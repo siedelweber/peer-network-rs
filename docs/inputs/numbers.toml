@@ -2588,3 +2588,192 @@ value = "200000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-coordinate-first"
+value = "17/25"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-coordinate-second"
+value = "79/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-radicand"
+value = "5372/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-coordinate-first"
+value = "41/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-coordinate-second"
+value = "91/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-radicand"
+value = "7462/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-coordinate-first"
+value = "3/5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-coordinate-second"
+value = "39/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-radicand"
+value = "468/1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-coordinate-first"
+value = "18/25"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-coordinate-second"
+value = "83/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-radicand"
+value = "5976/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-coordinate-first"
+value = "14/25"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-coordinate-second"
+value = "18/25"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-radicand"
+value = "4032/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-coordinate-first"
+value = "19/25"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-coordinate-second"
+value = "43/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-radicand"
+value = "6536/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-coordinate-first"
+value = "37/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-coordinate-second"
+value = "81/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-radicand"
+value = "5994/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-coordinate-first"
+value = "7/20"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-coordinate-second"
+value = "9/20"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-radicand"
+value = "1575/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-coordinate-first"
+value = "21/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-coordinate-second"
+value = "61/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-radicand"
+value = "2562/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

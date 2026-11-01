@@ -719,9 +719,63 @@ pub enum NumberId {
     NumbersSolveProjectionActorCount,
     /// Registry id: num:numbers:zero-width-reference-work-ceiling.
     NumbersZeroWidthReferenceWorkCeiling,
+    /// Registry id: num:numbers:published-vouch-carol-eve-coordinate-first.
+    NumbersPublishedVouchCarolEveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-carol-eve-coordinate-second.
+    NumbersPublishedVouchCarolEveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-carol-eve-radicand.
+    NumbersPublishedVouchCarolEveRadicand,
+    /// Registry id: num:numbers:published-vouch-alice-bob-coordinate-first.
+    NumbersPublishedVouchAliceBobCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-alice-bob-coordinate-second.
+    NumbersPublishedVouchAliceBobCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-alice-bob-radicand.
+    NumbersPublishedVouchAliceBobRadicand,
+    /// Registry id: num:numbers:published-vouch-bob-dave-coordinate-first.
+    NumbersPublishedVouchBobDaveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-bob-dave-coordinate-second.
+    NumbersPublishedVouchBobDaveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-bob-dave-radicand.
+    NumbersPublishedVouchBobDaveRadicand,
+    /// Registry id: num:numbers:published-vouch-dave-eve-coordinate-first.
+    NumbersPublishedVouchDaveEveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-dave-eve-coordinate-second.
+    NumbersPublishedVouchDaveEveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-dave-eve-radicand.
+    NumbersPublishedVouchDaveEveRadicand,
+    /// Registry id: num:numbers:published-vouch-alice-carol-coordinate-first.
+    NumbersPublishedVouchAliceCarolCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-alice-carol-coordinate-second.
+    NumbersPublishedVouchAliceCarolCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-alice-carol-radicand.
+    NumbersPublishedVouchAliceCarolRadicand,
+    /// Registry id: num:numbers:published-vouch-carol-dave-coordinate-first.
+    NumbersPublishedVouchCarolDaveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-carol-dave-coordinate-second.
+    NumbersPublishedVouchCarolDaveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-carol-dave-radicand.
+    NumbersPublishedVouchCarolDaveRadicand,
+    /// Registry id: num:numbers:published-vouch-bob-carol-coordinate-first.
+    NumbersPublishedVouchBobCarolCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-bob-carol-coordinate-second.
+    NumbersPublishedVouchBobCarolCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-bob-carol-radicand.
+    NumbersPublishedVouchBobCarolRadicand,
+    /// Registry id: num:numbers:published-vouch-alice-eve-coordinate-first.
+    NumbersPublishedVouchAliceEveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-alice-eve-coordinate-second.
+    NumbersPublishedVouchAliceEveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-alice-eve-radicand.
+    NumbersPublishedVouchAliceEveRadicand,
+    /// Registry id: num:numbers:published-vouch-bob-eve-coordinate-first.
+    NumbersPublishedVouchBobEveCoordinateFirst,
+    /// Registry id: num:numbers:published-vouch-bob-eve-coordinate-second.
+    NumbersPublishedVouchBobEveCoordinateSecond,
+    /// Registry id: num:numbers:published-vouch-bob-eve-radicand.
+    NumbersPublishedVouchBobEveRadicand,
 }
 
-const OFFSETS: [(usize, usize); 358] = [
+const OFFSETS: [(usize, usize); 385] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1080,6 +1134,33 @@ const OFFSETS: [(usize, usize); 358] = [
     (54388, 54389),
     (54517, 54521),
     (54654, 54663),
+    (54796, 54801),
+    (54944, 54950),
+    (55084, 55094),
+    (55236, 55241),
+    (55384, 55390),
+    (55524, 55534),
+    (55675, 55678),
+    (55820, 55825),
+    (55958, 55966),
+    (56107, 56112),
+    (56254, 56260),
+    (56393, 56403),
+    (56547, 56552),
+    (56697, 56702),
+    (56838, 56848),
+    (56991, 56996),
+    (57140, 57145),
+    (57280, 57290),
+    (57432, 57437),
+    (57580, 57586),
+    (57720, 57730),
+    (57872, 57876),
+    (58019, 58023),
+    (58157, 58167),
+    (58307, 58312),
+    (58453, 58459),
+    (58591, 58601),
 ];
 
 impl NumberId {

@@ -114,47 +114,87 @@ fn verification_policy() -> Procedure {
 }
 
 fn verification_reference() -> pn_records::conserved::VerificationInput {
+    use NumberId as N;
     use pn_records::conserved::{VerificationEdge, VerificationInput, VerificationSource};
     VerificationInput {
         sources: [
-            ("carol", "10", "6/5", "-1/10"),
-            ("alice", "12", "7/6", "-1/6"),
-            ("eve", "8", "9/8", "0"),
-            ("bob", "11", "13/11", "-1/11"),
-            ("dave", "2", "1", "0"),
+            (
+                "carol",
+                N::NumbersPublishedCarolCount,
+                N::NumbersPublishedCarolIntercept,
+                N::NumbersPublishedCarolSlope,
+            ),
+            (
+                "alice",
+                N::NumbersPublishedAliceCount,
+                N::NumbersPublishedAliceIntercept,
+                N::NumbersPublishedAliceSlope,
+            ),
+            (
+                "eve",
+                N::NumbersPublishedEveCount,
+                N::NumbersPublishedEveIntercept,
+                N::NumbersPublishedEveSlope,
+            ),
+            (
+                "bob",
+                N::NumbersPublishedBobCount,
+                N::NumbersPublishedBobIntercept,
+                N::NumbersPublishedBobSlope,
+            ),
+            (
+                "dave",
+                N::NumbersPublishedDaveCount,
+                N::NumbersPublishedDaveIntercept,
+                N::NumbersPublishedDaveSlope,
+            ),
         ]
         .into_iter()
         .map(|(name, count, intercept, slope)| VerificationSource {
             name: name.into(),
-            count: count.into(),
-            intercept: intercept.into(),
-            slope: slope.into(),
+            count: count.value().into(),
+            intercept: intercept.value().into(),
+            slope: slope.value().into(),
         })
         .collect(),
         edges: [
-            ("carol", "eve", "5372/10000"),
-            ("alice", "bob", "7462/10000"),
-            ("bob", "dave", "468/1000"),
-            ("dave", "eve", "5976/10000"),
-            ("alice", "carol", "4032/10000"),
-            ("carol", "dave", "6536/10000"),
-            ("bob", "carol", "5994/10000"),
-            ("alice", "eve", "1575/10000"),
-            ("bob", "eve", "2562/10000"),
+            ("carol", "eve", N::NumbersPublishedVouchCarolEveRadicand),
+            ("alice", "bob", N::NumbersPublishedVouchAliceBobRadicand),
+            ("bob", "dave", N::NumbersPublishedVouchBobDaveRadicand),
+            ("dave", "eve", N::NumbersPublishedVouchDaveEveRadicand),
+            ("alice", "carol", N::NumbersPublishedVouchAliceCarolRadicand),
+            ("carol", "dave", N::NumbersPublishedVouchCarolDaveRadicand),
+            ("bob", "carol", N::NumbersPublishedVouchBobCarolRadicand),
+            ("alice", "eve", N::NumbersPublishedVouchAliceEveRadicand),
+            ("bob", "eve", N::NumbersPublishedVouchBobEveRadicand),
         ]
         .into_iter()
         .map(|(source, target, radicand)| VerificationEdge {
             source: source.into(),
             target: target.into(),
-            radicand: radicand.into(),
+            radicand: radicand.value().into(),
         })
         .collect(),
-        wall: range("1/2", "65/128"),
-        shape: ["1", "1/2", "1/4", "1/8"].map(str::to_owned).to_vec(),
-        depth_mass: ["1/2", "1/4", "1/8", "1/8"].map(str::to_owned).to_vec(),
-        retention: "1".into(),
-        strength: "1".into(),
-        endpoint_bits: 32,
+        wall: range(N::NumbersReferenceWallLower.value(), N::NumbersReferenceWallUpper.value()),
+        shape: [
+            N::NumbersPublishedShapeFirst,
+            N::NumbersPublishedShapeSecond,
+            N::NumbersPublishedShapeThird,
+            N::NumbersPublishedShapeFourth,
+        ]
+        .map(|id| id.value().to_owned())
+        .to_vec(),
+        depth_mass: [
+            N::NumbersPublishedMassFirst,
+            N::NumbersPublishedMassSecond,
+            N::NumbersPublishedMassThird,
+            N::NumbersPublishedMassFourth,
+        ]
+        .map(|id| id.value().to_owned())
+        .to_vec(),
+        retention: N::NumbersPublishedRetention.value().into(),
+        strength: N::NumbersPublishedStrength.value().into(),
+        endpoint_bits: u32::try_from(N::NumbersVerificationCompositionBits.integer()).unwrap(),
     }
 }
 
@@ -219,6 +259,7 @@ fn verification_corpus() {
     let p = verification_policy();
     let input = verification_reference();
     let candidate = vec![range("11/10", "11/10"); 5];
+    corpus::declaration_controls(&input);
     let residual = verification::two_map(&p, &input, &candidate).unwrap();
     let declaration = pn_records::conserved::LocalDeclaration {
         inflation: "2".into(),

@@ -472,3 +472,97 @@ fn contributing_width(record: &pn_records::conserved::BoxMapRecord, wall: &str, 
     }
     maximum
 }
+
+// Exact declaration rows supplement the outward certificate rows.
+// network-v0.31.1, ver:standing:conserved-equilibrium-enclosure.
+fn declaration_matches(input: &pn_records::conserved::VerificationInput, budget: &mut Budget) -> bool {
+    use NumberId as N;
+    let expected = super::verification_reference();
+    if input != &expected {
+        return false;
+    }
+    let coordinates = [
+        (
+            "carol",
+            "eve",
+            N::NumbersPublishedVouchCarolEveCoordinateFirst,
+            N::NumbersPublishedVouchCarolEveCoordinateSecond,
+        ),
+        (
+            "alice",
+            "bob",
+            N::NumbersPublishedVouchAliceBobCoordinateFirst,
+            N::NumbersPublishedVouchAliceBobCoordinateSecond,
+        ),
+        (
+            "bob",
+            "dave",
+            N::NumbersPublishedVouchBobDaveCoordinateFirst,
+            N::NumbersPublishedVouchBobDaveCoordinateSecond,
+        ),
+        (
+            "dave",
+            "eve",
+            N::NumbersPublishedVouchDaveEveCoordinateFirst,
+            N::NumbersPublishedVouchDaveEveCoordinateSecond,
+        ),
+        (
+            "alice",
+            "carol",
+            N::NumbersPublishedVouchAliceCarolCoordinateFirst,
+            N::NumbersPublishedVouchAliceCarolCoordinateSecond,
+        ),
+        (
+            "carol",
+            "dave",
+            N::NumbersPublishedVouchCarolDaveCoordinateFirst,
+            N::NumbersPublishedVouchCarolDaveCoordinateSecond,
+        ),
+        (
+            "bob",
+            "carol",
+            N::NumbersPublishedVouchBobCarolCoordinateFirst,
+            N::NumbersPublishedVouchBobCarolCoordinateSecond,
+        ),
+        (
+            "alice",
+            "eve",
+            N::NumbersPublishedVouchAliceEveCoordinateFirst,
+            N::NumbersPublishedVouchAliceEveCoordinateSecond,
+        ),
+        (
+            "bob",
+            "eve",
+            N::NumbersPublishedVouchBobEveCoordinateFirst,
+            N::NumbersPublishedVouchBobEveCoordinateSecond,
+        ),
+    ];
+    input.edges.len() == coordinates.len()
+        && coordinates.into_iter().all(|(source, target, first, second)| {
+            let product = number(first.value(), budget)
+                .mul(&number(second.value(), budget), budget)
+                .unwrap();
+            input
+                .edges
+                .iter()
+                .any(|edge| edge.source == source && edge.target == target && number(&edge.radicand, budget) == product)
+        })
+}
+
+/// Check the exact tagged declaration and separate single-field mutations.
+/// # Panics
+/// Panics only if a declaration row disagrees or a changed field is accepted.
+pub(super) fn declaration_controls(input: &pn_records::conserved::VerificationInput) {
+    let mut budget = Budget::new(super::verification_policy().enclosure.unwrap().operation).unwrap();
+    assert!(declaration_matches(input, &mut budget));
+    for field in [2, 0, 1] {
+        let mut changed = input.clone();
+        // Each replacement is another declared quantity, distinct from this field.
+        match field {
+            0 => changed.edges[0].radicand.clone_from(&input.edges[1].radicand),
+            1 => changed.shape[0].clone_from(&input.shape[1]),
+            _ => changed.sources[0].intercept.clone_from(&input.sources[1].intercept),
+        }
+        assert!(!declaration_matches(&changed, &mut budget));
+    }
+}
