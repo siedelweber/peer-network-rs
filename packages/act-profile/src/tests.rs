@@ -438,29 +438,49 @@ fn commitment_trace_privacy() {
     let dependency_ids = list(vec![id(1, "Registration")]);
     let sy = salt(1, 32);
     let sd = salt(2, 64);
-    if std::env::var_os("PN_PROFILE_TRACE_CHILD").is_some() {
+    if let Ok(recipe) = std::env::var("PN_PROFILE_TRACE_CHILD") {
+        // Prepare the supplied anchor before capture; each child captures one
+        // complete recipe so its burst fits even when the writer is not scheduled.
+        let anchor = (recipe != "proposal")
+            .then(|| proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap());
         let _guard = cli_common::init_json_tracing(tracing::Level::TRACE).unwrap();
-        let proposal = proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap();
-        let cy = content_commitment(&proposal_body.id, &proposal, &sy, &payload).unwrap();
-        let cd = dependency_commitment(&proposal_body.id, &proposal, &sd, &dependency_ids).unwrap();
+        let bytes = match recipe.as_str() {
+            "proposal" => {
+                proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids)
+                    .unwrap()
+                    .bytes
+            }
+            "content" => {
+                content_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sy, &payload)
+                    .unwrap()
+                    .bytes
+            }
+            "dependency" => {
+                dependency_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sd, &dependency_ids)
+                    .unwrap()
+                    .bytes
+            }
+            _ => panic!("unknown capture recipe"),
+        };
         let vectors: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/commitments.json")).unwrap();
-        for (name, bytes) in [("proposal", proposal.bytes), ("content", cy.bytes), ("dependency", cd.bytes)] {
-            let row = vectors["vectors"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|row| row["name"] == name)
-                .unwrap();
-            assert_eq!(hex(&bytes), row["digest"].as_str().unwrap());
-        }
+        let row = vectors["vectors"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["name"] == recipe)
+            .unwrap();
+        assert_eq!(hex(&bytes), row["digest"].as_str().unwrap());
         return;
     }
-    for level in ["default", "trace"] {
-        let artifacts = std::env::temp_dir().join(format!("pn-act-profile-trace-{}-{level}", std::process::id()));
+    for (level, recipe) in ["default", "trace"]
+        .into_iter()
+        .flat_map(|level| ["proposal", "content", "dependency"].map(|recipe| (level, recipe)))
+    {
+        let artifacts = std::env::temp_dir().join(format!("pn-act-profile-trace-{}-{level}-{recipe}", std::process::id()));
         std::fs::create_dir(&artifacts).unwrap();
         let output = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "tests::commitment_trace_privacy", "--nocapture"])
-            .env("PN_PROFILE_TRACE_CHILD", "1")
+            .env("PN_PROFILE_TRACE_CHILD", recipe)
             .env("PN_OBSERVE_LEVEL", level)
             .env("PN_OBSERVE_ARTIFACT_DIR", &artifacts)
             .output()
@@ -475,7 +495,7 @@ fn commitment_trace_privacy() {
         std::fs::remove_dir_all(&artifacts).unwrap();
         let status: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
         assert_eq!(status.len(), 1);
-        assert_eq!(status[0]["lost_records"], 0);
+        assert_eq!(status[0]["lost_records"], 0, "{level}/{recipe}: {}", status[0]);
         assert_eq!(status[0]["undelivered_records"], 0);
         assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
         let metrics = records.iter().find(|row| row["kind"] == "metric_summary").unwrap();
@@ -485,7 +505,7 @@ fn commitment_trace_privacy() {
             .iter()
             .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
             .unwrap();
-        assert_eq!(started["counter"], 3);
+        assert_eq!(started["counter"], 1);
     }
 }
 
