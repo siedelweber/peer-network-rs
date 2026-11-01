@@ -108,6 +108,13 @@ def check_numeric_word_fragments(paths):
         raise ValueError('\n'.join(findings))
 
 
+def check_rendered_spacing(paths):
+    """Rendered Markdown separates blocks with one blank line."""
+    for path in paths:
+        if path.suffix == '.md' and re.search(r'\n[ \t]*\n[ \t]*\n', path.read_text()):
+            raise ValueError(f'{path}: repeated blank lines in rendered Markdown')
+
+
 def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
@@ -346,6 +353,8 @@ def numeric_correspondence():
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
+    check_rendered_spacing([path for path in tracked_paths()
+                            if path.as_posix() == 'docs/design/implementation.md'])
     check_numeric_word_fragments([path for path in tracked_paths()
                                   if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])
