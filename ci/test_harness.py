@@ -343,7 +343,44 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual((record['operation'], record['budget'], record['outcome']),
                                  (operation, 'integration', 'held' if held else 'passed'))
 
+    def calibration_campaign(self):
+        import json
+        from pathlib import Path
+        import tempfile
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from calibrate import campaign
+        for complete in (False, True):
+            with tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                inputs = root/'docs/inputs'
+                inputs.mkdir(parents=True)
+                (inputs/'devperf-budgets.toml').write_text('[[rows]]\nname = "gate"\nwarm_samples = 3\n')
+                calls = []
+                def invocation(_argv):
+                    artifact = root/'.lane/calibration'
+                    self.assertFalse(artifact.exists())
+                    artifact.mkdir()
+                    status = int(bool(calls))
+                    calls.append(status)
+                    if status == 0 or complete:
+                        (artifact/'result.json').write_text(json.dumps(dict(source='current',
+                            configuration=CONFIGURATION, status=status, start=0, end=1)))
+                    return SimpleNamespace(returncode=status)
+                with patch('calibrate.Path.cwd', return_value=root), patch('calibrate.source_id', return_value='current'), patch('calibrate.cancellable', side_effect=invocation):
+                    if complete:
+                        self.assertEqual(campaign(), 1)
+                    else:
+                        with self.assertRaises(FileNotFoundError):
+                            campaign()
+                self.assertEqual(calls, [0, 1])
+                retained = root/'.lane/calibration-campaign'
+                self.assertTrue((retained/'warmup/result.json').is_file())
+                self.assertEqual((retained/'sample-1/result.json').exists(), complete)
+                self.assertFalse((retained/'sample-2').exists())
+
     def calibrated_case_budgets(self):
+        self.calibration_campaign()
         from calibrate import warm_allowance
         policy = dict(warm_samples=3, allowance_multiple=2, allowance_round_ms=50)
         self.assertEqual(warm_allowance([20, 101, 70], policy), 250)

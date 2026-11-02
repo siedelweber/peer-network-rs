@@ -673,3 +673,14 @@ definition = "Restricted independently authored arrays and CBOR framing reconstr
 paths = ["packages/act-profile/tests/fixtures/commitments.json"]
 source = "packages/act-profile/tests/fixtures/commitments.json"
 vector = "proposal-reduced"
+
+[[rows]]
+family = "gate-warm-calibration-base"
+group = "warm case allowance calibration"
+measures = "Public main commit beneath the measured calibration candidate"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "37466cd6ec24cb974464c4dca736fe82e2ef0c79"
+definition = "The campaign names its public main base, which must be an ancestor in the checked-out history. This identifies the candidate's public starting point, not a claim that the base itself was measured; the retained campaign archive carries the measurements."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]

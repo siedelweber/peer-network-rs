@@ -322,8 +322,12 @@ def campaign():
     runs = []
     for index in range(policy['warm_samples']+1):
         name = 'warmup' if index == 0 else f'sample-{index}'
-        result = cancellable([sys.executable, '-B', 'ci/calibrate.py'])
         artifact = root/'.lane/calibration'
+        # A child that fails before writing its result must not inherit the
+        # preceding invocation's result through the parent's hand-back path.
+        if artifact.exists():
+            shutil.rmtree(artifact)
+        result = cancellable([sys.executable, '-B', 'ci/calibrate.py'])
         shutil.copytree(artifact, destination/name)
         sample = json.loads((artifact/'result.json').read_text())
         runs.append(dict(name=name, warm=index != 0, source=sample['source'],

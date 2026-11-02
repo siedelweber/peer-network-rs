@@ -391,6 +391,26 @@
       "allowance_multiple": 2,
       "allowance_round_ms": 50,
       "budget_ms": 120000,
+      "calibration_campaigns": [
+        {
+          "base_commit": "37466cd6ec24cb974464c4dca736fe82e2ef0c79",
+          "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+          "discarded_warmups": 1,
+          "label": "campaign:devperf:owned-cases-warm",
+          "multiplier": 2,
+          "round_ms": 50,
+          "rounding": "upward",
+          "sample_choice": "maximum-of-three-warm-serial",
+          "sample_walls_seconds": [
+            724.1814527511597,
+            726.8767776489258,
+            726.4905686378479
+          ],
+          "warm": true,
+          "warm_samples": 3,
+          "warmup_wall_seconds": 979.1095848083496
+        }
+      ],
       "category": "aggregate",
       "cpu_growth_percent": 20,
       "high_stall_percent": 10,
@@ -1545,15 +1565,28 @@
       "scope": "complete pn-graph::numeric suite"
     },
     {
-      "budget_ms": 15900,
+      "budget_ms": 17150,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        8132.409517886117,
+        8570.327793015167,
+        8219.834990799427
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-numeric-correspondence-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 900",
+          "exact": "17 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 900",
+          "num": "17 150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1568,15 +1601,28 @@
       "scope": "one ci::test_design.Correspondence.test_numeric_correspondence case"
     },
     {
-      "budget_ms": 30650,
+      "budget_ms": 33150,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        16117.438807850704,
+        16564.407753990963,
+        16172.777706058696
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-numeric-word-fragments-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "30 650",
+          "exact": "33 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30 650",
+          "num": "33 150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1591,15 +1637,28 @@
       "scope": "one ci::test_design.Correspondence.test_numeric_word_fragments case"
     },
     {
-      "budget_ms": 8450,
+      "budget_ms": 8800,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        4249.551088782027,
+        4381.821953924373,
+        4297.4825808778405
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-release-tags-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 450",
+          "exact": "8 800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 450",
+          "num": "8 800",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1614,15 +1673,28 @@
       "scope": "one ci::test_design.Correspondence.test_release_tags case"
     },
     {
-      "budget_ms": 8750,
+      "budget_ms": 9300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        4388.341172831133,
+        4632.0821810513735,
+        4351.612932980061
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-rendered-continuations-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 750",
+          "exact": "9 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 750",
+          "num": "9 300",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1637,15 +1709,28 @@
       "scope": "one ci::test_design.Correspondence.test_rendered_continuations case"
     },
     {
-      "budget_ms": 5850,
+      "budget_ms": 6200,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        3036.0379291232675,
+        2978.810225147754,
+        3090.6685509253293
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-rendered-spacing-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 850",
+          "exact": "6 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 850",
+          "num": "6 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1660,15 +1745,28 @@
       "scope": "one ci::test_design.Correspondence.test_rendered_spacing case"
     },
     {
-      "budget_ms": 4100,
+      "budget_ms": 4250,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        2113.2188190240413,
+        2042.0358930714428,
+        2124.1963289212435
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-design-tracked-prose-boundaries-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 100",
+          "exact": "4 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 100",
+          "num": "4 250",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1683,15 +1781,28 @@
       "scope": "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
     },
     {
-      "budget_ms": 30100,
+      "budget_ms": 17800,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        8883.517784066498,
+        8800.954158883542,
+        8799.435753840953
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-discipline-secret-carrier-traits-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "30 100",
+          "exact": "17 800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30 100",
+          "num": "17 800",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1706,15 +1817,28 @@
       "scope": "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
     },
     {
-      "budget_ms": 1150,
+      "budget_ms": 1600,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        777.6503490749747,
+        764.0414841007441,
+        709.3237789813429
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-host-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 150",
+          "exact": "1 600",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 150",
+          "num": "1 600",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1729,15 +1853,28 @@
       "scope": "one ci::test_harness.Harness.test_host_commit_isolation case"
     },
     {
-      "budget_ms": 1200,
+      "budget_ms": 1450,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        715.4435380361974,
+        717.1839601360261,
+        699.8531559947878
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-wallet-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 200",
+          "exact": "1 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 200",
+          "num": "1 450",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1752,15 +1889,28 @@
       "scope": "one ci::test_harness.Harness.test_wallet_commit_isolation case"
     },
     {
-      "budget_ms": 24900,
+      "budget_ms": 19050,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        8933.325961930677,
+        9504.246441880241,
+        8897.863722173497
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-runtime-independent-instances-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "24 900",
+          "exact": "19 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24 900",
+          "num": "19 050",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1775,15 +1925,28 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_independent_instances case"
     },
     {
-      "budget_ms": 33650,
+      "budget_ms": 4900,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        2438.7787599116564,
+        2421.314036939293,
+        2356.676983181387
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-runtime-statement-type-boundary-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "33 650",
+          "exact": "4 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33 650",
+          "num": "4 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1798,15 +1961,28 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_statement_type_boundary case"
     },
     {
-      "budget_ms": 6650,
+      "budget_ms": 7000,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        3449.98905621469,
+        3489.9166871327907,
+        3248.648694017902
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-runtime-storage-statements-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 650",
+          "exact": "7 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 650",
+          "num": "7 000",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1821,15 +1997,28 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_storage_statements case"
     },
     {
-      "budget_ms": 8500,
+      "budget_ms": 13650,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        5313.021635869518,
+        5325.505279935896,
+        6815.304628107697
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-census-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 500",
+          "exact": "13 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 500",
+          "num": "13 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1844,15 +2033,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_census case"
     },
     {
-      "budget_ms": 4450,
+      "budget_ms": 4500,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        2156.0839018784463,
+        2200.1036419533193,
+        2239.969748072326
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-completion-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 450",
+          "exact": "4 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 450",
+          "num": "4 500",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1867,15 +2069,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_completion case"
     },
     {
-      "budget_ms": 18750,
+      "budget_ms": 19900,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        8976.838394999504,
+        9067.803886020556,
+        9947.33343902044
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "18 750",
+          "exact": "19 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18 750",
+          "num": "19 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1890,15 +2105,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_delegation case"
     },
     {
-      "budget_ms": 8100,
+      "budget_ms": 7550,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        3565.5467950273305,
+        3553.662323160097,
+        3755.090021993965
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-cargo-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 100",
+          "exact": "7 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 100",
+          "num": "7 550",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1913,15 +2141,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_cargo_delegation case"
     },
     {
-      "budget_ms": 19700,
+      "budget_ms": 19400,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        9311.954678036273,
+        9602.516009937972,
+        9692.233743146062
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-runtime-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "19 700",
+          "exact": "19 400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19 700",
+          "num": "19 400",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1936,15 +2177,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_runtime_delegation case"
     },
     {
-      "budget_ms": 74650,
+      "budget_ms": 74000,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        36414.58950494416,
+        36248.13404912129,
+        36983.50044502877
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-linter-entry-service-ownership-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "74 650",
+          "exact": "74 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "74 650",
+          "num": "74 000",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1959,15 +2213,28 @@
       "scope": "one ci::test_linter_entry.Conformance.test_service_ownership case"
     },
     {
-      "budget_ms": 5750,
+      "budget_ms": 5500,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        2202.147011179477,
+        2744.6149769239128,
+        2577.0834288559854
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-observe-runtime-epoch-inputs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 750",
+          "exact": "5 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 750",
+          "num": "5 500",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1982,15 +2249,28 @@
       "scope": "one ci::test_observe_runtime.Processes.test_epoch_inputs case"
     },
     {
-      "budget_ms": 11350,
+      "budget_ms": 13550,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        5394.187753088772,
+        6768.912934930995,
+        6469.235412077978
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-observe-runtime-four-mode-results-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "11 350",
+          "exact": "13 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11 350",
+          "num": "13 550",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2005,15 +2285,28 @@
       "scope": "one ci::test_observe_runtime.Processes.test_four_mode_results case"
     },
     {
-      "budget_ms": 9500,
+      "budget_ms": 10250,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        3847.3394990433007,
+        5102.067029103637,
+        4445.377834839746
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-observe-runtime-title-suite-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "9 500",
+          "exact": "10 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9 500",
+          "num": "10 250",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2028,15 +2321,28 @@
       "scope": "one ci::test_observe_runtime.Processes.test_title_suite case"
     },
     {
-      "budget_ms": 3200,
+      "budget_ms": 3300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1640.6814029905945,
+        1635.8326429035515,
+        1644.2576218396425
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-testkit-consumer-seed-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 200",
+          "exact": "3 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 200",
+          "num": "3 300",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2052,6 +2358,19 @@
     },
     {
       "budget_ms": 3200,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1585.4513440281153,
+        1559.7488267812878,
+        1599.1155749652535
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-testkit-property-seed-case",
       "number_forms": {
@@ -2074,15 +2393,28 @@
       "scope": "one ci::test_testkit.SupportGuard.test_property_seed case"
     },
     {
-      "budget_ms": 19950,
+      "budget_ms": 19900,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        9812.468798132613,
+        9930.28698512353,
+        9843.655407894403
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-boundary-confinement-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "19 950",
+          "exact": "19 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19 950",
+          "num": "19 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2097,15 +2429,28 @@
       "scope": "one ci::test_wallet_boundary.WalletBoundary.test_confinement case"
     },
     {
-      "budget_ms": 23950,
+      "budget_ms": 21700,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        10762.430387083441,
+        10541.572659974918,
+        10835.692926077172
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-boundary-dependency-features-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "23 950",
+          "exact": "21 700",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23 950",
+          "num": "21 700",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2120,15 +2465,28 @@
       "scope": "one ci::test_wallet_boundary.WalletBoundary.test_dependency_features case"
     },
     {
-      "budget_ms": 4750,
+      "budget_ms": 5750,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        2873.63424198702,
+        2716.652800096199,
+        2665.7333050388843
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-documents-integration-repository-fixed-point-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 750",
+          "exact": "5 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 750",
+          "num": "5 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2143,15 +2501,28 @@
       "scope": "one documents::integration::repository_fixed_point case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 600,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        292.64233401045203,
+        181.03591492399573,
+        186.82088889181614
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-act-profile-commitment-trace-privacy-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "600",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "600",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2167,6 +2538,19 @@
     },
     {
       "budget_ms": 300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        126.3667109888047,
+        128.12169711105525,
+        128.00830719061196
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-postgresql-real-cancellation-case",
       "number_forms": {
@@ -2190,6 +2574,19 @@
     },
     {
       "budget_ms": 300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        140.54174395278096,
+        141.30662195384502,
+        138.2952779531479
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-postgresql-relay-throughput-case",
       "number_forms": {
@@ -2213,6 +2610,19 @@
     },
     {
       "budget_ms": 300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        139.12851084023714,
+        138.61811789683998,
+        139.83452506363392
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-scram-ceiling-login-progress-case",
       "number_forms": {
@@ -2236,6 +2646,19 @@
     },
     {
       "budget_ms": 850,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        402.8484739828855,
+        417.72542195394635,
+        419.8608100414276
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-scram-derivation-cost-case",
       "number_forms": {
@@ -2259,6 +2682,19 @@
     },
     {
       "budget_ms": 250,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        102.99371811561286,
+        103.01655088551342,
+        104.003133950755
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-scram-derivation-permits-case",
       "number_forms": {
@@ -2281,15 +2717,28 @@
       "scope": "one pn-host::scram::tests::derivation_permits case"
     },
     {
-      "budget_ms": 250,
+      "budget_ms": 400,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        105.53354513831437,
+        180.89739582501352,
+        136.2767550162971
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-competing-writers-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "250",
+          "exact": "400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "250",
+          "num": "400",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2304,15 +2753,28 @@
       "scope": "one pn-host::storage::tests::storage_competing_writers case"
     },
     {
-      "budget_ms": 650,
+      "budget_ms": 1000,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        319.1868900321424,
+        479.5944979414344,
+        306.37641879729927
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-contract-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "650",
+          "exact": "1 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "650",
+          "num": "1 000",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2327,15 +2789,28 @@
       "scope": "one pn-host::storage::tests::storage_contract case"
     },
     {
-      "budget_ms": 14600,
+      "budget_ms": 19200,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        9594.503327040002,
+        7429.788020905107,
+        7672.51146491617
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-growth-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "14 600",
+          "exact": "19 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14 600",
+          "num": "19 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2351,6 +2826,19 @@
     },
     {
       "budget_ms": 150,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        54.60252286866307,
+        59.64457895606756,
+        60.54810783825815
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-historical-constants-case",
       "number_forms": {
@@ -2374,6 +2862,19 @@
     },
     {
       "budget_ms": 150,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        56.69034086167812,
+        60.00225688330829,
+        64.29345509968698
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-rebuild-case",
       "number_forms": {
@@ -2397,6 +2898,19 @@
     },
     {
       "budget_ms": 200,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        82.20367203466594,
+        84.9797239061445,
+        91.14889381453395
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-runtime-case",
       "number_forms": {
@@ -2420,6 +2934,19 @@
     },
     {
       "budget_ms": 500,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        209.37219797633588,
+        227.45824907906353,
+        247.4000270012766
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-scaling-case",
       "number_forms": {
@@ -2442,15 +2969,28 @@
       "scope": "one pn-host::storage::tests::storage_scaling case"
     },
     {
-      "budget_ms": 800,
+      "budget_ms": 750,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        335.60585998930037,
+        361.53564299456775,
+        374.2822231724858
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-schema-identity-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "800",
+          "exact": "750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "800",
+          "num": "750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2466,6 +3006,19 @@
     },
     {
       "budget_ms": 450,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        194.83778695575893,
+        206.1436220537871,
+        185.85787806659937
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-host-storage-storage-tamper-case",
       "number_forms": {
@@ -2488,15 +3041,28 @@
       "scope": "one pn-host::storage::tests::storage_tamper case"
     },
     {
-      "budget_ms": 2750,
+      "budget_ms": 4650,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1249.2145178839564,
+        2303.4797401633114,
+        1301.6730879899114
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-rpc-rotation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 750",
+          "exact": "4 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 750",
+          "num": "4 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2511,15 +3077,28 @@
       "scope": "one pn-wallet::rpc::rotation case"
     },
     {
-      "budget_ms": 8950,
+      "budget_ms": 8500,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        4168.743625981733,
+        4235.1874760352075,
+        4221.144458977506
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-rpc-settlement-forks-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 950",
+          "exact": "8 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 950",
+          "num": "8 500",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2534,15 +3113,28 @@
       "scope": "one pn-wallet::rpc::settlement_forks case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 2800,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1268.1264239363372,
+        1278.1149719376117,
+        1387.819356052205
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-rpc-signed-reads-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "2 800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "2 800",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2558,6 +3150,19 @@
     },
     {
       "budget_ms": 850,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        395.73965105228126,
+        403.9985300041735,
+        399.9142430257052
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-rpc-cookie-descriptor-cases-case",
       "number_forms": {
@@ -2581,6 +3186,19 @@
     },
     {
       "budget_ms": 300,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        136.67741394601762,
+        134.70446993596852,
+        133.7620869744569
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-rpc-http-acquisition-cases-case",
       "number_forms": {
@@ -2604,6 +3222,19 @@
     },
     {
       "budget_ms": 9900,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        4919.922739034519,
+        4926.012095995247,
+        4919.299381086603
+      ],
+      "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-wire-wire-compatibility-case",
       "number_forms": {

@@ -114,7 +114,10 @@ def exercise(case):
         source_commit = command(['git', 'rev-parse', 'HEAD']).stdout.strip()
         address = root/'.lane/census.sock'
         wrapper = root/'.lane/census-wrapper.py'
-        wrapper.write_text('#!'+sys.executable+'\nimport os,socket,sys\n'
+        wrapper.write_text('#!'+sys.executable+'\nimport os,socket,sys\nfrom pathlib import Path\n'
+            'snapshot=Path(sys.argv[sys.argv.index("--root")+1])\n'
+            f'assert snapshot.resolve()!=Path({str(root)!r}).resolve(), "census received the live root"\n'
+            'assert not (snapshot/".lane/census-wrapper.py").exists(), "census copied an untracked path"\n'
             'with socket.socket(socket.AF_UNIX) as connection:\n'
             f' connection.connect({str(address)!r})\n connection.sendall(b"ready")\n assert connection.recv(1)==b"R"\n'
             f'os.execv({os.environ["LINTER_BIN"]!r},[{os.environ["LINTER_BIN"]!r},*sys.argv[1:]])\n')

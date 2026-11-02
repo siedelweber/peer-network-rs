@@ -140,6 +140,7 @@ cpu_growth_percent = 20
 allowance_multiple = 2
 allowance_round_ms = 50
 warm_samples = 3
+calibration_campaigns = [{ label = "campaign:devperf:owned-cases-warm", base_commit = "37466cd6ec24cb974464c4dca736fe82e2ef0c79", configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing", warmup_wall_seconds = 979.1095848083496, sample_walls_seconds = [724.1814527511597, 726.8767776489258, 726.4905686378479], discarded_warmups = 1, warm_samples = 3, sample_choice = "maximum-of-three-warm-serial", multiplier = 2, round_ms = 50, rounding = "upward", warm = true }]
 rebuild_steps = ["test-build", "clippy", "nursery-advisory", "minimal", "rustdoc", "observation-build", "host-observation-build"]
 budget_ms = 120000
 scope = "per-change gate on the imported tree in a fresh checkout, with its own retained node target"
@@ -488,178 +489,376 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "calibrated-design-numeric-correspondence-case"
 category = "case"
-budget_ms = 15900
+budget_ms = 17150
 scope = "one ci::test_design.Correspondence.test_numeric_correspondence case"
 reason = "Every numeric projection mutation retains a fresh optimized whole-checker execution, exact rational operands, published-key controls and truncated-derived-value refusals."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [8132.409517886117, 8570.327793015167, 8219.834990799427]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-numeric-word-fragments-case"
 category = "case"
-budget_ms = 30650
+budget_ms = 33150
 scope = "one ci::test_design.Correspondence.test_numeric_word_fragments case"
 reason = "The complete malformed-word and template-separator matrix retains fresh optimized whole-checker executions for every refusal and accepted structural control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [16117.438807850704, 16564.407753990963, 16172.777706058696]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-release-tags-case"
 category = "case"
-budget_ms = 8450
+budget_ms = 8800
 scope = "one ci::test_design.Correspondence.test_release_tags case"
 reason = "The complete release-tag matrix retains fresh optimized checks across tracked text kinds, deliberate source fixtures, case changes and binary boundaries."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [4249.551088782027, 4381.821953924373, 4297.4825808778405]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-rendered-continuations-case"
 category = "case"
-budget_ms = 8750
+budget_ms = 9300
 scope = "one ci::test_design.Correspondence.test_rendered_continuations case"
 reason = "Every accepted and refused Markdown block shape retains a fresh optimized whole-checker execution and its exact diagnostic assertions."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [4388.341172831133, 4632.0821810513735, 4351.612932980061]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-rendered-spacing-case"
 category = "case"
-budget_ms = 5850
+budget_ms = 6200
 scope = "one ci::test_design.Correspondence.test_rendered_spacing case"
 reason = "Spacing controls retain optimized full checks, real import-base histories, per-file ceiling growth refusals and stale-exception retirement."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [3036.0379291232675, 2978.810225147754, 3090.6685509253293]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-tracked-prose-boundaries-case"
 category = "case"
-budget_ms = 4100
+budget_ms = 4250
 scope = "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
 reason = "Tracked document and template mutations retain fresh optimized whole-checker execution, bare-mint refusals and the vendored-source exclusion."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [2113.2188190240413, 2042.0358930714428, 2124.1963289212435]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-discipline-secret-carrier-traits-case"
 category = "case"
-budget_ms = 30100
+budget_ms = 17800
 scope = "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
 reason = "Compiler checks retain each forbidden secret trait and the permitted carrier controls in real fixture crates."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [8883.517784066498, 8800.954158883542, 8799.435753840953]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-harness-host-commit-isolation-case"
 category = "case"
-budget_ms = 1150
+budget_ms = 1600
 scope = "one ci::test_harness.Harness.test_host_commit_isolation case"
 reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [777.6503490749747, 764.0414841007441, 709.3237789813429]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-harness-wallet-commit-isolation-case"
 category = "case"
-budget_ms = 1200
+budget_ms = 1450
 scope = "one ci::test_harness.Harness.test_wallet_commit_isolation case"
 reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [715.4435380361974, 717.1839601360261, 699.8531559947878]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-runtime-independent-instances-case"
 category = "case"
-budget_ms = 24900
+budget_ms = 19050
 scope = "one ci::test_host_runtime.HostRuntime.test_independent_instances case"
 reason = "Independent real PostgreSQL instances retain deep-root socket placement, port ownership, sibling survival and complete cleanup checks."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [8933.325961930677, 9504.246441880241, 8897.863722173497]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-runtime-statement-type-boundary-case"
 category = "case"
-budget_ms = 33650
+budget_ms = 4900
 scope = "one ci::test_host_runtime.HostRuntime.test_statement_type_boundary case"
 reason = "Source traversal and renamed-driver controls retain the actual compiler refusal for inline SQL at the closed Statement boundary."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [2438.7787599116564, 2421.314036939293, 2356.676983181387]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-runtime-storage-statements-case"
 category = "case"
-budget_ms = 6650
+budget_ms = 7000
 scope = "one ci::test_host_runtime.HostRuntime.test_storage_statements case"
 reason = "Real child processes retain complete storage statement observations and the refusal when bootstrap is omitted on a retake."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [3449.98905621469, 3489.9166871327907, 3248.648694017902]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-build-graph-census-case"
 category = "case"
-budget_ms = 8500
+budget_ms = 13650
 scope = "one ci::test_linter_entry.Conformance.test_build_graph_census case"
 reason = "The complete tracked-input census retains real linter projections and all missing, mismatched and undeclared source controls."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [5313.021635869518, 5325.505279935896, 6815.304628107697]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-build-graph-completion-case"
 category = "case"
-budget_ms = 4450
+budget_ms = 4500
 scope = "one ci::test_linter_entry.Conformance.test_build_graph_completion case"
 reason = "Fresh and reused Meson executions retain dependency, duplicate, stale-result and concurrent-completion controls."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [2156.0839018784463, 2200.1036419533193, 2239.969748072326]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-build-graph-delegation-case"
 category = "case"
-budget_ms = 18750
+budget_ms = 19900
 scope = "one ci::test_linter_entry.Conformance.test_build_graph_delegation case"
 reason = "Both graph routes retain real configured targets, source and feature bindings, and command-output refusal controls."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [8976.838394999504, 9067.803886020556, 9947.33343902044]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-cargo-delegation-case"
 category = "case"
-budget_ms = 8100
+budget_ms = 7550
 scope = "one ci::test_linter_entry.Conformance.test_cargo_delegation case"
 reason = "Real Cargo fixture builds retain feature identity, compiler-refusal and documentation-output comparisons across both routes."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [3565.5467950273305, 3553.662323160097, 3755.090021993965]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-runtime-delegation-case"
 category = "case"
-budget_ms = 19700
+budget_ms = 19400
 scope = "one ci::test_linter_entry.Conformance.test_runtime_delegation case"
 reason = "The runtime route matrix retains real harness joins, failed startup and tests, stale evidence, unavailable measurements and signal-driven cleanup."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [9311.954678036273, 9602.516009937972, 9692.233743146062]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-linter-entry-service-ownership-case"
 category = "case"
-budget_ms = 74650
+budget_ms = 74000
 scope = "one ci::test_linter_entry.Conformance.test_service_ownership case"
 reason = "Both routes retain paired real PostgreSQL and Elements instances, distinct endpoints and processes, sibling survival and owned shutdown."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [36414.58950494416, 36248.13404912129, 36983.50044502877]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-observe-runtime-epoch-inputs-case"
 category = "case"
-budget_ms = 5750
+budget_ms = 5500
 scope = "one ci::test_observe_runtime.Processes.test_epoch_inputs case"
 reason = "Every declared epoch input observation mode retains real child execution, result comparison and complete observation accounting."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [2202.147011179477, 2744.6149769239128, 2577.0834288559854]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-observe-runtime-four-mode-results-case"
 category = "case"
-budget_ms = 11350
+budget_ms = 13550
 scope = "one ci::test_observe_runtime.Processes.test_four_mode_results case"
 reason = "The complete observation-mode matrix retains real child results, trace payload and loss checks, and disabled-observation equivalence."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [5394.187753088772, 6768.912934930995, 6469.235412077978]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-observe-runtime-title-suite-case"
 category = "case"
-budget_ms = 9500
+budget_ms = 10250
 scope = "one ci::test_observe_runtime.Processes.test_title_suite case"
 reason = "The complete title observation suite retains each real child mode, public outcome comparison and finalized trace evidence."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [3847.3394990433007, 5102.067029103637, 4445.377834839746]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-testkit-consumer-seed-case"
 category = "case"
-budget_ms = 3200
+budget_ms = 3300
 scope = "one ci::test_testkit.PropertyDeclarations.test_consumer_seed case"
 reason = "The committed property declarations and full source census retain actual inner and consumer-qualified identities, replay evidence and changed-seed refusal."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1640.6814029905945, 1635.8326429035515, 1644.2576218396425]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-testkit-property-seed-case"
@@ -668,38 +867,83 @@ budget_ms = 3200
 scope = "one ci::test_testkit.SupportGuard.test_property_seed case"
 reason = "The committed property declarations and full source census retain dependency validation, runner environment and missing-seed refusal."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1585.4513440281153, 1559.7488267812878, 1599.1155749652535]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-boundary-confinement-case"
 category = "case"
-budget_ms = 19950
+budget_ms = 19900
 scope = "one ci::test_wallet_boundary.WalletBoundary.test_confinement case"
 reason = "Every source and adapter mutation retains real Cargo identity resolution and full confinement checks; only unchanged pure lexical masks are reused by complete source text."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [9812.468798132613, 9930.28698512353, 9843.655407894403]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-boundary-dependency-features-case"
 category = "case"
-budget_ms = 23950
+budget_ms = 21700
 scope = "one ci::test_wallet_boundary.WalletBoundary.test_dependency_features case"
 reason = "Actual Cargo metadata and production dependency trees retain the renamed and moved-dependency controls and every reviewed feature check."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [10762.430387083441, 10541.572659974918, 10835.692926077172]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-documents-integration-repository-fixed-point-case"
 category = "case"
-budget_ms = 4750
+budget_ms = 5750
 scope = "one documents::integration::repository_fixed_point case"
 reason = "The full repository generator and renderer fixed point retains every committed input and output comparison."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [2873.63424198702, 2716.652800096199, 2665.7333050388843]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-act-profile-commitment-trace-privacy-case"
 category = "case"
-budget_ms = 500
+budget_ms = 600
 scope = "one pn-act-profile::tests::commitment_trace_privacy case"
 reason = "The complete recipe and observation-mode matrix retains independent child collectors, authenticated artifact expansion, fixed digests and zero-loss accounting."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [292.64233401045203, 181.03591492399573, 186.82088889181614]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-postgresql-real-cancellation-case"
@@ -708,6 +952,15 @@ budget_ms = 300
 scope = "one pn-host::postgresql::real_cancellation case"
 reason = "Real PostgreSQL cancellation retains the deliberate query-start wait, cancellation delivery and subsequent connection usability."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [126.3667109888047, 128.12169711105525, 128.00830719061196]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-postgresql-relay-throughput-case"
@@ -716,6 +969,15 @@ budget_ms = 300
 scope = "one pn-host::postgresql::relay_throughput case"
 reason = "The public relay throughput fixture retains its complete framed transfer and server result checks."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [140.54174395278096, 141.30662195384502, 138.2952779531479]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-scram-ceiling-login-progress-case"
@@ -724,6 +986,15 @@ budget_ms = 300
 scope = "one pn-host::scram::tests::ceiling_login_progress case"
 reason = "The real ceiling-cost derivation remains active while a current-thread executor must forward a public relay frame."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [139.12851084023714, 138.61811789683998, 139.83452506363392]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-scram-derivation-cost-case"
@@ -732,6 +1003,15 @@ budget_ms = 850
 scope = "one pn-host::scram::tests::derivation_cost case"
 reason = "The derivation cost fixture retains real password derivations at the declared iteration boundaries and ceiling."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [402.8484739828855, 417.72542195394635, 419.8608100414276]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-scram-derivation-permits-case"
@@ -740,30 +1020,66 @@ budget_ms = 250
 scope = "one pn-host::scram::tests::derivation_permits case"
 reason = "The permit witness retains its timed non-progress controls before and after cancellation, blocked derivations and eventual permit return."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [102.99371811561286, 103.01655088551342, 104.003133950755]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-competing-writers-case"
 category = "case"
-budget_ms = 250
+budget_ms = 400
 scope = "one pn-host::storage::tests::storage_competing_writers case"
 reason = "Competing real storage writers retain transactional conflict and committed-history checks."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [105.53354513831437, 180.89739582501352, 136.2767550162971]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-contract-case"
 category = "case"
-budget_ms = 650
+budget_ms = 1000
 scope = "one pn-host::storage::tests::storage_contract case"
 reason = "The storage contract retains the complete in-memory and PostgreSQL boundary and history comparison."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [319.1868900321424, 479.5944979414344, 306.37641879729927]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-growth-case"
 category = "case"
-budget_ms = 14600
+budget_ms = 19200
 scope = "one pn-host::storage::tests::storage_growth case"
 reason = "The large retained-history campaign keeps all declared row scales, chain and live-key axes, real execution plans and independently checked results."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [9594.503327040002, 7429.788020905107, 7672.51146491617]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-historical-constants-case"
@@ -772,6 +1088,15 @@ budget_ms = 150
 scope = "one pn-host::storage::tests::storage_historical_constants case"
 reason = "The real storage fixture retains historical-constant identity checks across retained editions and boundaries."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [54.60252286866307, 59.64457895606756, 60.54810783825815]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-rebuild-case"
@@ -780,6 +1105,15 @@ budget_ms = 150
 scope = "one pn-host::storage::tests::storage_rebuild case"
 reason = "Real storage reconstruction retains its complete committed-history and rebuilt-boundary comparisons."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [56.69034086167812, 60.00225688330829, 64.29345509968698]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-runtime-case"
@@ -788,6 +1122,15 @@ budget_ms = 200
 scope = "one pn-host::storage::tests::storage_runtime case"
 reason = "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [82.20367203466594, 84.9797239061445, 91.14889381453395]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-scaling-case"
@@ -796,14 +1139,32 @@ budget_ms = 500
 scope = "one pn-host::storage::tests::storage_scaling case"
 reason = "The reduced fixture retains the full stated range of unrelated-history growth, selected-row identities, separate audit and excluded-corruption control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [209.37219797633588, 227.45824907906353, 247.4000270012766]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-schema-identity-case"
 category = "case"
-budget_ms = 800
+budget_ms = 750
 scope = "one pn-host::storage::tests::storage_schema_identity case"
 reason = "Real PostgreSQL schema inspection retains every mismatched index property, exact refusal and preservation check before a valid reopen."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [335.60585998930037, 361.53564299456775, 374.2822231724858]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-host-storage-storage-tamper-case"
@@ -812,30 +1173,66 @@ budget_ms = 450
 scope = "one pn-host::storage::tests::storage_tamper case"
 reason = "Both adapters retain every deletion, closure, overlap and payload-tampering control, with selected-boundary and full-audit distinctions."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [194.83778695575893, 206.1436220537871, 185.85787806659937]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-rpc-rotation-case"
 category = "case"
-budget_ms = 2750
+budget_ms = 4650
 scope = "one pn-wallet::rpc::rotation case"
 reason = "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1249.2145178839564, 2303.4797401633114, 1301.6730879899114]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-rpc-settlement-forks-case"
 category = "case"
-budget_ms = 8950
+budget_ms = 8500
 scope = "one pn-wallet::rpc::settlement_forks case"
 reason = "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [4168.743625981733, 4235.1874760352075, 4221.144458977506]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-rpc-signed-reads-case"
 category = "case"
-budget_ms = 3000
+budget_ms = 2800
 scope = "one pn-wallet::rpc::signed_reads case"
 reason = "Real Elements setup and signed reads retain their complete public transaction and authentication checks."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1268.1264239363372, 1278.1149719376117, 1387.819356052205]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-rpc-cookie-descriptor-cases-case"
@@ -844,6 +1241,15 @@ budget_ms = 850
 scope = "one pn-wallet::rpc_cookie::tests::descriptor_cases case"
 reason = "The descriptor witness retains the exhaustive file-mode sweep, ownership and link checks, descriptor mutation and rotated-read controls."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [395.73965105228126, 403.9985300041735, 399.9142430257052]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-rpc-http-acquisition-cases-case"
@@ -852,6 +1258,15 @@ budget_ms = 300
 scope = "one pn-wallet::rpc_http::tests::acquisition_cases case"
 reason = "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [136.67741394601762, 134.70446993596852, 133.7620869744569]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-wallet-wire-wire-compatibility-case"
@@ -860,6 +1275,15 @@ budget_ms = 9900
 scope = "one pn-wallet::wire::wire_compatibility case"
 reason = "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [4919.922739034519, 4926.012095995247, 4919.299381086603]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-title-exhaustive-case"
