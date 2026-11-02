@@ -397,6 +397,20 @@
           "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
           "discarded_warmups": 1,
           "label": "campaign:devperf:owned-cases-warm",
+          "measured_series": [
+            {
+              "commit": "f7f05119e1c8e44d74bbc799fb54dfc25d53887b",
+              "patch_id": "ec40b297fd423f29d6c338b285304b5f58f849bf"
+            },
+            {
+              "commit": "1d0e9c55653307bd9a3d8fde8c822b4dab720176",
+              "patch_id": "0e66db7cd67d5f491c19f3d56b28b87845b678aa"
+            },
+            {
+              "commit": "bfca44d02631f9a6f725566c1eb6f0052aee410c",
+              "patch_id": "c48c310374be9320bb9754a26916a598000394c6"
+            }
+          ],
           "multiplier": 2,
           "round_ms": 50,
           "rounding": "upward",
@@ -804,6 +818,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-marker-recognition-case",
       "number_forms": {
@@ -827,6 +842,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-typed-corruptions-case",
       "number_forms": {
@@ -850,6 +866,7 @@
     },
     {
       "budget_ms": 3000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "headroom_multiplier": 1.5,
       "measured_own_cpu_ms": 1903.931,
@@ -912,6 +929,7 @@
     },
     {
       "budget_ms": 1500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-act-emission-case",
       "number_forms": {
@@ -935,6 +953,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-burn-depleted-case",
       "number_forms": {
@@ -958,6 +977,7 @@
     },
     {
       "budget_ms": 1500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-burn-monotone-case",
       "number_forms": {
@@ -981,6 +1001,7 @@
     },
     {
       "budget_ms": 5000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-burn-sibling-case",
       "number_forms": {
@@ -1004,6 +1025,7 @@
     },
     {
       "budget_ms": 3750,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-burn-switch-case",
       "number_forms": {
@@ -1027,6 +1049,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-certified-splits-case",
       "number_forms": {
@@ -1050,6 +1073,7 @@
     },
     {
       "budget_ms": 1500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-conserved-projection-case",
       "number_forms": {
@@ -1073,6 +1097,7 @@
     },
     {
       "budget_ms": 12000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-conserved-residual-case",
       "number_forms": {
@@ -1096,6 +1121,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-fence-shapes-case",
       "number_forms": {
@@ -1119,6 +1145,7 @@
     },
     {
       "budget_ms": 2000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-compiled-conservation-case",
       "number_forms": {
@@ -1142,6 +1169,7 @@
     },
     {
       "budget_ms": 4000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-nonconstant-matched-split-case",
       "number_forms": {
@@ -1165,6 +1193,7 @@
     },
     {
       "budget_ms": 6000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-positive-rung-split-case",
       "number_forms": {
@@ -1188,6 +1217,7 @@
     },
     {
       "budget_ms": 2500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-published-isolated-acts-case",
       "number_forms": {
@@ -1211,6 +1241,7 @@
     },
     {
       "budget_ms": 4500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-published-retained-act-case",
       "number_forms": {
@@ -1234,6 +1265,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-receiving-small-case",
       "number_forms": {
@@ -1257,6 +1289,7 @@
     },
     {
       "budget_ms": 7000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-sibling-outside-paths-case",
       "number_forms": {
@@ -1280,6 +1313,7 @@
     },
     {
       "budget_ms": 5500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-two-map-box-case",
       "number_forms": {
@@ -1303,6 +1337,7 @@
     },
     {
       "budget_ms": 3000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-activation-costs-case",
       "number_forms": {
@@ -1326,6 +1361,7 @@
     },
     {
       "budget_ms": 2000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-activation-endpoints-case",
       "number_forms": {
@@ -1349,6 +1385,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-activation-oracles-case",
       "number_forms": {
@@ -1372,6 +1409,7 @@
     },
     {
       "budget_ms": 1500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-activation-walls-case",
       "number_forms": {
@@ -1395,6 +1433,7 @@
     },
     {
       "budget_ms": 1000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-enclosed-wall-clamp-case",
       "number_forms": {
@@ -1418,6 +1457,7 @@
     },
     {
       "budget_ms": 3000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-evaluation-costs-case",
       "number_forms": {
@@ -1441,6 +1481,7 @@
     },
     {
       "budget_ms": 2000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-reference-wall-branches-case",
       "number_forms": {
@@ -1464,6 +1505,7 @@
     },
     {
       "budget_ms": 2000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-reference-wall-controls-case",
       "number_forms": {
@@ -1487,6 +1529,7 @@
     },
     {
       "budget_ms": 3000,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-reference-wall-oracle-case",
       "number_forms": {
@@ -1510,6 +1553,7 @@
     },
     {
       "budget_ms": 5500,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-reference-wall-work-case",
       "number_forms": {
@@ -1533,6 +1577,7 @@
     },
     {
       "budget_ms": 60000,
+      "calibration_pending_owner": "lane/graph",
       "category": "suite",
       "name": "calibrated-epoch-numeric-suite",
       "number_forms": {
@@ -1556,6 +1601,7 @@
     },
     {
       "budget_ms": 15000,
+      "calibration_pending_owner": "lane/graph",
       "category": "suite",
       "name": "calibrated-graph-numeric-suite",
       "number_forms": {
@@ -3271,6 +3317,7 @@
     },
     {
       "budget_ms": 1750,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "name": "calibrated-title-exhaustive-case",
       "number_forms": {
@@ -3294,6 +3341,7 @@
     },
     {
       "budget_ms": 2100,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "measured_own_cpu_ms": 1048.129,
       "measured_wall_ms": 1048.316353,
@@ -3343,6 +3391,7 @@
     },
     {
       "budget_ms": 3050,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "measured_own_cpu_ms": 1504.13,
       "measured_wall_ms": 1504.35789,
@@ -3392,6 +3441,7 @@
     },
     {
       "budget_ms": 1600,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "measured_own_cpu_ms": 782.89,
       "measured_wall_ms": 783.057971,
@@ -3441,6 +3491,7 @@
     },
     {
       "budget_ms": 28200,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "measured_own_cpu_ms": 14044.133,
       "measured_wall_ms": 14075.070097,
@@ -3490,6 +3541,7 @@
     },
     {
       "budget_ms": 1650,
+      "calibration_pending_owner": "lane/graph",
       "category": "case",
       "measured_own_cpu_ms": 810.141,
       "measured_wall_ms": 811.443733,
@@ -3536,6 +3588,42 @@
       },
       "reason": "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object. The first serial after-measurement follows the current case-calibration sizing rule.",
       "scope": "one pn-graph::numeric::controller::controller_ridge case"
+    },
+    {
+      "budget_ms": 350,
+      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        155.0595599692315,
+        153.39159592986107,
+        145.67377907224
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "name": "calibrated-devperf-distinct-excess-ledger-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "350",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "350",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection.",
+      "scope": "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
     }
   ]
 }

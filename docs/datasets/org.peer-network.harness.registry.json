@@ -2548,6 +2548,12 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "ci::test_devperf.Performance.test_distinct_excess_ledger": "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection."
+      },
+      "case_budgets": {
+        "ci::test_devperf.Performance.test_distinct_excess_ledger": "calibrated-devperf-distinct-excess-ledger-case"
+      },
       "cases": [
         "ci::test_devperf.Performance.test_admitted_budget",
         "ci::test_devperf.Performance.test_budget_category",

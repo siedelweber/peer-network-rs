@@ -349,6 +349,27 @@ class Performance(unittest.TestCase):
                 with self.assertRaises(StructuralError):
                     budgets(path)
         self.assertEqual(assess(execution(101), declarations())[0]['kind'], 'budget-excess')
+        from devperf import calibration_declarations
+        source = tomllib.loads((Path(__file__).parents[1]/'docs/inputs/devperf-budgets.toml').read_text())
+        declared = {row['name']:row for row in source['rows']}
+        calibration_declarations(declared)
+        name = next(name for name, row in declared.items() if row.get('calibration_campaign'))
+        for changes in ({'calibration_campaign':'campaign:missing:campaign'}, {'budget_ms':1},
+                        {'calibration_warm':False}, {'calibration_selected_sample':0},
+                        {'calibration_walls_ms':[1]}, {'calibration_pending_owner':''}):
+            broken = copy.deepcopy(declared)
+            broken[name].update(changes)
+            with self.subTest(changes=changes), self.assertRaises(StructuralError):
+                calibration_declarations(broken)
+        pending = copy.deepcopy(declared)
+        pending[name].pop('calibration_campaign')
+        pending[name]['calibration_pending_owner'] = 'fixture-owner'
+        calibration_declarations(pending)
+        broken = copy.deepcopy(declared)
+        broken['gate']['calibration_campaigns'][0].pop('measured_series')
+        with self.assertRaises(StructuralError):
+            calibration_declarations(broken)
+
 
     def test_utc(self):
         """Naive and offset instants are refused without assigning a zone.

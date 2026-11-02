@@ -267,6 +267,17 @@ def establish(root, rule):
         if history.returncode or commit not in history.stdout.splitlines():
             raise ValueError("hash citations: admitted import is not reachable from HEAD")
         return lambda value, _line: value == commit
+    if kind == "ancestor-patch" and standing == "recomputable":
+        commit = rule["commit"]
+        establish(root, dict(reader="ancestor-commit", establishment="resolvable", commit=commit))
+        started = time.monotonic()
+        patch = subprocess.run(["git", "show", "--pretty=format:", "--binary", commit], cwd=root, capture_output=True)
+        result = subprocess.run(["git", "patch-id", "--stable"], cwd=root, input=patch.stdout, capture_output=True, text=False)
+        print(f"hash citations git stable patch-id wall={time.monotonic()-started:.6f}s status={result.returncode}")
+        words = result.stdout.decode().split()
+        if patch.returncode or result.returncode or len(words) != 2 or words[0] != rule["patch_id"]:
+            raise ValueError("hash citations: public stable patch identity differs")
+        return lambda value, _line: value in {commit, words[0]}
     if kind == "imported-commit" and standing == "resolvable":
         # Campaigns identify the exercised tree and its public history location.
         commit = rule["commit"]

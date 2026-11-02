@@ -37,7 +37,63 @@ def budgets(path):
         result[name] = row
     if not result:
         raise StructuralError('missing budget declarations')
+    calibration_declarations(result)
     return result
+
+
+def calibration_declarations(declared):
+    """A measured allowance is the stated rule over a named warm campaign."""
+    from decimal import Decimal, ROUND_CEILING
+    policy = declared.get('gate', {})
+    campaigns = {}
+    for campaign in policy.get('calibration_campaigns', []):
+        label = campaign.get('label')
+        if (not isinstance(label, str) or not re.fullmatch(r'campaign:[a-z0-9-]+:[a-z0-9-]+', label)
+                or label in campaigns):
+            raise StructuralError('missing, duplicate or malformed calibration campaign')
+        expected = dict(multiplier=policy.get('allowance_multiple'), round_ms=policy.get('allowance_round_ms'),
+                        warm_samples=policy.get('warm_samples'), discarded_warmups=1,
+                        sample_choice='maximum-of-three-warm-serial', rounding='upward', warm=True)
+        if (any(campaign.get(key) != value for key, value in expected.items())
+                or any(type(expected[key]) is not int or expected[key] <= 0 for key in ('multiplier', 'round_ms', 'warm_samples'))
+                or campaign.get('warm') is not True
+                or not number(campaign.get('warmup_wall_seconds'))
+                or not isinstance(campaign.get('sample_walls_seconds'), list)
+                or len(campaign['sample_walls_seconds']) != expected['warm_samples']
+                or not all(number(value) for value in campaign['sample_walls_seconds'])
+                or not campaign.get('configuration')
+                or not re.fullmatch(r'[0-9a-f]{40}', campaign.get('base_commit', ''))):
+            raise StructuralError(label+': malformed campaign or rule parameters differ')
+        series = campaign.get('measured_series')
+        if (not isinstance(series, list) or not series
+                or any(not isinstance(member, dict) or any(not re.fullmatch(r'[0-9a-f]{40}', member.get(key, '')) for key in ('commit', 'patch_id')) for member in series)
+                or len({member['commit'] for member in series}) != len(series)):
+            raise StructuralError(label+': measured public series is missing or malformed')
+        campaigns[label] = campaign
+    for name, row in declared.items():
+        if not name.startswith('calibrated-') and 'calibration_campaign' not in row:
+            continue
+        pending = row.get('calibration_pending_owner')
+        if 'calibration_pending_owner' in row:
+            if not isinstance(pending, str) or not pending.strip() or 'calibration_campaign' in row:
+                raise StructuralError(name+': pending calibration requires an owner and no asserted campaign')
+            continue
+        campaign = campaigns.get(row.get('calibration_campaign'))
+        if campaign is None:
+            raise StructuralError(name+': calibrated row requires an existing campaign or a pending owner')
+        walls = row.get('calibration_walls_ms')
+        if (not isinstance(walls, list) or len(walls) != campaign['warm_samples']
+                or not all(number(value) for value in walls)
+                or row.get('calibration_warm') is not True
+                or type(row.get('calibration_selected_sample')) is not int
+                or row['calibration_selected_sample'] != walls.index(max(walls))+1
+                or any(row.get('calibration_'+key) != campaign[key] for key in
+                       ('sample_choice', 'configuration', 'multiplier', 'round_ms', 'discarded_warmups'))):
+            raise StructuralError(name+': calibrated row differs from its warm campaign')
+        unit = Decimal(str(campaign['round_ms']))
+        expected = int((max(Decimal(str(value)) for value in walls)*campaign['multiplier']/unit).to_integral_value(rounding=ROUND_CEILING))*campaign['round_ms']
+        if row['budget_ms'] != expected:
+            raise StructuralError(name+': budget differs from the rule over recorded walls')
 
 
 def utc(value):

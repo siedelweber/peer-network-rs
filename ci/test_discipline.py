@@ -540,6 +540,28 @@ class HashCitations(unittest.TestCase):
                 with self.subTest(field=field), self.assertRaises(ValueError):
                     audit(root, ["sample.rs"], table)
 
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def git(*arguments, **options):
+                return subprocess.run(['git', '-C', str(root), *arguments], capture_output=True, check=True, **options)
+            git('init', '--quiet')
+            (root/'input').write_text('stable patch fixture\n')
+            git('add', 'input')
+            git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                'commit', '--quiet', '-m', 'fixture')
+            commit = git('rev-parse', 'HEAD').stdout.decode().strip()
+            contents = git('show', '--pretty=format:', '--binary', commit).stdout
+            identity = git('patch-id', '--stable', input=contents).stdout.decode().split()[0]
+            declaration = dict(reader='ancestor-patch', establishment='recomputable', commit=commit, patch_id=identity)
+            reader = establish(root, declaration)
+            self.assertTrue(reader(commit, ''))
+            self.assertTrue(reader(identity, ''))
+            self.assertFalse(reader('f'*40, ''))
+            with self.assertRaisesRegex(ValueError, 'patch identity differs'):
+                establish(root, dict(declaration, patch_id='0'*40))
+            with self.assertRaisesRegex(ValueError, 'not reachable'):
+                establish(root, dict(declaration, commit='f'*40))
+
     def test_hash_carrier(self):
         """the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.
         ´claim:discipline:identity-warrants-bind-carriers´

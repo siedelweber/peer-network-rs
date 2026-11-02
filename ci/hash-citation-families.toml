@@ -684,3 +684,39 @@ reader = "ancestor-commit"
 commit = "37466cd6ec24cb974464c4dca736fe82e2ef0c79"
 definition = "The campaign names its public main base, which must be an ancestor in the checked-out history. This identifies the candidate's public starting point, not a claim that the base itself was measured; the retained campaign archive carries the measurements."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "gate-warm-calibration-patch-1"
+group = "warm case allowance calibration"
+measures = "Public commit and stable patch identity of a measured series member"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "f7f05119e1c8e44d74bbc799fb54dfc25d53887b"
+patch_id = "ec40b297fd423f29d6c338b285304b5f58f849bf"
+definition = "The public ancestor supplies the patch; Git stable patch-id recomputes its identity independently of signing and parent commit identities. Apply the ordered patches to the campaign base to reconstruct the measured series."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "gate-warm-calibration-patch-2"
+group = "warm case allowance calibration"
+measures = "Public commit and stable patch identity of a measured series member"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "1d0e9c55653307bd9a3d8fde8c822b4dab720176"
+patch_id = "0e66db7cd67d5f491c19f3d56b28b87845b678aa"
+definition = "The public ancestor supplies the patch; Git stable patch-id recomputes its identity independently of signing and parent commit identities. Apply the ordered patches to the campaign base to reconstruct the measured series."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "gate-warm-calibration-patch-3"
+group = "warm case allowance calibration"
+measures = "Public commit and stable patch identity of a measured series member"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "bfca44d02631f9a6f725566c1eb6f0052aee410c"
+patch_id = "c48c310374be9320bb9754a26916a598000394c6"
+definition = "The public ancestor supplies the patch; Git stable patch-id recomputes its identity independently of signing and parent commit identities. Apply the ordered patches to the campaign base to reconstruct the measured series."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
