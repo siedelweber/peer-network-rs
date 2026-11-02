@@ -86,6 +86,71 @@ class Performance(unittest.TestCase):
                              ('case.rs', 'fn probe() {} fn probe() {}')):
             with self.assertRaisesRegex(StructuralError, 'ambiguous'):
                 case_identity(source, path, 'probe')
+        # The declared syntactic closure excludes implicit runner fixtures and
+        # module state; it does not pretend to resolve runtime initialization.
+        source = 'LIMIT = 1\nclass Fixture:\n    def setUp(self):\n        self.value = 1\n    def probe(self):\n        return self.value + LIMIT\n'
+        self.assertEqual(case_identity(source, 'case.py', 'probe'),
+                         case_identity(source.replace('= 1', '= 2'), 'case.py', 'probe'))
+        source = 'const LIMIT: u8 = 1; fn probe() { let value = LIMIT; }'
+        self.assertEqual(case_identity(source, 'case.rs', 'probe'),
+                         case_identity(source.replace('= 1', '= 2'), 'case.rs', 'probe'))
+
+    def test_gate_target_lock(self):
+        """The supervisor reports its wait and owns the target lock until gate exit, without lending it to a surviving descendant.
+        ´claim:devperf:gate-target-lock-is-supervised´
+        ´test:integration:test-gate-target-lock´
+        """
+        import fcntl
+        import multiprocessing
+        import signal
+        import sys
+        from contextlib import redirect_stdout, redirect_stderr
+        from isolation import gate_target
+        with tempfile.TemporaryDirectory() as directory:
+            command = 'sleep 30 >/dev/null 2>&1 & echo $! > "$1"\nprintf "locked\\n"\nread -r release\n'
+            pidfile = Path(directory)/'descendant'
+            errors = Path(directory)/'stderr'
+            output_read, output_write = os.pipe()
+            release_read, release_write = os.pipe()
+            def supervise():
+                os.close(output_read)
+                os.close(release_write)
+                os.dup2(release_read, 0)
+                os.close(release_read)
+                with os.fdopen(output_write, 'w') as output, errors.open('w') as diagnostic:
+                    os.dup2(output.fileno(), 1)
+                    os.dup2(diagnostic.fileno(), 2)
+                    with redirect_stdout(output), redirect_stderr(diagnostic):
+                        os.environ['CARGO_TARGET_DIR'] = directory
+                        sys.exit(gate_target(['bash', '-c', command, 'fixture', str(pidfile)]))
+            child = multiprocessing.get_context('fork').Process(target=supervise)
+            child.start()
+            os.close(output_write)
+            os.close(release_read)
+            try:
+                with os.fdopen(output_read) as output, os.fdopen(release_write, 'w') as release:
+                    try:
+                        self.assertRegex(output.readline(), r'^GATE-TARGET-LOCK wait_s=[0-9.]+ path=')
+                        self.assertEqual(output.readline(), 'locked\n')
+                        lock = str(Path(directory)/'.gate-target.lock')
+                        with open(lock, 'a') as competing:
+                            with self.assertRaises(BlockingIOError):
+                                fcntl.flock(competing, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    finally:
+                        release.write('release\n')
+                        release.flush()
+                        child.join(10)
+                self.assertFalse(child.is_alive(), 'gate supervisor exceeded its exit deadline')
+                self.assertEqual(child.exitcode, 0, errors.read_text())
+                with open(lock, 'a') as released:
+                    os.kill(int(pidfile.read_text()), 0)
+                    fcntl.flock(released, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            finally:
+                if child.is_alive():
+                    child.terminate()
+                    child.join(10)
+                if pidfile.exists():
+                    os.kill(int(pidfile.read_text()), signal.SIGTERM)
 
     def test_target_retention(self):
         """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.
@@ -93,26 +158,6 @@ class Performance(unittest.TestCase):
         ´test:integration:test-target-retention´
         """
         from isolation import bound_target, cargo_work, built_executable
-        import subprocess
-        import fcntl
-        gate = Path('ci/gate.sh').read_text()
-        begin = gate.index('lock_gate_target() {')
-        locking = gate[begin:gate.index('\n}\n', begin)+3]
-        with tempfile.TemporaryDirectory() as directory:
-            command = locking+'\nlock_gate_target\nprintf "locked\\n"\nread -r release\n'
-            child = subprocess.Popen(['bash', '-c', command], env={**os.environ, 'CARGO_TARGET_DIR':directory},
-                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            try:
-                self.assertEqual(child.stdout.readline(), 'locked\n')
-                lock = str(Path(directory)/'.gate-target.lock')
-                with open(lock, 'a') as competing:
-                    with self.assertRaises(BlockingIOError):
-                        fcntl.flock(competing, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            finally:
-                child.communicate('release\n', timeout=10)
-            self.assertEqual(child.returncode, 0)
-            with open(lock, 'a') as released:
-                fcntl.flock(released, fcntl.LOCK_EX | fcntl.LOCK_NB)
         artifact = dict(reason='compiler-artifact', target=dict(name='documents'), executable='/owned/target/triple/gate/documents')
         self.assertEqual(built_executable(json.dumps(artifact)), artifact['executable'])
         with self.assertRaisesRegex(ValueError, 'exactly one executable'):
@@ -133,8 +178,11 @@ class Performance(unittest.TestCase):
             self.assertTrue(bound_target(target, 1, 'fixture'))
             self.assertFalse((target/'gate').exists())
             self.assertEqual((target/'gate-baselines/retained').read_text(), 'baseline')
-            (target/'triple/gate').mkdir(parents=True)
+            (target/'triple/gate/.fingerprint').mkdir(parents=True)
             (target/'triple/gate/dependency').write_bytes(b'x'*8192)
+            (target/'host-observation-runtime/gate/.fingerprint').mkdir(parents=True)
+            (target/'host-observation-runtime/.rustc_info.json').write_text('{}')
+            (target/'host-observation-runtime/gate/dependency').write_bytes(b'x'*8192)
             (target/'isolation/owner').mkdir(parents=True)
             (target/'isolation/owner/retained').write_text('owned')
             output = io.StringIO()
@@ -145,6 +193,8 @@ class Performance(unittest.TestCase):
             self.assertEqual((target/'isolation/owner/retained').read_text(), 'owned')
             self.assertIn('outside_profiles=isolation', output.getvalue())
             self.assertIn('target_layout=triple', output.getvalue())
+            self.assertIn('nested_target=host-observation-runtime', output.getvalue())
+            self.assertTrue((target/'host-observation-runtime/gate/dependency').exists())
             self.assertIn('scope=reported-not-profile-ceiling', output.getvalue())
             log = target/'meter.jsonl'
             with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
@@ -190,8 +240,8 @@ class Performance(unittest.TestCase):
             root = Path(directory)
             lane = root/'.lane'
             lane.mkdir()
-            for wall, expected, cold, old_cold in ((1, False, False, False), (1, False, False, True), (2, False, True, False), (3, True, True, False)):
-                baseline = dict(source="prior", tiers={name: dict(step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
+            for wall, expected, cold, old_cold, old_stall in ((1, False, False, False, .2), (1, False, False, True, .2), (2, False, True, False, .2), (3, True, True, False, .2), (3, True, False, False, .2), (3, True, False, False, .9)):
+                baseline = dict(source="prior", tiers={name: dict(wall=4, resources={'node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
@@ -199,7 +249,7 @@ class Performance(unittest.TestCase):
                 for status in (0, 1):
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -212,6 +262,9 @@ class Performance(unittest.TestCase):
                         self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold else 0.5)
                         self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold else 0.25)
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
+                        self.assertEqual(measured[name]['baseline_stall'], old_stall)
+                        if wall == 3 and not cold:
+                            self.assertEqual(measured[name]['classification'], 'high-stall' if old_stall == .2 else 'plain')
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
@@ -221,6 +274,82 @@ class Performance(unittest.TestCase):
                     self.assertIn('over_budget='+str(expected).lower(), fast)
                     self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)
 
+    def test_whole_gate_warning(self):
+        """The whole critical path keeps its own warning and baseline while preserving the functional verdict.
+        ´claim:devperf:whole-gate-warning-preserves-verdict´
+        ´test:integration:test-whole-gate-warning´
+        """
+        from contextlib import redirect_stdout
+        from build_graph import wall_summary
+        from devperf import whole_gate_declaration
+        campaign = dict(label='campaign:devperf:whole-gate-mixed', warmup_commit='a'*40, source_commit='b'*40,
+                        discarded_warmup_ms=2000, rebuild_wall_ms=1200, warm_walls_ms=[1000, 1100, 1150],
+                        multiplier=2, round_ms=50, sample_choice='maximum-of-rebuild-and-three-warm', configuration='fixture')
+        declared = {'gate':dict(warm_samples=3, allowance_multiple=2, allowance_round_ms=50),
+                    'whole-gate':dict(budget_ms=2400, wall_campaign=campaign)}
+        whole_gate_declaration(declared)
+        bad = copy.deepcopy(declared)
+        bad['whole-gate']['budget_ms'] -= 1
+        with self.assertRaisesRegex(StructuralError, 'bound differs'):
+            whole_gate_declaration(bad)
+        bad = copy.deepcopy(declared)
+        bad['whole-gate']['wall_campaign']['warm_walls_ms'].pop()
+        with self.assertRaisesRegex(StructuralError, 'malformed'):
+            whole_gate_declaration(bad)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            lane = root/'.lane'
+            lane.mkdir()
+            measured = dict(step='gate', wall_seconds=1.2, own_user_s=1, own_sys_s=.1,
+                            node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
+            (lane/'gate-resources.json').write_text(json.dumps([measured]))
+            figures = dict(comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
+                           baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
+                           own_user_s=1, own_sys_s=0, baseline_cpu_s=1,
+                           changed_build_inputs=[], baseline_source='prior', baseline_match='import-base-tree')
+            for status in (0, 1):
+                pending = dict(source='fixture', tiers={'fast':figures}, previous_whole={'wall':2, 'stall':.1, 'own_user_s':1, 'own_sys_s':.1})
+                (lane/'gate-baseline.json').write_text(json.dumps(pending))
+                output = io.StringIO()
+                with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
+                    self.assertEqual(wall_summary(root, status), 0)
+                result = json.loads((lane/'gate-wall.json').read_text())
+                self.assertEqual(result['status'], status)
+                self.assertTrue(result['over_budget'])
+                self.assertEqual(result['classification'], 'high-stall')
+                self.assertEqual(result['baseline_stall'], .1)
+                self.assertEqual(result['baseline_source'], 'prior')
+                self.assertAlmostEqual(result['comparable_cpu_s'], 1.1)
+                self.assertAlmostEqual(result['baseline_comparable_cpu_s'], 1.1)
+                self.assertIn('GATE-WALL WALL=1.200000s verdict='+('green' if status == 0 else 'red'), output.getvalue())
+                retained = json.loads((lane/'gate-baseline.json').read_text())
+                self.assertEqual(retained['whole'], result)
+                self.assertNotIn('previous_whole', retained)
+                self.assertIn('exit:'+str(status), run.call_args.args[0])
+            (lane/'gate-resources.json').unlink()
+            with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(io.StringIO()):
+                self.assertEqual(wall_summary(root, 0, (1, 2.2)), 0)
+            unavailable = json.loads((lane/'gate-wall.json').read_text())
+            self.assertIsNone(unavailable['own_user_s'])
+            self.assertEqual(unavailable['classification'], 'unclassified')
+            self.assertEqual(unavailable['status'], 0)
+            registry = root/'registry.toml'
+            registry.write_text('rows = []\n')
+            argv = ['devperf', '--operation', 'gate::whole', '--budget', 'whole-gate',
+                    '--overrun-class', 'high-stall', '--duration-s', '1.2', '--outcome', 'exit:0',
+                    '--findings', str(root/'findings.json'), '--registry', str(registry)]
+            from devperf import main
+            with patch('sys.argv', argv), patch('devperf.budgets', return_value=declared), patch('devperf.report', return_value=0) as report_call:
+                self.assertEqual(main(), 0)
+            record = report_call.call_args.args[0][0]
+            self.assertEqual(record['tier'], 'whole')
+            self.assertEqual(record['overrun_class'], 'high-stall')
+            self.assertEqual(record['applicable_budgets'], ['whole-gate'])
+            finding, = assess({**record, 'duration_ms':2500, 'outcome':'exit:1'},
+                              {'whole-gate':dict(budget_ms=2400, category='aggregate')})
+            self.assertEqual(finding['classification'], 'high-stall')
+            self.assertEqual(finding['outcome'], 'exit:1')
+            self.assertEqual(finding['verdict_effect'], 'none')
     def test_overrun_classes(self):
         """Rebuild classification requires comparable compile CPU growth and serialized wall growth covering the excess; load alone cannot establish rebuild work.
         ´claim:devperf:rebuild-requires-compile-cpu-and-wall´
@@ -254,6 +383,12 @@ class Performance(unittest.TestCase):
         for stall in (0, .01):
             self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
                 wall=130, baseline_wall=135, baseline_stall=0, excess=10), 'plain')
+        # Projection is slack here, so only whole-excess coverage decides.
+        boundary = 120/(1-.1)
+        for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
+            wall = boundary+delta
+            self.assertEqual(overrun_class(True, 100, 100, .1, 40, 40, [], policy,
+                wall=wall, baseline_wall=150, baseline_stall=.01, excess=wall-120), expected)
         from build_graph import status_changes
         self.assertEqual(status_changes({'case':{'selected':'passed'}, 'obligation':{'scope':'scoped-passed'}},
             {'case':{'selected':'held'}, 'obligation':{'scope':'held'}}), [

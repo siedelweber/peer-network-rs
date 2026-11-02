@@ -106,6 +106,14 @@
       "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_gate_target_lock",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:gate-target-lock-is-supervised",
+      "before": "",
+      "after": "The supervisor reports its wait and owns the target lock until gate exit, without lending it to a surviving descendant.",
+      "review": "The gate supervisor holds flock while the child waits at a pipe barrier. A competing nonblocking acquisition refuses; after the gate exits it succeeds while the background descendant is still alive. This preserves exclusion and directly witnesses that descendants cannot retain the descriptor. The emitted wait field is checked."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_overrun_classes",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:rebuild-requires-compile-cpu-and-wall",
@@ -128,6 +136,14 @@
       "before": "",
       "after": "Tier summaries keep wall overruns separate from functional verdicts and exclude foreign-source and cold-owner measurements from comparisons.",
       "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_whole_gate_warning",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:whole-gate-warning-preserves-verdict",
+      "before": "",
+      "after": "The whole critical path keeps its own warning and baseline while preserving the functional verdict.",
+      "review": "The campaign controls recompute the mixed-sample bound and refuse malformed or altered declarations. Green and failed outcomes survive whole-wall reporting; retained pressure and comparable CPU include preparation. Missing resource context remains unclassified. The CLI carries the whole warning class and budget without changing a functional result."
     },
     {
       "operation": "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",

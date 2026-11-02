@@ -588,7 +588,7 @@
         "reason"
       ],
       "owner_target_ceiling_bytes": 4294967296,
-      "reason": "Pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
+      "reason": "The author-tier target retains the historical gate allowance: pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
       "rebuild_steps": [
         "test-build",
         "clippy",
@@ -602,7 +602,7 @@
       "record_pressure_percent": 2,
       "record_second_cpu_seconds": 233,
       "record_second_wall_seconds": "85.5",
-      "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target",
+      "scope": "author fast tier inside the complete per-change gate, with its own retained node target",
       "shared_target_ceiling_bytes": 17179869184,
       "warm_samples": 3
     },
@@ -5788,6 +5788,45 @@
       },
       "reason": "Whole-checker refusal matrices and cross-process observation modes retain their complete evidence without extending the author feedback path; this invocation has its own warning wall and remains required for import.",
       "scope": "required design-mutation and observation invocation alongside the per-change gate"
+    },
+    {
+      "budget_ms": 347300,
+      "category": "aggregate",
+      "name": "whole-gate",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "347 300",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "347 300",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "A rebuilding public-commit transition and warm repeats retain both compile work and steady verification. The mixed campaign maximum receives the declared multiplier and upward rounding; the author-tier target remains separate. Target-lock waiting is reported separately, not charged to executed gate work.",
+      "scope": "complete required-gate critical path after target-lock acquisition, including structural preparation, execution, result joins and resource collection",
+      "wall_campaign": {
+        "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+        "discarded_warmup_ms": 151670.16,
+        "label": "campaign:devperf:whole-gate-mixed",
+        "multiplier": 2,
+        "rebuild_wall_ms": 173638.03,
+        "round_ms": 50,
+        "sample_choice": "maximum-of-rebuild-and-three-warm",
+        "source_commit": "26b87795c9a4730191e1598e0328562bc3ad1319",
+        "warm_walls_ms": [
+          128579.754,
+          137882.71,
+          119844.733
+        ],
+        "warmup_commit": "2ba3ea5f48336cf93934d6119fcc7dd487d62247"
+      }
     }
   ]
 }

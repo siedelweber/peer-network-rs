@@ -40,7 +40,36 @@ def budgets(path):
     if not result:
         raise StructuralError('missing budget declarations')
     calibration_declarations(result)
+    whole_gate_declaration(result)
     return result
+
+
+def whole_gate_declaration(declared):
+    """Size the critical path from a rebuilding transition and warm repeats."""
+    if 'whole-gate' not in declared:
+        return
+    from decimal import Decimal, ROUND_CEILING
+    row = declared['whole-gate']
+    policy = declared['gate']
+    campaign = row.get('wall_campaign', {})
+    warm = campaign.get('warm_walls_ms')
+    if (campaign.get('label') != 'campaign:devperf:whole-gate-mixed'
+            or not all(re.fullmatch(r'[0-9a-f]{40}', campaign.get(key, '')) for key in ('warmup_commit', 'source_commit'))
+            or campaign['warmup_commit'] == campaign['source_commit']
+            or not number(campaign.get('discarded_warmup_ms'))
+            or not number(campaign.get('rebuild_wall_ms'))
+            or not isinstance(warm, list) or len(warm) != policy['warm_samples']
+            or not all(number(value) for value in warm)
+            or campaign.get('multiplier') != policy['allowance_multiple']
+            or campaign.get('round_ms') != policy['allowance_round_ms']
+            or campaign.get('sample_choice') != 'maximum-of-rebuild-and-three-warm'
+            or not campaign.get('configuration')):
+        raise StructuralError('whole-gate: malformed mixed rebuilding and warm campaign')
+    unit = Decimal(str(campaign['round_ms']))
+    maximum = max(Decimal(str(value)) for value in [campaign['rebuild_wall_ms'], *warm])
+    expected = int((maximum*campaign['multiplier']/unit).to_integral_value(rounding=ROUND_CEILING))*campaign['round_ms']
+    if row['budget_ms'] != expected:
+        raise StructuralError('whole-gate: warning bound differs from its measured campaign')
 
 
 def calibration_declarations(declared):
@@ -415,10 +444,11 @@ def main():
                             implementation='repository-tools', tier='fast', applicable_budgets=[args.budget, 'gate'], utc=datetime.datetime.now(datetime.timezone.utc).isoformat().replace('+00:00', 'Z'))]
         registry = tomllib.loads(Path(args.registry).read_text())['rows']
         if args.overrun_class:
-            if args.input or not args.operation.startswith('tier::'):
-                raise StructuralError('overrun class requires a tier operation')
+            whole = args.operation == 'gate::whole' and args.budget == 'whole-gate'
+            if args.input or not (whole or args.operation.startswith('tier::')):
+                raise StructuralError('overrun class requires a tier or whole-gate operation')
             records[0]['overrun_class'] = args.overrun_class
-            records[0]['tier'] = args.operation.removeprefix('tier::')
+            records[0]['tier'] = 'whole' if whole else args.operation.removeprefix('tier::')
             records[0]['applicable_budgets'] = [args.budget]
         return report(records, budgets(args.budgets), args.findings, registry=registry)
     except (ValueError, KeyError, TypeError, OSError) as error:

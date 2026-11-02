@@ -74,7 +74,7 @@
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
 | ci::test_design | active | integration | ci-python | extended | 10 |
-| ci::test_devperf | active | unit | ci-python | fast | 20 |
+| ci::test_devperf | active | unit | ci-python | fast | 22 |
 | ci::test_discipline | active | integration | ci-python | fast | 30 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | planned-burn | held | held | none | service | 0 |

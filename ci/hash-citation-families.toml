@@ -731,3 +731,25 @@ reader = "calibration-bodies"
 input = "docs/inputs/devperf-budgets.toml"
 definition = "Each campaign row selects a unique function from its public series head; its source bytes recompute the recorded digest. Current body identity is assessed separately and a changed body becomes pending under its owner."
 paths = ["docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "whole-gate-campaign-warmup"
+group = "whole-gate mixed calibration"
+measures = "Public source commit in the mixed rebuilding and warm campaign"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "2ba3ea5f48336cf93934d6119fcc7dd487d62247"
+definition = "The public ancestor identifies the measured source; the campaign retains the rebuilding transition and subsequent warm walls separately."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "whole-gate-campaign-measured"
+group = "whole-gate mixed calibration"
+measures = "Public source commit in the mixed rebuilding and warm campaign"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "26b87795c9a4730191e1598e0328562bc3ad1319"
+definition = "The public ancestor identifies the measured source; the campaign retains the rebuilding transition and subsequent warm walls separately."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]

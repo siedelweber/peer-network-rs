@@ -25,14 +25,12 @@ case "${PN_BUILDGRAPH_ROUTE:-meson}" in
     meson|legacy) ;;
     *) echo "GATE-STRUCTURAL-ERROR: unknown build graph route" >&2; exit 2 ;;
 esac
-# Hold the target lock through execution and EXIT cleanup, not only the sweep.
-lock_gate_target() {
-    local target=${CARGO_TARGET_DIR:-"$PWD/target"}
-    mkdir -p "$target" || return 2
-    exec {gate_target_lock}>"$target/.gate-target.lock" || return 2
-    python3 -B ci/isolation.py lock-target "$gate_target_lock" || return 2
-}
-lock_gate_target || exit 2
+# The supervisor owns the lock through EXIT cleanup; children never inherit it.
+if [ "${1:-}" = --gate-target-locked ]; then
+    shift
+else
+    exec python3 -B ci/isolation.py gate-target bash "$0" --gate-target-locked "$@"
+fi
 failed=0
 statuses=()
 mkdir -p .lane
@@ -150,6 +148,7 @@ gate_ended=$(date -u +%s.%N)
 gate_resource_sample .lane/gate-resource-end.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-end.raw
 gate_wall=$(awk -v s="$gate_started" -v e="$gate_ended" 'BEGIN { printf "%.6f", e-s }')
+rm -f .lane/gate-resources.json
 if python3 -B ci/gate_resources.py .lane "$gate_wall" > .lane/gate-resource-lines.log; then
     python3 -B ci/build_graph.py resource-lines .lane/gate-resource-lines.log
 else
@@ -158,14 +157,7 @@ else
     done < .lane/gate-steps.tsv
     printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$gate_wall"
 fi
-if [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
-    budget_wall=$(python3 -B ci/build_graph.py tier-wall)
-else
-    budget_wall=$gate_wall
-fi
-python3 -B ci/devperf.py --operation gate --duration-s "$budget_wall" --outcome "exit:$failed" \
-    --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
-if [ "$?" -ne 0 ]; then failed=1; fi
+python3 -B ci/build_graph.py wall-summary "$failed" "$gate_started" "$gate_ended" || failed=1
 python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
 if [ "$failed" = 0 ] && [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
     python3 -B ci/build_graph.py retain-baseline || failed=1

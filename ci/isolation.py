@@ -44,25 +44,42 @@ def bound_target(target, ceiling, owner):
         raise ValueError('target ceiling must be positive bytes')
     names = ('debug', 'gate', 'release', 'doc')
     profiles = [target/name for name in names]
-    # Cargo target-triple layouts have the same profiles one level deeper.
+    # Cargo puts root metadata in each independent target, not in a triple.
+    nested = [path for path in target.iterdir() if path.is_dir()
+              and any((path/name).is_file() for name in ('.rustc_info.json', 'CACHEDIR.TAG'))] if target.exists() else []
     triples = [path for path in target.iterdir() if path.is_dir() and path.name not in (*names, 'isolation')
-               and any((path/name).is_dir() for name in names)] if target.exists() else []
+               and path not in nested and any((path/name/'.fingerprint').is_dir() for name in names)] if target.exists() else []
     profiles.extend(path/name for path in triples for name in names)
     other = [path for path in target.iterdir() if path.is_dir() and path.name not in names and path not in triples] if target.exists() else []
     for path in sorted(other):
-        print(f'TARGET-DIRS owner={owner} outside_profiles={path.name} bytes={allocated([path])} scope=reported-not-profile-ceiling path={path}', flush=True)
+        kind = 'nested_target' if path in nested else 'outside_profiles'
+        print(f'TARGET-DIRS owner={owner} {kind}={path.name} bytes={allocated([path])} scope=reported-not-profile-ceiling path={path}', flush=True)
     before = allocated(profiles)
+    after = before
     if before > ceiling:
         for profile in profiles:
             shutil.rmtree(profile/'incremental', ignore_errors=True)
-        if allocated(profiles) > ceiling:
+        after = allocated(profiles)
+        if after > ceiling:
             for profile in profiles:
                 if profile.exists(): shutil.rmtree(profile)
-    after = allocated(profiles)
+            after = 0
     for path in sorted(triples):
         print(f'TARGET-DIRS owner={owner} target_layout={path.name} bytes={allocated([path])} scope=profiles-bounded-metadata-reported path={path}', flush=True)
     print(f'TARGET-DIRS owner={owner} before_bytes={before} after_bytes={after} ceiling_bytes={ceiling} path={target}', flush=True)
     return before > after
+
+
+def gate_target(command):
+    """Hold the target lock in a supervisor, never in a gate descendant."""
+    target = Path(os.environ.get('CARGO_TARGET_DIR', str(Path.cwd()/'target')))
+    target.mkdir(parents=True, exist_ok=True)
+    with (target/'.gate-target.lock').open('a') as lock:
+        started = time.monotonic()
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        print(f'GATE-TARGET-LOCK wait_s={time.monotonic()-started:.6f} path={target}', flush=True)
+        status = cancellable(command, close_fds=True).returncode
+        return 128-status if status < 0 else status
 
 
 def cache_policy(root):
@@ -303,11 +320,8 @@ def built_executable(output):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3 and sys.argv[1] == 'lock-target':
-        # The inherited descriptor shares the shell's open-file description;
-        # the lock survives this helper until the gate closes its descriptor.
-        fcntl.flock(int(sys.argv[2]), fcntl.LOCK_EX)
-        raise SystemExit(0)
+    if len(sys.argv) > 2 and sys.argv[1] == 'gate-target':
+        raise SystemExit(gate_target(sys.argv[2:]))
     if len(sys.argv) == 2 and sys.argv[1] in {'retention', 'target-sizes'}:
         if sys.argv[1] == 'target-sizes':
             target_sizes(Path.cwd())

@@ -742,8 +742,71 @@ def tier_summary(root, registry, worker_statuses):
                           capture_output=True, text=True, check=True).stdout.strip()
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree,
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports,
+        previous_whole=baseline.get('whole') if baseline else None,
         previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 
+
+def wall_summary(root, status, interval=None):
+    """Warn on the verdict's measured critical path without changing its exit."""
+    from devperf import budgets
+    declared = budgets(root/'docs/inputs/devperf-budgets.toml')
+    policy, budget = declared['gate'], declared['whole-gate']
+    resource_path = root/'.lane/gate-resources.json'
+    measured = next((row for row in json.loads(resource_path.read_text()) if row['step'] == 'gate'), None) if resource_path.exists() else None
+    if measured is None:
+        if interval is None:
+            raise ValueError('whole-gate interval is unavailable')
+        measured = dict(wall_seconds=interval[1]-interval[0], own_user_s=None, own_sys_s=None,
+                        start={'epoch_seconds':interval[0]}, end={'epoch_seconds':interval[1]})
+    wall = measured['wall_seconds']
+    pending_path = root/'.lane/gate-baseline.json'
+    pending = json.loads(pending_path.read_text()) if pending_path.exists() and os.environ.get('PN_GATE_PARALLEL') == '1' else {}
+    if pending and pending['source'] != os.environ['PN_GATE_SOURCE']:
+        raise ValueError('whole-gate baseline belongs to another source')
+    prior = pending.pop('previous_whole', None) or {}
+    tiers = pending.get('tiers', {})
+    def total(field):
+        values = [row.get(field) for row in tiers.values()]
+        return sum(values) if values and None not in values else None
+    current_cpu = total('comparable_cpu_s')
+    prior_cpu = total('baseline_comparable_cpu_s')
+    # Keep preparation and result-joining CPU in the whole comparison while
+    # retaining the tier comparisons' symmetric cold-owner exclusions.
+    current_steps = total('own_user_s')
+    current_system = total('own_sys_s')
+    prior_steps = total('baseline_cpu_s')
+    current_whole = (measured['own_user_s'], measured['own_sys_s'])
+    prior_whole = (prior.get('own_user_s'), prior.get('own_sys_s'))
+    current_cpu = current_cpu+sum(current_whole)-current_steps-current_system if None not in (*current_whole, current_cpu, current_steps, current_system) else None
+    prior_cpu = prior_cpu+sum(prior_whole)-prior_steps if None not in (*prior_whole, prior_cpu, prior_steps) else None
+    current_build = total('comparable_build_cpu_s')
+    prior_build = total('baseline_comparable_build_cpu_s')
+    growths = [row['compile_wall_growth_s'] for row in tiers.values() if row.get('compile_wall_growth_s') is not None]
+    growth = sum(growths) if growths else None
+    changed = sorted({path for row in tiers.values() for path in row['changed_build_inputs']})
+    stall = measured.get('node_pressure_fraction', {}).get('cpu.some')
+    limit = budget['budget_ms']/1000
+    excess = max(0.0, wall-limit)
+    classification = overrun_class(excess > 0, current_cpu, prior_cpu, stall, current_build, prior_build, changed, policy,
+        compile_wall_growth=growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'))
+    fast = tiers.get('fast', {})
+    result = dict(wall=wall, budget_s=limit, excess_s=excess, over_budget=excess > 0, classification=classification,
+        status=status, own_user_s=measured['own_user_s'], own_sys_s=measured['own_sys_s'],
+        stall=stall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
+        baseline_source=fast.get('baseline_source'), baseline_match=fast.get('baseline_match'),
+        comparable_cpu_s=current_cpu, baseline_comparable_cpu_s=prior_cpu,
+        comparable_build_cpu_s=current_build, baseline_comparable_build_cpu_s=prior_build,
+        compile_wall_growth_s=growth, changed_build_inputs=changed,
+        started=measured['start']['epoch_seconds'], ended=measured['end']['epoch_seconds'])
+    (root/'.lane/gate-wall.json').write_text(json.dumps(result, indent=2)+'\n')
+    if pending:
+        pending['whole'] = result
+        pending_path.write_text(json.dumps(pending)+'\n')
+    fields = ' '.join(key+'='+(value if isinstance(value, str) else json.dumps(value, separators=(',', ':'))) for key, value in result.items() if key not in {'wall', 'status'})
+    print(f'GATE-WALL WALL={wall:.6f}s verdict={"green" if status == 0 else "red"} '+fields, flush=True)
+    return subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'gate::whole',
+        '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
+        '--budget', 'whole-gate', '--overrun-class', classification, '--findings', '.lane/performance-findings.jsonl'], cwd=root).returncode
 
 def schedule(root):
     """Bound independent executors; only the scheduler publishes completions."""
@@ -840,6 +903,9 @@ def main():
     sub.add_parser('schedule')
     sub.add_parser('parallel-declared')
     sub.add_parser('tier-wall')
+    whole = sub.add_parser('wall-summary')
+    whole.add_argument('status', type=int)
+    whole.add_argument('interval', nargs=2, type=float)
     sub.add_parser('retain-baseline')
     supervisor = sub.add_parser('supervise')
     supervisor.add_argument('command', nargs=argparse.REMAINDER)
@@ -862,6 +928,8 @@ def main():
     if args.action == 'retain-baseline':
         retain_baseline(Path.cwd())
         return 0
+    if args.action == 'wall-summary':
+        return wall_summary(Path.cwd(), args.status, args.interval)
     if args.action == 'tier-wall':
         print(json.loads(Path('.lane/gate-tiers.json').read_text())['fast']['wall'])
         return 0
