@@ -236,11 +236,50 @@ class Evidence(unittest.TestCase):
         self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'designed')
         extra['obligations'][0].update(status='held', hold=hold)
         self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'held')
-        mentions = {record: dict(text='``def:testing:fixture``', citations={claim})}
+        mentions = {record: dict(text='``def:testing:fixture`` is witnessed by (`claim:testing:fixture`).', citations={claim})}
         self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['routes'],
                          [dict(kind='record-claim', record=record, claim=claim, scope=scope)])
-        mentions[record].update(citations=set(), exhibits={claim})
+        mentions[record].update(citations=set(), exhibits={claim}, text='``def:testing:fixture`` is witnessed by ``claim:testing:fixture``.')
         self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['status'], 'realized')
+        for boundary in ('. ', '? ', '! ', '\n'):
+            separate = {record: dict(text='Design ``def:testing:fixture``'+boundary+'Evidence ``claim:testing:fixture``.', citations=set())}
+            row = tracker_rows(inventory, separate, edge, bites)[0]
+            self.assertEqual(row['status'], 'designed')
+            self.assertEqual(row['routes'], [])
+            self.assertEqual(row['record_routes'], [dict(kind='record', record=record, scope=scope)])
+            self.assertEqual(row['record_granular'], 1)
+        shared = {record: dict(text='``def:testing:fixture`` uses `x. y` with ``claim:testing:fixture``.', citations=set())}
+        self.assertEqual(tracker_rows(inventory, shared, edge, bites)[0]['status'], 'realized')
+        attention_support = {'ROOT::open:testing:fixture': separate[record]}
+        attention_row = tracker_rows(inventory, attention_support, edge, bites)[0]
+        self.assertEqual(attention_row['status'], 'designed')
+        self.assertEqual((attention_row['tentative'], attention_row['record_granular']), (1, 1))
+        self.assertEqual(attention_row['routes'], [])
+        self.assertEqual(len(attention_row['record_routes']), 1)
+        two = deepcopy(edge)
+        two['claims'].append(dict(name=claim+'-other', status='passed'))
+        two['obligations'][0]['claims'].append(claim+'-other')
+        paired = {record: dict(text='``def:testing:fixture`` has ``claim:testing:fixture``. ``def:testing:other`` has ``claim:testing:fixture-other``.', citations=set())}
+        rows = tracker_rows(inventory+[dict(inventory[0], label='def:testing:other')], paired, two, bites)
+        self.assertEqual([row['routes'][0]['claim'] for row in rows], [claim, claim+'-other'])
+        self.assertTrue(all(row['status'] == 'realized' and row['record_granular'] == 0 for row in rows))
+        from build_graph_evidence import SERVICE_CASE
+        for state in ('passed', 'held'):
+            selected = deepcopy(two)
+            selected['claims'][1]['status'] = state
+            selected['obligations'][0]['status'] = 'scoped-passed' if state == 'passed' else 'held'
+            selected['sites'] = [dict(operation=SERVICE_CASE, claim=claim+'-other', owner='ROOT', doc='')]
+            with self.assertRaisesRegex(StructuralError, 'selectable service evidence'):
+                tracker_rows(inventory, shared, selected, bites)
+            selected['obligations'].append(dict(name=record, status='held', claims=[], realizers=[scope]))
+            with self.assertRaisesRegex(StructuralError, 'selectable service evidence'):
+                tracker_rows(inventory, records, selected, bites)
+        checklist = {record: dict(text='Outstanding ``def:testing:fixture``.', citations={'ROOT::conv:progress:outstanding-work'})}
+        self.assertEqual(tracker_rows(inventory, checklist, edge, bites)[0]['tentative'], 1)
+        checklist[scope] = dict(text='``def:testing:fixture``', citations=set())
+        held_edge = deepcopy(edge)
+        held_edge['obligations'][0].update(status='held', hold=hold)
+        self.assertEqual(tracker_rows(inventory, checklist, held_edge, bites)[0]['status'], 'held')
         mentions[record].update(exhibits=set(), text='``def:testing:fixture`` ``claim:testing:fixture``')
         remote = deepcopy(edge)
         remote['claims'][0]['name'] = 'GRAPH::claim:testing:fixture'
@@ -492,7 +531,7 @@ class Evidence(unittest.TestCase):
             Path('.lane/observation-coverage.json').write_text('{"source":"current","mechanical_status":"passed"}')
             for name,value in (('load_registry',registry),('census',sites),
                                ('claim_mints',{}),('checked_linter',None),
-                               ('prose',(data['paragraphs'],data['obligations'])),('source_id','current')):
+                               ('prose',(data['paragraphs'],data['obligations'])),('source_id','current'),('tracker_selection_sites',[])):
                 stack.enter_context(patch('claims.'+name,return_value=value))
             with redirect_stdout(io.StringIO()):
                 with patch('wallet_cases.repository_check', return_value=None):

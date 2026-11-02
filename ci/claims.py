@@ -1,6 +1,7 @@
 """Bidirectional source/claim/obligation/result accounting beside the linter."""
 
 import argparse
+import ast
 from collections import Counter, defaultdict
 import json
 import os
@@ -296,6 +297,50 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
+def tracker_sentences(text):
+    """Split prose punctuation outside Markdown code spans, never label dots."""
+    masked = re.sub(r'(`+)(.*?)\1', lambda match: 'x'*len(match[0]), text)
+    start = 0
+    for boundary in re.finditer(r'[.!?]+(?=\s|$)|\n', masked):
+        yield text[start:boundary.end()]
+        start = boundary.end()
+    if start < len(text):
+        yield text[start:]
+
+
+def tracker_paper(text):
+    """Admit exact paper citations and exhibits, not nearby free text."""
+    return (set(re.findall(r'\(`\[PAPER-([^\]`\n]+)\]`\)', text)) |
+            set(re.findall(r'(?<!`)``([^`\n]+)``(?!`)', text)))
+
+
+def tracker_claims(text, owner, claim_names):
+    """Resolve ordinary qualified citations and unique bare claim exhibits."""
+    cited = {qualify(m[1], owner) for m in re.finditer(
+        r'\(`(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')`\)', text)}
+    cited.update(qualify(m[1], owner) for m in re.finditer(r'(?<!`)``(\[[A-Z]+-'+LABEL+r'\])``(?!`)', text))
+    for label in re.findall(r'(?<!`)``(claim:[a-z0-9-]+:[a-z0-9.-]+)``(?!`)', text):
+        matches = claim_names.get(label, set())
+        if len(matches) > 1:
+            raise StructuralError('ambiguous tracker claim exhibit: '+label)
+        cited.update(matches)
+    return cited
+
+
+def tracker_selection_sites(root):
+    """Read the selectable case's claim from source before any execution."""
+    from build_graph_evidence import SERVICE_CASE
+    module, class_name, function_name = SERVICE_CASE.removeprefix('ci::').split('.')
+    path = Path('ci')/(module+'.py')
+    tree = ast.parse((Path(root)/path).read_text())
+    functions = [function for node in ast.walk(tree) if isinstance(node, ast.ClassDef) and node.name == class_name
+                 for function in node.body if isinstance(function, ast.FunctionDef) and function.name == function_name]
+    if len(functions) != 1:
+        raise StructuralError('tracker selectable service case does not resolve: '+SERVICE_CASE)
+    return [site_claim(dict(operation=SERVICE_CASE, owner='ROOT', language='python',
+                            doc=ast.get_docstring(functions[0]) or ''))]
+
+
 def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
     """Join exact paper mentions, scoped execution and bounded record edges."""
     labels = {row['label'] for row in inventory}
@@ -308,8 +353,7 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
         # Exhibits are how the repository names paper kinds the local linter
         # cannot import. Only exact inventory labels qualify, never free text.
         paper = {n.removeprefix('PAPER::') for n in record['citations'] if n.startswith('PAPER::')}
-        paper.update(re.findall(r'\(`\[PAPER-([^\]`\n]+)\]`\)', record['text']))
-        paper.update(re.findall(r'(?<!`)``([^`\n]+)``(?!`)', record['text']))
+        paper.update(tracker_paper(record['text']))
         for label in paper & labels:
             mentions[label].add(name)
     for constant in constants:
@@ -317,10 +361,26 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
             mentions[constant['cites']].add('CONSTANTS::'+constant['id'])
     claims = {row['name']: row for row in evidence['claims']}
     obligations = {row['name']: row for row in evidence['obligations']}
+    from build_graph_evidence import SERVICE_CASE
+    selected_claims = {site['claim'] for site in evidence.get('sites', []) if site.get('operation') == SERVICE_CASE}
+    unstable = {name for name, row in obligations.items() if selected_claims.intersection(row['claims'])}
+    for _ in obligations:
+        unstable.update(name for name, row in obligations.items() if unstable.intersection(row.get('realizers', [])))
+    claim_names = defaultdict(set)
+    for claim in claims.keys() | {claim for row in obligations.values() for claim in row['claims']}:
+        claim_names[claim.split('::', 1)[1]].add(claim)
     supported = defaultdict(set)
+    precise = defaultdict(set)
+    granular = defaultdict(set)
+    attention = {name for name, record in records.items() if name.split('::', 1)[-1].split(':', 1)[0] in {'open', 'obs'}
+                 or 'ROOT::conv:progress:outstanding-work' in record['citations']}
     holds = defaultdict(set)
     named_holds = {row['hold'] for row in obligations.values() if row['status'] == 'held' and row.get('hold')}
     scopes = defaultdict(set)
+    by_record = defaultdict(set)
+    for label, names in mentions.items():
+        for name in names:
+            by_record[name].add(label)
     for name, row in obligations.items():
         if row['status'] == 'scoped-passed':
             for claim in row['claims']:
@@ -330,27 +390,31 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
                 supported[name].add(('obligation', '', name))
         elif row['status'] == 'held' and row.get('hold') and name in records:
             holds[name].add(row['hold'])
+    cited_by_sites = defaultdict(set)
     for site in evidence.get('sites', []):
         claim = site['claim']
         citations = {qualify(m[1], site['owner']) for m in re.finditer(
             r'\(´(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')´\)', site['doc'])}
         for name in citations & records.keys():
+            cited_by_sites[name].add(claim)
             for scope in scopes[claim]:
                 supported[name].add(('site-claim', claim, scope))
-    claim_names = defaultdict(set)
-    for claim in claims:
-        claim_names[claim.split('::', 1)[1]].add(claim)
     for name, record in records.items():
-        cited_claims = (record['citations'] | record.get('exhibits', set())) & claims.keys()
-        # Bare exhibits name cross-package witnesses without guessing an owner.
-        for label in re.findall(r'(?<!`)``(claim:[a-z0-9-]+:[a-z0-9.-]+)``(?!`)', record['text']):
-            matches = claim_names[label]
-            if len(matches) > 1:
-                raise StructuralError('ambiguous tracker claim exhibit: '+label)
-            cited_claims.update(matches)
+        cited_claims = record['citations'] | record.get('exhibits', set()) | tracker_claims(record['text'], name.split('::', 1)[0], claim_names)
+        if by_record[name] and (name in unstable or any(
+                (cited_claims | cited_by_sites[name]).intersection(obligations[scope]['claims']) for scope in unstable)):
+            raise StructuralError('tracker route depends on selectable service evidence: '+name)
+        linked = defaultdict(set)
+        for sentence in tracker_sentences(record['text']):
+            for label in tracker_paper(sentence) & labels:
+                linked[label].update(tracker_claims(sentence, name.split('::', 1)[0], claim_names))
         for claim in cited_claims:
             for scope in scopes[claim]:
-                supported[name].add(('record-claim', claim, scope))
+                for label in by_record[name]:
+                    if claim in linked[label]:
+                        precise[label, name].add(('record-claim', claim, scope))
+                    else:
+                        granular[label, name].add(scope)
         holds[name].update(record['citations'] & named_holds)
         if name in named_holds:
             holds[name].add(name)
@@ -369,15 +433,18 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
     rows = []
     for item in inventory:
         names = sorted(mentions[item['label']])
+        designs = [name for name in names if name not in attention]
         routes = [dict(kind=kind, record=name, scope=scope, **({'claim': claim} if claim else {}))
-                  for name in names for kind, claim, scope in sorted(supported[name])]
+                  for name in designs for kind, claim, scope in sorted(supported[name] | precise[item['label'], name])]
+        record_routes = [dict(kind='record', record=name, scope=scope)
+                         for name in names for scope in sorted(granular[item['label'], name])]
         held = [dict(record=name, hold=hold) for name in names for hold in sorted(holds[name])]
-        status = ('realized' if routes else 'held' if names and all(holds[name] for name in names)
+        status = ('realized' if routes else 'held' if names and all(holds[name] for name in (designs or names))
                   else 'designed' if names else 'unassigned')
         rows.append(dict(label=item['label'], crate=item['crate'], kind=item['kind'], status=status,
-                         records=names, routes=routes, holds=held,
-                         tentative=int(status == 'designed' and all(
-                             name.split('::', 1)[-1].split(':', 1)[0] in {'open', 'obs'} for name in names)),
+                         records=names, routes=routes, record_routes=record_routes, holds=held,
+                         tentative=int(status == 'designed' and not designs),
+                         record_granular=int(status != 'realized' and bool(record_routes)),
                          bites=sorted({n for n, roots in bite_records.items() if roots.intersection(names)} |
                                       {b['ordinal'] for b in plan if item['label'] in b['labels']})))
     return rows
@@ -428,7 +495,7 @@ def tracker_structure(root):
     root = Path(root)
     read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
     rows = tracker_rows(read('design-inventory.toml'), prose(root)[0],
-                        dict(claims=[], obligations=read('claim-obligations.toml')),
+                        dict(claims=[], obligations=read('claim-obligations.toml'), sites=tracker_selection_sites(root)),
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
     changes = tracker_changes(read('specification-progress.toml'),
                               [dict(category='statement', **row) for row in rows],
@@ -487,6 +554,16 @@ def tracker_input(root, evidence):
     summaries = [dict(category='obligation-support', name=r['name'], claim_count=len(r['claims']),
                       numeric_display={'claim_count': dict(display='exact', exact_digits=32)})
                  for r in evidence['obligations'] if r['name'] in obligation_routes]
+    claim_names = defaultdict(set)
+    for claim in evidence['claims']:
+        claim_names[claim['name'].split('::', 1)[1]].add(claim['name'])
+    obligations = {row['name']: row for row in evidence['obligations']}
+    for record, scope in sorted({(route['record'], route['scope']) for row in rows for route in row['record_routes']}):
+        paragraph = paragraphs[record]
+        cited = paragraph['citations'] | paragraph.get('exhibits', set()) | tracker_claims(paragraph['text'], record.split('::', 1)[0], claim_names)
+        summaries.append(dict(category='record-support', name=record, scope=scope,
+                              claim_count=len(cited.intersection(obligations[scope]['claims'])),
+                              numeric_display={'claim_count': dict(display='exact', exact_digits=32)}))
     summaries.append(dict(category='citation-gaps', name='exact-elsewhere', total=len(elsewhere),
                           numeric_display={'total': dict(display='exact', exact_digits=32)}))
     for category, groups in (
@@ -500,9 +577,10 @@ def tracker_input(root, evidence):
             counts = Counter(r['status'] for r in members)
             summaries.append(dict(category=category, name=name, total=len(members),
                                   tentative=sum(r['tentative'] for r in members),
+                                  record_granular=sum(r['record_granular'] for r in members),
                                   **{status: counts[status] for status in ('realized', 'held', 'designed', 'unassigned')},
                                   numeric_display={field: dict(display='exact', exact_digits=32)
-                                                   for field in ('total', 'realized', 'held', 'designed', 'unassigned', 'tentative')}))
+                                                   for field in ('total', 'realized', 'held', 'designed', 'unassigned', 'tentative', 'record_granular')}))
     packages = {str(path.parent.relative_to(root)): tomllib.loads(path.read_text())['package']['name']
                 for path in sorted((root/'packages').glob('*/Cargo.toml'))}
     records = {name: [] for name in sorted(set(packages.values()) |
