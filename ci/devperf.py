@@ -60,16 +60,20 @@ def whole_gate_declaration(declared):
             or not number(campaign.get('rebuild_wall_ms'))
             or not isinstance(warm, list) or len(warm) != policy['warm_samples']
             or not all(number(value) for value in warm)
-            or campaign.get('multiplier') != policy['allowance_multiple']
+            or not number(row.get('wall_multiple')) or row['wall_multiple'] < 1
+            or campaign.get('multiplier') != row['wall_multiple']
             or campaign.get('round_ms') != policy['allowance_round_ms']
             or campaign.get('sample_choice') != 'maximum-of-rebuild-and-three-warm'
             or not campaign.get('configuration')):
         raise StructuralError('whole-gate: malformed mixed rebuilding and warm campaign')
     unit = Decimal(str(campaign['round_ms']))
     maximum = max(Decimal(str(value)) for value in [campaign['rebuild_wall_ms'], *warm])
-    expected = int((maximum*campaign['multiplier']/unit).to_integral_value(rounding=ROUND_CEILING))*campaign['round_ms']
+    expected = int((maximum*Decimal(str(row['wall_multiple']))/unit).to_integral_value(rounding=ROUND_CEILING))*campaign['round_ms']
     if row['budget_ms'] != expected:
         raise StructuralError('whole-gate: warning bound differs from its measured campaign')
+    tiers = ('gate', 'extended-gate', 'reference-gate', 'service-gate')
+    if row['budget_ms'] < max(declared[name].get('budget_ms', 0) for name in tiers if name in declared):
+        raise StructuralError('whole-gate: warning bound is below the largest tier budget')
 
 
 def calibration_declarations(declared):
@@ -423,7 +427,7 @@ def main():
     parser.add_argument('--outcome')
     parser.add_argument('--source', default='working tree')
     parser.add_argument('--budget', default='ordinary-check')
-    parser.add_argument('--overrun-class', choices=['within-budget', 'unclassified', 'high-stall', 'rebuild', 'plain', 'growth'])
+    parser.add_argument('--overrun-class', choices=['within-budget', 'unclassified', 'high-stall', 'load-unresolved', 'rebuild', 'plain', 'growth'])
     parser.add_argument('--findings')
     parser.add_argument('--ledger', type=Path)
     parser.add_argument('--registry', default='docs/inputs/devperf-registry.toml')

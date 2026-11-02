@@ -452,6 +452,7 @@
       "category": "aggregate",
       "cpu_growth_percent": 20,
       "isolation_retention_imports": 3,
+      "load_unresolved_pressure_percent": 10,
       "name": "gate",
       "number_forms": {
         "allowance_multiple": {
@@ -491,6 +492,14 @@
           "exact_exact": true,
           "exact_relation": "=",
           "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "load_unresolved_pressure_percent": {
+          "exact": "10",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -569,6 +578,10 @@
           "exact_digits": 32
         },
         "isolation_retention_imports": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load_unresolved_pressure_percent": {
           "display": "exact",
           "exact_digits": 32
         },
@@ -6065,21 +6078,33 @@
       "scope": "required design-mutation and observation invocation alongside the per-change gate"
     },
     {
-      "budget_ms": 347300,
+      "budget_ms": 217050,
       "category": "aggregate",
       "name": "whole-gate",
       "number_forms": {
         "budget_ms": {
-          "exact": "347 300",
+          "exact": "217 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "347 300",
+          "num": "217 050",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "wall_multiple": {
+          "exact": "1.25",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1.25",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "wall_multiple": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -6090,7 +6115,7 @@
         "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
         "discarded_warmup_ms": 151670.16,
         "label": "campaign:devperf:whole-gate-mixed",
-        "multiplier": 2,
+        "multiplier": 1.25,
         "rebuild_wall_ms": 173638.03,
         "round_ms": 50,
         "sample_choice": "maximum-of-rebuild-and-three-warm",
@@ -6101,7 +6126,8 @@
           119844.733
         ],
         "warmup_commit": "2ba3ea5f48336cf93934d6119fcc7dd487d62247"
-      }
+      },
+      "wall_multiple": 1.25
     },
     {
       "budget_ms": 750,

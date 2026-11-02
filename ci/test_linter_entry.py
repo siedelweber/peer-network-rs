@@ -271,7 +271,7 @@ class Conformance(unittest.TestCase):
         completion(self)
 
     def test_service_selection(self):
-        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
+        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs without passed evidence produce a standing selection hold, while matching last-passed evidence carries its execution source without a current execution, and admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
         ´claim:discipline:service-selection-keeps-unexecuted-evidence-held´
         ´test:integration:test-service-selection´
         """
@@ -279,6 +279,42 @@ class Conformance(unittest.TestCase):
         from contextlib import redirect_stdout, redirect_stderr
         import io
         from build_graph_evidence import SERVICE_INPUTS, SERVICE_CASE, service_selection, held_service
+        from build_graph_evidence import remember_service, retained_service_source, retained_service
+        from harness import CONFIGURATION
+        from test_harness import fixture as retained_fixture, result as retained_result
+        from test_claims import fixture as retained_claim_fixture
+        from claims import evaluate as retained_evaluate
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_BUILD_TARGET=''):
+            decision = dict(run=False, inputs='a'*64, hold='fixture-hold', reason='unchanged')
+            execution = dict(operation=SERVICE_CASE, outcome='passed', source='a'*40,
+                             configuration=CONFIGURATION, selection_inputs=decision['inputs'])
+            self.assertIsNone(retained_service_source(decision, CONFIGURATION))
+            remember_service(execution)
+            self.assertEqual(retained_service_source(decision, CONFIGURATION), execution['source'])
+            self.assertIsNone(retained_service_source(decision | dict(run=True), CONFIGURATION))
+            self.assertIsNone(retained_service_source(decision | dict(inputs='changed'), CONFIGURATION))
+            self.assertIsNone(retained_service_source(decision, 'changed'))
+            retained_registry = retained_fixture(case=SERVICE_CASE)
+            retained = retained_result(retained_registry) | dict(outcome='passed', retained=True, duration_ms=None,
+                execution_source=execution['source'], selection_inputs=decision['inputs'], hold=decision['hold'], reason=decision['reason'])
+            with patch('build_graph_evidence.service_selection', return_value=decision):
+                self.assertTrue(retained_service(retained, Path.cwd()))
+                matrix = retained_registry.matrix([retained], 'current')
+                self.assertEqual((matrix[0]['status'], matrix[0]['observed']), ('passed', 0))
+                self.assertEqual(matrix[0]['retained'], [dict(operation=SERVICE_CASE, source=execution['source'])])
+                data = retained_claim_fixture()
+                data['sites'][0]['operation'] = SERVICE_CASE
+                data['expected_sites'] = {SERVICE_CASE, 'sibling'}
+                # The fixture evaluator declares its own configuration.
+                remember_service(execution | dict(configuration='fixture'))
+                data['results'][0] = retained | dict(configuration='fixture')
+                evidence = retained_evaluate(**data)
+                self.assertEqual(evidence['claims'][0]['status'], 'passed')
+                self.assertEqual(evidence['obligations'][0]['status'], 'scoped-passed')
+                self.assertEqual(evidence['retained_execution'], [dict(operation=SERVICE_CASE, execution_source=execution['source'])])
+                self.assertFalse(retained_service(retained | dict(execution_source='b'*40), Path.cwd()))
+            remember_service(execution | dict(outcome='failed'))
+            self.assertIsNone(retained_service_source(decision, CONFIGURATION))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for name in SERVICE_INPUTS:

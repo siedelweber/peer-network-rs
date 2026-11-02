@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import time
+import uuid
 
 from build_graph import SHELL_STEPS, identity, read_result, report_path, roster, selected, tracked
 
@@ -27,7 +28,7 @@ SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_gr
 
 
 def service_selection(root, admission=False):
-    """No cached pass: unchanged-input gates carry a named unexecuted hold."""
+    """Select fresh execution independently of retained, input-bound evidence."""
     tools = {name: os.environ.get(name) for name in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN')}
     fingerprint = identity(dict(files=[(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS], tools=tools))
     changed = []
@@ -48,6 +49,56 @@ def held_service(record, root):
     decision = service_selection(root, os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
     return (not decision['run'] and record.get('hold') == decision['hold'] and
             record.get('reason') == decision['reason'] and record.get('selection_inputs') == decision['inputs'])
+
+
+def service_evidence_path(inputs):
+    """Share one evidence carrier across parent and commit-scoped child."""
+    if not isinstance(inputs, str) or not re.fullmatch(r'[0-9a-f]{64}', inputs): return None
+    target = os.environ.get('PN_GATE_BUILD_TARGET') or os.environ.get('CARGO_TARGET_DIR')
+    return Path(target)/'service-evidence'/(inputs+'.json') if target else None
+
+
+def remember_service(record):
+    """Keep the latest passed execution; a later failure invalidates it."""
+    path = service_evidence_path(record['selection_inputs'])
+    if path is None: return
+    if record['outcome'] != 'passed':
+        path.unlink(missing_ok=True)
+        return
+    if not re.fullmatch(r'[0-9a-f]{40}', record['source']): return
+    value = {key:record[key] for key in ('operation', 'source', 'configuration', 'outcome', 'selection_inputs')}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+    temporary.write_text(json.dumps(value)+'\n')
+    temporary.replace(path)
+
+
+def retained_service_source(selection, configuration):
+    """Missing or differently bound evidence never supplies a pass."""
+    if selection['run']: return None
+    path = service_evidence_path(selection['inputs'])
+    if path is None: return None
+    try:
+        value = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+    if (value.get('operation') != SERVICE_CASE or value.get('outcome') != 'passed'
+            or value.get('selection_inputs') != selection['inputs']
+            or value.get('configuration') != configuration
+            or not re.fullmatch(r'[0-9a-f]{40}', value.get('source', ''))):
+        return None
+    return value['source']
+
+
+def retained_service(record, root):
+    """Validate retained standing separately from this gate's execution source."""
+    if record.get('operation') != SERVICE_CASE or record.get('outcome') != 'passed': return False
+    decision = service_selection(root, os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
+    source = retained_service_source(decision, record.get('configuration'))
+    return bool(source and record.get('execution_source') == source and record.get('retained') is True
+                and record.get('selection_inputs') == decision['inputs']
+                and record.get('hold') == decision['hold'] and record.get('reason') == decision['reason']
+                and record.get('duration_ms') is None)
 
 
 def stable(value):

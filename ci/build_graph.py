@@ -552,6 +552,9 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
             and compile_wall_growth is not None and excess is not None
             and compile_wall_growth > 0 and compile_wall_growth >= excess):
         return 'rebuild'
+    # Pressure can inflate CPU as well as wall. Without a quiet measurement,
+    # the remainder is not attributable to plain work or owned growth.
+    if stall > policy['load_unresolved_pressure_percent']/100: return 'load-unresolved'
     if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
     return 'growth'
 
@@ -678,6 +681,15 @@ def tier_summary(root, registry, worker_statuses):
         raise ValueError('tier step partition differs from the exact roster')
     reports = {}
     gate_start = raw_sample(root/'.lane/gate-resource-start.raw')
+    selected_cases = {name: [] for name in groups}
+    paths = [root/'.lane/performance-events.jsonl', root/'.lane/harness-benchmarks.jsonl',
+             *sorted((root/'.lane').glob('harness-ci-*.jsonl'))]
+    for path in paths:
+        if not path.exists(): continue
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            if row.get('scope') == 'case' and row.get('outcome') != 'held' and not row.get('retained'):
+                selected_cases.setdefault(row['tier'], []).append(row['operation'])
     for tier, names in groups.items():
         selected_rows = [row for row in fields if row[0] in names]
         first = min(selected_rows, key=lambda row: float(row[2]))
@@ -707,6 +719,8 @@ def tier_summary(root, registry, worker_statuses):
         build_cpu = sum(row['cargo_cpu_s'] for row in step_figures.values())
         build_cpu += sum(row['own_cpu_s'] for name, row in step_figures.items() if name in policy['rebuild_steps'] and not row['layouts'] and row['own_cpu_s'] is not None)
         prior = baseline['tiers'].get(tier, {}) if baseline else {}
+        cases = sorted(selected_cases[tier])
+        comparable_cases = cases == prior.get('selected_cases')
         old_cpu = prior.get('own_cpu_s')
         own_cpu = sum(own) if None not in own else None
         comparable_cpu, comparable_old, wall_growth, omitted = compile_comparison(step_figures, prior.get('step_figures', {}), policy['rebuild_steps'])
@@ -721,8 +735,12 @@ def tier_summary(root, registry, worker_statuses):
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
             baseline_stall=old_stall)
+        if not comparable_cases:
+            comparable_cpu = comparable_old = comparable_build = comparable_old_build = wall_growth = None
+            classification = 'unclassified' if over_budget else 'within-budget'
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
+            selected_cases=cases, comparable_cases=comparable_cases,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
@@ -730,7 +748,7 @@ def tier_summary(root, registry, worker_statuses):
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} '
-              f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} '
+              f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,

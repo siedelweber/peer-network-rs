@@ -111,7 +111,7 @@ def main(module):
     from flake_ledger import Session
     ledger = Session(source)
     records = []
-    from build_graph_evidence import SERVICE_CASE, service_selection
+    from build_graph_evidence import SERVICE_CASE, service_selection, retained_service_source, remember_service
     if SERVICE_CASE in inventory:
         selection = service_selection(Path.cwd(), os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
         print('BUILD-SERVICE-SELECTION '+json.dumps(selection | dict(source=source, admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0')), sort_keys=True), flush=True)
@@ -119,6 +119,10 @@ def main(module):
             raw = event(SERVICE_CASE, registry.case_budget(SERVICE_CASE), None,
                         'held', source, CONFIGURATION)
             raw.update(hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
+            prior = retained_service_source(selection, CONFIGURATION)
+            if prior:
+                raw.update(outcome='passed', retained=True, execution_source=prior)
+                print('BUILD-SERVICE-RETAINED '+json.dumps(dict(case=SERVICE_CASE, source=source, execution_source=prior, inputs=selection['inputs']), sort_keys=True), flush=True)
             records.append(join_case(registry, raw, source, CONFIGURATION))
             suite = unittest.TestSuite(test for test in flatten(suite) if 'ci::'+test.id() != SERVICE_CASE)
 
@@ -174,6 +178,7 @@ def main(module):
             if raw['operation'] == SERVICE_CASE:
                 raw.update(reason=selection['reason'], selection_inputs=selection['inputs'],
                            selection_admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0'))
+                remember_service(raw)
             records.append(join_case(registry, raw, source, CONFIGURATION))
             super().stopTest(test)
 

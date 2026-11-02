@@ -178,7 +178,9 @@ class Registry:
         if len(cases) != len(self.cases) or {r['operation'] for r in cases} != set(self.cases):
             raise StructuralError('dropped or duplicate suite case')
         joined = [self.join(r, source) for r in cases]
-        from build_graph_evidence import held_service
+        from build_graph_evidence import held_service, retained_service
+        if any(r.get('retained') and not retained_service(r, Path.cwd()) for r in joined):
+            raise StructuralError('invalid retained service evidence')
         if any(r['outcome'] not in {'passed', 'failed'} and not held_service(r, Path.cwd()) for r in joined):
             raise StructuralError('ignored or incomplete required test')
         result = []
@@ -195,7 +197,8 @@ class Registry:
             else:
                 outcomes = Counter(r['outcome'] for r in joined if r['suite'] == suite['name'])
                 result.append({**row, 'status': 'failed' if outcomes['failed'] else ('held' if outcomes['held'] else 'passed'),
-                               'expected': len(suite['cases']), 'observed': outcomes['passed']+outcomes['failed'], 'outcomes': dict(outcomes),
+                               'expected': len(suite['cases']), 'observed': sum(r['outcome'] in {'passed', 'failed'} and not r.get('retained', False) for r in joined if r['suite']==suite['name']), 'outcomes': dict(outcomes),
+                               'retained': [dict(operation=r['operation'], source=r['execution_source']) for r in joined if r['suite']==suite['name'] and r.get('retained')],
                                'holds': [dict(operation=r['operation'], hold=r['hold'], reason=r['reason']) for r in joined if r['suite']==suite['name'] and r['outcome']=='held']})
         for tier in self.tiers.values():
             if tier['status'] == 'held':

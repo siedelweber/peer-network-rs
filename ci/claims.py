@@ -216,7 +216,8 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     for site in sites:
         result = actual[site['operation']]
         if result.get('source') != source or result.get('configuration') != configuration: raise StructuralError('stale result')
-        from build_graph_evidence import held_service
+        from build_graph_evidence import held_service, retained_service
+        if result.get('retained') and not retained_service(result, Path.cwd()): raise StructuralError('invalid retained service evidence')
         if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
     states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
     # Membership is declared by an owning obligation; it is never a mint.
@@ -294,7 +295,11 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             state = 'failed' if 'failed' in dependencies or row['status']=='failed' else ('held' if 'held' in dependencies or row['status']=='held' else 'scoped-passed')
             if state != row['status']: row['status']=state; changed=True
         if not changed: break
-    return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
+    evidence = dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
+    retained = [dict(operation=row['operation'], execution_source=row['execution_source'])
+                for row in results if row.get('retained')]
+    if retained: evidence['retained_execution'] = retained
+    return evidence
 
 
 def tracker_sentences(text):

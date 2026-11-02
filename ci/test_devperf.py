@@ -303,15 +303,19 @@ wait
             lane = root/'.lane'
             lane.mkdir()
             for wall, expected, cold, old_cold, old_stall in ((1, False, False, False, .2), (1, False, False, True, .2), (2, False, True, False, .2), (3, True, True, False, .2), (3, True, False, False, .2), (3, True, False, False, .9)):
-                baseline = dict(source="prior", tiers={name: dict(wall=4, resources={'node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
+                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
                     (lane/f'gate-{name}.log').write_text('\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
-                for status in (0, 1):
+                for status, changed_selection in ((0, False), (1, False), (0, True)):
+                    if changed_selection:
+                        baseline["tiers"]["service"]["selected_cases"] = ["previous-case"]
+                    else:
+                        baseline["tiers"]["service"]["selected_cases"] = []
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -321,12 +325,14 @@ wait
                         self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
-                        self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold else 0.5)
-                        self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold else 0.25)
+                        selection_differs = changed_selection and name == 'service'
+                        self.assertEqual(measured[name]['comparable_cases'], not selection_differs)
+                        self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold or selection_differs else 0.5)
+                        self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold or selection_differs else 0.25)
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                         self.assertEqual(measured[name]['baseline_stall'], old_stall)
                         if wall == 3 and not cold:
-                            self.assertEqual(measured[name]['classification'], 'high-stall' if old_stall == .2 else 'plain')
+                            self.assertEqual(measured[name]['classification'], 'unclassified' if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
@@ -346,10 +352,14 @@ wait
         from devperf import whole_gate_declaration
         campaign = dict(label='campaign:devperf:whole-gate-mixed', warmup_commit='a'*40, source_commit='b'*40,
                         discarded_warmup_ms=2000, rebuild_wall_ms=1200, warm_walls_ms=[1000, 1100, 1150],
-                        multiplier=2, round_ms=50, sample_choice='maximum-of-rebuild-and-three-warm', configuration='fixture')
+                        multiplier=1.25, round_ms=50, sample_choice='maximum-of-rebuild-and-three-warm', configuration='fixture')
         declared = {'gate':dict(warm_samples=3, allowance_multiple=2, allowance_round_ms=50),
-                    'whole-gate':dict(budget_ms=2400, wall_campaign=campaign)}
+                    'whole-gate':dict(budget_ms=1500, wall_multiple=1.25, wall_campaign=campaign)}
         whole_gate_declaration(declared)
+        bad = copy.deepcopy(declared)
+        bad['service-gate'] = dict(budget_ms=1501)
+        with self.assertRaisesRegex(StructuralError, 'below the largest tier'):
+            whole_gate_declaration(bad)
         bad = copy.deepcopy(declared)
         bad['whole-gate']['budget_ms'] -= 1
         with self.assertRaisesRegex(StructuralError, 'bound differs'):
@@ -418,7 +428,7 @@ wait
         ´test:integration:test-overrun-classes´
         """
         from build_graph import overrun_class
-        policy = dict(high_stall_percent=10, cpu_growth_percent=20)
+        policy = dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20)
         def classify(own=100, baseline=100, stall=0.09, build=40, old_build=40, changed=()):
             return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21, wall=210, baseline_wall=189, baseline_stall=0)
         self.assertEqual(classify(), 'plain')
@@ -437,7 +447,7 @@ wait
         # while 15 percent pressure cannot excuse a wall beyond its projection.
         for stall in (.05, .15):
             projected = 118*(1-.01)/(1-stall)
-            for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
+            for delta, expected in ((-.001, 'high-stall'), (.001, 'load-unresolved' if stall > .1 else 'plain')):
                 self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
                     wall=projected+delta, baseline_wall=118, baseline_stall=.01, excess=projected+delta-120), expected)
         # A previously over-budget baseline cannot turn zero or insufficient
@@ -445,6 +455,9 @@ wait
         for stall in (0, .01):
             self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
                 wall=130, baseline_wall=135, baseline_stall=0, excess=10), 'plain')
+        for cpu in (100, 150):
+            self.assertEqual(overrun_class(True, cpu, 100, .4, 40, 40, [], policy,
+                wall=200, baseline_wall=100, baseline_stall=.05, excess=80), 'load-unresolved')
         # Projection is slack here, so only whole-excess coverage decides.
         boundary = 120/(1-.1)
         for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
