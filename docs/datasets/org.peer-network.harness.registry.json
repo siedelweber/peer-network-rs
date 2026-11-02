@@ -2713,7 +2713,7 @@
       "implementation": "",
       "kind": "suite",
       "name": "planned-admission",
-      "reason": "contract not implemented; first contributing domain bite 7",
+      "reason": "Declaration and candidate-interface controls run in pn-epoch::package; the final admission contract remains held for rec:design:bite-seven-checklist. These controls grant no admission contract edition.",
       "status": "held",
       "tier": "fast"
     },
@@ -4497,7 +4497,9 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "pn-epoch::package::package_bindings"
+        "pn-epoch::package::package_bindings",
+        "pn-epoch::package::schedule_declarations",
+        "pn-epoch::package::candidate_boundaries"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4816,6 +4818,20 @@
       "runner": "nextest",
       "status": "active",
       "tier": "reference-certificate"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]",
+        "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "doctest",
+      "name": "pn-epoch-doctests",
+      "runner": "doctest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

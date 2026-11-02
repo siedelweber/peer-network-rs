@@ -361,6 +361,13 @@ contract = "EPOCH::amend:compiler:fence-evidence"
 
 [[rows]]
 owner = "EPOCH"
+area = "admission"
+stake = "Treating an incomplete schedule or proposed cause as admitted can bypass the final boundary's declared authority."
+register = "EPOCH::sec:admission:area-admission"
+contract = "ROOT::amend:design:admission-declarations"
+
+[[rows]]
+owner = "EPOCH"
 area = "standing"
 stake = "Dropping comparison premises can turn a scoped standing response into an unsupported equality or monotonicity guarantee."
 register = "EPOCH::sec:standing:area-standing"

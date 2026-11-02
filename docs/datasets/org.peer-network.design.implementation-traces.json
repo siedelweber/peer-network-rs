@@ -157,7 +157,7 @@
       "cases": "Equal-width graphs of different shape, a zero-width case and fences below, at and above the margin boundary. Transcribe the exact released reference Actor, vouch and standing_profile inputs and the independent conserved-equilibrium certificate.",
       "decision": "dec:design:certificate",
       "fixture": "fence-residual-cases",
-      "hold": "Backend soundness and adversarial executions remain held until the numerical bite.",
+      "hold": "The admitted backend fragment, finite boundary witnesses and reference corpus are supported by amend:design:backend-soundness-dossier and amend:design:bite-six-close. Additional platforms, binding ridge/controller admission and unrestricted families retain their named owners.",
       "labels": [
         "def:dynamics:conserved-standing-certificate",
         "thm:dynamics:certified-conserved-standing-uniqueness",
@@ -170,7 +170,7 @@
       "requirements": [
         "certificate"
       ],
-      "status": "planned; execution evidence pending"
+      "status": "scoped numerical execution supported under amend:design:bite-six-close"
     },
     {
       "cases": "An indecisive high rung, a proved failed rung and a lower pass under one published finite refinement policy.",
@@ -212,7 +212,7 @@
       "cases": "Individual failure hidden by a positive average, exact equality, threshold straddling, empty epoch and target overflow. Check the reference certificate final-set intervals and charge the revising act before forming its revised rate.",
       "decision": "dec:design:admission",
       "fixture": "gate-unit-cases",
-      "hold": "Final numerical threshold evidence waits for the supported profile; missing evidence is never counted as passing.",
+      "hold": "The supported profile and certified solve exist. Final admission, stamps, candidate/common-marker closure and effective schedules remain the epoch-owned checklist in rec:design:bite-seven-checklist; missing evidence never counts as passing.",
       "labels": [
         "post:epoch:final-act-sequence-write-rule",
         "post:network:host-contract",

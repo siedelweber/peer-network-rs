@@ -364,6 +364,13 @@
       "stake": "Treating an unresolved comparison or operational interruption as a passing fence can select an uncertified rung."
     },
     {
+      "area": "admission",
+      "contract": "ROOT::amend:design:admission-declarations",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:admission:area-admission",
+      "stake": "Treating an incomplete schedule or proposed cause as admitted can bypass the final boundary's declared authority."
+    },
+    {
       "area": "standing",
       "contract": "EPOCH::amend:compiler:solve-record-evidence",
       "owner": "EPOCH",

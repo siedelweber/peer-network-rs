@@ -1279,14 +1279,19 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs",
+        "EPOCH::claim:admission:candidate-context-retains-separate-authority"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:design:bite-7",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::gate:design:bite-7",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [],
       "status": "held"
     },
@@ -2065,14 +2070,18 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:candidate-context-retains-separate-authority"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:vision:admission",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::req:vision:admission",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [
         "ROOT::dec:design:admission",
         "ROOT::gate:design:bite-11",
@@ -2164,14 +2173,18 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:candidate-context-retains-separate-authority"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:vision:final-membership",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::req:vision:final-membership",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [
         "ROOT::dec:design:final-membership",
         "ROOT::gate:design:bite-1",
@@ -2232,14 +2245,18 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:vision:policy-schedules",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::req:vision:policy-schedules",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [
         "ROOT::dec:design:policy-schedules",
         "ROOT::gate:design:bite-11",
@@ -2648,14 +2665,18 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:candidate-context-retains-separate-authority"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for verif:design:gate-unit-cases",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::verif:design:gate-unit-cases",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [],
       "status": "held"
     },
@@ -2744,14 +2765,18 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "EPOCH::sec:admission:area-admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for verif:design:wall-controller-cases",
+      "missing": "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close.",
       "name": "ROOT::verif:design:wall-controller-cases",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission.",
       "realizers": [],
       "status": "held"
     },

@@ -1015,13 +1015,15 @@ closing_step = "Bite 6 finite scope closed; named later holds retain their owner
 name = "ROOT::gate:design:bite-7"
 path = "docs/design/implementation.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs", "EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-7"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::gate:design:bite-8"
@@ -1523,13 +1525,15 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-kinds-attestation-
 name = "ROOT::req:vision:admission"
 path = "docs/design/concept.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = ["ROOT::dec:design:admission", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for req:vision:admission"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:burn-boundary"
@@ -1595,13 +1599,15 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::req:vision:final-membership"
 path = "docs/design/concept.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = ["ROOT::dec:design:final-membership", "ROOT::gate:design:bite-1", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7", "ROOT::req:vision:admission"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for req:vision:final-membership"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:final-state"
@@ -1643,13 +1649,15 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::req:vision:policy-schedules"
 path = "docs/design/concept.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"]
 realizers = ["ROOT::dec:design:policy-schedules", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for req:vision:policy-schedules"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:public-inputs"
@@ -1963,13 +1971,15 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::verif:design:gate-unit-cases"
 path = "docs/design/implementation.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for verif:design:gate-unit-cases"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::verif:design:numerical-boundaries"
@@ -2059,13 +2069,15 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::verif:design:wall-controller-cases"
 path = "docs/design/implementation.md"
 status = "held"
-claims = []
+claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for verif:design:wall-controller-cases"
+missing = "Declaration validation has a finite witness; final admission remains held for rec:design:bite-seven-checklist: binding ridge, production controller and delivered value, effective schedules and lead, atomic final gates, candidate/common-marker closure, reference gates, registered conformance, calibration and independent source-matched close."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. They establish neither production schedule delivery nor final safety, authenticated publication or atomic admission."
+evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::verif:design:whole-act-counting"

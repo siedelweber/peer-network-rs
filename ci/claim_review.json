@@ -1722,12 +1722,28 @@
       "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
     },
     {
+      "operation": "pn-epoch::package::candidate_boundaries",
+      "path": "packages/epoch/tests/package.rs",
+      "claim": "EPOCH::claim:admission:candidate-context-retains-separate-authority",
+      "before": "",
+      "after": "Claim: Candidate verification shares published-package cause coherence while requiring separate proposed-cause and closure verifiers; the finite controls refuse cause substitution, invalid closure conditions, changed attestations and publication without its own evidence, and expose no admitted-result constructor.",
+      "review": "Complete fixture causes pass a retained proposed-cause verifier and a distinct attestation fixture at both closure causes. Missing proposal evidence, a changed sequence at the shared checker, malformed/premature closure statements and a substituted attestation are refused. The same causes refuse publication against an empty published registry. The compile-fail type boundary prevents using CandidateContext as PackageInput; AdmittedBoundary has no constructing operation. These fixtures establish local declaration/authority separation, not deployment authentication, the full closure corpus or final safety."
+    },
+    {
       "operation": "pn-epoch::package::package_bindings",
       "path": "packages/epoch/tests/package.rs",
       "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
       "before": "",
       "after": "Claim: Structural package verification separates burn-marker acceptance from complete act sequences and refuses mismatched histories, policies, predecessor markers, constants, writing prices, sequences and epoch alignment before public binding verification; matching epoch numbers alone do not establish a package.",
       "review": "An explicit fixture publication supplies the comparison oracle. Individual mutations exercise each structural cause and a rejecting publication oracle proves that matching structure alone is insufficient. Deployment authentication and settled-chain evidence are not established by this fixture."
+    },
+    {
+      "operation": "pn-epoch::package::schedule_declarations",
+      "path": "packages/epoch/tests/package.rs",
+      "claim": "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs",
+      "before": "",
+      "after": "Claim: Schedule declaration validation retains explicit initialization and a closed canonical-controller edition, refusing missing fields, unknown editions, late activation, invalid rational parameter ranges, grid placement and refinement declarations on the declared finite controls; validation produces neither a delivered schedule nor admission evidence.",
+      "review": "The checked grid declaration round-trips its full input. Each required initialization field is removed separately; reversed mutation order checks edition, lead, positivity/range, grid and finite-refinement defects at their named refusals. Exact-rational and ridge declarations remain explicit alternatives. No controller result, floor certificate, deployment authentication or admission is claimed."
     },
     {
       "operation": "pn-epoch::recipients::invitation_netting",

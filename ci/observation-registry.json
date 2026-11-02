@@ -7765,6 +7765,98 @@
       "claim": "ROOT::rule:observe:spans",
       "mode": "instrumented",
       "shape": "shape-002"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "item": "admission::declare_schedule",
+      "owner": "EPOCH",
+      "signature": "fn declare_schedule (input : ScheduleInput , limits : Limits) -> Result < ScheduleDeclaration , DeclarationError >",
+      "claim": "ROOT::alg:design:schedules",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "item": "admission::ScheduleDeclaration::input",
+      "owner": "EPOCH",
+      "signature": "fn input (& self) -> & ScheduleInput",
+      "claim": "ROOT::amend:design:admission-declarations",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access retains validation and performs no decision.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+        "class_decision": "epoch-admission-declarations"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "item": "admission::ScheduleDeclaration::controller",
+      "owner": "EPOCH",
+      "signature": "fn controller (& self) -> ControllerEdition",
+      "claim": "ROOT::amend:design:admission-declarations",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access retains validation and performs no decision.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+        "class_decision": "epoch-admission-declarations"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::verify_candidate",
+      "owner": "EPOCH",
+      "signature": "fn verify_candidate (input : CandidateInput , causes : & impl CandidateVerifier , closure : & impl ClosureVerifier ,) -> Result < CandidateContext , PackageError >",
+      "claim": "ROOT::alg:design:admission",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::CandidateContext::input",
+      "owner": "EPOCH",
+      "signature": "fn input (& self) -> & CandidateInput",
+      "claim": "ROOT::amend:design:candidate-admission-boundary",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access retains candidate verification without promotion.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+        "class_decision": "epoch-package"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::AdmittedBoundary::candidate",
+      "owner": "EPOCH",
+      "signature": "fn candidate (& self) -> & CandidateContext",
+      "claim": "ROOT::amend:design:candidate-admission-boundary",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access does not create an admitted result.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+        "class_decision": "epoch-package"
+      }
     }
   ],
   "metrics": [
@@ -14386,9 +14478,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
-      "body": "{ let count = input . bindings . len () ; let markers = input . markers . markers () ; if count == 0 || input . inputs . len () != count || input . prices . len () != count || markers . len () <= count { return Err (PackageError :: Alignment) ; } let last = u64 :: try_from (count) . map_err (| _ | PackageError :: Alignment) ? ; if input . history . acts () . iter () . any (| act | act . position () . 0 > last) { return Err (PackageError :: Sequence) ; } let basis = input . markers . basis () ; for (offset , binding) in input . bindings . iter () . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | PackageError :: Alignment) ? + 1 ; if binding . marker . history != basis . history || binding . predecessor . history != basis . history { return Err (PackageError :: History) ; } if [& binding . marker , & binding . predecessor] . iter () . any (| marker | marker . policy_identity != basis . policy_identity || marker . policy_edition != basis . policy_edition) { return Err (PackageError :: Policy) ; } if binding . marker . index != boundary || input . inputs [offset] . parameters () . boundary != boundary { return Err (PackageError :: Alignment) ; } if binding . predecessor != * markers [offset] . identity () { return Err (PackageError :: Predecessor) ; } if binding . marker != * markers [offset + 1] . identity () { return Err (PackageError :: Alignment) ; } if binding . inputs != input . inputs [offset] { return Err (PackageError :: Constants) ; } if binding . price != input . prices [offset] { return Err (PackageError :: Vintage) ; } let mut sequence : Vec < _ > = input . history . acts () . iter () . filter (| act | act . position () . 0 == boundary) . collect () ; sequence . sort_by_key (| act | act . position ()) ; if ! sequence . into_iter () . eq (binding . sequence . iter ()) { return Err (PackageError :: Sequence) ; } } if ! verifier . published_package (& input) { return Err (PackageError :: Binding) ; } Ok (VerifiedPackage { input }) }",
+      "body": "{ verify_causes (& input) ? ; if ! verifier . published_package (& input) { return Err (PackageError :: Binding) ; } Ok (VerifiedPackage { input }) }",
       "class_decision": "epoch-package",
-      "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise. The unchanged structural checks are factored into verify_causes, which candidate verification also calls; the publication verifier still executes separately after all structural checks.",
       "assessments": {
         "full_recording": "epoch-package-full_recording",
         "secret_flow": "epoch-package-secret_flow",
@@ -15097,6 +15189,72 @@
         "full_recording": "numeric-projection",
         "secret_flow": "review-002",
         "exposure_consumers": "review-003"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+      "body": "{ if input . controller != \"canonical-interim-v1\" { return Err (DeclarationError :: Controller) ; } let init = & input . initialization ; let floor = init . floor . ok_or (DeclarationError :: Missing (InitializationField :: Floor)) ? ; let wall = init . wall . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: Wall)) ? ; let parameters = init . parameters . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: Parameters)) ? ; let policy = init . policy_floor . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: PolicyFloor)) ? ; let boundary = init . effective_boundary . ok_or (DeclarationError :: Missing (InitializationField :: EffectiveBoundary)) ? ; if input . announced_at . checked_add (1) != Some (boundary) { return Err (DeclarationError :: Late) ; } let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; let wall = positive (wall , & mut budget , DeclarationError :: InitialWall) ? ; let policy = positive (policy , & mut budget , DeclarationError :: InitialWall) ? ; if policy . compare (& wall , & mut budget) ? == Ordering :: Less { return Err (DeclarationError :: InitialWall) ; } if floor == Floor :: RationalThreeThirtySevenths && wall . compare (& Rational :: parse (\"3/37\" , & mut budget) ? , & mut budget) ? == Ordering :: Less { return Err (DeclarationError :: InitialWall) ; } positive (& parameters . absolute_cap , & mut budget , DeclarationError :: Parameters) ? ; let relative = positive (& parameters . relative_cap , & mut budget , DeclarationError :: Parameters) ? ; let deadband = Rational :: parse (& parameters . deadband , & mut budget) ? ; let margin = positive (& parameters . margin , & mut budget , DeclarationError :: Parameters) ? ; if relative . compare (& one , & mut budget) ? != Ordering :: Less || deadband . is_negative () || deadband . compare (& one , & mut budget) ? != Ordering :: Less || margin . compare (& one , & mut budget) ? != Ordering :: Greater { return Err (DeclarationError :: Parameters) ; } if let Delivery :: Grid { quantum , maximum_error } = & input . delivery { let quantum = positive (quantum , & mut budget , DeclarationError :: Delivery) ? ; positive (maximum_error , & mut budget , DeclarationError :: Delivery) ? ; if ! wall . div (& quantum , & mut budget) ? . is_integer () { return Err (DeclarationError :: Delivery) ; } } let refinement = & input . refinement ; if refinement . precision_bits . is_empty () || refinement . precision_bits . contains (& 0) || refinement . precision_bits . windows (2) . any (| pair | pair [0] >= pair [1]) || refinement . maximum_work == 0 || refinement . maximum_replay_work == 0 { return Err (DeclarationError :: Refinement) ; } Ok (ScheduleDeclaration { input , controller : ControllerEdition :: CanonicalInterim , }) }",
+      "class_decision": "epoch-admission-declarations",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises. Verification retains exact one-boundary lead and separate candidate/publication authority; structural cause coherence is shared without sharing verifier results.",
+      "assessments": {
+        "full_recording": "epoch-admission-declarations-full_recording",
+        "secret_flow": "epoch-admission-declarations-secret_flow",
+        "exposure_consumers": "epoch-admission-declarations-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::input",
+      "body": "{ & self . input }",
+      "class_decision": "epoch-admission-declarations",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+      "assessments": {
+        "full_recording": "epoch-admission-declarations-full_recording",
+        "secret_flow": "epoch-admission-declarations-secret_flow",
+        "exposure_consumers": "epoch-admission-declarations-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::controller",
+      "body": "{ self . controller }",
+      "class_decision": "epoch-admission-declarations",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+      "assessments": {
+        "full_recording": "epoch-admission-declarations-full_recording",
+        "secret_flow": "epoch-admission-declarations-secret_flow",
+        "exposure_consumers": "epoch-admission-declarations-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+      "body": "{ verify_causes (& input . causes) ? ; check_closure (& input) ? ; if ! causes . candidate_causes (& input) { return Err (PackageError :: CandidateBinding) ; } if ! closure . host_determination (& input) { return Err (PackageError :: Closure) ; } Ok (CandidateContext { input }) }",
+      "class_decision": "epoch-package",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+      "assessments": {
+        "full_recording": "epoch-package-full_recording",
+        "secret_flow": "epoch-package-secret_flow",
+        "exposure_consumers": "epoch-package-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::CandidateContext::input",
+      "body": "{ & self . input }",
+      "class_decision": "epoch-package",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+      "assessments": {
+        "full_recording": "epoch-package-full_recording",
+        "secret_flow": "epoch-package-secret_flow",
+        "exposure_consumers": "epoch-package-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::candidate",
+      "body": "{ & self . candidate }",
+      "class_decision": "epoch-package",
+      "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+      "assessments": {
+        "full_recording": "epoch-package-full_recording",
+        "secret_flow": "epoch-package-secret_flow",
+        "exposure_consumers": "epoch-package-exposure_consumers"
       }
     }
   ],
@@ -18952,6 +19110,177 @@
       "syntax": "# [derive (Debug , Deserialize)]",
       "class_decision": "public-documents",
       "expansion_review": "Debug and Deserialize cover public numeric declarations only; no private carriers or external effects."
+    },
+    {
+      "item": "admission::ControllerEdition",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::InitializationField",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::ControllerParameters",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::InitializationInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::Delivery",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::Refinement",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::ScheduleInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::ScheduleDeclaration",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::DeclarationError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::Comparison",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::Gate",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::Stop",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "admission::AdmissionRefusal",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-admission-declarations",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::ClosurePolicy",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::ClosureCause",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::ClosureStatement",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::CandidateInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::CandidateContext",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "package::AdmittedBoundary",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
     }
   ],
   "reviewed_types": [
@@ -21470,6 +21799,84 @@
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     },
     {
+      "item": "admission::ControllerEdition",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" The closed set of controller editions admitted by this interface.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ControllerEdition { CanonicalInterim , }"
+    },
+    {
+      "item": "admission::InitializationField",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Required initialization fields, retained in missing-input refusals.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum InitializationField { Floor , Wall , Parameters , PolicyFloor , EffectiveBoundary , }"
+    },
+    {
+      "item": "admission::ControllerParameters",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Exact rational parameters of the canonical controller, not host overrides.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ControllerParameters { pub absolute_cap : String , pub relative_cap : String , pub deadband : String , pub margin : String , }"
+    },
+    {
+      "item": "admission::InitializationInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Untrusted initialization has explicit absence, never an inferred floor or wall.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct InitializationInput { pub floor : Option < Floor > , pub wall : Option < String > , pub parameters : Option < ControllerParameters > , pub policy_floor : Option < String > , pub effective_boundary : Option < u64 > , }"
+    },
+    {
+      "item": "admission::Delivery",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Rational delivery choices; all grid quantities are in reduced-wall units.\"] # [doc = \" (´[ROOT-rule:design:wall-delivery-declaration]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Delivery { # [doc = \" Requires proof that the ideal update is this exact rational.\"] ExactRational , # [doc = \" Nearest admissible grid point; ties approach the previous wall, then go lower.\"] # [doc = \" The absolute error from the ideal update must be certified within the bound.\"] Grid { quantum : String , maximum_error : String } , }"
+    },
+    {
+      "item": "admission::Refinement",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Finite public comparison sequence and independent production/replay ceilings.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Refinement { pub precision_bits : Vec < u32 > , pub maximum_work : u64 , pub maximum_replay_work : u64 , }"
+    },
+    {
+      "item": "admission::ScheduleInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Supplied schedule declaration; validation is not schedule publication or admission.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ScheduleInput { pub controller : String , pub announced_at : u64 , pub initialization : InitializationInput , pub numeraire : Numeraire , pub delivery : Delivery , pub refinement : Refinement , }"
+    },
+    {
+      "item": "admission::ScheduleDeclaration",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Immutable structurally valid declaration. Ridge evidence and execution remain separate.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ScheduleDeclaration { input : ScheduleInput , controller : ControllerEdition , }"
+    },
+    {
+      "item": "admission::DeclarationError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Declaration defects are distinct from an evaluated gate or incomplete comparison.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DeclarationError { # [error (\"unsupported controller edition\")] Controller , # [error (\"missing initialization field: {0:?}\")] Missing (InitializationField) , # [error (\"declaration lacks one-boundary lead\")] Late , # [error (\"invalid controller parameters\")] Parameters , # [error (\"invalid initial wall or policy floor\")] InitialWall , # [error (\"invalid rational delivery declaration\")] Delivery , # [error (\"invalid finite refinement declaration\")] Refinement , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
+      "item": "admission::Comparison",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Binding comparisons whose unresolved result withholds admission or publication.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Comparison { Floor , InverseGain , Deadband , StepCap , DeliveryError , IndividualSafety , EpochPolicy , }"
+    },
+    {
+      "item": "admission::Gate",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Mathematically failed final gates, never aliases for resource exhaustion.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Gate { OwnSolvency , IndividualSafety , EpochPolicy , Capacity , }"
+    },
+    {
+      "item": "admission::Stop",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Operational stops publish no mathematical verdict.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Stop { Work , ReplayWork , Storage , Interrupted , }"
+    },
+    {
+      "item": "admission::AdmissionRefusal",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission.rs",
+      "syntax": "# [doc = \" Reserved semantic outcomes for the later admission and schedule producers.\"] # [doc = \" No constructor in this cut produces an admitted boundary or a passing schedule.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum AdmissionRefusal { # [error (\"declaration: {0}\")] Declaration (# [from] DeclarationError) , # [error (\"candidate causes: {0}\")] Causes (# [from] crate :: package :: PackageError) , # [error (\"closure evidence does not establish the declared condition\")] Closure , # [error (\"certified final gate failed: {0:?}\")] Failed (Gate) , # [error (\"comparison remains indecisive: {0:?}\")] Indecisive (Comparison) , # [error (\"operation stopped without a verdict: {0:?}\")] Operational (Stop) , }"
+    },
+    {
       "item": "base::HeldCoefficient",
       "package": "pn-epoch",
       "path": "packages/epoch/src/base.rs",
@@ -21569,7 +21976,7 @@
       "item": "package::EpochBinding",
       "package": "pn-epoch",
       "path": "packages/epoch/src/package.rs",
-      "syntax": "# [doc = \" One epoch's explicit package binding, separate from the marker's burn acceptance.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EpochBinding { pub marker : Marker , pub predecessor : Marker , pub inputs : CompilerInputs , pub price : ChargedPrice , # [doc = \" Full immutable acts in published position order, including all projection evidence.\"] pub sequence : Vec < ValidatedAct > , }"
+      "syntax": "# [doc = \" One epoch's explicit package binding, separate from the marker's burn acceptance.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EpochBinding { pub marker : Marker , pub predecessor : Marker , pub inputs : CompilerInputs , pub price : ChargedPrice , # [doc = \" Full immutable acts in asserted position order; publication is verified separately.\"] pub sequence : Vec < ValidatedAct > , }"
     },
     {
       "item": "package::PackageInput",
@@ -21587,7 +21994,43 @@
       "item": "package::PackageError",
       "package": "pn-epoch",
       "path": "packages/epoch/src/package.rs",
-      "syntax": "# [doc = \" Structural coherence refusals precede public binding verification.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PackageError { # [error (\"package components belong to different marker histories\")] History , # [error (\"package mixes marker policy identities or editions\")] Policy , # [error (\"package drops or substitutes the preceding marker or epoch\")] Predecessor , # [error (\"package constants differ from the bound effective inputs\")] Constants , # [error (\"package write sequence differs from the validated history\")] Sequence , # [error (\"package epochs and markers are not aligned one to one\")] Alignment , # [error (\"package substitutes the writing epoch's debit vintage\")] Vintage , # [error (\"public verification does not establish the package binding\")] Binding , }"
+      "syntax": "# [doc = \" Structural coherence refusals precede public binding verification.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PackageError { # [error (\"package components belong to different marker histories\")] History , # [error (\"package mixes marker policy identities or editions\")] Policy , # [error (\"package drops or substitutes the preceding marker or epoch\")] Predecessor , # [error (\"package constants differ from the bound effective inputs\")] Constants , # [error (\"package write sequence differs from the validated history\")] Sequence , # [error (\"package epochs and markers are not aligned one to one\")] Alignment , # [error (\"package substitutes the writing epoch's debit vintage\")] Vintage , # [error (\"public verification does not establish the package binding\")] Binding , # [error (\"candidate verification does not establish the proposed causes\")] CandidateBinding , # [error (\"closure declaration or attestation is invalid\")] Closure , }"
+    },
+    {
+      "item": "package::ClosurePolicy",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Published closure conditions measured in the explicitly named clock's ticks.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosurePolicy { pub target : u64 , pub minimum_ticks : u64 , pub maximum_ticks : u64 , pub clock : String , }"
+    },
+    {
+      "item": "package::ClosureCause",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" The attested condition under which the candidate boundary closes.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ClosureCause { TargetAfterMinimum , MaximumDuration , }"
+    },
+    {
+      "item": "package::ClosureStatement",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Public assertion, whose earliest-host-determination premise needs a verifier.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosureStatement { pub policy : ClosurePolicy , pub opened_at : u64 , pub determined_at : u64 , pub cause : ClosureCause , pub attestation : String , }"
+    },
+    {
+      "item": "package::CandidateInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Proposed complete prefix, without an assertion that its last write is published.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub struct CandidateInput { pub causes : PackageInput , pub closure : ClosureStatement , }"
+    },
+    {
+      "item": "package::CandidateContext",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Checked candidate context, neither a published package nor an admitted result.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn publish(candidate: pn_epoch::package::CandidateContext, verifier: &impl pn_epoch::package::PackageVerifier) {\"] # [doc = \"     pn_epoch::package::verify_package(candidate, verifier);\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct CandidateContext { input : CandidateInput , }"
+    },
+    {
+      "item": "package::AdmittedBoundary",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Immutable admitted boundary reserved for the final gate producer. This cut has\"] # [doc = \" no constructor: a checked candidate or declaration cannot manufacture admission.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , }"
     },
     {
       "item": "recipients::ResolvedCell",
@@ -22156,7 +22599,10 @@
       "membership": {
         "explicit": [
           "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
-          "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input"
+          "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input",
+          "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+          "pn-epoch::packages/epoch/src/package.rs::package::CandidateContext::input",
+          "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::candidate"
         ]
       },
       "status": "reviewer-confirmed",
@@ -22283,6 +22729,18 @@
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay"
         ]
       }
+    },
+    {
+      "name": "epoch-admission-declarations",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+          "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::input",
+          "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::controller"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Schedule validation reads complete public initialization, controller identity, rational delivery and refinement declarations. Its result is an immutable declaration, not an executed controller, admitted write or publication. Exact arithmetic is bounded; diagnostics retain public inputs and named refusals. No secret material or deployment authentication flows through this operation."
     }
   ],
   "shapes": {
@@ -24329,6 +24787,21 @@
       "status": "reviewer-confirmed",
       "premises": "Exact numeric input values, display declarations, generated forms and source spans are public documentation data; instrumented projection and generation record complete inputs and results.",
       "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+    },
+    "epoch-admission-declarations-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-admission-declarations-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-admission-declarations-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }
 }

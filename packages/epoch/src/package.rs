@@ -1,4 +1,4 @@
-//! Structural completed-package verification, without a publication encoding.
+//! Shared cause coherence with separate candidate and published verification.
 //! (´def:compiler:completed-package´)
 
 use crate::CompilerInputs;
@@ -16,7 +16,7 @@ pub struct EpochBinding {
     pub predecessor: Marker,
     pub inputs: CompilerInputs,
     pub price: ChargedPrice,
-    /// Full immutable acts in published position order, including all projection evidence.
+    /// Full immutable acts in asserted position order; publication is verified separately.
     pub sequence: Vec<ValidatedAct>,
 }
 
@@ -71,6 +71,10 @@ pub enum PackageError {
     Vintage,
     #[error("public verification does not establish the package binding")]
     Binding,
+    #[error("candidate verification does not establish the proposed causes")]
+    CandidateBinding,
+    #[error("closure declaration or attestation is invalid")]
+    Closure,
 }
 
 /// Verify the structural prefix and its published coherence before compilation.
@@ -88,6 +92,26 @@ pub enum PackageError {
     ret
 )]
 pub fn verify_package(input: PackageInput, verifier: &impl PackageVerifier) -> Result<VerifiedPackage, PackageError> {
+    verify_causes(&input)?;
+    if !verifier.published_package(&input) {
+        return Err(PackageError::Binding);
+    }
+    Ok(VerifiedPackage { input })
+}
+
+impl VerifiedPackage {
+    /// Borrow the checked complete prefix; no mutable access escapes verification.
+    /// (´def:compiler:completed-package´)
+    /// Justified: Immutable access preserves the enclosing verification result.
+    #[must_use]
+    pub fn input(&self) -> &PackageInput {
+        &self.input
+    }
+}
+
+/// Check common cause coherence without asserting candidate or publication authority.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+fn verify_causes(input: &PackageInput) -> Result<(), PackageError> {
     let count = input.bindings.len();
     let markers = input.markers.markers();
     if count == 0 || input.inputs.len() != count || input.prices.len() != count || markers.len() <= count {
@@ -135,18 +159,163 @@ pub fn verify_package(input: PackageInput, verifier: &impl PackageVerifier) -> R
             return Err(PackageError::Sequence);
         }
     }
-    if !verifier.published_package(&input) {
-        return Err(PackageError::Binding);
-    }
-    Ok(VerifiedPackage { input })
+    Ok(())
 }
 
-impl VerifiedPackage {
-    /// Borrow the checked complete prefix; no mutable access escapes verification.
-    /// (´def:compiler:completed-package´)
-    /// Justified: Immutable access preserves the enclosing verification result.
+/// Published closure conditions measured in the explicitly named clock's ticks.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ClosurePolicy {
+    pub target: u64,
+    pub minimum_ticks: u64,
+    pub maximum_ticks: u64,
+    pub clock: String,
+}
+
+/// The attested condition under which the candidate boundary closes.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ClosureCause {
+    TargetAfterMinimum,
+    MaximumDuration,
+}
+
+/// Public assertion, whose earliest-host-determination premise needs a verifier.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ClosureStatement {
+    pub policy: ClosurePolicy,
+    pub opened_at: u64,
+    pub determined_at: u64,
+    pub cause: ClosureCause,
+    pub attestation: String,
+}
+
+/// Proposed complete prefix, without an assertion that its last write is published.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+#[derive(Clone, Debug)]
+pub struct CandidateInput {
+    pub causes: PackageInput,
+    pub closure: ClosureStatement,
+}
+
+/// Establish the finalized predecessor and the complete proposed causes independently.
+/// The current sequence is proposed; this method must not assume its publication.
+/// Approval, marker evidence, constants and price declarations require their declared
+/// public verification. Equality with unchecked caller assertions is insufficient.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+pub trait CandidateVerifier: std::fmt::Debug {
+    fn candidate_causes(&self, input: &CandidateInput) -> bool;
+}
+
+/// Verify the published policy and its attested earliest host determination for this
+/// exact candidate. Timestamps and structural duration checks alone are insufficient.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+pub trait ClosureVerifier: std::fmt::Debug {
+    fn host_determination(&self, input: &CandidateInput) -> bool;
+}
+
+/// Checked candidate context, neither a published package nor an admitted result.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+/// ```compile_fail
+/// fn publish(candidate: pn_epoch::package::CandidateContext, verifier: &impl pn_epoch::package::PackageVerifier) {
+///     pn_epoch::package::verify_package(candidate, verifier);
+/// }
+/// ```
+#[derive(Clone, Debug)]
+pub struct CandidateContext {
+    input: CandidateInput,
+}
+
+/// Immutable admitted boundary reserved for the final gate producer. This cut has
+/// no constructor: a checked candidate or declaration cannot manufacture admission.
+/// (´[ROOT-inv:design:atomic-admission]´)
+/// ```compile_fail
+/// fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {
+///     pn_epoch::package::AdmittedBoundary { candidate }
+/// }
+/// ```
+#[derive(Clone, Debug)]
+pub struct AdmittedBoundary {
+    candidate: CandidateContext,
+}
+
+/// Validate candidate coherence and independent cause/closure premises, not final gates.
+/// (´[ROOT-alg:design:admission]´)
+/// # Errors
+/// Returns the shared cause defect, invalid closure condition or either verifier refusal.
+#[tracing::instrument(
+    name = "alg:design:admission",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "alg:design:admission",
+        source_item = "package::verify_candidate"
+    ),
+    ret
+)]
+pub fn verify_candidate(
+    input: CandidateInput,
+    causes: &impl CandidateVerifier,
+    closure: &impl ClosureVerifier,
+) -> Result<CandidateContext, PackageError> {
+    verify_causes(&input.causes)?;
+    check_closure(&input)?;
+    if !causes.candidate_causes(&input) {
+        return Err(PackageError::CandidateBinding);
+    }
+    if !closure.host_determination(&input) {
+        return Err(PackageError::Closure);
+    }
+    Ok(CandidateContext { input })
+}
+
+/// Check only computable declared closure conditions; a verifier supplies earliestness.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+fn check_closure(input: &CandidateInput) -> Result<(), PackageError> {
+    let statement = &input.closure;
+    let policy = &statement.policy;
+    let elapsed = statement
+        .determined_at
+        .checked_sub(statement.opened_at)
+        .ok_or(PackageError::Closure)?;
+    let last = input.causes.bindings.last().ok_or(PackageError::Alignment)?;
+    let count = u64::try_from(last.sequence.len()).map_err(|_| PackageError::Closure)?;
+    if policy.target == 0
+        || policy.maximum_ticks == 0
+        || policy.minimum_ticks > policy.maximum_ticks
+        || policy.clock.is_empty()
+        || statement.attestation.is_empty()
+        || count > policy.target
+    {
+        return Err(PackageError::Closure);
+    }
+    let condition = match statement.cause {
+        ClosureCause::TargetAfterMinimum => count == policy.target && elapsed >= policy.minimum_ticks,
+        ClosureCause::MaximumDuration => elapsed >= policy.maximum_ticks,
+    };
+    if !condition {
+        return Err(PackageError::Closure);
+    }
+    Ok(())
+}
+
+impl CandidateContext {
+    /// Borrow proposed causes; this access carries no publication or admission authority.
+    /// (´[ROOT-amend:design:candidate-admission-boundary]´)
+    /// Justified: Immutable field access retains candidate verification without promotion.
     #[must_use]
-    pub fn input(&self) -> &PackageInput {
+    pub fn input(&self) -> &CandidateInput {
         &self.input
+    }
+}
+
+impl AdmittedBoundary {
+    /// Borrow the admitted result's candidate without a mutable or constructing path.
+    /// (´[ROOT-inv:design:atomic-admission]´)
+    /// Justified: Immutable field access does not create an admitted result.
+    #[must_use]
+    pub fn candidate(&self) -> &CandidateContext {
+        &self.candidate
     }
 }

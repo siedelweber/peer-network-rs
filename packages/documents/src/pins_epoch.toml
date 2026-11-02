@@ -694,6 +694,14 @@ id = "num:numbers:burn-work-ceiling"
 value = "1000000000000"
 
 [[rows]]
+id = "num:numbers:candidate-fixture-maximum-ticks"
+value = "4"
+
+[[rows]]
+id = "num:numbers:candidate-fixture-minimum-ticks"
+value = "2"
+
+[[rows]]
 id = "num:numbers:candidate-total-work"
 value = "64097175"
 
@@ -1324,6 +1332,58 @@ value = "2"
 [[rows]]
 id = "num:numbers:scaling-width-tolerance"
 value = "1/64"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-absolute-cap"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-deadband"
+value = "1/16"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-delivery-error"
+value = "1/64"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-final-precision"
+value = "16"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-grid-quantum"
+value = "1/128"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-initial-precision"
+value = "8"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-initial-wall"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-margin"
+value = "5/4"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-off-grid-wall"
+value = "2/3"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-policy-floor"
+value = "3/2"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-production-work"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-relative-cap"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:schedule-fixture-replay-work"
+value = "12000"
 
 [[rows]]
 id = "num:numbers:second-proposal-work"

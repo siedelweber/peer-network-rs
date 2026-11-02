@@ -592,7 +592,7 @@ status = "held"
 tier = "fast"
 implementation = ""
 cases = []
-reason = "contract not implemented; first contributing domain bite 7"
+reason = "Declaration and candidate-interface controls run in pn-epoch::package; the final admission contract remains held for rec:design:bite-seven-checklist. These controls grant no admission contract edition."
 contract = "individual/final-set safety, fixed floor and wall-controller cases"
 
 [[rows]]
@@ -1563,7 +1563,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::package::package_bindings"]
+cases = ["pn-epoch::package::package_bindings", "pn-epoch::package::schedule_declarations", "pn-epoch::package::candidate_boundaries"]
 
 [[rows]]
 kind = "suite"
@@ -1746,3 +1746,15 @@ budget = "reference-certificate-suite"
 case_budget = "calibrated-reference-wall-branches-case"
 case_span = true
 cases = ["pn-graph::numeric::reference_wall_branches"]
+
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]", "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]"]
