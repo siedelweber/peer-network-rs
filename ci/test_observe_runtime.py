@@ -124,9 +124,9 @@ def complete_title_summary(rows, history):
     if len(statuses) != 1:
         raise AssertionError(f'title capture status missing or repeated: history={history}')
     status = statuses[0]
-    fields = ('lost_records', 'undelivered_records', 'drain_timeouts')
+    fields = ('lost_records', 'undelivered_records', 'drain_timeouts', 'in_flight_records')
     if any(status.get(field) != 0 for field in fields):
-        raise AssertionError(f'title capture incomplete at bounded drain: history={history} status={status}')
+        raise AssertionError(f'title capture incomplete at bounded drain: history={history} in_flight_records={status.get("in_flight_records")} status={status}')
     summaries = [row['metrics'] for row in rows if row.get('kind') == 'metric_summary']
     if len(summaries) != 1:
         raise AssertionError(f'title metric summary missing or repeated after complete drain: history={history}')
@@ -370,9 +370,11 @@ class Processes(unittest.TestCase):
                       drain_timeouts=0, in_flight_records=0)
         summary = dict(kind='metric_summary', metrics={})
         self.assertEqual(complete_title_summary([status, summary], 'control'), {})
-        for field in ('lost_records', 'undelivered_records', 'drain_timeouts'):
+        for field in ('lost_records', 'undelivered_records', 'drain_timeouts', 'in_flight_records'):
             with self.assertRaisesRegex(AssertionError, 'title capture incomplete at bounded drain'):
                 complete_title_summary([dict(status, **{field: 1})], 'control')
+        with self.assertRaisesRegex(AssertionError, 'in_flight_records=1'):
+            complete_title_summary([dict(status, in_flight_records=1)], 'control')
         for rows in ([], [summary], [status, status, summary]):
             with self.assertRaisesRegex(AssertionError, 'title capture status missing or repeated'):
                 complete_title_summary(rows, 'control')

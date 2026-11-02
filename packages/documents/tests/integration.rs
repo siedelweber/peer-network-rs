@@ -396,6 +396,55 @@ fn repository_fixed_point() -> Result<()> {
         );
         assert_eq!(documents::run(&root, Operation::Check)?.findings, Vec::<Finding>::new());
     }
+    let script = r#"
+import json, os, sys
+from pathlib import Path
+root = Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(root/'ci'))
+from claims import check_tracker
+from devperf import StructuralError
+from harness import source_id
+from isolation import workspace
+os.chdir(root)
+source = source_id()
+os.environ['PN_GATE_BUILD_TARGET'] = str(Path(sys.argv[2]).resolve().parent.parent)
+paths = ('docs/inputs/specification-progress.toml',
+         'docs/datasets/org.peer-network.design.progress.json', 'docs/design/progress.md')
+expected = {name:(root/name).read_bytes() for name in paths}
+with workspace(root, 'tracker-artifact-witness', source) as (tree, _target):
+    (tree/'.lane').mkdir(exist_ok=True)
+    carrier = tree/paths[0]
+    projection = expected[paths[0]].decode()
+    mutated = projection.replace('status = "realized"', 'status = "designed"', 1)
+    assert mutated != projection
+    carrier.write_text(mutated)
+    try:
+        check_tracker(tree, projection)
+    except StructuralError as error:
+        assert 'specification tracker is stale; apply' in str(error), str(error)
+    else:
+        raise AssertionError('mutated tracker did not refuse')
+    artifact = tree/'.lane/specification-tracker'
+    manifest = json.loads((artifact/'manifest.json').read_text())
+    assert manifest == dict(source=source, evidence='checked-execution', paths=list(paths))
+    for name in paths:
+        assert (artifact/name).read_bytes() == expected[name], name
+    moved = json.loads((tree/'.lane/specification-tracker-moved.json').read_text())
+    assert len(moved) == 1 and moved[0]['fields'] == {'status':dict(before='designed', after='realized')}, moved
+    assert carrier.read_text() == mutated, 'artifact generation repaired the witness input'
+assert all((root/name).read_bytes() == content for name,content in expected.items())
+"#;
+    let output = Command::new("python3")
+        .args(["-B", "-c", script])
+        .arg(&root)
+        .arg(env!("CARGO_BIN_EXE_documents"))
+        .output()?;
+    assert!(
+        output.status.success(),
+        "tracker replacement artifacts differ: {}\n{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
     Ok(())
 }
 

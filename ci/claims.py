@@ -540,6 +540,23 @@ def tracker_artifacts(root, projection):
     print('SPECIFICATION-TRACKER artifacts=.lane/specification-tracker/manifest.json', flush=True)
 
 
+def check_tracker(root, projection):
+    """Refuse stale committed bytes and emit the complete replacement triple."""
+    root = Path(root)
+    (root/'.lane/specification-progress.toml').write_text(projection)
+    carrier = root/'docs/inputs/specification-progress.toml'
+    if carrier.read_text() != projection:
+        before = tomllib.loads(carrier.read_text())['rows']
+        changes = tracker_changes(before, tomllib.loads(projection)['rows'])
+        (root/'.lane/specification-tracker-moved.json').write_text(json.dumps(changes, indent=2)+'\n')
+        for change in changes:
+            print('SPECIFICATION-TRACKER-MOVED '+json.dumps(change, sort_keys=True), flush=True)
+        tracker_artifacts(root, projection)
+        raise StructuralError('specification tracker is stale; apply .lane/specification-tracker artifacts from checked execution evidence')
+    gap = next(row['total'] for row in tomllib.loads(projection)['rows'] if row['category'] == 'citation-gaps')
+    print(f'SPECIFICATION-TRACKER fixed-point=passed unassigned_exact_elsewhere={gap} artifact=.lane/specification-progress.toml')
+
+
 def tracker_input(root, evidence):
     """Project execution-backed rows and disjoint totals into a TOML carrier."""
     root = Path(root)
@@ -781,17 +798,7 @@ def main(argv=None):
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')
         print(f'CLAIM-EVIDENCE sites={len(sites)} claims={len(result["claims"])} obligations={len(obligations)} scoped_passed={counts["scoped-passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/claim-evidence.json')
         projection = tracker_input(root, dict(sites=sites, **result))
-        Path('.lane/specification-progress.toml').write_text(projection)
-        if Path('docs/inputs/specification-progress.toml').read_text() != projection:
-            before = tomllib.loads(Path('docs/inputs/specification-progress.toml').read_text())['rows']
-            changes = tracker_changes(before, tomllib.loads(projection)['rows'])
-            Path('.lane/specification-tracker-moved.json').write_text(json.dumps(changes, indent=2)+'\n')
-            for change in changes:
-                print('SPECIFICATION-TRACKER-MOVED '+json.dumps(change, sort_keys=True), flush=True)
-            tracker_artifacts(root, projection)
-            raise StructuralError('specification tracker is stale; apply .lane/specification-tracker artifacts from checked execution evidence')
-        gap = next(row['total'] for row in tomllib.loads(projection)['rows'] if row['category'] == 'citation-gaps')
-        print(f'SPECIFICATION-TRACKER fixed-point=passed unassigned_exact_elsewhere={gap} artifact=.lane/specification-progress.toml')
+        check_tracker(root, projection)
         return int(any(r['status']=='failed' for r in result['claims']) or counts['failed']>0 or (args.fail_respellings and bool(offenders)))
     except (ValueError, KeyError, TypeError, OSError) as error:
         print('CLAIM-STRUCTURAL-ERROR '+str(error), file=sys.stderr)
