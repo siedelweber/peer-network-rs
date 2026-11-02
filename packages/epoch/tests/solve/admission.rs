@@ -1127,3 +1127,32 @@ fn admission_contract() {
         assert_eq!(replayed.record(), closed.record());
     }
 }
+
+/// The attested determination cannot exceed the declared arithmetic maximum.
+/// (´claim:admission:closure-requires-attested-cause-and-duration´)
+/// ´test:integration:closure-maximum´
+#[test]
+fn closure_maximum() {
+    let base = candidate(&self_acts(), 1, &[("a", NumberId::NumbersClosureBurn.value())]);
+    for cause in [
+        package::ClosureCause::TargetAfterMinimum,
+        package::ClosureCause::MaximumDuration,
+    ] {
+        let mut input = base.input().clone();
+        input.closure.policy.minimum_ticks = NumberId::NumbersClosureMinimumTicks.integer();
+        input.closure.policy.maximum_ticks = NumberId::NumbersClosureMaximumTicks.integer();
+        input.closure.policy.target = u64::try_from(self_acts().len()).unwrap();
+        input.closure.cause = cause;
+        input.closure.determined_at = input.closure.opened_at + input.closure.policy.maximum_ticks;
+        let attested = Causes(input.clone());
+        let context = package::verify_candidate(input.clone(), &attested, &attested).unwrap();
+        close(&context, None);
+        input.closure.determined_at += 1;
+        let attests_late = Causes(input.clone());
+        assert!(package::ClosureVerifier::host_determination(&attests_late, &input));
+        assert!(matches!(
+            package::verify_candidate(input, &attests_late, &attests_late),
+            Err(package::PackageError::Closure)
+        ));
+    }
+}

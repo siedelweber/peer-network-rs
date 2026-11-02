@@ -1970,6 +1970,14 @@
       "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
     },
     {
+      "operation": "pn-epoch::solve::admission::closure_maximum",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:closure-requires-attested-cause-and-duration",
+      "before": "",
+      "after": "The attested determination cannot exceed the declared arithmetic maximum.",
+      "review": "Both closing causes receive matching verifier attestations. Exact maximum equality passes complete closure; one tick beyond the maximum refuses through candidate arithmetic. This companion does not reconstruct earliest host opportunity."
+    },
+    {
       "operation": "pn-epoch::solve::admission::closure_membership",
       "path": "packages/epoch/tests/solve/admission.rs",
       "claim": "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks",
@@ -2238,8 +2246,8 @@
       "path": "packages/epoch/tests/solve/schedules.rs",
       "claim": "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall",
       "before": "",
-      "after": "Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. The failed inverse neighbour withholds the defining proposal; no homogeneous controller or monotonic-accuracy law is asserted.",
-      "review": "The equality fixture compares the exact led wall and an explicitly declared adjacent lower policy through independent replay. The separate positive-width fixture retains a valid initial policy and refuses it when the independently computed next wall rises, including fixed-ledger migration. The declared inverse-sign floor retains its failing neighbour; no deployment or universal covariance claim is made."
+      "after": "Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. No homogeneous controller or monotonic-accuracy law is asserted.",
+      "review": "The changed-width and migrated complete histories each independently refuse retained policy after the led wall rises. The duplicated inverse-floor control is removed here and remains in schedule_covariance; this site makes no floor-control claim. Both distinct policy refusals and the passing rising-wall premises remain."
     },
     {
       "operation": "pn-epoch::solve::schedules::schedule_covariance",

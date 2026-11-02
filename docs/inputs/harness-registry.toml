@@ -1821,7 +1821,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::admission::closure_membership", "pn-epoch::solve::admission::closure_markers", "pn-epoch::solve::admission::closure_duration", "pn-epoch::solve::admission::closure_context"]
+cases = ["pn-epoch::solve::admission::closure_membership", "pn-epoch::solve::admission::closure_markers", "pn-epoch::solve::admission::closure_duration", "pn-epoch::solve::admission::closure_context", "pn-epoch::solve::admission::closure_maximum"]
 
 [[rows]]
 kind = "suite"

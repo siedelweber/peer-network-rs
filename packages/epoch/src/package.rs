@@ -284,6 +284,7 @@ fn check_closure(input: &CandidateInput) -> Result<(), PackageError> {
     if policy.target == 0
         || policy.maximum_ticks == 0
         || policy.minimum_ticks > policy.maximum_ticks
+        || elapsed > policy.maximum_ticks
         || policy.clock.is_empty()
         || statement.attestation.is_empty()
         || count > policy.target

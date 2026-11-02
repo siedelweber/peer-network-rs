@@ -500,7 +500,7 @@ fn retained_refusal(state: &pn_epoch::compiler::CompiledState, bits: u32) {
     ));
 }
 
-/// Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. The failed inverse neighbour withholds the defining proposal; no homogeneous controller or monotonic-accuracy law is asserted.
+/// Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. No homogeneous controller or monotonic-accuracy law is asserted.
 /// ´claim:admission:retained-policy-must-cover-a-rising-wall´
 /// ´test:integration:retained-policy´
 #[test]
@@ -509,7 +509,7 @@ fn retained_policy() {
     let walls = walls();
     let changed = fixture(2, &walls, Fraction(1, 1), false, true);
     retained_refusal(&changed, bits);
-    floor_control(&changed);
+    // The failed inverse neighbour is retained by schedule_covariance.
     let scale = number(NumberId::NumbersEffectiveScheduleRecoinage);
     let migrated_walls: Vec<_> = walls.iter().map(|wall| text(Fraction::parse(wall).over(scale))).collect();
     let migrated = fixture(2, &migrated_walls, scale, true, true);

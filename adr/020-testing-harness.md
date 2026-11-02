@@ -174,7 +174,7 @@
 | pn-graph::reference-controller | active | public-surface | pn-graph-rust | reference-certificate | 1 |
 | pn-epoch::admission | active | public-surface | pn-epoch-rust | fast | 6 |
 | pn-epoch::schedule-policy | active | public-surface | pn-epoch-rust | fast | 2 |
-| pn-epoch::closure | active | public-surface | pn-epoch-rust | fast | 4 |
+| pn-epoch::closure | active | public-surface | pn-epoch-rust | fast | 5 |
 | pn-epoch::admission-review | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::admission-contract | active | public-surface | pn-epoch-rust | fast | 1 |
 

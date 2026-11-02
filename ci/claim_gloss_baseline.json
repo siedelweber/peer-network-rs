@@ -418,6 +418,7 @@
     "pn-epoch::solve::admission::closure_context": "",
     "pn-epoch::solve::admission::closure_duration": "",
     "pn-epoch::solve::admission::closure_markers": "",
+    "pn-epoch::solve::admission::closure_maximum": "",
     "pn-epoch::solve::admission::closure_membership": "",
     "pn-epoch::solve::anchor_tables": "",
     "pn-epoch::solve::burn_depleted": "",

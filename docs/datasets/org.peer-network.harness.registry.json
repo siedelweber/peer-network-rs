@@ -4936,7 +4936,8 @@
         "pn-epoch::solve::admission::closure_membership",
         "pn-epoch::solve::admission::closure_markers",
         "pn-epoch::solve::admission::closure_duration",
-        "pn-epoch::solve::admission::closure_context"
+        "pn-epoch::solve::admission::closure_context",
+        "pn-epoch::solve::admission::closure_maximum"
       ],
       "contract": "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication.",
       "contract_edition": "epoch-admission-1",
