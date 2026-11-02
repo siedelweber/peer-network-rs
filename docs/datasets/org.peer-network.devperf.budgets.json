@@ -468,7 +468,7 @@
           "num_exact": true,
           "num_relation": "="
         },
-        "service_samples": {
+        "warm_samples": {
           "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
@@ -514,7 +514,7 @@
           "display": "exact",
           "exact_digits": 32
         },
-        "service_samples": {
+        "warm_samples": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -544,7 +544,7 @@
       "record_second_cpu_seconds": 233,
       "record_second_wall_seconds": "85.5",
       "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target",
-      "service_samples": 3
+      "warm_samples": 3
     },
     {
       "budget_ms": 180000,

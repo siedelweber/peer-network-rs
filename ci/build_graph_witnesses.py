@@ -133,7 +133,7 @@ def exercise(case):
                     with server.accept()[0] as connection:
                         connection.settimeout(30)
                         case.assertEqual(connection.recv(5), b'ready')
-                        result = subprocess.run([sys.executable, str(mutation)], capture_output=True, text=True,
+                        result = subprocess.run([sys.executable, '-B', str(mutation)], capture_output=True, text=True,
                             env=os.environ | {'PN_ISOLATION_ROOT':external}, timeout=30)
                         case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
                         case.assertIn('created=true removed=true', result.stdout)

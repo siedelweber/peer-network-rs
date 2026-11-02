@@ -344,6 +344,13 @@ assert (root/'payload').read_text() == 'committed'
                                  (operation, 'integration', 'held' if held else 'passed'))
 
     def calibrated_case_budgets(self):
+        from calibrate import warm_allowance
+        policy = dict(warm_samples=3, allowance_multiple=2, allowance_round_ms=50)
+        self.assertEqual(warm_allowance([20, 101, 70], policy), 250)
+        self.assertEqual(warm_allowance([10, 20, 25], policy), 50)
+        for samples in ([20], [20, 30, 40, 50], [20, -1, 30], [20, float('nan'), 30]):
+            with self.assertRaises(StructuralError):
+                warm_allowance(samples, policy)
         self.ci_case_budget_emission()
         data = rows(case='example::fast')
         data[-1]['cases'].append('example::calibrated')

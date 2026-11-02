@@ -1,9 +1,11 @@
 """Judge case budgets with one committed suite at a time, outside the gate."""
 import json
+import math
 import os
 from pathlib import Path
 import resource
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -298,7 +300,51 @@ def run():
     return status
 
 
+def warm_allowance(samples, policy):
+    """Size from every retained warm sample, never from a discarded cold run."""
+    if len(samples) != policy['warm_samples']:
+        raise StructuralError('calibration requires the declared warm sample count')
+    if any(not math.isfinite(value) or value < 0 for value in samples):
+        raise StructuralError('calibration walls must be finite and nonnegative')
+    quantum = policy['allowance_round_ms']
+    return math.ceil(max(samples)*policy['allowance_multiple']/quantum)*quantum
+
+
+def campaign():
+    """Retain a complete warm-up and three subsequent serial invocations."""
+    root = Path.cwd()
+    source = source_id()
+    policy = next(row for row in tomllib.loads((root/'docs/inputs/devperf-budgets.toml').read_text())['rows']
+                  if row['name'] == 'gate')
+    destination = root/'.lane/calibration-campaign'
+    destination.mkdir(parents=True, exist_ok=False)
+    started = time.time()
+    runs = []
+    for index in range(policy['warm_samples']+1):
+        name = 'warmup' if index == 0 else f'sample-{index}'
+        result = cancellable([sys.executable, '-B', 'ci/calibrate.py'])
+        artifact = root/'.lane/calibration'
+        shutil.copytree(artifact, destination/name)
+        sample = json.loads((artifact/'result.json').read_text())
+        runs.append(dict(name=name, warm=index != 0, source=sample['source'],
+                         configuration=sample['configuration'], status=result.returncode,
+                         start=sample['start'], end=sample['end']))
+        status = result.returncode or sample['status']
+        if sample['source'] != source or sample['configuration'] != CONFIGURATION:
+            raise StructuralError('calibration campaign source or configuration changed')
+        report = dict(source=source, start=started, end=time.time(), status=status, runs=runs,
+                      sample_choice='maximum-of-three-warm-serial', policy=policy)
+        (destination/'result.json').write_text(json.dumps(report, indent=2)+'\n')
+        print('CALIBRATION-CAMPAIGN '+json.dumps(dict(sample=name, status=status,
+              wall_s=sample['end']-sample['start'], warm=index != 0)), flush=True)
+        if status:
+            return status
+    return 0
+
+
 def main():
+    if sys.argv[1:] == ['--campaign']:
+        return campaign()
     if sys.argv[1:2] == ['--case']:
         return case_runner(sys.argv[2:])
     if sys.argv[1:2] == ['--compare'] and len(sys.argv) == 4:
