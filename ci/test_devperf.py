@@ -60,6 +60,24 @@ class Performance(unittest.TestCase):
             self.assertEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust+'\nfn other() {}', 'case.rs', 'probe'))
             self.assertNotEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust.replace('true','false'), 'case.rs', 'probe'))
 
+        for path, source, changed in (
+                ('case.py', 'def helper():\n    return 1\ndef probe():\n    return helper()\n', 'return 2'),
+                ('case.rs', "fn helper() { let brace = '}'; } fn probe() { helper(); }", "let brace = '{'")):
+            original = case_identity(source, path, 'probe')
+            altered = source.replace('return 1', changed) if path.endswith('.py') else source.replace("let brace = '}'", changed)
+            self.assertNotEqual(original, case_identity(altered, path, 'probe'))
+        for text in ("fn probe() { let c = '}'; assert!(true); }",
+                     'fn probe() { let s = r###"} fn fake() {"###; assert!(true); }',
+                     'fn probe() { /* outer } /* nested { */ } */ assert!(true); }'):
+            self.assertNotEqual(case_identity(text, 'case.rs', 'probe'), case_identity(text.replace('true', 'false'), 'case.rs', 'probe'))
+        for path, source in (('case.py', '@marker(1)\ndef probe():\n    pass\n'),
+                             ('case.rs', '#[marker(1)]\nfn probe() {}')):
+            self.assertNotEqual(case_identity(source, path, 'probe'), case_identity(source.replace('marker(1)', 'marker(2)'), path, 'probe'))
+        source = 'def leaf():\n    return 1\ndef helper():\n    return leaf()\ndef probe():\n    return helper()\n'
+        self.assertNotEqual(case_identity(source, 'case.py', 'probe'), case_identity(source.replace('return 1', 'return 2'), 'case.py', 'probe'))
+        source = 'fn leaf() { } fn helper() { leaf(); } fn probe() { helper(); }'
+        self.assertNotEqual(case_identity(source, 'case.rs', 'probe'), case_identity(source.replace('fn leaf() { }', 'fn leaf() { return; }'), 'case.rs', 'probe'))
+
     def test_target_retention(self):
         """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.
         ´claim:devperf:target-retention-preserves-metadata´

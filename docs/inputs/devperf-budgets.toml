@@ -982,7 +982,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [8132.409517886117, 8570.327793015167, 8219.834990799427]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_numeric_correspondence", digest = "58c13f38a6778edce82dd93762c8c0cb45690d8a2820795c86e6f7be03140d6b", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_numeric_correspondence", digest = "fef8a564fbac68319c6a792b7af87629fb76216b05126faf33b78e12812201a5", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1000,7 +1000,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [16117.438807850704, 16564.407753990963, 16172.777706058696]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_numeric_word_fragments", digest = "26cd5a220b69aa805f1611e67ef07826ae436b6826e46e943a6cc5248778f8cf", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_numeric_word_fragments", digest = "ef3da9cbd1240176b148027bb0dd3a60e3a4d7e0ea38fd2b4bb44703d693b273", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1018,7 +1018,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [4249.551088782027, 4381.821953924373, 4297.4825808778405]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_release_tags", digest = "5db374e6ca44d40747fed5005b922af847c18fd825410853620958a2336badd8", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_release_tags", digest = "1cbf0f933a1cca4a6c20f4a2717a9c2d97a9accb11eb63499978ab98f87ace52", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1036,7 +1036,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [4388.341172831133, 4632.0821810513735, 4351.612932980061]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_rendered_continuations", digest = "68548c12d696122f8e287b8e21c72cc075a2af8ed575025352285f5b08cde9f0", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_rendered_continuations", digest = "34c62c9f64a7315eb2aa5bcb6444a78e2bb932fdc076f13b1fd760acafdfa9ae", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1054,7 +1054,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [3036.0379291232675, 2978.810225147754, 3090.6685509253293]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_design.py", function = "test_rendered_spacing", digest = "6ca4fe7cdaa820438b71963e8182e53e86c86bbefdb7633988de0721aed64d0d", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_rendered_spacing", digest = "c6ce779527279a6e531668a4d06afbae6aeeca3e49d75e7425572e5a6b9096ac", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1072,7 +1072,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [2113.2188190240413, 2042.0358930714428, 2124.1963289212435]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_design.py", function = "test_tracked_prose_boundaries", digest = "c1f1ca399b69e9d382b9c6a1af36977752494c63cad195e71f9e6e6ff2c947b7", owner = "lane/design" }
+calibration_source = { path = "ci/test_design.py", function = "test_tracked_prose_boundaries", digest = "607d5f625a32a58c692d9d9058e3aa60907a6e1bbed5729680f1ab221f61c360", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1090,7 +1090,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [8883.517784066498, 8800.954158883542, 8799.435753840953]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "ci/test_discipline.py", function = "test_secret_carrier_traits", digest = "adc93899d2815dc5a9d08cbc304656f4cf151135a89f1c275bc66c3ae547ca77", owner = "lane/design" }
+calibration_source = { path = "ci/test_discipline.py", function = "test_secret_carrier_traits", digest = "4f8021cdadad2308e36e5744d2c3a314e934af7a81777d700324d239870d82a4", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1108,7 +1108,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [777.6503490749747, 764.0414841007441, 709.3237789813429]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "ci/test_harness.py", function = "test_host_commit_isolation", digest = "53a89c3e837dd15b4576e66b124e134d1945b01b5d9e8bc3ce6905e6fe2bade2", owner = "lane/design" }
+calibration_source = { path = "ci/test_harness.py", function = "test_host_commit_isolation", digest = "887ba918cee3c938b926ede66b30b62af306eeeb86ff4255a39e1f23aba104fc", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1126,7 +1126,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [715.4435380361974, 717.1839601360261, 699.8531559947878]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_harness.py", function = "test_wallet_commit_isolation", digest = "22691c46cd73cf44f870045cf73d9683e5e43bc049d7dfc3bf9e2c9ade1bb156", owner = "lane/design" }
+calibration_source = { path = "ci/test_harness.py", function = "test_wallet_commit_isolation", digest = "aa820c73a382efbc9e526a64a6d81323b3319b8173230b987a9804e17b6b0b7e", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1144,7 +1144,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [8933.325961930677, 9504.246441880241, 8897.863722173497]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_host_runtime.py", function = "test_independent_instances", digest = "d00da4130df53ea0627e274d7c29ba526f5105381737822e65ee79f3536a8417", owner = "lane/design" }
+calibration_source = { path = "ci/test_host_runtime.py", function = "test_independent_instances", digest = "f3b975eb1231296ecbfb1896c3e0fe28392b677dd52d7e6741d2cc025b08a328", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1162,7 +1162,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [2438.7787599116564, 2421.314036939293, 2356.676983181387]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "ci/test_host_runtime.py", function = "test_statement_type_boundary", digest = "4cc188b84144b7d8f59a202d71d017ae346820b17e4d1892445f902317a73359", owner = "lane/design" }
+calibration_source = { path = "ci/test_host_runtime.py", function = "test_statement_type_boundary", digest = "32f3f9aab28a93e79bc8e37355dc70ff90eb8f5fa2d561cf5ccde58f19df0cce", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1180,7 +1180,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [3449.98905621469, 3489.9166871327907, 3248.648694017902]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_host_runtime.py", function = "test_storage_statements", digest = "e153a8a1bcd806fcbd06d934da9b95847451cc01c9a84a12b41bc8d077e690f5", owner = "lane/design" }
+calibration_source = { path = "ci/test_host_runtime.py", function = "test_storage_statements", digest = "0f9a23704cfb8f8f43da8737b50a3bf7635c460172dd96c17cc0cdacd1568153", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1198,7 +1198,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [5313.021635869518, 5325.505279935896, 6815.304628107697]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_census", digest = "17c84242cf76d3472a8394428efd83a3fd60f4db41639c5a6a79634cc5e419bb", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_census", digest = "945a724c1f41c7a9e1b0cffafad7848e3e6f361895cd299d2270a2469a31aae8", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1216,7 +1216,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [2156.0839018784463, 2200.1036419533193, 2239.969748072326]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_completion", digest = "0ea7b1a2cb3cd99d78d132ed5d6e6f8a5b1f8a890f764068139a31feb05fbaaa", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_completion", digest = "0bac901c92652be9ae969e89e84ec33bedbca4861272abd62afb59a83dbe8ea9", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1234,7 +1234,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [8976.838394999504, 9067.803886020556, 9947.33343902044]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_delegation", digest = "51dc7cdc4a60510e9501fb5c27aea823d0ad3a766572aa6eabae42dadca343ff", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_delegation", digest = "236a91368c7d73ffe418101f8ca798ae4a5f1d23ce3c1df8cfdd12b4dff676d3", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1252,7 +1252,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [3565.5467950273305, 3553.662323160097, 3755.090021993965]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_cargo_delegation", digest = "b98eac588dcfceae3972a8c40aa6e970623539c9bb5ec4f434bdfe7258556345", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_cargo_delegation", digest = "52dd19aa552fe38685786d8b408603cb6a72715924f0fe70298926c106273200", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1270,7 +1270,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [9311.954678036273, 9602.516009937972, 9692.233743146062]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_runtime_delegation", digest = "a422f60c9a87d5b02ae50e5c2b63c864f97406d5ac71b9681576c054c2938bc0", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_runtime_delegation", digest = "c09140c6adff865e512970c797ffbc869b904b99b21bd2c471ae1c1290a6d8a6", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1288,7 +1288,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [36414.58950494416, 36248.13404912129, 36983.50044502877]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_service_ownership", digest = "1a290a589f2778efe7ea35d5b0c1c9f6416d16b58f9dc30c2c8c9f3b77f7f305", owner = "lane/design" }
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_service_ownership", digest = "4f1d9449ce0ee22742ee4b6723ff28c45926ff728637feeeea3da0dac6915eec", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1306,7 +1306,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [2202.147011179477, 2744.6149769239128, 2577.0834288559854]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_observe_runtime.py", function = "test_epoch_inputs", digest = "23df46e3e0b0bcbb106f667f14201335380713ca3afce8c745e08ec5b93f0004", owner = "lane/design" }
+calibration_source = { path = "ci/test_observe_runtime.py", function = "test_epoch_inputs", digest = "ddb16c542ec98906c549070c66e096e447c21c8e8581ef63800821cae44b8f36", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1324,7 +1324,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [5394.187753088772, 6768.912934930995, 6469.235412077978]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_observe_runtime.py", function = "test_four_mode_results", digest = "f6347929394b36bd82a376f62b1aaf4f3b8469e3934c1718614f575c3fdef79f", owner = "lane/design" }
+calibration_source = { path = "ci/test_observe_runtime.py", function = "test_four_mode_results", digest = "bbc64ab2fd77eae5c60313274e2b4aaece92db8ffebb926477a3e48d40235b65", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1342,7 +1342,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [3847.3394990433007, 5102.067029103637, 4445.377834839746]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_observe_runtime.py", function = "test_title_suite", digest = "c5f4f40029f2cfa455eb4f0a48ef829012dc49cee945a504f79be5cdf8831062", owner = "lane/design" }
+calibration_source = { path = "ci/test_observe_runtime.py", function = "test_title_suite", digest = "5e6ec7dfee6a9d313bd4e3fb1cd9c3790392c7af24bdde036101060c6e782abb", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1360,7 +1360,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [1640.6814029905945, 1635.8326429035515, 1644.2576218396425]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_testkit.py", function = "test_consumer_seed", digest = "0e055049f45cfd29259c1063386e06f9b4e9cab711b5d409a1fd5a706b7edbca", owner = "lane/design" }
+calibration_source = { path = "ci/test_testkit.py", function = "test_consumer_seed", digest = "1a8289290d1e3780e63c1838d71989d498199dee661659e6f0b3fead2d05b739", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1378,7 +1378,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [1585.4513440281153, 1559.7488267812878, 1599.1155749652535]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_testkit.py", function = "test_property_seed", digest = "b76fa0e154becdd9fe2cb7a2c13ece83e461b53d317f4b448080e6b328b8ff64", owner = "lane/design" }
+calibration_source = { path = "ci/test_testkit.py", function = "test_property_seed", digest = "657a4d8858615fc4db06ab32df1925afdc42d2f7507f759bc960f330cd9bdda4", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1396,7 +1396,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [9812.468798132613, 9930.28698512353, 9843.655407894403]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_wallet_boundary.py", function = "test_confinement", digest = "5f04f1a1ca1d13cb614608d9787355daca906c5c6d0356eefe2a17696008200c", owner = "lane/design" }
+calibration_source = { path = "ci/test_wallet_boundary.py", function = "test_confinement", digest = "213740bea0e843ac64ea3c4a2187506ba50a23e85b1a6bd58c65cfce6be13331", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1414,7 +1414,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [10762.430387083441, 10541.572659974918, 10835.692926077172]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "ci/test_wallet_boundary.py", function = "test_dependency_features", digest = "22ac4b3e8f97e71840a7a1a76819e95fa0cc606ed010ab97f4893ef2eebaf4d8", owner = "lane/design" }
+calibration_source = { path = "ci/test_wallet_boundary.py", function = "test_dependency_features", digest = "f73840addd21e66768cd6fc409da28dc52bd2170e6f8f25c48c7ec71f54cb2f4", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1432,7 +1432,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [2873.63424198702, 2716.652800096199, 2665.7333050388843]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/documents/tests/integration.rs", function = "repository_fixed_point", digest = "2c6ce92598b2bdddaa789282bcfd5be420921faf61c623d44e55e640b3dad22e", owner = "lane/design" }
+calibration_source = { path = "packages/documents/tests/integration.rs", function = "repository_fixed_point", digest = "67ac7dd7a96874525100cd23ee121fa99861e88cf8ef70e9e5e7e963fc302c35", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1450,7 +1450,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [292.64233401045203, 181.03591492399573, 186.82088889181614]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/act-profile/src/tests.rs", function = "commitment_trace_privacy", digest = "492f6f7bc09e05121739b71a9e94a2bcbc727197cdab00db55a30115cb492612", owner = "lane/design" }
+calibration_source = { path = "packages/act-profile/src/tests.rs", function = "commitment_trace_privacy", digest = "21d4820e7709587c98cfb748e813445a79b12483a6c077a18750dff57ec14bb5", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1468,7 +1468,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [126.3667109888047, 128.12169711105525, 128.00830719061196]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/src/postgresql.rs", function = "real_cancellation", digest = "9042d4230ca4f7c5c2be595aa7b0bb684e459b2fb2b6ea2326f31522a358e4e0", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/postgresql.rs", function = "real_cancellation", digest = "b0c9beac756f477bfb0b654359caa0a0b3fb24ef9ed2dc2dec806a68377367f6", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1486,7 +1486,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [140.54174395278096, 141.30662195384502, 138.2952779531479]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/src/postgresql.rs", function = "relay_throughput", digest = "42d371123afadeebd669f3b94a7ecfa4d0f108f7de4d4d62a6590aa899c67e67", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/postgresql.rs", function = "relay_throughput", digest = "036f309e953700cb57a0b65251938c0dc91c5eee134b2b50d0c099b14d75ca8f", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1504,7 +1504,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [139.12851084023714, 138.61811789683998, 139.83452506363392]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "ceiling_login_progress", digest = "fefbf4f348344399425ed6ec9328b8ea0acc48c9da296173ab0a0c84b6c2505e", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "ceiling_login_progress", digest = "a445fb226dc6d04f972452c9859569350a8133abdc379b68fd6385f6501ba7c6", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1522,7 +1522,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [402.8484739828855, 417.72542195394635, 419.8608100414276]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_cost", digest = "566c2f32e21e283e2f30e1d75bac2a6942777fa7c93a107fa006b52453876956", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_cost", digest = "22712095a765b7739b5deca04cf2330387d24c49711a9bfbaaf964f197f568a0", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1540,7 +1540,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [102.99371811561286, 103.01655088551342, 104.003133950755]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_permits", digest = "1f1f7d1af58284fa9eadb638a1fd790eedd09aa385056ad88ca839b7b71c5e47", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_permits", digest = "2259929bcb4edaae554c6415ffcee443277476cd457beb165dd194093d184d75", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1558,7 +1558,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [105.53354513831437, 180.89739582501352, 136.2767550162971]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_competing_writers", digest = "7499e807023f07979f6db54d4e7f3610e009e3597cc21802d4e7a319191c52ca", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_competing_writers", digest = "79add2437bb2d6fe2c3b93bfc819308cf06a62957c3698d67ea3f0ee060c11e2", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1576,7 +1576,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [319.1868900321424, 479.5944979414344, 306.37641879729927]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_contract", digest = "415bbb9388395943557ebf4b5b6ada954041c6c19dbe53b4f0a0d8a89e1becde", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_contract", digest = "25ad030425488764e2f828582278a916e7be0de6756c3f553076992ee0c031b8", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1594,7 +1594,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [9594.503327040002, 7429.788020905107, 7672.51146491617]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_growth", digest = "790ca80327bcc148e0f58e34ff4c06b585018b7fbe150550d9b43719dae0d8c6", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_growth", digest = "5705e149414dc2ff74f7540636ea3fbadff717830a565c862b8d6f313e5632e6", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1612,7 +1612,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [54.60252286866307, 59.64457895606756, 60.54810783825815]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_historical_constants", digest = "e543f9c6bf5eb7380d73d40871876a9f823415375f4829435ad5fe74c0dc797d", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_historical_constants", digest = "71dbb462d19d4f6c07a69a01e452d9055335ad833b431b54f9b3bacab1cfd5ff", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1630,7 +1630,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [56.69034086167812, 60.00225688330829, 64.29345509968698]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_rebuild", digest = "0cf3662bf9bd44bdeca01dfdf9d0cfda4186e1ffccdca646bbe6c12c013a03b3", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_rebuild", digest = "a5dd79adc1af7747c2f1400f67959b9696383fb57e75a5ae0d8cf3f01ce3e527", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1648,7 +1648,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [82.20367203466594, 84.9797239061445, 91.14889381453395]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_runtime", digest = "d272e8ffbe6cdbdf7ab3b23c835b228caa1307d06107905f614bb131f0b9e0bf", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_runtime", digest = "174682e05b2085dfca388250c33aaea89a293670f6cf577cf256548cc8b59d4a", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1666,7 +1666,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [209.37219797633588, 227.45824907906353, 247.4000270012766]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_scaling", digest = "9954094c192f555532a89184a35b6224e3584e7649c00f3f139ce83897df12bd", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_scaling", digest = "25e71927b3c3f0967528e6339eff0bf3f8b6c2e20d441bfe146171c0804ebb51", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1684,7 +1684,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [335.60585998930037, 361.53564299456775, 374.2822231724858]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_schema_identity", digest = "2494b5de7d967ee206c51c49520558279b2578d81908922187f51a601eada3a9", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_schema_identity", digest = "d3d2f21fe7afdfef4d78c4eaf977e2f82dac8f1fc56de58ac7a3a881919026e2", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1702,7 +1702,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [194.83778695575893, 206.1436220537871, 185.85787806659937]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_tamper", digest = "9ec532e0997b46a9227f5abad9ea525cdd782d2b4f7fd0d52d22c6d86fa2b7be", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/storage/tests.rs", function = "storage_tamper", digest = "3d9b359631c4da6faa87675e52142e24aabbf53b1259ab4c5ea127f7a843fc64", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1720,7 +1720,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [1249.2145178839564, 2303.4797401633114, 1301.6730879899114]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "rotation", digest = "f37cbf8fcc779a338bc7d09938c9feeaa0cbd44751d475d4dd97c5b15abffde9", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "rotation", digest = "c3c2d0bce0613ff68bcba72a22202af215c1fbe8de8ddc6a94db8f5dc653e284", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1738,7 +1738,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [4168.743625981733, 4235.1874760352075, 4221.144458977506]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "settlement_forks", digest = "4fa37fbdddc75d0096c73cbf0e45f40cc7bd10f932a5c283d06e729f92012948", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "settlement_forks", digest = "768b068ff2550c3af814dceadce729f6e8617173dde36c96fa8305d31892201b", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1756,7 +1756,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [1268.1264239363372, 1278.1149719376117, 1387.819356052205]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "signed_reads", digest = "8936052632d72ee1ea94b69aab23072f4b40d2ce92fc8354c8eb08435d91518b", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "signed_reads", digest = "de8f78b0d8dcf327c65cf5829524602c30c3b3f572ba7d2573ee0930a63c4f8c", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1774,7 +1774,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [395.73965105228126, 403.9985300041735, 399.9142430257052]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/wallet/src/rpc_cookie.rs", function = "descriptor_cases", digest = "0f4c7200d2c138e78236c8732e4ae3a714f00bee846f3c58a03f86f495c88046", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/src/rpc_cookie.rs", function = "descriptor_cases", digest = "2eba5fed020d31089205d4d47d0bbc2ff0a47bad02d3513108b3d988b19fa95c", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1792,7 +1792,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [136.67741394601762, 134.70446993596852, 133.7620869744569]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/wallet/src/rpc_http.rs", function = "acquisition_cases", digest = "846a3ed22576e0fe8925bf50783546064f0655d8a4c9acce240622fca3e100ef", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/src/rpc_http.rs", function = "acquisition_cases", digest = "f443d5a6853f3b9394f23a2c8d85402469683c413c33ef88dcd4a23d07abb348", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1810,7 +1810,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [4919.922739034519, 4926.012095995247, 4919.299381086603]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/wallet/tests/wire.rs", function = "wire_compatibility", digest = "82e270c7fe2e0226847ccba4b440dbe58f7bb933fcbb6b92f084fffcc5a84037", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/wire.rs", function = "wire_compatibility", digest = "0869c7036f557091fac8d5e0a991b98f14b3e156f8e9a1aace3fec54b720a696", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1948,7 +1948,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [155.0595599692315, 153.39159592986107, 145.67377907224]
 calibration_selected_sample = 1
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_source = { path = "ci/test_devperf.py", function = "test_distinct_excess_ledger", digest = "b160acc001f06d52339fa76b05f67fde6308c4b5e99c8b36f1f0e3c26bdaebf2", owner = "lane/design" }
+calibration_source = { path = "ci/test_devperf.py", function = "test_distinct_excess_ledger", digest = "f99ce78c1fbfcdc5472722f6797ce7fe37842533c157f709989923474bab0e3b", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2

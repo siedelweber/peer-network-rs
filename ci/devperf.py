@@ -108,29 +108,102 @@ def calibration_declarations(declared):
             raise StructuralError(name+': budget differs from the rule over recorded walls')
 
 
-def case_identity(text, path, function):
-    """Hash the exact named function, independently of neighbouring cases."""
+def identity_functions(text, path):
+    """Collect exact functions and conservative same-file reference edges."""
+    functions = {}
     if path.endswith('.py'):
-        nodes = [node for node in ast.walk(ast.parse(text))
-                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == function]
-        bodies = [ast.get_source_segment(text, node) for node in nodes]
+        tree = ast.parse(text)
+        parents = {child: node for node in ast.walk(tree) for child in ast.iter_child_nodes(node)}
+        nodes = [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
+        def scope(node):
+            names = []
+            while node in parents:
+                node = parents[node]
+                if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                    names.append(node.name)
+            return tuple(reversed(names))
+        keys = {node: scope(node)+(node.name,) for node in nodes}
+        known = set(keys.values())
+        lines = text.splitlines(keepends=True)
+        for node, key in keys.items():
+            first = min([node.lineno]+[decorator.lineno for decorator in node.decorator_list])
+            body = ''.join(lines[first-1:node.end_lineno])
+            refs = set()
+            for use in ast.walk(node):
+                if isinstance(use, ast.Name) and isinstance(use.ctx, ast.Load):
+                    for size in range(len(key), -1, -1):
+                        target = key[:size]+(use.id,)
+                        if target in known:
+                            refs.add(target)
+                            break
+                elif isinstance(use, ast.Attribute) and isinstance(use.value, ast.Name):
+                    if use.value.id in {'self', 'cls'}:
+                        target = key[:-1]+(use.attr,)
+                        if target in known: refs.add(target)
+                    elif (use.value.id, use.attr) in known:
+                        refs.add((use.value.id, use.attr))
+            functions[key] = (body, refs)
     else:
         from source_sites import rust_mask
         masked = rust_mask(text)
-        bodies = []
-        for match in re.finditer(r'\bfn\s+'+re.escape(function)+r'\s*\(', masked):
+        pairs = {}
+        stack = []
+        for match in re.finditer(r'[{}\[\]]', masked):
+            char = match[0]
+            if char in '{[': stack.append((char, match.start()))
+            elif not stack or stack[-1][0] != {'}':'{', ']':'['}[char]:
+                raise StructuralError('unbalanced Rust identity source: '+path)
+            else:
+                _, start = stack.pop()
+                pairs[start] = match.start()
+        if stack: raise StructuralError('unclosed Rust identity source: '+path)
+        definitions = []
+        for match in re.finditer(r'\bfn\s+(\w+)\s*(?:<|\()', masked):
             opening = masked.find('{', match.end())
-            if opening < 0: raise StructuralError('case has no body: '+function)
-            depth = 1
-            end = opening+1
-            while end < len(masked) and depth:
-                depth += (masked[end] == '{')-(masked[end] == '}')
-                end += 1
-            if depth: raise StructuralError('case has an unclosed body: '+function)
-            bodies.append(text[match.start():end])
-    if len(bodies) != 1:
+            semicolon = masked.find(';', match.end())
+            if opening < 0 or 0 <= semicolon < opening: continue
+            end = pairs[opening]+1
+            start = match.start()
+            # Include declaration modifiers and every attached outer attribute.
+            prefix = re.search(r'(?:(?:pub(?:\([^)]*\))?|async|const|unsafe|extern)\s+)*$', masked[:start])
+            start = prefix.start()
+            while True:
+                previous = start-1
+                while previous >= 0 and masked[previous].isspace(): previous -= 1
+                if previous < 0 or masked[previous] != ']': break
+                openings = [left for left, right in pairs.items() if right == previous]
+                if not openings or openings[0] == 0 or masked[openings[0]-1] != '#': break
+                start = openings[0]-1
+            definitions.append((match[1], start, end, opening))
+        counts = {}
+        for name, start, end, opening in definitions:
+            ordinal = counts.get(name, 0); counts[name] = ordinal+1
+            key = (name, str(ordinal))
+            references = set(re.findall(r'\b[A-Za-z_]\w*\b', masked[opening+1:end-1]))
+            functions[key] = (text[start:end], references)
+        # Method receivers and function values need not use direct call syntax.
+        # Include every same-file candidate for a referenced name rather than
+        # guessing a receiver type and silently omitting a possible callee.
+        for key, (body, refs) in list(functions.items()):
+            functions[key] = (body, {other for other in functions if other[0] in refs})
+    return functions
+
+
+def case_identity(text, path, function):
+    """Hash attributes and transitive same-file callees, excluding other files."""
+    functions = identity_functions(text, path)
+    roots = [key for key in functions if (key[-1] if path.endswith('.py') else key[0]) == function]
+    if len(roots) != 1:
         raise StructuralError('case identity is missing or ambiguous: '+path+'::'+function)
-    return hashlib.sha256(bodies[0].encode()).hexdigest()
+    pending = roots[:]
+    reached = set()
+    while pending:
+        key = pending.pop()
+        if key in reached: continue
+        reached.add(key)
+        pending.extend(functions[key][1]-reached)
+    payload = [(key, functions[key][0]) for key in sorted(reached)]
+    return hashlib.sha256(json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
 
 
 def calibration_identities(declared, root):
@@ -148,7 +221,7 @@ def calibration_identities(declared, root):
                 actual = None
             result.append(dict(budget=name, status='exact' if actual == identity['digest'] else 'pending',
                                owner=identity['owner'], measured=identity['digest'], current=actual,
-                               reason='same-body' if actual == identity['digest'] else 'changed-body'))
+                               reason='same-case-closure' if actual == identity['digest'] else 'changed-case-closure'))
     return result
 
 
