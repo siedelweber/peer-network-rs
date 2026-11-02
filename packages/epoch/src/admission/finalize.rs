@@ -198,11 +198,11 @@ fn verdict(round: &StampRound, effective: &schedules::Effective, b: &mut Budget)
 
 /// Evaluate final-set gates without mutating candidate causes, history or schedules.
 /// Candidate verification supplies the complete proposed causes; it never asserts
-/// publication. The numerical context is consumed, so no mutable caller state escapes
+/// publication. Capacity is checked by candidate construction before this call. The numerical context is consumed, so no mutable caller state escapes
 /// a refusal. Closure and common-marker deployment verification remain separate premises.
 /// (´[ROOT-alg:design:admission]´)
 /// # Errors
-/// Refuses schedule binding, capacity, own insolvency, certified stamp failures,
+/// Refuses schedule binding, own insolvency, certified stamp failures,
 /// unresolved comparisons after declared refinement, and bounded kernel failures.
 #[tracing::instrument(
     name = "alg:design:admission",
@@ -224,11 +224,6 @@ pub fn admit(
 ) -> Result<package::AdmittedBoundary, FinalRefusal> {
     let effective = effective(candidate, schedule)?;
     let binding = candidate.input().causes.bindings.last().ok_or(AdmissionRefusal::Evidence)?;
-    if u64::try_from(binding.sequence.len()).map_err(|_| AdmissionRefusal::Failed(Gate::Capacity))?
-        > candidate.input().closure.policy.target
-    {
-        return Err(AdmissionRefusal::Failed(Gate::Capacity).into());
-    }
     let state = match compiler::compile_candidate(
         candidate,
         registration,

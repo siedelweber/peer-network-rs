@@ -4940,6 +4940,21 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::admission_individual_straddle",
+        "pn-epoch::solve::admission::admission_solvent_support"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::admission-review",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

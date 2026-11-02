@@ -995,3 +995,86 @@ fn marker_context_controls(next: &package::CandidateContext, prior: &ClosedBound
         ));
     }
 }
+
+/// Claim: The finite coupled probe retains individual safety as unresolved when its outward standing interval straddles the wall; no unresolved stamp is published.
+/// ´claim:admission:individual-straddles-withhold-publication´
+/// ´test:integration:admission-individual-straddle´
+#[test]
+fn admission_individual_straddle() {
+    let context = candidate(
+        &coupled(),
+        1,
+        &[
+            ("b", NumberId::NumbersAdmissionStraddleSourceBurn.value()),
+            ("a", NumberId::NumbersAdmissionIndividualTargetBurn.value()),
+        ],
+    );
+    let mut plan = procedure(&context);
+    plan.solve.grid = vec![NumberId::NumbersAdmissionPositiveStrength.value().into(), "0".into()];
+    let state = compiled(&context);
+    let bound = bind_procedure(&state, plan.solve.clone(), &Published(plan.solve.clone()), Limits::default()).unwrap();
+    let fence = pn_epoch::fence::search(&bound, None).unwrap();
+    let solved = pn_epoch::conserved::solve(&bound, &fence).unwrap();
+    pn_epoch::conserved::replay(&bound, &solved).unwrap();
+    let round = solved.rounds.last().unwrap();
+    assert_eq!(round.certified.rung, NumberId::NumbersAdmissionPositiveStrength.value());
+    let wall = Fraction::parse(NumberId::NumbersAdmissionWall.value());
+    let individual = &round.standing["a"];
+    assert!(wall.minus(Fraction::parse(&individual.lower)).0 > 0);
+    assert!(Fraction::parse(&individual.upper).minus(wall).0 > 0);
+    assert!(matches!(
+        run(&context, &plan, &schedule(&context, NumberId::NumbersAdmissionWall.value())),
+        Err(FinalRefusal::Refused(AdmissionRefusal::Indecisive(
+            admission::Comparison::IndividualSafety
+        )))
+    ));
+}
+
+/// Claim: The finite coupled own-solvency probe uses the same supporter in both histories; its support lifts a solvent author's stamp above the wall but cannot fund an insolvent author's debit.
+/// ´claim:admission:real-support-cannot-fund-own-debits´
+/// ´test:integration:admission-solvent-support´
+#[test]
+fn admission_solvent_support() {
+    let context = candidate(
+        &coupled(),
+        1,
+        &[
+            ("b", NumberId::NumbersAdmissionStraddleSourceBurn.value()),
+            ("a", NumberId::NumbersAdmissionPoorBurn.value()),
+        ],
+    );
+    let mut plan = procedure(&context);
+    plan.solve.grid = vec!["0".into()];
+    let led = schedule(&context, NumberId::NumbersAdmissionWall.value());
+    let admitted = run(&context, &plan, &led).unwrap();
+    let wall = Fraction::parse(NumberId::NumbersAdmissionWall.value());
+    let own = Fraction::parse(NumberId::NumbersAdmissionPoorBurn.value()).minus(wall);
+    assert!(own.0 > 0);
+    assert!(wall.minus(own).0 > 0);
+    let support = Fraction::parse(NumberId::NumbersAdmissionStraddleSourceBurn.value())
+        .minus(wall.times(Fraction(2, 1)))
+        .over(Fraction(3, 1));
+    let expected = own.plus(support).over(Fraction(1, 1).plus(Fraction(2, 3)));
+    let result = admitted.evidence().rounds.last().unwrap();
+    let stamp = result.stamps.iter().find(|(act, _)| act.author == "a").unwrap().1;
+    assert_eq!(Fraction::parse(&stamp.lower), expected);
+    assert_eq!(Fraction::parse(&stamp.upper), expected);
+    assert!(expected.minus(wall).0 > 0);
+    let insolvent = candidate(
+        &coupled(),
+        1,
+        &[
+            ("b", NumberId::NumbersAdmissionStraddleSourceBurn.value()),
+            ("a", NumberId::NumbersAdmissionInsolventBurn.value()),
+        ],
+    );
+    assert_eq!(context.input().causes.history.acts(), insolvent.input().causes.history.acts());
+    assert!(matches!(
+        run(
+            &insolvent,
+            &plan,
+            &schedule(&insolvent, NumberId::NumbersAdmissionWall.value())
+        ),
+        Err(FinalRefusal::Refused(AdmissionRefusal::Failed(Gate::OwnSolvency)))
+    ));
+}

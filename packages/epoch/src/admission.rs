@@ -132,7 +132,6 @@ pub enum Gate {
     OwnSolvency,
     IndividualSafety,
     EpochPolicy,
-    Capacity,
 }
 
 /// Operational stops publish no mathematical verdict.

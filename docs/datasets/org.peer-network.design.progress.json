@@ -36684,10 +36684,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 491",
+          "exact": "1 492",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 491",
+          "num": "1 492",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36702,7 +36702,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1491
+      "total": 1492
     },
     {
       "category": "record-coverage",

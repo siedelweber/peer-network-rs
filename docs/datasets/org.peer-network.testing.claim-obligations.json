@@ -1294,7 +1294,9 @@
         "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks",
         "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers",
         "EPOCH::claim:admission:closure-requires-attested-cause-and-duration",
-        "EPOCH::claim:admission:closure-replay-binds-one-common-context"
+        "EPOCH::claim:admission:closure-replay-binds-one-common-context",
+        "EPOCH::claim:admission:individual-straddles-withhold-publication",
+        "EPOCH::claim:admission:real-support-cannot-fund-own-debits"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",

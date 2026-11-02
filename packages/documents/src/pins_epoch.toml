@@ -306,6 +306,10 @@ id = "num:numbers:admission-endpoint-grid"
 value = "1/4096"
 
 [[rows]]
+id = "num:numbers:admission-individual-target-burn"
+value = "7/10"
+
+[[rows]]
 id = "num:numbers:admission-insolvent-burn"
 value = "1/4"
 

@@ -230,8 +230,8 @@ pub struct CandidateContext {
 /// Immutable admitted boundary constructed only after every final gate passes.
 /// (´[ROOT-inv:design:atomic-admission]´)
 /// ```compile_fail
-/// fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {
-///     pn_epoch::package::AdmittedBoundary { candidate }
+/// fn admit(candidate: pn_epoch::package::CandidateContext, evidence: pn_epoch::admission::FinalEvidence) -> pn_epoch::package::AdmittedBoundary {
+///     pn_epoch::package::AdmittedBoundary { candidate, evidence }
 /// }
 /// ```
 #[derive(Clone, Debug)]

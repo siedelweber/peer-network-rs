@@ -1874,6 +1874,14 @@
       "review": "A reversed self-supported complete history checks both debit pre-balances independently, post-debit stamp and policy equality, zero headroom and immutable causes. Precision two is the solver scope minimum with a Scope control, not a sensitivity floor. No deployment authority is claimed."
     },
     {
+      "operation": "pn-epoch::solve::admission::admission_individual_straddle",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:individual-straddles-withhold-publication",
+      "before": "",
+      "after": "Claim: The finite coupled probe retains individual safety as unresolved when its outward standing interval straddles the wall; no unresolved stamp is published.",
+      "review": "A minimum-scope positive-rung solve is independently replayed; its individual interval strictly crosses the wall and final admission withholds publication as IndividualSafety. This is an unresolved-bound witness, not an accuracy-floor claim."
+    },
+    {
       "operation": "pn-epoch::solve::admission::admission_quarantine",
       "path": "packages/epoch/tests/solve/admission.rs",
       "claim": "EPOCH::claim:admission:individual-and-own-gates-cannot-be-averaged",
@@ -1896,6 +1904,14 @@
       "before": "",
       "after": "Claim: The finite two-author candidate refuses an individual deficit despite a passing act-weighted mean; own insolvency and a failing epoch policy remain separate refusals, and rejected attempts do not change candidate causes or the checked schedule.",
       "review": "Separate individual, own-solvency and policy failures retain typed classes. The computed passing mean cannot hide the deficient individual; the checked schedule and candidate remain unchanged. Fixture verifiers supply causes, not host authentication."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::admission_solvent_support",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:real-support-cannot-fund-own-debits",
+      "before": "",
+      "after": "Claim: The finite coupled own-solvency probe uses the same supporter in both histories; its support lifts a solvent author's stamp above the wall but cannot fund an insolvent author's debit.",
+      "review": "The same complete coupled acts retain an unchanged supporter. A hand-derived exact stamp clears safety despite an own rate below the wall; substituting only the target burn makes W1 refuse. No transfer funds the own debit."
     },
     {
       "operation": "pn-epoch::solve::admission::closure_context",

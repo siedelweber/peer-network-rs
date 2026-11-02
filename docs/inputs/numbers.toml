@@ -7182,3 +7182,11 @@ value = "2"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Admission individual-safety boundary control.
+[[rows]]
+id = "num:numbers:admission-individual-target-burn"
+value = "7/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
