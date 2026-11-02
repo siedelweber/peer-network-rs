@@ -141,6 +141,12 @@ fn ridge_definition() {
     let failed = policy(bits(NumberId::NumbersRidgeCertificateFailedPrecision));
     let prefix = kernel::evaluate(&failed, &i).unwrap();
     assert!(prefix.image.is_none());
+    let mut next = "0";
+    for cell in &prefix.cells {
+        assert_eq!(cell.lower, next);
+        next = &cell.upper;
+    }
+    assert_eq!(next, "1/2");
     assert!(kernel::replay(&failed, &i, &prefix).unwrap().image().is_none());
     let bounds = prefix.queries.last().unwrap().evidence.bounds.as_ref().unwrap();
     let zero = rational("0", &mut b);
@@ -228,11 +234,12 @@ fn ridge_comparisons() {
     assert!(!bounds.lower().compare(&zero, &mut b).unwrap().is_gt() && !bounds.upper().compare(&zero, &mut b).unwrap().is_lt());
     let failed = policy(bits(NumberId::NumbersRidgeComparisonFailedPrecision));
     let prefix = kernel::evaluate(&failed, &i).unwrap();
+    assert!(prefix.image.is_some());
     let coarse = kernel::replay(&failed, &i, &prefix).unwrap();
-    assert_eq!(
-        kernel::compare(&coarse, &adjacent[1].0, Floor::RidgeImage).unwrap().verdict,
-        FloorComparison::Indecisive
-    );
+    let comparison = kernel::compare(&coarse, &adjacent[1].0, Floor::RidgeImage).unwrap();
+    assert_eq!(comparison.verdict, FloorComparison::Indecisive);
+    let bounds = comparison.queries.last().unwrap().evidence.bounds.as_ref().unwrap();
+    assert!(!bounds.lower().compare(&zero, &mut b).unwrap().is_gt() && !bounds.upper().compare(&zero, &mut b).unwrap().is_lt());
     let mut refining = policy(bits(NumberId::NumbersRidgeComparisonPrecision));
     refining.precision = Precision::AbsoluteWidthBits(vec![1, bits(NumberId::NumbersRidgeComparisonPrecision)]);
     let r = kernel::evaluate(&refining, &i).unwrap();

@@ -184,58 +184,142 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "reference-map-case"
 category = "case"
-budget_ms = 15000
+budget_ms = 23000
 scope = "one published-fixture map or corpus case"
 reason = "The exact reference declaration retains all Actors, edges, depths and published comparisons; the measured map and corpus cases need a bounded certificate tier."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 11493.976410944015
+measured_own_cpu_ms = 11116.338000000025
+calibration_walls_ms = [11418.162886984646, 11493.976410944015, 11330.153898103163]
+calibration_own_cpu_ms = [11391.600000000006, 11116.338000000025, 11320.55600000006]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "reference-local-case"
 category = "case"
-budget_ms = 60000
+budget_ms = 93250
 scope = "one published-fixture local inclusion case"
 reason = "Interval Jacobians, preconditioning, replay and mutation controls retain the full reference declaration; the local certificate is the longest measured reference case."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 46623.780090827495
+measured_own_cpu_ms = 45714.309
+calibration_walls_ms = [46623.780090827495, 45805.12551008724, 46593.1069299113]
+calibration_own_cpu_ms = [45714.309, 45322.03800000001, 45324.76200000006]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "reference-wall-case"
 category = "case"
-budget_ms = 25000
+budget_ms = 39100
 scope = "one enclosed-reference-wall solve case"
 reason = "The end-to-end wall consumer retains both enclosed and rational solve routes and their replay and adjacent Work controls."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 19529.06831796281
+measured_own_cpu_ms = 17288.996000000017
+calibration_walls_ms = [19529.06831796281, 17732.765055960044, 16814.81598690152]
+calibration_own_cpu_ms = [17288.996000000017, 17259.86700000002, 16807.026999999933]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "reference-certificate-suite"
 category = "suite"
-budget_ms = 90000
+budget_ms = 93250
 scope = "one required reference-certificate group"
 reason = "Allow the exact reference cases and their refusal controls as a separately measured group while preserving the unchanged fast and gate budgets."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 46624.796682968736
+measured_own_cpu_ms = 45714.309
+calibration_walls_ms = [46624.796682968736, 45806.079484988004, 46594.58639007062]
+calibration_own_cpu_ms = [45714.309, 45322.03800000001, 45324.76200000006]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "reference-receiving-case"
 category = "case"
-budget_ms = 15000
+budget_ms = 8000
 scope = "one full-size published receiving showcase comparison"
-reason = "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. The focused measurement is recorded in the receiving reference-tier amendment; the declared allowance also accounts for gate contention without changing any other case budget."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+reason = "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 3995.3410800080746
+measured_own_cpu_ms = 3786.978999999958
+calibration_walls_ms = [3995.3410800080746, 3891.343434108421, 3181.3528470229357]
+calibration_own_cpu_ms = [3786.978999999958, 3744.2299999999696, 3180.98600000004]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "own-burn-case"
 category = "case"
-budget_ms = 15000
+budget_ms = 24000
 scope = "one complete-history own-loss mechanism"
 reason = "The lowest sign-certifying precision retains compilation, both solves and replayed forcing; the smaller histories tested change the response sign. This mechanism has its own allowance rather than borrowing the published-reference tier."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 11999.04110096395
+measured_own_cpu_ms = 9608.464000000027
+calibration_walls_ms = [11999.04110096395, 9900.980258127674, 8875.170900020748]
+calibration_own_cpu_ms = [9608.464000000027, 9631.389999999947, 8870.50700000004]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "own-burn-suite"
 category = "suite"
-budget_ms = 20000
+budget_ms = 24050
 scope = "the required own-loss mechanism group"
 reason = "Allow the mechanism case and harness overhead while retaining its separate case warning and the per-commit gate budget."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 12000.129694119096
+measured_own_cpu_ms = 9608.464000000027
+calibration_walls_ms = [12000.129694119096, 9902.385409921408, 8876.215333119035]
+calibration_own_cpu_ms = [9608.464000000027, 9631.389999999947, 8870.50700000004]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "reference-gate"
@@ -249,294 +333,643 @@ numeric_text = ["reason"]
 
 [[rows]]
 name = "calibrated-marker-recognition-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1350
 scope = "one pn-records::properties::marker_recognition case"
 reason = "The recorded property draw count and generated lineage/burn-recognition predicates remain unchanged; reducing draws would remove declared evidence."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 659.8530740011483
+measured_own_cpu_ms = 639.8780000000688
+calibration_walls_ms = [646.0245889611542, 650.7594378199428, 659.8530740011483]
+calibration_own_cpu_ms = [645.7380000000051, 631.4939999999893, 639.8780000000688]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-typed-corruptions-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1200
 scope = "one pn-records::properties::typed_corruptions case"
 reason = "The recorded property draw count and typed corruption families remain unchanged; reducing draws would remove declared evidence."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 591.7714850511402
+measured_own_cpu_ms = 570.8050000000053
+calibration_walls_ms = [550.6646549329162, 591.7714850511402, 569.6203678380698]
+calibration_own_cpu_ms = [550.3059999999973, 570.8050000000053, 555.0420000000021]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-act-directions-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3000
+budget_ms = 3950
 scope = "one pn-epoch::solve::act_directions case"
 reason = "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion."
-measured_own_cpu_ms = 1903.931
-headroom_multiplier = 1.5
-rounding_ms = 250
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 }, headroom_multiplier = { display = "exact", exact_digits = 32 }, rounding_ms = { display = "exact", exact_digits = 32 } }
+measured_own_cpu_ms = 1920.9329999999927
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1957.6855201739818
+calibration_walls_ms = [1957.6855201739818, 1872.6887768134475, 1919.426616979763]
+calibration_own_cpu_ms = [1920.9329999999927, 1872.1890000000058, 1918.6840000000095]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-act-emission-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1500
+budget_ms = 1850
 scope = "one pn-epoch::solve::act_emission case"
 reason = "The complete accepted-act pair changes emission and retains independently replayed solves and full finite-response transport at the minimum-supported execution, including the preceding Scope-refusal control."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 924.0451089572161
+measured_own_cpu_ms = 855.3420000000305
+calibration_walls_ms = [860.8422090765089, 924.0451089572161, 841.9898359570652]
+calibration_own_cpu_ms = [858.1080000000121, 855.3420000000305, 840.1439999999774]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-burn-depleted-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1200
 scope = "one pn-epoch::solve::burn_depleted case"
 reason = "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 579.478238010779
+measured_own_cpu_ms = 559.2389999999998
+calibration_walls_ms = [579.478238010779, 562.94612493366, 560.8580198604614]
+calibration_own_cpu_ms = [559.2389999999998, 560.28400000001, 560.5139999999765]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-burn-monotone-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1500
+budget_ms = 1300
 scope = "one pn-epoch::solve::burn_monotone case"
 reason = "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 642.7296521142125
+measured_own_cpu_ms = 639.6759999999908
+calibration_walls_ms = [642.7296521142125, 641.0348408389837, 634.4425741117448]
+calibration_own_cpu_ms = [639.6759999999908, 640.3219999999799, 633.6510000000058]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-burn-sibling-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 5000
+budget_ms = 6500
 scope = "one pn-epoch::solve::burn_sibling case"
 reason = "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 3246.729329926893
+measured_own_cpu_ms = 3205.176000000062
+calibration_walls_ms = [3198.7867599818856, 3170.9210330154747, 3246.729329926893]
+calibration_own_cpu_ms = [3184.0779999999922, 3168.336000000018, 3205.176000000062]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-burn-switch-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3750
+budget_ms = 5400
 scope = "one pn-epoch::solve::burn_switch case"
 reason = "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 2686.6871679667383
+measured_own_cpu_ms = 2544.499000000016
+calibration_walls_ms = [2686.6871679667383, 2477.4517461191863, 2505.942895077169]
+calibration_own_cpu_ms = [2544.499000000016, 2473.4149999999886, 2505.5680000000057]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-certified-splits-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1150
 scope = "one pn-epoch::solve::certified_splits case"
 reason = "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 560.8326059300452
+measured_own_cpu_ms = 537.5839999999989
+calibration_walls_ms = [560.8326059300452, 524.0909408312291, 515.9903350286186]
+calibration_own_cpu_ms = [537.5839999999989, 523.8689999999604, 515.7180000000156]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-conserved-projection-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1500
+budget_ms = 1850
 scope = "one pn-epoch::solve::conserved_projection case"
 reason = "Supported and chartered depth projections retain the nonzero-depth cells, exact cell and Work pins, and refusal controls."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 920.326008927077
+measured_own_cpu_ms = 919.7089999999939
+calibration_walls_ms = [920.326008927077, 909.8444518167526, 913.9523799531162]
+calibration_own_cpu_ms = [919.7089999999939, 909.646999999973, 912.3569999999379]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-conserved-residual-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 12000
+budget_ms = 17850
 scope = "one pn-epoch::solve::conserved_residual case"
 reason = "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 8922.396142035723
+measured_own_cpu_ms = 7938.456000000068
+calibration_walls_ms = [7978.348086122423, 7990.28731812723, 8922.396142035723]
+calibration_own_cpu_ms = [7967.675999999992, 7988.982000000028, 7938.456000000068]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-fence-shapes-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1450
 scope = "one pn-epoch::solve::fence_shapes case"
 reason = "Frozen-support shapes retain descending evaluated rung searches, independent primitive replay and width, tilt, wall and attachment refusal controls."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 709.6839991863817
+measured_own_cpu_ms = 658.4339999999163
+calibration_walls_ms = [700.0445760786533, 658.9219840243459, 709.6839991863817]
+calibration_own_cpu_ms = [679.1189999999912, 656.7169999999578, 658.4339999999163]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-compiled-conservation-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2000
+budget_ms = 2250
 scope = "one pn-epoch::solve::partitions::compiled_conservation case"
 reason = "The named transport mechanisms retain derived ledger export ceilings, declared conservation-width tolerance, passing and failing precision controls and replayed nonlinear transport."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1114.0459291636944
+measured_own_cpu_ms = 1105.7939999999924
+calibration_walls_ms = [1096.8057520221919, 1114.0459291636944, 1098.7718049436808]
+calibration_own_cpu_ms = [1096.5649999999857, 1105.7939999999924, 1089.5150000000538]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-nonconstant-matched-split-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 4000
+budget_ms = 5100
 scope = "one pn-epoch::solve::partitions::nonconstant_matched_split case"
 reason = "Real nonconstant matched transport retains its calibrated disjoint-image precision, compiled hop identities, common positive rung, solves and independent replay."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 2527.8664261568338
+measured_own_cpu_ms = 2440.6619999998948
+calibration_walls_ms = [2412.3283391818404, 2394.241984002292, 2527.8664261568338]
+calibration_own_cpu_ms = [2410.738999999996, 2394.1070000000036, 2440.6619999998948]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-positive-rung-split-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 6000
+budget_ms = 8350
 scope = "one pn-epoch::solve::partitions::positive_rung_split case"
 reason = "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 4166.574275121093
+measured_own_cpu_ms = 3785.7920000000595
+calibration_walls_ms = [3722.547960933298, 3748.333513038233, 4166.574275121093]
+calibration_own_cpu_ms = [3715.869999999997, 3747.9100000000008, 3785.7920000000595]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-published-isolated-acts-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2500
+budget_ms = 3250
 scope = "one pn-epoch::solve::partitions::published_isolated_acts case"
 reason = "The unsorted exact-rate sample family retains every complete before/after history, final-gate checks, independent solve replay and exact loss identity."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1621.6420400887728
+measured_own_cpu_ms = 1563.611000000007
+calibration_walls_ms = [1514.9157021660358, 1521.7278951313347, 1621.6420400887728]
+calibration_own_cpu_ms = [1514.7370000000003, 1521.0419999999747, 1563.611000000007]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-published-retained-act-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 4500
+budget_ms = 6450
 scope = "one pn-epoch::solve::partitions::published_retained_act case"
 reason = "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 3205.7035930920392
+measured_own_cpu_ms = 2914.7449999999644
+calibration_walls_ms = [2772.057079942897, 2761.697535868734, 3205.7035930920392]
+calibration_own_cpu_ms = [2771.580999999999, 2761.501000000024, 2914.7449999999644]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-receiving-small-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1250
 scope = "one pn-epoch::solve::partitions::receiving_small case"
 reason = "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 610.2622170001268
+measured_own_cpu_ms = 577.4860000000199
+calibration_walls_ms = [552.1569759584963, 553.7229161709547, 610.2622170001268]
+calibration_own_cpu_ms = [550.8869999999959, 553.5509999999846, 577.4860000000199]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-sibling-outside-paths-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 7000
+budget_ms = 11700
 scope = "one pn-epoch::solve::partitions::sibling_outside_paths case"
 reason = "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 5836.271299980581
+measured_own_cpu_ms = 4759.612000000003
+calibration_walls_ms = [5676.095890114084, 4572.8784669190645, 5836.271299980581]
+calibration_own_cpu_ms = [4675.106999999999, 4570.539999999991, 4759.612000000003]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-two-map-box-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 5500
+budget_ms = 7300
 scope = "one pn-epoch::solve::two_map_box case"
 reason = "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 3643.458754988387
+measured_own_cpu_ms = 3503.682000000017
+calibration_walls_ms = [3643.458754988387, 3457.996702985838, 3470.975303091109]
+calibration_own_cpu_ms = [3503.682000000017, 3453.1600000000394, 3467.7350000000242]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-activation-costs-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3000
+budget_ms = 3500
 scope = "one pn-graph::numeric::activation_costs case"
 reason = "Cold composed requests retain independent Work, output-byte and arithmetic-step success/refusal boundaries; reusing a warm result would change the charged request."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1747.44977010414
+measured_own_cpu_ms = 1727.0850000000362
+calibration_walls_ms = [1691.9478869531304, 1747.44977010414, 1702.6601310353726]
+calibration_own_cpu_ms = [1691.2129999999922, 1727.0850000000362, 1696.960999999952]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-activation-endpoints-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2000
+budget_ms = 2450
 scope = "one pn-graph::numeric::activation_endpoints case"
 reason = "Wall placements and activation quantities retain direct and monotone evaluations, independent endpoint brackets, generalized joins and powered-source premises."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1209.290012018755
+measured_own_cpu_ms = 1205.7639999999878
+calibration_walls_ms = [1208.2705809734762, 1209.290012018755, 1191.194217884913]
+calibration_own_cpu_ms = [1207.9309999999878, 1205.7639999999878, 1190.8109999999645]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-activation-oracles-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1300
 scope = "one pn-graph::numeric::activation_oracles case"
 reason = "Unsorted scalar compositions retain independent value and derivative oracle brackets and cold certified evaluation at the declared policy."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 649.9388220254332
+measured_own_cpu_ms = 649.6770000000608
+calibration_walls_ms = [628.2614809460938, 647.5507980212569, 649.9388220254332]
+calibration_own_cpu_ms = [628.0049999999875, 647.275000000029, 649.6770000000608]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-activation-walls-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1500
+budget_ms = 2000
 scope = "one pn-graph::numeric::activation_walls case"
 reason = "The wall placements retain activation, gain and generalized-kink controls under the complete declared policy."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 992.6084580365568
+measured_own_cpu_ms = 992.4069999999663
+calibration_walls_ms = [970.5467100720853, 992.6084580365568, 969.8673479724675]
+calibration_own_cpu_ms = [970.2370000000116, 992.4069999999663, 969.5040000000148]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-enclosed-wall-clamp-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1000
+budget_ms = 1300
 scope = "one pn-graph::numeric::enclosed_wall_clamp case"
 reason = "The wall-coordinate interval retains independently sampled rational clamps, crossing generalized slopes and changed-enclosure replay refusal."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 648.5733601730317
+measured_own_cpu_ms = 645.2910000000287
+calibration_walls_ms = [648.1918150093406, 643.6724348459393, 648.5733601730317]
+calibration_own_cpu_ms = [646.9369999999994, 643.1979999999662, 645.2910000000287]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-evaluation-costs-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3000
+budget_ms = 3700
 scope = "one pn-graph::numeric::evaluation_costs case"
 reason = "Reduction, root/log-exp endpoint and sharing-prefix cases retain every cold Work success/refusal boundary and distinguish preparation from memo hits."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1847.173925023526
+measured_own_cpu_ms = 1846.0350000000042
+calibration_walls_ms = [1826.5792799647897, 1815.2403950225562, 1847.173925023526]
+calibration_own_cpu_ms = [1825.5729999999967, 1814.9690000000014, 1846.0350000000042]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-reference-wall-branches-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2000
+budget_ms = 2150
 scope = "one pn-graph::numeric::reference_wall_branches case"
 reason = "Certified inverse-wall branches retain the floor, door, policy and deadband comparisons and their independently replayed queries."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1053.5847460851073
+measured_own_cpu_ms = 1032.628999999991
+calibration_walls_ms = [1053.5847460851073, 1052.4833500385284, 1016.7345160152763]
+calibration_own_cpu_ms = [1032.628999999991, 1034.0960000000123, 1016.5509999999323]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-reference-wall-controls-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2000
+budget_ms = 2500
 scope = "one pn-graph::numeric::reference_wall_controls case"
 reason = "The inverse-wall controls retain both wrong-sign bracket refusals, indecisive stopping and changed query or attachment replay refusals."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1246.419760864228
+measured_own_cpu_ms = 1224.4779999999764
+calibration_walls_ms = [1222.054547863081, 1246.419760864228, 1216.9014269020408]
+calibration_own_cpu_ms = [1208.880999999975, 1224.4779999999764, 1216.6519999999784]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-reference-wall-oracle-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3000
+budget_ms = 3750
 scope = "one pn-graph::numeric::reference_wall_oracle case"
 reason = "The tagged gain fixture retains certified bisection, independent endpoint signs and replay at the declared stopping width and precision."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1855.6994150858372
+measured_own_cpu_ms = 1804.763000000019
+calibration_walls_ms = [1824.8079121112823, 1855.6994150858372, 1775.8619021624327]
+calibration_own_cpu_ms = [1790.8170000000182, 1804.763000000019, 1774.0209999999693]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-reference-wall-work-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 5500
+budget_ms = 4850
 scope = "one pn-graph::numeric::reference_wall_work case"
 reason = "The stopping-width family takes each successful record from its exact Work cap and retains the adjacent refusal, bisection and per-query pins; each distinct width still runs independently."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 2409.658716060221
+measured_own_cpu_ms = 2367.5899999999965
+calibration_walls_ms = [2369.6687009651214, 2409.658716060221, 2338.8421509880573]
+calibration_own_cpu_ms = [2338.876999999995, 2367.5899999999965, 2336.9790000000457]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-epoch-numeric-suite"
-calibration_pending_owner = "lane/graph"
 category = "suite"
-budget_ms = 60000
+budget_ms = 91000
 scope = "complete planned-numeric suite"
 reason = "Serial compiled histories, certified solves, independent replays, strict lower controls and exact Work boundaries retain the complete registered mechanism roster; the allowance includes runner overhead and headroom above the measured serial cost."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 45498.36089089513
+measured_own_cpu_ms = 42308.867999999944
+calibration_walls_ms = [43544.61083584465, 41912.04417916015, 45498.36089089513]
+calibration_own_cpu_ms = [42070.638, 41758.163999999975, 42308.867999999944]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-graph-numeric-suite"
-calibration_pending_owner = "lane/graph"
 category = "suite"
-budget_ms = 15000
+budget_ms = 49100
 scope = "complete pn-graph::numeric suite"
 reason = "The remaining scalar, activation, clamp and replay controls retain cold resource boundaries; tagged full-production inverse-wall cases execute separately in the reference tier. The allowance includes serial runner overhead and measured headroom."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 24542.343503097072
+measured_own_cpu_ms = 23940.377999999968
+calibration_walls_ms = [23795.569239882752, 24542.343503097072, 23861.949559068307]
+calibration_own_cpu_ms = [23756.26999999999, 23940.377999999968, 23800.51600000001]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-design-numeric-correspondence-case"
@@ -1339,67 +1772,123 @@ calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-title-exhaustive-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 1750
+budget_ms = 2900
 scope = "one pn-verification::title::title_exhaustive case"
 reason = "The exhaustive two-boundary alphabet retains every history, the baseline and five parent, stamp or dependency variations in both input orders, independent truth-table assertions, and comparison of every retained clause and event. The allowance covers this serial reconstruction cost without sampling or dropping a variation."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+measured_wall_ms = 1434.2876598238945
+measured_own_cpu_ms = 1381.011000000063
+calibration_walls_ms = [1341.2470580078661, 1334.6170869190246, 1434.2876598238945]
+calibration_own_cpu_ms = [1341.0449999999905, 1331.1369999999858, 1381.011000000063]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-ridge-definition-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 2100
+budget_ms = 2050
 scope = "one pn-graph::numeric::ridge::ridge_definition case"
-measured_wall_ms = 1048.316353
-measured_own_cpu_ms = 1048.129
-reason = "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+measured_wall_ms = 1014.1063369810581
+measured_own_cpu_ms = 1010.5909999999518
+reason = "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1011.2951130140573, 1000.9788628667593, 1014.1063369810581]
+calibration_own_cpu_ms = [1010.8810000000101, 1000.6900000000023, 1010.5909999999518]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-ridge-comparisons-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 3050
+budget_ms = 2950
 scope = "one pn-graph::numeric::ridge::ridge_comparisons case"
-measured_wall_ms = 1504.357890
-measured_own_cpu_ms = 1504.130
-reason = "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+measured_wall_ms = 1471.2889529764652
+measured_own_cpu_ms = 1464.2909999999567
+reason = "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1435.8870210126042, 1459.4078459776938, 1471.2889529764652]
+calibration_own_cpu_ms = [1435.1589999999917, 1459.1399999999996, 1464.2909999999567]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-ridge-replay-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
 budget_ms = 1600
 scope = "one pn-graph::numeric::ridge::ridge_replay case"
-measured_wall_ms = 783.057971
-measured_own_cpu_ms = 782.890
-reason = "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+measured_wall_ms = 785.9136830084026
+measured_own_cpu_ms = 783.105000000031
+reason = "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [780.0063078757375, 766.5531558450311, 785.9136830084026]
+calibration_own_cpu_ms = [779.6000000000003, 766.3399999999942, 783.105000000031]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 3
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-controller-delivery-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
-budget_ms = 28200
+budget_ms = 26150
 scope = "one pn-graph::numeric::controller::controller_delivery case"
-measured_wall_ms = 14075.070097
-measured_own_cpu_ms = 14044.133000
-reason = "The calibrated reference and upward inverse signs, failed neighbours, strict absolute and relative cap selection in both directions, width straddle, exact-representation refusal, successful refinement and input/query/attachment mutations retain fresh independent replay of every complete request. The first serial after-measurement follows the current case-calibration sizing rule."
+measured_wall_ms = 13053.120100870728
+measured_own_cpu_ms = 12501.494000000026
+reason = "The calibrated reference and upward inverse signs, failed neighbours, strict absolute and relative cap selection in both directions, width straddle, exact-representation refusal, successful refinement and input/query/attachment mutations retain fresh independent replay of every complete request."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [12386.545534944162, 13053.120100870728, 12380.1898220554]
+calibration_own_cpu_ms = [12373.174000000012, 12501.494000000026, 12364.59799999999]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-controller-ridge-case"
-calibration_pending_owner = "lane/graph"
 category = "case"
 budget_ms = 1650
 scope = "one pn-graph::numeric::controller::controller_ridge case"
-measured_wall_ms = 811.443733
-measured_own_cpu_ms = 810.141000
-reason = "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object. The first serial after-measurement follows the current case-calibration sizing rule."
+measured_wall_ms = 805.9335369616747
+measured_own_cpu_ms = 802.0729999999699
+reason = "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [804.9654481001198, 805.9335369616747, 805.6969209574163]
+calibration_own_cpu_ms = [804.6220000000019, 802.0729999999699, 805.3959999999983]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-devperf-distinct-excess-ledger-case"

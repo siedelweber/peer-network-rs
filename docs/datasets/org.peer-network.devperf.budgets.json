@@ -617,21 +617,65 @@
       "scope": "full required provisioned-service matrix"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 23000,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        11391.600000000006,
+        11116.338000000025,
+        11320.55600000006
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        11418.162886984646,
+        11493.976410944015,
+        11330.153898103163
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 11116.338000000025,
+      "measured_wall_ms": 11493.976410944015,
       "name": "reference-map-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "23 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "23 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "11 116.338 000 000 025",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "11 116.338 000 000 025",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "11 493.976 410 944 015",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "11 493.976 410 944 015",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -640,21 +684,65 @@
       "scope": "one published-fixture map or corpus case"
     },
     {
-      "budget_ms": 60000,
+      "budget_ms": 93250,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        45714.309,
+        45322.03800000001,
+        45324.76200000006
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        46623.780090827495,
+        45805.12551008724,
+        46593.1069299113
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 45714.309,
+      "measured_wall_ms": 46623.780090827495,
       "name": "reference-local-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "60 000",
+          "exact": "93 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60 000",
+          "num": "93 250",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "45 714.309",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "45 714.309",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "46 623.780 090 827 495",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "46 623.780 090 827 495",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -663,21 +751,65 @@
       "scope": "one published-fixture local inclusion case"
     },
     {
-      "budget_ms": 25000,
+      "budget_ms": 39100,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        17288.996000000017,
+        17259.86700000002,
+        16807.026999999933
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        19529.06831796281,
+        17732.765055960044,
+        16814.81598690152
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 17288.996000000017,
+      "measured_wall_ms": 19529.06831796281,
       "name": "reference-wall-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "25 000",
+          "exact": "39 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25 000",
+          "num": "39 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "17 288.996 000 000 017",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "17 288.996 000 000 017",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "19 529.068 317 962 81",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "19 529.068 317 962 81",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -686,21 +818,65 @@
       "scope": "one enclosed-reference-wall solve case"
     },
     {
-      "budget_ms": 90000,
+      "budget_ms": 93250,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        45714.309,
+        45322.03800000001,
+        45324.76200000006
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        46624.796682968736,
+        45806.079484988004,
+        46594.58639007062
+      ],
+      "calibration_warm": true,
       "category": "suite",
+      "measured_own_cpu_ms": 45714.309,
+      "measured_wall_ms": 46624.796682968736,
       "name": "reference-certificate-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "90 000",
+          "exact": "93 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "90 000",
+          "num": "93 250",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "45 714.309",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "45 714.309",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "46 624.796 682 968 736",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "46 624.796 682 968 736",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -709,15 +885,51 @@
       "scope": "one required reference-certificate group"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 8000,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        3786.978999999958,
+        3744.2299999999696,
+        3180.98600000004
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        3995.3410800080746,
+        3891.343434108421,
+        3181.3528470229357
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 3786.978999999958,
+      "measured_wall_ms": 3995.3410800080746,
       "name": "reference-receiving-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "8 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "8 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "3 786.978 999 999 958",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 786.978 999 999 958",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "3 995.341 080 008 074 6",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 995.341 080 008 074 6",
           "num_exact": true,
           "num_relation": "="
         }
@@ -726,27 +938,79 @@
         "budget_ms": {
           "display": "exact",
           "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
         }
       },
-      "reason": "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. The focused measurement is recorded in the receiving reference-tier amendment; the declared allowance also accounts for gate contention without changing any other case budget.",
+      "reason": "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay.",
       "scope": "one full-size published receiving showcase comparison"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 24000,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        9608.464000000027,
+        9631.389999999947,
+        8870.50700000004
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        11999.04110096395,
+        9900.980258127674,
+        8875.170900020748
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 9608.464000000027,
+      "measured_wall_ms": 11999.04110096395,
       "name": "own-burn-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "24 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "24 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "9 608.464 000 000 027",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "9 608.464 000 000 027",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "11 999.041 100 963 95",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "11 999.041 100 963 95",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -755,21 +1019,65 @@
       "scope": "one complete-history own-loss mechanism"
     },
     {
-      "budget_ms": 20000,
+      "budget_ms": 24050,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        9608.464000000027,
+        9631.389999999947,
+        8870.50700000004
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        12000.129694119096,
+        9902.385409921408,
+        8876.215333119035
+      ],
+      "calibration_warm": true,
       "category": "suite",
+      "measured_own_cpu_ms": 9608.464000000027,
+      "measured_wall_ms": 12000.129694119096,
       "name": "own-burn-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "20 000",
+          "exact": "24 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20 000",
+          "num": "24 050",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "9 608.464 000 000 027",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "9 608.464 000 000 027",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "12 000.129 694 119 096",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12 000.129 694 119 096",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -817,22 +1125,65 @@
       "scope": "required reference-certificate invocation"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1350,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        645.7380000000051,
+        631.4939999999893,
+        639.8780000000688
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        646.0245889611542,
+        650.7594378199428,
+        659.8530740011483
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 639.8780000000688,
+      "measured_wall_ms": 659.8530740011483,
       "name": "calibrated-marker-recognition-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 350",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "639.878 000 000 068 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "639.878 000 000 068 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "659.853 074 001 148 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "659.853 074 001 148 3",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -841,22 +1192,65 @@
       "scope": "one pn-records::properties::marker_recognition case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1200,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        550.3059999999973,
+        570.8050000000053,
+        555.0420000000021
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        550.6646549329162,
+        591.7714850511402,
+        569.6203678380698
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 570.8050000000053,
+      "measured_wall_ms": 591.7714850511402,
       "name": "calibrated-typed-corruptions-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 200",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "570.805 000 000 005 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "570.805 000 000 005 3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "591.771 485 051 140 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "591.771 485 051 140 2",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -865,42 +1259,51 @@
       "scope": "one pn-records::properties::typed_corruptions case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3950,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1920.9329999999927,
+        1872.1890000000058,
+        1918.6840000000095
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        1957.6855201739818,
+        1872.6887768134475,
+        1919.426616979763
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "headroom_multiplier": 1.5,
-      "measured_own_cpu_ms": 1903.931,
+      "measured_own_cpu_ms": 1920.9329999999927,
+      "measured_wall_ms": 1957.6855201739818,
       "name": "calibrated-act-directions-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "headroom_multiplier": {
-          "exact": "1.5",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "1.5",
+          "num": "3 950",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 903.931",
+          "exact": "1 920.932 999 999 992 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 903.931",
+          "num": "1 920.932 999 999 992 7",
           "num_exact": true,
           "num_relation": "="
         },
-        "rounding_ms": {
-          "exact": "250",
+        "measured_wall_ms": {
+          "exact": "1 957.685 520 173 981 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "250",
+          "num": "1 957.685 520 173 981 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -910,40 +1313,78 @@
           "display": "exact",
           "exact_digits": 32
         },
-        "headroom_multiplier": {
-          "display": "exact",
-          "exact_digits": 32
-        },
         "measured_own_cpu_ms": {
           "display": "exact",
           "exact_digits": 32
         },
-        "rounding_ms": {
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
       },
       "reason": "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion.",
-      "rounding_ms": 250,
       "scope": "one pn-epoch::solve::act_directions case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 1850,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        858.1080000000121,
+        855.3420000000305,
+        840.1439999999774
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        860.8422090765089,
+        924.0451089572161,
+        841.9898359570652
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 855.3420000000305,
+      "measured_wall_ms": 924.0451089572161,
       "name": "calibrated-act-emission-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "1 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "1 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "855.342 000 000 030 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "855.342 000 000 030 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "924.045 108 957 216 1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "924.045 108 957 216 1",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -952,22 +1393,65 @@
       "scope": "one pn-epoch::solve::act_emission case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1200,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        559.2389999999998,
+        560.28400000001,
+        560.5139999999765
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        579.478238010779,
+        562.94612493366,
+        560.8580198604614
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 559.2389999999998,
+      "measured_wall_ms": 579.478238010779,
       "name": "calibrated-burn-depleted-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 200",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "559.238 999 999 999 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "559.238 999 999 999 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "579.478 238 010 779",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "579.478 238 010 779",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -976,22 +1460,65 @@
       "scope": "one pn-epoch::solve::burn_depleted case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 1300,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        639.6759999999908,
+        640.3219999999799,
+        633.6510000000058
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        642.7296521142125,
+        641.0348408389837,
+        634.4425741117448
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 639.6759999999908,
+      "measured_wall_ms": 642.7296521142125,
       "name": "calibrated-burn-monotone-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "1 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "1 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "639.675 999 999 990 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "639.675 999 999 990 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "642.729 652 114 212 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "642.729 652 114 212 5",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1000,22 +1527,65 @@
       "scope": "one pn-epoch::solve::burn_monotone case"
     },
     {
-      "budget_ms": 5000,
+      "budget_ms": 6500,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        3184.0779999999922,
+        3168.336000000018,
+        3205.176000000062
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        3198.7867599818856,
+        3170.9210330154747,
+        3246.729329926893
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 3205.176000000062,
+      "measured_wall_ms": 3246.729329926893,
       "name": "calibrated-burn-sibling-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 000",
+          "exact": "6 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 000",
+          "num": "6 500",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "3 205.176 000 000 062",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 205.176 000 000 062",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "3 246.729 329 926 893",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 246.729 329 926 893",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1024,22 +1594,65 @@
       "scope": "one pn-epoch::solve::burn_sibling case"
     },
     {
-      "budget_ms": 3750,
+      "budget_ms": 5400,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2544.499000000016,
+        2473.4149999999886,
+        2505.5680000000057
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        2686.6871679667383,
+        2477.4517461191863,
+        2505.942895077169
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 2544.499000000016,
+      "measured_wall_ms": 2686.6871679667383,
       "name": "calibrated-burn-switch-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 750",
+          "exact": "5 400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 750",
+          "num": "5 400",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 544.499 000 000 016",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 544.499 000 000 016",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "2 686.687 167 966 738 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 686.687 167 966 738 3",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1048,22 +1661,65 @@
       "scope": "one pn-epoch::solve::burn_switch case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1150,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        537.5839999999989,
+        523.8689999999604,
+        515.7180000000156
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        560.8326059300452,
+        524.0909408312291,
+        515.9903350286186
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 537.5839999999989,
+      "measured_wall_ms": 560.8326059300452,
       "name": "calibrated-certified-splits-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 150",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "537.583 999 999 998 9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "537.583 999 999 998 9",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "560.832 605 930 045 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "560.832 605 930 045 2",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1072,22 +1728,65 @@
       "scope": "one pn-epoch::solve::certified_splits case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 1850,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        919.7089999999939,
+        909.646999999973,
+        912.3569999999379
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        920.326008927077,
+        909.8444518167526,
+        913.9523799531162
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 919.7089999999939,
+      "measured_wall_ms": 920.326008927077,
       "name": "calibrated-conserved-projection-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "1 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "1 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "919.708 999 999 993 9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "919.708 999 999 993 9",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "920.326 008 927 077",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "920.326 008 927 077",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1096,22 +1795,65 @@
       "scope": "one pn-epoch::solve::conserved_projection case"
     },
     {
-      "budget_ms": 12000,
+      "budget_ms": 17850,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        7967.675999999992,
+        7988.982000000028,
+        7938.456000000068
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        7978.348086122423,
+        7990.28731812723,
+        8922.396142035723
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 7938.456000000068,
+      "measured_wall_ms": 8922.396142035723,
       "name": "calibrated-conserved-residual-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "12 000",
+          "exact": "17 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12 000",
+          "num": "17 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "7 938.456 000 000 068",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "7 938.456 000 000 068",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "8 922.396 142 035 723",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "8 922.396 142 035 723",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1120,22 +1862,65 @@
       "scope": "one pn-epoch::solve::conserved_residual case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1450,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        679.1189999999912,
+        656.7169999999578,
+        658.4339999999163
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        700.0445760786533,
+        658.9219840243459,
+        709.6839991863817
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 658.4339999999163,
+      "measured_wall_ms": 709.6839991863817,
       "name": "calibrated-fence-shapes-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "658.433 999 999 916 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "658.433 999 999 916 3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "709.683 999 186 381 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "709.683 999 186 381 7",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1144,22 +1929,65 @@
       "scope": "one pn-epoch::solve::fence_shapes case"
     },
     {
-      "budget_ms": 2000,
+      "budget_ms": 2250,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1096.5649999999857,
+        1105.7939999999924,
+        1089.5150000000538
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1096.8057520221919,
+        1114.0459291636944,
+        1098.7718049436808
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1105.7939999999924,
+      "measured_wall_ms": 1114.0459291636944,
       "name": "calibrated-compiled-conservation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 000",
+          "exact": "2 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 000",
+          "num": "2 250",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 105.793 999 999 992 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 105.793 999 999 992 4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 114.045 929 163 694 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 114.045 929 163 694 4",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1168,22 +1996,65 @@
       "scope": "one pn-epoch::solve::partitions::compiled_conservation case"
     },
     {
-      "budget_ms": 4000,
+      "budget_ms": 5100,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2410.738999999996,
+        2394.1070000000036,
+        2440.6619999998948
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        2412.3283391818404,
+        2394.241984002292,
+        2527.8664261568338
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 2440.6619999998948,
+      "measured_wall_ms": 2527.8664261568338,
       "name": "calibrated-nonconstant-matched-split-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 000",
+          "exact": "5 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 000",
+          "num": "5 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 440.661 999 999 894 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 440.661 999 999 894 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "2 527.866 426 156 833 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 527.866 426 156 833 8",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1192,22 +2063,65 @@
       "scope": "one pn-epoch::solve::partitions::nonconstant_matched_split case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 8350,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        3715.869999999997,
+        3747.9100000000008,
+        3785.7920000000595
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        3722.547960933298,
+        3748.333513038233,
+        4166.574275121093
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 3785.7920000000595,
+      "measured_wall_ms": 4166.574275121093,
       "name": "calibrated-positive-rung-split-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "8 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "8 350",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "3 785.792 000 000 059 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 785.792 000 000 059 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "4 166.574 275 121 093",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 166.574 275 121 093",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1216,22 +2130,65 @@
       "scope": "one pn-epoch::solve::partitions::positive_rung_split case"
     },
     {
-      "budget_ms": 2500,
+      "budget_ms": 3250,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1514.7370000000003,
+        1521.0419999999747,
+        1563.611000000007
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1514.9157021660358,
+        1521.7278951313347,
+        1621.6420400887728
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1563.611000000007,
+      "measured_wall_ms": 1621.6420400887728,
       "name": "calibrated-published-isolated-acts-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 500",
+          "exact": "3 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 500",
+          "num": "3 250",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 563.611 000 000 007",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 563.611 000 000 007",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 621.642 040 088 772 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 621.642 040 088 772 8",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1240,22 +2197,65 @@
       "scope": "one pn-epoch::solve::partitions::published_isolated_acts case"
     },
     {
-      "budget_ms": 4500,
+      "budget_ms": 6450,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2771.580999999999,
+        2761.501000000024,
+        2914.7449999999644
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        2772.057079942897,
+        2761.697535868734,
+        3205.7035930920392
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 2914.7449999999644,
+      "measured_wall_ms": 3205.7035930920392,
       "name": "calibrated-published-retained-act-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 500",
+          "exact": "6 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 500",
+          "num": "6 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 914.744 999 999 964 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 914.744 999 999 964 4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "3 205.703 593 092 039 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 205.703 593 092 039 2",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1264,22 +2264,65 @@
       "scope": "one pn-epoch::solve::partitions::published_retained_act case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1250,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        550.8869999999959,
+        553.5509999999846,
+        577.4860000000199
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        552.1569759584963,
+        553.7229161709547,
+        610.2622170001268
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 577.4860000000199,
+      "measured_wall_ms": 610.2622170001268,
       "name": "calibrated-receiving-small-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 250",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "577.486 000 000 019 9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "577.486 000 000 019 9",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "610.262 217 000 126 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "610.262 217 000 126 8",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1288,22 +2331,65 @@
       "scope": "one pn-epoch::solve::partitions::receiving_small case"
     },
     {
-      "budget_ms": 7000,
+      "budget_ms": 11700,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        4675.106999999999,
+        4570.539999999991,
+        4759.612000000003
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        5676.095890114084,
+        4572.8784669190645,
+        5836.271299980581
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 4759.612000000003,
+      "measured_wall_ms": 5836.271299980581,
       "name": "calibrated-sibling-outside-paths-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "7 000",
+          "exact": "11 700",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7 000",
+          "num": "11 700",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "4 759.612 000 000 003",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 759.612 000 000 003",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "5 836.271 299 980 581",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 836.271 299 980 581",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1312,22 +2398,65 @@
       "scope": "one pn-epoch::solve::partitions::sibling_outside_paths case"
     },
     {
-      "budget_ms": 5500,
+      "budget_ms": 7300,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        3503.682000000017,
+        3453.1600000000394,
+        3467.7350000000242
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        3643.458754988387,
+        3457.996702985838,
+        3470.975303091109
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 3503.682000000017,
+      "measured_wall_ms": 3643.458754988387,
       "name": "calibrated-two-map-box-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 500",
+          "exact": "7 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 500",
+          "num": "7 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "3 503.682 000 000 017",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 503.682 000 000 017",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "3 643.458 754 988 387",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 643.458 754 988 387",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1336,22 +2465,65 @@
       "scope": "one pn-epoch::solve::two_map_box case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3500,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1691.2129999999922,
+        1727.0850000000362,
+        1696.960999999952
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1691.9478869531304,
+        1747.44977010414,
+        1702.6601310353726
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1727.0850000000362,
+      "measured_wall_ms": 1747.44977010414,
       "name": "calibrated-activation-costs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "3 500",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 727.085 000 000 036 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 727.085 000 000 036 2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 747.449 770 104 14",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 747.449 770 104 14",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1360,22 +2532,65 @@
       "scope": "one pn-graph::numeric::activation_costs case"
     },
     {
-      "budget_ms": 2000,
+      "budget_ms": 2450,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1207.9309999999878,
+        1205.7639999999878,
+        1190.8109999999645
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1208.2705809734762,
+        1209.290012018755,
+        1191.194217884913
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1205.7639999999878,
+      "measured_wall_ms": 1209.290012018755,
       "name": "calibrated-activation-endpoints-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 000",
+          "exact": "2 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 000",
+          "num": "2 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 205.763 999 999 987 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 205.763 999 999 987 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 209.290 012 018 755",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 209.290 012 018 755",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1384,22 +2599,65 @@
       "scope": "one pn-graph::numeric::activation_endpoints case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1300,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        628.0049999999875,
+        647.275000000029,
+        649.6770000000608
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        628.2614809460938,
+        647.5507980212569,
+        649.9388220254332
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 649.6770000000608,
+      "measured_wall_ms": 649.9388220254332,
       "name": "calibrated-activation-oracles-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "649.677 000 000 060 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "649.677 000 000 060 8",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "649.938 822 025 433 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "649.938 822 025 433 2",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1408,22 +2666,65 @@
       "scope": "one pn-graph::numeric::activation_oracles case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 2000,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        970.2370000000116,
+        992.4069999999663,
+        969.5040000000148
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        970.5467100720853,
+        992.6084580365568,
+        969.8673479724675
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 992.4069999999663,
+      "measured_wall_ms": 992.6084580365568,
       "name": "calibrated-activation-walls-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "2 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "992.406 999 999 966 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "992.406 999 999 966 3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "992.608 458 036 556 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "992.608 458 036 556 8",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1432,22 +2733,65 @@
       "scope": "one pn-graph::numeric::activation_walls case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 1300,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        646.9369999999994,
+        643.1979999999662,
+        645.2910000000287
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        648.1918150093406,
+        643.6724348459393,
+        648.5733601730317
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 645.2910000000287,
+      "measured_wall_ms": 648.5733601730317,
       "name": "calibrated-enclosed-wall-clamp-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "1 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "1 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "645.291 000 000 028 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "645.291 000 000 028 7",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "648.573 360 173 031 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "648.573 360 173 031 7",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1456,22 +2800,65 @@
       "scope": "one pn-graph::numeric::enclosed_wall_clamp case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3700,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1825.5729999999967,
+        1814.9690000000014,
+        1846.0350000000042
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1826.5792799647897,
+        1815.2403950225562,
+        1847.173925023526
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1846.0350000000042,
+      "measured_wall_ms": 1847.173925023526,
       "name": "calibrated-evaluation-costs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 700",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "3 700",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 846.035 000 000 004 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 846.035 000 000 004 2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 847.173 925 023 526",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 847.173 925 023 526",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1480,22 +2867,65 @@
       "scope": "one pn-graph::numeric::evaluation_costs case"
     },
     {
-      "budget_ms": 2000,
+      "budget_ms": 2150,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1032.628999999991,
+        1034.0960000000123,
+        1016.5509999999323
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_walls_ms": [
+        1053.5847460851073,
+        1052.4833500385284,
+        1016.7345160152763
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1032.628999999991,
+      "measured_wall_ms": 1053.5847460851073,
       "name": "calibrated-reference-wall-branches-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 000",
+          "exact": "2 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 000",
+          "num": "2 150",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 032.628 999 999 991",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 032.628 999 999 991",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 053.584 746 085 107 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 053.584 746 085 107 3",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1504,22 +2934,65 @@
       "scope": "one pn-graph::numeric::reference_wall_branches case"
     },
     {
-      "budget_ms": 2000,
+      "budget_ms": 2500,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1208.880999999975,
+        1224.4779999999764,
+        1216.6519999999784
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1222.054547863081,
+        1246.419760864228,
+        1216.9014269020408
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1224.4779999999764,
+      "measured_wall_ms": 1246.419760864228,
       "name": "calibrated-reference-wall-controls-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 000",
+          "exact": "2 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 000",
+          "num": "2 500",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 224.477 999 999 976 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 224.477 999 999 976 4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 246.419 760 864 228",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 246.419 760 864 228",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1528,22 +3001,65 @@
       "scope": "one pn-graph::numeric::reference_wall_controls case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3750,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1790.8170000000182,
+        1804.763000000019,
+        1774.0209999999693
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        1824.8079121112823,
+        1855.6994150858372,
+        1775.8619021624327
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1804.763000000019,
+      "measured_wall_ms": 1855.6994150858372,
       "name": "calibrated-reference-wall-oracle-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "3 750",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 804.763 000 000 019",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 804.763 000 000 019",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 855.699 415 085 837 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 855.699 415 085 837 2",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1552,22 +3068,65 @@
       "scope": "one pn-graph::numeric::reference_wall_oracle case"
     },
     {
-      "budget_ms": 5500,
+      "budget_ms": 4850,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2338.876999999995,
+        2367.5899999999965,
+        2336.9790000000457
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        2369.6687009651214,
+        2409.658716060221,
+        2338.8421509880573
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 2367.5899999999965,
+      "measured_wall_ms": 2409.658716060221,
       "name": "calibrated-reference-wall-work-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 500",
+          "exact": "4 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 500",
+          "num": "4 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 367.589 999 999 996 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 367.589 999 999 996 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "2 409.658 716 060 221",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 409.658 716 060 221",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -1576,16 +3135,51 @@
       "scope": "one pn-graph::numeric::reference_wall_work case"
     },
     {
-      "budget_ms": 60000,
+      "budget_ms": 91000,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        42070.638,
+        41758.163999999975,
+        42308.867999999944
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        43544.61083584465,
+        41912.04417916015,
+        45498.36089089513
+      ],
+      "calibration_warm": true,
       "category": "suite",
+      "measured_own_cpu_ms": 42308.867999999944,
+      "measured_wall_ms": 45498.36089089513,
       "name": "calibrated-epoch-numeric-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "60 000",
+          "exact": "91 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60 000",
+          "num": "91 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "42 308.867 999 999 944",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "42 308.867 999 999 944",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "45 498.360 890 895 13",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "45 498.360 890 895 13",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1594,28 +3188,79 @@
         "budget_ms": {
           "display": "exact",
           "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
         }
       },
       "reason": "Serial compiled histories, certified solves, independent replays, strict lower controls and exact Work boundaries retain the complete registered mechanism roster; the allowance includes runner overhead and headroom above the measured serial cost.",
       "scope": "complete planned-numeric suite"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 49100,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        23756.26999999999,
+        23940.377999999968,
+        23800.51600000001
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        23795.569239882752,
+        24542.343503097072,
+        23861.949559068307
+      ],
+      "calibration_warm": true,
       "category": "suite",
+      "measured_own_cpu_ms": 23940.377999999968,
+      "measured_wall_ms": 24542.343503097072,
       "name": "calibrated-graph-numeric-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "49 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "49 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "23 940.377 999 999 968",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "23 940.377 999 999 968",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "24 542.343 503 097 072",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "24 542.343 503 097 072",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -3316,22 +4961,65 @@
       "scope": "one pn-wallet::wire::wire_compatibility case"
     },
     {
-      "budget_ms": 1750,
+      "budget_ms": 2900,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1341.0449999999905,
+        1331.1369999999858,
+        1381.011000000063
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1341.2470580078661,
+        1334.6170869190246,
+        1434.2876598238945
+      ],
+      "calibration_warm": true,
       "category": "case",
+      "measured_own_cpu_ms": 1381.011000000063,
+      "measured_wall_ms": 1434.2876598238945,
       "name": "calibrated-title-exhaustive-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 750",
+          "exact": "2 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 750",
+          "num": "2 900",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 381.011 000 000 063",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 381.011 000 000 063",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 434.287 659 823 894 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 434.287 659 823 894 5",
           "num_exact": true,
           "num_relation": "="
         }
       },
       "numeric_display": {
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
           "display": "exact",
           "exact_digits": 32
         }
@@ -3340,34 +5028,51 @@
       "scope": "one pn-verification::title::title_exhaustive case"
     },
     {
-      "budget_ms": 2100,
+      "budget_ms": 2050,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1010.8810000000101,
+        1000.6900000000023,
+        1010.5909999999518
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1011.2951130140573,
+        1000.9788628667593,
+        1014.1063369810581
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1048.129,
-      "measured_wall_ms": 1048.316353,
+      "measured_own_cpu_ms": 1010.5909999999518,
+      "measured_wall_ms": 1014.1063369810581,
       "name": "calibrated-ridge-definition-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 100",
+          "exact": "2 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 100",
+          "num": "2 050",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 048.129",
+          "exact": "1 010.590 999 999 951 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 048.129",
+          "num": "1 010.590 999 999 951 8",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 048.316 353",
+          "exact": "1 014.106 336 981 058 1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 048.316 353",
+          "num": "1 014.106 336 981 058 1",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3386,38 +5091,55 @@
           "exact_digits": 32
         }
       },
-      "reason": "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "reason": "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor.",
       "scope": "one pn-graph::numeric::ridge::ridge_definition case"
     },
     {
-      "budget_ms": 3050,
+      "budget_ms": 2950,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1435.1589999999917,
+        1459.1399999999996,
+        1464.2909999999567
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        1435.8870210126042,
+        1459.4078459776938,
+        1471.2889529764652
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1504.13,
-      "measured_wall_ms": 1504.35789,
+      "measured_own_cpu_ms": 1464.2909999999567,
+      "measured_wall_ms": 1471.2889529764652,
       "name": "calibrated-ridge-comparisons-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 050",
+          "exact": "2 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 050",
+          "num": "2 950",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 504.13",
+          "exact": "1 464.290 999 999 956 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 504.13",
+          "num": "1 464.290 999 999 956 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 504.357 89",
+          "exact": "1 471.288 952 976 465 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 504.357 89",
+          "num": "1 471.288 952 976 465 2",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3436,15 +5158,32 @@
           "exact_digits": 32
         }
       },
-      "reason": "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "reason": "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay.",
       "scope": "one pn-graph::numeric::ridge::ridge_comparisons case"
     },
     {
       "budget_ms": 1600,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        779.6000000000003,
+        766.3399999999942,
+        783.105000000031
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        780.0063078757375,
+        766.5531558450311,
+        785.9136830084026
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 782.89,
-      "measured_wall_ms": 783.057971,
+      "measured_own_cpu_ms": 783.105000000031,
+      "measured_wall_ms": 785.9136830084026,
       "name": "calibrated-ridge-replay-case",
       "number_forms": {
         "budget_ms": {
@@ -3456,18 +5195,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "782.89",
+          "exact": "783.105 000 000 031",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "782.89",
+          "num": "783.105 000 000 031",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "783.057 971",
+          "exact": "785.913 683 008 402 6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "783.057 971",
+          "num": "785.913 683 008 402 6",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3486,38 +5225,55 @@
           "exact_digits": 32
         }
       },
-      "reason": "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "reason": "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover.",
       "scope": "one pn-graph::numeric::ridge::ridge_replay case"
     },
     {
-      "budget_ms": 28200,
+      "budget_ms": 26150,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        12373.174000000012,
+        12501.494000000026,
+        12364.59799999999
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        12386.545534944162,
+        13053.120100870728,
+        12380.1898220554
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 14044.133,
-      "measured_wall_ms": 14075.070097,
+      "measured_own_cpu_ms": 12501.494000000026,
+      "measured_wall_ms": 13053.120100870728,
       "name": "calibrated-controller-delivery-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "28 200",
+          "exact": "26 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28 200",
+          "num": "26 150",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "14 044.133",
+          "exact": "12 501.494 000 000 026",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14 044.133",
+          "num": "12 501.494 000 000 026",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "14 075.070 097",
+          "exact": "13 053.120 100 870 728",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14 075.070 097",
+          "num": "13 053.120 100 870 728",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3536,15 +5292,32 @@
           "exact_digits": 32
         }
       },
-      "reason": "The calibrated reference and upward inverse signs, failed neighbours, strict absolute and relative cap selection in both directions, width straddle, exact-representation refusal, successful refinement and input/query/attachment mutations retain fresh independent replay of every complete request. The first serial after-measurement follows the current case-calibration sizing rule.",
+      "reason": "The calibrated reference and upward inverse signs, failed neighbours, strict absolute and relative cap selection in both directions, width straddle, exact-representation refusal, successful refinement and input/query/attachment mutations retain fresh independent replay of every complete request.",
       "scope": "one pn-graph::numeric::controller::controller_delivery case"
     },
     {
       "budget_ms": 1650,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        804.6220000000019,
+        802.0729999999699,
+        805.3959999999983
+      ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        804.9654481001198,
+        805.9335369616747,
+        805.6969209574163
+      ],
+      "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 810.141,
-      "measured_wall_ms": 811.443733,
+      "measured_own_cpu_ms": 802.0729999999699,
+      "measured_wall_ms": 805.9335369616747,
       "name": "calibrated-controller-ridge-case",
       "number_forms": {
         "budget_ms": {
@@ -3556,18 +5329,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "810.141",
+          "exact": "802.072 999 999 969 9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "810.141",
+          "num": "802.072 999 999 969 9",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "811.443 733",
+          "exact": "805.933 536 961 674 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "811.443 733",
+          "num": "805.933 536 961 674 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3586,7 +5359,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object. The first serial after-measurement follows the current case-calibration sizing rule.",
+      "reason": "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object.",
       "scope": "one pn-graph::numeric::controller::controller_ridge case"
     },
     {

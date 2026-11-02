@@ -56,7 +56,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 475 | 177 |
+| ROOT (repository-wide) | 1 476 | 177 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -1416,7 +1416,7 @@
 | ``subsec:verification:two-gate`` | pn-verification; fixture | designed | ``CONSTANTS::fixture.migration.scale`` ``CONSTANTS::fixture.migration.stamp`` ``CONSTANTS::result.epoch.migration_stamp`` ``CONSTANTS::result.epoch.migration_w2a`` ``CONSTANTS::result.epoch.migration_wall`` | | | |  | |
 | ``subsec:verification:reference-constants`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``tbl:verification:reference-constants`` | pn-verification; fixture | designed | ``CONSTANTS::const.epoch.margin`` | | | |  | |
-| ``ver:floor:ridge-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::bound.dynamics.ridge_p_hi`` ``CONSTANTS::bound.dynamics.ridge_p_lo`` ``CONSTANTS::result.ridge.bracket_width`` ``CONSTANTS::result.ridge.cells`` ``CONSTANTS::result.ridge.interval_dps`` ``CONSTANTS::result.ridge.max_depth`` ``CONSTANTS::result.ridge.root_decimal_places`` | | | |  | |
+| ``ver:floor:ridge-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::bound.dynamics.ridge_p_hi`` ``CONSTANTS::bound.dynamics.ridge_p_lo`` ``CONSTANTS::result.ridge.bracket_width`` ``CONSTANTS::result.ridge.cells`` ``CONSTANTS::result.ridge.interval_dps`` ``CONSTANTS::result.ridge.max_depth`` ``CONSTANTS::result.ridge.root_decimal_places`` ``ROOT::rule:design:ridge-analytic-premises`` | | | |  | |
 | ``ver:floor:below-door`` | pn-verification; fixture | designed | ``ROOT::amend:design:ridge-fragment-admission`` | | | |  | |
 | ``ver:floor:fixture-regime`` | pn-verification; fixture | designed | ``CONSTANTS::const.epoch.safefloor`` ``CONSTANTS::result.epoch.fixture_wall_above_floor`` ``CONSTANTS::result.epoch.reference_floor_margin`` ``ROOT::amend:design:two-map-measurements`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::rule:design:reference-wall-branches`` | | | |  | |
 | ``ver:floor:fixture-declaration-invariant`` | pn-verification; fixture | designed | ``CONSTANTS::result.epoch.fixture_floor_declaration_invariant`` | | | |  | |

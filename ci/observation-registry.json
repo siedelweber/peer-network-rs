@@ -21974,7 +21974,7 @@
       "item": "numeric::wall::Run",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/wall.rs",
-      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , bleed_squared : & 'a str , supplied : Option < & 'a Record > , budget : Budget , result : Record , }"
+      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , bleed_squared : & 'a str , supplied : Option < & 'a Record > , reconstruct : bool , budget : Budget , result : Record , }"
     },
     {
       "item": "numeric::Error",

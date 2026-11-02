@@ -24063,7 +24063,8 @@
         "CONSTANTS::result.ridge.cells",
         "CONSTANTS::result.ridge.interval_dps",
         "CONSTANTS::result.ridge.max_depth",
-        "CONSTANTS::result.ridge.root_decimal_places"
+        "CONSTANTS::result.ridge.root_decimal_places",
+        "ROOT::rule:design:ridge-analytic-premises"
       ],
       "routes": [],
       "status": "designed",
@@ -36248,10 +36249,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 475",
+          "exact": "1 476",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 475",
+          "num": "1 476",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36266,7 +36267,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1475
+      "total": 1476
     },
     {
       "category": "record-coverage",

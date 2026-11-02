@@ -257,7 +257,14 @@ fn replay_controls(procedure: &Procedure, inputs: &Inputs, record: &pn_records::
     ));
     let mut limits = inputs.clone();
     limits.maximum_replay_work = limits.maximum_replay_work.checked_add(1).unwrap();
-    assert_eq!(checked(procedure, &limits).verdict, Verdict::Delivered);
+    // Production does not consume this replay-only ceiling. Replay the same
+    // production evidence under the larger ceiling without producing it twice.
+    let mut larger_replay = record.clone();
+    larger_replay.inputs = limits.clone();
+    assert_eq!(
+        kernel::replay(procedure, &limits, None, &larger_replay).unwrap().verdict,
+        Verdict::Delivered
+    );
     let mut refinement = procedure.clone();
     refinement.precision = Precision::AbsoluteWidthBits(vec![
         bits(NumberId::NumbersControllerTestFailedPrecision),

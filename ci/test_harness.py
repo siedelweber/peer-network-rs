@@ -97,9 +97,9 @@ class Harness(unittest.TestCase):
         from pathlib import Path
         from devperf import budgets
         row = budgets(Path('docs/inputs/devperf-budgets.toml'))['calibrated-act-directions-case']
-        measured = Fraction(str(row['measured_own_cpu_ms']))
-        multiplier = Fraction(str(row['headroom_multiplier']))
-        quantum = Fraction(str(row['rounding_ms']))
+        measured = max(Fraction(str(value)) for value in row['calibration_walls_ms'])
+        multiplier = Fraction(str(row['calibration_multiplier']))
+        quantum = Fraction(str(row['calibration_round_ms']))
         units = measured * multiplier / quantum
         ceiling = -(-units.numerator // units.denominator)
         self.assertEqual(row['budget_ms'], ceiling * quantum)

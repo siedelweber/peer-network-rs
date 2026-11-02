@@ -86,6 +86,7 @@ struct Run<'a> {
     procedure: &'a Procedure,
     bleed_squared: &'a str,
     supplied: Option<&'a Record>,
+    reconstruct: bool,
     budget: Budget,
     result: Record,
 }
@@ -127,10 +128,20 @@ impl Run<'_> {
             }
             let mut policy = self.procedure.clone();
             policy.enclosure.as_mut().ok_or(Error::Declaration)?.refinement.precision = *precision;
-            let evidence = super::run_budget(&policy, &query, attachment, None, &mut self.budget).map_err(|e| match e {
+            let evidence = super::run_budget(
+                &policy,
+                &query,
+                attachment.filter(|_| !self.reconstruct),
+                None,
+                &mut self.budget,
+            )
+            .map_err(|e| match e {
                 super::Error::InvalidCertificate(_) | super::Error::Schema if supplied.is_some() => Error::Attachment,
                 other => Error::Numeric(other),
             })?;
+            if self.reconstruct && supplied.is_some_and(|s| s.primitive.evidence.attachment != evidence.attachment) {
+                return Err(Error::Attachment);
+            }
             if !matches!(evidence.outcome, Outcome::Bound | Outcome::Indecisive(_)) {
                 return Err(Error::Operational {
                     outcome: evidence.outcome,
@@ -223,6 +234,7 @@ fn run(procedure: &Procedure, input: &Inputs, supplied: Option<&Record>) -> Resu
         procedure,
         bleed_squared: "1/400",
         supplied,
+        reconstruct: false,
         budget: Budget::new(limits)?,
         result: Record {
             target: None,
@@ -328,7 +340,8 @@ pub(super) fn inverse(
     let mut run = Run {
         procedure,
         bleed_squared,
-        supplied: None,
+        supplied,
+        reconstruct: true,
         budget: Budget::new(limits)?,
         result: Record {
             target: None,
