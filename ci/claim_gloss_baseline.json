@@ -404,6 +404,7 @@
     "pn-epoch::solve::act_emission": "",
     "pn-epoch::solve::act_switch": "",
     "pn-epoch::solve::admission::admission_boundaries": "",
+    "pn-epoch::solve::admission::admission_contract": "",
     "pn-epoch::solve::admission::admission_empty": "",
     "pn-epoch::solve::admission::admission_equalities": "",
     "pn-epoch::solve::admission::admission_individual_straddle": "",

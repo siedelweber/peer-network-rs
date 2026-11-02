@@ -1078,3 +1078,52 @@ fn admission_solvent_support() {
         Err(FinalRefusal::Refused(AdmissionRefusal::Failed(Gate::OwnSolvency)))
     ));
 }
+
+/// Claim: At the finite self-supported and coupled rational-floor complete candidates, direct admission and local closure retain identical final-gate evidence under the same schedule and procedure, and independent closure replay retains that evidence. No published-reference history or deployment authority is inferred.
+/// ´claim:admission:shared-contract-retains-identical-final-gates´
+/// ´test:integration:admission-contract´
+#[test]
+fn admission_contract() {
+    for (acts, burns) in [
+        (self_acts(), vec![("a", NumberId::NumbersAdmissionRepeatedBurn.value())]),
+        (
+            coupled(),
+            vec![
+                ("b", NumberId::NumbersAdmissionStraddleSourceBurn.value()),
+                ("a", NumberId::NumbersAdmissionPoorBurn.value()),
+            ],
+        ),
+    ] {
+        let context = candidate(&acts, 1, &burns);
+        let mut plan = procedure(&context);
+        plan.solve.grid = vec!["0".into()];
+        let led = closure_initial(&context);
+        let direct = run(&context, &plan, &led).unwrap();
+        let blocks = closure::partition(&context).unwrap();
+        let input = ClosureInput {
+            candidate: &context,
+            partition: &blocks,
+            schedule: &led,
+            previous: None,
+        };
+        let closed = closure::close(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric(),
+        )
+        .unwrap();
+        assert_eq!(&closed.record().final_gates, direct.evidence());
+        let replayed = closure::replay(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric(),
+            closed.record(),
+        )
+        .unwrap();
+        assert_eq!(replayed.record(), closed.record());
+    }
+}

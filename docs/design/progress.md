@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 55 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 54 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 50 | 51 | 360 | 8 | 22 | 895 |
+| implementation | 1 356 | 50 | 51 | 362 | 10 | 22 | 893 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -34,7 +34,7 @@
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
 | pn-records | 218 | 1 | 9 | 76 | 1 | 3 | 132 |
 | pn-replay | 26 | 0 | 3 | 1 | 0 | 0 | 22 |
-| pn-verification | 281 | 22 | 4 | 41 | 4 | 1 | 214 |
+| pn-verification | 281 | 22 | 4 | 43 | 6 | 1 | 212 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
 
@@ -56,7 +56,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 492 | 189 |
+| ROOT (repository-wide) | 1 494 | 190 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -69,12 +69,12 @@
 | 4 | 35 | 2 | 11 | 21 | 0 | 4 | 1 |
 | 5 | 42 | 13 | 5 | 23 | 0 | 3 | 1 |
 | 6 | 24 | 4 | 5 | 14 | 0 | 1 | 1 |
-| 7 | 38 | 1 | 6 | 30 | 0 | 1 | 1 |
+| 7 | 38 | 1 | 6 | 31 | 1 | 1 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 8 | 1 | 4 | 3 | 0 | 0 | 0 |
 | 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
 | 11 | 90 | 14 | 26 | 49 | 0 | 4 | 1 |
-| unlinked | 1 497 | 33 | 16 | 254 | 14 | 13 | 1 194 |
+| unlinked | 1 497 | 33 | 16 | 255 | 15 | 13 | 1 193 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -83,7 +83,7 @@
 | certificate | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
-| fixture | 218 | 11 | 1 | 31 | 6 | 0 | 175 |
+| fixture | 218 | 11 | 1 | 33 | 8 | 0 | 173 |
 | function | 216 | 12 | 6 | 94 | 0 | 8 | 104 |
 | invariant check | 517 | 22 | 21 | 131 | 1 | 8 | 343 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
@@ -728,7 +728,7 @@
 | ``def:epoch:standing-domain-profile`` | pn-epoch; function | realized | ``EPOCH::def:compiler:boundary-inputs`` ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | |
 | ``tbl:epoch:standing-domain-weights`` | pn-epoch; function | designed | ``EPOCH::def:compiler:boundary-inputs`` | | | |  | |
 | ``def:epoch:self-retention-base`` | pn-epoch; function | designed | ``EPOCH::def:compiler:base-allocation`` ``EPOCH::def:compiler:boundary-inputs`` | | | |  | |
-| ``def:epoch:domain-weighted-base-allocation`` | pn-epoch; function | designed | ``ROOT::alg:design:base`` | | | | 5 | |
+| ``def:epoch:domain-weighted-base-allocation`` | pn-epoch; function | designed | ``ROOT::alg:design:base`` ``ROOT::open:design:reference-registration-base`` | | | | 5 | |
 | ``eq:epoch:domain-weighted-base-allocation`` | pn-epoch; function | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | |
 | ``rem:epoch:artifact-activity-crowds-out-export`` | pn-epoch; policy | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
 | ``subsec:epoch:conserved-standing-transport`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -768,7 +768,7 @@
 | ``rem:epoch:certificate-failure-versus-indecisive-enclosure`` | pn-epoch; certificate | designed | ``EPOCH::rule:compiler:fence-refinement`` ``ROOT::dec:design:rung-verdicts`` ``ROOT::req:vision:rung-verdicts`` | | | ``ROOT::dec:design:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
 | ``subsec:epoch:act-folding`` | pn-epoch; certificate | unassigned | | | | |  | |
 | ``def:epoch:net-stance`` | pn-epoch; function | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::amend:design:epoch-compiler-readings`` | | | |  | |
-| ``rem:epoch:compiled-acts-fold-into-cells`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::amend:design:epoch-compiler-readings`` | | | |  | |
+| ``rem:epoch:compiled-acts-fold-into-cells`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::open:design:reference-registration-base`` | | | |  | |
 | ``prop:epoch:act-folding-properties`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:epoch:folding-precedes-allocation`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:joined-state`` | | | |  | |
 | ``rem:epoch:control-acts-resolve-to-self`` | pn-epoch; policy | designed | ``ROOT::alg:design:recipients`` ``ROOT::amend:design:deinvite-formation-scope`` | | | | 5 | |
@@ -1466,9 +1466,9 @@
 | ``ver:standing:terminal-regression`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``ver:standing:canonical-encoding`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``subsec:verification:final-epoch-gates`` | pn-verification; fixture | unassigned | | | | |  | |
-| ``ver:epoch:final-stamps`` | pn-verification; fixture | unassigned | | | | | 7 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/inputs/design-bites.toml` |
+| ``ver:epoch:final-stamps`` | pn-verification; fixture | designed (attention only) | ``ROOT::open:design:reference-registration-base`` | | | | 7 | |
 | ``ver:standing:conservation-witness`` | pn-verification; fixture | unassigned | | | | |  | |
-| ``ver:epoch:final-backpressure`` | pn-verification; fixture | unassigned | | | | |  | |
+| ``ver:epoch:final-backpressure`` | pn-verification; fixture | designed (attention only) | ``ROOT::open:design:reference-registration-base`` | | | |  | |
 | ``subsec:verification:graph-dependent-certificate`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``ver:standing:conserved-equilibrium-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::standing_profile`` ``ROOT::alg:design:local-inclusion`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:two-map-measurements`` ``ROOT::conv:render:numeric-displays`` ``ROOT::conv:vision:vectors-properties`` ``ROOT::dec:design:certificate`` ``ROOT::obs:design:reference-certificate`` ``ROOT::obs:inventory:constants`` ``ROOT::open:design:nrz-capabilities`` ``ROOT::open:design:reference-wall-route`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::req:vision:certificate`` | | | ``ROOT::dec:design:certificate``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:certificate``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
 | ``ver:standing:interval-certificate`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |

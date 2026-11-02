@@ -1858,6 +1858,14 @@
       "review": "The coupled source with full emission fails individual safety, and an incoming relationship cannot fund an insolvent own account. A positive-rung policy straddle is explicitly INDECISIVE; exhausted Work is a kernel fault, not a certified failure."
     },
     {
+      "operation": "pn-epoch::solve::admission::admission_contract",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:shared-contract-retains-identical-final-gates",
+      "before": "",
+      "after": "Claim: At the finite self-supported and coupled rational-floor complete candidates, direct admission and local closure retain identical final-gate evidence under the same schedule and procedure, and independent closure replay retains that evidence. No published-reference history or deployment authority is inferred.",
+      "review": "The same reversed self-supported and coupled complete candidates, schedule and anchor procedure feed both public consumers. FinalEvidence equality and independent closure replay are exact identities at the solver minimum. No reference-family, ridge-charge or deployment result is inferred."
+    },
+    {
       "operation": "pn-epoch::solve::admission::admission_empty",
       "path": "packages/epoch/tests/solve/admission.rs",
       "claim": "EPOCH::claim:admission:empty-final-set-has-no-stamp-or-debit",

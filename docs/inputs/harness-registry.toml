@@ -1454,7 +1454,7 @@ claim = "claim:verification:shared-title-cases-retain-complete-results"
 kind = "implementation"
 name = "pn-epoch-rust"
 evidence = "pure"
-contract = "boundary compiler parameters, final ledger and declared conserved numeric procedures"
+contract = "boundary compiler parameters, final ledger, declared conserved numeric procedures and finite candidate admission/closure"
 edition = "0.1"
 
 [[rows]]
@@ -1778,6 +1778,8 @@ cases = ["pn-graph::numeric::controller::controller_delivery"]
 [[rows]]
 kind = "suite"
 name = "pn-epoch::admission"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
 case_span = true
 status = "active"
 runner = "nextest"
@@ -1810,6 +1812,8 @@ cases = ["pn-epoch::solve::schedules::policy_edges", "pn-epoch::solve::schedules
 [[rows]]
 kind = "suite"
 name = "pn-epoch::closure"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
 case_span = true
 status = "active"
 runner = "nextest"
@@ -1822,6 +1826,8 @@ cases = ["pn-epoch::solve::admission::closure_membership", "pn-epoch::solve::adm
 [[rows]]
 kind = "suite"
 name = "pn-epoch::admission-review"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
 case_span = true
 status = "active"
 runner = "nextest"
@@ -1830,3 +1836,17 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::admission_individual_straddle", "pn-epoch::solve::admission::admission_solvent_support"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::admission-contract"
+contract_edition = "epoch-admission-1"
+contract = "Shared complete-candidate final-gate evidence through direct admission, local closure and independent replay; rational-floor fixture scope only."
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_contract"]
