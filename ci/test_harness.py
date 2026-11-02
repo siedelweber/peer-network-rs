@@ -128,6 +128,8 @@ class Harness(unittest.TestCase):
         import threading
         import time
         from unittest.mock import patch
+        from contextlib import redirect_stdout
+        import io
         from run_ci import isolated_wallet, isolated_host
         operation = isolated_host if host else isolated_wallet
         module = "test_host_runtime" if host else "test_wallet_boundary"
@@ -233,8 +235,13 @@ assert (root/'payload').read_text() == 'committed'
                             self.assertEqual(destination.read_bytes(), expected)
                             replacements.append(destination.name)
                         try:
-                            with patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'PN_IMPORT_BASE':'refs/import/base' if moving else source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
+                            captured = io.StringIO()
+                            with redirect_stdout(captured), patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'PN_IMPORT_BASE':'refs/import/base' if moving else source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
                                 self.assertEqual(operation(module), 0)
+                            measured = [json.loads(line.removeprefix('ISOLATION-COMPILE ')) for line in captured.getvalue().splitlines() if line.startswith('ISOLATION-COMPILE ')]
+                            self.assertEqual(len(measured), 1)
+                            self.assertEqual(measured[0]['cold_target'], not moving)
+                            self.assertFalse(measured[0]['layout_changed'])
                         finally:
                             worker.join(timeout=30)
                         self.assertFalse(worker.is_alive())
@@ -274,10 +281,14 @@ assert (root/'payload').read_text() == 'committed'
                     self.assertEqual(target, original_target)
                     self.assertEqual((target/'retained').read_text(), 'owned cache')
                     self.assertEqual((isolated/'Cargo.lock').read_text(), (root/'Cargo.lock').read_text())
-                with patch.dict(os.environ, RUSTFLAGS='--cfg isolation_key_witness'):
+                captured = io.StringIO()
+                with redirect_stdout(captured), patch.dict(os.environ, RUSTFLAGS='--cfg isolation_key_witness'):
                     with workspace(root, 'host-observation-runtime' if host else 'wallet-conformance', source) as (_, target):
                         self.assertNotEqual(target, original_target)
                         self.assertFalse((target/'retained').exists())
+                measured = json.loads(next(line.removeprefix('ISOLATION-COMPILE ') for line in captured.getvalue().splitlines() if line.startswith('ISOLATION-COMPILE ')))
+                self.assertTrue(measured['cold_target'])
+                self.assertTrue(measured['layout_changed'])
                 self.assertFalse(original_target.exists())
                 from isolation import retention
                 legacy = root/'target/i/legacy'

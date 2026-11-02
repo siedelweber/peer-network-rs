@@ -72,9 +72,11 @@ class Performance(unittest.TestCase):
             root = Path(directory)
             lane = root/'.lane'
             lane.mkdir()
-            for name in names:
-                (lane/f'gate-{name}.log').write_text('fixture')
-            for wall, expected in ((1, False), (2, False), (3, True)):
+            for wall, expected, cold in ((1, False, False), (2, False, True), (3, True, True)):
+                for name in names:
+                    actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
+                    synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
+                    (lane/f'gate-{name}.log').write_text('\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
                 for status in (0, 1):
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
@@ -84,6 +86,10 @@ class Performance(unittest.TestCase):
                     for name in tiers:
                         self.assertEqual(measured[name]['status'], status)
                         self.assertEqual(measured[name]['over_budget'], expected)
+                        self.assertEqual(measured[name]['step_figures'][name]['partial'], cold)
+                        self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
+                        self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
+                        self.assertEqual(measured[name]['build_cpu_s'], 0.5)
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])

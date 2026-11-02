@@ -165,6 +165,7 @@ def workspace(root, name, source):
                                           ('RUSTUP_TOOLCHAIN', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'CARGO_BUILD_TARGET')})
         key = hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()).hexdigest()
         target = base/'c'/key
+        cold_target = not target.is_dir()
         target.mkdir(parents=True, exist_ok=True)
         for obsolete in target.parent.iterdir():
             if obsolete != target and obsolete.is_dir():
@@ -174,6 +175,9 @@ def workspace(root, name, source):
         print(f'ISOLATION owner={name} source={source} tree={tree} target={target} cache=retained cargo=fingerprinted', flush=True)
         layout = hashlib.sha256(json.dumps(dict(storage=str(base.parent), configuration=configuration,
             format='owner-cargo-v1'), sort_keys=True).encode()).hexdigest()
+        identity = base/'layout'
+        layout_changed = identity.exists() and identity.read_text() != layout
+        identity.write_text(layout)
         try:
             yield tree, target
         finally:
@@ -181,7 +185,7 @@ def workspace(root, name, source):
                 (base/'last-use').write_text(str(json.loads(state.read_text())['generation']))
             log = tree/'.lane/cargo-work.jsonl'
             rows = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
-            print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, layout=layout,
+            print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, source=source, layout=layout, cold_target=cold_target, layout_changed=layout_changed,
                 cargo_cpu_s=sum(row['own_cpu'] for row in rows), cargo_wall_s=sum(row['wall'] for row in rows),
                 calls=len(rows), scope='cargo-and-waited-descendants')), flush=True)
 
