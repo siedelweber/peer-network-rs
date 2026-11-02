@@ -152,6 +152,67 @@ class Performance(unittest.TestCase):
                 if pidfile.exists():
                     os.kill(int(pidfile.read_text()), signal.SIGTERM)
 
+    def test_gate_cancel_cleanup(self):
+        """Cancellation retains target exclusion until a slow EXIT stop and its session finish.
+        ´claim:devperf:gate-cancellation-retains-exclusion´
+        ´test:integration:test-gate-cancel-cleanup´
+        """
+        import fcntl
+        import multiprocessing
+        import signal
+        import sys
+        import time
+        from isolation import gate_target
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            ready_read, ready_write = os.pipe()
+            command = '''trap 'trap - EXIT; trap "" TERM INT; printf "stopping\\n"; sleep 6; kill -KILL "$service"; wait "$service"; printf "service-stopped\\n"; kill -KILL "$session"; wait "$session"; printf "session-closed\\n"' EXIT
+trap 'trap "" TERM INT; exit 143' TERM INT
+bash -c 'trap "" TERM INT; printf "service-ready\\n"; exec sleep 60' & service=$!
+bash -c 'trap "" TERM INT; printf "session-ready\\n"; exec sleep 60' & session=$!
+printf '%s %s\\n' "$service" "$session" > "$1"
+printf "ready\\n"
+wait
+'''
+            def supervise():
+                os.close(ready_read)
+                os.dup2(ready_write, 1)
+                os.close(ready_write)
+                with (root/'stderr').open('w') as errors:
+                    os.dup2(errors.fileno(), 2)
+                    os.environ['CARGO_TARGET_DIR'] = directory
+                    sys.exit(gate_target(['bash', '-c', command, 'fixture', str(root/'pids')]))
+            child = multiprocessing.get_context('fork').Process(target=supervise)
+            child.start()
+            os.close(ready_write)
+            try:
+                with os.fdopen(ready_read) as events, (root/'.gate-target.lock').open('a') as lock:
+                    self.assertTrue(events.readline().startswith('GATE-TARGET-LOCK'))
+                    self.assertEqual({events.readline() for _ in range(3)}, {'ready\n', 'service-ready\n', 'session-ready\n'})
+                    pids = [int(pid) for pid in (root/'pids').read_text().split()]
+                    self.assertEqual(len(pids), 2)
+                    child.terminate()
+                    self.assertEqual(events.readline(), 'stopping\n')
+                    time.sleep(5.25)
+                    self.assertTrue(child.is_alive(), 'supervisor killed the gate during EXIT stop')
+                    for pid in pids:
+                        os.kill(pid, 0)
+                    with self.assertRaises(BlockingIOError):
+                        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    self.assertEqual(events.readline(), 'service-stopped\n')
+                    self.assertEqual(events.readline(), 'session-closed\n')
+                    child.join(10)
+                    self.assertFalse(child.is_alive())
+                    self.assertEqual(child.exitcode, 143)
+                    for pid in pids:
+                        with self.assertRaises(ProcessLookupError):
+                            os.kill(pid, 0)
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            finally:
+                if child.is_alive():
+                    os.kill(child.pid, signal.SIGKILL)
+                    child.join(10)
+
     def test_target_retention(self):
         """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.
         ´claim:devperf:target-retention-preserves-metadata´
@@ -179,6 +240,7 @@ class Performance(unittest.TestCase):
             self.assertFalse((target/'gate').exists())
             self.assertEqual((target/'gate-baselines/retained').read_text(), 'baseline')
             (target/'triple/gate/.fingerprint').mkdir(parents=True)
+            (target/'triple/CACHEDIR.TAG').write_text('Cargo cache')
             (target/'triple/gate/dependency').write_bytes(b'x'*8192)
             (target/'host-observation-runtime/gate/.fingerprint').mkdir(parents=True)
             (target/'host-observation-runtime/.rustc_info.json').write_text('{}')

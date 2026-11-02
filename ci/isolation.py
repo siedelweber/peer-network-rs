@@ -46,7 +46,7 @@ def bound_target(target, ceiling, owner):
     profiles = [target/name for name in names]
     # Cargo puts root metadata in each independent target, not in a triple.
     nested = [path for path in target.iterdir() if path.is_dir()
-              and any((path/name).is_file() for name in ('.rustc_info.json', 'CACHEDIR.TAG'))] if target.exists() else []
+              and (path/'.rustc_info.json').is_file()] if target.exists() else []
     triples = [path for path in target.iterdir() if path.is_dir() and path.name not in (*names, 'isolation')
                and path not in nested and any((path/name/'.fingerprint').is_dir() for name in names)] if target.exists() else []
     profiles.extend(path/name for path in triples for name in names)
@@ -78,7 +78,9 @@ def gate_target(command):
         started = time.monotonic()
         fcntl.flock(lock, fcntl.LOCK_EX)
         print(f'GATE-TARGET-LOCK wait_s={time.monotonic()-started:.6f} path={target}', flush=True)
-        status = cancellable(command, close_fds=True).returncode
+        # The gate owns adapter escalation and service-stop deadlines. Killing
+        # it here would release exclusion before its EXIT cleanup has finished.
+        status = cancellable(command, kill_after=None, close_fds=True).returncode
         return 128-status if status < 0 else status
 
 

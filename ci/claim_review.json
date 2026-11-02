@@ -114,6 +114,14 @@
       "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_gate_cancel_cleanup",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:gate-cancellation-retains-exclusion",
+      "before": "",
+      "after": "Cancellation retains target exclusion until a slow EXIT stop and its session finish.",
+      "review": "The pipe barrier starts cancellation only after both fixture processes exist. The EXIT stop remains active beyond the former supervisor escalation, while a competing target lock still refuses. The test requires both process waits to complete before supervisor exit and successful lock acquisition."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_gate_target_lock",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:gate-target-lock-is-supervised",

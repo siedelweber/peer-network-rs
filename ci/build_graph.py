@@ -141,7 +141,7 @@ def plan(root):
                    for name, command in roster(root))
 
 
-def cancellable(argv, **kwargs):
+def cancellable(argv, *, kill_after=5, **kwargs):
     """Forward termination through each adapter boundary and reap its child."""
     child = None
     pending = []
@@ -163,7 +163,7 @@ def cancellable(argv, **kwargs):
                 output, errors = child.communicate(timeout=0.25)
                 break
             except subprocess.TimeoutExpired:
-                if pending and time.monotonic()-pending[1] >= 5:
+                if pending and kill_after is not None and time.monotonic()-pending[1] >= kill_after:
                     try:os.killpg(child.pid, signal.SIGKILL)
                     except ProcessLookupError:pass
         return subprocess.CompletedProcess(argv, -pending[0] if pending else child.returncode, output, errors)

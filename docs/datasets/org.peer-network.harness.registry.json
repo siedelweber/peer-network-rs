@@ -2552,6 +2552,7 @@
         "ci::test_devperf.Performance.test_distinct_excess_ledger": "calibrated-devperf-distinct-excess-ledger-case"
       },
       "cases": [
+        "ci::test_devperf.Performance.test_gate_cancel_cleanup",
         "ci::test_devperf.Performance.test_gate_target_lock",
         "ci::test_devperf.Performance.test_whole_gate_warning",
         "ci::test_devperf.Performance.test_target_retention",
