@@ -250,6 +250,11 @@ class Evidence(unittest.TestCase):
             self.assertEqual(row['record_granular'], 1)
         shared = {record: dict(text='``def:testing:fixture`` uses `x. y` with ``claim:testing:fixture``.', citations=set())}
         self.assertEqual(tracker_rows(inventory, shared, edge, bites)[0]['status'], 'realized')
+        retained = {record: dict(text='The consumer retains ``def:testing:fixture`` as a premise. Endpoint composition is checked by ``claim:testing:fixture``.', citations=set())}
+        premise = tracker_rows(inventory, retained, edge, bites)[0]
+        self.assertEqual(premise['status'], 'designed')
+        self.assertEqual(premise['routes'], [])
+        self.assertEqual(premise['record_routes'], [dict(kind='record', record=record, scope=scope)])
         attention_support = {'ROOT::open:testing:fixture': separate[record]}
         attention_row = tracker_rows(inventory, attention_support, edge, bites)[0]
         self.assertEqual(attention_row['status'], 'designed')

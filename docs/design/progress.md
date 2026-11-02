@@ -2,7 +2,7 @@
 
 **Convention (Citation coverage)** · `conv:progress:citation-coverage` This tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record cites the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a citation to one clause does not claim coverage of the others. Shared vocabulary alone is insufficient. Sibling labels, including rejected simplifications, are checked against the same criterion, with uncovered clauses distinguished from adopted ones. A held statement stays held until an unheld record designs its operative clause: a citation covering only part cannot discharge design work retained by held records. When that part has its own label, the record cites that label; otherwise the larger statement remains uncited and the coverage audit names the shortfall. Citation placement follows the design, never a desired evidence status.
 
-**Convention (Evidence routes)** · `conv:progress:evidence-routes` A statement count is useful only when its route to executed evidence is inspectable. This tracker joins exact inventory labels to labelled design paragraphs harvested by the claim checker and to the cites field of the named design-constants carrier. A paragraph mention is an ordinary PAPER citation or an exact doubled-delimiter inventory label; a constant mention is its whole cites field and retains its constant id. Four route kinds distinguish the evidence: obligation joins a record that is itself a scoped-passed obligation, once per obligation, with its claim count retained in the obligation table; site-claim joins a test site's exact citation of the mentioning record; record-claim joins an exact paper label and an exact claim citation or exhibit in the same sentence of a mentioning record; record joins a mentioning record and scoped obligation when a cited claim occurs only in a separate sentence. Sentence boundaries are periods, question marks or exclamation marks followed by whitespace or the paragraph end, and line endings, outside Markdown code spans; punctuation inside a label or code span does not divide a sentence. Abbreviations such as e.g. and i.e. receive no linguistic exception: their final period followed by whitespace divides sentences unless enclosed in a code span, keeping evidence attribution conservative and mechanically reproducible. The same sentence is the existing prose boundary that says which evidence witnesses which statement, without inferring a relation from neighbouring topics. A bare claim exhibit must resolve to one qualified claim identity across the checked claims; ambiguous names refuse rather than guessing a package. Site-claim and record-claim routes retain the individual claim and its scoped-passed obligation. Record routes are record-granular, rendered separately once per record and obligation with their claim count in the support table; they do not realize a label. The record-granular support sub-count counts only statements without a realized route and overlaps held or designed, never realized. A claim must pass all registered executions and combined members; an obligation route requires every declared claim to pass. Obligation routes are obligation-granular: they do not assert that every member claim witnesses every paper label. A constant mention alone cannot create execution evidence. These relations use the checked evidence of (`rule:testing:results`); planned names and manually written implementation-status prose supply no evidence.
+**Convention (Evidence routes)** · `conv:progress:evidence-routes` A statement count is useful only when its route to executed evidence is inspectable. This tracker joins exact inventory labels to labelled design paragraphs harvested by the claim checker and to the cites field of the named design-constants carrier. A paragraph mention is an ordinary PAPER citation or an exact doubled-delimiter inventory label; a constant mention is its whole cites field and retains its constant id. Four route kinds distinguish the evidence: obligation joins a record that is itself a scoped-passed obligation, once per obligation, with its claim count retained in the obligation table; site-claim joins a test site's exact citation of the mentioning record; record-claim joins an exact paper label and an exact claim citation or exhibit in the same sentence of a mentioning record; record joins a mentioning record and scoped obligation when a cited claim occurs only in a separate sentence. Sentence boundaries are periods, question marks or exclamation marks followed by whitespace or the paragraph end, and line endings, outside Markdown code spans; punctuation inside a label or code span does not divide a sentence. Abbreviations such as e.g. and i.e. receive no linguistic exception: their final period followed by whitespace divides sentences unless enclosed in a code span, keeping evidence attribution conservative and mechanically reproducible. A claim witnesses a statement only if its assertions could fail when that statement fails. A test that retains the statement as a premise and checks only its consumer does not witness that premise; its claim belongs in the sentence about the consumer. The same sentence is the existing prose boundary that says which evidence witnesses which statement, without inferring a relation from neighbouring topics. A bare claim exhibit must resolve to one qualified claim identity across the checked claims; ambiguous names refuse rather than guessing a package. Site-claim and record-claim routes retain the individual claim and its scoped-passed obligation. Record routes are record-granular, rendered separately once per record and obligation with their claim count in the support table; they do not realize a label. The record-granular support sub-count counts only statements without a realized route and overlaps held or designed, never realized. A claim must pass all registered executions and combined members; an obligation route requires every declared claim to pass. Obligation routes are obligation-granular: they do not assert that every member claim witnesses every paper label. A constant mention alone cannot create execution evidence. These relations use the checked evidence of (`rule:testing:results`); planned names and manually written implementation-status prose supply no evidence.
 
 **Convention (Status precedence)** · `conv:progress:status-precedence` Realized means at least one obligation, site-claim or same-sentence record-claim scoped execution route. Held means there is a design mention, no realized route, and every design-bearing mentioning record is a held obligation, a named hold used by a held obligation, or explicitly cites such a hold. Designed means there is a design mention but neither of those conditions holds; an unheld design route prevents held-only classification. The attention-only column is a sub-count of designed: every mentioning record is an open question, observation or declared outstanding-work record, with no design-bearing carrier. Attention mentions cannot override a held design route, and cannot supply realization; when all mentions are attention, named holds still take precedence. Such mentions identify attention or a measurement, not a design decision; they remain visible without being counted as an additional status. Unassigned means there is no exact-label design mention. A statement realized in one scope and held in another counts once as realized, with both routes retained below; this is scoped realization, not universal completion or discharge of the other hold. A failed execution cannot realize a statement and still refuses the gate. Rows whose proposed crate is none form the separate prose total, not implementation completion.
 
@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 52 | 44 | 344 | 8 | 20 | 916 |
+| implementation | 1 356 | 50 | 46 | 346 | 8 | 22 | 914 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,8 +28,8 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 24 | 8 | 131 | 1 | 11 | 208 |
-| pn-graph | 223 | 5 | 7 | 61 | 0 | 4 | 150 |
+| pn-epoch | 371 | 22 | 8 | 133 | 1 | 13 | 208 |
+| pn-graph | 223 | 5 | 9 | 61 | 0 | 4 | 148 |
 | pn-host | 166 | 0 | 12 | 29 | 1 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
 | pn-records | 218 | 1 | 9 | 76 | 1 | 3 | 132 |
@@ -66,7 +66,7 @@
 | 1 | 16 | 0 | 3 | 12 | 0 | 0 | 1 |
 | 2 | 32 | 2 | 3 | 27 | 0 | 0 | 0 |
 | 3 | 21 | 0 | 2 | 18 | 0 | 4 | 1 |
-| 4 | 33 | 2 | 9 | 21 | 0 | 4 | 1 |
+| 4 | 35 | 2 | 11 | 21 | 0 | 4 | 1 |
 | 5 | 41 | 13 | 5 | 22 | 0 | 3 | 1 |
 | 6 | 24 | 4 | 5 | 14 | 0 | 1 | 1 |
 | 7 | 33 | 1 | 3 | 28 | 0 | 1 | 1 |
@@ -74,7 +74,7 @@
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 | 0 |
 | 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
 | 11 | 85 | 14 | 21 | 49 | 0 | 4 | 1 |
-| unlinked | 1 509 | 35 | 16 | 243 | 14 | 11 | 1 215 |
+| unlinked | 1 507 | 33 | 16 | 245 | 14 | 13 | 1 213 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -85,7 +85,7 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 11 | 1 | 31 | 6 | 0 | 175 |
 | function | 216 | 12 | 6 | 94 | 0 | 8 | 104 |
-| invariant check | 517 | 24 | 17 | 122 | 1 | 6 | 354 |
+| invariant check | 517 | 22 | 19 | 124 | 1 | 8 | 352 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
 | policy | 265 | 5 | 15 | 41 | 6 | 3 | 204 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
@@ -1215,9 +1215,9 @@
 | ``eq:dynamics:scalar-row-map`` | pn-epoch; function | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
 | ``rem:dynamics:isolated-actor`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``subsec:dynamics:responsive-activation`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``prop:dynamics:responsive-vouch-activation-monotonicity`` | pn-epoch; invariant check | realized | ``GRAPH::def:numerics:activation-endpoints`` | record-claim; ``GRAPH::def:numerics:activation-endpoints``; ``GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises``; ``ROOT::gate:design:bite-6``<br>| | |  | |
+| ``prop:dynamics:responsive-vouch-activation-monotonicity`` | pn-epoch; invariant check | designed | ``GRAPH::def:numerics:activation-endpoints`` | | ``GRAPH::def:numerics:activation-endpoints``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``prop:dynamics:responsive-vouch-activation-bound`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``prop:dynamics:responsive-vouch-activation-log-concavity`` | pn-epoch; invariant check | realized | ``GRAPH::def:numerics:activation-endpoints`` | record-claim; ``GRAPH::def:numerics:activation-endpoints``; ``GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises``; ``ROOT::gate:design:bite-6``<br>| | |  | |
+| ``prop:dynamics:responsive-vouch-activation-log-concavity`` | pn-epoch; invariant check | designed | ``GRAPH::def:numerics:activation-endpoints`` | | ``GRAPH::def:numerics:activation-endpoints``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``prop:dynamics:responsive-vouch-activation-concavity`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:dynamics:responsive-vouch-activation-scope`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``prop:dynamics:clean-gain-domination`` | pn-epoch; invariant check | designed | ``CONSTANTS::const.dynamics.vouchgain_1`` ``GRAPH::rule:numerics:activation-gain`` | | | |  | |
@@ -1623,7 +1623,7 @@
 | ``case:necessity:mutual-consumption-order-tiebreak`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | |
 | ``case:necessity:mutual-consumption-permanent-void`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | |
 | ``subsec:necessity:epoch-quantized-consent`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
-| ``case:necessity:epoch-quantized-consent-instant-commit`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``case:necessity:epoch-quantized-consent-instant-commit`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``case:necessity:epoch-quantized-consent-arrival-order`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:epoch-quantized-consent-asserted-time`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:no-privileged-cancel-class`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -1692,7 +1692,7 @@
 | ``subsec:necessity:retained-commitment`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:retained-commitment-remove-residue`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:title-order-separation`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
-| ``case:necessity:title-order-separation-host-title-tiebreak`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``case:necessity:title-order-separation-host-title-tiebreak`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``app:deployment`` | pn-verification; none | unassigned | | | | |  | |
 | ``subsec:deployment:public-availability`` | pn-host; policy | unassigned | | | | |  | |
 | ``case:deployment:public-availability-streaming`` | pn-host; policy | unassigned | | | | |  | |
