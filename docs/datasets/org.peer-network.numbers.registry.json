@@ -11875,6 +11875,45 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "17/233"
+    },
+    {
+      "display": "exact",
+      "exact": "1/4",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:schedule-refused-policy-floor",
+      "num": "1/4",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "1/4"
+    },
+    {
+      "display": "exact",
+      "exact": "1/16",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:schedule-refused-below-floor-wall",
+      "num": "1/16",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "1/16"
+    },
+    {
+      "display": "exact",
+      "exact": "1/256",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:schedule-refused-sub-quantum-error",
+      "num": "1/256",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "1/256"
     }
   ]
 }

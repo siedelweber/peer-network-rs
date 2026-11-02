@@ -155,6 +155,12 @@ pub enum AdmissionRefusal {
     Closure,
     #[error("certified final gate failed: {0:?}")]
     Failed(Gate),
+    #[error("certified delivery has no admissible representation")]
+    Delivery,
+    #[error("replay inputs or retained evidence differ")]
+    Evidence,
+    #[error("later schedule violates its led wall or effective declaration")]
+    ScheduleValidity,
     #[error("comparison remains indecisive: {0:?}")]
     Indecisive(Comparison),
     #[error("operation stopped without a verdict: {0:?}")]
@@ -225,7 +231,10 @@ pub fn declare_schedule(input: ScheduleInput, limits: Limits) -> Result<Schedule
     }
     if let Delivery::Grid { quantum, maximum_error } = &input.delivery {
         let quantum = positive(quantum, &mut budget, DeclarationError::Delivery)?;
-        positive(maximum_error, &mut budget, DeclarationError::Delivery)?;
+        let maximum_error = positive(maximum_error, &mut budget, DeclarationError::Delivery)?;
+        if maximum_error.compare(&quantum, &mut budget)?.is_lt() {
+            return Err(DeclarationError::Delivery);
+        }
         if !wall.div(&quantum, &mut budget)?.is_integer() {
             return Err(DeclarationError::Delivery);
         }

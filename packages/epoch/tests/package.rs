@@ -141,6 +141,32 @@ fn schedule_fixture() -> pn_epoch::admission::ScheduleInput {
     }
 }
 
+fn schedule_refusals() -> [(u8, pn_epoch::admission::DeclarationError); 20] {
+    use pn_epoch::admission::DeclarationError;
+    [
+        (0, DeclarationError::Controller),
+        (1, DeclarationError::Late),
+        (2, DeclarationError::InitialWall),
+        (3, DeclarationError::InitialWall),
+        (4, DeclarationError::Parameters),
+        (5, DeclarationError::Parameters),
+        (6, DeclarationError::Parameters),
+        (7, DeclarationError::Parameters),
+        (8, DeclarationError::Delivery),
+        (9, DeclarationError::Delivery),
+        (10, DeclarationError::Delivery),
+        (11, DeclarationError::Refinement),
+        (12, DeclarationError::Refinement),
+        (13, DeclarationError::Refinement),
+        (14, DeclarationError::Refinement),
+        (15, DeclarationError::Refinement),
+        (16, DeclarationError::Late),
+        (17, DeclarationError::InitialWall),
+        (18, DeclarationError::InitialWall),
+        (19, DeclarationError::Delivery),
+    ]
+}
+
 /// Claim: Schedule declaration validation retains explicit initialization and a closed canonical-controller edition, refusing missing fields, unknown editions, late activation, invalid rational parameter ranges, grid placement and refinement declarations on the declared finite controls; validation produces neither a delivered schedule nor admission evidence.
 /// ´claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs´
 /// ´test:integration:schedule-declarations´
@@ -171,28 +197,7 @@ fn schedule_declarations() {
             DeclarationError::Missing(missing)
         );
     }
-    for (case, expected) in [
-        (0, DeclarationError::Controller),
-        (1, DeclarationError::Late),
-        (2, DeclarationError::InitialWall),
-        (3, DeclarationError::InitialWall),
-        (4, DeclarationError::Parameters),
-        (5, DeclarationError::Parameters),
-        (6, DeclarationError::Parameters),
-        (7, DeclarationError::Parameters),
-        (8, DeclarationError::Delivery),
-        (9, DeclarationError::Delivery),
-        (10, DeclarationError::Delivery),
-        (11, DeclarationError::Refinement),
-        (12, DeclarationError::Refinement),
-        (13, DeclarationError::Refinement),
-        (14, DeclarationError::Refinement),
-        (15, DeclarationError::Refinement),
-        (16, DeclarationError::Late),
-    ]
-    .into_iter()
-    .rev()
-    {
+    for (case, expected) in schedule_refusals().into_iter().rev() {
         let mut input = original.clone();
         match case {
             0 => input.controller = "unknown-controller".into(),
@@ -221,11 +226,24 @@ fn schedule_declarations() {
             13 => input.refinement.precision_bits[0] = 0,
             14 => input.refinement.maximum_work = 0,
             15 => input.refinement.maximum_replay_work = 0,
-            _ => input.initialization.effective_boundary = Some(input.announced_at + 2),
+            16 => input.initialization.effective_boundary = Some(input.announced_at + 2),
+            17 => input.initialization.policy_floor = Some(pins::NumberId::NumbersScheduleRefusedPolicyFloor.value().into()),
+            18 => input.initialization.wall = Some(pins::NumberId::NumbersScheduleRefusedBelowFloorWall.value().into()),
+            _ => {
+                input.delivery = Delivery::Grid {
+                    quantum: pins::NumberId::NumbersScheduleFixtureGridQuantum.value().into(),
+                    maximum_error: pins::NumberId::NumbersScheduleRefusedSubQuantumError.value().into(),
+                }
+            }
         }
         assert_eq!(declare_schedule(input, ExactLimits::default()).unwrap_err(), expected);
     }
     let mut exact = original;
+    exact.delivery = Delivery::Grid {
+        quantum: pins::NumberId::NumbersScheduleFixtureGridQuantum.value().into(),
+        maximum_error: pins::NumberId::NumbersScheduleFixtureGridQuantum.value().into(),
+    };
+    declare_schedule(exact.clone(), ExactLimits::default()).unwrap();
     exact.delivery = Delivery::ExactRational;
     declare_schedule(exact.clone(), ExactLimits::default()).unwrap();
     exact.initialization.floor = Some(pn_records::numerics::Floor::RidgeImage);
@@ -258,7 +276,7 @@ impl pn_epoch::package::ClosureVerifier for Attested {
     }
 }
 
-/// Claim: Candidate verification shares published-package cause coherence while requiring separate proposed-cause and closure verifiers; the finite controls refuse cause substitution, invalid closure conditions, changed attestations and publication without its own evidence, and expose no admitted-result constructor.
+/// Claim: Candidate verification shares published-package cause coherence while requiring separate proposed-cause and closure verifiers; the finite controls refuse cause substitution, invalid closure conditions, changed attestations and publication without its own evidence, without establishing the compile-time admitted-result boundary.
 /// ´claim:admission:candidate-context-retains-separate-authority´
 /// ´test:integration:candidate-boundaries´
 #[test]
@@ -325,6 +343,18 @@ fn candidate_boundaries() {
     target.closure.determined_at = target.closure.policy.minimum_ticks;
     target.closure.attestation = "fixture-target-attestation".into();
     verify_candidate(target.clone(), &proposed, &Attested(target.closure.clone())).unwrap();
+    let mut excess = target.clone();
+    excess.closure.policy.target -= 1;
+    assert_eq!(
+        verify_candidate(excess.clone(), &proposed, &Attested(excess.closure.clone())).unwrap_err(),
+        PackageError::Closure
+    );
+    let mut short = target.clone();
+    short.closure.policy.target += 1;
+    assert_eq!(
+        verify_candidate(short.clone(), &proposed, &Attested(short.closure.clone())).unwrap_err(),
+        PackageError::Closure
+    );
     target.closure.determined_at -= 1;
     assert_eq!(
         verify_candidate(target.clone(), &proposed, &Attested(target.closure.clone())).unwrap_err(),

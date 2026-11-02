@@ -6689,3 +6689,26 @@ value = "17/233"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 96
+
+# Schedule declaration refusal controls.
+
+[[rows]]
+id = "num:numbers:schedule-refused-policy-floor"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:schedule-refused-below-floor-wall"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:schedule-refused-sub-quantum-error"
+value = "1/256"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

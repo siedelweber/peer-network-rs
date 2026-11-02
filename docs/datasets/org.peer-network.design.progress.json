@@ -11177,10 +11177,11 @@
       "label": "cond:epoch:safety-derivability",
       "records": [
         "ROOT::dec:design:policy-schedules",
+        "ROOT::rec:design:bite-seven-checklist",
         "ROOT::req:vision:policy-schedules"
       ],
       "routes": [],
-      "status": "held"
+      "status": "designed"
     },
     {
       "bites": [
@@ -11205,6 +11206,7 @@
         "ROOT::alg:design:schedules",
         "ROOT::amend:decomposition:wall-reference",
         "ROOT::dec:design:policy-schedules",
+        "ROOT::rec:design:bite-seven-checklist",
         "ROOT::req:vision:policy-schedules"
       ],
       "routes": [],
@@ -11312,10 +11314,11 @@
       "label": "cond:epoch:safety-controller-publication",
       "records": [
         "ROOT::dec:design:policy-schedules",
+        "ROOT::rec:design:bite-seven-checklist",
         "ROOT::req:vision:policy-schedules"
       ],
       "routes": [],
-      "status": "held"
+      "status": "designed"
     },
     {
       "bites": [
@@ -11393,6 +11396,7 @@
       "records": [
         "ROOT::alg:design:schedules",
         "ROOT::dec:design:policy-schedules",
+        "ROOT::rec:design:bite-seven-checklist",
         "ROOT::req:vision:policy-schedules"
       ],
       "routes": [],
@@ -23381,23 +23385,23 @@
     },
     {
       "category": "total",
-      "designed": 202,
-      "held": 36,
+      "designed": 204,
+      "held": 34,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "202",
+          "exact": "204",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "202",
+          "num": "204",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "36",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "36",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         },
@@ -23600,23 +23604,23 @@
     },
     {
       "category": "crate",
-      "designed": 72,
-      "held": 9,
+      "designed": 74,
+      "held": 7,
       "name": "pn-epoch",
       "number_forms": {
         "designed": {
-          "exact": "72",
+          "exact": "74",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "72",
+          "num": "74",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "9",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -24476,23 +24480,23 @@
     },
     {
       "category": "kind",
-      "designed": 66,
-      "held": 10,
+      "designed": 68,
+      "held": 8,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "66",
+          "exact": "68",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "66",
+          "num": "68",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "10",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -25279,23 +25283,23 @@
     },
     {
       "category": "bite",
-      "designed": 17,
-      "held": 6,
+      "designed": 19,
+      "held": 4,
       "name": "7",
       "number_forms": {
         "designed": {
-          "exact": "17",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "6",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -25571,23 +25575,23 @@
     },
     {
       "category": "bite",
-      "designed": 47,
-      "held": 22,
+      "designed": 49,
+      "held": 20,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "47",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "47",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "22",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         },
@@ -26193,14 +26197,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 175,
+      "exact_citing": 176,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "175",
+          "exact": "176",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "175",
+          "num": "176",
           "num_exact": true,
           "num_relation": "="
         },

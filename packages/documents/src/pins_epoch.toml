@@ -1386,6 +1386,18 @@ id = "num:numbers:schedule-fixture-replay-work"
 value = "12000"
 
 [[rows]]
+id = "num:numbers:schedule-refused-below-floor-wall"
+value = "1/16"
+
+[[rows]]
+id = "num:numbers:schedule-refused-policy-floor"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:schedule-refused-sub-quantum-error"
+value = "1/256"
+
+[[rows]]
 id = "num:numbers:second-proposal-work"
 value = "43330725"
 
