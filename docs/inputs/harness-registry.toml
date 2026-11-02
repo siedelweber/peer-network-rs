@@ -73,7 +73,7 @@ edition = "0.1"
 [[rows]]
 kind = "tier"
 name = "fast"
-steps = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "cargo-config-measurement", "fmt", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "observation-parser"]
+steps = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "cargo-config-measurement", "fmt", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks"]
 jobs = 8
 finalize_steps = ["test-evidence", "test-budgets", "harness-matrix", "claim-evidence", "observation-syntax"]
 invocation_budget = "gate"
@@ -492,7 +492,7 @@ status = "active"
 runner = "ci"
 level = "integration"
 implementation = "ci-python"
-tier = "fast"
+tier = "extended"
 budget = "pure-suite"
 cases = ["ci::test_design.Correspondence.test_rendered_continuations", "ci::test_design.Correspondence.test_rendered_spacing", "ci::test_design.Correspondence.test_empty_selections", "ci::test_design.Correspondence.test_indexed_mint_predicate", "ci::test_design.Correspondence.test_pinned_decisions_under_optimization", "ci::test_design.Correspondence.test_release_projections", "ci::test_design.Correspondence.test_release_tags", "ci::test_design.Correspondence.test_numeric_correspondence", "ci::test_design.Correspondence.test_numeric_word_fragments", "ci::test_design.Correspondence.test_tracked_prose_boundaries"]
 case_budgets = { "ci::test_design.Correspondence.test_numeric_correspondence" = "calibrated-design-numeric-correspondence-case", "ci::test_design.Correspondence.test_numeric_word_fragments" = "calibrated-design-numeric-word-fragments-case", "ci::test_design.Correspondence.test_release_tags" = "calibrated-design-release-tags-case", "ci::test_design.Correspondence.test_rendered_continuations" = "calibrated-design-rendered-continuations-case", "ci::test_design.Correspondence.test_rendered_spacing" = "calibrated-design-rendered-spacing-case", "ci::test_design.Correspondence.test_tracked_prose_boundaries" = "calibrated-design-tracked-prose-boundaries-case" }
@@ -856,7 +856,7 @@ status = "active"
 runner = "ci"
 level = "integration"
 implementation = "ci-python"
-tier = "fast"
+tier = "extended"
 budget = "pure-suite"
 cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_epoch_inputs", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_formation", "ci::test_observe_runtime.Processes.test_title_suite", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 case_budgets = { "ci::test_observe_runtime.Processes.test_epoch_inputs" = "calibrated-observe-runtime-epoch-inputs-case", "ci::test_observe_runtime.Processes.test_four_mode_results" = "calibrated-observe-runtime-four-mode-results-case", "ci::test_observe_runtime.Processes.test_title_suite" = "calibrated-observe-runtime-title-suite-case" }
@@ -869,7 +869,7 @@ status = "active"
 runner = "ci"
 level = "integration"
 implementation = "ci-python"
-tier = "fast"
+tier = "extended"
 budget = "pure-suite"
 cases = ["ci::test_observe_syntax.Syntax.test_parsed_boundaries"]
 
@@ -1786,3 +1786,11 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::admission_equalities", "pn-epoch::solve::admission::admission_refusals", "pn-epoch::solve::admission::admission_empty", "pn-epoch::solve::admission::admission_boundaries", "pn-epoch::solve::admission::admission_refinement", "pn-epoch::solve::admission::admission_quarantine"]
+
+[[rows]]
+kind = "tier"
+name = "extended"
+steps = ["design-tests", "observation-build", "observation-runtime", "observation-parser"]
+invocation_budget = "extended-gate"
+status = "active"
+reason = "Whole-checker mutation matrices and cross-process observation-mode coverage remain required alongside the author feedback tier, with unchanged assertions, case budgets and exact result joins."

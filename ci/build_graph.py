@@ -672,7 +672,7 @@ def tier_summary(root, registry, worker_statuses):
     policy = declared['gate']
     baseline_path, baseline, changed = baseline_context(root, registry)
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
-    groups = {name: registry.tiers[name]['steps'] for name in ('fast', 'service', 'reference-certificate')}
+    groups = {name: tier['steps'] for name, tier in registry.tiers.items() if 'steps' in tier}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
     if Counter(name for group in groups.values() for name in group) != Counter(row[0] for row in fields):
         raise ValueError('tier step partition differs from the exact roster')

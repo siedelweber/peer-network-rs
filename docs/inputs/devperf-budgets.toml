@@ -1976,3 +1976,11 @@ calibration_warm = true
 calibration_discarded_warmups = 1
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
 
+
+[[rows]]
+name = "extended-gate"
+category = "aggregate"
+budget_ms = 120000
+scope = "required design-mutation and observation invocation alongside the per-change gate"
+reason = "Whole-checker refusal matrices and cross-process observation modes retain their complete evidence without extending the author feedback path; this invocation has its own warning wall and remains required for import."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }

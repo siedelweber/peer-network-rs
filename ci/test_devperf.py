@@ -123,7 +123,7 @@ class Performance(unittest.TestCase):
         from contextlib import redirect_stdout
         from build_graph import tier_summary
         tiers = {name: dict(steps=[name], invocation_budget='fixture')
-                 for name in ('fast', 'service', 'reference-certificate')}
+                 for name in ('fast', 'service', 'reference-certificate', 'extended')}
         tiers['fast']['finalize_steps'] = ['finalize']
         names = [*tiers, 'finalize']
         with tempfile.TemporaryDirectory() as directory:

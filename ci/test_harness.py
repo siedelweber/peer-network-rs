@@ -643,6 +643,17 @@ assert (root/'payload').read_text() == 'committed'
             registry.roster('nextest', [])
         with self.assertRaisesRegex(StructuralError, 'dropped'):
             registry.matrix([], 'current')
+        extended = rows(runner='ci')
+        extended[-1]['tier'] = 'extended'
+        extended.append(dict(kind='tier', name='extended', status='active', invocation_budget='extended-gate'))
+        registry = Registry(extended, dict(declarations(), **{'extended-gate':dict(budget_ms=120000, category='aggregate')}))
+        record = result(registry)
+        self.assertEqual((record['tier'], record['budget'], record['level']), ('extended', 'unit', 'unit'))
+        self.assertEqual(record['applicable_budgets'], ['unit', 'pure-suite', 'extended-gate'])
+        self.assertEqual(registry.matrix([record], 'current')[0]['status'], 'passed')
+        for records in ([], [record, record]):
+            with self.assertRaisesRegex(StructuralError, 'dropped or duplicate'):
+                registry.matrix(records, 'current')
 
     def test_ignored_case(self):
         """An ignored required case cannot make its suite pass without executing its predicate.

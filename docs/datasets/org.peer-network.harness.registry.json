@@ -109,7 +109,6 @@
         "vendor-set",
         "member-lints",
         "design-correspondence",
-        "design-tests",
         "linter",
         "token",
         "hash-citations",
@@ -126,10 +125,7 @@
         "documents",
         "determinism-datasets",
         "determinism-documents",
-        "benchmarks",
-        "observation-build",
-        "observation-runtime",
-        "observation-parser"
+        "benchmarks"
       ]
     },
     {
@@ -2545,7 +2541,7 @@
       "name": "ci::test_design",
       "runner": "ci",
       "status": "active",
-      "tier": "fast"
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",
@@ -3219,7 +3215,7 @@
       "name": "ci::test_observe_runtime",
       "runner": "ci",
       "status": "active",
-      "tier": "fast"
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",
@@ -3232,7 +3228,7 @@
       "name": "ci::test_observe_syntax",
       "runner": "ci",
       "status": "active",
-      "tier": "fast"
+      "tier": "extended"
     },
     {
       "budget": "combined-suite",
@@ -4899,6 +4895,19 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "invocation_budget": "extended-gate",
+      "kind": "tier",
+      "name": "extended",
+      "reason": "Whole-checker mutation matrices and cross-process observation-mode coverage remain required alongside the author feedback tier, with unchanged assertions, case budgets and exact result joins.",
+      "status": "active",
+      "steps": [
+        "design-tests",
+        "observation-build",
+        "observation-runtime",
+        "observation-parser"
+      ]
     }
   ]
 }

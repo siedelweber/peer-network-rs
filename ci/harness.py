@@ -131,7 +131,7 @@ class Registry:
 
     def aggregate_budgets(self, tier):
         budget = self.tiers[tier].get('invocation_budget')
-        return [budget] if budget and tier in {'service', 'reference-certificate'} else ['test-command', 'gate']
+        return [budget] if budget and tier != 'fast' else ['test-command', 'gate']
 
     def join(self, record, source, configuration=CONFIGURATION):
         from properties import validate

@@ -73,7 +73,7 @@
 | execwrap-doctests | active | doctest | execwrap-rust | fast | 2 |
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
-| ci::test_design | active | integration | ci-python | fast | 10 |
+| ci::test_design | active | integration | ci-python | extended | 10 |
 | ci::test_devperf | active | unit | ci-python | fast | 20 |
 | ci::test_discipline | active | integration | ci-python | fast | 30 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
@@ -105,8 +105,8 @@
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 24 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
-| ci::test_observe_runtime | active | integration | ci-python | fast | 15 |
-| ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
+| ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
+| ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
 | pn-records | active | unit | pn-records-rust | fast | 5 |
 | pn-records::public | active | public-surface | pn-records-rust | fast | 56 |

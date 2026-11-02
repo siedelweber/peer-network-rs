@@ -5765,6 +5765,29 @@
       },
       "reason": "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control.",
       "scope": "one pn-epoch::solve::schedules::schedule_covariance case"
+    },
+    {
+      "budget_ms": 120000,
+      "category": "aggregate",
+      "name": "extended-gate",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "120 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "120 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Whole-checker refusal matrices and cross-process observation modes retain their complete evidence without extending the author feedback path; this invocation has its own warning wall and remains required for import.",
+      "scope": "required design-mutation and observation invocation alongside the per-change gate"
     }
   ]
 }
