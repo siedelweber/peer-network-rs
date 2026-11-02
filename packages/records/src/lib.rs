@@ -2,6 +2,7 @@
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
 pub mod conserved;
+pub mod controller;
 /// Exact numeric carriers and explicit unit operations.
 /// (´def:numerics:exact-carriers´)
 pub mod numerics;

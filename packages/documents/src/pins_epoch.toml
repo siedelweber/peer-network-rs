@@ -754,6 +754,30 @@ id = "num:numbers:conservation-strength"
 value = "1/64"
 
 [[rows]]
+id = "num:numbers:controller-test-bracket-lower"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:controller-test-bracket-upper"
+value = "1"
+
+[[rows]]
+id = "num:numbers:controller-test-scope-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:controller-test-steps"
+value = "64"
+
+[[rows]]
+id = "num:numbers:controller-test-stopping-width"
+value = "1/1024"
+
+[[rows]]
+id = "num:numbers:controller-test-work"
+value = "2000000000"
+
+[[rows]]
 id = "num:numbers:enclosed-depth-mass-count"
 value = "4"
 

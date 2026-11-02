@@ -5,6 +5,8 @@ mod design_constants;
 pub mod pins;
 use pins::NumberId;
 
+#[path = "numeric/controller.rs"]
+mod controller;
 #[path = "numeric/corpus.rs"]
 mod corpus;
 #[path = "numeric/ridge.rs"]

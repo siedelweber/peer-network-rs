@@ -6712,3 +6712,181 @@ value = "1/256"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Canonical controller fixtures and precision calibration.
+
+[[rows]]
+id = "num:numbers:controller-test-chartered-tilt"
+value = "15/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-previous"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-quantum"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-error"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-bracket-lower"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-bracket-upper"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-stopping-width"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-steps"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-work"
+value = "2000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-precision"
+value = "13"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-failed-precision"
+value = "12"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-scope-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-cap-previous"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-up-width"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-down-previous"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-deadband-equality-previous"
+value = "4/37"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-deadband-equality"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-cap-equality"
+value = "1/37"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-cap-release"
+value = "1/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-previous"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-quantum"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-relative-cap"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-straddling-width"
+value = "1/512"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-upward-precision"
+value = "14"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:controller-test-relative-limited-absolute-cap"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

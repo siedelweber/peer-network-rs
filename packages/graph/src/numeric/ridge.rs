@@ -447,3 +447,15 @@ pub fn replay_comparison(
 ) -> Result<ComparisonRecord, Error> {
     comparison(checked, wall, floor, Some(record))
 }
+
+// A controller may narrow the comparison allowance without changing the checked definition.
+pub(super) fn compare_limited(
+    checked: &CheckedRidge,
+    wall: &Wall,
+    floor: Floor,
+    remaining_work: u64,
+) -> Result<ComparisonRecord, Error> {
+    let mut limited = checked.clone();
+    limited.input.maximum_work = limited.input.maximum_work.min(remaining_work);
+    comparison(&limited, wall, floor, None)
+}

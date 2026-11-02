@@ -1882,6 +1882,14 @@
       "review": "Four denominator/cap cases retain their production N/N-minus-one pins and replay at N. A four-Actor equal-hull proposal has four identical activation records and replays at its production allowance. One-Work replay declarations now refuse solve publication as well as replay; standing and ledger remain unchanged."
     },
     {
+      "operation": "pn-epoch::solve::controller::controller_binding",
+      "path": "packages/epoch/tests/solve/controller.rs",
+      "claim": "EPOCH::claim:admission:controller-publication-retains-frozen-epoch-inputs",
+      "before": "",
+      "after": "Claim: The zero-width completed-epoch controller derives its width, chartered tilt, bleed, current wall and accepted rung from the frozen compile and independently replayed fence, binds the declared rational numeraire image, and rejects substituted declaration, controller and burn-image evidence without modifying debit vintages; schedule activation and final admission remain separate.",
+      "review": "A complete unsorted self-support history gives exact zero contributing width. The frozen fence, chartered profile, current rational price and numeraire bind the controller inputs; independent reconstruction refuses altered declaration, controller scope and burn image while preserving the full compiled view and debit vintage. This exact scope witness does not establish schedule activation or final admission."
+    },
+    {
       "operation": "pn-epoch::solve::enclosed_wall_solve",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual",
@@ -2456,6 +2464,30 @@
       "before": "",
       "after": "Claim: The wall clamp keeps the same below-wall value and zero generalized gain, retains the zero-to-responsive generalized join on touching and crossing boxes, and composes non-dyadic hop powers from the exact strength times shape. Expected-input replay rejects a changed wall; invalid domains and deterministic interruption carry no mathematical verdict.",
       "review": "Fifteen distinct formula requests cover one below-wall anchor, four box placements for values and generalized gains, a one-third applied exponent, a zero exponent, changed-wall replay, and three invalid-domain requests. Independent brackets check value endpoints and responsive gains; below-wall value and zero gain are exact branch controls. Interruption has no verdict. A separate policy with only the output ceiling reduced to one MiB retains an explicit no-bound OutputBytes exhaustion. No smooth derivative or wall inversion is admitted."
+    },
+    {
+      "operation": "pn-graph::numeric::controller::controller_branches",
+      "path": "packages/graph/tests/numeric/controller.rs",
+      "claim": "GRAPH::claim:numerics:controller-branches-retain-ordered-comparisons",
+      "before": "",
+      "after": "Claim: The finite canonical-controller fixtures retain separate floor, deadband, direction and cap decisions, exact equality controls, signed updates and zero-width empty-domain behavior, with independent replay; they establish no schedule activation or admission guarantee.",
+      "review": "Reversed exact scalar scenarios cover floor and deadband equality, simultaneous absolute/relative cap equality and strict downward capping. Empty and nonempty zero-width routes have identical decisions and no inverse queries. Fresh reconstruction checks each retained record. These are exact identities at a declared supported scope, not precision-floor measurements."
+    },
+    {
+      "operation": "pn-graph::numeric::controller::controller_delivery",
+      "path": "packages/graph/tests/numeric/controller.rs",
+      "claim": "GRAPH::claim:numerics:controller-delivery-retains-defining-and-replay-evidence",
+      "before": "",
+      "after": "Claim: The finite positive-width controller fixture encloses the tagged inverse target, certifies upward and downward caps and grid delivery, retains unresolved inverse and representation refusals, and independently rejects substituted inputs and evidence; finite controls establish no universal precision improvement.",
+      "review": "The tagged inverse bounds are contained by the independently reconstructed target. Grid and rational representation modes, strict signed caps, failed inverse precision and changed input, query and delivery evidence are checked separately. The finite precision control supports its named assertion only; no monotonic accuracy or unrestricted schedule claim follows."
+    },
+    {
+      "operation": "pn-graph::numeric::controller::controller_ridge",
+      "path": "packages/graph/tests/numeric/controller.rs",
+      "claim": "GRAPH::claim:numerics:controller-ridge-delivery-retains-defining-floor",
+      "before": "",
+      "after": "Claim: The zero-width ridge-floor controller retains its independent defining object, certifies an admissible grid wall above that object and refuses exact-rational delivery without equality evidence; the fixture does not charge a ridge enclosure endpoint.",
+      "review": "The independently checked ridge is retained as its defining object. The zero-width proposal is gridded above that object, distinct from both enclosure endpoints, with independent reconstruction; ExactRational refuses absent defining rational equality. The prerequisite comparison precision and its failing adjacent control are retained by the ridge comparison witness."
     },
     {
       "operation": "pn-graph::numeric::enclosed_wall_clamp",

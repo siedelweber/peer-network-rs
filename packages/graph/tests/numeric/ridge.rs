@@ -55,7 +55,7 @@ fn image(point: &str) -> String {
 fn bits(id: NumberId) -> u32 {
     u32::try_from(id.integer()).unwrap()
 }
-fn certified(precision: NumberId) -> (Procedure, Inputs, pn_records::ridge::Record, kernel::CheckedRidge) {
+pub(super) fn certified(precision: NumberId) -> (Procedure, Inputs, pn_records::ridge::Record, kernel::CheckedRidge) {
     let p = policy(bits(precision));
     let i = input();
     let r = kernel::evaluate(&p, &i).unwrap();

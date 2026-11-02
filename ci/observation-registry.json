@@ -7915,6 +7915,64 @@
       "claim": "ROOT::sig:design:graph",
       "shape": "shape-graph",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/controller.rs",
+      "item": "numeric::controller::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (p : & Procedure , input : & Inputs , ridge : Option < & CheckedRidge >) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/controller.rs",
+      "item": "numeric::controller::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (p : & Procedure , input : & Inputs , ridge : Option < & CheckedRidge > , record : & Record) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "item": "controller::evaluate",
+      "owner": "EPOCH",
+      "signature": "fn evaluate (bound : & BoundProcedure < '_ > , d : & ScheduleDeclaration , search : & InverseSearch , ridge : Option < & CheckedRidge > ,) -> Result < Evidence , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "item": "controller::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (bound : & BoundProcedure < '_ > , d : & ScheduleDeclaration , search : & InverseSearch , ridge : Option < & CheckedRidge > , e : & Evidence ,) -> Result < CheckedProposal , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "item": "controller::CheckedProposal::evidence",
+      "owner": "EPOCH",
+      "signature": "fn evidence (& self) -> & Evidence",
+      "claim": "ROOT::alg:design:production-wall-controller",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits independent controller replay and supplies no authority.",
+        "witness": "EPOCH::claim:admission:controller-publication-retains-frozen-epoch-inputs",
+        "boundary": "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+        "class_decision": "canonical-controller-public"
+      }
     }
   ],
   "metrics": [
@@ -15369,6 +15427,61 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::evaluate",
+      "body": "{ run (p , input , ridge , None) }",
+      "class_decision": "canonical-controller-public",
+      "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay",
+      "body": "{ run (p , input , ridge , Some (record)) }",
+      "class_decision": "canonical-controller-public",
+      "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
+      "body": "{ let fence = crate :: fence :: search (bound , None) ? ; let (p , input) = inputs (bound , d , search , & fence) ? ; let controller = pn_graph :: numeric :: controller :: evaluate (& p , & input , ridge) ? ; let burn_image = image (& p , d , & controller) ? ; Ok (Evidence { declaration : d . input () . clone () , search : search . clone () , fence , controller , burn_image , }) }",
+      "class_decision": "canonical-controller-public",
+      "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+      "body": "{ if e . declaration != * d . input () || e . search != * search || e . fence != crate :: fence :: search (bound , None) ? { return Err (AdmissionRefusal :: Evidence . into ()) ; } let (p , input) = inputs (bound , d , search , & e . fence) ? ; let checked = pn_graph :: numeric :: controller :: replay (& p , & input , ridge , & e . controller) ? ; if image (& p , d , & checked) ? != e . burn_image { return Err (AdmissionRefusal :: Evidence . into ()) ; } match checked . verdict { Verdict :: Delivered => Ok (CheckedProposal { evidence : e . clone () }) , Verdict :: Indecisive => { let comparison = match checked . attempts . last () . and_then (| a | a . stopped_at) { Some (Stage :: Floor) => Comparison :: Floor , Some (Stage :: InverseGain) => Comparison :: InverseGain , Some (Stage :: Deadband) => Comparison :: Deadband , Some (Stage :: StepCap) => Comparison :: StepCap , Some (Stage :: Delivery) | None => Comparison :: DeliveryError , } ; Err (AdmissionRefusal :: Indecisive (comparison) . into ()) } Verdict :: DeliveryRefused => Err (AdmissionRefusal :: Delivery . into ()) , } }",
+      "class_decision": "canonical-controller-public",
+      "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence",
+      "body": "{ & self . evidence }",
+      "class_decision": "canonical-controller-public",
+      "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -19457,6 +19570,123 @@
       "syntax": "# [derive (Clone , Debug)]",
       "class_decision": "binding-ridge-public",
       "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "controller::Delivery",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Inputs",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Relation",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Branches",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Stage",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Attempt",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Verdict",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Record",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "numeric::controller::Error",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/controller.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::InverseSearch",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Evidence",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::CheckedProposal",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "controller::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "canonical-controller-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
     }
   ],
   "reviewed_types": [
@@ -20637,6 +20867,54 @@
       "syntax": "# [doc = \" Reconstructible interval forward derivatives and the rational Krawczyk image.\"] # [doc = \" The preconditioner is the declared identity, with denominator one.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalRecord { pub declaration : LocalDeclaration , pub active : Vec < usize > , pub center : Vec < crate :: primitive :: Range > , pub domain : Vec < crate :: primitive :: Range > , pub preconditioner : Vec < Vec < String > > , pub preconditioner_denominator : String , pub jacobian : Vec < Vec < crate :: primitive :: Range > > , pub asserted : Vec < crate :: primitive :: Range > , pub jacobian_norm : String , pub inflation_radius : String , pub image_radius : String , pub above_wall : bool , pub verdict : LocalVerdict , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
     },
     {
+      "item": "controller::Delivery",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" Public representation rule, in reduced-wall units.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Delivery { ExactRational , Grid { quantum : String , maximum_error : String } , }"
+    },
+    {
+      "item": "controller::Inputs",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" Declared finite inverse search and controller constants; no admission statistics.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub width : String , pub empty_live_domain : bool , pub accepted_rung : String , pub cumulative_tilt : String , pub bleed_squared : String , pub previous : String , pub floor : Floor , pub absolute_cap : String , pub relative_cap : String , pub deadband : String , pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , pub maximum_work : u64 , pub maximum_replay_work : u64 , pub delivery : Delivery , }"
+    },
+    {
+      "item": "controller::Relation",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" An interval comparison is never converted to a guessed branch.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Relation { Below , Equal , Above , Indecisive , }"
+    },
+    {
+      "item": "controller::Branches",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" Separate mathematical choices retain equality at every binding edge.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Branches { pub zero_width : bool , pub floor : Relation , pub deadband : Relation , pub absolute_cap : Relation , pub relative_cap : Relation , pub direction : Relation , pub proposal : Range , pub ideal : Range , }"
+    },
+    {
+      "item": "controller::Stage",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" The first unresolved mathematical comparison, distinct from delivery refusal.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Stage { Floor , InverseGain , Deadband , StepCap , Delivery , }"
+    },
+    {
+      "item": "controller::Attempt",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" A complete comparison attempt, including its independent scalar evidence.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub precision : u32 , pub stopped_at : Option < Stage > , pub inverse : Option < InverseRecord > , pub floor_checks : Vec < ComparisonRecord > , pub branches : Option < Branches > , pub delivered : Option < String > , pub delivery_error : Option < Range > , }"
+    },
+    {
+      "item": "controller::Verdict",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" Certified representation failure differs from unresolved comparison and operational error.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Verdict { Delivered , Indecisive , DeliveryRefused , }"
+    },
+    {
+      "item": "controller::Record",
+      "package": "pn-records",
+      "path": "packages/records/src/controller.rs",
+      "syntax": "# [doc = \" The mathematical proposal and its evidence are never replaced by a rounded charge.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub procedure : crate :: solve :: Procedure , pub inputs : Inputs , pub attempts : Vec < Attempt > , pub verdict : Verdict , }"
+    },
+    {
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
@@ -21621,6 +21899,18 @@
       "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
     },
     {
+      "item": "numeric::controller::Error",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/controller.rs",
+      "syntax": "# [doc = \" Invalid declarations and evidence do not acquire mathematical verdicts.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"invalid canonical controller declaration\")] Declaration , # [error (\"controller Work allowance exhausted\")] Work , # [error (\"controller replay input or evidence mismatch\")] Evidence , # [error (\"controller exact arithmetic stopped: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"inverse evidence: {0}\")] Inverse (# [from] super :: wall :: Error) , # [error (\"ridge evidence: {0}\")] Ridge (# [from] super :: ridge :: Error) , # [error (\"controller primitive declaration: {0}\")] Numeric (# [from] super :: Error) , }"
+    },
+    {
+      "item": "numeric::controller::Run",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/controller.rs",
+      "syntax": "struct Run < 'a > { p : & 'a Procedure , input : & 'a Inputs , ridge : Option < & 'a CheckedRidge > , b : Budget , spent : u64 , ceiling : u64 , }"
+    },
+    {
       "item": "numeric::ridge::formula::Formula",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/ridge/formula.rs",
@@ -21684,7 +21974,7 @@
       "item": "numeric::wall::Run",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/wall.rs",
-      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , supplied : Option < & 'a Record > , budget : Budget , result : Record , }"
+      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , bleed_squared : & 'a str , supplied : Option < & 'a Record > , budget : Budget , result : Record , }"
     },
     {
       "item": "numeric::Error",
@@ -22171,6 +22461,30 @@
       "package": "pn-epoch",
       "path": "packages/epoch/src/conserved.rs",
       "syntax": "# [doc = \" A refusal never constitutes a standing or convergence verdict.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"conserved solve declaration or frozen scope refused\")] Scope , # [error (\"map evidence or endpoint composition refused\")] Map , # [error (\"residual bound refused\")] Residual , # [error (\"residual radius refused\")] Radius , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"primitive: {0}\")] Primitive (# [from] pn_graph :: numeric :: Error) , # [error (\"transport: {0}\")] Transport (# [from] pn_records :: transport :: KernelError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"frozen constants: {0}\")] Input (# [from] crate :: InputError) , # [error (\"accepted fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"records: {0}\")] Records (# [from] pn_records :: solve :: RecordError) , }"
+    },
+    {
+      "item": "controller::InverseSearch",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [doc = \" Finite inverse-search declarations, separate from measured epoch inputs.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct InverseSearch { pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , }"
+    },
+    {
+      "item": "controller::Evidence",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [doc = \" Candidate publication retains the epoch certificate and exact rational burn image.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evidence { pub declaration : ScheduleInput , pub search : InverseSearch , pub fence : Search , pub controller : Record , pub burn_image : Option < String > , }"
+    },
+    {
+      "item": "controller::CheckedProposal",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [doc = \" Only independent replay creates this immutable controller result, not admission evidence.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug)] pub struct CheckedProposal { evidence : Evidence , }"
+    },
+    {
+      "item": "controller::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/controller.rs",
+      "syntax": "# [doc = \" Typed controller refusals precede the later effective-schedule and admission joins.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"controller refusal: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"frozen fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"controller evidence: {0}\")] Kernel (# [from] pn_graph :: numeric :: controller :: Error) , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
       "item": "fence::Search",
@@ -22983,6 +23297,20 @@
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison"
+        ]
+      }
+    },
+    {
+      "name": "canonical-controller-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public frozen epoch inputs, closed controller edition and independently reconstructed inverse, floor, branch and delivery evidence. No secret or schedule-admission authority is introduced.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::evaluate",
+          "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay",
+          "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
+          "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+          "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence"
         ]
       }
     }

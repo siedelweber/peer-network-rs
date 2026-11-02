@@ -7,6 +7,8 @@ use pins::NumberId;
 #[path = "common/boundary.rs"]
 mod boundary;
 mod common;
+#[path = "solve/controller.rs"]
+mod controller;
 #[path = "common/joined.rs"]
 mod joined;
 #[path = "solve/partitions.rs"]

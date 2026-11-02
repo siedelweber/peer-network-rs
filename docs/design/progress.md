@@ -50,7 +50,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 470 | 176 |
+| ROOT (repository-wide) | 1 475 | 177 |
 
 ## By bite · `sec:progress:bites`
 
@@ -823,7 +823,7 @@
 | ``cor:epoch:floor-economics`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` | | | 2 |
 | ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` | | | 2 |
 | ``def:epoch:wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 |
-| ``def:epoch:canonical-interim-wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:admission-declarations`` ``ROOT::amend:design:reference-wall-measurements`` ``ROOT::dec:design:policy-schedules`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 |
+| ``def:epoch:canonical-interim-wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:admission-declarations`` ``ROOT::amend:design:reference-wall-measurements`` ``ROOT::dec:design:policy-schedules`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 |
 | ``case:epoch:canonical-interim-wall-controller-zero-width`` | pn-epoch; invariant check | unassigned | | | |  |
 | ``case:epoch:canonical-interim-wall-controller-positive-width`` | pn-epoch; invariant check | unassigned | | | |  |
 | ``case:epoch:canonical-interim-wall-controller-deadband-hold`` | pn-epoch; invariant check | unassigned | | | |  |
@@ -831,7 +831,7 @@
 | ``prop:epoch:safety-independent-of-controller`` | pn-epoch; invariant check | unassigned | | | |  |
 | ``case:epoch:safety-independent-of-controller-nonempty-domain`` | pn-epoch; invariant check | unassigned | | | |  |
 | ``case:epoch:safety-independent-of-controller-empty-domain`` | pn-epoch; invariant check | unassigned | | | |  |
-| ``prop:epoch:wall-controller-total`` | pn-epoch; invariant check | designed | ``GRAPH::amend:numerics:reference-wall`` ``ROOT::alg:design:enclosed-wall-consumers`` ``ROOT::alg:design:reference-wall`` ``ROOT::alg:design:two-map-verification`` ``ROOT::rec:design:pending-reference-corpus`` | | |  |
+| ``prop:epoch:wall-controller-total`` | pn-epoch; invariant check | designed | ``GRAPH::amend:numerics:reference-wall`` ``ROOT::alg:design:enclosed-wall-consumers`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:reference-wall`` ``ROOT::alg:design:two-map-verification`` ``ROOT::rec:design:pending-reference-corpus`` | | |  |
 | ``prop:epoch:wall-controller-covariance`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` | | |  |
 | ``case:epoch:wall-controller-covariance-recoinage`` | pn-epoch; invariant check | unassigned | | | |  |
 | ``case:epoch:wall-controller-covariance-fixed-ledger-migration`` | pn-epoch; invariant check | unassigned | | | |  |

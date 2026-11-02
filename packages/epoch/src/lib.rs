@@ -6,6 +6,7 @@ pub mod base;
 pub mod cells;
 pub mod coefficients;
 pub mod conserved;
+pub mod controller;
 pub mod fence;
 pub mod ledger;
 pub mod package;

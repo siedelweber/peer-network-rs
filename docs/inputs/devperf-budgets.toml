@@ -1322,3 +1322,23 @@ measured_wall_ms = 783.057971
 measured_own_cpu_ms = 782.890
 reason = "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-controller-delivery-case"
+category = "case"
+budget_ms = 28200
+scope = "one pn-graph::numeric::controller::controller_delivery case"
+measured_wall_ms = 14075.070097
+measured_own_cpu_ms = 14044.133000
+reason = "The calibrated reference and upward inverse signs, failed neighbours, strict absolute and relative cap selection in both directions, width straddle, exact-representation refusal, successful refinement and input/query/attachment mutations retain fresh independent replay of every complete request. The first serial after-measurement follows the current case-calibration sizing rule."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-controller-ridge-case"
+category = "case"
+budget_ms = 1650
+scope = "one pn-graph::numeric::controller::controller_ridge case"
+measured_wall_ms = 811.443733
+measured_own_cpu_ms = 810.141000
+reason = "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object. The first serial after-measurement follows the current case-calibration sizing rule."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }

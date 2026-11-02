@@ -11617,6 +11617,7 @@
       "kind": "function",
       "label": "def:epoch:canonical-interim-wall-controller",
       "records": [
+        "ROOT::alg:design:production-wall-controller",
         "ROOT::alg:design:schedules",
         "ROOT::amend:decomposition:wall-reference",
         "ROOT::amend:design:admission-declarations",
@@ -11716,6 +11717,7 @@
       "records": [
         "GRAPH::amend:numerics:reference-wall",
         "ROOT::alg:design:enclosed-wall-consumers",
+        "ROOT::alg:design:production-wall-controller",
         "ROOT::alg:design:reference-wall",
         "ROOT::alg:design:two-map-verification",
         "ROOT::rec:design:pending-reference-corpus"
@@ -26197,22 +26199,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 176,
+      "exact_citing": 177,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "176",
+          "exact": "177",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "176",
+          "num": "177",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 470",
+          "exact": "1 475",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 470",
+          "num": "1 475",
           "num_exact": true,
           "num_relation": "="
         }
@@ -26227,7 +26229,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1470
+      "total": 1475
     }
   ]
 }

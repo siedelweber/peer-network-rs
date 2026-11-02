@@ -6,6 +6,106 @@ id = "num:numbers:certifying-prefix-work"
 value = "4924286"
 
 [[rows]]
+id = "num:numbers:controller-test-bracket-lower"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:controller-test-bracket-upper"
+value = "1"
+
+[[rows]]
+id = "num:numbers:controller-test-cap-equality"
+value = "1/37"
+
+[[rows]]
+id = "num:numbers:controller-test-cap-previous"
+value = "1"
+
+[[rows]]
+id = "num:numbers:controller-test-cap-release"
+value = "1/100"
+
+[[rows]]
+id = "num:numbers:controller-test-chartered-tilt"
+value = "15/8"
+
+[[rows]]
+id = "num:numbers:controller-test-deadband-equality"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:controller-test-deadband-equality-previous"
+value = "4/37"
+
+[[rows]]
+id = "num:numbers:controller-test-down-previous"
+value = "2"
+
+[[rows]]
+id = "num:numbers:controller-test-error"
+value = "1/128"
+
+[[rows]]
+id = "num:numbers:controller-test-failed-precision"
+value = "12"
+
+[[rows]]
+id = "num:numbers:controller-test-precision"
+value = "13"
+
+[[rows]]
+id = "num:numbers:controller-test-previous"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:controller-test-quantum"
+value = "1/128"
+
+[[rows]]
+id = "num:numbers:controller-test-relative-limited-absolute-cap"
+value = "1"
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-previous"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-quantum"
+value = "1/1024"
+
+[[rows]]
+id = "num:numbers:controller-test-ridge-relative-cap"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:controller-test-scope-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:controller-test-steps"
+value = "64"
+
+[[rows]]
+id = "num:numbers:controller-test-stopping-width"
+value = "1/1024"
+
+[[rows]]
+id = "num:numbers:controller-test-straddling-width"
+value = "1/512"
+
+[[rows]]
+id = "num:numbers:controller-test-up-width"
+value = "2"
+
+[[rows]]
+id = "num:numbers:controller-test-upward-precision"
+value = "14"
+
+[[rows]]
+id = "num:numbers:controller-test-work"
+value = "2000000000"
+
+[[rows]]
 id = "num:numbers:direct-activation-work"
 value = "9383042"
 

@@ -84,6 +84,7 @@ fn validate(procedure: &Procedure, input: &Inputs, b: &mut Budget) -> Result<(),
 
 struct Run<'a> {
     procedure: &'a Procedure,
+    bleed_squared: &'a str,
     supplied: Option<&'a Record>,
     budget: Budget,
     result: Record,
@@ -99,7 +100,7 @@ impl Run<'_> {
             let mut query = super::activation::query(
                 &Request {
                     standing: range(x, x, &mut self.budget)?,
-                    bleed_squared: "1/400".into(),
+                    bleed_squared: self.bleed_squared.into(),
                     wall: None,
                     wall_enclosure: None,
                     quantity: Quantity::ResponsiveLogGain,
@@ -220,6 +221,7 @@ fn run(procedure: &Procedure, input: &Inputs, supplied: Option<&Record>) -> Resu
     });
     let mut run = Run {
         procedure,
+        bleed_squared: "1/400",
         supplied,
         budget: Budget::new(limits)?,
         result: Record {
@@ -307,4 +309,56 @@ pub fn evaluate(procedure: &Procedure, input: &Inputs) -> Result<Record, Error> 
 )]
 pub fn replay(procedure: &Procedure, input: &Inputs, record: &Record) -> Result<Record, Error> {
     run(procedure, input, Some(record))
+}
+
+// The production controller shares only the inverse algorithm, not reference branches.
+pub(super) fn inverse(
+    procedure: &Procedure,
+    input: &Inputs,
+    bleed_squared: &str,
+    supplied: Option<&Record>,
+) -> Result<Record, Error> {
+    let policy = procedure.enclosure.as_ref().ok_or(Error::Declaration)?;
+    let mut limits = policy.operation.clone();
+    limits.work = limits.work.min(if supplied.is_some() {
+        input.maximum_replay_work
+    } else {
+        input.maximum_work
+    });
+    let mut run = Run {
+        procedure,
+        bleed_squared,
+        supplied: None,
+        budget: Budget::new(limits)?,
+        result: Record {
+            target: None,
+            steps: Vec::new(),
+            bisections: 0,
+            bisection_work: Vec::new(),
+            branches: None,
+            indecisive: false,
+            work: 0,
+        },
+    };
+    validate(procedure, input, &mut run.budget)?;
+    positive(bleed_squared, &mut run.budget)?;
+    run.result.target = run.invert(input)?;
+    run.result.work = run.budget.usage().work;
+    if let Some(record) = supplied {
+        if record.steps.len() != run.result.steps.len() {
+            return Err(Error::Query);
+        }
+        for (expected, actual) in record.steps.iter().zip(&run.result.steps) {
+            if expected.primitive.query != actual.primitive.query || expected.primitive.precision != actual.primitive.precision {
+                return Err(Error::Query);
+            }
+            if expected.primitive.evidence.attachment != actual.primitive.evidence.attachment {
+                return Err(Error::Attachment);
+            }
+        }
+        if record != &run.result {
+            return Err(Error::Record);
+        }
+    }
+    Ok(run.result)
 }

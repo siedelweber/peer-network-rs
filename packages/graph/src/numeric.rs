@@ -2,6 +2,7 @@
 //! (´def:numerics:primitive-adapter´)
 
 pub mod activation;
+pub mod controller;
 pub mod ridge;
 mod scope;
 pub mod verification;
