@@ -4509,7 +4509,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "a445fb226dc6d04f972452c9859569350a8133abdc379b68fd6385f6501ba7c6",
+        "digest": "0ecf7dd526d4dbebb5617f0b23143aa44d54d5a2aecba33447444df550310edd",
         "function": "ceiling_login_progress",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -4551,7 +4551,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "22712095a765b7739b5deca04cf2330387d24c49711a9bfbaaf964f197f568a0",
+        "digest": "6344621b594a96d383036af651ea281fab3d96af81eea242092ba6f058dcdfd5",
         "function": "derivation_cost",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -4593,7 +4593,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "2259929bcb4edaae554c6415ffcee443277476cd457beb165dd194093d184d75",
+        "digest": "feebb42616aa4a8d55da3f3f781f1222b7dcffc25a823aebae8eb045c1574011",
         "function": "derivation_permits",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -5055,7 +5055,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "768b068ff2550c3af814dceadce729f6e8617173dde36c96fa8305d31892201b",
+        "digest": "ea8ae467493297ceca95ee86493b0522cd4bd54b2385f7610957ed3785e65cfe",
         "function": "settlement_forks",
         "owner": "lane/design",
         "path": "packages/wallet/tests/rpc.rs"
@@ -5097,7 +5097,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "de8f78b0d8dcf327c65cf5829524602c30c3b3f572ba7d2573ee0930a63c4f8c",
+        "digest": "58f45aae682b847110a50719ad83c95763888d6778c4d1f4faf35267ee542f5c",
         "function": "signed_reads",
         "owner": "lane/design",
         "path": "packages/wallet/tests/rpc.rs"

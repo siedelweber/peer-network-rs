@@ -42,7 +42,15 @@ def bound_target(target, ceiling, owner):
     """Bound retained profile caches at a quiescent owner boundary."""
     if type(ceiling) is not int or ceiling <= 0:
         raise ValueError('target ceiling must be positive bytes')
-    profiles = [target/name for name in ('debug', 'gate', 'release', 'doc')]
+    names = ('debug', 'gate', 'release', 'doc')
+    profiles = [target/name for name in names]
+    # Cargo target-triple layouts have the same profiles one level deeper.
+    triples = [path for path in target.iterdir() if path.is_dir() and path.name not in (*names, 'isolation')
+               and any((path/name).is_dir() for name in names)] if target.exists() else []
+    profiles.extend(path/name for path in triples for name in names)
+    other = [path for path in target.iterdir() if path.is_dir() and path.name not in names and path not in triples] if target.exists() else []
+    for path in sorted(other):
+        print(f'TARGET-DIRS owner={owner} outside_profiles={path.name} bytes={allocated([path])} scope=reported-not-profile-ceiling path={path}', flush=True)
     before = allocated(profiles)
     if before > ceiling:
         for profile in profiles:
@@ -51,6 +59,8 @@ def bound_target(target, ceiling, owner):
             for profile in profiles:
                 if profile.exists(): shutil.rmtree(profile)
     after = allocated(profiles)
+    for path in sorted(triples):
+        print(f'TARGET-DIRS owner={owner} target_layout={path.name} bytes={allocated([path])} scope=profiles-bounded-metadata-reported path={path}', flush=True)
     print(f'TARGET-DIRS owner={owner} before_bytes={before} after_bytes={after} ceiling_bytes={ceiling} path={target}', flush=True)
     return before > after
 
@@ -293,6 +303,11 @@ def built_executable(output):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 3 and sys.argv[1] == 'lock-target':
+        # The inherited descriptor shares the shell's open-file description;
+        # the lock survives this helper until the gate closes its descriptor.
+        fcntl.flock(int(sys.argv[2]), fcntl.LOCK_EX)
+        raise SystemExit(0)
     if len(sys.argv) == 2 and sys.argv[1] in {'retention', 'target-sizes'}:
         if sys.argv[1] == 'target-sizes':
             target_sizes(Path.cwd())

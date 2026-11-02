@@ -124,11 +124,17 @@ def identity_functions(text, path):
             return tuple(reversed(names))
         keys = {node: scope(node)+(node.name,) for node in nodes}
         known = set(keys.values())
+        if len(known) != len(keys):
+            raise StructuralError('ambiguous Python identity source: '+path)
         lines = text.splitlines(keepends=True)
         for node, key in keys.items():
             first = min([node.lineno]+[decorator.lineno for decorator in node.decorator_list])
             body = ''.join(lines[first-1:node.end_lineno])
             refs = set()
+            receiver = node
+            while receiver in parents and not isinstance(receiver, ast.ClassDef):
+                receiver = parents[receiver]
+            receiver_scope = scope(receiver)+(receiver.name,) if isinstance(receiver, ast.ClassDef) else ()
             for use in ast.walk(node):
                 if isinstance(use, ast.Name) and isinstance(use.ctx, ast.Load):
                     for size in range(len(key), -1, -1):
@@ -138,7 +144,7 @@ def identity_functions(text, path):
                             break
                 elif isinstance(use, ast.Attribute) and isinstance(use.value, ast.Name):
                     if use.value.id in {'self', 'cls'}:
-                        target = key[:-1]+(use.attr,)
+                        target = receiver_scope+(use.attr,)
                         if target in known: refs.add(target)
                     elif (use.value.id, use.attr) in known:
                         refs.add((use.value.id, use.attr))
@@ -159,9 +165,16 @@ def identity_functions(text, path):
         if stack: raise StructuralError('unclosed Rust identity source: '+path)
         definitions = []
         for match in re.finditer(r'\bfn\s+(\w+)\s*(?:<|\()', masked):
-            opening = masked.find('{', match.end())
-            semicolon = masked.find(';', match.end())
-            if opening < 0 or 0 <= semicolon < opening: continue
+            depth = 0
+            opening = None
+            for position in range(match.start(), len(masked)):
+                char = masked[position]
+                if char in '([': depth += 1
+                elif char in ')]': depth -= 1
+                elif depth == 0 and char in '{;':
+                    if char == '{': opening = position
+                    break
+            if opening is None: continue
             end = pairs[opening]+1
             start = match.start()
             # Include declaration modifiers and every attached outer attribute.

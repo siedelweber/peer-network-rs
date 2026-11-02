@@ -25,6 +25,14 @@ case "${PN_BUILDGRAPH_ROUTE:-meson}" in
     meson|legacy) ;;
     *) echo "GATE-STRUCTURAL-ERROR: unknown build graph route" >&2; exit 2 ;;
 esac
+# Hold the target lock through execution and EXIT cleanup, not only the sweep.
+lock_gate_target() {
+    local target=${CARGO_TARGET_DIR:-"$PWD/target"}
+    mkdir -p "$target" || return 2
+    exec {gate_target_lock}>"$target/.gate-target.lock" || return 2
+    python3 -B ci/isolation.py lock-target "$gate_target_lock" || return 2
+}
+lock_gate_target || exit 2
 failed=0
 statuses=()
 mkdir -p .lane

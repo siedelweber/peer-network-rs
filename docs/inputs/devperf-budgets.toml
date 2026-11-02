@@ -1504,7 +1504,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [139.12851084023714, 138.61811789683998, 139.83452506363392]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "ceiling_login_progress", digest = "a445fb226dc6d04f972452c9859569350a8133abdc379b68fd6385f6501ba7c6", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "ceiling_login_progress", digest = "0ecf7dd526d4dbebb5617f0b23143aa44d54d5a2aecba33447444df550310edd", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1522,7 +1522,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [402.8484739828855, 417.72542195394635, 419.8608100414276]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_cost", digest = "22712095a765b7739b5deca04cf2330387d24c49711a9bfbaaf964f197f568a0", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_cost", digest = "6344621b594a96d383036af651ea281fab3d96af81eea242092ba6f058dcdfd5", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1540,7 +1540,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [102.99371811561286, 103.01655088551342, 104.003133950755]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_permits", digest = "2259929bcb4edaae554c6415ffcee443277476cd457beb165dd194093d184d75", owner = "lane/design" }
+calibration_source = { path = "packages/host/src/scram.rs", function = "derivation_permits", digest = "feebb42616aa4a8d55da3f3f781f1222b7dcffc25a823aebae8eb045c1574011", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1738,7 +1738,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [4168.743625981733, 4235.1874760352075, 4221.144458977506]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "settlement_forks", digest = "768b068ff2550c3af814dceadce729f6e8617173dde36c96fa8305d31892201b", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "settlement_forks", digest = "ea8ae467493297ceca95ee86493b0522cd4bd54b2385f7610957ed3785e65cfe", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
@@ -1756,7 +1756,7 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [1268.1264239363372, 1278.1149719376117, 1387.819356052205]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 3
-calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "signed_reads", digest = "de8f78b0d8dcf327c65cf5829524602c30c3b3f572ba7d2573ee0930a63c4f8c", owner = "lane/design" }
+calibration_source = { path = "packages/wallet/tests/rpc.rs", function = "signed_reads", digest = "58f45aae682b847110a50719ad83c95763888d6778c4d1f4faf35267ee542f5c", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:owned-cases-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2

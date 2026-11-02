@@ -75,8 +75,17 @@ class Performance(unittest.TestCase):
             self.assertNotEqual(case_identity(source, path, 'probe'), case_identity(source.replace('marker(1)', 'marker(2)'), path, 'probe'))
         source = 'def leaf():\n    return 1\ndef helper():\n    return leaf()\ndef probe():\n    return helper()\n'
         self.assertNotEqual(case_identity(source, 'case.py', 'probe'), case_identity(source.replace('return 1', 'return 2'), 'case.py', 'probe'))
+        source = 'class Fixture:\n    def leaf(self):\n        return 1\n    def probe(self):\n        def invoke():\n            return self.leaf()\n        return invoke()\n'
+        self.assertNotEqual(case_identity(source, 'case.py', 'probe'), case_identity(source.replace('return 1', 'return 2'), 'case.py', 'probe'))
         source = 'fn leaf() { } fn helper() { leaf(); } fn probe() { helper(); }'
         self.assertNotEqual(case_identity(source, 'case.rs', 'probe'), case_identity(source.replace('fn leaf() { }', 'fn leaf() { return; }'), 'case.rs', 'probe'))
+
+        source = 'fn helper(value: [u8; 2]) { let _ = value; } fn probe() { helper([0, 0]); }'
+        self.assertNotEqual(case_identity(source, 'case.rs', 'probe'), case_identity(source.replace('let _ = value;', 'let _ = value[0];'), 'case.rs', 'probe'))
+        for path, source in (('case.py', 'def probe():\n    pass\ndef probe():\n    pass\n'),
+                             ('case.rs', 'fn probe() {} fn probe() {}')):
+            with self.assertRaisesRegex(StructuralError, 'ambiguous'):
+                case_identity(source, path, 'probe')
 
     def test_target_retention(self):
         """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.
@@ -84,6 +93,26 @@ class Performance(unittest.TestCase):
         ´test:integration:test-target-retention´
         """
         from isolation import bound_target, cargo_work, built_executable
+        import subprocess
+        import fcntl
+        gate = Path('ci/gate.sh').read_text()
+        begin = gate.index('lock_gate_target() {')
+        locking = gate[begin:gate.index('\n}\n', begin)+3]
+        with tempfile.TemporaryDirectory() as directory:
+            command = locking+'\nlock_gate_target\nprintf "locked\\n"\nread -r release\n'
+            child = subprocess.Popen(['bash', '-c', command], env={**os.environ, 'CARGO_TARGET_DIR':directory},
+                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                self.assertEqual(child.stdout.readline(), 'locked\n')
+                lock = str(Path(directory)/'.gate-target.lock')
+                with open(lock, 'a') as competing:
+                    with self.assertRaises(BlockingIOError):
+                        fcntl.flock(competing, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            finally:
+                child.communicate('release\n', timeout=10)
+            self.assertEqual(child.returncode, 0)
+            with open(lock, 'a') as released:
+                fcntl.flock(released, fcntl.LOCK_EX | fcntl.LOCK_NB)
         artifact = dict(reason='compiler-artifact', target=dict(name='documents'), executable='/owned/target/triple/gate/documents')
         self.assertEqual(built_executable(json.dumps(artifact)), artifact['executable'])
         with self.assertRaisesRegex(ValueError, 'exactly one executable'):
@@ -104,6 +133,19 @@ class Performance(unittest.TestCase):
             self.assertTrue(bound_target(target, 1, 'fixture'))
             self.assertFalse((target/'gate').exists())
             self.assertEqual((target/'gate-baselines/retained').read_text(), 'baseline')
+            (target/'triple/gate').mkdir(parents=True)
+            (target/'triple/gate/dependency').write_bytes(b'x'*8192)
+            (target/'isolation/owner').mkdir(parents=True)
+            (target/'isolation/owner/retained').write_text('owned')
+            output = io.StringIO()
+            from contextlib import redirect_stdout
+            with redirect_stdout(output):
+                self.assertTrue(bound_target(target, 1, 'fixture'))
+            self.assertFalse((target/'triple/gate').exists())
+            self.assertEqual((target/'isolation/owner/retained').read_text(), 'owned')
+            self.assertIn('outside_profiles=isolation', output.getvalue())
+            self.assertIn('target_layout=triple', output.getvalue())
+            self.assertIn('scope=reported-not-profile-ceiling', output.getvalue())
             log = target/'meter.jsonl'
             with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
                 for command in ('build', 'check', 'run', 'test'):
@@ -148,7 +190,8 @@ class Performance(unittest.TestCase):
             root = Path(directory)
             lane = root/'.lane'
             lane.mkdir()
-            for wall, expected, cold in ((1, False, False), (2, False, True), (3, True, True)):
+            for wall, expected, cold, old_cold in ((1, False, False, False), (1, False, False, True), (2, False, True, False), (3, True, True, False)):
+                baseline = dict(source="prior", tiers={name: dict(step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
@@ -156,7 +199,7 @@ class Performance(unittest.TestCase):
                 for status in (0, 1):
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', None, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -166,6 +209,8 @@ class Performance(unittest.TestCase):
                         self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
+                        self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold else 0.5)
+                        self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold else 0.25)
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
@@ -195,6 +240,8 @@ class Performance(unittest.TestCase):
         self.assertEqual(classify(own=121, build=61, changed=['Cargo.lock'], stall=0.1), 'high-stall')
         self.assertEqual(classify(baseline=None), 'unclassified')
         self.assertEqual(classify(stall=None), 'unclassified')
+        self.assertEqual(overrun_class(True, 100, 100, 0, 120, 100, ['Cargo.lock'], policy,
+            compile_wall_growth=60, excess=21, wall=141, baseline_wall=100, baseline_stall=0), 'plain')
         # The line is continuous: 5 percent pressure can explain an overrun,
         # while 15 percent pressure cannot excuse a wall beyond its projection.
         for stall in (.05, .15):
