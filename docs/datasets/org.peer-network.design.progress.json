@@ -8966,6 +8966,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -9092,6 +9117,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -9245,6 +9295,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -9361,6 +9436,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -9479,6 +9579,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -9595,6 +9720,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -9839,6 +9989,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -9954,6 +10129,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -10072,6 +10272,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -10188,6 +10413,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -17955,6 +18205,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -18363,6 +18638,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -18478,6 +18778,31 @@
       ],
       "routes": [
         {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
           "scope": "ROOT::verif:design:core-standing-properties"
@@ -18592,6 +18917,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",
@@ -18709,6 +19059,31 @@
         "ROOT::verif:design:core-standing-properties"
       ],
       "routes": [
+        {
+          "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
+        {
+          "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+          "record": "ROOT::verif:design:core-standing-properties",
+          "scope": "ROOT::verif:design:core-standing-properties"
+        },
         {
           "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
           "record": "ROOT::verif:design:core-standing-properties",

@@ -2601,7 +2601,12 @@
         "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises",
         "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement",
         "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss",
-        "EPOCH::claim:standing:published-retained-act-has-certified-own-increase"
+        "EPOCH::claim:standing:published-retained-act-has-certified-own-increase",
+        "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+        "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages",
+        "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+        "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs",
+        "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state"
       ],
       "closing_condition": "Attach passing source/configuration-matched evidence for observational equivalence, non-monotonicity and the conditional response and partition bounds; retain the scoped refusals in (`cav:design:standing-negative-probe-index`).",
       "closing_step": "Bite 6 finite scope closed; named later holds retain their owners",

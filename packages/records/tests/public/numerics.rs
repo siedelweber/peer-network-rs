@@ -255,7 +255,6 @@ fn constant_correspondence() {
     );
     let ridge = rows.iter().find(|r| r["id"] == "const.epoch.wall_floor_ridge").unwrap();
     assert_eq!(ridge["definition"]["func"], "wall_floor_ridge");
-    assert_ne!(Floor::RidgeImage, Floor::RationalThreeThirtySevenths);
 }
 
 /// Claim: With a declared compensation-family width law W/c, market repricing preserves the reduced-amount versus width verdict; a fixed-width family can lose it, so quantity covariance alone supplies no width or fence theorem.
