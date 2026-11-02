@@ -188,7 +188,7 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         let mut dataset = envelope::input(&input).map_err(|error| format!("{}: {error}", path.display()))?;
         numbers::project(&mut dataset)?;
         if dataset.namespace == numbers::NAMESPACE {
-            numeric_input = Some((dataset.clone(), input));
+            numeric_input = Some(dataset.clone());
         }
         if !namespaces.insert(dataset.namespace.clone()) {
             return Err(format!("duplicate dataset: {}", dataset.namespace).into());
@@ -196,7 +196,7 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         let destination = root.join("docs/datasets").join(format!("{}.json", dataset.namespace));
         projections.push((destination, envelope::bytes(&dataset)?));
     }
-    if let Some((dataset, input)) = numeric_input {
+    if let Some(dataset) = numeric_input {
         let carrier = projections
             .iter()
             .find(|(path, _)| {
@@ -220,12 +220,12 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
                 }
             }
         }
-        let (pins, constants) = numbers::pins(&dataset, &input, carrier, &requested)?;
-        projections.push((root.join("packages/documents/src/pins.rs"), pins.into_bytes()));
+        let constants = numbers::constants(carrier, &requested)?;
         projections.push((
             root.join("packages/documents/src/design_constants.rs"),
             constants.into_bytes(),
         ));
+        projections.extend(package_pins(root, &dataset)?);
     }
     let expected: BTreeSet<_> = projections.iter().map(|(path, _)| path.clone()).collect();
     let mut findings = Vec::new();
@@ -246,6 +246,83 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         }
     }
     Ok(findings)
+}
+
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "package_pins"
+    ),
+    ret
+)]
+fn package_pins(root: &Path, dataset: &envelope::Dataset) -> Result<Vec<(PathBuf, Vec<u8>)>> {
+    let mut projections = Vec::new();
+    let variants: BTreeMap<_, _> = dataset
+        .rows
+        .iter()
+        .map(|row| {
+            let id = row["id"].as_str().ok_or("number: absent id")?;
+            let variant: String = id
+                .strip_prefix("num:")
+                .unwrap_or(id)
+                .split([':', '-'])
+                .map(|word| {
+                    let mut letters = word.chars();
+                    letters
+                        .next()
+                        .map_or_else(String::new, |first| first.to_ascii_uppercase().to_string() + letters.as_str())
+                })
+                .collect();
+            Ok((variant, row.clone()))
+        })
+        .collect::<Result<_>>()?;
+    if variants.len() != dataset.rows.len() {
+        return Err("number: ambiguous Rust ids".into());
+    }
+    for package in ["documents", "records", "graph", "epoch"] {
+        let stem = if package == "documents" {
+            "pins".to_owned()
+        } else {
+            format!("pins_{package}")
+        };
+        let mut used = BTreeSet::new();
+        for path in files(&root.join("packages").join(package))? {
+            if path.extension().is_none_or(|extension| extension != "rs")
+                || path
+                    .file_name()
+                    .is_some_and(|name| name.to_string_lossy().starts_with("pins"))
+            {
+                continue;
+            }
+            let source = read(&path)?;
+            for token in source.split(|letter: char| !letter.is_ascii_alphanumeric() && letter != '_') {
+                if variants.contains_key(token) {
+                    used.insert(token.to_owned());
+                }
+            }
+        }
+        let mut subset = dataset.clone();
+        subset.rows = used.iter().map(|variant| variants[variant].clone()).collect();
+        let mut exact = String::from("namespace = \"org.peer-network.numbers.registry\"\nversion = [1, 0, 0]\n");
+        for row in &subset.rows {
+            use std::fmt::Write as _;
+            writeln!(
+                exact,
+                "\n[[rows]]\nid = {:?}\nvalue = {:?}",
+                row["id"].as_str().ok_or("number: absent id")?,
+                row["value"].as_str().ok_or("number: absent value")?
+            )?;
+        }
+        let name = format!("{stem}.toml");
+        let pins = numbers::pins(&subset, &exact, &name)?;
+        let directory = root.join("packages/documents/src");
+        projections.push((directory.join(format!("{stem}.rs")), pins.into_bytes()));
+        projections.push((directory.join(name), exact.into_bytes()));
+    }
+    Ok(projections)
 }
 
 fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {

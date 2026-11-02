@@ -1,7 +1,7 @@
 #[path = "../../documents/src/design_constants.rs"]
 mod design_constants;
 
-#[path = "../../documents/src/pins.rs"]
+#[path = "../../documents/src/pins_graph.rs"]
 pub mod pins;
 use pins::NumberId;
 

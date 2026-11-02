@@ -110,8 +110,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local",
       "before": "",
-      "after": "Only validated exact-value field spans in the two registry carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.",
-      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
+      "after": "Only validated exact-value field spans in the declared registry and package carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.",
+      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values. Each package carrier separately refuses malformed values and non-value digit runs at its exact declared path."
     },
     {
       "operation": "ci::test_discipline.HashCitations.test_public_git_locator",
@@ -1199,7 +1199,7 @@
       "claim": "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
       "before": "",
       "after": "Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.",
-      "review": "Read the scoped registry and compact constant-carrier controls: missing requested constants and invalid exact values refuse, and changing an unused constant leaves the code carrier unchanged. The controls establish exact projection and presentation, not numerical certification of the declared values."
+      "review": "Read the scoped registry and compact constant-carrier controls: missing requested constants and invalid exact values refuse, and changing an unused constant leaves the code carrier unchanged. Per-package pin witnesses retain correspondence assertions, show unrelated carriers remain byte-identical, and check used-value changes and a repeated fixed point. These controls establish exact projection and presentation, not numerical certification of the declared values."
     },
     {
       "operation": "documents::integration::repository_fixed_point",

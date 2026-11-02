@@ -1,0 +1,50 @@
+namespace = "org.peer-network.numbers.registry"
+version = [1, 0, 0]
+
+[[rows]]
+id = "num:numbers:records-burn-corruption-count"
+value = "39"
+
+[[rows]]
+id = "num:numbers:records-burn-marker-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:records-dag-corruption-count"
+value = "19"
+
+[[rows]]
+id = "num:numbers:records-dag-history-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:records-dag-history-epoch"
+value = "1"
+
+[[rows]]
+id = "num:numbers:records-dag-over-bound-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:records-dag-proposal-epoch"
+value = "2"
+
+[[rows]]
+id = "num:numbers:records-dag-proposal-maximum"
+value = "10"
+
+[[rows]]
+id = "num:numbers:records-dag-proposal-minimum"
+value = "2"
+
+[[rows]]
+id = "num:numbers:records-dag-word-capacity"
+value = "8"
+
+[[rows]]
+id = "num:numbers:records-numeric-case-count"
+value = "6"
+
+[[rows]]
+id = "num:numbers:reference-rational-floor"
+value = "3/37"

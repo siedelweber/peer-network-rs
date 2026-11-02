@@ -1,4 +1,4 @@
-#[path = "../../documents/src/pins.rs"]
+#[path = "../../documents/src/pins_records.rs"]
 pub mod pins;
 
 mod common;

@@ -1,0 +1,586 @@
+namespace = "org.peer-network.numbers.registry"
+version = [1, 0, 0]
+
+[[rows]]
+id = "num:numbers:certifying-prefix-work"
+value = "4924286"
+
+[[rows]]
+id = "num:numbers:direct-activation-work"
+value = "9383042"
+
+[[rows]]
+id = "num:numbers:evaluation-work-ceiling"
+value = "200000000"
+
+[[rows]]
+id = "num:numbers:local-box-radius"
+value = "1/1024"
+
+[[rows]]
+id = "num:numbers:local-check-work"
+value = "3954534051"
+
+[[rows]]
+id = "num:numbers:local-image-radius-upper"
+value = "587447/1073741824"
+
+[[rows]]
+id = "num:numbers:local-inflation"
+value = "2"
+
+[[rows]]
+id = "num:numbers:local-jacobian-norm-upper"
+value = "16690803/4294967296"
+
+[[rows]]
+id = "num:numbers:local-reference-residual-radius"
+value = "385543179193/77355582226432"
+
+[[rows]]
+id = "num:numbers:published-alice-count"
+value = "12"
+
+[[rows]]
+id = "num:numbers:published-alice-hull-lower"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-alice-hull-upper"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-alice-intercept"
+value = "7/6"
+
+[[rows]]
+id = "num:numbers:published-alice-rate-lower"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-alice-rate-upper"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-alice-slope"
+value = "-1/6"
+
+[[rows]]
+id = "num:numbers:published-bob-count"
+value = "11"
+
+[[rows]]
+id = "num:numbers:published-bob-hull-lower"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-bob-hull-upper"
+value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-bob-intercept"
+value = "13/11"
+
+[[rows]]
+id = "num:numbers:published-bob-rate-lower"
+value = "568097506751047828285296239184516275455577561356905500322620137986255641549/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-bob-rate-upper"
+value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-bob-slope"
+value = "-1/11"
+
+[[rows]]
+id = "num:numbers:published-candidate-iterations"
+value = "18"
+
+[[rows]]
+id = "num:numbers:published-carol-count"
+value = "10"
+
+[[rows]]
+id = "num:numbers:published-carol-hull-lower"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-carol-hull-upper"
+value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-carol-intercept"
+value = "6/5"
+
+[[rows]]
+id = "num:numbers:published-carol-rate-lower"
+value = "1149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-carol-rate-upper"
+value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-carol-slope"
+value = "-1/10"
+
+[[rows]]
+id = "num:numbers:published-dave-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:published-dave-hull-lower"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-dave-hull-upper"
+value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-dave-intercept"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-dave-rate-lower"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-dave-rate-upper"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-dave-slope"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-eve-count"
+value = "8"
+
+[[rows]]
+id = "num:numbers:published-eve-hull-lower"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-eve-hull-upper"
+value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-eve-intercept"
+value = "9/8"
+
+[[rows]]
+id = "num:numbers:published-eve-rate-lower"
+value = "9/8"
+
+[[rows]]
+id = "num:numbers:published-eve-rate-upper"
+value = "9/8"
+
+[[rows]]
+id = "num:numbers:published-eve-slope"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-fence-lower"
+value = "74907257426152611113825863102967903001135317492596050354882151784881205653/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-fence-upper"
+value = "2996290297046104444553034524118716120045412699703842014195286071395248231/20000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-global-contraction-upper"
+value = "2996290297046104444553034524118716120045412699703842014195286071395248231/25000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-alice-lower"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-alice-upper"
+value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-bob-lower"
+value = "221718985746048721368645652815925026799241993646055823424105839322877941327/200000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-bob-upper"
+value = "1108594928730243606843228264079625133996209968230279117120529196614389706673/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-carol-lower"
+value = "280824332079934064151629193278089535287868642768639427334871742037467162257/250000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-carol-upper"
+value = "1123297328319736256606516773112358141151474571074557709339486968149868649063/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-dave-lower"
+value = "279611668024175928092197991827989438471414042619796953345452392906209879683/250000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-dave-upper"
+value = "27961166802417592809219799182798943847141404261979695334545239290620987969/25000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-eve-lower"
+value = "559442753720072326272561844025180458771772376060791094447332114059563492423/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-image-eve-upper"
+value = "223777101488028930509024737610072183508708950424316437778932845623825396973/200000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-local-contraction-upper"
+value = "14529966121662466844609137066561219529377/250000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-local-inflation"
+value = "2"
+
+[[rows]]
+id = "num:numbers:published-local-padding"
+value = "0.00000000000000000000000000000000001"
+
+[[rows]]
+id = "num:numbers:published-local-radius-upper"
+value = "8767210314447/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-mass-first"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:published-mass-fourth"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-mass-second"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:published-mass-third"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-numeraire"
+value = "1/10"
+
+[[rows]]
+id = "num:numbers:published-residual-radius-upper"
+value = "19909653387353/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-retention"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-root-bob-lower"
+value = "1108594928730243606843228264079625133996209968230279117120529193608892122323/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-bob-upper"
+value = "554297464365121803421614132039812566998104984115139558560264596804446477867/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-carol-lower"
+value = "224659465663947251321303354622471628230294914214911541867897392641136444739/200000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-carol-upper"
+value = "561648664159868128303258386556179070575737285537278854669743481602841580933/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-dave-lower"
+value = "223689334419340742473758393462391550777131234095837562676361917831851797043/200000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-dave-upper"
+value = "27961166802417592809219799182798943847141404261979695334545239728981503691/25000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-eve-lower"
+value = "1118885507440144652545123688050360917543544752121582188894664226286468435717/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-root-eve-upper"
+value = "22377710148802893050902473761007218350870895042431643777893284525729383973/20000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-shape-first"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-shape-fourth"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-shape-second"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:published-shape-third"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:published-standing-inflation-radius"
+value = "3066254181021229128478478673909297559195/154008415986242880224369876774687554472119026646131473486596719276728986968474460503806170769353943212"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-coordinate-first"
+value = "41/50"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-coordinate-second"
+value = "91/100"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-bob-radicand"
+value = "7462/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-coordinate-first"
+value = "14/25"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-coordinate-second"
+value = "18/25"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-carol-radicand"
+value = "4032/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-coordinate-first"
+value = "7/20"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-coordinate-second"
+value = "9/20"
+
+[[rows]]
+id = "num:numbers:published-vouch-alice-eve-radicand"
+value = "1575/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-coordinate-first"
+value = "37/50"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-coordinate-second"
+value = "81/100"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-carol-radicand"
+value = "5994/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-coordinate-first"
+value = "3/5"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-coordinate-second"
+value = "39/50"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-dave-radicand"
+value = "468/1000"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-coordinate-first"
+value = "21/50"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-coordinate-second"
+value = "61/100"
+
+[[rows]]
+id = "num:numbers:published-vouch-bob-eve-radicand"
+value = "2562/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-coordinate-first"
+value = "19/25"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-coordinate-second"
+value = "43/50"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-dave-radicand"
+value = "6536/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-coordinate-first"
+value = "17/25"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-coordinate-second"
+value = "79/100"
+
+[[rows]]
+id = "num:numbers:published-vouch-carol-eve-radicand"
+value = "5372/10000"
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-coordinate-first"
+value = "18/25"
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-coordinate-second"
+value = "83/100"
+
+[[rows]]
+id = "num:numbers:published-vouch-dave-eve-radicand"
+value = "5976/10000"
+
+[[rows]]
+id = "num:numbers:published-wall-lower"
+value = "250927425738473888861741368970320969988646825074039496451178482151187942819/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-wall-upper"
+value = "250927425738473888861741368970320969988646825074039496451178482151187942961/500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-width-lower"
+value = "149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-width-upper"
+value = "149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:quarter-hop-pair-work"
+value = "218608"
+
+[[rows]]
+id = "num:numbers:quarter-power-certificate-bytes"
+value = "6349"
+
+[[rows]]
+id = "num:numbers:quarter-power-output-ceiling-bytes"
+value = "1924854"
+
+[[rows]]
+id = "num:numbers:quarter-power-request-work"
+value = "22147931"
+
+[[rows]]
+id = "num:numbers:reference-bisection-fifth-work"
+value = "20292810"
+
+[[rows]]
+id = "num:numbers:reference-bisection-first-work"
+value = "19867093"
+
+[[rows]]
+id = "num:numbers:reference-bisection-fourth-work"
+value = "20078015"
+
+[[rows]]
+id = "num:numbers:reference-bisection-second-work"
+value = "20284573"
+
+[[rows]]
+id = "num:numbers:reference-bisection-sixth-work"
+value = "20466889"
+
+[[rows]]
+id = "num:numbers:reference-bisection-third-work"
+value = "20007742"
+
+[[rows]]
+id = "num:numbers:reference-box-map-work"
+value = "1347009880"
+
+[[rows]]
+id = "num:numbers:reference-candidate-coordinate"
+value = "11/10"
+
+[[rows]]
+id = "num:numbers:reference-candidate-iterations"
+value = "0"
+
+[[rows]]
+id = "num:numbers:reference-eighth-prefix-work"
+value = "75081871"
+
+[[rows]]
+id = "num:numbers:reference-half-prefix-work"
+value = "34929785"
+
+[[rows]]
+id = "num:numbers:reference-image-first-radius"
+value = "27962035/18885640192"
+
+[[rows]]
+id = "num:numbers:reference-lower-sign-work"
+value = "18691604"
+
+[[rows]]
+id = "num:numbers:reference-one-map-radius"
+value = "252865445/9442820096"
+
+[[rows]]
+id = "num:numbers:reference-point-map-work"
+value = "528817445"
+
+[[rows]]
+id = "num:numbers:reference-production-work"
+value = "155927977"
+
+[[rows]]
+id = "num:numbers:reference-quarter-prefix-work"
+value = "54797106"
+
+[[rows]]
+id = "num:numbers:reference-sixteenth-prefix-work"
+value = "95089873"
+
+[[rows]]
+id = "num:numbers:reference-sixty-fourth-prefix-work"
+value = "135460828"
+
+[[rows]]
+id = "num:numbers:reference-thirty-second-prefix-work"
+value = "115168018"
+
+[[rows]]
+id = "num:numbers:reference-upper-sign-work"
+value = "16223174"
+
+[[rows]]
+id = "num:numbers:reference-wall-lower"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:reference-wall-upper"
+value = "65/128"
+
+[[rows]]
+id = "num:numbers:reference-work-ceiling"
+value = "2000000000"
+
+[[rows]]
+id = "num:numbers:second-activation-session-work"
+value = "10685294"
+
+[[rows]]
+id = "num:numbers:third-hop-pair-work"
+value = "6182071"
+
+[[rows]]
+id = "num:numbers:verification-composition-bits"
+value = "32"
+
+[[rows]]
+id = "num:numbers:verification-trial-work-ceiling"
+value = "20000000000"
+
+[[rows]]
+id = "num:numbers:wall-gain-request-work"
+value = "15858856"

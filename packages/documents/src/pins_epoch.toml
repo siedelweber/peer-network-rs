@@ -1,0 +1,1542 @@
+namespace = "org.peer-network.numbers.registry"
+version = [1, 0, 0]
+
+[[rows]]
+id = "num:numbers:act-directions-precision"
+value = "5"
+
+[[rows]]
+id = "num:numbers:act-emission-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-family-extreme-rate"
+value = "1000000"
+
+[[rows]]
+id = "num:numbers:act-family-high-rate"
+value = "100"
+
+[[rows]]
+id = "num:numbers:act-family-high-rational-rate"
+value = "17/3"
+
+[[rows]]
+id = "num:numbers:act-family-isolated-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-family-low-rational-rate"
+value = "7/2"
+
+[[rows]]
+id = "num:numbers:act-family-retained-change-lower"
+value = "43/131072"
+
+[[rows]]
+id = "num:numbers:act-family-retained-change-upper"
+value = "73179/1048576"
+
+[[rows]]
+id = "num:numbers:act-family-retained-failed-precision"
+value = "7"
+
+[[rows]]
+id = "num:numbers:act-family-retained-precision"
+value = "8"
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-after-lower"
+value = "13556199/4194304"
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-after-upper"
+value = "13689235/4194304"
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-before-lower"
+value = "13396519/4194304"
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-before-upper"
+value = "13554823/4194304"
+
+[[rows]]
+id = "num:numbers:act-response-actor-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-arithmetic-ceiling"
+value = "5000000"
+
+[[rows]]
+id = "num:numbers:act-response-directions-contraction-upper"
+value = "7/160"
+
+[[rows]]
+id = "num:numbers:act-response-emission-acts-after"
+value = "5"
+
+[[rows]]
+id = "num:numbers:act-response-emission-acts-before"
+value = "4"
+
+[[rows]]
+id = "num:numbers:act-response-emission-burn"
+value = "5"
+
+[[rows]]
+id = "num:numbers:act-response-emission-contraction-upper"
+value = "11/40"
+
+[[rows]]
+id = "num:numbers:act-response-emission-displacement-upper"
+value = "7631995887995/3985729650688"
+
+[[rows]]
+id = "num:numbers:act-response-emission-response-lower"
+value = "-1702604270425/1099511627776"
+
+[[rows]]
+id = "num:numbers:act-response-emission-response-upper"
+value = "-227585184923/549755813888"
+
+[[rows]]
+id = "num:numbers:act-response-emission-solve-after-work"
+value = "94827401"
+
+[[rows]]
+id = "num:numbers:act-response-emission-solve-before-work"
+value = "93488278"
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-after-lower"
+value = "86852405819/76190859264"
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-after-upper"
+value = "21240726174739/13961999794176"
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-before-lower"
+value = "14464728775597/7474156732416"
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-before-upper"
+value = "48186653043/17923637248"
+
+[[rows]]
+id = "num:numbers:act-response-emission-target-loss-upper"
+value = "7631995887995/3985729650688"
+
+[[rows]]
+id = "num:numbers:act-response-endpoint-grid"
+value = "1/65536"
+
+[[rows]]
+id = "num:numbers:act-response-lower-burn"
+value = "5"
+
+[[rows]]
+id = "num:numbers:act-response-lower-displacement-upper"
+value = "400/153"
+
+[[rows]]
+id = "num:numbers:act-response-lower-response-lower"
+value = "-111347995073/549755813888"
+
+[[rows]]
+id = "num:numbers:act-response-lower-response-upper"
+value = "-204910034721/1099511627776"
+
+[[rows]]
+id = "num:numbers:act-response-lower-solve-after-work"
+value = "111581146"
+
+[[rows]]
+id = "num:numbers:act-response-lower-solve-before-work"
+value = "69232777"
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-after-lower"
+value = "16570802495/9219014656"
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-after-upper"
+value = "128325473625147/70755937484800"
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-before-lower"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-before-upper"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-lower-target-loss-upper"
+value = "53255327476321/168225279049728"
+
+[[rows]]
+id = "num:numbers:act-response-product-ceiling"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:act-response-proposal-cap"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-raise-burn"
+value = "8"
+
+[[rows]]
+id = "num:numbers:act-response-raise-displacement-upper"
+value = "640/153"
+
+[[rows]]
+id = "num:numbers:act-response-raise-response-lower"
+value = "23250912485/137438953472"
+
+[[rows]]
+id = "num:numbers:act-response-raise-response-upper"
+value = "245546487605/1099511627776"
+
+[[rows]]
+id = "num:numbers:act-response-raise-solve-after-work"
+value = "93392757"
+
+[[rows]]
+id = "num:numbers:act-response-raise-solve-before-work"
+value = "62635711"
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-after-lower"
+value = "753783666805/282403487744"
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-after-upper"
+value = "25721965829216593/9445065334308864"
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-before-lower"
+value = "5/2"
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-before-upper"
+value = "5/2"
+
+[[rows]]
+id = "num:numbers:act-response-raised-target-burn"
+value = "7/2"
+
+[[rows]]
+id = "num:numbers:act-response-reference-acts-after"
+value = "3"
+
+[[rows]]
+id = "num:numbers:act-response-reference-acts-before"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-supported-depth-count"
+value = "1"
+
+[[rows]]
+id = "num:numbers:act-response-switch-burn"
+value = "18"
+
+[[rows]]
+id = "num:numbers:act-response-switch-displacement-upper"
+value = "9"
+
+[[rows]]
+id = "num:numbers:act-response-switch-response-lower"
+value = "1319413953331/549755813888"
+
+[[rows]]
+id = "num:numbers:act-response-switch-response-upper"
+value = "2638827906663/1099511627776"
+
+[[rows]]
+id = "num:numbers:act-response-switch-solve-after-work"
+value = "121000"
+
+[[rows]]
+id = "num:numbers:act-response-switch-solve-before-work"
+value = "65116073"
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-after-lower"
+value = "22/5"
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-after-upper"
+value = "22/5"
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-before-lower"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-before-upper"
+value = "2"
+
+[[rows]]
+id = "num:numbers:act-response-target-burn"
+value = "3"
+
+[[rows]]
+id = "num:numbers:act-response-upstream-burn"
+value = "10"
+
+[[rows]]
+id = "num:numbers:act-response-wall"
+value = "1"
+
+[[rows]]
+id = "num:numbers:act-response-work-ceiling"
+value = "1000000000"
+
+[[rows]]
+id = "num:numbers:act-switch-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-arithmetic-ceiling"
+value = "1000000000"
+
+[[rows]]
+id = "num:numbers:burn-compiler-work-ceiling"
+value = "200000000"
+
+[[rows]]
+id = "num:numbers:burn-depleted-act-count"
+value = "13"
+
+[[rows]]
+id = "num:numbers:burn-depleted-displacement-upper"
+value = "9661967841/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-depleted-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-depleted-rate-after"
+value = "51/100"
+
+[[rows]]
+id = "num:numbers:burn-depleted-rate-before"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:burn-depleted-response-lower"
+value = "-9661967841/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-depleted-response-upper"
+value = "-9661967839/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-depleted-solve-after-work"
+value = "461085"
+
+[[rows]]
+id = "num:numbers:burn-depleted-solve-before-work"
+value = "400719"
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-after-lower"
+value = "29367/8825"
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-after-upper"
+value = "29367/8825"
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-before-lower"
+value = "704/211"
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-before-upper"
+value = "704/211"
+
+[[rows]]
+id = "num:numbers:burn-depleted-target-loss-upper"
+value = "9661967841/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-depleted-upstream-count"
+value = "10"
+
+[[rows]]
+id = "num:numbers:burn-endpoint-grid"
+value = "1/4294967296"
+
+[[rows]]
+id = "num:numbers:burn-high-rate"
+value = "4"
+
+[[rows]]
+id = "num:numbers:burn-literal-bytes"
+value = "4096"
+
+[[rows]]
+id = "num:numbers:burn-low-rate"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-monotone-act-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:burn-monotone-displacement-upper"
+value = "54975581389/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-monotone-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-monotone-response-lower"
+value = "109951162777/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-monotone-response-upper"
+value = "54975581389/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-monotone-solve-after-work"
+value = "50824450"
+
+[[rows]]
+id = "num:numbers:burn-monotone-solve-before-work"
+value = "36514329"
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-after-lower"
+value = "21/10"
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-after-upper"
+value = "21/10"
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-before-lower"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-before-upper"
+value = "2"
+
+[[rows]]
+id = "num:numbers:burn-numeraire"
+value = "1"
+
+[[rows]]
+id = "num:numbers:burn-output-bytes"
+value = "33554432"
+
+[[rows]]
+id = "num:numbers:burn-own-act-count"
+value = "7805"
+
+[[rows]]
+id = "num:numbers:burn-own-contraction-upper"
+value = "322445/1048576"
+
+[[rows]]
+id = "num:numbers:burn-own-direct-maximum-lower"
+value = "153205706981284729270501723436880521568384441000333505568484311690742030087883755318001417990340972811630746892074154567263695149886414931466615944243972736077517500/522984674126502682311509187878128895926783184245070028898511636844862092887610874334337817144281915412785853772516388808672076562540215467360384169410439403059845189661"
+
+[[rows]]
+id = "num:numbers:burn-own-direct-maximum-upper"
+value = "6120916269004962847347969107179223216621143528448354112414143274233500102506050873380812902960468662335412512467333611758791131006142173057173833780290884850000/20894420053733442506391469364010849609639575558635177024150540024942587174871838183793830099098020736814497535096769830619161442492368816167439586841197531226622263"
+
+[[rows]]
+id = "num:numbers:burn-own-direct-own-lower"
+value = "218841991560304157831873580372278322788005241877348034467489817258697822005126247145013360538838949377814327489871204230262347520346953502641579475792601902059880448/296831194446980422240675553746430864697393884339490338571067371569815331085237155689575439212944695215128690884010075670145974556620968279355067129220378743983943219150873"
+
+[[rows]]
+id = "num:numbers:burn-own-direct-own-upper"
+value = "789570080748873749997094727190373856909171494889220010383844780674776827158013861528059684242952407922900990127743986857943055675217194392161600417144024097357824/1070950516264376784737311284830619964972241467388056258758678013980203413994666305657201308625798686321289058782645632250328492286470703723467942016352925698600978642649"
+
+[[rows]]
+id = "num:numbers:burn-own-displacement-upper"
+value = "2877094609/27192983552"
+
+[[rows]]
+id = "num:numbers:burn-own-export-multiplicity"
+value = "2500"
+
+[[rows]]
+id = "num:numbers:burn-own-feedback-factor-upper"
+value = "322445/726131"
+
+[[rows]]
+id = "num:numbers:burn-own-feedback-upper"
+value = "1973658846359305245313115898764404630083404625030529541777378428060220940552563573867276216495088317826742087582529386443563406237275512991420416833285894365458250000/15172086128037518340608544040758562237897194639967319727723455778851585767876862732236397643688144895643847909657352573877322317398426260852479074632585604547118450454453"
+
+[[rows]]
+id = "num:numbers:burn-own-path-multiplicity"
+value = "100"
+
+[[rows]]
+id = "num:numbers:burn-own-precision"
+value = "24"
+
+[[rows]]
+id = "num:numbers:burn-own-response-lower"
+value = "-6096437/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-own-response-upper"
+value = "-2887565/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-own-side-multiplicity"
+value = "50"
+
+[[rows]]
+id = "num:numbers:burn-own-solve-after-work"
+value = "738032344"
+
+[[rows]]
+id = "num:numbers:burn-own-solve-before-work"
+value = "744148517"
+
+[[rows]]
+id = "num:numbers:burn-own-standing-after-lower"
+value = "51520344291678684423372371087817374811056797328295123129439298659909229673045423386415088373333298747645882089200576976425089444956014642247205992915355345712593403784369726079076632803986790389366021726794909844073081423944733831652504072284681260850105335788821004468262603985085223621538590552797605918519151186826418174208284016833619887162274044123973188565162240080393086614371549454423276329372731156212970553699088396568485376729/19227745492974095673899627969202436046684551192572375048092135517847706425664279893939787300081571147365697099864298144512316166754828269963472536774358764106814800486246516093366463005039729268198205055142795983557179397310177534539779844304593584805799264317818648740317079137036827318011021228753174194989588983818037251246507203309778747760843752021833858240953695420934564433665968407902547386737335624559339226978422356332238602240"
+
+[[rows]]
+id = "num:numbers:burn-own-standing-after-upper"
+value = "57975957718007812173763948117114769708499569875475871507912121854457041693947242528839317688171496233997326981200553681802930958858953117046364868734586724754514878908804227910582473515594296201709888435292954670412449967563345452858335216701956962495013247991167593905159491369154911823947697842719308613284664291292019400609833833798754366269027687546821810888588609096071863281334690022886236380663241071989875101405171215561054681296670679637920302957201844241190223602209643233630221774881599400665286278755703745905386203/21636989771779286166669110722222521495600441501927036421823800253103838541371528793943063992722223465685867736770838707018132659575621023967431332326004138573911526526152708430371655715079752157213367933840271064456056027488664424864419625222070038360067088754201775449650085375056733120571776790104603144688150288666125361494785415259701185051969804660614968735300444452813412730120042014963085496173460839797936723760263071835287039258171289057242762980826608183129471460247305321580848229675435999103415652028438831358279680"
+
+[[rows]]
+id = "num:numbers:burn-own-standing-before-lower"
+value = "16688184700827423239145598520774872430296903622545149234690673178923380636738766502033521761230936178317667178499075344849632892274807266584627910097706124108098404136976334995680314717901919775698840377886033551389119141994879440556733767625704931264468890445907732742826430338773/6228128727650449968455350093586424266115876623167515663507574419520335073154632099662319102695860752396496609699108816632945725344598930587199459585098254928581874672379330222339160650983099689975602856519094129392629005148104405649368533619233861780316880651189773461747352469504"
+
+[[rows]]
+id = "num:numbers:burn-own-standing-before-upper"
+value = "1545287197302415292063361838346817992763682423812004908885228489911413236601356908833958554851956786945129103802684148817376681208388435332129859909951404141943099831283635590969234856854061640376802895382066650495812556442728430851587919733600116425470677377654194025469436941281623976601127350719761297635308418198731651530711861811074888400192610532924487358054138168431272520511011206365860682047705205952531028844460129329271675197348064494296302797508927937749998463342426685617590519589773237647221862418232002133181774775355551214121997001/576709383136340690621032375085800348001472373885988290693020044728967996333745458252845811095780597300625648291749456888845455242578625438725554131501385382479893216708975368084182563539779482341681257069534320824485607732767051467970147150792210597968544730628679487566590731048997968843706644896019143732554521894335119209668573389009998607013561842980670407829681989316551683829059218774893821077679650347409522422224556315734098973227249798036347804685486149067151518549393468976955121124407748833106226770893743356430193560193690892582780928"
+
+[[rows]]
+id = "num:numbers:burn-own-target-loss-upper"
+value = "3690114134321651/114055639684087808"
+
+[[rows]]
+id = "num:numbers:burn-own-upstream-count"
+value = "2500"
+
+[[rows]]
+id = "num:numbers:burn-product-ceiling"
+value = "100000"
+
+[[rows]]
+id = "num:numbers:burn-proposal-cap"
+value = "16"
+
+[[rows]]
+id = "num:numbers:burn-raised-rate"
+value = "21/10"
+
+[[rows]]
+id = "num:numbers:burn-saturated-contraction-upper"
+value = "806113/2621440"
+
+[[rows]]
+id = "num:numbers:burn-saturated-feedback-factor-upper"
+value = "806113/1815327"
+
+[[rows]]
+id = "num:numbers:burn-saturated-precision"
+value = "40"
+
+[[rows]]
+id = "num:numbers:burn-sibling-act-count"
+value = "6"
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-maximum-lower"
+value = "368836874129/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-maximum-upper"
+value = "92209300191/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-own-lower"
+value = "368836874129/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-own-upper"
+value = "92209300191/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-sibling-displacement-upper"
+value = "368982337075/3807016648704"
+
+[[rows]]
+id = "num:numbers:burn-sibling-feedback-upper"
+value = "81892811163/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-sibling-precision"
+value = "18"
+
+[[rows]]
+id = "num:numbers:burn-sibling-response-lower"
+value = "-215869045/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-sibling-response-upper"
+value = "-23011007/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-sibling-solve-after-work"
+value = "198531635"
+
+[[rows]]
+id = "num:numbers:burn-sibling-solve-before-work"
+value = "187664854"
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-after-lower"
+value = "3289989738193/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-after-upper"
+value = "411257713709/137438953472"
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-before-lower"
+value = "822538438425/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-before-upper"
+value = "1645102803619/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-sibling-target-loss-upper"
+value = "59523654670333295/1995973144715722752"
+
+[[rows]]
+id = "num:numbers:burn-sibling-weak-denominator"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:burn-switch-act-count"
+value = "6"
+
+[[rows]]
+id = "num:numbers:burn-switch-displacement-upper"
+value = "2224545669/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-switch-precision"
+value = "27"
+
+[[rows]]
+id = "num:numbers:burn-switch-rate-after"
+value = "460156247/100000000"
+
+[[rows]]
+id = "num:numbers:burn-switch-rate-before"
+value = "230078123/50000000"
+
+[[rows]]
+id = "num:numbers:burn-switch-response-lower"
+value = "-752568847/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-switch-response-upper"
+value = "-373868779/549755813888"
+
+[[rows]]
+id = "num:numbers:burn-switch-solve-after-work"
+value = "967732"
+
+[[rows]]
+id = "num:numbers:burn-switch-solve-before-work"
+value = "326337808"
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-after-lower"
+value = "169006263690597776452/38397473805237903125"
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-after-upper"
+value = "169006263690597776452/38397473805237903125"
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-before-lower"
+value = "1210060486471/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-before-upper"
+value = "1210061694293/274877906944"
+
+[[rows]]
+id = "num:numbers:burn-switch-target-loss-upper"
+value = "752568847/1099511627776"
+
+[[rows]]
+id = "num:numbers:burn-switch-weak-denominator"
+value = "1000"
+
+[[rows]]
+id = "num:numbers:burn-wall"
+value = "1"
+
+[[rows]]
+id = "num:numbers:burn-work-ceiling"
+value = "1000000000000"
+
+[[rows]]
+id = "num:numbers:candidate-total-work"
+value = "64097175"
+
+[[rows]]
+id = "num:numbers:certified-map-work"
+value = "51033270"
+
+[[rows]]
+id = "num:numbers:certified-transport-work"
+value = "583937"
+
+[[rows]]
+id = "num:numbers:conservation-balance-total-width"
+value = "7814226939942245737322448794792873464799444535294101/31666982946791670045331160474697816674011785129571123200"
+
+[[rows]]
+id = "num:numbers:conservation-count-total-width"
+value = "941008430946011456115832099606566084188427848915219/513518642380405460194559359049153783902893812911964160"
+
+[[rows]]
+id = "num:numbers:conservation-depleted-row-width"
+value = "48761059757846647842305738027610853402571/159598952053331309414826296708598502644744192"
+
+[[rows]]
+id = "num:numbers:conservation-depletion-ratio"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:conservation-failed-precision"
+value = "8"
+
+[[rows]]
+id = "num:numbers:conservation-failed-solvent-row-width"
+value = "259953969913693253097751/212816904092773800896102400"
+
+[[rows]]
+id = "num:numbers:conservation-precision"
+value = "9"
+
+[[rows]]
+id = "num:numbers:conservation-relative-width-tolerance"
+value = "1/1024"
+
+[[rows]]
+id = "num:numbers:conservation-solvent-row-width"
+value = "196396673160554638361698191757799197/321585625680024469493369038608856514560"
+
+[[rows]]
+id = "num:numbers:conservation-strength"
+value = "1/64"
+
+[[rows]]
+id = "num:numbers:enclosed-depth-mass-count"
+value = "4"
+
+[[rows]]
+id = "num:numbers:enclosed-wall-production-work"
+value = "612584299"
+
+[[rows]]
+id = "num:numbers:enclosed-wall-replay-work"
+value = "380980787"
+
+[[rows]]
+id = "num:numbers:enclosed-work-ceiling"
+value = "2000000000"
+
+[[rows]]
+id = "num:numbers:epoch-aggregate-case-count"
+value = "27"
+
+[[rows]]
+id = "num:numbers:epoch-aggregate-coordinate-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:epoch-aggregate-family-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:epoch-aggregate-member-maximum"
+value = "3"
+
+[[rows]]
+id = "num:numbers:epoch-base-actor-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:epoch-family-fixture-act-count"
+value = "4"
+
+[[rows]]
+id = "num:numbers:epoch-family-history-count"
+value = "456"
+
+[[rows]]
+id = "num:numbers:epoch-family-presentation-count"
+value = "24"
+
+[[rows]]
+id = "num:numbers:epoch-invitation-formality"
+value = "7/10"
+
+[[rows]]
+id = "num:numbers:epoch-invitation-radicand"
+value = "14/25"
+
+[[rows]]
+id = "num:numbers:epoch-invitation-urgency"
+value = "4/5"
+
+[[rows]]
+id = "num:numbers:epoch-ledger-address-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:epoch-mixed-presentation-count"
+value = "24"
+
+[[rows]]
+id = "num:numbers:epoch-mixed-tail-act-count"
+value = "4"
+
+[[rows]]
+id = "num:numbers:epoch-property-draw-count"
+value = "256"
+
+[[rows]]
+id = "num:numbers:epoch-real-base-denominator-count"
+value = "6"
+
+[[rows]]
+id = "num:numbers:epoch-recipient-history-count"
+value = "22"
+
+[[rows]]
+id = "num:numbers:epoch-recipient-presentation-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:epoch-recipient-scenario-count"
+value = "11"
+
+[[rows]]
+id = "num:numbers:epoch-settlement-chain-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:epoch-settlement-interleaving-count"
+value = "20"
+
+[[rows]]
+id = "num:numbers:epoch-support-far-depth"
+value = "2"
+
+[[rows]]
+id = "num:numbers:epoch-support-near-depth"
+value = "1"
+
+[[rows]]
+id = "num:numbers:epoch-support-partial-emission"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:epoch-support-source-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:first-proposal-work"
+value = "20450944"
+
+[[rows]]
+id = "num:numbers:frozen-box-map-work"
+value = "411904756"
+
+[[rows]]
+id = "num:numbers:frozen-declared-depth-count"
+value = "4"
+
+[[rows]]
+id = "num:numbers:frozen-image-first-radius"
+value = "12934495/4302372864"
+
+[[rows]]
+id = "num:numbers:frozen-one-map-radius"
+value = "115395727595/4302372864"
+
+[[rows]]
+id = "num:numbers:frozen-point-map-work"
+value = "394358227"
+
+[[rows]]
+id = "num:numbers:frozen-supported-depth-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:partition-act-capacity"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:partition-anchor-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:partition-arithmetic-ceiling"
+value = "100000000"
+
+[[rows]]
+id = "num:numbers:partition-backoff-ratio"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:partition-close-rate"
+value = "201/100"
+
+[[rows]]
+id = "num:numbers:partition-comparison-precision"
+value = "22"
+
+[[rows]]
+id = "num:numbers:partition-distinct-export-new"
+value = "160/81"
+
+[[rows]]
+id = "num:numbers:partition-distinct-export-old"
+value = "1417/625"
+
+[[rows]]
+id = "num:numbers:partition-distinct-gain"
+value = "12666/20447"
+
+[[rows]]
+id = "num:numbers:partition-distinct-standing-new"
+value = "1780/161"
+
+[[rows]]
+id = "num:numbers:partition-distinct-standing-old"
+value = "9278/889"
+
+[[rows]]
+id = "num:numbers:partition-distinct-ungrouped-bound"
+value = "4251/889"
+
+[[rows]]
+id = "num:numbers:partition-endpoint-grid"
+value = "1/65536"
+
+[[rows]]
+id = "num:numbers:partition-export-opinions"
+value = "2"
+
+[[rows]]
+id = "num:numbers:partition-export-registrations"
+value = "2"
+
+[[rows]]
+id = "num:numbers:partition-high-rate"
+value = "20"
+
+[[rows]]
+id = "num:numbers:partition-literal-byte-ceiling"
+value = "4096"
+
+[[rows]]
+id = "num:numbers:partition-low-rate"
+value = "2"
+
+[[rows]]
+id = "num:numbers:partition-matched-coordinate"
+value = "2/3"
+
+[[rows]]
+id = "num:numbers:partition-matched-new-radius-upper"
+value = "17/4194304"
+
+[[rows]]
+id = "num:numbers:partition-matched-new-round-work"
+value = "193199002"
+
+[[rows]]
+id = "num:numbers:partition-matched-old-radius-upper"
+value = "17/4194304"
+
+[[rows]]
+id = "num:numbers:partition-matched-old-round-work"
+value = "192074295"
+
+[[rows]]
+id = "num:numbers:partition-numeraire"
+value = "1/10"
+
+[[rows]]
+id = "num:numbers:partition-output-ceiling"
+value = "134217728"
+
+[[rows]]
+id = "num:numbers:partition-policy-floor"
+value = "1"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-new-round-work"
+value = "104796522"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-old-round-work"
+value = "104364472"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-pair-upper"
+value = "2295/4194304"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-projected-upper"
+value = "1083/1048576"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-response-lower"
+value = "-4589/8388608"
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-response-upper"
+value = "-9/65536"
+
+[[rows]]
+id = "num:numbers:partition-positive-precision"
+value = "13"
+
+[[rows]]
+id = "num:numbers:partition-positive-proposal-cap"
+value = "8"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-new-round-work"
+value = "113611794"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-old-round-work"
+value = "113142732"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-pair-upper"
+value = "2295/4194304"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-projected-upper"
+value = "4417/4194304"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-response-lower"
+value = "289/2097152"
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-response-upper"
+value = "9179/16777216"
+
+[[rows]]
+id = "num:numbers:partition-precision"
+value = "22"
+
+[[rows]]
+id = "num:numbers:partition-product-ceiling"
+value = "1000000"
+
+[[rows]]
+id = "num:numbers:partition-proof-node-ceiling"
+value = "100000"
+
+[[rows]]
+id = "num:numbers:partition-proposal-cap"
+value = "1"
+
+[[rows]]
+id = "num:numbers:partition-reduction-ceiling"
+value = "4"
+
+[[rows]]
+id = "num:numbers:partition-work-ceiling"
+value = "100000000000"
+
+[[rows]]
+id = "num:numbers:proposal-prefix-work"
+value = "4219729"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-certificate-after"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-certificate-before"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-fence-after"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-fence-before"
+value = "0"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-finite-change"
+value = "-5/2"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-standing-after"
+value = "3/2"
+
+[[rows]]
+id = "num:numbers:published-act-isolated-standing-before"
+value = "4"
+
+[[rows]]
+id = "num:numbers:published-act-numeraire"
+value = "1/10"
+
+[[rows]]
+id = "num:numbers:published-act-retained-certificate-after"
+value = "30673951138699340093250997058207948685531584858685685249881903809982370382780407/50000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-certificate-before"
+value = "61501502433326067968641458297979282191721815610504498618190857714155939415449549/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-count"
+value = "1000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-fence-after"
+value = "76684877846748350233127492645519871713828962146714213124704759524955925956951017/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-fence-before"
+value = "1201201219400899765012528482382407855307066711142665988636540189729608191707999/1562500000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-finite-change"
+value = "7012722080662642715167732730334891672943936676494758777572550951885898381671727/200000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-high-rate"
+value = "4"
+
+[[rows]]
+id = "num:numbers:published-act-retained-low-rate"
+value = "2"
+
+[[rows]]
+id = "num:numbers:published-act-retained-standing-after"
+value = "16239714561407135131057768613472734952507888325320338370544072226191515243340563/5000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-retained-standing-before"
+value = "1606439650939056906317857529521436266068428990840796940110475845239436778379877/500000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+[[rows]]
+id = "num:numbers:published-act-wall"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-mass-first"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:published-mass-fourth"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-mass-second"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:published-mass-third"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-shape-first"
+value = "1"
+
+[[rows]]
+id = "num:numbers:published-shape-fourth"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:published-shape-second"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:published-shape-third"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:rational-wall-production-work"
+value = "455927402"
+
+[[rows]]
+id = "num:numbers:rational-wall-replay-work"
+value = "252822503"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-donors"
+value = "100"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-gain"
+value = "571477680/32396729"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-incoming-count"
+value = "8000/81"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-registrations"
+value = "9800"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-retained-count"
+value = "1"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-standing-new"
+value = "160162/8081"
+
+[[rows]]
+id = "num:numbers:receiving-showcase-standing-old"
+value = "8738/4009"
+
+[[rows]]
+id = "num:numbers:receiving-small-donors"
+value = "1"
+
+[[rows]]
+id = "num:numbers:receiving-small-gain"
+value = "58320/19481"
+
+[[rows]]
+id = "num:numbers:receiving-small-incoming-count"
+value = "80/81"
+
+[[rows]]
+id = "num:numbers:receiving-small-registrations"
+value = "2"
+
+[[rows]]
+id = "num:numbers:receiving-small-retained-count"
+value = "1"
+
+[[rows]]
+id = "num:numbers:receiving-small-standing-new"
+value = "1762/161"
+
+[[rows]]
+id = "num:numbers:receiving-small-standing-old"
+value = "962/121"
+
+[[rows]]
+id = "num:numbers:reference-reduction-ceiling"
+value = "2"
+
+[[rows]]
+id = "num:numbers:reference-squared-bleed"
+value = "1/400"
+
+[[rows]]
+id = "num:numbers:reference-work-ceiling"
+value = "2000000000"
+
+[[rows]]
+id = "num:numbers:scaling-base-fence-lower"
+value = "1/16"
+
+[[rows]]
+id = "num:numbers:scaling-base-fence-upper"
+value = "5/64"
+
+[[rows]]
+id = "num:numbers:scaling-base-numeraire"
+value = "1"
+
+[[rows]]
+id = "num:numbers:scaling-buyer-burn"
+value = "7"
+
+[[rows]]
+id = "num:numbers:scaling-degraded-fence-lower"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:scaling-degraded-fence-upper"
+value = "9/64"
+
+[[rows]]
+id = "num:numbers:scaling-factor"
+value = "2"
+
+[[rows]]
+id = "num:numbers:scaling-failed-precision"
+value = "3"
+
+[[rows]]
+id = "num:numbers:scaling-precision"
+value = "4"
+
+[[rows]]
+id = "num:numbers:scaling-product-ceiling"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:scaling-repriced-fence-lower"
+value = "1/32"
+
+[[rows]]
+id = "num:numbers:scaling-repriced-fence-upper"
+value = "3/64"
+
+[[rows]]
+id = "num:numbers:scaling-repriced-numeraire"
+value = "2"
+
+[[rows]]
+id = "num:numbers:scaling-seller-burn"
+value = "12"
+
+[[rows]]
+id = "num:numbers:scaling-wall"
+value = "2"
+
+[[rows]]
+id = "num:numbers:scaling-width-tolerance"
+value = "1/64"
+
+[[rows]]
+id = "num:numbers:second-proposal-work"
+value = "43330725"
+
+[[rows]]
+id = "num:numbers:sibling-control-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:sibling-endpoint-grid"
+value = "1/262144"
+
+[[rows]]
+id = "num:numbers:sibling-precision"
+value = "28"
+
+[[rows]]
+id = "num:numbers:sibling-raised-rate"
+value = "3"
+
+[[rows]]
+id = "num:numbers:sibling-response-lower"
+value = "-2387/1073741824"
+
+[[rows]]
+id = "num:numbers:sibling-response-upper"
+value = "-447/1073741824"
+
+[[rows]]
+id = "num:numbers:sibling-strength"
+value = "1/512"
+
+[[rows]]
+id = "num:numbers:solve-certifying-prefix-work"
+value = "4924286"
+
+[[rows]]
+id = "num:numbers:solve-quarter-alice-width"
+value = "4379964147582925249900990/204216272147387762307073"
+
+[[rows]]
+id = "num:numbers:solve-quarter-bob-width"
+value = "4914179380769986304243500/204216272147387762307073"
+
+[[rows]]
+id = "num:numbers:solve-quarter-carol-width"
+value = "4895274571658931454953260/204216272147387762307073"
+
+[[rows]]
+id = "num:numbers:solve-quarter-dave-width"
+value = "4847976380148668165378860/204216272147387762307073"
+
+[[rows]]
+id = "num:numbers:solve-quarter-one-work"
+value = "71352757"
+
+[[rows]]
+id = "num:numbers:solve-quarter-radius"
+value = "554880343262225/43841845855598"
+
+[[rows]]
+id = "num:numbers:solve-quarter-residual"
+value = "110976068652445/43841845855598"
+
+[[rows]]
+id = "num:numbers:solve-quarter-two-work"
+value = "114618499"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-alice-width"
+value = "17480737461808201588044445/816865088589551049228292"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-bob-width"
+value = "9789239633016473196927485/408432544294775524614146"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-carol-width"
+value = "9751430014794363498347005/408432544294775524614146"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-dave-width"
+value = "9656833631773836919198205/408432544294775524614146"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-one-work"
+value = "71819896"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-radius"
+value = "4418047176245575/350734766844784"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-residual"
+value = "883609435249115/350734766844784"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-two-work"
+value = "115287737"
+
+[[rows]]
+id = "num:numbers:solve-work-ceiling"
+value = "200000000"
+
+[[rows]]
+id = "num:numbers:split-coarse-balance"
+value = "192"
+
+[[rows]]
+id = "num:numbers:split-coarse-burn"
+value = "200"
+
+[[rows]]
+id = "num:numbers:split-coarse-count"
+value = "4"
+
+[[rows]]
+id = "num:numbers:split-coarse-export"
+value = "1"
+
+[[rows]]
+id = "num:numbers:split-coarse-receiving-standing"
+value = "73"
+
+[[rows]]
+id = "num:numbers:split-coarse-self-hop"
+value = "3/4"
+
+[[rows]]
+id = "num:numbers:split-compiler-product-ceiling"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:split-contributing-width"
+value = "50"
+
+[[rows]]
+id = "num:numbers:split-endpoint-grid"
+value = "1/16"
+
+[[rows]]
+id = "num:numbers:split-member-balance"
+value = "96"
+
+[[rows]]
+id = "num:numbers:split-member-burn"
+value = "100"
+
+[[rows]]
+id = "num:numbers:split-member-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:split-member-proportion"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:split-outsider-balance"
+value = "98"
+
+[[rows]]
+id = "num:numbers:split-outsider-burn"
+value = "100"
+
+[[rows]]
+id = "num:numbers:split-outsider-count"
+value = "1"
+
+[[rows]]
+id = "num:numbers:split-outsider-rate"
+value = "98"
+
+[[rows]]
+id = "num:numbers:split-precision"
+value = "4"
+
+[[rows]]
+id = "num:numbers:split-proposal-cap"
+value = "2"
+
+[[rows]]
+id = "num:numbers:split-receiving-displacement"
+value = "25/7"
+
+[[rows]]
+id = "num:numbers:split-receiving-variation"
+value = "1/14"
+
+[[rows]]
+id = "num:numbers:split-refined-export"
+value = "4/3"
+
+[[rows]]
+id = "num:numbers:split-refined-receiving-standing"
+value = "486/7"
+
+[[rows]]
+id = "num:numbers:split-refined-self-hop"
+value = "2/3"
+
+[[rows]]
+id = "num:numbers:split-source-rate"
+value = "48"
+
+[[rows]]
+id = "num:numbers:split-writing-wall"
+value = "2"
+
+[[rows]]
+id = "num:numbers:verification-trial-work-ceiling"
+value = "20000000000"
+
+[[rows]]
+id = "num:numbers:zero-width-reference-work-ceiling"
+value = "200000000"

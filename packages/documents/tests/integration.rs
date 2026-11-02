@@ -162,6 +162,38 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
     Ok(())
 }
 
+fn package_pin_projection(root: &Path) -> Result<()> {
+    let directory = root.join("packages/documents/src");
+    let records = root.join("packages/records/tests");
+    fs::create_dir_all(&records)?;
+    fs::write(directory.join("consumer.rs"), "NumberId::TestThird")?;
+    fs::write(records.join("consumer.rs"), "NumberId::TestHalf")?;
+    documents::run(root, Operation::Generate { check: false })?;
+    let document_bytes = fs::read(directory.join("pins.toml"))?;
+    let document_rust = fs::read(directory.join("pins.rs"))?;
+    let record_bytes = fs::read(directory.join("pins_records.toml"))?;
+    assert!(String::from_utf8(document_bytes.clone())?.contains("1/3"));
+    assert!(!String::from_utf8(document_bytes.clone())?.contains("-5/2"));
+    assert!(String::from_utf8(record_bytes.clone())?.contains("-5/2"));
+    assert!(!String::from_utf8(record_bytes.clone())?.contains("1/3"));
+    let input = root.join("docs/inputs/numbers.toml");
+    let original = fs::read_to_string(&input)?;
+    fs::write(&input, original.replace("-5/2", "-7/2"))?;
+    documents::run(root, Operation::Generate { check: false })?;
+    assert_eq!(fs::read(directory.join("pins.toml"))?, document_bytes);
+    assert_eq!(fs::read(directory.join("pins.rs"))?, document_rust);
+    assert_ne!(fs::read(directory.join("pins_records.toml"))?, record_bytes);
+    assert!(fs::read_to_string(directory.join("pins_records.toml"))?.contains("-7/2"));
+    fs::write(input, original)?;
+    documents::run(root, Operation::Generate { check: false })?;
+    assert_eq!(fs::read(directory.join("pins_records.toml"))?, record_bytes);
+    assert_eq!(
+        documents::run(root, Operation::Generate { check: true })?.findings,
+        Vec::<Finding>::new()
+    );
+    Ok(())
+}
+
 fn registry_pin_correspondence() -> Result<()> {
     let constants: serde_json::Value = serde_json::from_str(&fs::read_to_string(
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
@@ -176,7 +208,9 @@ fn registry_pin_correspondence() -> Result<()> {
         design_constants::DesignConstantId::EpochWallFloorRational.value(),
         floor["definition"]["expr"].as_str().ok_or("floor expression")?
     );
-    let input: toml::Value = toml::from_str(include_str!("../../../docs/inputs/numbers.toml"))?;
+    let input: toml::Value = toml::from_str(&fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/inputs/numbers.toml"),
+    )?)?;
     let rows = input["rows"].as_array().ok_or("registry rows")?;
     let pin = rows
         .iter()
@@ -246,6 +280,7 @@ fn number_registry() -> Result<()> {
     fs::remove_file(constant_input)?;
     fs::remove_file(root.join("docs/datasets/org.peer-network.design.constants.json"))?;
     fs::remove_file(consumer)?;
+    package_pin_projection(root)?;
     documents::run(root, Operation::Generate { check: false })?;
     let template = root.join("docs/templates/docs/result.md.j2");
     fs::write(

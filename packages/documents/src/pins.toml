@@ -1,0 +1,54 @@
+namespace = "org.peer-network.numbers.registry"
+version = [1, 0, 0]
+
+[[rows]]
+id = "num:numbers:observe-bridge-drain-seconds"
+value = "0.1"
+
+[[rows]]
+id = "num:numbers:observe-bridge-queue-record-capacity"
+value = "64"
+
+[[rows]]
+id = "num:numbers:observe-drain-base-seconds"
+value = "1"
+
+[[rows]]
+id = "num:numbers:observe-drain-per-mib-seconds"
+value = "1"
+
+[[rows]]
+id = "num:numbers:observe-inline-byte-threshold"
+value = "65536"
+
+[[rows]]
+id = "num:numbers:observe-inline-nesting-level-count"
+value = "96"
+
+[[rows]]
+id = "num:numbers:observe-queue-record-capacity"
+value = "1024"
+
+[[rows]]
+id = "num:numbers:observe-queued-byte-capacity"
+value = "67108864"
+
+[[rows]]
+id = "num:numbers:observe-record-byte-capacity"
+value = "1048576"
+
+[[rows]]
+id = "num:numbers:observe-reserved-diagnostic-slot-count"
+value = "8"
+
+[[rows]]
+id = "num:numbers:observe-reserved-summary-slot-count"
+value = "2"
+
+[[rows]]
+id = "num:numbers:observe-serde-json-default-recursion-limit"
+value = "128"
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-two-work"
+value = "115287737"

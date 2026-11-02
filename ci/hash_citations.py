@@ -29,19 +29,21 @@ IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|sha(?:-?(?:1|256|512
 IDENTITY_FIELD = re.compile(r'''\b(?:hash|rev|revision|tree|object)\b[ \t]*(?:[=:][ \t]*)?["'`]?\Z''', re.I)
 BARE = re.compile(r"[0-9a-f]+", re.I)
 
-NUMERIC_PATHS = ('docs/inputs/numbers.toml', 'docs/datasets/org.peer-network.numbers.registry.json')
+NUMERIC_PATHS = ('docs/inputs/numbers.toml', 'docs/datasets/org.peer-network.numbers.registry.json',
+                 'packages/documents/src/pins.toml', 'packages/documents/src/pins_records.toml',
+                 'packages/documents/src/pins_graph.toml', 'packages/documents/src/pins_epoch.toml')
 EXACT_NUMBER = re.compile(r'[+-]?[0-9]+(?:/[0-9]+|\.[0-9]+)?\Z')
 
 
 def numeric_registry(root, rule):
-    """Account only exact-value fields in the two declared registry carriers.
+    """Account only exact-value fields in the declared registry and package carriers.
 
     Carrier parsing validates values independently of hash recognition. Physical
     field spans, not membership in a set of numeric strings, grant admission.
     Consequently an identical run in a comment or another field gains nothing.
     """
     if rule.get('paths') != list(NUMERIC_PATHS):
-        raise ValueError('numeric registry: expected the two exact carrier paths')
+        raise ValueError('numeric registry: expected the exact carrier paths')
     admitted = {}
     for name in NUMERIC_PATHS:
         text = relative_file(root, name).read_text()

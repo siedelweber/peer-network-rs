@@ -138,7 +138,7 @@ class WorkspaceChecks(unittest.TestCase):
 
 class HashCitations(unittest.TestCase):
     def test_numeric_registry_fields(self):
-        """Only validated exact-value field spans in the two registry carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.
+        """Only validated exact-value field spans in the declared registry and package carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.
         ´claim:hashcitations:numeric-registry-admission-is-field-local´
         ´test:integration:test-numeric-registry-fields´
         """
@@ -153,7 +153,9 @@ class HashCitations(unittest.TestCase):
             for name in NUMERIC_PATHS:
                 (root/name).parent.mkdir(parents=True, exist_ok=True)
             def write(value, extra=''):
-                (root/NUMERIC_PATHS[0]).write_text('namespace = "org.peer-network.numbers.registry"\nversion = [1, 0, 0]\n[[rows]]\nid = "num:test:pin"\nvalue = '+json.dumps(value)+'\n'+extra)
+                for name in NUMERIC_PATHS:
+                    if name.endswith('.toml'):
+                        (root/name).write_text('namespace = "org.peer-network.numbers.registry"\nversion = [1, 0, 0]\n[[rows]]\nid = "num:test:pin"\nvalue = '+json.dumps(value)+'\n'+extra)
                 (root/NUMERIC_PATHS[1]).write_text(json.dumps(dict(namespace='org.peer-network.numbers.registry', version=[1, 0, 0], rows=[dict(id='num:test:pin', value=value)]), indent=2)+'\n')
             for value in (run, '-'+run, '+'+run, run+'/2', '0.'+run):
                 write(value)
@@ -166,6 +168,16 @@ class HashCitations(unittest.TestCase):
             self.assertTrue(any('unaccounted' in finding for finding in audit(root, list(NUMERIC_PATHS), table)[0]))
             for value in ('1/0', '1/-2', '1/+2', '1e4', 'NaN', '1.', '.1', ' 1', '1_000', '1/2/3', run+'x'):
                 write(value)
+                with self.assertRaisesRegex(ValueError, 'malformed exact value'):
+                    audit(root, list(NUMERIC_PATHS), table)
+            write(run)
+            for name in NUMERIC_PATHS[2:]:
+                write(run)
+                carrier = root/name
+                carrier.write_text(carrier.read_text()+'note = "'+run+'"\n')
+                self.assertTrue(any(name in finding and 'unaccounted' in finding for finding in audit(root, list(NUMERIC_PATHS), table)[0]))
+                write(run)
+                carrier.write_text(carrier.read_text().replace('value = "'+run+'"', 'value = "1/0"'))
                 with self.assertRaisesRegex(ValueError, 'malformed exact value'):
                     audit(root, list(NUMERIC_PATHS), table)
             write(run)

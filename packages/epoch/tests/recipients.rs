@@ -1,4 +1,4 @@
-#[path = "../../documents/src/pins.rs"]
+#[path = "../../documents/src/pins_epoch.rs"]
 pub mod pins;
 use pins::NumberId as N;
 

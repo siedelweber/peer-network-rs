@@ -8,8 +8,8 @@ measures = "Exact numeric values, not content identities"
 producer = "Authored numeric registry and documents input projection"
 establishment = "defined"
 reader = "numeric-registry"
-definition = "Only isolated value fields in the declared input and its projected dataset denote signed integers, finite exact decimals or rationals with positive denominators. Carrier parsing validates every value; the reader accounts digit runs by their field span, never by a global allow-list. Other fields and all other paths retain ordinary identity accounting."
-paths = ["docs/inputs/numbers.toml", "docs/datasets/org.peer-network.numbers.registry.json"]
+definition = "Only isolated value fields in the declared input, projected dataset and per-package exact carriers denote signed integers, finite exact decimals or rationals with positive denominators. Carrier parsing validates every value; the reader accounts digit runs by their field span, never by a global allow-list. Other fields and all other paths retain ordinary identity accounting."
+paths = ["docs/inputs/numbers.toml", "docs/datasets/org.peer-network.numbers.registry.json", "packages/documents/src/pins.toml", "packages/documents/src/pins_records.toml", "packages/documents/src/pins_graph.toml", "packages/documents/src/pins_epoch.toml"]
 
 [[rows]]
 family = "policy-recipe-vectors"
