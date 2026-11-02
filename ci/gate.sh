@@ -157,5 +157,8 @@ python3 -B ci/devperf.py --operation gate --duration-s "$budget_wall" --outcome 
     --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
 if [ "$?" -ne 0 ]; then failed=1; fi
 python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
+if [ "$failed" = 0 ] && [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
+    python3 -B ci/build_graph.py retain-baseline || failed=1
+fi
 printf 'GATE-EXIT=%s\n' "$failed"
 exit "$failed"

@@ -388,15 +388,51 @@
       "scope": "one-file incremental rebuild"
     },
     {
+      "allowance_multiple": 2,
+      "allowance_round_ms": 50,
       "budget_ms": 120000,
       "category": "aggregate",
+      "cpu_growth_percent": 20,
+      "high_stall_percent": 10,
       "name": "gate",
       "number_forms": {
+        "allowance_multiple": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "allowance_round_ms": {
+          "exact": "50",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "50",
+          "num_exact": true,
+          "num_relation": "="
+        },
         "budget_ms": {
           "exact": "120 000",
           "exact_exact": true,
           "exact_relation": "=",
           "num": "120 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "cpu_growth_percent": {
+          "exact": "20",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "high_stall_percent": {
+          "exact": "10",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -431,10 +467,34 @@
           "num": "85.5",
           "num_exact": true,
           "num_relation": "="
+        },
+        "service_samples": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
         }
       },
       "numeric_display": {
+        "allowance_multiple": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "allowance_round_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
         "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "cpu_growth_percent": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "high_stall_percent": {
           "display": "exact",
           "exact_digits": 32
         },
@@ -453,6 +513,10 @@
         "record_second_wall_seconds": {
           "display": "exact",
           "exact_digits": 32
+        },
+        "service_samples": {
+          "display": "exact",
+          "exact_digits": 32
         }
       },
       "numeric_refs": {
@@ -466,11 +530,21 @@
         "reason"
       ],
       "reason": "Pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
+      "rebuild_steps": [
+        "test-build",
+        "clippy",
+        "nursery-advisory",
+        "minimal",
+        "rustdoc",
+        "observation-build",
+        "host-observation-build"
+      ],
       "record_first_wall_seconds": "81.2",
       "record_pressure_percent": 2,
       "record_second_cpu_seconds": 233,
       "record_second_wall_seconds": "85.5",
-      "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target"
+      "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target",
+      "service_samples": 3
     },
     {
       "budget_ms": 180000,

@@ -531,10 +531,61 @@ def delegate(root, step):
     return result['status']
 
 
+def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy):
+    """Classify warning evidence without changing the functional verdict."""
+    if not over: return 'within-budget'
+    if stall is not None and stall >= policy['high_stall_percent']/100: return 'high-stall'
+    if stall is None or own is None or baseline is None: return 'unclassified'
+    if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
+    if changed and build_cpu is not None and old_build_cpu is not None and build_cpu-old_build_cpu >= own-baseline:
+        return 'rebuild'
+    return 'growth'
+
+
+def baseline_context(root, registry):
+    """A retained target compares only the same runner configuration and lineage."""
+    from harness import CONFIGURATION
+    identity = dict(configuration=CONFIGURATION, tiers=registry.tiers,
+        profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
+        toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
+        runtime=dict(python=sys.version, machine=os.uname().machine, flags=os.environ.get('RUSTFLAGS'),
+            rustdocflags=os.environ.get('RUSTDOCFLAGS'), services={key:os.environ.get(key) for key in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN')}),
+        cargo_config=[(str(path), path.read_text()) for directory in (root, *root.parents)
+            for path in (directory/'.cargo/config', directory/'.cargo/config.toml') if path.is_file()],
+        cargo_home_config=[(name, path.read_text()) for name in ('config', 'config.toml')
+            if (path := Path(os.environ.get('CARGO_HOME', str(Path.home()/'.cargo')))/name).is_file()])
+    key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+    path = Path(os.environ['CARGO_TARGET_DIR'])/'gate-baselines'/f'{key}.json'
+    baseline = None
+    changed = []
+    try:
+        baseline = json.loads(path.read_text())
+        ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', baseline['source'], os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True)
+        if ancestor.returncode: baseline = None
+        else:
+            diff = subprocess.run(['git', 'diff', '--name-only', baseline['source'], os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True, text=True, check=True)
+            changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/')) and name.endswith('.rs')]
+    except (FileNotFoundError, ValueError, KeyError):
+        baseline = None
+    return path, baseline, changed
+
+
+def retain_baseline(root):
+    """Publish only after the whole invocation is functionally green."""
+    candidate = json.loads((root/'.lane/gate-baseline.json').read_text())
+    path = Path(candidate.pop('path'))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+    temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
+    temporary.replace(path)
+
+
 def tier_summary(root, registry, worker_statuses):
     from devperf import budgets
     from gate_resources import cpu_from_log, raw_sample, joined, compact
     declared = budgets(root/'docs/inputs/devperf-budgets.toml')
+    policy = declared['gate']
+    baseline_path, baseline, changed = baseline_context(root, registry)
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
     groups = {name: registry.tiers[name]['steps'] for name in ('fast', 'service', 'reference-certificate')}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
@@ -559,15 +610,25 @@ def tier_summary(root, registry, worker_statuses):
         limit = declared[budget]['budget_ms']/1000 if budget else None
         excess = max(0.0, wall-limit) if limit is not None else None
         over_budget = excess is not None and excess > 0
-        reports[tier].update(over_budget=over_budget, excess_s=excess)
+        build_values = [cpu_from_log((root/f'.lane/gate-{row[0]}.log').read_text().splitlines()) for row in selected_rows if row[0] in policy['rebuild_steps']]
+        build_cpu = sum(sum(pair) for pair in build_values) if all(None not in pair for pair in build_values) else None
+        prior = baseline['tiers'].get(tier, {}) if baseline else {}
+        old_cpu = prior.get('own_cpu_s')
+        own_cpu = sum(own) if None not in own else None
+        stall = measurement.get('node_pressure_fraction', {}).get('cpu.some')
+        classification = overrun_class(over_budget, own_cpu, old_cpu, stall, build_cpu, prior.get('build_cpu_s'), changed, policy)
+        reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification,
+            own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
+            baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
-              f'over_budget={str(over_budget).lower()} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
                 '--budget', budget, '--findings', '.lane/performance-findings.jsonl'], cwd=root)
             if result.returncode: raise ValueError('tier performance reporting refused')
     (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
+    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tiers=reports))+'\n')
 
 
 def schedule(root):
@@ -665,6 +726,7 @@ def main():
     sub.add_parser('schedule')
     sub.add_parser('parallel-declared')
     sub.add_parser('tier-wall')
+    sub.add_parser('retain-baseline')
     supervisor = sub.add_parser('supervise')
     supervisor.add_argument('command', nargs=argparse.REMAINDER)
     measurements=sub.add_parser('resource-lines')
@@ -683,6 +745,9 @@ def main():
         return 0
     if args.action == 'parallel-declared':
         return int('gate_dependencies = {' not in Path('meson.build').read_text())
+    if args.action == 'retain-baseline':
+        retain_baseline(Path.cwd())
+        return 0
     if args.action == 'tier-wall':
         print(json.loads(Path('.lane/gate-tiers.json').read_text())['fast']['wall'])
         return 0
