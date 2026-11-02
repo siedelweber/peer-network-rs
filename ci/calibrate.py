@@ -80,7 +80,7 @@ def comparison(before, after, changed):
         if row.get('scope') != 'case' or row['operation'] not in old:
             continue
         operation = row['operation']
-        paths = [path for path in changed if path.startswith(('packages/', 'docs/inputs/', 'docs/datasets/', 'ci/'))
+        paths = [path for path in changed if path.startswith(('packages/', 'vendor/', 'docs/inputs/', 'docs/datasets/', 'ci/'))
                  or path in {'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml'}
                  or operation.startswith('ci::'+Path(path).stem+'.')]
         rows.append(dict(operation=operation, before=old[operation], after=row,
@@ -88,7 +88,7 @@ def comparison(before, after, changed):
                          declaration_changes=[path for path in changed if path.startswith('docs/inputs/')]))
     return dict(source_before=before['source'], source_after=after['source'],
                 source_range=before['source']+'..'+after['source'], changed_files=changed,
-                change_scope='all cases for any package, generated input/dataset or harness change; not causal attribution', cases=rows)
+                change_scope='all cases for any package or vendor, generated input/dataset or harness change; not causal attribution', cases=rows)
 
 
 def selection(inventory, cases):

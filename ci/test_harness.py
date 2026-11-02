@@ -86,10 +86,23 @@ class Harness(unittest.TestCase):
         for paths, changed in ((['packages/epoch/tests/common/joined.rs'], True),
                                (['packages/graph/src/numeric.rs'], True),
                                (['packages/documents/src/pins.rs'], True),
+                               (['vendor/regexml/src/lib.rs'], True),
                                (['docs/inputs/numbers.toml'], True), (['README.md'], False)):
             result = comparison(before, after, paths)
             self.assertEqual(result['source_range'], 'before..after')
             self.assertEqual(result['cases'][0]['code_changed'], changed)
+
+    def act_allowance(self):
+        from fractions import Fraction
+        from pathlib import Path
+        from devperf import budgets
+        row = budgets(Path('docs/inputs/devperf-budgets.toml'))['calibrated-act-directions-case']
+        measured = Fraction(str(row['measured_own_cpu_ms']))
+        multiplier = Fraction(str(row['headroom_multiplier']))
+        quantum = Fraction(str(row['rounding_ms']))
+        units = measured * multiplier / quantum
+        ceiling = -(-units.numerator // units.denominator)
+        self.assertEqual(row['budget_ms'], ceiling * quantum)
 
     def test_wallet_commit_isolation(self):
         """Claim: Wallet conformance reads a clean checkout of its source commit even when its parent is dirty before cloning and changes during execution; identical committed inputs yield identical result artifacts, each published by atomic replacement to a distinct step-owned path without modifying shared findings.
@@ -399,6 +412,7 @@ assert (root/'payload').read_text() == 'committed'
             with self.assertRaises(StructuralError):
                 complete(registry, invalid)
         self.calibration_cpu()
+        self.act_allowance()
         self.calibrated_case_budgets()
         thresholds = declarations()
         start = thresholds['unit']['budget_ms']

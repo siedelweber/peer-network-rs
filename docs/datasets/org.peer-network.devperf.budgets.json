@@ -742,15 +742,41 @@
       "scope": "one pn-records::properties::typed_corruptions case"
     },
     {
-      "budget_ms": 2500,
+      "budget_ms": 3000,
       "category": "case",
+      "headroom_multiplier": 1.5,
+      "measured_own_cpu_ms": 1903.931,
       "name": "calibrated-act-directions-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 500",
+          "exact": "3 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 500",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "headroom_multiplier": {
+          "exact": "1.5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1.5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 903.931",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 903.931",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "rounding_ms": {
+          "exact": "250",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "250",
           "num_exact": true,
           "num_relation": "="
         }
@@ -759,9 +785,22 @@
         "budget_ms": {
           "display": "exact",
           "exact_digits": 32
+        },
+        "headroom_multiplier": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "rounding_ms": {
+          "display": "exact",
+          "exact_digits": 32
         }
       },
-      "reason": "Opposite signed complete-act comparisons retain both independently replayed solves and the finite forcing bounds at the declared precision.",
+      "reason": "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion.",
+      "rounding_ms": 250,
       "scope": "one pn-epoch::solve::act_directions case"
     },
     {
@@ -784,7 +823,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The complete accepted-act pair changes emission and retains independently replayed solves and the full finite-response transport.",
+      "reason": "The complete accepted-act pair changes emission and retains independently replayed solves and full finite-response transport at the minimum-supported execution, including the preceding Scope-refusal control.",
       "scope": "one pn-epoch::solve::act_emission case"
     },
     {
@@ -807,7 +846,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock.",
+      "reason": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control.",
       "scope": "one pn-epoch::solve::burn_depleted case"
     },
     {
@@ -830,7 +869,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The sole-contributor pair retains both complete solves, independent replay and the whole-path regime premises.",
+      "reason": "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control.",
       "scope": "one pn-epoch::solve::burn_monotone case"
     },
     {

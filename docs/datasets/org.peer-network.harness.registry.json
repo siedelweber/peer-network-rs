@@ -4529,10 +4529,10 @@
     {
       "budget": "calibrated-epoch-numeric-suite",
       "case_budget_reasons": {
-        "pn-epoch::solve::act_directions": "Opposite signed complete-act comparisons retain both independently replayed solves and the finite forcing bounds at the declared precision.",
-        "pn-epoch::solve::act_emission": "The complete accepted-act pair changes emission and retains independently replayed solves and the full finite-response transport.",
-        "pn-epoch::solve::burn_depleted": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock.",
-        "pn-epoch::solve::burn_monotone": "The sole-contributor pair retains both complete solves, independent replay and the whole-path regime premises.",
+        "pn-epoch::solve::act_directions": "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion.",
+        "pn-epoch::solve::act_emission": "The complete accepted-act pair changes emission and retains independently replayed solves and full finite-response transport at the minimum-supported execution, including the preceding Scope-refusal control.",
+        "pn-epoch::solve::burn_depleted": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control.",
+        "pn-epoch::solve::burn_monotone": "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control.",
         "pn-epoch::solve::burn_sibling": "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors.",
         "pn-epoch::solve::burn_switch": "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport.",
         "pn-epoch::solve::certified_splits": "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds.",

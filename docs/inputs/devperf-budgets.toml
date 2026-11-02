@@ -239,17 +239,20 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "calibrated-act-directions-case"
 category = "case"
-budget_ms = 2500
+budget_ms = 3000
 scope = "one pn-epoch::solve::act_directions case"
-reason = "Opposite signed complete-act comparisons retain both independently replayed solves and the finite forcing bounds at the declared precision."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+reason = "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion."
+measured_own_cpu_ms = 1903.931
+headroom_multiplier = 1.5
+rounding_ms = 250
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 }, headroom_multiplier = { display = "exact", exact_digits = 32 }, rounding_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "calibrated-act-emission-case"
 category = "case"
 budget_ms = 1500
 scope = "one pn-epoch::solve::act_emission case"
-reason = "The complete accepted-act pair changes emission and retains independently replayed solves and the full finite-response transport."
+reason = "The complete accepted-act pair changes emission and retains independently replayed solves and full finite-response transport at the minimum-supported execution, including the preceding Scope-refusal control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
@@ -257,7 +260,7 @@ name = "calibrated-burn-depleted-case"
 category = "case"
 budget_ms = 1000
 scope = "one pn-epoch::solve::burn_depleted case"
-reason = "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock."
+reason = "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
@@ -265,7 +268,7 @@ name = "calibrated-burn-monotone-case"
 category = "case"
 budget_ms = 1500
 scope = "one pn-epoch::solve::burn_monotone case"
-reason = "The sole-contributor pair retains both complete solves, independent replay and the whole-path regime premises."
+reason = "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
