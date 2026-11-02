@@ -159,29 +159,51 @@ def identity_functions(text, path):
         known = set(keys.values())
         if len(known) != len(keys):
             raise StructuralError('ambiguous Python identity source: '+path)
+        assignments = {}
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign)): continue
+            ancestor = parents.get(node)
+            while ancestor is not None and not isinstance(ancestor, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                ancestor = parents.get(ancestor)
+            if ancestor is not None: continue
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for target in targets:
+                for name in ast.walk(target):
+                    if isinstance(name, ast.Name) and isinstance(name.ctx, ast.Store):
+                        assignments.setdefault(scope(node)+(name.id,), []).append(node)
+        known.update(assignments)
         lines = text.splitlines(keepends=True)
-        for node, key in keys.items():
-            first = min([node.lineno]+[decorator.lineno for decorator in node.decorator_list])
-            body = ''.join(lines[first-1:node.end_lineno])
-            refs = set()
-            receiver = node
-            while receiver in parents and not isinstance(receiver, ast.ClassDef):
-                receiver = parents[receiver]
-            receiver_scope = scope(receiver)+(receiver.name,) if isinstance(receiver, ast.ClassDef) else ()
-            for use in ast.walk(node):
-                if isinstance(use, ast.Name) and isinstance(use.ctx, ast.Load):
-                    for size in range(len(key), -1, -1):
-                        target = key[:size]+(use.id,)
-                        if target in known:
-                            refs.add(target)
-                            break
-                elif isinstance(use, ast.Attribute) and isinstance(use.value, ast.Name):
-                    if use.value.id in {'self', 'cls'}:
-                        target = receiver_scope+(use.attr,)
-                        if target in known: refs.add(target)
-                    elif (use.value.id, use.attr) in known:
-                        refs.add((use.value.id, use.attr))
-            functions[key] = (body, refs)
+        entries = {key: [node] for node, key in keys.items()}
+        for key, members in assignments.items():
+            entries.setdefault(key, []).extend(members)
+        for key, members in entries.items():
+            bodies, refs = [], set()
+            for node in sorted(members, key=lambda value: value.lineno):
+                decorators = getattr(node, 'decorator_list', [])
+                first = min([node.lineno]+[decorator.lineno for decorator in decorators])
+                bodies.append(''.join(lines[first-1:node.end_lineno]))
+                receiver = node
+                while receiver in parents and not isinstance(receiver, ast.ClassDef):
+                    receiver = parents[receiver]
+                receiver_scope = scope(receiver)+(receiver.name,) if isinstance(receiver, ast.ClassDef) else ()
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    hooks = ('setUp', 'tearDown', 'setUpClass', 'tearDownClass', 'asyncSetUp', 'asyncTearDown', '__init__')
+                    refs.update(receiver_scope+(hook,) for hook in hooks if receiver_scope and receiver_scope+(hook,) in known)
+                    refs.update((hook,) for hook in ('setUpModule', 'tearDownModule') if (hook,) in known)
+                for use in ast.walk(node):
+                    if isinstance(use, ast.Name) and isinstance(use.ctx, ast.Load):
+                        for size in range(len(key), -1, -1):
+                            target = key[:size]+(use.id,)
+                            if target in known:
+                                refs.add(target)
+                                break
+                    elif isinstance(use, ast.Attribute) and isinstance(use.value, ast.Name):
+                        if use.value.id in {'self', 'cls'}:
+                            target = receiver_scope+(use.attr,)
+                            if target in known: refs.add(target)
+                        elif (use.value.id, use.attr) in known:
+                            refs.add((use.value.id, use.attr))
+            functions[key] = (''.join(bodies), refs)
     else:
         from source_sites import rust_mask
         masked = rust_mask(text)
@@ -221,11 +243,32 @@ def identity_functions(text, path):
                 if not openings or openings[0] == 0 or masked[openings[0]-1] != '#': break
                 start = openings[0]-1
             definitions.append((match[1], start, end, opening))
+        for match in re.finditer(r'\b(?:const|static)\s+(?:mut\s+)?(\w+)\s*:', masked):
+            depth = 0
+            end = None
+            for position in range(match.end(), len(masked)):
+                char = masked[position]
+                if char in '([{': depth += 1
+                elif char in ')]}': depth -= 1
+                elif depth == 0 and char == ';':
+                    end = position+1
+                    break
+            if end is None: raise StructuralError('unclosed Rust constant: '+path)
+            start = match.start()
+            prefix = re.search(r'(?:pub(?:\([^)]*\))?\s+)?$', masked[:start])
+            start = prefix.start()
+            while True:
+                previous = start-1
+                while previous >= 0 and masked[previous].isspace(): previous -= 1
+                openings = [left for left, right in pairs.items() if right == previous]
+                if not openings or openings[0] == 0 or masked[openings[0]-1] != '#': break
+                start = openings[0]-1
+            definitions.append((match[1], start, end, start))
         counts = {}
         for name, start, end, opening in definitions:
             ordinal = counts.get(name, 0); counts[name] = ordinal+1
             key = (name, str(ordinal))
-            references = set(re.findall(r'\b[A-Za-z_]\w*\b', masked[opening+1:end-1]))
+            references = set(re.findall(r'\b[A-Za-z_]\w*\b', masked[start:end]))
             functions[key] = (text[start:end], references)
         # Method receivers and function values need not use direct call syntax.
         # Include every same-file candidate for a referenced name rather than
@@ -236,7 +279,7 @@ def identity_functions(text, path):
 
 
 def case_identity(text, path, function):
-    """Hash attributes and transitive same-file callees, excluding other files."""
+    """Hash same-file callees, own fixtures and referenced values, excluding other files."""
     functions = identity_functions(text, path)
     roots = [key for key in functions if (key[-1] if path.endswith('.py') else key[0]) == function]
     if len(roots) != 1:

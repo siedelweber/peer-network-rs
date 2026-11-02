@@ -86,14 +86,24 @@ class Performance(unittest.TestCase):
                              ('case.rs', 'fn probe() {} fn probe() {}')):
             with self.assertRaisesRegex(StructuralError, 'ambiguous'):
                 case_identity(source, path, 'probe')
-        # The declared syntactic closure excludes implicit runner fixtures and
-        # module state; it does not pretend to resolve runtime initialization.
-        source = 'LIMIT = 1\nclass Fixture:\n    def setUp(self):\n        self.value = 1\n    def probe(self):\n        return self.value + LIMIT\n'
+        # Own runner fixtures and named values join the closure independently;
+        # unrelated values and inherited dispatch remain outside its scope.
+        source = 'LIMIT = 1\nUNUSED = 1\nclass Fixture:\n    DEFAULT = 1\n    def setUp(self):\n        self.value = 1\n    def tearDown(self):\n        release()\n    def probe(self):\n        return self.value + LIMIT + self.DEFAULT\ndef release():\n    pass\n'
+        for before, after in (('LIMIT = 1', 'LIMIT = 2'), ('DEFAULT = 1', 'DEFAULT = 2'),
+                              ('self.value = 1', 'self.value = 2'), ('    pass', '    return')):
+            self.assertNotEqual(case_identity(source, 'case.py', 'probe'),
+                                case_identity(source.replace(before, after), 'case.py', 'probe'))
         self.assertEqual(case_identity(source, 'case.py', 'probe'),
-                         case_identity(source.replace('= 1', '= 2'), 'case.py', 'probe'))
-        source = 'const LIMIT: u8 = 1; fn probe() { let value = LIMIT; }'
+                         case_identity(source.replace('UNUSED = 1', 'UNUSED = 2'), 'case.py', 'probe'))
+        source = 'def helper():\n    return 1\nhelper = wrap(helper)\ndef probe():\n    return helper()\n'
+        self.assertNotEqual(case_identity(source, 'case.py', 'probe'),
+                            case_identity(source.replace('return 1', 'return 2'), 'case.py', 'probe'))
+        source = '#[cfg(feature="one")] const LIMIT: u8 = 1; static WIDTH: u8 = 2; const ALIAS: u8 = LIMIT; const UNUSED: u8 = 3; fn probe() { let value = ALIAS + WIDTH; }'
+        for before, after in (('= 1', '= 4'), ('= 2', '= 5'), ('"one"', '"two"')):
+            self.assertNotEqual(case_identity(source, 'case.rs', 'probe'),
+                                case_identity(source.replace(before, after), 'case.rs', 'probe'))
         self.assertEqual(case_identity(source, 'case.rs', 'probe'),
-                         case_identity(source.replace('= 1', '= 2'), 'case.rs', 'probe'))
+                         case_identity(source.replace('= 3', '= 6'), 'case.rs', 'probe'))
 
     def test_gate_target_lock(self):
         """The supervisor reports its wait and owns the target lock until gate exit, without lending it to a surviving descendant.

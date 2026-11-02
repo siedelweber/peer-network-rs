@@ -3537,7 +3537,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "fef8a564fbac68319c6a792b7af87629fb76216b05126faf33b78e12812201a5",
+        "digest": "a6e274dca8fd2bdea55f163826ddbf6f49e5e494b0a126fef4bec9821b265326",
         "function": "test_numeric_correspondence",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3579,7 +3579,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "ef3da9cbd1240176b148027bb0dd3a60e3a4d7e0ea38fd2b4bb44703d693b273",
+        "digest": "1802a1c9bad52eedb4d56e47a17013615b6ddd29358893689b60259ba45e39c7",
         "function": "test_numeric_word_fragments",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3621,7 +3621,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "1cbf0f933a1cca4a6c20f4a2717a9c2d97a9accb11eb63499978ab98f87ace52",
+        "digest": "92afb0e942fe978aae2098d0ceef0ec86a659df24defbfc6d7dbb66a80eed12c",
         "function": "test_release_tags",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3663,7 +3663,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "34c62c9f64a7315eb2aa5bcb6444a78e2bb932fdc076f13b1fd760acafdfa9ae",
+        "digest": "399ab7fb0e4ca9b688a8c0cc76fb305b7272b0f9843968ccdcb9ba570a04ea86",
         "function": "test_rendered_continuations",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3705,7 +3705,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "c6ce779527279a6e531668a4d06afbae6aeeca3e49d75e7425572e5a6b9096ac",
+        "digest": "89e7854bc21ce22c47f0e8c7746f593be9c45306a77494b10e4a31b860bdf5d9",
         "function": "test_rendered_spacing",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3747,7 +3747,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "607d5f625a32a58c692d9d9058e3aa60907a6e1bbed5729680f1ab221f61c360",
+        "digest": "e217bd0ac38178e26a2a1d328877cb91ac7d1b68e2d799f9a4db63658291a0c3",
         "function": "test_tracked_prose_boundaries",
         "owner": "lane/design",
         "path": "ci/test_design.py"
@@ -3999,7 +3999,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "0f9a23704cfb8f8f43da8737b50a3bf7635c460172dd96c17cc0cdacd1568153",
+        "digest": "ad0407c0a89e6833b163e22e69f72b8dc8a7d121aac05881b67e525025cc9b8b",
         "function": "test_storage_statements",
         "owner": "lane/design",
         "path": "ci/test_host_runtime.py"
@@ -4755,7 +4755,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "0ecf7dd526d4dbebb5617f0b23143aa44d54d5a2aecba33447444df550310edd",
+        "digest": "68da5891008d49249c7d01844b342549ecb65ac9680d756e76e76071fe401a61",
         "function": "ceiling_login_progress",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -4797,7 +4797,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "6344621b594a96d383036af651ea281fab3d96af81eea242092ba6f058dcdfd5",
+        "digest": "1c1bfad3c87183fa6cb6683b93641017b6dced30f1bba68d0b6fabbff480b60b",
         "function": "derivation_cost",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -4839,7 +4839,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "feebb42616aa4a8d55da3f3f781f1222b7dcffc25a823aebae8eb045c1574011",
+        "digest": "8402e92b50e8fbf808e84b8110693420ef9f62e28170fab370bb7908c8e773cd",
         "function": "derivation_permits",
         "owner": "lane/design",
         "path": "packages/host/src/scram.rs"
@@ -5385,7 +5385,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "2eba5fed020d31089205d4d47d0bbc2ff0a47bad02d3513108b3d988b19fa95c",
+        "digest": "056838b6f26c4ae7d89a0f1ac1dea8bea4857bcecff7a6c64775badb97ac6832",
         "function": "descriptor_cases",
         "owner": "lane/design",
         "path": "packages/wallet/src/rpc_cookie.rs"
@@ -5427,7 +5427,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
       "calibration_source": {
-        "digest": "f443d5a6853f3b9394f23a2c8d85402469683c413c33ef88dcd4a23d07abb348",
+        "digest": "520cd47dd0652633ab5028f2c418ba1ab139010a1cb1d22e3c7f10994e4a849e",
         "function": "acquisition_cases",
         "owner": "lane/design",
         "path": "packages/wallet/src/rpc_http.rs"
@@ -5469,7 +5469,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "0869c7036f557091fac8d5e0a991b98f14b3e156f8e9a1aace3fec54b720a696",
+        "digest": "6f2577d3cc7474d9e0f82bd1e707903332658b78c7dd8dc03b9511a2223bfbbc",
         "function": "wire_compatibility",
         "owner": "lane/design",
         "path": "packages/wallet/tests/wire.rs"
@@ -6217,7 +6217,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
       "calibration_source": {
-        "digest": "7cfd8bb52730625558e88c70b56f1f0b0691b52c542f54126eec6335757f64f5",
+        "digest": "c3bbc401f5d5e21eeaebc8b49cbaca2f0aa2a4775d2ef550772154a0f2b74a1d",
         "function": "compiler_properties",
         "owner": "lane/graph",
         "path": "packages/epoch/tests/compiler.rs"
@@ -6290,7 +6290,7 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "bf3742cff34d22c740fa9c957f998eced14fafbec9d9fc15ed18fd9103028071",
+        "digest": "d1f38a20ace05b3bc1e54de54642f53bad05cc278d145c854b6c1b794ad46b9c",
         "function": "compiler_generated",
         "owner": "lane/graph",
         "path": "packages/epoch/tests/compiler.rs"
