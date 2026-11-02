@@ -166,7 +166,7 @@ class Performance(unittest.TestCase):
         from build_graph import overrun_class
         policy = dict(high_stall_percent=10, cpu_growth_percent=20)
         def classify(own=100, baseline=100, stall=0.09, build=40, old_build=40, changed=()):
-            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21, wall=100/.9, baseline_wall=100, baseline_stall=0)
+            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21, wall=210, baseline_wall=189, baseline_stall=0)
         self.assertEqual(classify(), 'plain')
         self.assertEqual(classify(own=120), 'plain')
         self.assertEqual(classify(stall=0.1), 'high-stall')
@@ -180,10 +180,15 @@ class Performance(unittest.TestCase):
         # The line is continuous: 5 percent pressure can explain an overrun,
         # while 15 percent pressure cannot excuse a wall beyond its projection.
         for stall in (.05, .15):
-            projected = 115*(1-.02)/(1-stall)
+            projected = 118*(1-.01)/(1-stall)
             for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
                 self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
-                    wall=projected+delta, baseline_wall=115, baseline_stall=.02), expected)
+                    wall=projected+delta, baseline_wall=118, baseline_stall=.01, excess=projected+delta-120), expected)
+        # A previously over-budget baseline cannot turn zero or insufficient
+        # stall into an explanation for an otherwise unchanged overrun.
+        for stall in (0, .01):
+            self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
+                wall=130, baseline_wall=135, baseline_stall=0, excess=10), 'plain')
         from build_graph import status_changes
         self.assertEqual(status_changes({'case':{'selected':'passed'}, 'obligation':{'scope':'scoped-passed'}},
             {'case':{'selected':'held'}, 'obligation':{'scope':'held'}}), [

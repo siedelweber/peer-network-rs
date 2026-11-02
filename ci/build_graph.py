@@ -542,11 +542,11 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
     if stall is None or own is None or baseline is None: return 'unclassified'
-    if wall is None or baseline_wall is None or baseline_stall is None: return 'unclassified'
+    if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return 'unclassified'
     # Remove the baseline's stall before projecting its work into this interval.
     # A pressure fraction is context, not an attribution of CPU to this tier.
     if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
-    if wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
+    if wall*stall >= excess and wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
     if (changed and build_cpu is not None and old_build_cpu is not None
             and build_cpu > old_build_cpu*(1+policy['cpu_growth_percent']/100)
             and compile_wall_growth is not None and excess is not None
