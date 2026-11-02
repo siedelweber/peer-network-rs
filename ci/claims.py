@@ -295,6 +295,123 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
+def tracker_rows(inventory, paragraphs, evidence, bites):
+    """Join exact paper mentions, scoped execution and bounded record edges."""
+    labels = {row['label'] for row in inventory}
+    if len(labels) != len(inventory):
+        raise StructuralError('tracker inventory has duplicate labels')
+    records = {name: row for name, row in paragraphs.items()
+               if row.get('path') != 'docs/design/progress.md'}
+    mentions = defaultdict(set)
+    for name, record in records.items():
+        # Exhibits are how the repository names paper kinds the local linter
+        # cannot import. Only exact inventory labels qualify, never free text.
+        paper = {n.removeprefix('PAPER::') for n in record['citations'] if n.startswith('PAPER::')}
+        paper.update(re.findall(r'\(`\[PAPER-([^\]`\n]+)\]`\)', record['text']))
+        paper.update(re.findall(r'(?<!`)``([^`\n]+)``(?!`)', record['text']))
+        for label in paper & labels:
+            mentions[label].add(name)
+    claims = {row['name']: row for row in evidence['claims']}
+    obligations = {row['name']: row for row in evidence['obligations']}
+    supported = defaultdict(set)
+    holds = defaultdict(set)
+    named_holds = {row['hold'] for row in obligations.values() if row['status'] == 'held' and row.get('hold')}
+    scopes = defaultdict(set)
+    for name, row in obligations.items():
+        if row['status'] == 'scoped-passed':
+            for claim in row['claims']:
+                if claims.get(claim, {}).get('status') == 'passed':
+                    scopes[claim].add(name)
+                    if name in records:
+                        supported[name].add((claim, name))
+        elif row['status'] == 'held' and row.get('hold') and name in records:
+            holds[name].add(row['hold'])
+    for site in evidence.get('sites', []):
+        claim = site['claim']
+        citations = {qualify(m[1], site['owner']) for m in re.finditer(
+            r'\(´(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')´\)', site['doc'])}
+        for name in citations & records.keys():
+            for scope in scopes[claim]:
+                supported[name].add((claim, scope))
+    for name, record in records.items():
+        holds[name].update(record['citations'] & named_holds)
+        if name in named_holds:
+            holds[name].add(name)
+    bite_records = {}
+    for bite in bites:
+        roots = {'ROOT::'+name for name in bite['contracts']}
+        roots.update('ROOT::req:vision:'+name for name in bite['requirements'])
+        # Requirement realizers are checked directed edges, not prose reachability.
+        pending = list(roots)
+        while pending:
+            for name in obligations.get(pending.pop(), {}).get('realizers', []):
+                if name not in roots:
+                    roots.add(name)
+                    pending.append(name)
+        bite_records[bite['ordinal']] = roots
+    rows = []
+    for item in inventory:
+        names = sorted(mentions[item['label']])
+        routes = [dict(record=name, claim=claim, scope=scope)
+                  for name in names for claim, scope in sorted(supported[name])]
+        held = [dict(record=name, hold=hold) for name in names for hold in sorted(holds[name])]
+        status = ('realized' if routes else 'held' if names and all(holds[name] for name in names)
+                  else 'designed' if names else 'unassigned')
+        rows.append(dict(label=item['label'], crate=item['crate'], kind=item['kind'], status=status,
+                         records=names, routes=routes, holds=held,
+                         bites=sorted(n for n, roots in bite_records.items() if roots.intersection(names))))
+    return rows
+
+
+def tracker_input(root, evidence):
+    """Project execution-backed rows and disjoint totals into a TOML carrier."""
+    root = Path(root)
+    read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
+    paragraphs = prose(root)[0]
+    rows = tracker_rows(read('design-inventory.toml'), paragraphs, evidence,
+                        read('implementation-bites.toml'))
+    summaries = []
+    for category, groups in (
+            ('total', {'implementation': [r for r in rows if r['crate'] != 'none'],
+                       'prose': [r for r in rows if r['crate'] == 'none']}),
+            ('crate', {name: [r for r in rows if r['crate'] == name] for name in sorted({r['crate'] for r in rows})}),
+            ('kind', {name: [r for r in rows if r['kind'] == name] for name in sorted({r['kind'] for r in rows})}),
+            ('bite', {str(b['ordinal']): [r for r in rows if b['ordinal'] in r['bites']]
+                      for b in read('implementation-bites.toml')} | {'unlinked': [r for r in rows if not r['bites']]})):
+        for name, members in groups.items():
+            counts = Counter(r['status'] for r in members)
+            summaries.append(dict(category=category, name=name, total=len(members),
+                                  **{status: counts[status] for status in ('realized', 'held', 'designed', 'unassigned')},
+                                  numeric_display={field: dict(display='exact', exact_digits=32)
+                                                   for field in ('total', 'realized', 'held', 'designed', 'unassigned')}))
+    packages = {str(path.parent.relative_to(root)): tomllib.loads(path.read_text())['package']['name']
+                for path in sorted((root/'packages').glob('*/Cargo.toml'))}
+    records = {name: [] for name in sorted(set(packages.values()) |
+               {r['crate'] for r in rows if r['crate'] != 'none'})}
+    records['ROOT (repository-wide)'] = []
+    cited = {name for row in rows for name in row['records']}
+    for name, paragraph in paragraphs.items():
+        path = paragraph['path']
+        if path == 'docs/design/progress.md': continue
+        crate = packages.get(str(Path(path).parent), 'ROOT (repository-wide)')
+        records[crate].append(name)
+    for name, members in records.items():
+        summaries.append(dict(category='record-coverage', name=name, total=len(members),
+                              exact_citing=sum(member in cited for member in members),
+                              numeric_display={field: dict(display='exact', exact_digits=32)
+                                               for field in ('total', 'exact_citing')}))
+    def value(item):
+        if isinstance(item, str): return json.dumps(item, ensure_ascii=False)
+        if isinstance(item, int): return str(item)
+        if isinstance(item, list): return '['+', '.join(value(v) for v in item)+']'
+        return '{ '+', '.join(k+' = '+value(v) for k, v in item.items())+' }'
+    output = ['# Generated by ci/claims.py tracker from checked execution evidence; do not edit.',
+              'namespace = "org.peer-network.design.progress"', 'version = [1, 0, 0]', '', 'rows = [']
+    output.extend('  '+value(dict(category='statement', **row))+',' for row in rows)
+    output.extend('  '+value(row)+',' for row in summaries)
+    return '\n'.join([*output, ']', ''])
+
+
 def bite_one_started(root):
     """Both the conventional directory and a renamed workspace member trigger entry."""
     import glob
@@ -399,8 +516,17 @@ def main(argv=None):
     commands = parser.add_subparsers(dest='command')
     canonicalize = commands.add_parser('canonicalize', help='explicitly reorder and format claim registers without changing entries')
     canonicalize.add_argument('registers', nargs='*', help='registered path(s); defaults to both registers')
+    commands.add_parser('tracker', help='project the current checked execution evidence into the tracker carrier')
     args = parser.parse_args(argv)
     try:
+        if args.command == 'tracker':
+            evidence = json.loads(Path('.lane/claim-evidence.json').read_text())
+            if evidence.get('source') != source_id() or evidence.get('configuration') != CONFIGURATION:
+                raise StructuralError('tracker requires current-source checked execution evidence')
+            if any(row['status'] == 'failed' for field in ('claims', 'obligations') for row in evidence[field]):
+                raise StructuralError('tracker refuses failed execution evidence')
+            Path('docs/inputs/specification-progress.toml').write_text(tracker_input('.', evidence))
+            return 0
         if args.command == 'canonicalize':
             started = time.monotonic()
             try:
@@ -456,6 +582,11 @@ def main(argv=None):
         print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')
         print(f'CLAIM-EVIDENCE sites={len(sites)} claims={len(result["claims"])} obligations={len(obligations)} scoped_passed={counts["scoped-passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/claim-evidence.json')
+        projection = tracker_input(root, dict(sites=sites, **result))
+        Path('.lane/specification-progress.toml').write_text(projection)
+        if Path('docs/inputs/specification-progress.toml').read_text() != projection:
+            raise StructuralError('specification tracker is stale; regenerate from checked execution evidence')
+        print('SPECIFICATION-TRACKER fixed-point=passed artifact=.lane/specification-progress.toml')
         return int(any(r['status']=='failed' for r in result['claims']) or counts['failed']>0 or (args.fail_respellings and bool(offenders)))
     except (ValueError, KeyError, TypeError, OSError) as error:
         print('CLAIM-STRUCTURAL-ERROR '+str(error), file=sys.stderr)

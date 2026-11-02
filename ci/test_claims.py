@@ -183,6 +183,45 @@ class Evidence(unittest.TestCase):
         ´test:integration:test-executed-admission´
         """
         from claims import enforce_entry
+        from claims import tracker_rows
+        record = 'ROOT::alg:testing:fixture'
+        claim = 'ROOT::claim:testing:fixture'
+        scope = 'ROOT::gate:testing:fixture'
+        hold = 'ROOT::open:testing:fixture'
+        inventory = [dict(label='def:testing:fixture', crate='pn-records', kind='type')]
+        records = {record: dict(text='``def:testing:fixture``', citations=set())}
+        execution = dict(claims=[dict(name=claim, status='passed')],
+                         obligations=[dict(name=scope, status='scoped-passed', claims=[claim])],
+                         sites=[dict(claim=claim, owner='ROOT', doc='(´alg:testing:fixture´)')])
+        bites = [dict(ordinal=1, contracts=['alg:testing:fixture'], requirements=[])]
+        projected = tracker_rows(inventory, records, execution, bites)[0]
+        self.assertEqual(projected['status'], 'realized')
+        self.assertEqual(projected['routes'], [dict(record=record, claim=claim, scope=scope)])
+        self.assertEqual(projected['bites'], [1])
+        removed = deepcopy(execution)
+        removed['sites'] = []
+        self.assertEqual(tracker_rows(inventory, records, removed, bites)[0]['status'], 'designed')
+        failed = deepcopy(execution)
+        failed['claims'][0]['status'] = 'failed'
+        self.assertEqual(tracker_rows(inventory, records, failed, bites)[0]['status'], 'designed')
+        execution['obligations'].append(dict(name=record, status='held', claims=[], hold=hold))
+        self.assertEqual(tracker_rows(inventory, records, execution, bites)[0]['status'], 'realized')
+        execution['sites'] = []
+        self.assertEqual(tracker_rows(inventory, records, execution, bites)[0]['status'], 'held')
+        records['ROOT::alg:testing:other'] = dict(text='``def:testing:fixture``', citations=set())
+        self.assertEqual(tracker_rows(inventory, records, execution, bites)[0]['status'], 'designed')
+        self.assertEqual(tracker_rows(inventory, {}, execution, bites)[0]['status'], 'unassigned')
+        paper = {record: dict(text='', citations={'PAPER::def:testing:fixture'})}
+        self.assertEqual(tracker_rows(inventory, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'designed')
+        paper[record]['citations'] = {'PAPER::def:testing:fixture-extra'}
+        self.assertEqual(tracker_rows(inventory, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'unassigned')
+        paper[record] = dict(path='docs/design/progress.md', text='``def:testing:fixture``', citations=set())
+        self.assertEqual(tracker_rows(inventory, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'unassigned')
+        named_hold = {hold: dict(text='``def:testing:fixture``', citations=set())}
+        self.assertEqual(tracker_rows(inventory, named_hold, execution, bites)[0]['status'], 'held')
+        short = [dict(label='sec:testing', crate='none', kind='none')]
+        paper = {record: dict(text='(`[PAPER-sec:testing]`)', citations=set())}
+        self.assertEqual(tracker_rows(short, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'designed')
         name='ROOT::gate:testing:fixture';label='ROOT::amend:testing:admission'
         paragraphs={label:dict(citations={name})}
         row=dict(name=name,entry_gate='ROOT::gate:design:bite-1',status="scoped-passed",claims=[],owner='reviewer',admission_basis='executed',admission=dict(owner='reviewer',evidence_kind='fixture evidence',status='admitted',evidence=label))
@@ -368,11 +407,16 @@ class Evidence(unittest.TestCase):
         data['paragraphs']['ROOT::amend:decomposition:bite-one-entry-evidence']={'citations':set()}
         for basis in ('review','executed'):
             data['paragraphs']['ROOT::amend:decomposition:entry-'+basis+'-basis']={'citations':set()}
+        for paragraph in data['paragraphs'].values():
+            paragraph.setdefault('text', '')
+            paragraph.setdefault('path', 'docs/design/fixture.md')
         with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
             previous=Path.cwd()
             stack.callback(os.chdir,previous)
             os.chdir(directory)
             for name in ('.lane','ci','docs/inputs'): Path(name).mkdir(parents=True,exist_ok=True)
+            for name in ('design-inventory', 'implementation-bites'):
+                Path('docs/inputs/'+name+'.toml').write_text('rows = []\n')
             for name,rows in (('claim-areas',data['areas']),('claim-obligations',data['declared'])):
                 Path('docs/inputs/'+name+'.toml').write_text('\n'.join(
                     '[[rows]]\n'+'\n'.join(key+' = '+json.dumps(value) for key,value in row.items()) for row in rows))
@@ -388,8 +432,24 @@ class Evidence(unittest.TestCase):
                 stack.enter_context(patch('claims.'+name,return_value=value))
             with redirect_stdout(io.StringIO()):
                 with patch('wallet_cases.repository_check', return_value=None):
+                    from claims import tracker_input
+                    Path('docs/inputs/specification-progress.toml').write_text(tracker_input('.', dict(claims=[], obligations=[])))
                     self.assertEqual(main([]),0)
                     self.assertEqual(main(['--fail-respellings']),1)
+                    self.assertEqual(main(['tracker']), 0)
+                    carrier = Path('docs/inputs/specification-progress.toml')
+                    original = carrier.read_text()
+                    carrier.write_text(original+'\n')
+                    with redirect_stderr(io.StringIO()):
+                        self.assertEqual(main([]), 2)
+                    self.assertEqual(main(['tracker']), 0)
+                    self.assertEqual(carrier.read_text(), original)
+                    execution = Path('.lane/claim-evidence.json')
+                    stale = json.loads(execution.read_text())
+                    stale['source'] = 'previous'
+                    execution.write_text(json.dumps(stale))
+                    with redirect_stderr(io.StringIO()):
+                        self.assertEqual(main(['tracker']), 2)
             self.assertEqual(len(json.loads(Path('.lane/claim-respellings.json').read_text())['offenders']),1)
 
     def test_review_binding(self):
