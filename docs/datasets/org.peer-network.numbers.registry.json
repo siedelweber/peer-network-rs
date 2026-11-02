@@ -12707,6 +12707,71 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "1/1024"
+    },
+    {
+      "display": "exact",
+      "exact": "6",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:closure-burn",
+      "num": "6",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "6"
+    },
+    {
+      "display": "exact",
+      "exact": "3",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:closure-minimum-ticks",
+      "num": "3",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "3"
+    },
+    {
+      "display": "exact",
+      "exact": "5",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:closure-maximum-ticks",
+      "num": "5",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "5"
+    },
+    {
+      "display": "exact",
+      "exact": "9/10",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:closure-deadband",
+      "num": "9/10",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "9/10"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:closure-alternate-burn",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
     }
   ]
 }

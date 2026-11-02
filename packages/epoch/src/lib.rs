@@ -4,6 +4,7 @@
 pub mod admission;
 pub mod base;
 pub mod cells;
+pub mod closure;
 pub mod coefficients;
 pub mod conserved;
 pub mod controller;

@@ -70,6 +70,7 @@ pub struct Record {
 #[derive(Debug)]
 pub struct CheckedSchedule {
     record: Record,
+    sources: Vec<crate::package::PackageInput>,
 }
 
 /// Schedule defects, unresolved comparisons and arithmetic stops remain distinct.
@@ -250,10 +251,30 @@ pub fn replay(
 ) -> Result<CheckedSchedule, Error> {
     Ok(CheckedSchedule {
         record: run(d, frames, ridge, limits, Some(record))?,
+        sources: frames
+            .iter()
+            .map(|frame| frame.completed.inputs().0.package().input().clone())
+            .collect(),
     })
 }
 
 impl CheckedSchedule {
+    pub(crate) fn matches_context(&self, candidate: &crate::package::PackageInput) -> bool {
+        let Some(last) = candidate.bindings.last() else {
+            return false;
+        };
+        if last.marker.index == self.record.initial.boundary {
+            return true;
+        }
+        self.sources.iter().any(|source| {
+            source
+                .bindings
+                .last()
+                .is_some_and(|binding| binding.marker.index.checked_add(1) == Some(last.marker.index))
+                && crate::package::same_prefix(source, candidate)
+        })
+    }
+
     /// Borrow checked evidence; this access creates no publication or admission authority.
     /// (´[ROOT-alg:design:effective-schedules]´)
     /// Justified: Immutable access inherits schedule replay and performs no decision.

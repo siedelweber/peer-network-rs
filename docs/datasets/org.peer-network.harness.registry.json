@@ -4923,6 +4923,23 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::closure_membership",
+        "pn-epoch::solve::admission::closure_markers",
+        "pn-epoch::solve::admission::closure_duration",
+        "pn-epoch::solve::admission::closure_context"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::closure",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

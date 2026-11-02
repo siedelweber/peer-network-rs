@@ -798,6 +798,26 @@ id = "num:numbers:certified-transport-work"
 value = "583937"
 
 [[rows]]
+id = "num:numbers:closure-alternate-burn"
+value = "2"
+
+[[rows]]
+id = "num:numbers:closure-burn"
+value = "6"
+
+[[rows]]
+id = "num:numbers:closure-deadband"
+value = "9/10"
+
+[[rows]]
+id = "num:numbers:closure-maximum-ticks"
+value = "5"
+
+[[rows]]
+id = "num:numbers:closure-minimum-ticks"
+value = "3"
+
+[[rows]]
 id = "num:numbers:conservation-balance-total-width"
 value = "7814226939942245737322448794792873464799444535294101/31666982946791670045331160474697816674011785129571123200"
 

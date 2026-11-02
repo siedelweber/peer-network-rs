@@ -464,3 +464,534 @@ fn admission_quarantine() {
         Err(pn_epoch::controller::Error::Refused(AdmissionRefusal::Evidence))
     ));
 }
+
+use pn_epoch::closure::{self, ClosedBoundary, ClosureError, ClosureInput};
+
+fn close(context: &package::CandidateContext, previous: Option<&ClosedBoundary>) -> ClosedBoundary {
+    let plan = procedure(context);
+    let led = if let Some(prior) = previous {
+        let acts: Vec<_> = prior.record().bindings[0].sequence.iter().map(test_raw).collect();
+        let names: std::collections::BTreeSet<_> = acts.iter().map(|a| a.id.author.as_str()).collect();
+        let burns: Vec<_> = names
+            .into_iter()
+            .rev()
+            .map(|a| (a, NumberId::NumbersClosureBurn.value()))
+            .collect();
+        next_schedule_for(&acts, &burns)
+    } else {
+        closure_initial(context)
+    };
+    let blocks = closure::partition(context).unwrap();
+    let input = ClosureInput {
+        candidate: context,
+        partition: &blocks,
+        schedule: &led,
+        previous,
+    };
+    let result = closure::close(
+        &input,
+        &plan,
+        &joined::Verifier,
+        &Published(plan.solve.clone()),
+        joined::numeric(),
+    )
+    .unwrap();
+    assert_eq!(
+        closure::replay(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric(),
+            result.record()
+        )
+        .unwrap()
+        .record(),
+        result.record()
+    );
+    result
+}
+
+fn interleaved() -> Vec<pn_records::CandidateAct> {
+    let a = joined::act("Registration", "a", 1, 1);
+    let b = joined::act("Registration", "b", 2, 1);
+    let mut acts = vec![a.clone(), b.clone()];
+    for (author, position, parent) in [("a", 3, &a), ("b", 4, &b), ("a", 5, &a)] {
+        let mut act = joined::act("Opinion", author, position, 1);
+        act.legs[0].target = joined::named("prof", author);
+        act.body.asserted_parents = vec![parent.id.clone()];
+        acts.push(act);
+    }
+    acts.reverse();
+    acts
+}
+
+/// Claim: At the declared finite interleaved complete history, current shared parents merge whole acts against fixed prior history; independent closure replay retains the exact cover and final gates, while omitted, duplicated or separated blocks are refused without changing prior evidence. No inference of earliest host determination or deployment publication is made.
+/// ´claim:admission:closure-consumes-whole-dependent-blocks´
+/// ´test:integration:closure-membership´
+#[test]
+fn closure_membership() {
+    let acts = interleaved();
+    let context = candidate(
+        &acts,
+        1,
+        &[
+            ("b", NumberId::NumbersClosureBurn.value()),
+            ("a", NumberId::NumbersClosureBurn.value()),
+        ],
+    );
+    let result = close(&context, None);
+    let blocks = closure::partition(&context).unwrap();
+    assert_eq!(
+        blocks,
+        vec![
+            vec![acts[4].id.clone(), acts[2].id.clone(), acts[0].id.clone()],
+            vec![acts[3].id.clone(), acts[1].id.clone()]
+        ]
+    );
+    let plan = procedure(&context);
+    let led = closure_initial(&context);
+    let input = ClosureInput {
+        candidate: &context,
+        partition: &blocks,
+        schedule: &led,
+        previous: None,
+    };
+    assert!(
+        matches!(closure::close(&input, &plan, &NoApproval, &Published(plan.solve.clone()), joined::numeric()), Err(ClosureError::Admission(e)) if matches!(&*e, FinalRefusal::Compile(e) if matches!(e.as_ref(), pn_epoch::compiler::CompileError::Ledger(pn_epoch::ledger::LedgerError::Formation(pn_graph::registration::RegistrationError::Unapproved)))))
+    );
+    let mut omitted = blocks.clone();
+    omitted[0].pop();
+    let mut duplicated = blocks.clone();
+    duplicated[1].push(blocks[0][0].clone());
+    let split = blocks.iter().flatten().map(|act| vec![act.clone()]).collect();
+    for invalid in [omitted, duplicated, split] {
+        let input = ClosureInput {
+            candidate: &context,
+            partition: &invalid,
+            schedule: &led,
+            previous: None,
+        };
+        assert!(matches!(
+            closure::close(
+                &input,
+                &plan,
+                &joined::Verifier,
+                &Published(plan.solve.clone()),
+                joined::numeric()
+            ),
+            Err(ClosureError::Membership)
+        ));
+    }
+    assert_eq!(close(&context, None).record(), result.record());
+    let mut missing = acts.clone();
+    missing.retain(|act| act.id != acts[4].id);
+    let absent = candidate(
+        &missing,
+        1,
+        &[
+            ("b", NumberId::NumbersClosureBurn.value()),
+            ("a", NumberId::NumbersClosureBurn.value()),
+        ],
+    );
+    assert!(matches!(closure::partition(&absent), Err(ClosureError::Records(_))));
+    let mut paired = joined::act("Reference", "a", 6, 1);
+    paired.legs[1].target = joined::named("prof", "a");
+    let empty = pn_records::validate_history(&[], &[]).unwrap();
+    paired.legs.retain(|leg| leg.id.role != pn_records::Role::T);
+    assert_eq!(
+        pn_records::validate_record(&[paired.clone()], &empty, &[]).unwrap_err(),
+        pn_records::ValidationError::MissingCoLeg {
+            act: paired.id,
+            role: pn_records::Role::T
+        }
+    );
+    let mut low = plan.clone();
+    low.solve.precision = Precision::AbsoluteWidthBits(vec![1]);
+    low.solve.enclosure.as_mut().unwrap().refinement.precision = 1;
+    let input = ClosureInput {
+        candidate: &context,
+        partition: &blocks,
+        schedule: &led,
+        previous: None,
+    };
+    assert!(
+        matches!(closure::close(&input, &low, &joined::Verifier, &Published(low.solve.clone()), joined::numeric()), Err(ClosureError::Admission(e)) if matches!(&*e, FinalRefusal::Solve(e) if matches!(e.as_ref(), pn_epoch::conserved::Error::Scope)))
+    );
+}
+
+/// Claim: The finite local marker chain registers only consecutive recognized boundaries, retaining pending markers without closing them; repeated and skipped registration and a changed predecessor context are refused. Historical shared parents do not merge new blocks. This does not establish host halt, recovery or offline-history admission.
+/// ´claim:admission:closure-registers-consecutive-recognized-markers´
+/// ´test:integration:closure-markers´
+#[test]
+fn closure_markers() {
+    let a = joined::act("Registration", "a", 1, 1);
+    let b = joined::act("Registration", "b", 2, 1);
+    let first = candidate(
+        &[b.clone(), a.clone()],
+        1,
+        &[
+            ("b", NumberId::NumbersClosureBurn.value()),
+            ("a", NumberId::NumbersClosureBurn.value()),
+        ],
+    );
+    let prior = close(&first, None);
+    assert!(first.input().causes.markers.markers().len() > prior.record().bindings.len() + 1);
+    let mut acts = vec![a.clone(), b];
+    for (author, position) in [("a", 3), ("b", 4)] {
+        let mut act = joined::act("Opinion", author, position, 2);
+        act.legs[0].target = joined::named("prof", author);
+        act.body.asserted_parents = vec![a.id.clone()];
+        acts.push(act);
+    }
+    acts.reverse();
+    let next = candidate(
+        &acts,
+        2,
+        &[
+            ("b", NumberId::NumbersClosureBurn.value()),
+            ("a", NumberId::NumbersClosureBurn.value()),
+        ],
+    );
+    let mut input = next.input().clone();
+    input.closure.opened_at = prior.record().statement.determined_at;
+    input.closure.determined_at += input.closure.opened_at;
+    let verifier = Causes(input.clone());
+    let next = package::verify_candidate(input, &verifier, &verifier).unwrap();
+    let blocks = closure::partition(&next).unwrap();
+    assert_eq!(blocks, vec![vec![acts[1].id.clone()], vec![acts[0].id.clone()]]);
+    let mut accumulator = next.input().clone();
+    accumulator.causes.bindings.last_mut().unwrap().marker.name = "unrecognized-accumulator".into();
+    let verifier = Causes(accumulator.clone());
+    assert!(matches!(
+        package::verify_candidate(accumulator, &verifier, &verifier),
+        Err(package::PackageError::Alignment)
+    ));
+    let next_result = close(&next, Some(&prior));
+    assert_eq!(next_result.record().bindings.len(), 2);
+    marker_controls(&first, &next, &prior, &acts);
+}
+
+/// Claim: At the declared target and duration boundaries, a verifier-bound cause and determination permit closure exactly at the minimum target time or maximum duration; earlier, substituted and unattested determinations refuse. Numerical bounds alone do not reconstruct the earliest host opportunity.
+/// ´claim:admission:closure-requires-attested-cause-and-duration´
+/// ´test:integration:closure-duration´
+#[test]
+fn closure_duration() {
+    let base = candidate(&self_acts(), 1, &[("a", NumberId::NumbersClosureBurn.value())]);
+    for cause in [
+        package::ClosureCause::TargetAfterMinimum,
+        package::ClosureCause::MaximumDuration,
+    ] {
+        let mut input = base.input().clone();
+        input.closure.policy.minimum_ticks = NumberId::NumbersClosureMinimumTicks.integer();
+        input.closure.policy.maximum_ticks = NumberId::NumbersClosureMaximumTicks.integer();
+        input.closure.cause = cause;
+        input.closure.policy.target = if cause == package::ClosureCause::TargetAfterMinimum {
+            u64::try_from(self_acts().len()).unwrap()
+        } else {
+            NumberId::NumbersAdmissionTarget.integer()
+        };
+        input.closure.determined_at = if cause == package::ClosureCause::TargetAfterMinimum {
+            input.closure.policy.minimum_ticks
+        } else {
+            input.closure.policy.maximum_ticks
+        };
+        let attested = Causes(input.clone());
+        let context = package::verify_candidate(input.clone(), &attested, &attested).unwrap();
+        close(&context, None);
+        let mut early = input.clone();
+        early.closure.determined_at -= 1;
+        let admits_early = Causes(early.clone());
+        assert!(matches!(
+            package::verify_candidate(early, &admits_early, &admits_early),
+            Err(package::PackageError::Closure)
+        ));
+        let mut late = input.clone();
+        late.closure.determined_at += 1;
+        assert!(matches!(
+            package::verify_candidate(late, &attested, &attested),
+            Err(package::PackageError::Closure)
+        ));
+        let mut altered = input;
+        altered.closure.attestation.push('!');
+        assert!(matches!(
+            package::verify_candidate(altered, &attested, &attested),
+            Err(package::PackageError::Closure)
+        ));
+    }
+}
+
+/// Claim: Independent closure replay refuses context substitution before consuming gates and refuses a changed final solve record after recomputation. A correct solve from a different declared complete candidate cannot supply this candidate's stamps.
+/// ´claim:admission:closure-replay-binds-one-common-context´
+/// ´test:integration:closure-context´
+#[test]
+fn closure_context() {
+    let context = candidate(&self_acts(), 1, &[("a", NumberId::NumbersClosureBurn.value())]);
+    let other = candidate(&self_acts(), 1, &[("a", NumberId::NumbersClosureAlternateBurn.value())]);
+    let result = close(&context, None);
+    let alternate = close(&other, None);
+    let plan = procedure(&context);
+    let led = closure_initial(&context);
+    let blocks = closure::partition(&context).unwrap();
+    let input = ClosureInput {
+        candidate: &context,
+        partition: &blocks,
+        schedule: &led,
+        previous: None,
+    };
+    assert!(matches!(
+        closure::replay(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric(),
+            alternate.record()
+        ),
+        Err(ClosureError::Context)
+    ));
+    let next = candidate(&self_acts(), 2, &[("a", NumberId::NumbersClosureBurn.value())]);
+    let np = procedure(&next);
+    let correct = next_schedule(NumberId::NumbersClosureBurn.value());
+    let foreign = next_schedule(NumberId::NumbersClosureAlternateBurn.value());
+    assert_eq!(
+        correct.record().publications[0].effective,
+        foreign.record().publications[0].effective
+    );
+    run(&next, &np, &correct).unwrap();
+    assert!(matches!(
+        run(&next, &np, &foreign),
+        Err(FinalRefusal::Refused(AdmissionRefusal::Evidence))
+    ));
+    let mut changed = result.record().clone();
+    changed
+        .final_gates
+        .standing
+        .clone_from(&alternate.record().final_gates.standing);
+    assert!(matches!(
+        closure::replay(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric(),
+            &changed
+        ),
+        Err(ClosureError::Evidence)
+    ));
+}
+
+fn next_schedule(burn: &str) -> schedules::CheckedSchedule {
+    next_schedule_for(&self_acts(), &[("a", burn)])
+}
+fn next_schedule_for(acts: &[pn_records::CandidateAct], burns: &[(&str, &str)]) -> schedules::CheckedSchedule {
+    let source = joined::package_at_numeraires(acts, 1, burns, NumberId::NumbersAdmissionWall.value(), &["1", "1"]);
+    let state = compile_final_state(
+        &source,
+        &joined::Verifier,
+        &mut joined::numeric(),
+        Limits::default(),
+        NumberId::NumbersControllerTestWork.integer(),
+    )
+    .unwrap();
+    let ctx = candidate(acts, 1, burns);
+    let mut declared = schedule(&ctx, NumberId::NumbersAdmissionWall.value())
+        .record()
+        .declaration
+        .clone();
+    declared.initialization.parameters.as_mut().unwrap().deadband = NumberId::NumbersClosureDeadband.value().into();
+    let declared = admission::declare_schedule(declared, Limits::default()).unwrap();
+    let p = procedure(&ctx).solve;
+    let published = Published(p.clone());
+    let bound = bind_procedure(&state, p, &published, Limits::default()).unwrap();
+    let search = pn_epoch::controller::InverseSearch {
+        bracket: pn_records::primitive::Range {
+            lower: NumberId::NumbersControllerTestBracketLower.value().into(),
+            upper: NumberId::NumbersControllerTestBracketUpper.value().into(),
+        },
+        stopping_width: NumberId::NumbersControllerTestStoppingWidth.value().into(),
+        maximum_steps: NumberId::NumbersControllerTestSteps.integer(),
+    };
+    let frame = schedules::Boundary {
+        completed: &bound,
+        search: &search,
+        announced_at: 1,
+        effective_at: 2,
+        policy_floor: None,
+    };
+    let record = schedules::evaluate(&declared, &[frame], None, Limits::default()).unwrap();
+    let frame = schedules::Boundary {
+        completed: &bound,
+        search: &search,
+        announced_at: 1,
+        effective_at: 2,
+        policy_floor: None,
+    };
+    schedules::replay(&declared, &[frame], None, Limits::default(), &record).unwrap()
+}
+
+#[derive(Debug)]
+struct NoApproval;
+impl pn_graph::registration::RegistrationVerifier for NoApproval {
+    fn approval(&self, _: &pn_records::ValidatedAct) -> bool {
+        false
+    }
+    fn removal(&self, _: &pn_records::ValidatedAct, _: pn_graph::registration::OpeningKind, _: pn_records::Position) -> bool {
+        false
+    }
+}
+
+fn closure_initial(context: &package::CandidateContext) -> schedules::CheckedSchedule {
+    let mut d = schedule(context, NumberId::NumbersAdmissionWall.value())
+        .record()
+        .declaration
+        .clone();
+    d.initialization.parameters.as_mut().unwrap().deadband = NumberId::NumbersClosureDeadband.value().into();
+    let d = admission::declare_schedule(d, Limits::default()).unwrap();
+    let record = schedules::evaluate(&d, &[], None, Limits::default()).unwrap();
+    schedules::replay(&d, &[], None, Limits::default(), &record).unwrap()
+}
+fn test_raw(act: &pn_records::ValidatedAct) -> pn_records::CandidateAct {
+    pn_records::CandidateAct {
+        commitments: act.commitments().cloned(),
+        id: act.id().clone(),
+        body: act.body().clone(),
+        legs: act
+            .legs()
+            .iter()
+            .map(|leg| pn_records::CandidateLeg {
+                id: leg.id().clone(),
+                source: leg.source().clone(),
+                target: leg.target().clone(),
+                removal: None,
+            })
+            .collect(),
+        projections: act.projections().clone(),
+        protocol_references: act.protocol_references().to_vec(),
+        authentication_evidence: act.authentication_evidence().to_vec(),
+        finalization_epoch: act.finalization_epoch(),
+        authoritative_position: act.authoritative_position(),
+        logical_time: act.logical_time(),
+    }
+}
+
+fn marker_controls(
+    first: &package::CandidateContext,
+    next: &package::CandidateContext,
+    prior: &ClosedBoundary,
+    acts: &[pn_records::CandidateAct],
+) {
+    let blocks = closure::partition(next).unwrap();
+    let reset = closure_initial(next);
+    let plan = procedure(next);
+    let input = ClosureInput {
+        candidate: next,
+        partition: &blocks,
+        schedule: &reset,
+        previous: Some(prior),
+    };
+    assert!(matches!(
+        closure::close(
+            &input,
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric()
+        ),
+        Err(ClosureError::Context)
+    ));
+    for (context, previous) in [(first, Some(prior)), (next, None)] {
+        let plan = procedure(context);
+        let led = closure_initial(context);
+        let blocks = closure::partition(context).unwrap();
+        assert!(matches!(
+            closure::close(
+                &ClosureInput {
+                    candidate: context,
+                    partition: &blocks,
+                    schedule: &led,
+                    previous
+                },
+                &plan,
+                &joined::Verifier,
+                &Published(plan.solve.clone()),
+                joined::numeric()
+            ),
+            Err(ClosureError::MarkerOrder)
+        ));
+    }
+    marker_context_controls(next, prior, acts);
+}
+
+fn marker_context_controls(next: &package::CandidateContext, prior: &ClosedBoundary, acts: &[pn_records::CandidateAct]) {
+    let blocks = closure::partition(next).unwrap();
+    let first: Vec<_> = acts.iter().filter(|a| a.finalization_epoch == 1).cloned().collect();
+    let changed = candidate(
+        acts,
+        2,
+        &[
+            ("b", NumberId::NumbersClosureAlternateBurn.value()),
+            ("a", NumberId::NumbersClosureAlternateBurn.value()),
+        ],
+    );
+    let mut input = changed.input().clone();
+    input.closure = next.input().closure.clone();
+    let verifier = Causes(input.clone());
+    let changed = package::verify_candidate(input, &verifier, &verifier).unwrap();
+    let plan = procedure(&changed);
+    let burns = [
+        ("b", NumberId::NumbersClosureAlternateBurn.value()),
+        ("a", NumberId::NumbersClosureAlternateBurn.value()),
+    ];
+    let led = next_schedule_for(&first, &burns);
+    run(&changed, &plan, &led).unwrap();
+    assert!(matches!(
+        closure::close(
+            &ClosureInput {
+                candidate: &changed,
+                partition: &blocks,
+                schedule: &led,
+                previous: Some(prior)
+            },
+            &plan,
+            &joined::Verifier,
+            &Published(plan.solve.clone()),
+            joined::numeric()
+        ),
+        Err(ClosureError::Context)
+    ));
+    let led = next_schedule_for(
+        &first,
+        &[
+            ("b", NumberId::NumbersClosureBurn.value()),
+            ("a", NumberId::NumbersClosureBurn.value()),
+        ],
+    );
+    for clock in [false, true] {
+        let mut input = next.input().clone();
+        if clock {
+            input.closure.policy.clock.push('!');
+        } else {
+            input.closure.opened_at += 1;
+            input.closure.determined_at += 1;
+        }
+        let verifier = Causes(input.clone());
+        let shifted = package::verify_candidate(input, &verifier, &verifier).unwrap();
+        let input = ClosureInput {
+            candidate: &shifted,
+            partition: &blocks,
+            schedule: &led,
+            previous: Some(prior),
+        };
+        assert!(matches!(
+            closure::close(
+                &input,
+                &plan,
+                &joined::Verifier,
+                &Published(plan.solve.clone()),
+                joined::numeric()
+            ),
+            Err(ClosureError::Context)
+        ));
+    }
+}

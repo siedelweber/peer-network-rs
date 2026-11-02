@@ -88,6 +88,9 @@ fn effective(
         .chain(record.publications.iter().map(|p| &p.effective))
         .find(|e| e.boundary == binding.marker.index)
         .ok_or(AdmissionRefusal::ScheduleValidity)?;
+    if !schedule.matches_context(source) {
+        return Err(AdmissionRefusal::Evidence.into());
+    }
     if binding.price.wall().exact() != selected.wall
         || binding.price.price().exact() != selected.charge
         || binding.price.numeraire() != &selected.numeraire

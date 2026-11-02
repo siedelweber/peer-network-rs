@@ -7145,3 +7145,40 @@ value = "1/1024"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Closure complete-history fixture and declared clock intervals.
+
+[[rows]]
+id = "num:numbers:closure-burn"
+value = "6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:closure-minimum-ticks"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:closure-maximum-ticks"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:closure-deadband"
+value = "9/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:closure-alternate-burn"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

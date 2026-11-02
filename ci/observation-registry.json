@@ -8067,6 +8067,54 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "item": "closure::partition",
+      "owner": "EPOCH",
+      "signature": "fn partition (candidate : & package :: CandidateContext) -> Result < DependencyBlocks , ClosureError >",
+      "claim": "ROOT::alg:design:admission",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "item": "closure::close",
+      "owner": "EPOCH",
+      "signature": "fn close (input : & ClosureInput < '_ > , procedure : & admission :: FinalProcedure , registration : & impl RegistrationVerifier , published : & impl solve :: ProcedureVerifier , numeric : pn_records :: numerics :: NumericContext ,) -> Result < ClosedBoundary , ClosureError >",
+      "claim": "ROOT::alg:design:admission",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "item": "closure::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (input : & ClosureInput < '_ > , procedure : & admission :: FinalProcedure , registration : & impl RegistrationVerifier , published : & impl solve :: ProcedureVerifier , numeric : pn_records :: numerics :: NumericContext , supplied : & ClosureRecord ,) -> Result < ClosedBoundary , ClosureError >",
+      "claim": "ROOT::alg:design:admission",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "item": "closure::ClosedBoundary::record",
+      "owner": "EPOCH",
+      "signature": "fn record (& self) -> & ClosureRecord",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable evidence access inherits complete closure and admission.",
+        "witness": "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks",
+        "boundary": "pn-epoch::packages/epoch/src/closure.rs::closure::close",
+        "class_decision": "closure-admission-public"
+      }
     }
   ],
   "metrics": [
@@ -15590,7 +15638,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
-      "body": "{ Ok (CheckedSchedule { record : run (d , frames , ridge , limits , Some (record)) ? , }) }",
+      "body": "{ Ok (CheckedSchedule { record : run (d , frames , ridge , limits , Some (record)) ? , sources : frames . iter () . map (| frame | frame . completed . inputs () . 0 . package () . input () . clone ()) . collect () , }) }",
       "class_decision": "effective-schedule-public",
       "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
       "assessments": {
@@ -15648,6 +15696,50 @@
       "body": "{ compile_source (CompiledSource :: Candidate (candidate . clone ()) , verifier , numeric , limits , maximum_products ,) }",
       "class_decision": "atomic-admission-public",
       "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/closure.rs::closure::partition",
+      "body": "{ let records = records (candidate) ? ; let boundary = candidate . input () . causes . bindings . last () . ok_or (ClosureError :: MarkerOrder) ? . marker . index ; let inputs = pn_records :: assemble_boundary_inputs (& records , (boundary , 1)) . map_err (| e | ClosureError :: Records (Box :: new (e))) ? ; Ok (pn_graph :: partition_dependencies (& inputs) ? . 1) }",
+      "class_decision": "closure-admission-public",
+      "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/closure.rs::closure::close",
+      "body": "{ let partition = context (input) ? ; let admitted = admission :: admit (input . candidate , input . schedule , procedure , registration , published , numeric) . map_err (| e | ClosureError :: Admission (Box :: new (e))) ? ; let source = & input . candidate . input () . causes ; let record = ClosureRecord { markers : source . markers . clone () , bindings : source . bindings . clone () , statement : input . candidate . input () . closure . clone () , partition , final_gates : admitted . evidence () . clone () , schedule : input . schedule . record () . clone () , } ; Ok (ClosedBoundary { admitted , record }) }",
+      "class_decision": "closure-admission-public",
+      "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/closure.rs::closure::replay",
+      "body": "{ let source = & input . candidate . input () . causes ; if supplied . schedule != * input . schedule . record () || supplied . markers != source . markers || supplied . bindings != source . bindings || supplied . statement != input . candidate . input () . closure { return Err (ClosureError :: Context) ; } let result = close (input , procedure , registration , published , numeric) ? ; if result . record != * supplied { return Err (ClosureError :: Evidence) ; } Ok (result) }",
+      "class_decision": "closure-admission-public",
+      "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/closure.rs::closure::ClosedBoundary::record",
+      "body": "{ & self . record }",
+      "class_decision": "closure-admission-public",
+      "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -19966,6 +20058,42 @@
       "syntax": "# [derive (Clone , Debug)]",
       "class_decision": "atomic-admission-public",
       "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "closure::ClosureInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "closure-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "closure::ClosureRecord",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "closure-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "closure::ClosedBoundary",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "closure-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "closure::ClosureError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "closure-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
     }
   ],
   "reviewed_types": [
@@ -22754,6 +22882,30 @@
       "syntax": "# [doc = \" Whole-result coordinate, formation or bounded exact-arithmetic refusal.\"] # [doc = \" (´def:compiler:standing-cells´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CellError { # [error (\"missing or malformed mandatory coordinate\")] Representation , # [error (\"formation: {0}\")] Formation (# [from] RegistrationError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary zero is not a compiling epoch\")] Boundary , }"
     },
     {
+      "item": "closure::ClosureInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [doc = \" One candidate, its declared whole-act partition, led schedule and preceding close.\"] # [doc = \" No demand set or timestamp-derived claim of earliest determination is supplied.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug)] pub struct ClosureInput < 'a > { pub candidate : & 'a package :: CandidateContext , pub partition : & 'a DependencyBlocks , pub schedule : & 'a schedules :: CheckedSchedule , pub previous : Option < & 'a ClosedBoundary > , }"
+    },
+    {
+      "item": "closure::ClosureRecord",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [doc = \" Replayable public closure evidence; a standalone record grants no admission authority.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosureRecord { pub markers : RecognizedMarkers , pub bindings : Vec < package :: EpochBinding > , pub statement : package :: ClosureStatement , pub partition : DependencyBlocks , pub final_gates : admission :: FinalEvidence , pub schedule : schedules :: Record , }"
+    },
+    {
+      "item": "closure::ClosedBoundary",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [doc = \" A registered local close, constructed only after membership and final admission pass.\"] # [doc = \" It does not persist or authenticate a deployment publication.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug)] pub struct ClosedBoundary { admitted : package :: AdmittedBoundary , record : ClosureRecord , }"
+    },
+    {
+      "item": "closure::ClosureError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/closure.rs",
+      "syntax": "# [doc = \" Closure, evidence and operational failures are not unresolved numeric comparisons.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug , thiserror :: Error)] pub enum ClosureError { # [error (\"closure requires the next recognized marker, without skipping or repeating\")] MarkerOrder , # [error (\"closure components do not retain one common predecessor context\")] Context , # [error (\"the supplied partition omits, repeats or separates a dependent block\")] Membership , # [error (\"candidate dependency formation: {0}\")] Records (# [source] Box < pn_records :: ValidationError >) , # [error (\"dependent-set partition: {0}\")] Partition (# [from] pn_graph :: PartitionError) , # [error (\"final admission: {0}\")] Admission (# [source] Box < admission :: FinalRefusal >) , # [error (\"closure replay evidence differs\")] Evidence , }"
+    },
+    {
       "item": "coefficients::CoefficientError",
       "package": "pn-epoch",
       "path": "packages/epoch/src/coefficients.rs",
@@ -23051,7 +23203,7 @@
       "item": "schedules::CheckedSchedule",
       "package": "pn-epoch",
       "path": "packages/epoch/src/schedules.rs",
-      "syntax": "# [doc = \" Immutable replayed sequence; it does not admit a write or authenticate deployment publication.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug)] pub struct CheckedSchedule { record : Record , }"
+      "syntax": "# [doc = \" Immutable replayed sequence; it does not admit a write or authenticate deployment publication.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug)] pub struct CheckedSchedule { record : Record , sources : Vec < crate :: package :: PackageInput > , }"
     },
     {
       "item": "schedules::Error",
@@ -23687,6 +23839,19 @@
           "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::evidence",
           "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledSource::input",
           "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_candidate"
+        ]
+      }
+    },
+    {
+      "name": "closure-admission-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public complete candidate causes, canonical dependency blocks, attested closure, consecutive recognized markers, checked effective schedules and bounded exact gate evidence; no secrets, rejected-submission counter or demand statistics enter. Persistent publication and deployment remain unsupported.",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/closure.rs::closure::partition",
+          "pn-epoch::packages/epoch/src/closure.rs::closure::close",
+          "pn-epoch::packages/epoch/src/closure.rs::closure::replay",
+          "pn-epoch::packages/epoch/src/closure.rs::closure::ClosedBoundary::record"
         ]
       }
     }

@@ -1898,6 +1898,38 @@
       "review": "Separate individual, own-solvency and policy failures retain typed classes. The computed passing mean cannot hide the deficient individual; the checked schedule and candidate remain unchanged. Fixture verifiers supply causes, not host authentication."
     },
     {
+      "operation": "pn-epoch::solve::admission::closure_context",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:closure-replay-binds-one-common-context",
+      "before": "",
+      "after": "Claim: Independent closure replay refuses context substitution before consuming gates and refuses a changed final solve record after recomputation. A correct solve from a different declared complete candidate cannot supply this candidate's stamps.",
+      "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::closure_duration",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:closure-requires-attested-cause-and-duration",
+      "before": "",
+      "after": "Claim: At the declared target and duration boundaries, a verifier-bound cause and determination permit closure exactly at the minimum target time or maximum duration; earlier, substituted and unattested determinations refuse. Numerical bounds alone do not reconstruct the earliest host opportunity.",
+      "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::closure_markers",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers",
+      "before": "",
+      "after": "Claim: The finite local marker chain registers only consecutive recognized boundaries, retaining pending markers without closing them; repeated and skipped registration and a changed predecessor context are refused. Historical shared parents do not merge new blocks. This does not establish host halt, recovery or offline-history admission.",
+      "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::closure_membership",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks",
+      "before": "",
+      "after": "Claim: At the declared finite interleaved complete history, current shared parents merge whole acts against fixed prior history; independent closure replay retains the exact cover and final gates, while omitted, duplicated or separated blocks are refused without changing prior evidence. No inference of earliest host determination or deployment publication is made.",
+      "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
+    },
+    {
       "operation": "pn-epoch::solve::anchor_tables",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds",

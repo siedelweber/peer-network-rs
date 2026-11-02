@@ -330,3 +330,11 @@ impl AdmittedBoundary {
         &self.candidate
     }
 }
+
+// Compare the complete admitted predecessor, allowing later recognized markers only.
+pub(crate) fn same_prefix(earlier: &PackageInput, later: &PackageInput) -> bool {
+    let n = earlier.bindings.len();
+    earlier.markers.basis() == later.markers.basis()
+        && later.bindings.get(..n) == Some(earlier.bindings.as_slice())
+        && later.markers.markers().get(..=n) == earlier.markers.markers().get(..=n)
+}
