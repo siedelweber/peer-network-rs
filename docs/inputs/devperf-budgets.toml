@@ -868,3 +868,33 @@ budget_ms = 1750
 scope = "one pn-verification::title::title_exhaustive case"
 reason = "The exhaustive two-boundary alphabet retains every history, the baseline and five parent, stamp or dependency variations in both input orders, independent truth-table assertions, and comparison of every retained clause and event. The allowance covers this serial reconstruction cost without sampling or dropping a variation."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-ridge-definition-case"
+category = "case"
+budget_ms = 2100
+scope = "one pn-graph::numeric::ridge::ridge_definition case"
+measured_wall_ms = 1048.316353
+measured_own_cpu_ms = 1048.129
+reason = "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-ridge-comparisons-case"
+category = "case"
+budget_ms = 3050
+scope = "one pn-graph::numeric::ridge::ridge_comparisons case"
+measured_wall_ms = 1504.357890
+measured_own_cpu_ms = 1504.130
+reason = "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-ridge-replay-case"
+category = "case"
+budget_ms = 1600
+scope = "one pn-graph::numeric::ridge::ridge_replay case"
+measured_wall_ms = 783.057971
+measured_own_cpu_ms = 782.890
+reason = "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }

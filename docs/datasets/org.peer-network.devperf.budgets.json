@@ -2647,6 +2647,153 @@
       },
       "reason": "The exhaustive two-boundary alphabet retains every history, the baseline and five parent, stamp or dependency variations in both input orders, independent truth-table assertions, and comparison of every retained clause and event. The allowance covers this serial reconstruction cost without sampling or dropping a variation.",
       "scope": "one pn-verification::title::title_exhaustive case"
+    },
+    {
+      "budget_ms": 2100,
+      "category": "case",
+      "measured_own_cpu_ms": 1048.129,
+      "measured_wall_ms": 1048.316353,
+      "name": "calibrated-ridge-definition-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 048.129",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 048.129",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 048.316 353",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 048.316 353",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete analytic-majorant cover, derivative bracket, independent replay and oracle, failed precision and exact Work boundary retain the certificate floor. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "scope": "one pn-graph::numeric::ridge::ridge_definition case"
+    },
+    {
+      "budget_ms": 3050,
+      "category": "case",
+      "measured_own_cpu_ms": 1504.13,
+      "measured_wall_ms": 1504.35789,
+      "name": "calibrated-ridge-comparisons-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 050",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 050",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 504.13",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 504.13",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 504.357 89",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 504.357 89",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The adjacent strict signs retain the comparison floor, both chartered identities, a zero-straddling proposal, failed precision and a successful refinement sequence with independent replay. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "scope": "one pn-graph::numeric::ridge::ridge_comparisons case"
+    },
+    {
+      "budget_ms": 1600,
+      "category": "case",
+      "measured_own_cpu_ms": 782.89,
+      "measured_wall_ms": 783.057971,
+      "name": "calibrated-ridge-replay-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 600",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 600",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "782.89",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "782.89",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "783.057 971",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "783.057 971",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Independent query and attachment replay retains defining-input, cover, image and verdict mutations, a wrong-sign bracket and exhausted cover. The first serial after-measurement and own CPU are retained in this row; the current case-calibration sizing rule determines the allowance.",
+      "scope": "one pn-graph::numeric::ridge::ridge_replay case"
     }
   ]
 }

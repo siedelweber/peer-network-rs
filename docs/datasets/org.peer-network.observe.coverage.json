@@ -367,25 +367,25 @@
       "operations": 44
     },
     {
-      "exceptions": 7,
-      "generators": 58,
+      "exceptions": 8,
+      "generators": 60,
       "helpers": 0,
-      "instrumented": 35,
+      "instrumented": 39,
       "name": "pn-graph",
       "number_forms": {
         "exceptions": {
-          "exact": "7",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "58",
+          "exact": "60",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "58",
+          "num": "60",
           "num_exact": true,
           "num_relation": "="
         },
@@ -398,18 +398,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "35",
+          "exact": "39",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "35",
+          "num": "39",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "42",
+          "exact": "47",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "42",
+          "num": "47",
           "num_exact": true,
           "num_relation": "="
         }
@@ -436,7 +436,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 42
+      "operations": 47
     },
     {
       "exceptions": 18,
@@ -584,7 +584,7 @@
     },
     {
       "exceptions": 68,
-      "generators": 134,
+      "generators": 139,
       "helpers": 0,
       "instrumented": 41,
       "name": "pn-records",
@@ -598,10 +598,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "134",
+          "exact": "139",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "134",
+          "num": "139",
           "num_exact": true,
           "num_relation": "="
         },

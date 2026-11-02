@@ -6,6 +6,7 @@ pub mod conserved;
 /// (´def:numerics:exact-carriers´)
 pub mod numerics;
 pub mod primitive;
+pub mod ridge;
 pub mod solve;
 pub mod wall;
 

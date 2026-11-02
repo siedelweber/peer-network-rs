@@ -7,6 +7,8 @@ use pins::NumberId;
 
 #[path = "numeric/corpus.rs"]
 mod corpus;
+#[path = "numeric/ridge.rs"]
+mod ridge;
 
 use nrz_cas::{enclosure::RefinementPolicy, limits::Limits};
 use pn_graph::numeric::{Error, evaluate, preflight, replay};

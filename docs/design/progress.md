@@ -14,7 +14,7 @@
 
 | Population | Total | Realized | Held | Designed | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 25 | 36 | 199 | 1 096 |
+| implementation | 1 356 | 25 | 36 | 202 | 1 093 |
 | prose | 320 | 0 | 0 | 9 | 311 |
 
 ## By crate · `sec:progress:crates`
@@ -28,7 +28,7 @@
 | pn-readouts | 71 | 0 | 1 | 3 | 67 |
 | pn-records | 218 | 0 | 5 | 56 | 157 |
 | pn-replay | 26 | 0 | 3 | 1 | 22 |
-| pn-verification | 281 | 17 | 5 | 19 | 240 |
+| pn-verification | 281 | 17 | 5 | 22 | 237 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
 
@@ -41,7 +41,7 @@
 | execwrap | 62 | 0 |
 | pn-act-profile | 11 | 0 |
 | pn-epoch | 38 | 14 |
-| pn-graph | 73 | 33 |
+| pn-graph | 74 | 33 |
 | pn-host | 19 | 0 |
 | pn-interchange | 25 | 0 |
 | pn-readouts | 0 | 0 |
@@ -50,7 +50,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 464 | 172 |
+| ROOT (repository-wide) | 1 470 | 175 |
 
 ## By bite · `sec:progress:bites`
 
@@ -67,7 +67,7 @@
 | 9 | 7 | 1 | 4 | 2 | 0 |
 | 10 | 5 | 0 | 4 | 1 | 0 |
 | 11 | 78 | 9 | 22 | 47 | 0 |
-| unlinked | 1 558 | 16 | 14 | 121 | 1 407 |
+| unlinked | 1 558 | 16 | 14 | 124 | 1 404 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -76,11 +76,11 @@
 | certificate | 6 | 0 | 0 | 5 | 1 |
 | constant | 4 | 0 | 0 | 1 | 3 |
 | data type | 4 | 0 | 1 | 3 | 0 |
-| fixture | 218 | 9 | 2 | 15 | 192 |
+| fixture | 218 | 9 | 2 | 16 | 191 |
 | function | 216 | 3 | 4 | 43 | 166 |
 | invariant check | 517 | 10 | 10 | 66 | 431 |
 | none | 346 | 0 | 0 | 6 | 340 |
-| policy | 265 | 3 | 15 | 27 | 220 |
+| policy | 265 | 3 | 15 | 29 | 218 |
 | serialization | 8 | 0 | 0 | 3 | 5 |
 | type | 92 | 0 | 4 | 39 | 49 |
 
@@ -817,7 +817,7 @@
 | ``def:epoch:participation-floor`` | pn-epoch; function | designed | ``ROOT::rule:design:reference-wall-branches`` | | |  |
 | ``eq:epoch:effective-floor`` | pn-epoch; function | unassigned | | | |  |
 | ``def:epoch:safety-wall`` | pn-epoch; function | designed | ``ROOT::inv:design:charged-value`` | | | 2 |
-| ``def:epoch:safety-wall-floor`` | pn-records; type | designed | ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 |
+| ``def:epoch:safety-wall-floor`` | pn-records; type | designed | ``ROOT::alg:design:binding-ridge`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 |
 | ``case:epoch:safety-wall-floor-ridge-floor`` | pn-epoch; invariant check | designed | ``RECORDS::def:declarations:constants-edition`` ``ROOT::model:design:wall-floor`` | | | 2 |
 | ``case:epoch:safety-wall-floor-rational-floor`` | pn-epoch; invariant check | designed | ``ROOT::model:design:wall-floor`` | | | 2 |
 | ``cor:epoch:floor-economics`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` | | | 2 |
@@ -1188,8 +1188,8 @@
 | ``eq:dynamics:monotone-gain`` | pn-epoch; function | unassigned | | | |  |
 | ``lem:dynamics:elasticity`` | pn-verification; invariant check | unassigned | | | |  |
 | ``lem:dynamics:elasticity-cap`` | pn-verification; invariant check | unassigned | | | |  |
-| ``rem:dynamics:elasticity-profile`` | pn-verification; policy | unassigned | | | |  |
-| ``prop:dynamics:floor-above-the-ridge`` | pn-verification; policy | unassigned | | | |  |
+| ``rem:dynamics:elasticity-profile`` | pn-verification; policy | designed | ``ROOT::alg:design:binding-ridge`` | | |  |
+| ``prop:dynamics:floor-above-the-ridge`` | pn-verification; policy | designed | ``ROOT::rule:design:ridge-analytic-premises`` | | |  |
 | ``case:dynamics:floor-above-the-ridge-below-half`` | pn-verification; invariant check | unassigned | | | |  |
 | ``case:dynamics:floor-above-the-ridge-above-half`` | pn-verification; invariant check | unassigned | | | |  |
 | ``prop:dynamics:core-schwarzian-profile`` | pn-verification; invariant check | unassigned | | | |  |
@@ -1344,7 +1344,7 @@
 | ``subsec:verification:reference-constants`` | pn-verification; fixture | unassigned | | | |  |
 | ``tbl:verification:reference-constants`` | pn-verification; fixture | unassigned | | | |  |
 | ``ver:floor:ridge-enclosure`` | pn-verification; fixture | unassigned | | | |  |
-| ``ver:floor:below-door`` | pn-verification; fixture | unassigned | | | |  |
+| ``ver:floor:below-door`` | pn-verification; fixture | designed | ``ROOT::amend:design:ridge-fragment-admission`` | | |  |
 | ``ver:floor:fixture-regime`` | pn-verification; fixture | designed | ``ROOT::amend:design:two-map-measurements`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::rule:design:reference-wall-branches`` | | |  |
 | ``ver:floor:fixture-declaration-invariant`` | pn-verification; fixture | unassigned | | | |  |
 | ``ver:floor:recoinage-invariant`` | pn-verification; fixture | unassigned | | | |  |

@@ -7857,6 +7857,64 @@
         "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
         "class_decision": "epoch-package"
       }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::CheckedRidge::image",
+      "owner": "GRAPH",
+      "signature": "fn image (& self) -> Option < & Range >",
+      "claim": "ROOT::alg:design:binding-ridge",
+      "shape": "shape-graph",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits the replay operation and supplies no new verdict.",
+        "witness": "GRAPH::claim:numerics:ridge-replay-refuses-defining-and-query-substitution",
+        "boundary": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+        "class_decision": "binding-ridge-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (p : & Procedure , input : & Inputs) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (p : & Procedure , input : & Inputs , record : & Record) -> Result < CheckedRidge , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::compare",
+      "owner": "GRAPH",
+      "signature": "fn compare (checked : & CheckedRidge , wall : & Wall , floor : Floor) -> Result < ComparisonRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::replay_comparison",
+      "owner": "GRAPH",
+      "signature": "fn replay_comparison (checked : & CheckedRidge , wall : & Wall , floor : Floor , record : & ComparisonRecord ,) -> Result < ComparisonRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -15256,6 +15314,61 @@
         "secret_flow": "epoch-package-secret_flow",
         "exposure_consumers": "epoch-package-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::CheckedRidge::image",
+      "body": "{ self . image . as_ref () }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::evaluate",
+      "body": "{ run (p , input , None) }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+      "body": "{ let checked = run (p , input , Some (record)) ? ; Ok (CheckedRidge { procedure : p . clone () , input : input . clone () , image : checked . image , }) }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
+      "body": "{ comparison (checked , wall , floor , None) }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison",
+      "body": "{ comparison (checked , wall , floor , Some (record)) }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -19281,6 +19394,69 @@
       "syntax": "# [derive (Clone , Debug)]",
       "class_decision": "epoch-package",
       "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+    },
+    {
+      "item": "ridge::Definition",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "ridge::Inputs",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "ridge::Record",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "ridge::Wall",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "ridge::ComparisonRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "numeric::ridge::Error",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+    },
+    {
+      "item": "numeric::ridge::CheckedRidge",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
     }
   ],
   "reviewed_types": [
@@ -20641,6 +20817,36 @@
       "syntax": "# [doc = \" One original primitive request, its declared policy and its untrusted evidence.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveRecord { pub query : Query , pub precision : u32 , pub evidence : PrimitiveEvidence , }"
     },
     {
+      "item": "ridge::Definition",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Closed formula identity, checked before any numerical evaluation.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Definition { pub schema : String , pub inverse_temperature : String , pub bleed_squared : String , pub core_power : String , }"
+    },
+    {
+      "item": "ridge::Inputs",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Declared bracket, complete-cover subdivision ceiling and independent Work limits.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub definition : Definition , pub bracket : Range , pub maximum_depth : u32 , pub maximum_work : u64 , pub maximum_replay_work : u64 , }"
+    },
+    {
+      "item": "ridge::Record",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Retained attempted queries and full concavity cover; absence of an image is indecisive.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub input : Inputs , pub queries : Vec < PrimitiveRecord > , pub cells : Vec < Range > , pub image : Option < Range > , pub work : u64 , }"
+    },
+    {
+      "item": "ridge::Wall",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Either an exact rational wall or identity with the checked defining ridge.\"] # [doc = \" The defining alternative is not a rational charge representation.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Wall { Rational (String) , DefiningRidge (Definition) , }"
+    },
+    {
+      "item": "ridge::ComparisonRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Untrusted floor comparison, retaining every attempted precision and attachment.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ComparisonRecord { pub wall : Wall , pub floor : Floor , pub queries : Vec < PrimitiveRecord > , pub verdict : FloorComparison , pub work : u64 , }"
+    },
+    {
       "item": "solve::Primitive",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
@@ -21413,6 +21619,30 @@
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/activation.rs",
       "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
+    },
+    {
+      "item": "numeric::ridge::formula::Formula",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge/formula.rs",
+      "syntax": "struct Formula { nodes : Vec < Node > , }"
+    },
+    {
+      "item": "numeric::ridge::Error",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [doc = \" Refusals preserve the first failed defining, query, attachment or arithmetic check.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"unsupported clean ridge defining object\")] Definition , # [error (\"invalid ridge declaration\")] Declaration , # [error (\"certified wrong ridge endpoint sign\")] Bracket , # [error (\"ridge query or precision differs from its reconstruction\")] Query , # [error (\"ridge attachment absent or invalid\")] Attachment , # [error (\"ridge record differs from independently checked evidence\")] Record , # [error (\"ridge query {query} stopped without mathematical evidence: {outcome:?}, {fault:?}\")] Operational { query : usize , outcome : Outcome , fault : Option < nrz_cas :: Fault > , } , # [error (\"ridge numerical kernel: {0}\")] Numeric (# [from] super :: Error) , # [error (\"ridge exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
+      "item": "numeric::ridge::CheckedRidge",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [doc = \" Only independent replay constructs this immutable authority for ridge comparisons.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug)] pub struct CheckedRidge { procedure : Procedure , input : Inputs , image : Option < Range > , }"
+    },
+    {
+      "item": "numeric::ridge::Run",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , supplied : Option < & 'a [PrimitiveRecord] > , budget : Budget , queries : Vec < PrimitiveRecord > , }"
     },
     {
       "item": "numeric::verification::arithmetic::Arithmetic",
@@ -22741,6 +22971,20 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Schedule validation reads complete public initialization, controller identity, rational delivery and refinement declarations. Its result is an immutable declaration, not an executed controller, admitted write or publication. Exact arithmetic is bounded; diagnostics retain public inputs and named refusals. No secret material or deployment authentication flows through this operation."
+    },
+    {
+      "name": "binding-ridge-public",
+      "status": "reviewer-confirmed",
+      "premises": "Closed public clean-ridge defining inputs, complete majorant boxes, rational comparisons and independently replayed attachments. No secret, deployed gain inversion, charge mutation or production admission is introduced.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::CheckedRidge::image",
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::evaluate",
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison"
+        ]
+      }
     }
   ],
   "shapes": {

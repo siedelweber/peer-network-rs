@@ -278,6 +278,18 @@ id = "num:numbers:published-retention"
 value = "1"
 
 [[rows]]
+id = "num:numbers:published-ridge-image-lower"
+value = "0.072857886347658096069917719310122339057638109800352948787450652560445081531298644"
+
+[[rows]]
+id = "num:numbers:published-ridge-image-upper"
+value = "0.072858001450074874759921200725509494900598633307649112778618540831580819787964636"
+
+[[rows]]
+id = "num:numbers:published-ridge-root-display"
+value = "0.072857921591270216171171639280248918697753369151428381972859331236545986717841527"
+
+[[rows]]
 id = "num:numbers:published-root-bob-lower"
 value = "1108594928730243606843228264079625133996209968230279117120529193608892122323/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 
@@ -564,6 +576,70 @@ value = "65/128"
 [[rows]]
 id = "num:numbers:reference-work-ceiling"
 value = "2000000000"
+
+[[rows]]
+id = "num:numbers:ridge-bracket-lower"
+value = "679/10000"
+
+[[rows]]
+id = "num:numbers:ridge-bracket-upper"
+value = "17/250"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-failed-precision"
+value = "20"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-precision"
+value = "21"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-work"
+value = "119541482"
+
+[[rows]]
+id = "num:numbers:ridge-comparison-certificate-work"
+value = "153945510"
+
+[[rows]]
+id = "num:numbers:ridge-comparison-failed-precision"
+value = "28"
+
+[[rows]]
+id = "num:numbers:ridge-comparison-precision"
+value = "29"
+
+[[rows]]
+id = "num:numbers:ridge-concavity-depth-ceiling"
+value = "8"
+
+[[rows]]
+id = "num:numbers:ridge-image-lower"
+value = "679/9321"
+
+[[rows]]
+id = "num:numbers:ridge-image-upper"
+value = "17/233"
+
+[[rows]]
+id = "num:numbers:ridge-independent-bracket-lower"
+value = "3/50"
+
+[[rows]]
+id = "num:numbers:ridge-independent-bracket-upper"
+value = "3/40"
+
+[[rows]]
+id = "num:numbers:ridge-lower-comparison-work"
+value = "19048378"
+
+[[rows]]
+id = "num:numbers:ridge-rational-neighbor-step"
+value = "1/1000000"
+
+[[rows]]
+id = "num:numbers:ridge-upper-comparison-work"
+value = "19042259"
 
 [[rows]]
 id = "num:numbers:second-activation-session-work"

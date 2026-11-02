@@ -379,6 +379,11 @@ def published_correspondence(rows, path=None):
     expected = {f'num:numbers:published-act-{family}-{suffix}':
                 f'result.tilt_act_{family}.'+suffix.replace('-', '_')
                 for family in ('isolated', 'retained') for suffix in suffixes}
+    expected.update({
+        'num:numbers:published-ridge-image-lower': 'bound.epoch.wall_floor_ridge_lo',
+        'num:numbers:published-ridge-image-upper': 'bound.epoch.wall_floor_ridge_hi',
+        'num:numbers:published-ridge-root-display': 'const.epoch.wall_floor_ridge',
+    })
     selected = {row['id']:row for row in rows if row['id'] in expected}
     if set(selected) != set(expected):
         raise ValueError('published registry: missing declared row')

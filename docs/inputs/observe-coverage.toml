@@ -48,11 +48,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-graph"
-operations = 42
-instrumented = 35
-exceptions = 7
+operations = 47
+instrumented = 39
+exceptions = 8
 helpers = 0
-generators = 58
+generators = 60
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
@@ -79,7 +79,7 @@ operations = 109
 instrumented = 41
 exceptions = 68
 helpers = 0
-generators = 134
+generators = 139
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]

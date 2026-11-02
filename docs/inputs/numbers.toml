@@ -6548,3 +6548,144 @@ value = "4"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Binding ridge declarations and measurements.
+
+[[rows]]
+id = "num:numbers:ridge-certificate-precision"
+value = "21"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-concavity-depth-ceiling"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-bracket-lower"
+value = "679/10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-bracket-upper"
+value = "17/250"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-independent-bracket-lower"
+value = "3/50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-independent-bracket-upper"
+value = "3/40"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-rational-neighbor-step"
+value = "1/1000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:published-ridge-image-lower"
+value = "0.072857886347658096069917719310122339057638109800352948787450652560445081531298644"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+paper_key = "bound.epoch.wall_floor_ridge_lo"
+paper_tag = "network-v0.31.1"
+
+[[rows]]
+id = "num:numbers:published-ridge-image-upper"
+value = "0.072858001450074874759921200725509494900598633307649112778618540831580819787964636"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+paper_key = "bound.epoch.wall_floor_ridge_hi"
+paper_tag = "network-v0.31.1"
+
+[[rows]]
+id = "num:numbers:published-ridge-root-display"
+value = "0.072857921591270216171171639280248918697753369151428381972859331236545986717841527"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+paper_key = "const.epoch.wall_floor_ridge"
+paper_tag = "network-v0.31.1"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-failed-precision"
+value = "20"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-comparison-precision"
+value = "29"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-comparison-failed-precision"
+value = "28"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-certificate-work"
+value = "119541482"
+unit = "Work"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-comparison-certificate-work"
+value = "153945510"
+unit = "Work"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-lower-comparison-work"
+value = "19048378"
+unit = "Work"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-upper-comparison-work"
+value = "19042259"
+unit = "Work"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-image-lower"
+value = "679/9321"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
+
+[[rows]]
+id = "num:numbers:ridge-image-upper"
+value = "17/233"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 96
