@@ -10,6 +10,7 @@
     "ci::test_claims.Evidence.test_orphan_mint": "A source claim detached from all executable sites cannot disappear from the reverse coverage query.",
     "ci::test_claims.Evidence.test_planned_census": "An exhibited future name in a design paragraph is neither a minted claim nor a new obligation.",
     "ci::test_claims.Evidence.test_planned_name": "A planned claim name with no test-site mint cannot support a passing obligation.",
+    "ci::test_claims.Evidence.test_portion_citations": "",
     "ci::test_claims.Evidence.test_python_exhibits": "Designated evidence exhibits resolve only to Python-minted claims; unknown or Rust names refuse while unrelated planned names remain outside support.",
     "ci::test_claims.Evidence.test_register_canonical_form": "Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries and reaches a byte-stable form.",
     "ci::test_claims.Evidence.test_removed_obligation": "Deleting a register row cannot erase an obligation still minted in checked prose.",

@@ -177,6 +177,35 @@ class Evidence(unittest.TestCase):
         with self.assertRaisesRegex(StructuralError,'does not resolve'):
             enforce_entry([row],True,paragraphs={label:dict(citations=set())})
 
+    def test_portion_citations(self):
+        """Claim: A declared paper portion retains its clause as attention without lifting a held or unassigned statement, while an independent plain citation still designs it and malformed or unknown portions refuse.
+        ´claim:testing:portion-citations-cannot-design´
+        ´test:integration:test-portion-citations´
+        """
+        from claims import tracker_rows, tracker_sentences
+        label = 'def:testing:fixture'
+        record = 'ROOT::alg:testing:fixture'
+        hold = 'ROOT::open:testing:fixture'
+        inventory = [dict(label=label, crate='pn-records', kind='type')]
+        evidence = dict(claims=[], obligations=[])
+        text = 'The local rule covers portion{``'+label+'``; local admission, e.g. ordering}.'
+        partial = {record: dict(text=text, citations=set())}
+        row = tracker_rows(inventory, partial, evidence, [])[0]
+        self.assertEqual(row['status'], 'unassigned')
+        self.assertEqual(row['records'], [])
+        self.assertEqual(row['routes'], [])
+        self.assertEqual(row['portions'], [dict(record=record, clause='local admission, e.g. ordering')])
+        self.assertEqual(list(tracker_sentences(text)), [text])
+        partial[hold] = dict(text='``'+label+'``', citations=set())
+        held = dict(claims=[], obligations=[dict(name=hold, status='held', claims=[], hold=hold)])
+        self.assertEqual(tracker_rows(inventory, partial, held, [])[0]['status'], 'held')
+        partial[record]['text'] += ' The whole ``'+label+'`` is designed separately.'
+        self.assertEqual(tracker_rows(inventory, partial, held, [])[0]['status'], 'designed')
+        for malformed in ('portion{``'+label+'``}', 'portion{``'+label+'``; }',
+                          'portion{``def:testing:absent``; local admission}'):
+            with self.subTest(malformed=malformed), self.assertRaises(StructuralError):
+                tracker_rows(inventory, {record: dict(text=malformed, citations=set())}, evidence, [])
+
     def test_executed_admission(self):
         """Claim: An executed-basis entry clears only with its owner's admitted, resolving amendment, and current scoped execution support; absent admission or an unrelated evidence label refuses entry.
         ´claim:testing:executed-admission-requires-resolving-evidence´

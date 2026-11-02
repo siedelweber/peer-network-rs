@@ -3128,6 +3128,7 @@
         "ci::test_claims.Evidence.test_entry_basis_matches_authored_source",
         "ci::test_claims.Evidence.test_enforcement_switch",
         "ci::test_claims.Evidence.test_executed_admission",
+        "ci::test_claims.Evidence.test_portion_citations",
         "ci::test_claims.Evidence.test_missing_area",
         "ci::test_claims.Evidence.test_missing_results_and_mints",
         "ci::test_claims.Evidence.test_orphan_mint",

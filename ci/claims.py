@@ -300,6 +300,8 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
 def tracker_sentences(text):
     """Split prose punctuation outside Markdown code spans, never label dots."""
     masked = re.sub(r'(`+)(.*?)\1', lambda match: 'x'*len(match[0]), text)
+    for match in tracker_portions(text):
+        masked = masked[:match.start()] + 'x'*len(match[0]) + masked[match.end():]
     start = 0
     for boundary in re.finditer(r'[.!?]+(?=\s|$)|\n', masked):
         yield text[start:boundary.end()]
@@ -308,8 +310,21 @@ def tracker_sentences(text):
         yield text[start:]
 
 
+def tracker_portions(text):
+    """Read explicitly bounded attention, retaining its covered clause."""
+    pattern = r'portion\{``([^`\n{}]+)``; ([^{}\n]+)\}'
+    matches = list(re.finditer(pattern, text))
+    if 'portion{' in re.sub(pattern, '', text):
+        raise StructuralError('malformed paper portion citation')
+    if any(not match[2].strip() for match in matches):
+        raise StructuralError('empty paper portion clause')
+    return matches
+
+
 def tracker_paper(text):
     """Admit exact paper citations and exhibits, not nearby free text."""
+    for match in reversed(tracker_portions(text)):
+        text = text[:match.start()] + ' '*len(match[0]) + text[match.end():]
     return (set(re.findall(r'\(`\[PAPER-([^\]`\n]+)\]`\)', text)) |
             set(re.findall(r'(?<!`)``([^`\n]+)``(?!`)', text)))
 
@@ -349,11 +364,16 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
     records = {name: row for name, row in paragraphs.items()
                if row.get('path') != 'docs/design/progress.md'}
     mentions = defaultdict(set)
+    portions = defaultdict(list)
     for name, record in records.items():
         # Exhibits are how the repository names paper kinds the local linter
         # cannot import. Only exact inventory labels qualify, never free text.
         paper = {n.removeprefix('PAPER::') for n in record['citations'] if n.startswith('PAPER::')}
         paper.update(tracker_paper(record['text']))
+        for match in tracker_portions(record['text']):
+            if match[1] not in labels:
+                raise StructuralError('unknown paper portion label: '+match[1])
+            portions[match[1]].append(dict(record=name, clause=match[2].strip()))
         for label in paper & labels:
             mentions[label].add(name)
     for constant in constants:
@@ -443,6 +463,7 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
                   else 'designed' if names else 'unassigned')
         rows.append(dict(label=item['label'], crate=item['crate'], kind=item['kind'], status=status,
                          records=names, routes=routes, record_routes=record_routes, holds=held,
+                         portions=sorted(portions[item['label']], key=lambda part: (part['record'], part['clause'])),
                          tentative=int(status == 'designed' and not designs),
                          record_granular=int(status != 'realized' and bool(record_routes)),
                          bites=sorted({n for n, roots in bite_records.items() if roots.intersection(names)} |
@@ -499,7 +520,7 @@ def tracker_structure(root):
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
     changes = tracker_changes(read('specification-progress.toml'),
                               [dict(category='statement', **row) for row in rows],
-                              ('crate', 'kind', 'records', 'bites'))
+                              ('crate', 'kind', 'records', 'bites', 'portions'))
     artifact = root/'.lane/specification-tracker-structure.json'
     artifact.parent.mkdir(exist_ok=True)
     artifact.write_text(json.dumps(dict(evidence='structural-only', changes=changes), indent=2)+'\n')
@@ -507,7 +528,7 @@ def tracker_structure(root):
         print('SPECIFICATION-TRACKER-MOVED '+json.dumps(change, sort_keys=True), flush=True)
     if changes:
         raise StructuralError('specification tracker records or bites are stale; see .lane/specification-tracker-structure.json')
-    print('SPECIFICATION-TRACKER structure=passed fields=crate,kind,records,bites', flush=True)
+    print('SPECIFICATION-TRACKER structure=passed fields=crate,kind,records,bites,portions', flush=True)
 
 
 def tracker_artifacts(root, projection):
