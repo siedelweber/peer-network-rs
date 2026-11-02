@@ -1,8 +1,8 @@
 # Specification realization tracker at network-v0.31.1 · `reg:progress:overview`
 
-**Convention (Citation coverage)** · `conv:progress:citation-coverage` This tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record cites the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a plain citation claims the whole statement, not merely a neighbouring or selected clause. Shared vocabulary alone is insufficient. Sibling labels, including rejected simplifications, are checked against the same criterion, with uncovered clauses distinguished from adopted ones. A held statement stays held until an unheld record designs its operative clause: a citation covering only part cannot discharge design work retained by held records. When the covered clause has its own label, the record cites that label. Otherwise a portion citation uses the literal opener `portion{`, the statement label in doubled backticks, a semicolon and space, the covered clause in words, and a closing `}`. The clause is nonempty and contains no braces or line breaks. The ordinary label checker retains the existing paper-exhibit boundary; the tracker structural check reads the wrapper, resolves its exact inventory label and refuses malformed wrappers. A portion is attention only, retained with its record and clause in the statement table. It creates no design or evidence route, supplies no bite membership, and cannot lift held or unassigned. A separate plain citation of the same label still has its ordinary whole-statement meaning. This explicit distinction prevents a partial design from discharging the work retained by a hold. Citation placement follows the design, never a desired evidence status.
+**Convention (Citation coverage)** · `conv:progress:citation-coverage` This tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record makes a whole-statement citation to the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a plain citation claims the whole statement, not merely a neighbouring or selected clause. Shared vocabulary alone is insufficient. Sibling labels, including rejected simplifications, are checked against the same criterion, with uncovered clauses distinguished from adopted ones. A held statement stays held until an unheld record designs its operative clause: a citation covering only part cannot discharge design work retained by held records. When the covered clause has its own label, the record cites that label. Otherwise a portion citation uses the literal opener `portion{`, the statement label in doubled backticks, a semicolon and space, the covered clause in words, and a closing `}`. The clause is nonempty and contains no braces or line breaks. The ordinary label checker retains the existing paper-exhibit boundary; the tracker structural check reads the wrapper, resolves its exact inventory label and refuses malformed wrappers. A portion is attention only, retained with its record and clause in the statement table. It creates no design or evidence route, supplies no bite membership, and cannot lift held or unassigned. A separate plain citation of the same label still has its ordinary whole-statement meaning. This explicit distinction prevents a partial design from discharging the work retained by a hold. Citation placement follows the design, never a desired evidence status.
 
-**Convention (Evidence routes)** · `conv:progress:evidence-routes` A statement count is useful only when its route to executed evidence is inspectable. This tracker joins exact inventory labels to labelled design paragraphs harvested by the claim checker and to the cites field of the named design-constants carrier. A paragraph mention is an ordinary PAPER citation or an exact doubled-delimiter inventory label; a constant mention is its whole cites field and retains its constant id. Four route kinds distinguish the evidence: obligation joins a record that is itself a scoped-passed obligation, once per obligation, with its claim count retained in the obligation table; site-claim joins a test site's exact citation of the mentioning record; record-claim joins an exact paper label and an exact claim citation or exhibit in the same sentence of a mentioning record; record joins a mentioning record and scoped obligation when a cited claim occurs only in a separate sentence. Sentence boundaries are periods, question marks or exclamation marks followed by whitespace or the paragraph end, and line endings, outside Markdown code spans; punctuation inside a label or code span does not divide a sentence. Abbreviations such as e.g. and i.e. receive no linguistic exception: their final period followed by whitespace divides sentences unless enclosed in a code span, keeping evidence attribution conservative and mechanically reproducible. A claim witnesses a statement only if its assertions could fail when that statement fails. A test that retains the statement as a premise and checks only its consumer does not witness that premise; its claim belongs in the sentence about the consumer. The same sentence is the existing prose boundary that says which evidence witnesses which statement, without inferring a relation from neighbouring topics. A bare claim exhibit must resolve to one qualified claim identity across the checked claims; ambiguous names refuse rather than guessing a package. Site-claim and record-claim routes retain the individual claim and its scoped-passed obligation. Record routes are record-granular, rendered separately once per record and obligation with their claim count in the support table; they do not realize a label. The record-granular support sub-count counts only statements without a realized route and overlaps held or designed, never realized. A claim must pass all registered executions and combined members; an obligation route requires every declared claim to pass. Obligation routes are obligation-granular: they do not assert that every member claim witnesses every paper label. A constant mention alone cannot create execution evidence. These relations use the checked evidence of (`rule:testing:results`); planned names and manually written implementation-status prose supply no evidence.
+**Convention (Evidence routes)** · `conv:progress:evidence-routes` A statement count is useful only when its route to executed evidence is inspectable. This tracker joins exact inventory labels to labelled design paragraphs harvested by the claim checker and to the cites field of the named design-constants carrier. A paragraph mention is an ordinary PAPER citation or an exact doubled-delimiter inventory label outside a declared portion; a constant mention is its whole cites field and retains its constant id. Four route kinds distinguish the evidence: obligation joins a record that is itself a scoped-passed obligation, once per obligation, with its claim count retained in the obligation table; site-claim joins a test site's exact citation of the mentioning record; record-claim joins an exact paper label and an exact claim citation or exhibit in the same sentence of a mentioning record; record joins a mentioning record and scoped obligation when a cited claim occurs only in a separate sentence. Sentence boundaries are periods, question marks or exclamation marks followed by whitespace or the paragraph end, and line endings, outside Markdown code spans; punctuation inside a label or code span does not divide a sentence. Abbreviations such as e.g. and i.e. receive no linguistic exception: their final period followed by whitespace divides sentences unless enclosed in a code span, keeping evidence attribution conservative and mechanically reproducible. A claim witnesses a statement only if its assertions could fail when that statement fails. A test that retains the statement as a premise and checks only its consumer does not witness that premise; its claim belongs in the sentence about the consumer. The same sentence is the existing prose boundary that says which evidence witnesses which statement, without inferring a relation from neighbouring topics. A bare claim exhibit must resolve to one qualified claim identity across the checked claims; ambiguous names refuse rather than guessing a package. Site-claim and record-claim routes retain the individual claim and its scoped-passed obligation. Record routes are record-granular, rendered separately once per record and obligation with their claim count in the support table; they do not realize a label. The record-granular support sub-count counts only statements without a realized route and overlaps held or designed, never realized. A claim must pass all registered executions and combined members; an obligation route requires every declared claim to pass. Obligation routes are obligation-granular: they do not assert that every member claim witnesses every paper label. A constant mention alone cannot create execution evidence. These relations use the checked evidence of (`rule:testing:results`); planned names and manually written implementation-status prose supply no evidence.
 
 **Convention (Status precedence)** · `conv:progress:status-precedence` Realized means at least one obligation, site-claim or same-sentence record-claim scoped execution route. Held means there is a design mention, no realized route, and every design-bearing mentioning record is a held obligation, a named hold used by a held obligation, or explicitly cites such a hold. Designed means there is a design mention but neither of those conditions holds; an unheld design route prevents held-only classification. The attention-only column is a sub-count of designed: every mentioning record is an open question, observation or declared outstanding-work record, with no design-bearing carrier. Attention mentions cannot override a held design route, and cannot supply realization; when all mentions are attention, named holds still take precedence. Such mentions identify attention or a measurement, not a design decision; they remain visible without being counted as an additional status. Unassigned means there is no exact-label design mention. A statement realized in one scope and held in another counts once as realized, with both routes retained below; this is scoped realization, not universal completion or discharge of the other hold. A failed execution cannot realize a statement and still refuses the gate. Rows whose proposed crate is none form the separate prose total, not implementation completion.
 
@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 55 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 61 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 50 | 52 | 360 | 10 | 22 | 894 |
+| implementation | 1 356 | 48 | 55 | 375 | 10 | 25 | 878 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -34,7 +34,7 @@
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
 | pn-records | 218 | 1 | 9 | 75 | 1 | 3 | 133 |
 | pn-replay | 26 | 0 | 3 | 1 | 0 | 0 | 22 |
-| pn-verification | 281 | 22 | 5 | 42 | 6 | 1 | 212 |
+| pn-verification | 281 | 20 | 8 | 57 | 6 | 4 | 196 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
 
@@ -46,17 +46,17 @@
 | documents | 10 | 0 |
 | execwrap | 62 | 0 |
 | pn-act-profile | 11 | 0 |
-| pn-epoch | 39 | 14 |
+| pn-epoch | 39 | 13 |
 | pn-graph | 74 | 34 |
 | pn-host | 19 | 0 |
 | pn-interchange | 25 | 0 |
 | pn-readouts | 0 | 0 |
-| pn-records | 44 | 14 |
+| pn-records | 44 | 15 |
 | pn-replay | 0 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 494 | 190 |
+| ROOT (repository-wide) | 1 494 | 191 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -65,16 +65,16 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 19 | 0 | 6 | 12 | 0 | 0 | 1 |
 | 2 | 35 | 2 | 5 | 28 | 0 | 0 | 0 |
-| 3 | 21 | 0 | 2 | 18 | 0 | 4 | 1 |
-| 4 | 35 | 2 | 11 | 21 | 0 | 4 | 1 |
-| 5 | 42 | 13 | 5 | 23 | 0 | 3 | 1 |
-| 6 | 24 | 4 | 5 | 14 | 0 | 1 | 1 |
+| 3 | 22 | 0 | 3 | 18 | 0 | 4 | 1 |
+| 4 | 36 | 2 | 11 | 23 | 0 | 4 | 0 |
+| 5 | 44 | 13 | 5 | 25 | 0 | 3 | 1 |
+| 6 | 25 | 4 | 6 | 14 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 6 | 31 | 1 | 1 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 8 | 1 | 4 | 3 | 0 | 0 | 0 |
 | 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
-| 11 | 90 | 14 | 26 | 49 | 0 | 4 | 1 |
-| unlinked | 1 497 | 33 | 17 | 253 | 15 | 13 | 1 194 |
+| 11 | 91 | 14 | 27 | 49 | 0 | 4 | 1 |
+| unlinked | 1 492 | 31 | 18 | 264 | 15 | 16 | 1 179 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -83,9 +83,9 @@
 | certificate | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
-| fixture | 218 | 11 | 2 | 32 | 8 | 0 | 173 |
+| fixture | 218 | 9 | 4 | 47 | 8 | 3 | 158 |
 | function | 216 | 12 | 6 | 94 | 0 | 8 | 104 |
-| invariant check | 517 | 22 | 21 | 130 | 1 | 8 | 344 |
+| invariant check | 517 | 22 | 22 | 130 | 1 | 8 | 343 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
 | policy | 265 | 5 | 18 | 48 | 6 | 3 | 194 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
@@ -106,10 +106,6 @@
 | Mentioning record | Scoped-passed obligation | Passed claims in the record |
 | --- | --- | ---: |
 | ``EPOCH::amend:compiler:invitation-netting-evidence`` | ``ROOT::verif:design:invitation-netting-cases`` | 2 |
-| ``EPOCH::amend:compiler:joined-evidence`` | ``ROOT::dec:design:final-state`` | 3 |
-| ``EPOCH::amend:compiler:joined-evidence`` | ``ROOT::gate:design:bite-5`` | 3 |
-| ``EPOCH::amend:compiler:joined-evidence`` | ``ROOT::verif:design:compiler-cases`` | 3 |
-| ``EPOCH::amend:compiler:joined-evidence`` | ``ROOT::verif:design:core-standing-properties`` | 1 |
 | ``GRAPH::amend:numerics:reference-wall`` | ``ROOT::gate:design:bite-6`` | 4 |
 | ``GRAPH::def:formation:settlement-recognition`` | ``ROOT::gate:design:bite-4`` | 2 |
 | ``GRAPH::def:formation:title-events`` | ``ROOT::gate:design:bite-4`` | 1 |
@@ -531,7 +527,7 @@
 | ``itm:graph:act-authentication-requirements-ordering`` | pn-records; policy | unassigned | | | | |  | | |
 | ``def:graph:act-finalization-epoch`` | pn-records; function | designed | ``ROOT::alg:design:title`` | | | | 4 | | |
 | ``def:graph:act-envelope`` | pn-records; type | unassigned | | | | |  | | |
-| ``def:graph:settlement-recognition`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::alg:design:title`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | |
+| ``def:graph:settlement-recognition`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | ``ROOT::alg:design:title``; the fresh-genesis owner premise in authorization clause (iii)<br>|
 | ``itm:graph:settlement-recognition-completeness`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
 | ``itm:graph:settlement-recognition-reference-binding`` | pn-graph; function | realized | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``GRAPH::def:formation:settlement-recognition``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
 | ``itm:graph:settlement-recognition-authorization`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::open:design:settlement-partner-clause`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
@@ -1365,16 +1361,16 @@
 | ``ver:proposals:review-universality`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:proposals:reference`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:verification:act-ownership`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:binary-projection`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:hyper-projection`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:one-time`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:ownership:binary-projection`` | pn-verification; fixture | designed | ``RECORDS::def:acts:projection`` | | | |  | | |
+| ``ver:ownership:hyper-projection`` | pn-verification; fixture | designed | ``RECORDS::def:acts:projection`` | | | |  | | |
+| ``ver:ownership:one-time`` | pn-verification; fixture | designed | ``RECORDS::def:acts:carrier`` | | | |  | | |
 | ``ver:ownership:one-payload`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:ownership:one-dependency`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:no-leg-dependency`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:ownership:no-leg-dependency`` | pn-verification; fixture | designed | ``RECORDS::def:acts:dependencies`` | | | |  | | |
 | ``ver:ownership:one-approval`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:ownership:one-debit`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:one-stamp`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:ownership:settlement-reference`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:ownership:one-stamp`` | pn-verification; fixture | designed | ``ROOT::rec:design:atomic-admission-evidence`` | | | |  | | |
+| ``ver:ownership:settlement-reference`` | pn-verification; fixture | held | ``ROOT::alg:design:formation`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
 | ``ver:ownership:derived-edge`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:verification:membership-lifecycle`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:membership:control-tensor`` | pn-verification; fixture | unassigned | | | | |  | | |
@@ -1385,14 +1381,14 @@
 | ``subsec:verification:in-place-revision`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:revision:terminal-target-freshness`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:revision:genesis-force`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:revision:bid-fresh-mint-only`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:revision:bid-fresh-mint-only`` | pn-verification; fixture | designed | ``GRAPH::def:formation:bid`` | | | |  | | |
 | ``ver:revision:chain-ordered-head`` | none; none | unassigned | | | | |  | | |
 | ``ver:revision:sibling-branch-incumbent`` | none; none | unassigned | | | | |  | | |
 | ``ver:revision:item-title-selected`` | none; none | unassigned | | | | |  | | |
 | ``ver:revision:past-epochs-replay`` | none; none | unassigned | | | | |  | | |
 | ``ver:revision:reduced-head-remains`` | none; none | unassigned | | | | |  | | |
 | ``subsec:verification:uniform-participant`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:participant:four-cases`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:participant:four-cases`` | pn-verification; fixture | unassigned | | | | |  | `docs/templates/packages/graph/README.md.j2` `packages/graph/README.md` | ``GRAPH::def:formation:participant``; one common projection shape across the four Participant cases<br>|
 | ``ver:participant:self-loop-registers`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:participant:forced-parity`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:participant:move-departs-origin`` | none; none | unassigned | | | | |  | | |
@@ -1404,7 +1400,7 @@
 | ``subsec:verification:reference-constants`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``tbl:verification:reference-constants`` | pn-verification; fixture | designed | ``CONSTANTS::const.epoch.margin`` | | | |  | | |
 | ``ver:floor:ridge-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::bound.dynamics.ridge_p_hi`` ``CONSTANTS::bound.dynamics.ridge_p_lo`` ``CONSTANTS::result.ridge.bracket_width`` ``CONSTANTS::result.ridge.cells`` ``CONSTANTS::result.ridge.interval_dps`` ``CONSTANTS::result.ridge.max_depth`` ``CONSTANTS::result.ridge.root_decimal_places`` ``ROOT::rule:design:ridge-analytic-premises`` | | | |  | | |
-| ``ver:floor:below-door`` | pn-verification; fixture | designed | ``ROOT::amend:design:ridge-fragment-admission`` | | | |  | | |
+| ``ver:floor:below-door`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::amend:design:ridge-fragment-admission``; the structural-floor comparison with the default door<br>|
 | ``ver:floor:fixture-regime`` | pn-verification; fixture | designed | ``CONSTANTS::const.epoch.safefloor`` ``CONSTANTS::result.epoch.fixture_wall_above_floor`` ``CONSTANTS::result.epoch.reference_floor_margin`` ``ROOT::amend:design:two-map-measurements`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::rule:design:reference-wall-branches`` | | | |  | | |
 | ``ver:floor:fixture-declaration-invariant`` | pn-verification; fixture | designed | ``CONSTANTS::result.epoch.fixture_floor_declaration_invariant`` | | | |  | | |
 | ``ver:floor:recoinage-invariant`` | pn-verification; fixture | unassigned | | | | |  | | |
@@ -1426,37 +1422,37 @@
 | ``ver:standing:support-preservation`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:universal-act-accounting`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:hyper-act-single-accounting`` | pn-verification; fixture | unassigned | | | | | 1 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/inputs/design-bites.toml` | |
-| ``ver:standing:domain-proportionality`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:settlement-event-persistence`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:title-coupling`` | pn-verification; fixture | unassigned | | | | | 4 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/inputs/design-bites.toml` | |
+| ``ver:standing:domain-proportionality`` | pn-verification; fixture | designed | ``ROOT::alg:design:base`` | | | | 5 | | |
+| ``ver:standing:settlement-event-persistence`` | pn-verification; fixture | designed | ``ROOT::inv:design:settlement-standing`` | | | | 4 | | |
+| ``ver:standing:title-coupling`` | pn-verification; fixture | designed | ``ROOT::inv:design:settlement-standing`` | | | | 4 | | |
 | ``ver:standing:artifact-heavy-author`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:anchored-count-invariant`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:epoch-permutation-invariance`` | pn-verification; fixture | unassigned | | | | | 5 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-bites.toml` `docs/inputs/design-questions.toml` | |
+| ``ver:standing:anchored-count-invariant`` | pn-verification; fixture | designed | ``ROOT::alg:design:ledger`` | | | | 5 | | |
+| ``ver:standing:epoch-permutation-invariance`` | pn-verification; fixture | unassigned | | | | | 5 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/datasets/org.peer-network.design.questions.json` `docs/design/implementation.md` `docs/design/questions.md` `docs/inputs/design-bites.toml` `docs/inputs/design-questions.toml` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::dec:design:final-state``; dependency-compliant permutation independence of the compiled inputs<br>|
 | ``ver:standing:warm-start-independence`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:ledger-invariance`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:artifact-crowding`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``ver:standing:relative-odds`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:rival-share-derivatives`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:wall-flatness`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:hop-order-convention`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:standing:hop-order-convention`` | pn-verification; fixture | designed | ``ROOT::alg:design:transport`` | | | |  | | |
 | ``ver:standing:self-retention-manipulation`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``ver:standing:no-tilt-anchor`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
-| ``ver:standing:tilt-backoff`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
+| ``ver:standing:tilt-backoff`` | pn-verification; fixture | held | ``ROOT::dec:design:rung-verdicts`` | | | ``ROOT::dec:design:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | | |
 | ``ver:standing:prior-screen`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:near-wall-clique`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
-| ``ver:standing:emission-conservation`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:emission-zero-anchor`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:emission-relay`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:emission-wall-symmetry`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:standing:emission-conservation`` | pn-verification; fixture | designed | ``ROOT::rule:design:conservation-sensitivity`` | | | |  | | |
+| ``ver:standing:emission-zero-anchor`` | pn-verification; fixture | designed | ``ROOT::amend:design:integrated-compiled-conservation`` | | ``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::verif:design:core-standing-properties``<br>| |  | | |
+| ``ver:standing:emission-relay`` | pn-verification; fixture | designed | ``ROOT::amend:design:integrated-compiled-conservation`` | | ``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::verif:design:core-standing-properties``<br>| |  | | |
+| ``ver:standing:emission-wall-symmetry`` | pn-verification; fixture | designed | ``EPOCH::def:compiler:emission-support`` | | | |  | | |
 | ``ver:standing:emission-certificate-transfer`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:emission-no-tilt`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:emission-export-bound`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:standing:emission-export-bound`` | pn-verification; fixture | designed | ``ROOT::amend:design:integrated-compiled-conservation`` | | ``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::verif:design:core-standing-properties``<br>| |  | | |
 | ``ver:standing:emission-rate-preservation`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``ver:standing:emission-self-inertia`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:emission-split`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:standing:actor-splitting`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:split-admissibility`` | pn-verification; fixture | realized | ``EPOCH::amend:compiler:joined-evidence`` | record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::dec:design:final-state``<br>record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::gate:design:bite-5``<br>record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::verif:design:compiler-cases``<br>| ``EPOCH::amend:compiler:joined-evidence``; ``ROOT::dec:design:final-state``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::gate:design:bite-5``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::verif:design:compiler-cases``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::verif:design:core-standing-properties``<br>| |  | | |
-| ``ver:standing:split-fold-export`` | pn-verification; fixture | realized | ``EPOCH::amend:compiler:joined-evidence`` | record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::dec:design:final-state``<br>record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::gate:design:bite-5``<br>record-claim; ``EPOCH::amend:compiler:joined-evidence``; ``EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base``; ``ROOT::verif:design:compiler-cases``<br>| ``EPOCH::amend:compiler:joined-evidence``; ``ROOT::dec:design:final-state``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::gate:design:bite-5``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::verif:design:compiler-cases``<br>``EPOCH::amend:compiler:joined-evidence``; ``ROOT::verif:design:core-standing-properties``<br>| |  | | |
+| ``ver:standing:split-admissibility`` | pn-verification; fixture | unassigned | | | | |  | `docs/templates/packages/epoch/README.md.j2` `packages/epoch/README.md` | ``EPOCH::amend:compiler:joined-evidence``; whole-act partition and proportional source ledger pairs<br>|
+| ``ver:standing:split-fold-export`` | pn-verification; fixture | unassigned | | | | |  | `docs/templates/packages/epoch/README.md.j2` `packages/epoch/README.md` | ``EPOCH::amend:compiler:joined-evidence``; different compiled bases after partition<br>|
 | ``ver:standing:split-distinct-targets`` | pn-verification; fixture | designed | ``ROOT::amend:design:certified-exporting-splits`` | | | |  | | |
 | ``ver:standing:split-positive-rung`` | pn-verification; fixture | designed | ``ROOT::amend:design:certified-exporting-splits`` | | | |  | | |
 | ``ver:standing:split-receiving`` | pn-verification; fixture | unassigned | | | | |  | | |
@@ -1513,7 +1509,7 @@
 | ``subsec:verification:bootstrapping-attenuation`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:verification:boundary-admission`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:boundary:dependent-set-pricing`` | pn-verification; fixture | designed | ``CONSTANTS::result.epoch.subsidy_bound_m1`` ``CONSTANTS::result.epoch.subsidy_count_m1`` | | | |  | | |
-| ``ver:boundary:safety-not-averaged`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:boundary:safety-not-averaged`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:admission``; individual safety cannot be replaced by a passing epoch average<br>|
 | ``ver:boundary:regime-replay`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``ver:boundary:invalid-polfloor`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:boundary:safety-replay`` | pn-verification; fixture | designed | ``CONSTANTS::const.epoch.safefloor_m1`` ``CONSTANTS::const.epoch.safethresh_m1`` | | | |  | | |
@@ -1523,12 +1519,12 @@
 | ``subsec:verification:settlement-walkthrough`` | pn-verification; fixture | designed | ``CONSTANTS::fixture.bid_full.direct`` ``CONSTANTS::fixture.bid_full.indirect`` ``CONSTANTS::fixture.bid_full.maturity`` ``CONSTANTS::result.bid_full.boltz`` ``CONSTANTS::result.bid_full.coherence`` ``CONSTANTS::result.bid_full.detscore`` ``CONSTANTS::result.bid_full.entropy`` ``CONSTANTS::result.bid_full.frobenius`` ``CONSTANTS::result.bid_full.weight`` | | | |  | | |
 | ``ver:settlement:bid-promotion-verification`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:raw:bid-maturity-pair`` | pn-readouts; fixture | designed (attention only) | ``ROOT::obs:design:released-witnesses`` | | | |  | | |
-| ``ver:settlement:same-epoch-cancel`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:settlement:same-epoch-cancel`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:recognition``; cancellation through the Ratify epoch defeats recognition<br>|
 | ``ver:settlement:suppressed-cancel`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:settlement:mutual-consumption`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:settlement:mutual-consumption`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:title``; consumed identities cannot be reused and retry needs fresh records<br>|
 | ``ver:settlement:coerced-unfair`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:verification:authored-act-fixtures`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:handshake:pre-commitment`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:handshake:pre-commitment`` | pn-verification; fixture | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | ``ROOT::amend:identity:act-proposal-admission``; recomputation of the supplied proposal pre-commitment<br>|
 | ``ver:handshake:salting`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:approval`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:atomicity`` | pn-verification; fixture | unassigned | | | | |  | | |
@@ -1815,7 +1811,7 @@
 | ``def:graph:title-certificate-fault`` | pn-records; data type | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``cond:graph:boundary-accountability-title-certificate`` | pn-verification; invariant check | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``rem:graph:settlement-party-mismatch`` | pn-graph; invariant check | realized | ``ROOT::verif:design:settlement-party-cases`` | obligation; ``ROOT::verif:design:settlement-party-cases``; ``ROOT::verif:design:settlement-party-cases``<br>record-claim; ``ROOT::verif:design:settlement-party-cases``; ``VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization``; ``ROOT::verif:design:settlement-party-cases``<br>| | |  | | |
-| ``rem:graph:title-certificate-is-summary`` | pn-verification; invariant check | unassigned | | | | |  | | |
+| ``rem:graph:title-certificate-is-summary`` | pn-verification; invariant check | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``lem:epoch:tentative-fold-agreement`` | pn-verification; invariant check | designed | ``ROOT::alg:design:title`` ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 4 | | |
 | ``rem:epoch:epoch-history-is-the-marker-sequence`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:final-ledger`` ``ROOT::alg:design:ledger`` | | | | 5 | | |
 | ``cond:deployment:title-certificate-monitoring`` | pn-host; policy | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
