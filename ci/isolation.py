@@ -29,6 +29,59 @@ def storage_root(root):
     return base/hashlib.sha256(str(root).encode()).hexdigest()
 
 
+def retention(root, source, imports):
+    """Expire idle owner artifacts on distinct imports, never while in use."""
+    if type(imports) is not int or imports < 1:
+        raise ValueError('isolation retention must be a positive import count')
+    base = storage_root(root)
+    base.mkdir(parents=True, exist_ok=True)
+    # The pre-external layout belongs to this checkout alone. Keep lock inodes
+    # stable so an older invocation waiting on one cannot lose its exclusion.
+    for owner in sorted((root/'target/i').glob('*/owner')):
+        with (owner.parent/'lock').open('a') as old_lock:
+            try:
+                fcntl.flock(old_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                continue
+            for child in ('s', 'c'):
+                if (owner.parent/child).exists():
+                    shutil.rmtree(owner.parent/child)
+                    print(f'ISOLATION-SWEEP owner={owner.read_text()} artifact={child} reason=superseded-storage', flush=True)
+    identity = subprocess.check_output(['git', '-C', str(root), 'rev-parse', source+'^{tree}'], text=True).strip()
+    with (base/'retention.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        state_path = base/'retention.json'
+        state = json.loads(state_path.read_text()) if state_path.exists() else dict(trees=[], generation=0)
+        if identity not in state['trees']:
+            state['trees'].append(identity)
+            state['generation'] += 1
+        temporary = state_path.with_suffix('.tmp')
+        temporary.write_text(json.dumps(state)+'\n')
+        temporary.replace(state_path)
+        for owner in sorted(base.glob('*/owner')):
+            directory = owner.parent
+            with (directory/'lock').open('a') as owner_lock:
+                try:
+                    fcntl.flock(owner_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    continue
+                used = directory/'last-use'
+                if not used.exists():
+                    used.write_text(str(state['generation']))
+                if state['generation']-int(used.read_text()) >= imports:
+                    for child in ('s', 'c'):
+                        if (directory/child).exists():
+                            shutil.rmtree(directory/child)
+                            print(f'ISOLATION-SWEEP owner={owner.read_text()} artifact={child} idle_imports={state["generation"]-int(used.read_text())}', flush=True)
+
+
+def target_sizes(root):
+    """Report allocated bytes for each checkout-owned isolation partition."""
+    for owner in sorted(storage_root(root).glob('*/owner')):
+        result = subprocess.check_output(['du', '-s', '--block-size=1', str(owner.parent)], text=True)
+        print(f'TARGET-DIRS owner={owner.read_text()} bytes={result.split()[0]} path={owner.parent}', flush=True)
+
+
 @contextmanager
 def tracked_snapshot(root):
     """Give a traversing census only index-enumerated regular source files."""
@@ -83,6 +136,9 @@ def workspace(root, name, source):
         if binding.exists() and binding.read_text() != name:
             raise ValueError('isolation owner key collision')
         binding.write_text(name)
+        state = base.parent/'retention.json'
+        generation = json.loads(state.read_text())['generation'] if state.exists() else 0
+        (base/'last-use').write_text(str(generation))
         tree = base/'s'
         # Older shared clones borrow objects that the parent may prune.
         if (tree/'.git/objects/info/alternates').exists():
@@ -110,6 +166,10 @@ def workspace(root, name, source):
         key = hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()).hexdigest()
         target = base/'c'/key
         target.mkdir(parents=True, exist_ok=True)
+        for obsolete in target.parent.iterdir():
+            if obsolete != target and obsolete.is_dir():
+                shutil.rmtree(obsolete)
+                print(f'ISOLATION-SWEEP owner={name} artifact=target reason=superseded-configuration', flush=True)
         (tree/'.lane').mkdir()
         print(f'ISOLATION owner={name} source={source} tree={tree} target={target} cache=retained cargo=fingerprinted', flush=True)
         layout = hashlib.sha256(json.dumps(dict(storage=str(base.parent), configuration=configuration,
@@ -117,6 +177,8 @@ def workspace(root, name, source):
         try:
             yield tree, target
         finally:
+            if state.exists():
+                (base/'last-use').write_text(str(json.loads(state.read_text())['generation']))
             log = tree/'.lane/cargo-work.jsonl'
             rows = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
             print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, layout=layout,
@@ -169,6 +231,14 @@ def generate(action):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2 and sys.argv[1] in {'retention', 'target-sizes'}:
+        if sys.argv[1] == 'target-sizes':
+            target_sizes(Path.cwd())
+        else:
+            from devperf import budgets
+            retention(Path.cwd(), os.environ.get('PN_IMPORT_BASE', os.environ['PN_GATE_SOURCE']),
+                      budgets('docs/inputs/devperf-budgets.toml')['gate']['isolation_retention_imports'])
+        raise SystemExit(0)
     if len(sys.argv) > 2 and sys.argv[1] == 'cargo-work':
         raise SystemExit(cargo_work(sys.argv[2:]))
     if len(sys.argv) == 2 and sys.argv[1] == 'import-base':

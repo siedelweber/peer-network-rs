@@ -278,6 +278,28 @@ assert (root/'payload').read_text() == 'committed'
                     with workspace(root, 'host-observation-runtime' if host else 'wallet-conformance', source) as (_, target):
                         self.assertNotEqual(target, original_target)
                         self.assertFalse((target/'retained').exists())
+                self.assertFalse(original_target.exists())
+                from isolation import retention
+                legacy = root/'target/i/legacy'
+                (legacy/'c').mkdir(parents=True)
+                (legacy/'s').mkdir()
+                (legacy/'owner').write_text(owner)
+                retention(root, source, 1)
+                self.assertFalse((legacy/'s').exists())
+                self.assertFalse((legacy/'c').exists())
+                self.assertTrue((legacy/'lock').exists())
+                with workspace(root, owner, source) as (_, target):
+                    retention(root, changed_lock, 1)
+                    self.assertTrue(target.exists())
+                retention(root, source, 1)
+                self.assertTrue(target.exists())
+                # A new import ages an idle owner; repeating an old tree does not.
+                (root/'expiry').write_text('next import')
+                git('add', 'expiry')
+                git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'expiry')
+                retention(root, git('rev-parse', 'HEAD'), 1)
+                self.assertFalse(target.exists())
+                self.assertFalse(isolated.exists())
             finally:
                 os.chdir(original)
         print(f'COMMIT-ISOLATION-WITNESS suite={module} clean=passed moving=passed results=identical handback=atomic sibling-findings=unchanged')

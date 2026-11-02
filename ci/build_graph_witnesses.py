@@ -3,6 +3,7 @@
 import copy
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
@@ -104,6 +105,7 @@ def exercise(case):
         case.assertEqual(manifest.stat().st_mtime_ns, before)
         print('GRAPH-WITNESS vendor=passed generated=passed fresh-repeat=passed')
 
+        unmutated = json.loads(report.read_text())['census']
         # Pause the census process after snapshot hand-off, then create and
         # remove an actual isolated checkout before allowing the reader on.
         import socket
@@ -140,6 +142,11 @@ def exercise(case):
                             env=os.environ | {'PN_ISOLATION_ROOT':external}, timeout=30)
                         case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
                         case.assertIn('created=true removed=true', result.stdout)
+                        live = root/'target/moving-census/objects'
+                        live.mkdir(parents=True)
+                        (live/'transient').write_text('untracked live-root mutation')
+                        shutil.rmtree(live.parent)
+                        (root/'.lane/moving-census').write_text('changed while census paused')
                         connection.sendall(b'R')
                 except BaseException as error:
                     errors.append(error)
@@ -154,6 +161,11 @@ def exercise(case):
             case.assertFalse(worker.is_alive())
             case.assertEqual(errors, [])
         address.unlink()
+        (root/'.lane/moving-census').unlink()
+        mutated = json.loads(report.read_text())['census']
+        for field in ('tracked', 'declared', 'excluded', 'failures', 'clean'):
+            case.assertEqual(mutated[field], unmutated[field])
+        print('GRAPH-WITNESS live-root=mutated census-counts=identical')
         print('GRAPH-WITNESS tracked-census=passed concurrent-isolated-tree=created-and-removed barrier=ordered')
 
         # Direct Ninja invocation retains Meson's regeneration edge. Reusing
