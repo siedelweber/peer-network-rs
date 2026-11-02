@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 52 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 49 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 47 | 44 | 281 | 9 | 16 | 984 |
+| implementation | 1 356 | 52 | 46 | 338 | 8 | 20 | 920 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,7 +28,7 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 19 | 7 | 70 | 2 | 7 | 275 |
+| pn-epoch | 371 | 24 | 9 | 127 | 1 | 11 | 211 |
 | pn-graph | 223 | 5 | 7 | 61 | 0 | 4 | 150 |
 | pn-host | 166 | 0 | 12 | 29 | 1 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
@@ -56,25 +56,25 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 480 | 179 |
+| ROOT (repository-wide) | 1 480 | 180 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
 
 | Bite | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | 15 | 0 | 3 | 11 | 0 | 0 | 1 |
-| 2 | 31 | 2 | 3 | 26 | 0 | 0 | 0 |
+| 1 | 16 | 0 | 4 | 11 | 0 | 0 | 1 |
+| 2 | 32 | 2 | 3 | 27 | 0 | 0 | 0 |
 | 3 | 21 | 0 | 2 | 18 | 0 | 4 | 1 |
-| 4 | 32 | 2 | 8 | 21 | 0 | 4 | 1 |
-| 5 | 34 | 9 | 4 | 20 | 0 | 3 | 1 |
-| 6 | 17 | 4 | 4 | 8 | 0 | 1 | 1 |
-| 7 | 26 | 1 | 4 | 19 | 0 | 1 | 2 |
+| 4 | 33 | 2 | 9 | 21 | 0 | 4 | 1 |
+| 5 | 41 | 13 | 5 | 22 | 0 | 3 | 1 |
+| 6 | 24 | 4 | 5 | 14 | 0 | 1 | 1 |
+| 7 | 33 | 1 | 4 | 26 | 0 | 1 | 2 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 | 0 |
 | 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
-| 11 | 79 | 10 | 20 | 48 | 0 | 4 | 1 |
-| unlinked | 1 531 | 34 | 17 | 198 | 15 | 7 | 1 282 |
+| 11 | 85 | 14 | 22 | 48 | 0 | 4 | 1 |
+| unlinked | 1 509 | 35 | 17 | 239 | 14 | 11 | 1 218 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -84,10 +84,10 @@
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 11 | 2 | 30 | 6 | 0 | 175 |
-| function | 216 | 11 | 7 | 76 | 0 | 6 | 122 |
-| invariant check | 517 | 21 | 15 | 87 | 2 | 4 | 394 |
+| function | 216 | 12 | 7 | 92 | 0 | 8 | 105 |
+| invariant check | 517 | 24 | 17 | 121 | 1 | 6 | 355 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 4 | 15 | 32 | 6 | 3 | 214 |
+| policy | 265 | 5 | 15 | 39 | 6 | 3 | 206 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
 
@@ -113,6 +113,7 @@
 | ``GRAPH::amend:numerics:reference-wall`` | ``ROOT::gate:design:bite-6`` | 4 |
 | ``GRAPH::def:formation:settlement-recognition`` | ``ROOT::gate:design:bite-4`` | 2 |
 | ``GRAPH::def:formation:title-events`` | ``ROOT::gate:design:bite-4`` | 1 |
+| ``GRAPH::def:numerics:activation-endpoints`` | ``ROOT::gate:design:bite-6`` | 1 |
 | ``ROOT::amend:design:bite-six-activation`` | ``ROOT::gate:design:bite-6`` | 3 |
 | ``ROOT::amend:design:bite-six-conserved-solve`` | ``ROOT::dec:design:activation-evaluation-policy`` | 2 |
 | ``ROOT::amend:design:bite-six-conserved-solve`` | ``ROOT::dec:design:final-state`` | 1 |
@@ -122,6 +123,10 @@
 | ``ROOT::amend:design:bite-six-costs`` | ``ROOT::dec:design:activation-evaluation-policy`` | 2 |
 | ``ROOT::amend:design:bite-six-costs`` | ``ROOT::gate:design:bite-6`` | 2 |
 | ``ROOT::amend:design:bite-six-fence`` | ``ROOT::gate:design:bite-6`` | 2 |
+| ``ROOT::amend:design:integrated-compiled-conservation`` | ``ROOT::dec:design:final-state`` | 1 |
+| ``ROOT::amend:design:integrated-compiled-conservation`` | ``ROOT::gate:design:bite-5`` | 1 |
+| ``ROOT::amend:design:integrated-compiled-conservation`` | ``ROOT::gate:design:bite-6`` | 1 |
+| ``ROOT::amend:design:integrated-compiled-conservation`` | ``ROOT::verif:design:core-standing-properties`` | 1 |
 | ``ROOT::amend:design:reference-wall-measurements`` | ``ROOT::gate:design:bite-6`` | 5 |
 | ``ROOT::open:design:invitation-withdrawal-edition`` | ``ROOT::gate:design:bite-5`` | 1 |
 | ``ROOT::open:design:invitation-withdrawal-edition`` | ``ROOT::verif:design:compiler-cases`` | 1 |
@@ -242,17 +247,17 @@
 | ``subsec:comparator:faithfulness`` | pn-records; policy | unassigned | | | | |  | |
 | ``post:comparator:faithfulness`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``cond:comparator:faithfulness-source`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-numeraire`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-measurement`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cond:comparator:faithfulness-numeraire`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` | | | |  | |
+| ``cond:comparator:faithfulness-measurement`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:exact-anchor`` | | | |  | |
 | ``cond:comparator:faithfulness-conservation`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-epoch-set`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-title`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cond:comparator:faithfulness-epoch-set`` | pn-epoch; invariant check | realized | ``ROOT::dec:design:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | | 5, 11 | |
+| ``cond:comparator:faithfulness-title`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``cond:comparator:faithfulness-memorylessness`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``cond:comparator:faithfulness-universal-act-weighing`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-domain-weights`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cond:comparator:faithfulness-domain-weights`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | |
 | ``cond:comparator:faithfulness-responsive-tilt`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``cond:comparator:faithfulness-cluster-rate`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``cond:comparator:faithfulness-final-set-admission`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cond:comparator:faithfulness-final-set-admission`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` | | | | 7 | |
 | ``ins:comparator:universal-amplifier`` | none; none | unassigned | | | | |  | |
 | ``rem:comparator:amplifier-rendering`` | none; none | unassigned | | | | |  | |
 | ``rem:comparator:conserved-allocation-scope`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -291,7 +296,7 @@
 | ``itm:network:conserved-standing-package-evidence`` | pn-host; type | unassigned | | | | |  | |
 | ``tbl:network:object-taxonomy`` | pn-host; policy | unassigned | | | | |  | |
 | ``rem:network:taxonomy-subtleties`` | pn-host; policy | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | |
-| ``rem:network:within-epoch-solve-freeze`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
+| ``rem:network:within-epoch-solve-freeze`` | pn-epoch; invariant check | realized | ``ROOT::dec:design:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | | 5, 11 | |
 | ``subsec:network:host-contract`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``post:network:host-contract`` | pn-host; type | designed | ``EPOCH::def:compiler:completed-package`` ``ROOT::dec:design:admission`` ``ROOT::dec:design:final-membership`` ``ROOT::dec:design:public-inputs`` ``ROOT::dec:design:publication`` ``ROOT::dec:design:replay`` ``ROOT::model:design:package`` ``ROOT::req:vision:admission`` ``ROOT::req:vision:final-membership`` ``ROOT::req:vision:public-inputs`` ``ROOT::req:vision:publication`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 8, 9, 11 | |
 | ``itm:network:host-contract-accepted-records`` | pn-host; type | unassigned | | | | |  | |
@@ -357,7 +362,7 @@
 | ``rem:graph:chain-requirement-sited-in-fold`` | pn-records; policy | unassigned | | | | |  | |
 | ``def:graph:canonical-erasure-default`` | none; none | unassigned | | | | |  | |
 | ``rem:graph:parallel-undefined`` | pn-host; policy | unassigned | | | | |  | |
-| ``rem:graph:grounded-target-does-not-imply-allocation`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``rem:graph:grounded-target-does-not-imply-allocation`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``rem:graph:right-to-leave-completed`` | pn-records; policy | unassigned | | | | |  | |
 | ``subsec:graph:partition-and-passivity`` | pn-records; policy | unassigned | | | | |  | |
 | ``def:graph:partition`` | pn-records; type | unassigned | | | | |  | |
@@ -490,7 +495,7 @@
 | ``itm:graph:hyper-edge-reduction-raw-path`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``itm:graph:hyper-edge-reduction-attribution`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``itm:graph:hyper-edge-reduction-standing`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``cor:graph:standing-act-atomicity`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cor:graph:standing-act-atomicity`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | |
 | ``subsec:graph:interaction-domains`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``tbl:graph:interaction-domains`` | pn-records; type | unassigned | | | | |  | |
 | ``def:graph:mask-promotion-criterion`` | pn-graph; function | unassigned | | | | |  | |
@@ -698,14 +703,14 @@
 | ``eq:epoch:final-residual-balance`` | pn-epoch; function | designed | ``EPOCH::def:compiler:final-ledger`` | | | | 5 | |
 | ``eq:epoch:final-action-count`` | pn-epoch; function | designed | ``EPOCH::def:compiler:final-ledger`` | | | |  | |
 | ``subsec:epoch:standing-quantization`` | pn-epoch; function | unassigned | | | | |  | |
-| ``post:epoch:standing-quantization`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``rem:epoch:causality-without-intra-epoch-standing`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``post:epoch:standing-quantization`` | pn-epoch; policy | designed | ``ROOT::alg:design:admission`` | | | | 7 | |
+| ``rem:epoch:causality-without-intra-epoch-standing`` | pn-epoch; policy | realized | ``ROOT::dec:design:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | | 5, 11 | |
 | ``subsec:epoch:standing-principles`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``post:epoch:standing-is-measurement`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``post:epoch:standing-is-measurement`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:exact-anchor`` | | | |  | |
 | ``post:epoch:standing-pair-mass-conservation`` | pn-epoch; policy | held | ``ROOT::dec:design:conservation`` ``ROOT::req:vision:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | |
 | ``thm:epoch:standing-pair-mass-conservation`` | pn-epoch; invariant check | realized | ``ROOT::amend:design:integrated-compiled-conservation`` | record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | |
 | ``post:epoch:standing-epoch-set-determinism`` | pn-epoch; policy | realized | ``EPOCH::def:compiler:joined-state`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | |
-| ``def:epoch:tentative-title-fold`` | pn-epoch; function | unassigned | | | | |  | |
+| ``def:epoch:tentative-title-fold`` | pn-epoch; function | designed | ``GRAPH::def:formation:title-events`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| |  | |
 | ``post:epoch:settlement-standing-title-coupling`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:recipient-resolution`` ``GRAPH::def:formation:title-events`` ``ROOT::alg:design:recipients`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 5, 11 | |
 | ``post:epoch:standing-memorylessness`` | pn-epoch; policy | realized | ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | |
 | ``post:epoch:universal-act-weighing`` | pn-epoch; policy | held | ``ROOT::dec:design:complete-acts`` ``ROOT::req:vision:complete-acts`` | | | ``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 4, 11 | |
@@ -715,10 +720,10 @@
 | ``subsec:epoch:standing-allocation-inputs`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``def:epoch:standing-fold-cell`` | pn-epoch; function | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::alg:design:cells`` | | | | 5 | |
 | ``def:epoch:effective-act-contribution`` | pn-epoch; function | designed | ``CONSTANTS::result.vouch.alice_bob`` ``CONSTANTS::result.vouch.alice_carol`` ``CONSTANTS::result.vouch.alice_eve`` ``CONSTANTS::result.vouch.bob_carol`` ``CONSTANTS::result.vouch.bob_dave`` ``CONSTANTS::result.vouch.bob_eve`` ``CONSTANTS::result.vouch.carol_dave`` ``CONSTANTS::result.vouch.carol_eve`` ``CONSTANTS::result.vouch.dave_eve`` ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::alg:design:cells`` | | | | 5 | |
-| ``rem:epoch:hostility-is-priced`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``rem:epoch:hostility-is-priced`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` | | | |  | |
 | ``def:epoch:standing-recipient-resolution`` | pn-epoch; function | designed | ``EPOCH::def:compiler:recipient-resolution`` ``GRAPH::def:formation:title-events`` ``ROOT::alg:design:recipients`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| | 5 | |
 | ``rem:epoch:allocation-index-set`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | |
-| ``case:epoch:allocation-index-set-unanchored-recipient`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``case:epoch:allocation-index-set-unanchored-recipient`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | |
 | ``tbl:epoch:standing-recipient-resolution`` | pn-epoch; function | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``def:epoch:standing-domain-profile`` | pn-epoch; function | realized | ``EPOCH::def:compiler:boundary-inputs`` ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | |
 | ``tbl:epoch:standing-domain-weights`` | pn-epoch; function | designed | ``EPOCH::def:compiler:boundary-inputs`` | | | |  | |
@@ -730,9 +735,9 @@
 | ``def:epoch:standing-tilt-profile`` | pn-epoch; function | designed | ``GRAPH::def:numerics:activation`` ``ROOT::amend:design:bite-six-activation`` ``ROOT::open:design:nrz-capabilities`` | | ``ROOT::amend:design:bite-six-activation``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``def:epoch:hop-allocation-score`` | pn-epoch; function | realized | ``GRAPH::def:numerics:activation`` ``ROOT::amend:design:bite-six-activation`` ``ROOT::amend:design:bite-six-conserved-solve`` | record-claim; ``ROOT::amend:design:bite-six-conserved-solve``; ``EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes``; ``ROOT::dec:design:activation-evaluation-policy``<br>record-claim; ``ROOT::amend:design:bite-six-conserved-solve``; ``EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::amend:design:bite-six-activation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::dec:design:activation-evaluation-policy``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::verif:design:core-standing-properties``<br>| |  | |
 | ``eq:epoch:hop-allocation-score`` | pn-epoch; function | unassigned | | | | |  | |
-| ``eq:epoch:hop-allocation-matrix`` | pn-epoch; function | unassigned | | | | |  | |
-| ``def:epoch:hop-allocation-matrix`` | pn-epoch; function | unassigned | | | | |  | |
-| ``rem:epoch:mass-owner-relative-hop-order`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``eq:epoch:hop-allocation-matrix`` | pn-epoch; function | designed | ``ROOT::alg:design:transport`` | | | |  | |
+| ``def:epoch:hop-allocation-matrix`` | pn-epoch; function | designed | ``ROOT::alg:design:transport`` | | | |  | |
+| ``rem:epoch:mass-owner-relative-hop-order`` | pn-epoch; policy | designed | ``ROOT::alg:design:transport`` | | | |  | |
 | ``prop:epoch:relative-allocation-odds`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``eq:epoch:relative-allocation-odds`` | pn-epoch; function | unassigned | | | | |  | |
 | ``prop:epoch:rival-allocation-response`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -742,22 +747,22 @@
 | ``itm:epoch:rival-allocation-response-row-independence`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``prop:epoch:standing-support-preservation`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:emission-support`` | | | |  | |
 | ``def:epoch:standing-depth-mass`` | pn-epoch; function | designed | ``EPOCH::def:compiler:boundary-inputs`` | | | |  | |
-| ``def:epoch:source-emission`` | pn-epoch; function | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
+| ``def:epoch:source-emission`` | pn-epoch; function | designed | ``EPOCH::def:compiler:emission-support`` | | | |  | |
 | ``eq:epoch:source-emission`` | pn-epoch; function | designed | ``EPOCH::def:compiler:emission-support`` | | | |  | |
 | ``rem:epoch:source-emission-rationale`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``def:epoch:finite-depth-conserved-transport`` | pn-epoch; function | realized | ``EPOCH::def:compiler:exact-anchor`` ``GRAPH::def:numerics:exact-transport`` ``ROOT::alg:design:transport`` ``ROOT::alg:design:two-map-verification`` ``ROOT::amend:design:integrated-compiled-conservation`` | record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | |
-| ``eq:epoch:finite-depth-conserved-transport`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:epoch:finite-depth-conserved-transport`` | pn-epoch; function | designed | ``ROOT::alg:design:transport`` | | | |  | |
 | ``rem:epoch:transport-is-not-ledger-transfer`` | pn-epoch; policy | held | ``ROOT::dec:design:conservation`` ``ROOT::req:vision:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | |
 | ``rem:epoch:emission-self-inertia`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``cor:epoch:conserving-emission`` | pn-epoch; invariant check | realized | ``EPOCH::def:compiler:emission-support`` ``ROOT::amend:design:integrated-compiled-conservation`` | record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | |
-| ``thm:epoch:emission-export-bound`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
-| ``eq:epoch:emission-export-bound`` | pn-epoch; function | unassigned | | | | |  | |
+| ``thm:epoch:emission-export-bound`` | pn-epoch; invariant check | designed | ``ROOT::amend:design:integrated-compiled-conservation`` | | ``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::verif:design:core-standing-properties``<br>| |  | |
+| ``eq:epoch:emission-export-bound`` | pn-epoch; function | designed | ``ROOT::amend:design:integrated-compiled-conservation`` | | ``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:integrated-compiled-conservation``; ``ROOT::verif:design:core-standing-properties``<br>| |  | |
 | ``rem:epoch:emission-wall-symmetry`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``prop:epoch:artifact-non-allocation`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | |
 | ``def:epoch:conserved-standing-map`` | pn-epoch; function | realized | ``EPOCH::def:compiler:exact-anchor`` ``GRAPH::def:numerics:exact-transport`` ``ROOT::alg:design:enclosures`` ``ROOT::alg:design:two-map-verification`` ``ROOT::amend:design:bite-six-conserved-solve`` ``ROOT::amend:design:integrated-compiled-conservation`` | record-claim; ``ROOT::amend:design:bite-six-conserved-solve``; ``EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes``; ``ROOT::dec:design:activation-evaluation-policy``<br>record-claim; ``ROOT::amend:design:bite-six-conserved-solve``; ``EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::verif:design:core-standing-properties``<br>| ``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::dec:design:activation-evaluation-policy``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::dec:design:final-state``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::gate:design:bite-5``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:bite-six-conserved-solve``; ``ROOT::verif:design:core-standing-properties``<br>| |  | |
-| ``eq:epoch:conserved-standing-map`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:epoch:conserved-standing-map`` | pn-epoch; function | designed | ``ROOT::alg:design:transport`` | | | |  | |
 | ``def:epoch:conserved-standing-equilibrium`` | pn-epoch; function | held | ``ROOT::dec:design:conservation`` ``ROOT::req:vision:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | |
-| ``eq:epoch:conserved-standing-equilibrium`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:epoch:conserved-standing-equilibrium`` | pn-epoch; function | designed | ``ROOT::alg:design:solve`` | | | | 6 | |
 | ``def:epoch:tilt-backoff-grid`` | pn-epoch; certificate | designed | ``EPOCH::rule:compiler:fence-refinement`` ``ROOT::dec:design:rung-verdicts`` ``ROOT::req:vision:rung-verdicts`` | | | ``ROOT::dec:design:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
 | ``rem:epoch:tilt-backoff-is-not-export-backoff`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``rem:epoch:certificate-failure-versus-indecisive-enclosure`` | pn-epoch; certificate | designed | ``EPOCH::rule:compiler:fence-refinement`` ``ROOT::dec:design:rung-verdicts`` ``ROOT::req:vision:rung-verdicts`` | | | ``ROOT::dec:design:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:rung-verdicts``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
@@ -765,7 +770,7 @@
 | ``def:epoch:net-stance`` | pn-epoch; function | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::amend:design:epoch-compiler-readings`` | | | |  | |
 | ``rem:epoch:compiled-acts-fold-into-cells`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::amend:design:epoch-compiler-readings`` | | | |  | |
 | ``prop:epoch:act-folding-properties`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``rem:epoch:folding-precedes-allocation`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``rem:epoch:folding-precedes-allocation`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:joined-state`` | | | |  | |
 | ``rem:epoch:control-acts-resolve-to-self`` | pn-epoch; policy | designed | ``ROOT::alg:design:recipients`` ``ROOT::amend:design:deinvite-formation-scope`` | | | | 5 | |
 | ``prop:epoch:net-stance-properties`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:epoch:conviction-inertia`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -776,7 +781,7 @@
 | ``def:epoch:responsive-vouch-activation`` | pn-epoch; function | realized | ``CONSTANTS::const.activation.qcore_cap`` ``GRAPH::def:numerics:activation`` ``ROOT::amend:design:bite-six-activation`` ``ROOT::amend:design:bite-six-costs`` | record-claim; ``ROOT::amend:design:bite-six-activation``; ``GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::amend:design:bite-six-activation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:bite-six-costs``; ``ROOT::dec:design:activation-evaluation-policy``<br>``ROOT::amend:design:bite-six-costs``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``eq:epoch:responsive-vouch-activation`` | pn-epoch; function | designed | ``CONSTANTS::const.epoch.hop_depth_4`` | | | |  | |
 | ``def:epoch:safety-wall-clamped-activation`` | pn-epoch; function | realized | ``GRAPH::def:numerics:activation`` ``ROOT::amend:design:bite-six-activation`` | record-claim; ``ROOT::amend:design:bite-six-activation``; ``GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::amend:design:bite-six-activation``; ``ROOT::gate:design:bite-6``<br>| |  | |
-| ``eq:epoch:safety-wall-clamped-activation`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:epoch:safety-wall-clamped-activation`` | pn-epoch; function | realized | ``GRAPH::def:numerics:activation-endpoints`` | record-claim; ``GRAPH::def:numerics:activation-endpoints``; ``GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises``; ``ROOT::gate:design:bite-6``<br>| | |  | |
 | ``subsec:epoch:raw-signed-service`` | pn-epoch; function | unassigned | | | | |  | |
 | ``eq:epoch:path-sign`` | pn-readouts; function | unassigned | | | | |  | |
 | ``rem:epoch:parity-not-balance`` | pn-readouts; policy | unassigned | | | | |  | |
@@ -831,11 +836,11 @@
 | ``itm:epoch:final-act-sequence-closure-safety`` | pn-host; policy | unassigned | | | | |  | |
 | ``itm:epoch:final-act-sequence-closure-policy`` | pn-host; policy | unassigned | | | | |  | |
 | ``post:epoch:final-edge-set`` | pn-epoch; policy | designed | ``CONSTANTS::const.epoch.epochlen`` ``CONSTANTS::const.epoch.snapbuf`` ``EPOCH::def:compiler:completed-package`` ``EPOCH::def:compiler:joined-state`` ``EPOCH::def:compiler:standing-cells`` ``ROOT::amend:decomposition:marker-settlement`` ``ROOT::amend:design:bite-five-close`` ``ROOT::dec:design:final-membership`` ``ROOT::dec:design:publication`` ``ROOT::model:design:frozen-epoch`` ``ROOT::req:vision:final-membership`` ``ROOT::req:vision:publication`` ``ROOT::rule:design:marker-recognition`` | | | ``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:devnet-evidence``<br>``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:publication``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 2, 7, 8, 11 | |
-| ``rem:epoch:shared-burn-snapshot-rationale`` | pn-epoch; invariant check | designed (attention only) | ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` | | | |  | |
+| ``rem:epoch:shared-burn-snapshot-rationale`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:ledger`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` | | | | 5 | |
 | ``def:epoch:raw-self-edge-reading`` | pn-readouts; function | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
 | ``eq:epoch:raw-self-edge-reading`` | pn-readouts; function | unassigned | | | | |  | |
 | ``alg:epoch:conserved-standing-computation`` | pn-epoch; function | unassigned | | | | |  | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.crates.json` `docs/inputs/design-crates.toml` |
-| ``alg:epoch:tilt-backoff`` | pn-epoch; function | unassigned | | | | |  | |
+| ``alg:epoch:tilt-backoff`` | pn-epoch; function | designed | ``EPOCH::rule:compiler:fence-refinement`` | | | |  | |
 | ``prop:epoch:epoch-replay-determinism`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:epoch:act-debit`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``post:epoch:act-debit`` | pn-epoch; policy | realized | ``CONSTANTS::fixture.seed.carol_rate_revised`` ``ROOT::alg:design:ledger`` ``ROOT::dec:design:ledger-vintages`` ``ROOT::req:vision:ledger-vintages`` | obligation; ``ROOT::dec:design:ledger-vintages``; ``ROOT::dec:design:ledger-vintages``<br>| | ``ROOT::req:vision:ledger-vintages``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | |
@@ -868,7 +873,7 @@
 | ``cond:epoch:safety-declared-floor`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:policy-schedules`` ``ROOT::model:design:wall-floor`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | |
 | ``cond:epoch:safety-input-quarantine`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``def:epoch:policy-floor`` | pn-host; function | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``eq:epoch:floor-validity`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:epoch:floor-validity`` | pn-epoch; function | designed | ``ROOT::alg:design:effective-schedules`` | | | |  | |
 | ``def:epoch:participation-floor`` | pn-epoch; function | designed | ``ROOT::rule:design:reference-wall-branches`` | | | |  | |
 | ``eq:epoch:effective-floor`` | pn-epoch; function | unassigned | | | | |  | |
 | ``def:epoch:safety-wall`` | pn-epoch; function | designed | ``ROOT::inv:design:charged-value`` | | | | 2 | |
@@ -879,17 +884,17 @@
 | ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` | | | | 2 | |
 | ``def:epoch:wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``def:epoch:canonical-interim-wall-controller`` | pn-epoch; function | designed | ``CONSTANTS::const.epoch.deadband`` ``CONSTANTS::const.epoch.step_abs`` ``CONSTANTS::const.epoch.step_rel`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:admission-declarations`` ``ROOT::amend:design:reference-wall-measurements`` ``ROOT::dec:design:policy-schedules`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::amend:design:reference-wall-measurements``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``case:epoch:canonical-interim-wall-controller-zero-width`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:epoch:canonical-interim-wall-controller-positive-width`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:epoch:canonical-interim-wall-controller-deadband-hold`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:epoch:canonical-interim-wall-controller-deadband-move`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:epoch:canonical-interim-wall-controller-zero-width`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | |
+| ``case:epoch:canonical-interim-wall-controller-positive-width`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | |
+| ``case:epoch:canonical-interim-wall-controller-deadband-hold`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | |
+| ``case:epoch:canonical-interim-wall-controller-deadband-move`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | |
 | ``prop:epoch:safety-independent-of-controller`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:safety-independent-of-controller-nonempty-domain`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:safety-independent-of-controller-empty-domain`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``prop:epoch:wall-controller-total`` | pn-epoch; invariant check | designed | ``GRAPH::amend:numerics:reference-wall`` ``ROOT::alg:design:enclosed-wall-consumers`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:reference-wall`` ``ROOT::alg:design:two-map-verification`` ``ROOT::rec:design:pending-reference-corpus`` | | ``GRAPH::amend:numerics:reference-wall``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``prop:epoch:wall-controller-covariance`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` ``ROOT::rec:design:effective-schedule-fixtures`` | | | |  | |
-| ``case:epoch:wall-controller-covariance-recoinage`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:epoch:wall-controller-covariance-fixed-ledger-migration`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:epoch:wall-controller-covariance-recoinage`` | pn-epoch; invariant check | designed | ``ROOT::rec:design:effective-schedule-fixtures`` | | | |  | |
+| ``case:epoch:wall-controller-covariance-fixed-ledger-migration`` | pn-epoch; invariant check | designed | ``ROOT::rec:design:effective-schedule-fixtures`` | | | |  | |
 | ``case:epoch:wall-controller-covariance-compensated`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:wall-controller-covariance-uncompensated`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``def:epoch:final-act-stamps`` | pn-epoch; function | held | ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
@@ -898,7 +903,7 @@
 | ``eq:epoch:final-epoch-headroom`` | pn-epoch; function | unassigned | | | | |  | |
 | ``post:epoch:reduction-convention`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``prop:epoch:compensation`` | pn-epoch; invariant check | designed | ``ROOT::amend:decomposition:dimensional-scope`` ``ROOT::inv:design:units`` | | | |  | |
-| ``rem:epoch:capacity-crush`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``rem:epoch:capacity-crush`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:final-ledger`` | | | |  | |
 | ``rem:epoch:two-axes`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``rem:epoch:dial-scope`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``rem:epoch:operator-authority-floor`` | pn-host; policy | unassigned | | | | |  | |
@@ -1020,13 +1025,13 @@
 | ``subsec:scalability:sybil-and-spam-resistance`` | none; none | unassigned | | | | |  | |
 | ``cor:scalability:sybil-resistance`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``cor:scalability:spam-resistance`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``itm:scalability:spam-resistance-closed-person-vouch-census`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``itm:scalability:spam-resistance-closed-person-vouch-census`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``itm:scalability:spam-resistance-complete-act-author-continuity`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``itm:scalability:spam-resistance-passive-unmatched-leg-exclusion`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``itm:scalability:spam-resistance-conserved-apportionment`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``itm:scalability:spam-resistance-safety-wall-clamp`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``itm:scalability:spam-resistance-safety-wall-clamp`` | pn-epoch; invariant check | designed | ``GRAPH::def:numerics:activation-endpoints`` | | ``GRAPH::def:numerics:activation-endpoints``; ``ROOT::gate:design:bite-6``<br>| |  | |
 | ``itm:scalability:spam-resistance-conserved-standing-certificate`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``itm:scalability:spam-resistance-final-gates-record-budget`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``itm:scalability:spam-resistance-final-gates-record-budget`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` | | | | 7 | |
 | ``itm:scalability:spam-resistance-per-action-debit`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:scalability:verifiability`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``prop:scalability:raw-path-verifiability`` | pn-readouts; invariant check | unassigned | | | | |  | |
@@ -1041,7 +1046,7 @@
 | ``prop:gates:two-phase-transit`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:gates:frontload`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``subsec:gates:lever`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``cor:gates:standing-transport-no-solvency-discount`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``cor:gates:standing-transport-no-solvency-discount`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:charged-value`` | | | | 2 | |
 | ``rem:gates:tilt-is-not-price-discount`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``thm:gates:equal-rate-no-internal-lift`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:gates:external`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -1198,9 +1203,9 @@
 | ``ins:bridge:magnitude-boundary`` | none; none | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
 | ``app:dynamics`` | pn-verification; none | unassigned | | | | |  | |
 | ``subsec:dynamics:overview`` | pn-verification; none | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
-| ``eq:dynamics:activation`` | pn-epoch; function | unassigned | | | | |  | |
-| ``eq:dynamics:vouch-gain`` | pn-epoch; function | unassigned | | | | |  | |
-| ``eq:dynamics:clean-budget-gain`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:dynamics:activation`` | pn-epoch; function | designed | ``GRAPH::def:numerics:activation`` | | | |  | |
+| ``eq:dynamics:vouch-gain`` | pn-epoch; function | designed | ``GRAPH::rule:numerics:activation-gain`` | | | |  | |
+| ``eq:dynamics:clean-budget-gain`` | pn-epoch; function | designed | ``GRAPH::rule:numerics:activation-gain`` | | | |  | |
 | ``eq:dynamics:gain-domination`` | pn-epoch; function | unassigned | | | | |  | |
 | ``subsec:dynamics:within-epoch-indices`` | pn-verification; none | unassigned | | | | |  | |
 | ``post:dynamics:direct-allocation-dominated`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -1220,7 +1225,7 @@
 | ``rem:dynamics:standing-feed-separation`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``subsec:dynamics:fixed-point-enclosure`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``lem:dynamics:fixed-point-residual-enclosure`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:enclosures`` ``ROOT::alg:design:residual`` ``ROOT::amend:design:bite-six-costs`` ``ROOT::conv:vision:executable-obligations`` ``ROOT::dec:design:certificate`` ``ROOT::req:vision:certificate`` ``ROOT::rule:design:two-map-residual`` | | ``ROOT::amend:design:bite-six-costs``; ``ROOT::dec:design:activation-evaluation-policy``<br>``ROOT::amend:design:bite-six-costs``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::dec:design:certificate``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:certificate``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
-| ``eq:dynamics:fixed-point-residual-enclosure`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:dynamics:fixed-point-residual-enclosure`` | pn-epoch; function | designed | ``ROOT::alg:design:residual`` | | | | 6 | |
 | ``prop:dynamics:split-projected-residual`` | pn-verification; invariant check | realized | ``ROOT::alg:design:residual`` ``ROOT::amend:design:split-fold-export`` ``ROOT::rule:design:positive-rung-displacement`` | record-claim; ``ROOT::rule:design:positive-rung-displacement``; ``EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::rule:design:positive-rung-displacement``; ``EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::rule:design:positive-rung-displacement``; ``EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::rule:design:positive-rung-displacement``; ``EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises``; ``ROOT::verif:design:core-standing-properties``<br>| | | 6 | |
 | ``thm:dynamics:split-hop-refinement`` | pn-verification; invariant check | realized | ``ROOT::amend:design:certified-split-comparisons`` ``ROOT::rule:design:nonconstant-matched-split`` | record-claim; ``ROOT::rule:design:nonconstant-matched-split``; ``EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::rule:design:nonconstant-matched-split``; ``EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::rule:design:nonconstant-matched-split``; ``EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::rule:design:nonconstant-matched-split``; ``EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | |
 | ``subsec:dynamics:within-epoch-convergence`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -1270,15 +1275,15 @@
 | ``thm:dynamics:conserved-standing-existence`` | pn-epoch; invariant check | designed | ``ROOT::conv:vision:executable-obligations`` | | | |  | |
 | ``subsec:dynamics:conserved-standing-certificates`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``thm:dynamics:certified-conserved-standing-uniqueness`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:residual`` ``ROOT::conv:vision:executable-obligations`` ``ROOT::dec:design:certificate`` ``ROOT::req:vision:certificate`` | | | ``ROOT::dec:design:certificate``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:certificate``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | |
-| ``eq:dynamics:certified-contraction-norm`` | pn-epoch; function | unassigned | | | | |  | |
+| ``eq:dynamics:certified-contraction-norm`` | pn-epoch; function | designed | ``ROOT::alg:design:residual`` | | | | 6 | |
 | ``cor:dynamics:standing-initialization-independence`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``def:dynamics:local-width`` | pn-epoch; function | designed | ``CONSTANTS::result.standing.width_hi`` ``CONSTANTS::result.standing.width_lo`` | | | |  | |
 | ``lem:dynamics:allocation-entrywise-derivative`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``eq:dynamics:allocation-entrywise-derivative`` | pn-epoch; function | unassigned | | | | |  | |
 | ``lem:dynamics:transport-derivative-propagation`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``eq:dynamics:transport-derivative-propagation`` | pn-epoch; function | unassigned | | | | |  | |
-| ``thm:dynamics:hop-profile-width-fence`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``eq:dynamics:hop-profile-width-fence`` | pn-epoch; function | unassigned | | | | |  | |
+| ``thm:dynamics:hop-profile-width-fence`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:fence`` | | | | 6 | |
+| ``eq:dynamics:hop-profile-width-fence`` | pn-epoch; function | designed | ``ROOT::alg:design:fence`` | | | | 6 | |
 | ``rem:dynamics:rival-factor-two`` | pn-epoch; policy | designed | ``CONSTANTS::const.standing.rival_factor_2`` | | | |  | |
 | ``cor:dynamics:tilt-profile-prior-screen`` | pn-epoch; invariant check | designed | ``CONSTANTS::const.standing.critical_decay`` ``CONSTANTS::const.standing.prior_screen_cap`` ``CONSTANTS::const.standing.profile_l1`` ``CONSTANTS::const.standing.profile_slack`` ``CONSTANTS::const.standing.screen_margin`` | | | |  | |
 | ``eq:dynamics:tilt-profile-prior-screen`` | pn-epoch; function | unassigned | | | | |  | |
@@ -1293,8 +1298,8 @@
 | ``prop:dynamics:standing-intervention-forcing`` | pn-verification; invariant check | designed | ``ROOT::amend:design:published-act-families`` | | | |  | |
 | ``cor:dynamics:minimal-safe-rung`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:dynamics:minimal-safe-wall-positive-width`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:dynamics:minimal-safe-wall-zero-width`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:dynamics:minimal-safe-wall-anchor`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:dynamics:minimal-safe-wall-zero-width`` | pn-epoch; invariant check | designed | ``GRAPH::def:numerics:width-fence`` | | | |  | |
+| ``case:dynamics:minimal-safe-wall-anchor`` | pn-epoch; invariant check | designed | ``GRAPH::def:numerics:width-fence`` | | | |  | |
 | ``rem:dynamics:wall-tilt-tradeoff`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``thm:dynamics:finite-max-envelope-lipschitz`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``prop:dynamics:sibling-response-without-path`` | pn-graph; invariant check | realized | ``ROOT::amend:design:sibling-outside-paths`` ``ROOT::resol:design:certified-bound-scope`` | record-claim; ``ROOT::amend:design:sibling-outside-paths``; ``EPOCH::claim:standing:sibling-response-refuses-selected-path-independence``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:sibling-outside-paths``; ``EPOCH::claim:standing:sibling-response-refuses-selected-path-independence``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:sibling-outside-paths``; ``EPOCH::claim:standing:sibling-response-refuses-selected-path-independence``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:sibling-outside-paths``; ``EPOCH::claim:standing:sibling-response-refuses-selected-path-independence``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | |
@@ -1552,31 +1557,31 @@
 | ``subsec:necessity:average-based-aggregation`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``case:necessity:average-based-aggregation-summation`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:per-author-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:per-author-netting-weight-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:per-author-netting-cross-author-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:per-author-netting-weight-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | |
+| ``case:necessity:per-author-netting-cross-author-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | |
 | ``case:necessity:per-author-netting-derived-bond-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:per-author-netting-settlement-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:per-author-netting-control-netting`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:per-author-netting-settlement-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | |
+| ``case:necessity:per-author-netting-control-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | |
 | ``subsec:necessity:max-product-path-scoring`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``case:necessity:max-product-path-scoring-sum-of-paths`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:conserved-rival-allocation`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:conserved-rival-allocation-independent-weights`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:conserved-rival-allocation-independent-weights`` | pn-epoch; invariant check | held | ``ROOT::dec:design:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | |
 | ``subsec:necessity:self-retention-base`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:self-retention-base-drop-mass`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:self-retention-base-tilt-self`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:domain-weighted-allocation`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:domain-weighted-allocation-domain-double-counting`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:domain-weighted-allocation-domain-double-counting`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:base`` | | | | 5 | |
 | ``subsec:necessity:finite-depth-conserved-transport`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:finite-depth-conserved-transport-unbounded-closure`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:finite-depth-conserved-transport-single-hop`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:finite-depth-conserved-transport-unbounded-closure`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:transport`` | | | |  | |
+| ``case:necessity:finite-depth-conserved-transport-single-hop`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:transport`` | | | |  | |
 | ``subsec:necessity:hop-faded-responsive-tilt`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:hop-faded-responsive-tilt-flat-profile`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:hop-faded-responsive-tilt-row-owned-exponent`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:epoch-set-standing`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:epoch-set-standing-order-input`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:epoch-set-standing-memory-input`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:epoch-set-standing-order-input`` | pn-epoch; invariant check | realized | ``ROOT::dec:design:final-state`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | | 5, 11 | |
+| ``case:necessity:epoch-set-standing-memory-input`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:solve`` | | | | 6 | |
 | ``subsec:necessity:title-coupled-settlement-standing`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:title-coupled-settlement-standing-face-value`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:title-coupled-settlement-standing-face-value`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``subsec:necessity:clamped-entry-bounds`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:clamped-entry-bounds-raw-products`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:always-active-baseline`` | pn-graph; invariant check | designed | ``CONSTANTS::const.graph.corner_norm`` | | | |  | |
@@ -1604,7 +1609,7 @@
 | ``case:necessity:participation-floor-capacity-gate`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:participation-floor-uncontrolled-host-dial`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:floor-as-numeraire`` | pn-epoch; invariant check | designed | ``ROOT::amend:decomposition:dimensional-scope`` ``ROOT::inv:design:units`` | | | |  | |
-| ``case:necessity:floor-as-numeraire-unreduced-debit`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:floor-as-numeraire-unreduced-debit`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` | | | |  | |
 | ``case:necessity:floor-as-numeraire-unreduced-bond`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:nu-reduced-kernel`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:necessity:nu-reduced-kernel-gate-reduction`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -1632,10 +1637,10 @@
 | ``subsec:necessity:stance-marginal-reputation`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``case:necessity:stance-marginal-reputation-parity-reputation`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:universal-act-weighing`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:universal-act-weighing-parity-only`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:universal-act-weighing-negative-weight`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:universal-act-weighing-parity-only`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
+| ``case:necessity:universal-act-weighing-negative-weight`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:cell-coefficients`` | | | |  | |
 | ``case:necessity:universal-act-weighing-composed-stance`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:universal-act-weighing-exclude-hostility`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:universal-act-weighing-exclude-hostility`` | pn-epoch; invariant check | held | ``ROOT::dec:design:complete-acts`` | | | ``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 4, 11 | |
 | ``subsec:necessity:declarative-item-identity`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:declarative-item-identity-content-addressing`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:declarative-item-identity-external-registry`` | pn-records; invariant check | unassigned | | | | |  | |
@@ -1656,7 +1661,7 @@
 | ``case:necessity:unrestricted-departure-leave-membership-check`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:unrestricted-departure-deinvite-authority-check`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:control-self-retention`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``case:necessity:control-self-retention-outward-control`` | pn-epoch; invariant check | unassigned | | | | |  | |
+| ``case:necessity:control-self-retention-outward-control`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | |
 | ``subsec:necessity:deinvite-profile-terminus`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:deinvite-profile-terminus-actor-terminus`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:bridge-per-edge-positivity`` | none; none | unassigned | | | | |  | |
