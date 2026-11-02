@@ -338,6 +338,10 @@ id = "num:numbers:admission-product-ceiling"
 value = "10000"
 
 [[rows]]
+id = "num:numbers:admission-refinement-measured-work"
+value = "200418307"
+
+[[rows]]
 id = "num:numbers:admission-refinement-work-ceiling"
 value = "400000000"
 

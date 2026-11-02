@@ -1156,3 +1156,39 @@ fn closure_maximum() {
         ));
     }
 }
+
+/// Logical Work is checked separately from elapsed-time calibration.
+/// (´claim:admission:final-policy-refines-without-guessing´)
+/// ´test:integration:admission-work´
+#[test]
+fn admission_work() {
+    let context = candidate(
+        &coupled(),
+        1,
+        &[
+            ("b", NumberId::NumbersAdmissionStraddleSourceBurn.value()),
+            ("a", NumberId::NumbersAdmissionStraddleTargetBurn.value()),
+        ],
+    );
+    let mut plan = procedure(&context);
+    let low = u32::try_from(NumberId::NumbersAdmissionPolicyFailedPrecision.integer()).unwrap();
+    let high = u32::try_from(NumberId::NumbersAdmissionPolicyPrecision.integer()).unwrap();
+    plan.solve.grid = vec![NumberId::NumbersAdmissionPositiveStrength.value().into(), "0".into()];
+    plan.solve.maximum_solve_work = NumberId::NumbersAdmissionRefinementWorkCeiling.integer();
+    plan.solve.maximum_replay_work = NumberId::NumbersAdmissionRefinementWorkCeiling.integer();
+    plan.solve.precision = Precision::AbsoluteWidthBits(vec![low, high]);
+    plan.solve.enclosure.as_mut().unwrap().refinement.precision = low;
+    let led = schedule(&context, NumberId::NumbersAdmissionStraddlePolicy.value());
+    let admitted = run(&context, &plan, &led).unwrap();
+    let work = admitted.evidence().standing.as_ref().unwrap().work;
+    assert_eq!(work, NumberId::NumbersAdmissionRefinementMeasuredWork.integer());
+    plan.solve.maximum_solve_work = work;
+    plan.solve.maximum_replay_work = work;
+    let exact = run(&context, &plan, &led).unwrap();
+    assert_eq!(exact.evidence().standing.as_ref().unwrap().work, work);
+    let mut short = plan.clone();
+    short.solve.maximum_solve_work -= 1;
+    assert!(matches!(run(&context, &short, &led), Err(FinalRefusal::Solve(_))));
+    plan.solve.maximum_replay_work -= 1;
+    assert!(run(&context, &plan, &led).is_ok());
+}

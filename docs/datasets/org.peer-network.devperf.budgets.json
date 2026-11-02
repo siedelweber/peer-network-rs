@@ -423,6 +423,30 @@
           "warm": true,
           "warm_samples": 3,
           "warmup_wall_seconds": 979.1095848083496
+        },
+        {
+          "base_commit": "aab51e0df2855ad09365102ef1d80f30a7024192",
+          "configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+          "discarded_warmups": 1,
+          "label": "campaign:devperf:graph-public-main-warm",
+          "measured_series": [
+            {
+              "commit": "ef17211afed7b79e0cc9c819cb8d0b4164eaa10d",
+              "patch_id": "23335fea82a655f6f6fa658bf6ae70c9684b74fc"
+            }
+          ],
+          "multiplier": 2,
+          "round_ms": 50,
+          "rounding": "upward",
+          "sample_choice": "maximum-of-three-warm-serial",
+          "sample_walls_seconds": [
+            195.17751502990723,
+            193.65291833877563,
+            204.75400304794312
+          ],
+          "warm": true,
+          "warm_samples": 3,
+          "warmup_wall_seconds": 191.28991436958313
         }
       ],
       "category": "aggregate",
@@ -630,51 +654,52 @@
       "scope": "full required provisioned-service matrix"
     },
     {
-      "budget_ms": 23000,
+      "budget_ms": 24750,
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        11391.600000000006,
-        11116.338000000025,
-        11320.55600000006
+        11390.475999999999,
+        11401.327000000094,
+        11625.014999999998
       ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The shared or suite allowance has multiple execution roots; the current campaign identity schema admits one case closure, not their union.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
       "calibration_walls_ms": [
-        11418.162886984646,
-        11493.976410944015,
-        11330.153898103163
+        11698.454297147691,
+        11408.483191160485,
+        12365.612570894882
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 11116.338000000025,
-      "measured_wall_ms": 11493.976410944015,
+      "measured_own_cpu_ms": 11625.014999999998,
+      "measured_wall_ms": 12365.612570894882,
       "name": "reference-map-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "23 000",
+          "exact": "24 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23 000",
+          "num": "24 750",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "11 116.338 000 000 025",
+          "exact": "11 625.014 999 999 998",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11 116.338 000 000 025",
+          "num": "11 625.014 999 999 998",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "11 493.976 410 944 015",
+          "exact": "12 365.612 570 894 882",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11 493.976 410 944 015",
+          "num": "12 365.612 570 894 882",
           "num_exact": true,
           "num_relation": "="
         }
@@ -697,51 +722,57 @@
       "scope": "one published-fixture map or corpus case"
     },
     {
-      "budget_ms": 93250,
+      "budget_ms": 96350,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        45714.309,
-        45322.03800000001,
-        45324.76200000006
+        43833.95800000005,
+        44153.289999999935,
+        45608.981999999996
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "88080fcb87ab62f31a179880f830153c75e564b19ab92c3697743e1665ae82e9",
+        "function": "verification_local",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        46623.780090827495,
-        45805.12551008724,
-        46593.1069299113
+        44642.170547973365,
+        44239.696093136445,
+        48150.23035299964
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 45714.309,
-      "measured_wall_ms": 46623.780090827495,
+      "measured_own_cpu_ms": 45608.981999999996,
+      "measured_wall_ms": 48150.23035299964,
       "name": "reference-local-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "93 250",
+          "exact": "96 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93 250",
+          "num": "96 350",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "45 714.309",
+          "exact": "45 608.981 999 999 996",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45 714.309",
+          "num": "45 608.981 999 999 996",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "46 623.780 090 827 495",
+          "exact": "48 150.230 352 999 64",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "46 623.780 090 827 495",
+          "num": "48 150.230 352 999 64",
           "num_exact": true,
           "num_relation": "="
         }
@@ -764,51 +795,57 @@
       "scope": "one published-fixture local inclusion case"
     },
     {
-      "budget_ms": 39100,
+      "budget_ms": 33450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        17288.996000000017,
-        17259.86700000002,
-        16807.026999999933
+        14948.575999999985,
+        14957.32400000001,
+        16590.91899999998
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "7e96ed1146f72bd4ded64cb63b26ed86f61e6fc1dabfd04996d4340dc2dede0f",
+        "function": "enclosed_wall_solve",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        19529.06831796281,
-        17732.765055960044,
-        16814.81598690152
+        14949.45639395155,
+        14958.00126902759,
+        16706.570769893005
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 17288.996000000017,
-      "measured_wall_ms": 19529.06831796281,
+      "measured_own_cpu_ms": 16590.91899999998,
+      "measured_wall_ms": 16706.570769893005,
       "name": "reference-wall-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "39 100",
+          "exact": "33 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "39 100",
+          "num": "33 450",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "17 288.996 000 000 017",
+          "exact": "16 590.918 999 999 98",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17 288.996 000 000 017",
+          "num": "16 590.918 999 999 98",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "19 529.068 317 962 81",
+          "exact": "16 706.570 769 893 005",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19 529.068 317 962 81",
+          "num": "16 706.570 769 893 005",
           "num_exact": true,
           "num_relation": "="
         }
@@ -831,51 +868,52 @@
       "scope": "one enclosed-reference-wall solve case"
     },
     {
-      "budget_ms": 93250,
+      "budget_ms": 96350,
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        45714.309,
-        45322.03800000001,
-        45324.76200000006
+        43833.95800000005,
+        44153.289999999935,
+        45608.981999999996
       ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The shared or suite allowance has multiple execution roots; the current campaign identity schema admits one case closure, not their union.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
       "calibration_walls_ms": [
-        46624.796682968736,
-        45806.079484988004,
-        46594.58639007062
+        44643.520690035075,
+        44240.861364873126,
+        48151.677075074986
       ],
       "calibration_warm": true,
       "category": "suite",
-      "measured_own_cpu_ms": 45714.309,
-      "measured_wall_ms": 46624.796682968736,
+      "measured_own_cpu_ms": 45608.981999999996,
+      "measured_wall_ms": 48151.677075074986,
       "name": "reference-certificate-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "93 250",
+          "exact": "96 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93 250",
+          "num": "96 350",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "45 714.309",
+          "exact": "45 608.981 999 999 996",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45 714.309",
+          "num": "45 608.981 999 999 996",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "46 624.796 682 968 736",
+          "exact": "48 151.677 075 074 986",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "46 624.796 682 968 736",
+          "num": "48 151.677 075 074 986",
           "num_exact": true,
           "num_relation": "="
         }
@@ -898,51 +936,57 @@
       "scope": "one required reference-certificate group"
     },
     {
-      "budget_ms": 8000,
+      "budget_ms": 9550,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        3786.978999999958,
-        3744.2299999999696,
-        3180.98600000004
+        3016.0169999999766,
+        2999.401000000045,
+        4427.337000000012
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "675654a41edb842f3b6acc433f11d7ac050e8c29243501342922c6a72d434e78",
+        "function": "receiving_showcase",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        3995.3410800080746,
-        3891.343434108421,
-        3181.3528470229357
+        3016.264823032543,
+        2999.7327919118106,
+        4751.001187833026
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 3786.978999999958,
-      "measured_wall_ms": 3995.3410800080746,
+      "measured_own_cpu_ms": 4427.337000000012,
+      "measured_wall_ms": 4751.001187833026,
       "name": "reference-receiving-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 000",
+          "exact": "9 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 000",
+          "num": "9 550",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "3 786.978 999 999 958",
+          "exact": "4 427.337 000 000 012",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 786.978 999 999 958",
+          "num": "4 427.337 000 000 012",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "3 995.341 080 008 074 6",
+          "exact": "4 751.001 187 833 026",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 995.341 080 008 074 6",
+          "num": "4 751.001 187 833 026",
           "num_exact": true,
           "num_relation": "="
         }
@@ -965,51 +1009,57 @@
       "scope": "one full-size published receiving showcase comparison"
     },
     {
-      "budget_ms": 24000,
+      "budget_ms": 18300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        9608.464000000027,
-        9631.389999999947,
-        8870.50700000004
+        8014.343000000022,
+        8508.632999999929,
+        8941.451000000001
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "0bc3a7383ab25ba3516e16a3b45e02b657e8176940e7af7a4f64d224b7c03316",
+        "function": "burn_own",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        11999.04110096395,
-        9900.980258127674,
-        8875.170900020748
+        8014.850700041279,
+        8510.931903962046,
+        9144.650512142107
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 9608.464000000027,
-      "measured_wall_ms": 11999.04110096395,
+      "measured_own_cpu_ms": 8941.451000000001,
+      "measured_wall_ms": 9144.650512142107,
       "name": "own-burn-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "24 000",
+          "exact": "18 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24 000",
+          "num": "18 300",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "9 608.464 000 000 027",
+          "exact": "8 941.451 000 000 001",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9 608.464 000 000 027",
+          "num": "8 941.451 000 000 001",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "11 999.041 100 963 95",
+          "exact": "9 144.650 512 142 107",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11 999.041 100 963 95",
+          "num": "9 144.650 512 142 107",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1032,51 +1082,52 @@
       "scope": "one complete-history own-loss mechanism"
     },
     {
-      "budget_ms": 24050,
+      "budget_ms": 18300,
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        9608.464000000027,
-        9631.389999999947,
-        8870.50700000004
+        8014.343000000022,
+        8508.632999999929,
+        8941.451000000001
       ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The shared or suite allowance has multiple execution roots; the current campaign identity schema admits one case closure, not their union.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
       "calibration_walls_ms": [
-        12000.129694119096,
-        9902.385409921408,
-        8876.215333119035
+        8016.276120906696,
+        8512.282884912565,
+        9146.057883044705
       ],
       "calibration_warm": true,
       "category": "suite",
-      "measured_own_cpu_ms": 9608.464000000027,
-      "measured_wall_ms": 12000.129694119096,
+      "measured_own_cpu_ms": 8941.451000000001,
+      "measured_wall_ms": 9146.057883044705,
       "name": "own-burn-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "24 050",
+          "exact": "18 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24 050",
+          "num": "18 300",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "9 608.464 000 000 027",
+          "exact": "8 941.451 000 000 001",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9 608.464 000 000 027",
+          "num": "8 941.451 000 000 001",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "12 000.129 694 119 096",
+          "exact": "9 146.057 883 044 705",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12 000.129 694 119 096",
+          "num": "9 146.057 883 044 705",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1138,51 +1189,57 @@
       "scope": "required reference-certificate invocation"
     },
     {
-      "budget_ms": 1350,
+      "budget_ms": 1300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        645.7380000000051,
-        631.4939999999893,
-        639.8780000000688
+        615.5670000000341,
+        606.4260000000061,
+        644.6189999999632
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "27739a37fcc7d67c37e36a2cbe91d1227971be2245291e21c74c598ae9b6af52",
+        "function": "marker_recognition",
+        "owner": "lane/graph",
+        "path": "packages/records/tests/properties.rs"
+      },
       "calibration_walls_ms": [
-        646.0245889611542,
-        650.7594378199428,
-        659.8530740011483
+        617.1523099765182,
+        606.6975649446249,
+        647.4417941644788
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 639.8780000000688,
-      "measured_wall_ms": 659.8530740011483,
+      "measured_own_cpu_ms": 644.6189999999632,
+      "measured_wall_ms": 647.4417941644788,
       "name": "calibrated-marker-recognition-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 350",
+          "exact": "1 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 350",
+          "num": "1 300",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "639.878 000 000 068 8",
+          "exact": "644.618 999 999 963 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "639.878 000 000 068 8",
+          "num": "644.618 999 999 963 2",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "659.853 074 001 148 3",
+          "exact": "647.441 794 164 478 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "659.853 074 001 148 3",
+          "num": "647.441 794 164 478 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1205,51 +1262,57 @@
       "scope": "one pn-records::properties::marker_recognition case"
     },
     {
-      "budget_ms": 1200,
+      "budget_ms": 1050,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        550.3059999999973,
-        570.8050000000053,
-        555.0420000000021
+        523.4889999999801,
+        523.7889999999794,
+        506.5290000000644
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "b36d89e190c22cbd4bb379db953954ff5272dd93f0d1fc5488a1345ea933983f",
+        "function": "typed_corruptions",
+        "owner": "lane/graph",
+        "path": "packages/records/tests/properties.rs"
+      },
       "calibration_walls_ms": [
-        550.6646549329162,
-        591.7714850511402,
-        569.6203678380698
+        524.0475349128246,
+        524.7240799944848,
+        506.782686104998
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 570.8050000000053,
-      "measured_wall_ms": 591.7714850511402,
+      "measured_own_cpu_ms": 523.7889999999794,
+      "measured_wall_ms": 524.7240799944848,
       "name": "calibrated-typed-corruptions-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 200",
+          "exact": "1 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 200",
+          "num": "1 050",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "570.805 000 000 005 3",
+          "exact": "523.788 999 999 979 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "570.805 000 000 005 3",
+          "num": "523.788 999 999 979 4",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "591.771 485 051 140 2",
+          "exact": "524.724 079 994 484 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "591.771 485 051 140 2",
+          "num": "524.724 079 994 484 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1272,51 +1335,57 @@
       "scope": "one pn-records::properties::typed_corruptions case"
     },
     {
-      "budget_ms": 3950,
+      "budget_ms": 3800,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1920.9329999999927,
-        1872.1890000000058,
-        1918.6840000000095
+        1843.5450000000308,
+        1867.583000000014,
+        1869.32600000004
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "a31ef02acf9ef9114e0710f6058aa15f63ae5bb5844df53ccf4f490d5781aa28",
+        "function": "act_directions",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        1957.6855201739818,
-        1872.6887768134475,
-        1919.426616979763
+        1844.1286738961935,
+        1867.8640038706362,
+        1881.9253349211067
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1920.9329999999927,
-      "measured_wall_ms": 1957.6855201739818,
+      "measured_own_cpu_ms": 1869.32600000004,
+      "measured_wall_ms": 1881.9253349211067,
       "name": "calibrated-act-directions-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 950",
+          "exact": "3 800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 950",
+          "num": "3 800",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 920.932 999 999 992 7",
+          "exact": "1 869.326 000 000 04",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 920.932 999 999 992 7",
+          "num": "1 869.326 000 000 04",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 957.685 520 173 981 8",
+          "exact": "1 881.925 334 921 106 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 957.685 520 173 981 8",
+          "num": "1 881.925 334 921 106 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1339,51 +1408,57 @@
       "scope": "one pn-epoch::solve::act_directions case"
     },
     {
-      "budget_ms": 1850,
+      "budget_ms": 1700,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        858.1080000000121,
-        855.3420000000305,
-        840.1439999999774
+        829.2620000000142,
+        828.2549999999062,
+        831.4719999999589
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "9f355ba8dfa556bb41d9411233ee91da24917ed62fd093485fadc558d61ccd7d",
+        "function": "act_emission",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        860.8422090765089,
-        924.0451089572161,
-        841.9898359570652
+        829.546483932063,
+        828.977616969496,
+        831.8944489583373
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 855.3420000000305,
-      "measured_wall_ms": 924.0451089572161,
+      "measured_own_cpu_ms": 831.4719999999589,
+      "measured_wall_ms": 831.8944489583373,
       "name": "calibrated-act-emission-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 850",
+          "exact": "1 700",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 850",
+          "num": "1 700",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "855.342 000 000 030 5",
+          "exact": "831.471 999 999 958 9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "855.342 000 000 030 5",
+          "num": "831.471 999 999 958 9",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "924.045 108 957 216 1",
+          "exact": "831.894 448 958 337 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "924.045 108 957 216 1",
+          "num": "831.894 448 958 337 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1406,51 +1481,57 @@
       "scope": "one pn-epoch::solve::act_emission case"
     },
     {
-      "budget_ms": 1200,
+      "budget_ms": 1450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        559.2389999999998,
-        560.28400000001,
-        560.5139999999765
+        552.1870000000213,
+        551.6380000000219,
+        585.314999999973
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "c3bc34d93c9bc2b4ae737de24b3ed94c3e1d539904c4f394b16dfee86dfa13fe",
+        "function": "burn_depleted",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        579.478238010779,
-        562.94612493366,
-        560.8580198604614
+        552.4712160695344,
+        551.9015300087631,
+        719.7109952103347
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 559.2389999999998,
-      "measured_wall_ms": 579.478238010779,
+      "measured_own_cpu_ms": 585.314999999973,
+      "measured_wall_ms": 719.7109952103347,
       "name": "calibrated-burn-depleted-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 200",
+          "exact": "1 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 200",
+          "num": "1 450",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "559.238 999 999 999 8",
+          "exact": "585.314 999 999 973",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "559.238 999 999 999 8",
+          "num": "585.314 999 999 973",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "579.478 238 010 779",
+          "exact": "719.710 995 210 334 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "579.478 238 010 779",
+          "num": "719.710 995 210 334 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1474,27 +1555,33 @@
     },
     {
       "budget_ms": 1300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        639.6759999999908,
-        640.3219999999799,
-        633.6510000000058
+        626.0600000000024,
+        628.3150000000824,
+        626.8400000000121
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "d8071161b29ca3c52d8c81847e8cbeda685cbd540df3da8da8ed5c59efd26006",
+        "function": "burn_monotone",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        642.7296521142125,
-        641.0348408389837,
-        634.4425741117448
+        626.3695710804313,
+        628.6169469822198,
+        627.0209599751979
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 639.6759999999908,
-      "measured_wall_ms": 642.7296521142125,
+      "measured_own_cpu_ms": 628.3150000000824,
+      "measured_wall_ms": 628.6169469822198,
       "name": "calibrated-burn-monotone-case",
       "number_forms": {
         "budget_ms": {
@@ -1506,18 +1593,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "639.675 999 999 990 8",
+          "exact": "628.315 000 000 082 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "639.675 999 999 990 8",
+          "num": "628.315 000 000 082 4",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "642.729 652 114 212 5",
+          "exact": "628.616 946 982 219 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "642.729 652 114 212 5",
+          "num": "628.616 946 982 219 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1540,51 +1627,57 @@
       "scope": "one pn-epoch::solve::burn_monotone case"
     },
     {
-      "budget_ms": 6500,
+      "budget_ms": 6850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        3184.0779999999922,
-        3168.336000000018,
-        3205.176000000062
+        3114.612999999995,
+        3132.395999999982,
+        3161.3860000000213
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "63b244b9d347f682e43185b4207ad5fdb01aab0cbfed5ada1ac22e14d1304ed6",
+        "function": "burn_sibling",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        3198.7867599818856,
-        3170.9210330154747,
-        3246.729329926893
+        3122.446684865281,
+        3221.212383825332,
+        3411.048908950761
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 3205.176000000062,
-      "measured_wall_ms": 3246.729329926893,
+      "measured_own_cpu_ms": 3161.3860000000213,
+      "measured_wall_ms": 3411.048908950761,
       "name": "calibrated-burn-sibling-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 500",
+          "exact": "6 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 500",
+          "num": "6 850",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "3 205.176 000 000 062",
+          "exact": "3 161.386 000 000 021 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 205.176 000 000 062",
+          "num": "3 161.386 000 000 021 3",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "3 246.729 329 926 893",
+          "exact": "3 411.048 908 950 761",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 246.729 329 926 893",
+          "num": "3 411.048 908 950 761",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1607,51 +1700,57 @@
       "scope": "one pn-epoch::solve::burn_sibling case"
     },
     {
-      "budget_ms": 5400,
+      "budget_ms": 6350,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        2544.499000000016,
-        2473.4149999999886,
-        2505.5680000000057
+        2423.6619999999753,
+        2429.6379999999795,
+        2491.375000000019
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "107d0162002950f75981845c48e67da3ecffe40d0d2bee5c4359f79381462396",
+        "function": "burn_switch",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        2686.6871679667383,
-        2477.4517461191863,
-        2505.942895077169
+        2424.8053319752216,
+        2430.21666794084,
+        3162.037713918835
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 2544.499000000016,
-      "measured_wall_ms": 2686.6871679667383,
+      "measured_own_cpu_ms": 2491.375000000019,
+      "measured_wall_ms": 3162.037713918835,
       "name": "calibrated-burn-switch-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 400",
+          "exact": "6 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 400",
+          "num": "6 350",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "2 544.499 000 000 016",
+          "exact": "2 491.375 000 000 019",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 544.499 000 000 016",
+          "num": "2 491.375 000 000 019",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "2 686.687 167 966 738 3",
+          "exact": "3 162.037 713 918 835",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 686.687 167 966 738 3",
+          "num": "3 162.037 713 918 835",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1674,51 +1773,57 @@
       "scope": "one pn-epoch::solve::burn_switch case"
     },
     {
-      "budget_ms": 1150,
+      "budget_ms": 1050,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        537.5839999999989,
-        523.8689999999604,
-        515.7180000000156
+        506.91499999999576,
+        511.0119999999654,
+        508.2959999999837
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "1cfc671f5a28785756643daea07fd5d3adddae704a7dd27cc6f3657fcf86bcdb",
+        "function": "certified_splits",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        560.8326059300452,
-        524.0909408312291,
-        515.9903350286186
+        507.25937099196017,
+        513.3132019545883,
+        511.70492614619434
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 537.5839999999989,
-      "measured_wall_ms": 560.8326059300452,
+      "measured_own_cpu_ms": 511.0119999999654,
+      "measured_wall_ms": 513.3132019545883,
       "name": "calibrated-certified-splits-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 150",
+          "exact": "1 050",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 150",
+          "num": "1 050",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "537.583 999 999 998 9",
+          "exact": "511.011 999 999 965 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "537.583 999 999 998 9",
+          "num": "511.011 999 999 965 4",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "560.832 605 930 045 2",
+          "exact": "513.313 201 954 588 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "560.832 605 930 045 2",
+          "num": "513.313 201 954 588 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1742,27 +1847,33 @@
     },
     {
       "budget_ms": 1850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        919.7089999999939,
-        909.646999999973,
-        912.3569999999379
+        900.7120000000128,
+        897.7839999999553,
+        895.4460000000565
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "35fcc2c17a4ac0592fd914cfb0024f13f245345b96eb57df19cb76a14b3410b1",
+        "function": "conserved_projection",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        920.326008927077,
-        909.8444518167526,
-        913.9523799531162
+        901.0064250323921,
+        898.0139929335564,
+        895.710633136332
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 919.7089999999939,
-      "measured_wall_ms": 920.326008927077,
+      "measured_own_cpu_ms": 900.7120000000128,
+      "measured_wall_ms": 901.0064250323921,
       "name": "calibrated-conserved-projection-case",
       "number_forms": {
         "budget_ms": {
@@ -1774,18 +1885,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "919.708 999 999 993 9",
+          "exact": "900.712 000 000 012 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "919.708 999 999 993 9",
+          "num": "900.712 000 000 012 8",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "920.326 008 927 077",
+          "exact": "901.006 425 032 392 1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "920.326 008 927 077",
+          "num": "901.006 425 032 392 1",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1808,51 +1919,57 @@
       "scope": "one pn-epoch::solve::conserved_projection case"
     },
     {
-      "budget_ms": 17850,
+      "budget_ms": 18200,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        7967.675999999992,
-        7988.982000000028,
-        7938.456000000068
+        7790.267000000007,
+        7904.1740000000045,
+        7798.711999999934
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "fb6380ae48a43f1a8d6fa5e43bafcccbb6e782d88bd6a46b04887f61244ac4d0",
+        "function": "conserved_residual",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        7978.348086122423,
-        7990.28731812723,
-        8922.396142035723
+        7796.574242878705,
+        9097.305002855137,
+        7873.043461004272
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 7938.456000000068,
-      "measured_wall_ms": 8922.396142035723,
+      "measured_own_cpu_ms": 7904.1740000000045,
+      "measured_wall_ms": 9097.305002855137,
       "name": "calibrated-conserved-residual-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "17 850",
+          "exact": "18 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17 850",
+          "num": "18 200",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "7 938.456 000 000 068",
+          "exact": "7 904.174 000 000 004 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7 938.456 000 000 068",
+          "num": "7 904.174 000 000 004 5",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "8 922.396 142 035 723",
+          "exact": "9 097.305 002 855 137",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 922.396 142 035 723",
+          "num": "9 097.305 002 855 137",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1875,51 +1992,57 @@
       "scope": "one pn-epoch::solve::conserved_residual case"
     },
     {
-      "budget_ms": 1450,
+      "budget_ms": 1300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        679.1189999999912,
-        656.7169999999578,
-        658.4339999999163
+        641.8330000000232,
+        644.900999999983,
+        647.1460000000277
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "6166e81f7190b1a3e5f424e513b8dfcaaab27fa12054676e2813fa0e48cf1a9e",
+        "function": "fence_shapes",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        700.0445760786533,
-        658.9219840243459,
-        709.6839991863817
+        642.1318319626153,
+        645.0183941051364,
+        647.6072429213673
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 658.4339999999163,
-      "measured_wall_ms": 709.6839991863817,
+      "measured_own_cpu_ms": 647.1460000000277,
+      "measured_wall_ms": 647.6072429213673,
       "name": "calibrated-fence-shapes-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 450",
+          "exact": "1 300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 450",
+          "num": "1 300",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "658.433 999 999 916 3",
+          "exact": "647.146 000 000 027 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "658.433 999 999 916 3",
+          "num": "647.146 000 000 027 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "709.683 999 186 381 7",
+          "exact": "647.607 242 921 367 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "709.683 999 186 381 7",
+          "num": "647.607 242 921 367 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1942,51 +2065,57 @@
       "scope": "one pn-epoch::solve::fence_shapes case"
     },
     {
-      "budget_ms": 2250,
+      "budget_ms": 2150,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1096.5649999999857,
-        1105.7939999999924,
-        1089.5150000000538
+        1055.8059999999543,
+        1054.6799999999869,
+        1052.5739999999964
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "c424b8139c82d11bb46ba83c25bfa1eec26758932c5c4cfe48153f82e84b53de",
+        "function": "compiled_conservation",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        1096.8057520221919,
-        1114.0459291636944,
-        1098.7718049436808
+        1058.0764359328896,
+        1055.2604850381613,
+        1052.9586081393063
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1105.7939999999924,
-      "measured_wall_ms": 1114.0459291636944,
+      "measured_own_cpu_ms": 1055.8059999999543,
+      "measured_wall_ms": 1058.0764359328896,
       "name": "calibrated-compiled-conservation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 250",
+          "exact": "2 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 250",
+          "num": "2 150",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 105.793 999 999 992 4",
+          "exact": "1 055.805 999 999 954 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 105.793 999 999 992 4",
+          "num": "1 055.805 999 999 954 3",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 114.045 929 163 694 4",
+          "exact": "1 058.076 435 932 889 6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 114.045 929 163 694 4",
+          "num": "1 058.076 435 932 889 6",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2009,51 +2138,57 @@
       "scope": "one pn-epoch::solve::partitions::compiled_conservation case"
     },
     {
-      "budget_ms": 5100,
+      "budget_ms": 4750,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        2410.738999999996,
-        2394.1070000000036,
-        2440.6619999998948
+        2361.330999999975,
+        2361.6309999999708,
+        2363.4719999999625
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "221a707f8819e78e70d9731d302c517a48196053a3cc092aed0f0dc29b1466c3",
+        "function": "nonconstant_matched_split",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        2412.3283391818404,
-        2394.241984002292,
-        2527.8664261568338
+        2362.2629560995847,
+        2362.1481370646507,
+        2363.7634760234505
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 2440.6619999998948,
-      "measured_wall_ms": 2527.8664261568338,
+      "measured_own_cpu_ms": 2363.4719999999625,
+      "measured_wall_ms": 2363.7634760234505,
       "name": "calibrated-nonconstant-matched-split-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 100",
+          "exact": "4 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 100",
+          "num": "4 750",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "2 440.661 999 999 894 8",
+          "exact": "2 363.471 999 999 962 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 440.661 999 999 894 8",
+          "num": "2 363.471 999 999 962 5",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "2 527.866 426 156 833 8",
+          "exact": "2 363.763 476 023 450 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 527.866 426 156 833 8",
+          "num": "2 363.763 476 023 450 5",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2076,51 +2211,57 @@
       "scope": "one pn-epoch::solve::partitions::nonconstant_matched_split case"
     },
     {
-      "budget_ms": 8350,
+      "budget_ms": 7400,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        3715.869999999997,
-        3747.9100000000008,
-        3785.7920000000595
+        3685.8850000000343,
+        3664.3810000000058,
+        3692.655999999971
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "28e00ae57a4baa2cee967cfdf83db6ab94c67fe245c6135d1e08458596e190e2",
+        "function": "positive_rung_split",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        3722.547960933298,
-        3748.333513038233,
-        4166.574275121093
+        3690.760971046984,
+        3664.8276050109416,
+        3692.859441973269
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 3785.7920000000595,
-      "measured_wall_ms": 4166.574275121093,
+      "measured_own_cpu_ms": 3692.655999999971,
+      "measured_wall_ms": 3692.859441973269,
       "name": "calibrated-positive-rung-split-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "8 350",
+          "exact": "7 400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8 350",
+          "num": "7 400",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "3 785.792 000 000 059 5",
+          "exact": "3 692.655 999 999 971",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 785.792 000 000 059 5",
+          "num": "3 692.655 999 999 971",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "4 166.574 275 121 093",
+          "exact": "3 692.859 441 973 269",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 166.574 275 121 093",
+          "num": "3 692.859 441 973 269",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2143,51 +2284,57 @@
       "scope": "one pn-epoch::solve::partitions::positive_rung_split case"
     },
     {
-      "budget_ms": 3250,
+      "budget_ms": 4800,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1514.7370000000003,
-        1521.0419999999747,
-        1563.611000000007
+        1583.7229999999706,
+        1576.4880000000474,
+        1515.9170000000408
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "7be1662b9a0d3be967499e7e4f746281f0aabcbc372966107541b9cc566323b1",
+        "function": "published_isolated_acts",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        1514.9157021660358,
-        1521.7278951313347,
-        1621.6420400887728
+        2398.7019159831107,
+        1657.753444975242,
+        1516.1322059575468
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1563.611000000007,
-      "measured_wall_ms": 1621.6420400887728,
+      "measured_own_cpu_ms": 1583.7229999999706,
+      "measured_wall_ms": 2398.7019159831107,
       "name": "calibrated-published-isolated-acts-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 250",
+          "exact": "4 800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 250",
+          "num": "4 800",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 563.611 000 000 007",
+          "exact": "1 583.722 999 999 970 6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 563.611 000 000 007",
+          "num": "1 583.722 999 999 970 6",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 621.642 040 088 772 8",
+          "exact": "2 398.701 915 983 110 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 621.642 040 088 772 8",
+          "num": "2 398.701 915 983 110 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2211,27 +2358,33 @@
     },
     {
       "budget_ms": 6450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        2771.580999999999,
-        2761.501000000024,
-        2914.7449999999644
+        2816.028000000017,
+        2885.9299999999307,
+        2783.5909999999126
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "28a1a7f25ef8bd3b2485afbe69befa7d7c9aa52ab399fcd673c7abee7291fe00",
+        "function": "published_retained_act",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        2772.057079942897,
-        2761.697535868734,
-        3205.7035930920392
+        2845.3307871241122,
+        3201.5606078784913,
+        2786.127026891336
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 2914.7449999999644,
-      "measured_wall_ms": 3205.7035930920392,
+      "measured_own_cpu_ms": 2885.9299999999307,
+      "measured_wall_ms": 3201.5606078784913,
       "name": "calibrated-published-retained-act-case",
       "number_forms": {
         "budget_ms": {
@@ -2243,18 +2396,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "2 914.744 999 999 964 4",
+          "exact": "2 885.929 999 999 930 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 914.744 999 999 964 4",
+          "num": "2 885.929 999 999 930 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "3 205.703 593 092 039 2",
+          "exact": "3 201.560 607 878 491 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 205.703 593 092 039 2",
+          "num": "3 201.560 607 878 491 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2277,51 +2430,57 @@
       "scope": "one pn-epoch::solve::partitions::published_retained_act case"
     },
     {
-      "budget_ms": 1250,
+      "budget_ms": 1200,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        550.8869999999959,
-        553.5509999999846,
-        577.4860000000199
+        548.2720000000079,
+        547.5560000000037,
+        569.4110000000699
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "4209bc3d5aad6d5e46142fa671da6371fe883b66a5a0081fe44a47260a40ec08",
+        "function": "receiving_small",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        552.1569759584963,
-        553.7229161709547,
-        610.2622170001268
+        548.6533190123737,
+        547.9611940681934,
+        585.7777760829777
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 577.4860000000199,
-      "measured_wall_ms": 610.2622170001268,
+      "measured_own_cpu_ms": 569.4110000000699,
+      "measured_wall_ms": 585.7777760829777,
       "name": "calibrated-receiving-small-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 250",
+          "exact": "1 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 250",
+          "num": "1 200",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "577.486 000 000 019 9",
+          "exact": "569.411 000 000 069 9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "577.486 000 000 019 9",
+          "num": "569.411 000 000 069 9",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "610.262 217 000 126 8",
+          "exact": "585.777 776 082 977 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "610.262 217 000 126 8",
+          "num": "585.777 776 082 977 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2344,51 +2503,57 @@
       "scope": "one pn-epoch::solve::partitions::receiving_small case"
     },
     {
-      "budget_ms": 11700,
+      "budget_ms": 13000,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        4675.106999999999,
-        4570.539999999991,
-        4759.612000000003
+        4599.155000000011,
+        4574.097000000052,
+        4499.419
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "5b804842edca188baf3a483682a942b5068c03228c243ca439c1a8502d6fff6d",
+        "function": "sibling_outside_paths",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
       "calibration_walls_ms": [
-        5676.095890114084,
-        4572.8784669190645,
-        5836.271299980581
+        6479.6505339909345,
+        5036.7386569269,
+        4499.804946128279
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 4759.612000000003,
-      "measured_wall_ms": 5836.271299980581,
+      "measured_own_cpu_ms": 4599.155000000011,
+      "measured_wall_ms": 6479.6505339909345,
       "name": "calibrated-sibling-outside-paths-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "11 700",
+          "exact": "13 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11 700",
+          "num": "13 000",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "4 759.612 000 000 003",
+          "exact": "4 599.155 000 000 011",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 759.612 000 000 003",
+          "num": "4 599.155 000 000 011",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "5 836.271 299 980 581",
+          "exact": "6 479.650 533 990 934 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 836.271 299 980 581",
+          "num": "6 479.650 533 990 934 5",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2411,51 +2576,57 @@
       "scope": "one pn-epoch::solve::partitions::sibling_outside_paths case"
     },
     {
-      "budget_ms": 7300,
+      "budget_ms": 7350,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        3503.682000000017,
-        3453.1600000000394,
-        3467.7350000000242
+        3393.055000000011,
+        3459.1970000000247,
+        3390.974999999983
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "a70c809b8663bcaa2efa7014ad72dcd3540b201233a4d0bd50e52853e8f341f8",
+        "function": "two_map_box",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
       "calibration_walls_ms": [
-        3643.458754988387,
-        3457.996702985838,
-        3470.975303091109
+        3393.648329889402,
+        3673.9158479031175,
+        3391.769219888374
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 3503.682000000017,
-      "measured_wall_ms": 3643.458754988387,
+      "measured_own_cpu_ms": 3459.1970000000247,
+      "measured_wall_ms": 3673.9158479031175,
       "name": "calibrated-two-map-box-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "7 300",
+          "exact": "7 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7 300",
+          "num": "7 350",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "3 503.682 000 000 017",
+          "exact": "3 459.197 000 000 024 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 503.682 000 000 017",
+          "num": "3 459.197 000 000 024 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "3 643.458 754 988 387",
+          "exact": "3 673.915 847 903 117 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 643.458 754 988 387",
+          "num": "3 673.915 847 903 117 5",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2478,51 +2649,57 @@
       "scope": "one pn-epoch::solve::two_map_box case"
     },
     {
-      "budget_ms": 3500,
+      "budget_ms": 3450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1691.2129999999922,
-        1727.0850000000362,
-        1696.960999999952
+        1708.2730000000126,
+        1712.9529999999243,
+        1719.8410000000522
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "b5baad16f61ecc771f1c7431f6709d8ae8711b8b6778a299762bce32532be696",
+        "function": "activation_costs",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1691.9478869531304,
-        1747.44977010414,
-        1702.6601310353726
+        1713.59849604778,
+        1713.2324271369725,
+        1720.240319147706
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1727.0850000000362,
-      "measured_wall_ms": 1747.44977010414,
+      "measured_own_cpu_ms": 1719.8410000000522,
+      "measured_wall_ms": 1720.240319147706,
       "name": "calibrated-activation-costs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 500",
+          "exact": "3 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 500",
+          "num": "3 450",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 727.085 000 000 036 2",
+          "exact": "1 719.841 000 000 052 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 727.085 000 000 036 2",
+          "num": "1 719.841 000 000 052 2",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 747.449 770 104 14",
+          "exact": "1 720.240 319 147 706",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 747.449 770 104 14",
+          "num": "1 720.240 319 147 706",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2546,27 +2723,33 @@
     },
     {
       "budget_ms": 2450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1207.9309999999878,
-        1205.7639999999878,
-        1190.8109999999645
+        1200.123999999999,
+        1212.271000000097,
+        1219.422999999992
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "9101e92979ff57388e4639203dbf7beac136ff38ac57e2df0f8a951f2ca28688",
+        "function": "activation_endpoints",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1208.2705809734762,
-        1209.290012018755,
-        1191.194217884913
+        1200.5323509220034,
+        1212.5446749851108,
+        1223.853558069095
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1205.7639999999878,
-      "measured_wall_ms": 1209.290012018755,
+      "measured_own_cpu_ms": 1219.422999999992,
+      "measured_wall_ms": 1223.853558069095,
       "name": "calibrated-activation-endpoints-case",
       "number_forms": {
         "budget_ms": {
@@ -2578,18 +2761,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 205.763 999 999 987 8",
+          "exact": "1 219.422 999 999 992",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 205.763 999 999 987 8",
+          "num": "1 219.422 999 999 992",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 209.290 012 018 755",
+          "exact": "1 223.853 558 069 095",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 209.290 012 018 755",
+          "num": "1 223.853 558 069 095",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2613,27 +2796,33 @@
     },
     {
       "budget_ms": 1300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        628.0049999999875,
-        647.275000000029,
-        649.6770000000608
+        635.1199999999651,
+        636.5810000000529,
+        640.6210000000385
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "bda86da5afa5fb38e564cf86e9af8e6c8499e754393db94e30f7c972af4ed5e0",
+        "function": "activation_oracles",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        628.2614809460938,
-        647.5507980212569,
-        649.9388220254332
+        635.2503360249102,
+        636.7840659804642,
+        640.9946840722114
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 649.6770000000608,
-      "measured_wall_ms": 649.9388220254332,
+      "measured_own_cpu_ms": 640.6210000000385,
+      "measured_wall_ms": 640.9946840722114,
       "name": "calibrated-activation-oracles-case",
       "number_forms": {
         "budget_ms": {
@@ -2645,18 +2834,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "649.677 000 000 060 8",
+          "exact": "640.621 000 000 038 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "649.677 000 000 060 8",
+          "num": "640.621 000 000 038 5",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "649.938 822 025 433 2",
+          "exact": "640.994 684 072 211 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "649.938 822 025 433 2",
+          "num": "640.994 684 072 211 4",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2680,27 +2869,33 @@
     },
     {
       "budget_ms": 2000,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        970.2370000000116,
-        992.4069999999663,
-        969.5040000000148
+        978.8420000000215,
+        982.7469999999856,
+        987.8769999999548
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "19a02c1056f338f86270ba2b148ace1f0b9c6e67bfe99d7350b930291ba2f823",
+        "function": "activation_walls",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        970.5467100720853,
-        992.6084580365568,
-        969.8673479724675
+        979.0096839424223,
+        982.9351590014994,
+        988.4078379254788
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 992.4069999999663,
-      "measured_wall_ms": 992.6084580365568,
+      "measured_own_cpu_ms": 987.8769999999548,
+      "measured_wall_ms": 988.4078379254788,
       "name": "calibrated-activation-walls-case",
       "number_forms": {
         "budget_ms": {
@@ -2712,18 +2907,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "992.406 999 999 966 3",
+          "exact": "987.876 999 999 954 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "992.406 999 999 966 3",
+          "num": "987.876 999 999 954 8",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "992.608 458 036 556 8",
+          "exact": "988.407 837 925 478 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "992.608 458 036 556 8",
+          "num": "988.407 837 925 478 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2746,51 +2941,57 @@
       "scope": "one pn-graph::numeric::activation_walls case"
     },
     {
-      "budget_ms": 1300,
+      "budget_ms": 1350,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        646.9369999999994,
-        643.1979999999662,
-        645.2910000000287
+        641.090000000009,
+        645.0550000000774,
+        644.6059999999711
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "cfadb2b11210cb37df1ba3b22f3d1c639668774ecb89b980db06df2d3f6d7ffd",
+        "function": "enclosed_wall_clamp",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        648.1918150093406,
-        643.6724348459393,
-        648.5733601730317
+        641.3740459829569,
+        654.2528960853815,
+        645.5859059933573
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 645.2910000000287,
-      "measured_wall_ms": 648.5733601730317,
+      "measured_own_cpu_ms": 645.0550000000774,
+      "measured_wall_ms": 654.2528960853815,
       "name": "calibrated-enclosed-wall-clamp-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 300",
+          "exact": "1 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 300",
+          "num": "1 350",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "645.291 000 000 028 7",
+          "exact": "645.055 000 000 077 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "645.291 000 000 028 7",
+          "num": "645.055 000 000 077 4",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "648.573 360 173 031 7",
+          "exact": "654.252 896 085 381 5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "648.573 360 173 031 7",
+          "num": "654.252 896 085 381 5",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2813,51 +3014,57 @@
       "scope": "one pn-graph::numeric::enclosed_wall_clamp case"
     },
     {
-      "budget_ms": 3700,
+      "budget_ms": 4000,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1825.5729999999967,
-        1814.9690000000014,
-        1846.0350000000042
+        1819.9930000000038,
+        1831.090999999919,
+        1874.089999999999
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "854eca12e065baad9b0b32868363178ba26dc25291e1a39fb04df951a5eee01f",
+        "function": "evaluation_costs",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1826.5792799647897,
-        1815.2403950225562,
-        1847.173925023526
+        1820.5814021639526,
+        1831.6284320317209,
+        1994.1967490594834
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1846.0350000000042,
-      "measured_wall_ms": 1847.173925023526,
+      "measured_own_cpu_ms": 1874.089999999999,
+      "measured_wall_ms": 1994.1967490594834,
       "name": "calibrated-evaluation-costs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 700",
+          "exact": "4 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 700",
+          "num": "4 000",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 846.035 000 000 004 2",
+          "exact": "1 874.089 999 999 999",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 846.035 000 000 004 2",
+          "num": "1 874.089 999 999 999",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 847.173 925 023 526",
+          "exact": "1 994.196 749 059 483 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 847.173 925 023 526",
+          "num": "1 994.196 749 059 483 4",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2880,51 +3087,57 @@
       "scope": "one pn-graph::numeric::evaluation_costs case"
     },
     {
-      "budget_ms": 2150,
+      "budget_ms": 2200,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1032.628999999991,
-        1034.0960000000123,
-        1016.5509999999323
+        1034.0680000000048,
+        949.4130000000282,
+        1048.8960000000488
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "43087bf3230350032872148458771c743f1b8009b2678ac3118a9d57f5950215",
+        "function": "reference_wall_branches",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1053.5847460851073,
-        1052.4833500385284,
-        1016.7345160152763
+        1034.631764050573,
+        950.453634141013,
+        1084.6660321112722
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1032.628999999991,
-      "measured_wall_ms": 1053.5847460851073,
+      "measured_own_cpu_ms": 1048.8960000000488,
+      "measured_wall_ms": 1084.6660321112722,
       "name": "calibrated-reference-wall-branches-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 150",
+          "exact": "2 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 150",
+          "num": "2 200",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 032.628 999 999 991",
+          "exact": "1 048.896 000 000 048 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 032.628 999 999 991",
+          "num": "1 048.896 000 000 048 8",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 053.584 746 085 107 3",
+          "exact": "1 084.666 032 111 272 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 053.584 746 085 107 3",
+          "num": "1 084.666 032 111 272 2",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2947,51 +3160,57 @@
       "scope": "one pn-graph::numeric::reference_wall_branches case"
     },
     {
-      "budget_ms": 2500,
+      "budget_ms": 2450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1208.880999999975,
-        1224.4779999999764,
-        1216.6519999999784
+        1200.8140000000046,
+        1103.1489999999699,
+        1202.114999999999
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "dd0bea91fa383a47f5983ac232da768d6dcfea4aa23664a56520efa2edbca008",
+        "function": "reference_wall_controls",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1222.054547863081,
-        1246.419760864228,
-        1216.9014269020408
+        1201.22174709104,
+        1103.3482952043414,
+        1207.2553099133074
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1224.4779999999764,
-      "measured_wall_ms": 1246.419760864228,
+      "measured_own_cpu_ms": 1202.114999999999,
+      "measured_wall_ms": 1207.2553099133074,
       "name": "calibrated-reference-wall-controls-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 500",
+          "exact": "2 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 500",
+          "num": "2 450",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 224.477 999 999 976 4",
+          "exact": "1 202.114 999 999 999",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 224.477 999 999 976 4",
+          "num": "1 202.114 999 999 999",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 246.419 760 864 228",
+          "exact": "1 207.255 309 913 307 4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 246.419 760 864 228",
+          "num": "1 207.255 309 913 307 4",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3015,27 +3234,33 @@
     },
     {
       "budget_ms": 3750,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1790.8170000000182,
-        1804.763000000019,
-        1774.0209999999693
+        1763.3199999999968,
+        1653.6220000000199,
+        1764.9579999999823
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "a078d065282b76740a3d099e4da240ce7f9d29fad3cba0b6b4bd7d0308c213ba",
+        "function": "reference_wall_oracle",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        1824.8079121112823,
-        1855.6994150858372,
-        1775.8619021624327
+        1859.518646961078,
+        1654.1067289654166,
+        1774.1352450102568
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1804.763000000019,
-      "measured_wall_ms": 1855.6994150858372,
+      "measured_own_cpu_ms": 1763.3199999999968,
+      "measured_wall_ms": 1859.518646961078,
       "name": "calibrated-reference-wall-oracle-case",
       "number_forms": {
         "budget_ms": {
@@ -3047,18 +3272,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 804.763 000 000 019",
+          "exact": "1 763.319 999 999 996 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 804.763 000 000 019",
+          "num": "1 763.319 999 999 996 8",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 855.699 415 085 837 2",
+          "exact": "1 859.518 646 961 078",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 855.699 415 085 837 2",
+          "num": "1 859.518 646 961 078",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3082,27 +3307,33 @@
     },
     {
       "budget_ms": 4850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        2338.876999999995,
-        2367.5899999999965,
-        2336.9790000000457
+        2307.6639999999957,
+        2092.2900000000554,
+        2322.5529999999744
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "6d3da917e7b1f101221dffa6f825cb04a0628df33fc066e014690ffd54d63faa",
+        "function": "reference_wall_work",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
       "calibration_walls_ms": [
-        2369.6687009651214,
-        2409.658716060221,
-        2338.8421509880573
+        2404.4713301118463,
+        2092.5504888873547,
+        2351.251055020839
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 2367.5899999999965,
-      "measured_wall_ms": 2409.658716060221,
+      "measured_own_cpu_ms": 2307.6639999999957,
+      "measured_wall_ms": 2404.4713301118463,
       "name": "calibrated-reference-wall-work-case",
       "number_forms": {
         "budget_ms": {
@@ -3114,18 +3345,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "2 367.589 999 999 996 5",
+          "exact": "2 307.663 999 999 995 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 367.589 999 999 996 5",
+          "num": "2 307.663 999 999 995 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "2 409.658 716 060 221",
+          "exact": "2 404.471 330 111 846 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 409.658 716 060 221",
+          "num": "2 404.471 330 111 846 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3148,51 +3379,52 @@
       "scope": "one pn-graph::numeric::reference_wall_work case"
     },
     {
-      "budget_ms": 91000,
+      "budget_ms": 108950,
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        42070.638,
-        41758.163999999975,
-        42308.867999999944
+        51125.701000000015,
+        51517.098,
+        50894.66099999996
       ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The shared or suite allowance has multiple execution roots; the current campaign identity schema admits one case closure, not their union.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
       "calibration_walls_ms": [
-        43544.61083584465,
-        41912.04417916015,
-        45498.36089089513
+        54113.54401009157,
+        54452.20921118744,
+        52186.13889697008
       ],
       "calibration_warm": true,
       "category": "suite",
-      "measured_own_cpu_ms": 42308.867999999944,
-      "measured_wall_ms": 45498.36089089513,
+      "measured_own_cpu_ms": 51517.098,
+      "measured_wall_ms": 54452.20921118744,
       "name": "calibrated-epoch-numeric-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "91 000",
+          "exact": "108 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "91 000",
+          "num": "108 950",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "42 308.867 999 999 944",
+          "exact": "51 517.098",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "42 308.867 999 999 944",
+          "num": "51 517.098",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "45 498.360 890 895 13",
+          "exact": "54 452.209 211 187 44",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45 498.360 890 895 13",
+          "num": "54 452.209 211 187 44",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3215,51 +3447,52 @@
       "scope": "complete planned-numeric suite"
     },
     {
-      "budget_ms": 49100,
+      "budget_ms": 23450,
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        23756.26999999999,
-        23940.377999999968,
-        23800.51600000001
+        11391.933000000003,
+        11446.62999999994,
+        11524.54800000008
       ],
       "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The shared or suite allowance has multiple execution roots; the current campaign identity schema admits one case closure, not their union.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 3,
       "calibration_walls_ms": [
-        23795.569239882752,
-        24542.343503097072,
-        23861.949559068307
+        11418.39591995813,
+        11480.468548135832,
+        11715.85465199314
       ],
       "calibration_warm": true,
       "category": "suite",
-      "measured_own_cpu_ms": 23940.377999999968,
-      "measured_wall_ms": 24542.343503097072,
+      "measured_own_cpu_ms": 11524.54800000008,
+      "measured_wall_ms": 11715.85465199314,
       "name": "calibrated-graph-numeric-suite",
       "number_forms": {
         "budget_ms": {
-          "exact": "49 100",
+          "exact": "23 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49 100",
+          "num": "23 450",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "23 940.377 999 999 968",
+          "exact": "11 524.548 000 000 08",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23 940.377 999 999 968",
+          "num": "11 524.548 000 000 08",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "24 542.343 503 097 072",
+          "exact": "11 715.854 651 993 14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24 542.343 503 097 072",
+          "num": "11 715.854 651 993 14",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5256,51 +5489,57 @@
       "scope": "one pn-wallet::wire::wire_compatibility case"
     },
     {
-      "budget_ms": 2900,
+      "budget_ms": 2850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1341.0449999999905,
-        1331.1369999999858,
-        1381.011000000063
+        1342.7380000000433,
+        1416.297000000018,
+        1309.0600000000272
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "49d85dcd11854ab58cd70a02828e1f9b2499f12d69e18e441066a3926a6eb7e0",
+        "function": "title_exhaustive",
+        "owner": "lane/graph",
+        "path": "packages/verification/tests/title.rs"
+      },
       "calibration_walls_ms": [
-        1341.2470580078661,
-        1334.6170869190246,
-        1434.2876598238945
+        1343.0543150752783,
+        1416.5936310309917,
+        1309.334937017411
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1381.011000000063,
-      "measured_wall_ms": 1434.2876598238945,
+      "measured_own_cpu_ms": 1416.297000000018,
+      "measured_wall_ms": 1416.5936310309917,
       "name": "calibrated-title-exhaustive-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 900",
+          "exact": "2 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 900",
+          "num": "2 850",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 381.011 000 000 063",
+          "exact": "1 416.297 000 000 018",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 381.011 000 000 063",
+          "num": "1 416.297 000 000 018",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 434.287 659 823 894 5",
+          "exact": "1 416.593 631 030 991 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 434.287 659 823 894 5",
+          "num": "1 416.593 631 030 991 7",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5324,27 +5563,33 @@
     },
     {
       "budget_ms": 2050,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1010.8810000000101,
-        1000.6900000000023,
-        1010.5909999999518
+        1001.994999999976,
+        1005.5909999999067,
+        1005.7239999999439
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "10df45fbef324b73bb19f0b19e43ffc3250bcc27246af2a79475fbc9fef02e95",
+        "function": "ridge_definition",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric/ridge.rs"
+      },
       "calibration_walls_ms": [
-        1011.2951130140573,
-        1000.9788628667593,
-        1014.1063369810581
+        1002.6162550784647,
+        1011.0159029718488,
+        1006.0961979907006
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1010.5909999999518,
-      "measured_wall_ms": 1014.1063369810581,
+      "measured_own_cpu_ms": 1005.5909999999067,
+      "measured_wall_ms": 1011.0159029718488,
       "name": "calibrated-ridge-definition-case",
       "number_forms": {
         "budget_ms": {
@@ -5356,18 +5601,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 010.590 999 999 951 8",
+          "exact": "1 005.590 999 999 906 7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 010.590 999 999 951 8",
+          "num": "1 005.590 999 999 906 7",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 014.106 336 981 058 1",
+          "exact": "1 011.015 902 971 848 8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 014.106 336 981 058 1",
+          "num": "1 011.015 902 971 848 8",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5391,27 +5636,33 @@
     },
     {
       "budget_ms": 2950,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        1435.1589999999917,
-        1459.1399999999996,
-        1464.2909999999567
+        1466.4479999999892,
+        1466.642000000032,
+        1463.116000000035
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "a2919abf1989968e349693bb6209e1bd00e315125e5f220fffb8c07d5c49239c",
+        "function": "ridge_comparisons",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric/ridge.rs"
+      },
       "calibration_walls_ms": [
-        1435.8870210126042,
-        1459.4078459776938,
-        1471.2889529764652
+        1466.7130268644542,
+        1466.9103759806603,
+        1463.6022399645299
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 1464.2909999999567,
-      "measured_wall_ms": 1471.2889529764652,
+      "measured_own_cpu_ms": 1466.642000000032,
+      "measured_wall_ms": 1466.9103759806603,
       "name": "calibrated-ridge-comparisons-case",
       "number_forms": {
         "budget_ms": {
@@ -5423,18 +5674,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "1 464.290 999 999 956 7",
+          "exact": "1 466.642 000 000 032",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 464.290 999 999 956 7",
+          "num": "1 466.642 000 000 032",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "1 471.288 952 976 465 2",
+          "exact": "1 466.910 375 980 660 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 471.288 952 976 465 2",
+          "num": "1 466.910 375 980 660 3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5458,27 +5709,33 @@
     },
     {
       "budget_ms": 1600,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        779.6000000000003,
-        766.3399999999942,
-        783.105000000031
+        766.4470000000314,
+        768.327999999979,
+        778.7980000000302
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "eba308c48cd153d4ee5b1e96e19828e5681a374176d0da6f680f963b7c4355b2",
+        "function": "ridge_replay",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric/ridge.rs"
+      },
       "calibration_walls_ms": [
-        780.0063078757375,
-        766.5531558450311,
-        785.9136830084026
+        766.8022089637816,
+        768.7390460632741,
+        793.30062889494
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 783.105000000031,
-      "measured_wall_ms": 785.9136830084026,
+      "measured_own_cpu_ms": 778.7980000000302,
+      "measured_wall_ms": 793.30062889494,
       "name": "calibrated-ridge-replay-case",
       "number_forms": {
         "budget_ms": {
@@ -5490,18 +5747,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "783.105 000 000 031",
+          "exact": "778.798 000 000 030 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "783.105 000 000 031",
+          "num": "778.798 000 000 030 2",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "785.913 683 008 402 6",
+          "exact": "793.300 628 894 94",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "785.913 683 008 402 6",
+          "num": "793.300 628 894 94",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5524,51 +5781,57 @@
       "scope": "one pn-graph::numeric::ridge::ridge_replay case"
     },
     {
-      "budget_ms": 26150,
+      "budget_ms": 25550,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        12373.174000000012,
-        12501.494000000026,
-        12364.59799999999
+        12337.892,
+        11812.004999999974,
+        12366.621999999961
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "b5afa9d928a8fb3c9bb876253e72406c83f0c62330b226331b16b74d9bffbc18",
+        "function": "controller_delivery",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric/controller.rs"
+      },
       "calibration_walls_ms": [
-        12386.545534944162,
-        13053.120100870728,
-        12380.1898220554
+        12767.682903911918,
+        11819.481558166444,
+        12639.234873931855
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 12501.494000000026,
-      "measured_wall_ms": 13053.120100870728,
+      "measured_own_cpu_ms": 12337.892,
+      "measured_wall_ms": 12767.682903911918,
       "name": "calibrated-controller-delivery-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "26 150",
+          "exact": "25 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26 150",
+          "num": "25 550",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "12 501.494 000 000 026",
+          "exact": "12 337.892",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12 501.494 000 000 026",
+          "num": "12 337.892",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "13 053.120 100 870 728",
+          "exact": "12 767.682 903 911 918",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13 053.120 100 870 728",
+          "num": "12 767.682 903 911 918",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5592,27 +5855,33 @@
     },
     {
       "budget_ms": 1650,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        804.6220000000019,
-        802.0729999999699,
-        805.3959999999983
+        800.4610000000057,
+        806.8029999999951,
+        806.3969999999721
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "5007453ebc9b1b61eef2048891dd23a53d69a56490b3c60424b338b3b92d0bde",
+        "function": "controller_ridge",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric/controller.rs"
+      },
       "calibration_walls_ms": [
-        804.9654481001198,
-        805.9335369616747,
-        805.6969209574163
+        800.8728041313589,
+        807.0663341786712,
+        806.7176649346948
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 802.0729999999699,
-      "measured_wall_ms": 805.9335369616747,
+      "measured_own_cpu_ms": 806.8029999999951,
+      "measured_wall_ms": 807.0663341786712,
       "name": "calibrated-controller-ridge-case",
       "number_forms": {
         "budget_ms": {
@@ -5624,18 +5893,18 @@
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "802.072 999 999 969 9",
+          "exact": "806.802 999 999 995 1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "802.072 999 999 969 9",
+          "num": "806.802 999 999 995 1",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "805.933 536 961 674 7",
+          "exact": "807.066 334 178 671 2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "805.933 536 961 674 7",
+          "num": "807.066 334 178 671 2",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5700,51 +5969,57 @@
       "scope": "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
     },
     {
-      "budget_ms": 20200,
+      "budget_ms": 20550,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        9807.027999999998,
-        10057.398000000003,
-        9871.958
+        9868.466999999984,
+        9983.588999999984,
+        9626.86800000002
       ],
-      "calibration_pending_owner": "lane/graph",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "da92aa26e23c08a784761da6a6d9d24c90bd0806563ca0975c90a2ed91a0ce52",
+        "function": "schedule_covariance",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/schedules.rs"
+      },
       "calibration_walls_ms": [
-        9823.914822191,
-        10077.215888071805,
-        9874.89967700094
+        10058.840076904744,
+        10272.448564181104,
+        9628.36867198348
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 10057.398000000003,
-      "measured_wall_ms": 10077.215888071805,
+      "measured_own_cpu_ms": 9983.588999999984,
+      "measured_wall_ms": 10272.448564181104,
       "name": "calibrated-schedule-covariance-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "20 200",
+          "exact": "20 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20 200",
+          "num": "20 550",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "10 057.398 000 000 003",
+          "exact": "9 983.588 999 999 984",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 057.398 000 000 003",
+          "num": "9 983.588 999 999 984",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "10 077.215 888 071 805",
+          "exact": "10 272.448 564 181 104",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 077.215 888 071 805",
+          "num": "10 272.448 564 181 104",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5827,6 +6102,1169 @@
         ],
         "warmup_commit": "2ba3ea5f48336cf93934d6119fcc7dd487d62247"
       }
+    },
+    {
+      "budget_ms": 750,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        358.4419999999682,
+        361.8830000000095,
+        341.0529999999703
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "23ef7b5ef7647a8969b5f4b57051092c3df059c43dcdd4469d7d791fc57fa67c",
+        "function": "title_generated",
+        "owner": "lane/graph",
+        "path": "packages/verification/tests/title.rs"
+      },
+      "calibration_walls_ms": [
+        358.7919541168958,
+        362.06734413281083,
+        341.17096313275397
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 361.8830000000095,
+      "measured_wall_ms": 362.06734413281083,
+      "name": "calibrated-title-generated-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "750",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "750",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "361.883 000 000 009 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "361.883 000 000 009 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "362.067 344 132 810 83",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "362.067 344 132 810 83",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-verification::title::title_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-verification::title::title_generated execution"
+    },
+    {
+      "budget_ms": 850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        389.70699999999067,
+        393.4799999999612,
+        417.78900000008434
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "7cfd8bb52730625558e88c70b56f1f0b0691b52c542f54126eec6335757f64f5",
+        "function": "compiler_properties",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/compiler.rs"
+      },
+      "calibration_walls_ms": [
+        389.8780890740454,
+        393.89015291817486,
+        417.9218579083681
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 417.78900000008434,
+      "measured_wall_ms": 417.9218579083681,
+      "name": "calibrated-compiler-properties-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "850",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "417.789 000 000 084 34",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "417.789 000 000 084 34",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "417.921 857 908 368 1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "417.921 857 908 368 1",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::compiler::compiler_properties mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::compiler::compiler_properties execution"
+    },
+    {
+      "budget_ms": 800,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        372.1079999999759,
+        380.5070000000477,
+        370.7889999999629
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "bf3742cff34d22c740fa9c957f998eced14fafbec9d9fc15ed18fd9103028071",
+        "function": "compiler_generated",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/compiler.rs"
+      },
+      "calibration_walls_ms": [
+        372.36077920533717,
+        380.95199409872293,
+        370.9252690896392
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 380.5070000000477,
+      "measured_wall_ms": 380.95199409872293,
+      "name": "calibrated-compiler-generated-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "800",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "800",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "380.507 000 000 047 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "380.507 000 000 047 7",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "380.951 994 098 722 93",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "380.951 994 098 722 93",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::compiler::compiler_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::compiler::compiler_generated execution"
+    },
+    {
+      "budget_ms": 1450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        458.0130000000473,
+        485.85299999995254,
+        454.2139999999648
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "1539a628a2c910db58dbf04fc367aa6744b16dde94dbc7ae57002ecc92252ac5",
+        "function": "evaluated_scaling",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
+      "calibration_walls_ms": [
+        458.5703769698739,
+        701.475169043988,
+        454.4911899138242
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 485.85299999995254,
+      "measured_wall_ms": 701.475169043988,
+      "name": "calibrated-evaluated-scaling-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 450",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "485.852 999 999 952 54",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "485.852 999 999 952 54",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "701.475 169 043 988",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "701.475 169 043 988",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::evaluated_scaling mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::evaluated_scaling execution"
+    },
+    {
+      "budget_ms": 900,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        442.7679999999974,
+        436.63899999998534,
+        438.12200000009227
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "160df0d8d8f8052f72a2989a1c7eb30bed1ddfe345f8361a8171dbb9b0132e66",
+        "function": "distinct_target_split",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/partitions.rs"
+      },
+      "calibration_walls_ms": [
+        442.9076749365777,
+        436.8739021010697,
+        438.3232709951699
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 442.7679999999974,
+      "measured_wall_ms": 442.9076749365777,
+      "name": "calibrated-distinct-target-split-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "900",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "900",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "442.767 999 999 997 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "442.767 999 999 997 4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "442.907 674 936 577 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "442.907 674 936 577 7",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::partitions::distinct_target_split mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::partitions::distinct_target_split execution"
+    },
+    {
+      "budget_ms": 800,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        394.6839999999838,
+        393.8330000000647,
+        394.90899999993803
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "8ae829aa92e7d809b1f4fa77dac5fdc6aa05c5c3517e50764dd3fbfcc31eec7d",
+        "function": "act_switch",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve.rs"
+      },
+      "calibration_walls_ms": [
+        394.8526969179511,
+        394.0919619053602,
+        395.2373678330332
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 394.90899999993803,
+      "measured_wall_ms": 395.2373678330332,
+      "name": "calibrated-act-switch-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "800",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "800",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "394.908 999 999 938 03",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "394.908 999 999 938 03",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "395.237 367 833 033 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "395.237 367 833 033 2",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::act_switch mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::act_switch execution"
+    },
+    {
+      "budget_ms": 850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        415.9009999999981,
+        390.86800000002245,
+        413.07599999998246
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "119f9d6718df47d96d4f2d709d9557ce47c118ac4446eecee11c2a3524152aa1",
+        "function": "admission_refusals",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        419.2725131288171,
+        391.9026888906956,
+        414.4445089623332
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 415.9009999999981,
+      "measured_wall_ms": 419.2725131288171,
+      "name": "calibrated-admission-refusals-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "850",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "415.900 999 999 998 1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "415.900 999 999 998 1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "419.272 513 128 817 1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "419.272 513 128 817 1",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::admission_refusals mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::admission_refusals execution"
+    },
+    {
+      "budget_ms": 1300,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        645.2990000000085,
+        620.147999999979,
+        649.4919999999595
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "5eedb981d7b2ede17c563d39f989fbca3c5248159295a50d367afe39bcdefba7",
+        "function": "admission_boundaries",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        645.5128509551287,
+        620.3243820928037,
+        649.8413181398064
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 649.4919999999595,
+      "measured_wall_ms": 649.8413181398064,
+      "name": "calibrated-admission-boundaries-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 300",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "649.491 999 999 959 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "649.491 999 999 959 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "649.841 318 139 806 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "649.841 318 139 806 4",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::admission_boundaries mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::admission_boundaries execution"
+    },
+    {
+      "budget_ms": 3100,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1367.6939999999931,
+        1351.0989999999872,
+        1392.349999999972
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "138125fbefc83b28699bc482f875997e83d5f421db7f024b312c43431f12cbbb",
+        "function": "admission_refinement",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        1377.3249888326973,
+        1352.1956407930702,
+        1537.405112059787
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 1392.349999999972,
+      "measured_wall_ms": 1537.405112059787,
+      "name": "calibrated-admission-refinement-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "1 392.349 999 999 972",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 392.349 999 999 972",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 537.405 112 059 787",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 537.405 112 059 787",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::admission_refinement mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::admission_refinement execution"
+    },
+    {
+      "budget_ms": 1150,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        377.3819999999688,
+        377.4080000000772,
+        393.38300000004267
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "a307d0d7db80c13e1dc65def9a6367a8afed1bdc017db89a0e93a0b5b86dae51",
+        "function": "admission_quarantine",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        378.0284230597317,
+        379.50133602134883,
+        571.2601060513407
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 393.38300000004267,
+      "measured_wall_ms": 571.2601060513407,
+      "name": "calibrated-admission-quarantine-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 150",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 150",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "393.383 000 000 042 67",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "393.383 000 000 042 67",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "571.260 106 051 340 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "571.260 106 051 340 7",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::admission_quarantine mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::admission_quarantine execution"
+    },
+    {
+      "budget_ms": 9450,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        4622.052000000035,
+        4493.367000000035,
+        4720.269000000098
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_pending_reason": "The case closure changes in this step; public-main measurements describe the preceding body.",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_walls_ms": [
+        4666.190098039806,
+        4495.419340906665,
+        4723.191069904715
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 4720.269000000098,
+      "measured_wall_ms": 4723.191069904715,
+      "name": "calibrated-retained-policy-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "9 450",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "9 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "4 720.269 000 000 098",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 720.269 000 000 098",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "4 723.191 069 904 715",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 723.191 069 904 715",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::schedules::retained_policy mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::schedules::retained_policy execution"
+    },
+    {
+      "budget_ms": 1850,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        685.7769999999625,
+        668.6409999999335,
+        701.4959999999917
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "311c82dfe525b2eac76b3878047f752a659461997649f9792fb6da790fa9a2f1",
+        "function": "closure_membership",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        685.95054699108,
+        668.7925411388278,
+        905.1105349790305
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 701.4959999999917,
+      "measured_wall_ms": 905.1105349790305,
+      "name": "calibrated-closure-membership-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 850",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "701.495 999 999 991 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "701.495 999 999 991 7",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "905.110 534 979 030 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "905.110 534 979 030 5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::closure_membership mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::closure_membership execution"
+    },
+    {
+      "budget_ms": 1150,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        539.2010000000128,
+        519.7500000000197,
+        557.4479999999085
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "99ff2dfa23a42992142cdb124eb56dc87e0e4f7ed88b06962dc383cd0c87fd6a",
+        "function": "closure_markers",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        540.246422868222,
+        519.8556059040129,
+        570.8237190265208
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 557.4479999999085,
+      "measured_wall_ms": 570.8237190265208,
+      "name": "calibrated-closure-markers-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 150",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 150",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "557.447 999 999 908 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "557.447 999 999 908 5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "570.823 719 026 520 8",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "570.823 719 026 520 8",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::closure_markers mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::closure_markers execution"
+    },
+    {
+      "budget_ms": 2450,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        427.15500000003817,
+        426.61199999999155,
+        464.67300000009004
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "6b9fb9876fbea33debbe67e366930dbbf31c3e8b4aaf986332f0c2fea33dc6dc",
+        "function": "closure_duration",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        429.39228005707264,
+        426.89563194289804,
+        1200.801021186635
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 464.67300000009004,
+      "measured_wall_ms": 1200.801021186635,
+      "name": "calibrated-closure-duration-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 450",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "464.673 000 000 090 04",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "464.673 000 000 090 04",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 200.801 021 186 635",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 200.801 021 186 635",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::closure_duration mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::closure_duration execution"
+    },
+    {
+      "budget_ms": 2400,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        515.2180000000009,
+        509.12800000004313,
+        549.781999999972
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "d18ac2f8b3e57ce9fa7a56ac0135a88f8e942fc7aa0c717de9827f8f4dafad3c",
+        "function": "closure_context",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        516.3635341450572,
+        509.2246909625828,
+        1186.9805969763547
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 549.781999999972,
+      "measured_wall_ms": 1186.9805969763547,
+      "name": "calibrated-closure-context-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 400",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 400",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "549.781 999 999 972",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "549.781 999 999 972",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 186.980 596 976 354 7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 186.980 596 976 354 7",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::closure_context mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::closure_context execution"
+    },
+    {
+      "budget_ms": 1950,
+      "calibration_campaign": "campaign:devperf:graph-public-main-warm",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        679.4969999999623,
+        669.9949999999752,
+        708.3589999999554
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "8d7a0f35db64f4c1ced5ccb5c0483057726fefda521cbb8920c631365547a2ab",
+        "function": "admission_individual_straddle",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        680.4479509592056,
+        670.1845920179039,
+        952.9926180839539
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 708.3589999999554,
+      "measured_wall_ms": 952.9926180839539,
+      "name": "calibrated-admission-individual-straddle-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 950",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 950",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "708.358 999 999 955 4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "708.358 999 999 955 4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "952.992 618 083 953 9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "952.992 618 083 953 9",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete pn-epoch::solve::admission::admission_individual_straddle mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "scope": "one pn-epoch::solve::admission::admission_individual_straddle execution"
     }
   ]
 }

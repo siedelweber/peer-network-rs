@@ -415,6 +415,7 @@
     "pn-epoch::solve::admission::admission_refinement": "",
     "pn-epoch::solve::admission::admission_refusals": "",
     "pn-epoch::solve::admission::admission_solvent_support": "",
+    "pn-epoch::solve::admission::admission_work": "",
     "pn-epoch::solve::admission::closure_context": "",
     "pn-epoch::solve::admission::closure_duration": "",
     "pn-epoch::solve::admission::closure_markers": "",

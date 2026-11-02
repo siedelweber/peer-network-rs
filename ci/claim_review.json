@@ -1946,6 +1946,14 @@
       "review": "The same complete coupled acts retain an unchanged supporter. A hand-derived exact stamp clears safety despite an own rate below the wall; substituting only the target burn makes W1 refuse. No transfer funds the own debit."
     },
     {
+      "operation": "pn-epoch::solve::admission::admission_work",
+      "path": "packages/epoch/tests/solve/admission.rs",
+      "claim": "EPOCH::claim:admission:final-policy-refines-without-guessing",
+      "before": "",
+      "after": "Logical Work is checked separately from elapsed-time calibration.",
+      "review": "The same two-attempt positive-rung fixture checks the recorded logical cost as an exact successful cap and independently refuses one less for production and replay. This is a finite resource boundary, not a wall-time multiplier or a new accuracy claim."
+    },
+    {
       "operation": "pn-epoch::solve::admission::closure_context",
       "path": "packages/epoch/tests/solve/admission.rs",
       "claim": "EPOCH::claim:admission:closure-replay-binds-one-common-context",

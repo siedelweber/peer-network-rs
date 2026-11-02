@@ -7190,3 +7190,11 @@ value = "7/10"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Admission logical Work boundary, independent of elapsed-time allowances.
+[[rows]]
+id = "num:numbers:admission-refinement-measured-work"
+value = "200418307"
+unit = "Work"
+display = "exact"
+exact_digits = 24

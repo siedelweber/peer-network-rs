@@ -4320,10 +4320,12 @@
     {
       "budget": "pure-suite",
       "case_budget_reasons": {
-        "pn-verification::title::title_exhaustive": "The complete two-boundary alphabet retains the baseline and five fault variations in both input orders, with independently checked clauses, ownership, consumption and events."
+        "pn-verification::title::title_exhaustive": "The complete two-boundary alphabet retains the baseline and five fault variations in both input orders, with independently checked clauses, ownership, consumption and events.",
+        "pn-verification::title::title_generated": "The complete pn-verification::title::title_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
       },
       "case_budgets": {
-        "pn-verification::title::title_exhaustive": "calibrated-title-exhaustive-case"
+        "pn-verification::title::title_exhaustive": "calibrated-title-exhaustive-case",
+        "pn-verification::title::title_generated": "calibrated-title-generated-case"
       },
       "cases": [
         "pn-verification::title::title_shared_cases",
@@ -4522,6 +4524,14 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::compiler::compiler_generated": "The complete pn-epoch::compiler::compiler_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::compiler::compiler_properties": "The complete pn-epoch::compiler::compiler_properties mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+      },
+      "case_budgets": {
+        "pn-epoch::compiler::compiler_generated": "calibrated-compiler-generated-case",
+        "pn-epoch::compiler::compiler_properties": "calibrated-compiler-properties-case"
+      },
       "cases": [
         "pn-epoch::compiler::compiler_contract",
         "pn-epoch::compiler::compiler_tables",
@@ -4544,6 +4554,7 @@
       "case_budget_reasons": {
         "pn-epoch::solve::act_directions": "Opposite signed complete-act comparisons retain both independently replayed solves and finite forcing bounds at the measured component-loss floor, including the preceding precision control that fails the zero component-loss assertion.",
         "pn-epoch::solve::act_emission": "The complete accepted-act pair changes emission and retains independently replayed solves and full finite-response transport at the minimum-supported execution, including the preceding Scope-refusal control.",
+        "pn-epoch::solve::act_switch": "The complete pn-epoch::solve::act_switch mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::burn_depleted": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control.",
         "pn-epoch::solve::burn_monotone": "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control.",
         "pn-epoch::solve::burn_sibling": "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors.",
@@ -4551,8 +4562,10 @@
         "pn-epoch::solve::certified_splits": "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds.",
         "pn-epoch::solve::conserved_projection": "Supported and chartered depth projections retain the nonzero-depth cells, exact cell and Work pins, and refusal controls.",
         "pn-epoch::solve::conserved_residual": "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals.",
+        "pn-epoch::solve::evaluated_scaling": "The complete pn-epoch::solve::evaluated_scaling mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::fence_shapes": "Frozen-support shapes retain descending evaluated rung searches, independent primitive replay and width, tilt, wall and attachment refusal controls.",
         "pn-epoch::solve::partitions::compiled_conservation": "The named transport mechanisms retain derived ledger export ceilings, declared conservation-width tolerance, passing and failing precision controls and replayed nonlinear transport.",
+        "pn-epoch::solve::partitions::distinct_target_split": "The complete pn-epoch::solve::partitions::distinct_target_split mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::partitions::nonconstant_matched_split": "Real nonconstant matched transport retains its calibrated disjoint-image precision, compiled hop identities, common positive rung, solves and independent replay.",
         "pn-epoch::solve::partitions::positive_rung_split": "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay.",
         "pn-epoch::solve::partitions::published_isolated_acts": "The unsorted exact-rate sample family retains every complete before/after history, final-gate checks, independent solve replay and exact loss identity.",
@@ -4565,6 +4578,7 @@
       "case_budgets": {
         "pn-epoch::solve::act_directions": "calibrated-act-directions-case",
         "pn-epoch::solve::act_emission": "calibrated-act-emission-case",
+        "pn-epoch::solve::act_switch": "calibrated-act-switch-case",
         "pn-epoch::solve::burn_depleted": "calibrated-burn-depleted-case",
         "pn-epoch::solve::burn_monotone": "calibrated-burn-monotone-case",
         "pn-epoch::solve::burn_sibling": "calibrated-burn-sibling-case",
@@ -4572,8 +4586,10 @@
         "pn-epoch::solve::certified_splits": "calibrated-certified-splits-case",
         "pn-epoch::solve::conserved_projection": "calibrated-conserved-projection-case",
         "pn-epoch::solve::conserved_residual": "calibrated-conserved-residual-case",
+        "pn-epoch::solve::evaluated_scaling": "calibrated-evaluated-scaling-case",
         "pn-epoch::solve::fence_shapes": "calibrated-fence-shapes-case",
         "pn-epoch::solve::partitions::compiled_conservation": "calibrated-compiled-conservation-case",
+        "pn-epoch::solve::partitions::distinct_target_split": "calibrated-distinct-target-split-case",
         "pn-epoch::solve::partitions::nonconstant_matched_split": "calibrated-nonconstant-matched-split-case",
         "pn-epoch::solve::partitions::positive_rung_split": "calibrated-positive-rung-split-case",
         "pn-epoch::solve::partitions::published_isolated_acts": "calibrated-published-isolated-acts-case",
@@ -4882,6 +4898,18 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::admission::admission_boundaries": "The complete pn-epoch::solve::admission::admission_boundaries mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::admission_quarantine": "The complete pn-epoch::solve::admission::admission_quarantine mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::admission_refinement": "The complete pn-epoch::solve::admission::admission_refinement mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::admission_refusals": "The complete pn-epoch::solve::admission::admission_refusals mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::admission::admission_boundaries": "calibrated-admission-boundaries-case",
+        "pn-epoch::solve::admission::admission_quarantine": "calibrated-admission-quarantine-case",
+        "pn-epoch::solve::admission::admission_refinement": "calibrated-admission-refinement-case",
+        "pn-epoch::solve::admission::admission_refusals": "calibrated-admission-refusals-case"
+      },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::admission::admission_equalities",
@@ -4916,6 +4944,12 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::schedules::retained_policy": "The complete pn-epoch::solve::schedules::retained_policy mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::schedules::retained_policy": "calibrated-retained-policy-case"
+      },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::schedules::policy_edges",
@@ -4931,6 +4965,18 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::admission::closure_context": "The complete pn-epoch::solve::admission::closure_context mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::closure_duration": "The complete pn-epoch::solve::admission::closure_duration mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::closure_markers": "The complete pn-epoch::solve::admission::closure_markers mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+        "pn-epoch::solve::admission::closure_membership": "The complete pn-epoch::solve::admission::closure_membership mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::admission::closure_context": "calibrated-closure-context-case",
+        "pn-epoch::solve::admission::closure_duration": "calibrated-closure-duration-case",
+        "pn-epoch::solve::admission::closure_markers": "calibrated-closure-markers-case",
+        "pn-epoch::solve::admission::closure_membership": "calibrated-closure-membership-case"
+      },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::admission::closure_membership",
@@ -4951,6 +4997,12 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::admission::admission_individual_straddle": "The complete pn-epoch::solve::admission::admission_individual_straddle mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::admission::admission_individual_straddle": "calibrated-admission-individual-straddle-case"
+      },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::admission::admission_individual_straddle",
@@ -4978,6 +5030,20 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-epoch::admission-contract",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::admission_work"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::admission-work",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

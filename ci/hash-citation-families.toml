@@ -753,3 +753,26 @@ reader = "ancestor-commit"
 commit = "26b87795c9a4730191e1598e0328562bc3ad1319"
 definition = "The public ancestor identifies the measured source; the campaign retains the rebuilding transition and subsequent warm walls separately."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "graph-public-calibration-base"
+group = "warm case allowance calibration"
+measures = "Public parent beneath the measured imported series"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "aab51e0df2855ad09365102ef1d80f30a7024192"
+definition = "The public parent and the declared imported patch reconstruct the measured source."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "graph-public-calibration-series"
+group = "warm case allowance calibration"
+measures = "Public measured commit and its stable patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "ef17211afed7b79e0cc9c819cb8d0b4164eaa10d"
+patch_id = "23335fea82a655f6f6fa658bf6ae70c9684b74fc"
+definition = "The imported public series head is the measured source, with its patch identity independently recomputed."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
