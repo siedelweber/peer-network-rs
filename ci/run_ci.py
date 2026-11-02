@@ -63,10 +63,12 @@ def isolated_runtime(module, name, marker, logs):
 
 def isolated_suite(module, name, marker, logs, root, source, tree, target):
     from build_graph import cancellable
+    from isolation import cargo_environment
     prefix = 'ISOLATED-SUITE'
     env = dict(os.environ, CARGO_TARGET_DIR=str(target),
                PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'),
                PN_OBSERVE_ARTIFACT_DIR=str(tree/'.lane/observations'))
+    env.update(cargo_environment(tree))
     env[marker] = '1'
     env['PN_CI_ISOLATED'] = module
     env['PN_GATE_BUILD_TARGET'] = str(Path(os.environ['CARGO_TARGET_DIR']).resolve())

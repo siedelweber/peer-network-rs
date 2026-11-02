@@ -538,14 +538,14 @@ def delegate(root, step):
     return result['status']
 
 
-def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy):
+def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None):
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
     if stall is not None and stall >= policy['high_stall_percent']/100: return 'high-stall'
     if stall is None or own is None or baseline is None: return 'unclassified'
-    if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
-    if changed and build_cpu is not None and old_build_cpu is not None and build_cpu-old_build_cpu >= own-baseline:
+    if changed and compile_wall_growth is not None and excess is not None and compile_wall_growth > 0 and compile_wall_growth >= excess:
         return 'rebuild'
+    if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
     return 'growth'
 
 
@@ -563,29 +563,43 @@ def baseline_context(root, registry):
         cargo_home_config=[(name, path.read_text()) for name in ('config', 'config.toml')
             if (path := Path(os.environ.get('CARGO_HOME', str(Path.home()/'.cargo')))/name).is_file()])
     key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
-    path = Path(os.environ['CARGO_TARGET_DIR'])/'gate-baselines'/f'{key}.json'
+    directory = Path(os.environ['CARGO_TARGET_DIR'])/'gate-baselines'/key
+    source = os.environ['PN_GATE_SOURCE']
+    tree = subprocess.run(['git', 'rev-parse', source+'^{tree}'], cwd=root,
+                          capture_output=True, text=True, check=True).stdout.strip()
+    path = directory/(tree+'.json')
     baseline = None
     changed = []
-    try:
-        baseline = json.loads(path.read_text())
-        ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', baseline['source'], os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True)
-        comparison = baseline['source']
-        if ancestor.returncode:
-            base = os.environ.get('PN_IMPORT_BASE')
-            tree = subprocess.run(['git', 'rev-parse', '--verify', base+'^{tree}'], cwd=root,
-                                  capture_output=True, text=True) if base else None
-            if not tree or tree.returncode or tree.stdout.strip() != baseline.get('tree'):
-                baseline = None
-            else:
+    base = os.environ.get('PN_IMPORT_BASE')
+    base_tree = subprocess.run(['git', 'rev-parse', '--verify', base+'^{tree}'], cwd=root,
+                              capture_output=True, text=True) if base else None
+    candidates = []
+    if base_tree and not base_tree.returncode:
+        candidates.append(directory/(base_tree.stdout.strip()+'.json'))
+    # An explicit import base must match that tree: unrelated green candidates
+    # cannot replace it. Without a base, retain the ancestor comparison route.
+    else:
+        candidates.extend(sorted(directory.glob('*.json'), key=lambda p:p.stat().st_mtime, reverse=True))
+    legacy = directory.with_suffix('.json')
+    if legacy.exists(): candidates.append(legacy)
+    for candidate in candidates:
+        try:
+            value = json.loads(candidate.read_text())
+            if base_tree and not base_tree.returncode:
+                if value.get('tree') != base_tree.stdout.strip(): continue
                 comparison = base
-                baseline['match'] = 'import-base-tree'
-        else:
-            baseline['match'] = 'ancestor'
-        if baseline:
-            diff = subprocess.run(['git', 'diff', '--name-only', comparison, os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True, text=True, check=True)
+                value['match'] = 'import-base-tree'
+            else:
+                ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', value['source'], source], cwd=root, capture_output=True)
+                if ancestor.returncode: continue
+                comparison = value['source']
+                value['match'] = 'ancestor'
+            baseline = value
+            diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
             changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
-    except (FileNotFoundError, ValueError, KeyError):
-        baseline = None
+            break
+        except (FileNotFoundError, ValueError, KeyError):
+            continue
     return path, baseline, changed
 
 
@@ -599,12 +613,27 @@ def retain_baseline(root):
     temporary.replace(path)
 
 
+def compile_comparison(current, prior, serialized):
+    """Compare like steps; parallel isolated builds cannot explain serial wall."""
+    comparable = [name for name, row in current.items() if name in prior and
+                  not row.get('partial') and not prior[name].get('partial') and
+                  row.get('own_cpu_s') is not None and prior[name].get('own_cpu_s') is not None and
+                  row.get('layouts') == prior[name].get('layouts')]
+    own = sum(current[name]['own_cpu_s'] for name in comparable) if comparable else None
+    old = sum(prior[name]['own_cpu_s'] for name in comparable) if comparable else None
+    serial = [name for name in comparable if name in serialized]
+    growth = sum(current[name]['wall']-prior[name]['wall'] for name in serial) if serial else None
+    return own, old, growth, sorted(set(current)-set(comparable))
+
+
 def tier_summary(root, registry, worker_statuses):
     from devperf import budgets
     from gate_resources import cpu_from_log, raw_sample, joined, compact
     declared = budgets(root/'docs/inputs/devperf-budgets.toml')
     policy = declared['gate']
     baseline_path, baseline, changed = baseline_context(root, registry)
+    base = os.environ.get('PN_IMPORT_BASE')
+    isolation_changed = bool(base and subprocess.run(['git', 'diff', '--name-only', base, os.environ['PN_GATE_SOURCE'], '--', 'ci/isolation.py'], cwd=root, capture_output=True, text=True, check=True).stdout.strip())
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
     groups = {name: registry.tiers[name]['steps'] for name in ('fast', 'service', 'reference-certificate')}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
@@ -629,19 +658,30 @@ def tier_summary(root, registry, worker_statuses):
         limit = declared[budget]['budget_ms']/1000 if budget else None
         excess = max(0.0, wall-limit) if limit is not None else None
         over_budget = excess is not None and excess > 0
-        build_values = [cpu_from_log((root/f'.lane/gate-{row[0]}.log').read_text().splitlines()) for row in selected_rows if row[0] in policy['rebuild_steps']]
-        build_cpu = sum(sum(pair) for pair in build_values) if all(None not in pair for pair in build_values) else None
+        step_figures = {}
+        for row, cpu in zip(selected_rows, values):
+            log = (root/f'.lane/gate-{row[0]}.log').read_text()
+            isolated = [json.loads(line.removeprefix('ISOLATION-COMPILE ')) for line in log.splitlines() if line.startswith('ISOLATION-COMPILE ')]
+            step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
+                cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
+                layouts={value['owner']:value['layout'] for value in isolated},
+                partial=bool(isolated and isolation_changed))
+        build_cpu = sum(row['cargo_cpu_s'] for row in step_figures.values())
+        build_cpu += sum(row['own_cpu_s'] for name, row in step_figures.items() if name in policy['rebuild_steps'] and not row['layouts'] and row['own_cpu_s'] is not None)
         prior = baseline['tiers'].get(tier, {}) if baseline else {}
         old_cpu = prior.get('own_cpu_s')
         own_cpu = sum(own) if None not in own else None
+        comparable_cpu, comparable_old, wall_growth, omitted = compile_comparison(step_figures, prior.get('step_figures', {}), policy['rebuild_steps'])
         stall = measurement.get('node_pressure_fraction', {}).get('cpu.some')
-        classification = overrun_class(over_budget, own_cpu, old_cpu, stall, build_cpu, prior.get('build_cpu_s'), changed, policy)
+        classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, build_cpu, prior.get('build_cpu_s'), changed, policy,
+            compile_wall_growth=wall_growth, excess=excess)
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification,
+            step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
-              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],

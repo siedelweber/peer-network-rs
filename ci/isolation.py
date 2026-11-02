@@ -6,6 +6,8 @@ import json
 import os
 from pathlib import Path
 import re
+import resource
+import shlex
 import shutil
 import subprocess
 import sys
@@ -110,7 +112,44 @@ def workspace(root, name, source):
         target.mkdir(parents=True, exist_ok=True)
         (tree/'.lane').mkdir()
         print(f'ISOLATION owner={name} source={source} tree={tree} target={target} cache=retained cargo=fingerprinted', flush=True)
-        yield tree, target
+        layout = hashlib.sha256(json.dumps(dict(storage=str(base.parent), configuration=configuration,
+            format='owner-cargo-v1'), sort_keys=True).encode()).hexdigest()
+        try:
+            yield tree, target
+        finally:
+            log = tree/'.lane/cargo-work.jsonl'
+            rows = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
+            print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, layout=layout,
+                cargo_cpu_s=sum(row['own_cpu'] for row in rows), cargo_wall_s=sum(row['wall'] for row in rows),
+                calls=len(rows), scope='cargo-and-waited-descendants')), flush=True)
+
+
+def cargo_environment(tree):
+    """Meter Cargo and its waited descendants in the isolated owner's process."""
+    real = os.environ.get('PN_ISOLATION_CARGO') or shutil.which('cargo')
+    if not real: raise ValueError('isolated Cargo executable is unavailable')
+    directory = tree/'.lane/cargo-bin'
+    directory.mkdir(exist_ok=True)
+    wrapper = directory/'cargo'
+    command = [sys.executable, '-B', str(Path(__file__).resolve()), 'cargo-work', real, str(tree/'.lane/cargo-work.jsonl')]
+    wrapper.write_text('#!/bin/sh\nexec '+shlex.join(command)+' "$@"\n')
+    wrapper.chmod(0o755)
+    return dict(PATH=str(directory)+os.pathsep+os.environ['PATH'], PN_ISOLATION_CARGO=real)
+
+
+def cargo_work(arguments):
+    """Keep inclusive Cargo CPU separate from the enclosing suite's own CPU."""
+    real, destination, *arguments = arguments
+    started = time.monotonic()
+    before = resource.getrusage(resource.RUSAGE_CHILDREN)
+    result = subprocess.run([real, *arguments])
+    after = resource.getrusage(resource.RUSAGE_CHILDREN)
+    row = dict(wall=time.monotonic()-started, own_cpu=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
+               command=arguments, status=result.returncode)
+    with Path(destination).open('a') as output:
+        fcntl.flock(output, fcntl.LOCK_EX)
+        output.write(json.dumps(row)+'\n')
+    return result.returncode
 
 
 def generate(action):
@@ -119,7 +158,7 @@ def generate(action):
     source = os.environ.get('PN_GATE_SOURCE') or subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
     with workspace(root, 'fixed-point', source) as (tree, target):
         result = cancellable(['cargo', 'run', '-p', 'documents', '--locked', '--profile', 'gate', '--', action],
-                             cwd=tree, env=os.environ | {'CARGO_TARGET_DIR':str(target)})
+                             cwd=tree, env=os.environ | cargo_environment(tree) | {'CARGO_TARGET_DIR':str(target)})
         if result.returncode:
             return result.returncode
         changed = cancellable(['git', '-C', str(tree), 'diff', '--exit-code'], stdout=subprocess.PIPE)
@@ -130,6 +169,8 @@ def generate(action):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 2 and sys.argv[1] == 'cargo-work':
+        raise SystemExit(cargo_work(sys.argv[2:]))
     if len(sys.argv) == 2 and sys.argv[1] == 'import-base':
         try:
             print(import_base(Path.cwd(), os.environ['PN_GATE_SOURCE'], os.environ['PN_IMPORT_BASE']))

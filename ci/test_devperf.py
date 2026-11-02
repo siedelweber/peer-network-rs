@@ -98,7 +98,7 @@ class Performance(unittest.TestCase):
         from build_graph import overrun_class
         policy = dict(high_stall_percent=10, cpu_growth_percent=20)
         def classify(own=100, baseline=100, stall=0.09, build=40, old_build=40, changed=()):
-            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy)
+            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21)
         self.assertEqual(classify(), 'plain')
         self.assertEqual(classify(own=120), 'plain')
         self.assertEqual(classify(stall=0.1), 'high-stall')
@@ -110,6 +110,21 @@ class Performance(unittest.TestCase):
         self.assertEqual(classify(baseline=None), 'unclassified')
         self.assertEqual(classify(stall=None), 'unclassified')
         self.assertEqual(overrun_class(False, None, None, None, None, None, [], policy), 'within-budget')
+        from build_graph import compile_comparison
+        cold = dict(wall=100, own_cpu_s=315, layouts={'owner':'old'}, partial=True)
+        old = {'test-build':dict(wall=3.8, own_cpu_s=103.153, layouts={}, partial=False), 'isolated':cold}
+        current = {'test-build':dict(wall=64.3, own_cpu_s=407.389, layouts={}, partial=False),
+                   'isolated':dict(cold, own_cpu_s=10, layouts={'owner':'new'}, partial=False)}
+        own, baseline, growth, omitted = compile_comparison(current, old, ['test-build'])
+        self.assertEqual(omitted, ['isolated'])
+        self.assertAlmostEqual(growth, 60.5)
+        self.assertEqual(overrun_class(True, own, baseline, .0525, 407.389, 418.153,
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
+        # The historical totals alone grew only four percent; serial wall still
+        # identifies the rebuild before the plain branch.
+        self.assertEqual(overrun_class(True, 714.200, 684.486, .0525, 407.389, 418.153,
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
+
 
     def baseline_lineage(self):
         from build_graph import baseline_context, retain_baseline
@@ -128,12 +143,12 @@ class Performance(unittest.TestCase):
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
-                with patch('build_graph.subprocess.run', side_effect=[good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
+                with patch('build_graph.subprocess.run', side_effect=[good, good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
                     same_path, old, changed = baseline_context(root, registry)
                 self.assertEqual(path, same_path)
                 self.assertEqual(old['source'], 'ancestor')
                 self.assertEqual(changed, ['packages/example/src/pins.rs', 'packages/example/src/pins.toml', 'vendor/example/data.bin'])
-                with patch('build_graph.subprocess.run', side_effect=[good, SimpleNamespace(returncode=1)]):
+                with patch('build_graph.subprocess.run', side_effect=[good, good, SimpleNamespace(returncode=1)]):
                     self.assertIsNone(baseline_context(root, registry)[1])
                 (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 2\n')
                 self.assertIsNone(baseline_context(root, registry)[1])
@@ -167,6 +182,20 @@ class Performance(unittest.TestCase):
                 self.assertEqual(retained['source'], original)
                 self.assertEqual(retained['match'], 'import-base-tree')
                 self.assertEqual(changed, [])
+                (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 1\n# Unimported candidate\n')
+                git('add', 'Cargo.toml')
+                other_tree = git('write-tree')
+                other = git('-c', 'commit.gpgsign=false', 'commit-tree', other_tree, '-p', imported, input='unimported candidate\n')
+                with patch.dict(os.environ, PN_GATE_SOURCE=other):
+                    other_path, _, _ = baseline_context(root, registry)
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={})))
+                    retain_baseline(root)
+                self.assertNotEqual(path, other_path)
+                self.assertTrue(path.exists())
+                self.assertEqual(baseline_context(root, registry)[1]['source'], original)
+                other_path.unlink()
+                with patch.dict(os.environ, PN_IMPORT_BASE=other):
+                    self.assertIsNone(baseline_context(root, registry)[1], 'a mismatched tree must refuse the comparison')
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 
