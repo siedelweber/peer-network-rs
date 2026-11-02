@@ -1554,6 +1554,10 @@ id = "num:numbers:schedule-fixture-replay-work"
 value = "12000"
 
 [[rows]]
+id = "num:numbers:schedule-policy-adjacency"
+value = "1/1024"
+
+[[rows]]
 id = "num:numbers:schedule-refused-below-floor-wall"
 value = "1/16"
 

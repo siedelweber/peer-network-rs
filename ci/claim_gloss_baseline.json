@@ -440,6 +440,8 @@
     "pn-epoch::solve::real_base": "Claim: Six unsorted reaction denominators preserve every frozen base entry and its cells, radicands and domain factors while attaching replayable enclosures to irrational terms. Independent integer-square brackets lie inside those bounds; rational-root entries stay exact, and ledger, support and compiler output remain unchanged. No standing or rung is computed.",
     "pn-epoch::solve::reference_wall_binding": "",
     "pn-epoch::solve::schedules::effective_schedules": "",
+    "pn-epoch::solve::schedules::policy_edges": "",
+    "pn-epoch::solve::schedules::retained_policy": "",
     "pn-epoch::solve::schedules::schedule_covariance": "",
     "pn-epoch::solve::standing_scope": "Claim: The finite standing witness set in the standing-witness join, the joined compiler prerequisite, and the compiled-conservation and transport witnesses retain their scoped premises, bounds and refusals at each declared fixture, policy and precision. Preserve means this finite evidence join, not invariance; the standing negative-probe index excludes universal split invariance, burn monotonicity, own recovery, act direction, contraction-only sign, purpose inference, unrestricted strategic completion, individual-standing conservation, unconditional rehabilitation, guild-funded recovery, randomized consumer guarantees, unbounded families, real-chain integration and deployment authentication.",
     "pn-epoch::solve::transport_oracle": "",

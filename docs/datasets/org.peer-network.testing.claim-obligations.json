@@ -1288,7 +1288,9 @@
         "EPOCH::claim:admission:individual-and-own-gates-cannot-be-averaged",
         "EPOCH::claim:admission:empty-final-set-has-no-stamp-or-debit",
         "EPOCH::claim:admission:relational-support-and-uncertainty-do-not-waive-gates",
-        "EPOCH::claim:admission:final-policy-refines-without-guessing"
+        "EPOCH::claim:admission:final-policy-refines-without-guessing",
+        "EPOCH::claim:admission:scheduled-policy-compares-at-the-led-wall",
+        "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",

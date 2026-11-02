@@ -1794,3 +1794,15 @@ steps = ["design-tests", "observation-build", "observation-runtime", "observatio
 invocation_budget = "extended-gate"
 status = "active"
 reason = "Whole-checker mutation matrices and cross-process observation-mode coverage remain required alongside the author feedback tier, with unchanged assertions, case budgets and exact result joins."
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::schedule-policy"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::schedules::policy_edges", "pn-epoch::solve::schedules::retained_policy"]

@@ -7137,3 +7137,11 @@ value = "2"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Schedule policy adjacency probe.
+[[rows]]
+id = "num:numbers:schedule-policy-adjacency"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

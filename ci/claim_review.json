@@ -2143,7 +2143,23 @@
       "claim": "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages",
       "before": "",
       "after": "Claim: The finite complete-history boundary sequence retains explicit initialization, one-boundary lead, policy persistence and validity, exact wall-price identity and unchanged debit vintages; independent replay refuses altered publications and skipped or invalid announcements, without admitting writes or authenticating deployment publication.",
-      "review": "Read the finite sequence and transformed complete histories: the tests reconstruct widths and prices independently, replay each proposal and sequence, retain old vintages and refuse invalid lead, policy and changed evidence. These sites confer no final admission or deployment authentication."
+      "review": "The complete-history recurrence checks lead, policy, rational charges and old debit vintages. Skip, same-boundary, invalid policy and changed-prefix controls now call independent replay and name ScheduleValidity; publication substitutions name Evidence or kernel Evidence. The unused annotation loop is removed; the existing Boundary compile-fail doctest carries quarantine. No admission or deployment authority is asserted."
+    },
+    {
+      "operation": "pn-epoch::solve::schedules::policy_edges",
+      "path": "packages/epoch/tests/solve/schedules.rs",
+      "claim": "EPOCH::claim:admission:scheduled-policy-compares-at-the-led-wall",
+      "before": "",
+      "after": "Claim: The finite zero-width schedule accepts a policy exactly at its led wall and independently refuses the adjacent lower declaration; this is an exact rational boundary control, not a numerical accuracy floor.",
+      "review": "The equality fixture compares the exact led wall and an explicitly declared adjacent lower policy through independent replay. The separate positive-width fixture retains a valid initial policy and refuses it when the independently computed next wall rises, including fixed-ledger migration. The declared inverse-sign floor retains its failing neighbour; no deployment or universal covariance claim is made."
+    },
+    {
+      "operation": "pn-epoch::solve::schedules::retained_policy",
+      "path": "packages/epoch/tests/solve/schedules.rs",
+      "claim": "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall",
+      "before": "",
+      "after": "Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. The failed inverse neighbour withholds the defining proposal; no homogeneous controller or monotonic-accuracy law is asserted.",
+      "review": "The equality fixture compares the exact led wall and an explicitly declared adjacent lower policy through independent replay. The separate positive-width fixture retains a valid initial policy and refuses it when the independently computed next wall rises, including fixed-ledger migration. The declared inverse-sign floor retains its failing neighbour; no deployment or universal covariance claim is made."
     },
     {
       "operation": "pn-epoch::solve::schedules::schedule_covariance",

@@ -12694,6 +12694,19 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "1/1 024",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:schedule-policy-adjacency",
+      "num": "1/1 024",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "1/1024"
     }
   ]
 }

@@ -4908,6 +4908,21 @@
         "observation-runtime",
         "observation-parser"
       ]
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::schedules::policy_edges",
+        "pn-epoch::solve::schedules::retained_policy"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::schedule-policy",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

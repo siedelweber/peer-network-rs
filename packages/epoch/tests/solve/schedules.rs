@@ -217,10 +217,12 @@ fn controls(states: &[pn_epoch::compiler::CompiledState], bits: u32, record: &sc
         effective_at: 2,
         policy_floor: None,
     };
+    let mut first = record.clone();
+    first.publications.truncate(1);
     for effective_at in [3, 1] {
         frame.effective_at = effective_at;
         assert!(matches!(
-            schedules::evaluate(&d, std::slice::from_ref(&frame), None, Limits::default()),
+            schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &first),
             Err(schedules::Error::Refused(
                 pn_epoch::admission::AdmissionRefusal::ScheduleValidity
             ))
@@ -229,14 +231,12 @@ fn controls(states: &[pn_epoch::compiler::CompiledState], bits: u32, record: &sc
     frame.effective_at = 2;
     frame.policy_floor = Some(wall_floor_rational());
     assert!(matches!(
-        schedules::evaluate(&d, std::slice::from_ref(&frame), None, Limits::default()),
+        schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &first),
         Err(schedules::Error::Refused(
             pn_epoch::admission::AdmissionRefusal::ScheduleValidity
         ))
     ));
     frame.policy_floor = None;
-    let mut first = record.clone();
-    first.publications.truncate(1);
     for changed in (0..4).rev() {
         let mut bad = first.clone();
         match changed {
@@ -260,15 +260,6 @@ fn controls(states: &[pn_epoch::compiler::CompiledState], bits: u32, record: &sc
             ));
         }
     }
-    // Quarantined annotations never enter Boundary or the controller's inputs.
-    for _annotation in ["high admission demand", "no admission demand"] {
-        assert_eq!(
-            schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &first)
-                .unwrap()
-                .record(),
-            &first
-        );
-    }
     let mut changed_walls = walls();
     changed_walls[0] = text(Fraction::parse(&changed_walls[0]).plus(number(NumberId::NumbersEffectiveScheduleAbsoluteCap)));
     let changed = fixture(2, &changed_walls, Fraction(1, 1), false, false);
@@ -285,8 +276,10 @@ fn controls(states: &[pn_epoch::compiler::CompiledState], bits: u32, record: &sc
             policy_floor: None,
         },
     ];
+    let mut prefix = record.clone();
+    prefix.publications.truncate(frames.len());
     assert!(matches!(
-        schedules::evaluate(&d, &frames, None, Limits::default()),
+        schedules::replay(&d, &frames, None, Limits::default(), &prefix),
         Err(schedules::Error::Refused(
             pn_epoch::admission::AdmissionRefusal::ScheduleValidity
         ))
@@ -435,4 +428,90 @@ fn floor_control(state: &pn_epoch::compiler::CompiledState) {
     let zero = nrz_cas::Rational::parse("0", &mut budget).unwrap();
     assert!(!bounds.lower().compare(&zero, &mut budget).unwrap().is_gt());
     assert!(!bounds.upper().compare(&zero, &mut budget).unwrap().is_lt());
+}
+
+/// Claim: The finite zero-width schedule accepts a policy exactly at its led wall and independently refuses the adjacent lower declaration; this is an exact rational boundary control, not a numerical accuracy floor.
+/// ´claim:admission:scheduled-policy-compares-at-the-led-wall´
+/// ´test:integration:policy-edges´
+#[test]
+fn policy_edges() {
+    let bits = u32::try_from(NumberId::NumbersEffectiveScheduleScopePrecision.integer()).unwrap();
+    let state = fixture(1, &walls(), Fraction(1, 1), false, false);
+    let p = policy(&state, bits);
+    let published = Published(p.clone());
+    let bound = bind_procedure(&state, p, &published, Limits::default()).unwrap();
+    let d = declaration(&state, bits);
+    let search = search();
+    let next = model(number(NumberId::NumbersEffectiveScheduleInitialWall));
+    let mut frame = Boundary {
+        completed: &bound,
+        search: &search,
+        announced_at: 1,
+        effective_at: 2,
+        policy_floor: Some(text(next)),
+    };
+    let record = schedules::evaluate(&d, std::slice::from_ref(&frame), None, Limits::default()).unwrap();
+    assert_eq!(Fraction::parse(&record.publications[0].effective.wall), next);
+    assert_eq!(Fraction::parse(&record.publications[0].effective.policy_floor), next);
+    assert_eq!(
+        schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &record)
+            .unwrap()
+            .record(),
+        &record
+    );
+    frame.policy_floor = Some(text(next.minus(number(NumberId::NumbersSchedulePolicyAdjacency))));
+    assert!(matches!(
+        schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &record),
+        Err(schedules::Error::Refused(
+            pn_epoch::admission::AdmissionRefusal::ScheduleValidity
+        ))
+    ));
+}
+
+fn retained_refusal(state: &pn_epoch::compiler::CompiledState, bits: u32) {
+    let last = state.package().input().bindings.last().unwrap();
+    let current_wall = Fraction::parse(last.price.wall().exact());
+    let mut input = declaration(state, bits).input().clone();
+    input.announced_at = last.marker.index - 1;
+    input.initialization.effective_boundary = Some(last.marker.index);
+    input.initialization.wall = Some(text(current_wall));
+    input.initialization.policy_floor = Some(text(current_wall));
+    let d = declare_schedule(input, Limits::default()).unwrap();
+    let p = policy(state, bits);
+    let published = Published(p.clone());
+    let bound = bind_procedure(state, p, &published, Limits::default()).unwrap();
+    let search = search();
+    let mut frame = Boundary {
+        completed: &bound,
+        search: &search,
+        announced_at: last.marker.index,
+        effective_at: last.marker.index + 1,
+        policy_floor: Some(NumberId::NumbersEffectiveSchedulePolicy.value().into()),
+    };
+    let record = schedules::evaluate(&d, std::slice::from_ref(&frame), None, Limits::default()).unwrap();
+    let next_wall = Fraction::parse(&record.publications[0].effective.wall);
+    assert!(next_wall.minus(current_wall).0 > 0);
+    frame.policy_floor = None;
+    assert!(matches!(
+        schedules::replay(&d, &[frame], None, Limits::default(), &record),
+        Err(schedules::Error::Refused(
+            pn_epoch::admission::AdmissionRefusal::ScheduleValidity
+        ))
+    ));
+}
+
+/// Claim: The finite changed-width and fixed-ledger migration histories independently refuse a retained policy overtaken by their rising led wall, even when that policy was valid at initialization. The failed inverse neighbour withholds the defining proposal; no homogeneous controller or monotonic-accuracy law is asserted.
+/// ´claim:admission:retained-policy-must-cover-a-rising-wall´
+/// ´test:integration:retained-policy´
+#[test]
+fn retained_policy() {
+    let bits = u32::try_from(NumberId::NumbersEffectiveSchedulePrecision.integer()).unwrap();
+    let walls = walls();
+    let changed = fixture(2, &walls, Fraction(1, 1), false, true);
+    retained_refusal(&changed, bits);
+    floor_control(&changed);
+    let scale = number(NumberId::NumbersEffectiveScheduleRecoinage);
+    let migrated_walls: Vec<_> = walls.iter().map(|wall| text(Fraction::parse(wall).over(scale))).collect();
+    let migrated = fixture(2, &migrated_walls, scale, true, true);
+    retained_refusal(&migrated, bits);
 }
