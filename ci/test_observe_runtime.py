@@ -118,6 +118,21 @@ def distribution(summary):
     return result
 
 
+def complete_title_summary(rows, history):
+    """Name bounded-drain loss before attempting to read a title summary."""
+    statuses = [row for row in rows if row.get('kind') == 'observation_status']
+    if len(statuses) != 1:
+        raise AssertionError(f'title capture status missing or repeated: history={history}')
+    status = statuses[0]
+    fields = ('lost_records', 'undelivered_records', 'drain_timeouts')
+    if any(status.get(field) != 0 for field in fields):
+        raise AssertionError(f'title capture incomplete at bounded drain: history={history} status={status}')
+    summaries = [row['metrics'] for row in rows if row.get('kind') == 'metric_summary']
+    if len(summaries) != 1:
+        raise AssertionError(f'title metric summary missing or repeated after complete drain: history={history}')
+    return expanded(summaries[0])
+
+
 class Processes(unittest.TestCase):
     def test_cutoff_capture_interval(self):
         """Claim: With one reserved write at cutoff, either capture endpoint reconciles while missing completed records, excess captures, multiple reservations and inconsistent attempted totals refuse; without a reservation the interval collapses to equality.
@@ -351,28 +366,55 @@ class Processes(unittest.TestCase):
         ´claim:discipline:title-suite-retains-observed-evidence´
         ´test:integration:test-title-suite´
         """
+        status = dict(kind='observation_status', lost_records=0, undelivered_records=0,
+                      drain_timeouts=0, in_flight_records=0)
+        summary = dict(kind='metric_summary', metrics={})
+        self.assertEqual(complete_title_summary([status, summary], 'control'), {})
+        for field in ('lost_records', 'undelivered_records', 'drain_timeouts'):
+            with self.assertRaisesRegex(AssertionError, 'title capture incomplete at bounded drain'):
+                complete_title_summary([dict(status, **{field: 1})], 'control')
+        for rows in ([], [summary], [status, status, summary]):
+            with self.assertRaisesRegex(AssertionError, 'title capture status missing or repeated'):
+                complete_title_summary(rows, 'control')
+        for rows in ([status], [status, summary, summary]):
+            with self.assertRaisesRegex(AssertionError, 'title metric summary missing or repeated'):
+                complete_title_summary(rows, 'control')
+        binary=str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/title_observation')
+        roster=run([binary,'list'])
+        self.assertEqual(roster.returncode,0,roster.stderr.decode())
+        histories=json.loads(roster.stdout)
+        self.assertEqual(len(histories),8)
         samples={};accounting={}
+        stem='graph__root__sig__design__graph__'
         for mode in ('disabled','default','trace'):
             env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
-            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/title_observation'),mode],mode,env)
-            self.assertEqual(result.returncode,0,result.stderr.decode())
-            samples[mode]=result.stdout
-            values=dict(json.loads(result.stdout))
+            captured=[];diagnostics=[];values={};accounting[mode]={}
+            for history,name in enumerate(histories):
+                result=compare([binary,mode,str(history)],mode,env)
+                self.assertEqual(result.returncode,0,result.stderr.decode())
+                captured.append(result.stdout);diagnostics.append(result.stderr)
+                captured_values=dict(json.loads(result.stdout))
+                self.assertEqual(list(captured_values),[name])
+                values.update(captured_values)
+                if mode=='disabled':continue
+                rows=[json.loads(line) for line in result.stderr.splitlines()]
+                summary=complete_title_summary(rows, history)
+                counts={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
+                self.assertGreater(counts[(stem+'started_operations','')],0)
+                self.assertEqual(counts[(stem+'started_operations','')],counts[(stem+'completed_operations','success')])
+                for key,value in counts.items():accounting[mode][key]=accounting[mode].get(key,0)+value
+            samples[mode]=b''.join(captured)
             self.assertEqual(len(values),8)
             self.assertIn('Conflict',values['conflict'])
             self.assertIn('Transferred',values['resale'])
             self.assertIn('consumed:',values['fresh-retry'])
             self.assertIn('accept_target_is_buyer: false',values['wrong-partner'])
             if mode=='disabled':continue
-            rows=[json.loads(line) for line in result.stderr.splitlines()]
-            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
-            stem='graph__root__sig__design__graph__'
-            accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
             self.assertGreater(accounting[mode][(stem+'started_operations','')],0)
             self.assertEqual(accounting[mode][(stem+'started_operations','')],accounting[mode][(stem+'completed_operations','success')])
             if mode=='trace':
                 for marker in ('TitleReplay','PartnerEvidence','consumed','Transferred','Conflict'):
-                    self.assertIn(marker,result.stderr.decode())
+                    self.assertIn(marker,b''.join(diagnostics).decode())
         self.assertEqual(samples['disabled'],samples['default'])
         self.assertEqual(samples['default'],samples['trace'])
         self.assertEqual(accounting['default'],accounting['trace'])
