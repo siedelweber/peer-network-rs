@@ -545,7 +545,8 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
 def baseline_context(root, registry):
     """A retained target compares only the same runner configuration and lineage."""
     from harness import CONFIGURATION
-    identity = dict(configuration=CONFIGURATION, tiers=registry.tiers,
+    lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
+    identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers,
         profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
         toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
         runtime=dict(python=sys.version, machine=os.uname().machine, flags=os.environ.get('RUSTFLAGS'),
@@ -561,10 +562,21 @@ def baseline_context(root, registry):
     try:
         baseline = json.loads(path.read_text())
         ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', baseline['source'], os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True)
-        if ancestor.returncode: baseline = None
+        comparison = baseline['source']
+        if ancestor.returncode:
+            base = os.environ.get('PN_IMPORT_BASE')
+            tree = subprocess.run(['git', 'rev-parse', '--verify', base+'^{tree}'], cwd=root,
+                                  capture_output=True, text=True) if base else None
+            if not tree or tree.returncode or tree.stdout.strip() != baseline.get('tree'):
+                baseline = None
+            else:
+                comparison = base
+                baseline['match'] = 'import-base-tree'
         else:
-            diff = subprocess.run(['git', 'diff', '--name-only', baseline['source'], os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True, text=True, check=True)
-            changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/')) and name.endswith('.rs')]
+            baseline['match'] = 'ancestor'
+        if baseline:
+            diff = subprocess.run(['git', 'diff', '--name-only', comparison, os.environ['PN_GATE_SOURCE']], cwd=root, capture_output=True, text=True, check=True)
+            changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
     except (FileNotFoundError, ValueError, KeyError):
         baseline = None
     return path, baseline, changed
@@ -619,16 +631,20 @@ def tier_summary(root, registry, worker_statuses):
         classification = overrun_class(over_budget, own_cpu, old_cpu, stall, build_cpu, prior.get('build_cpu_s'), changed, policy)
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
+            baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
-              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
                 '--budget', budget, '--findings', '.lane/performance-findings.jsonl'], cwd=root)
             if result.returncode: raise ValueError('tier performance reporting refused')
     (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
-    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tiers=reports))+'\n')
+    tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
+                          capture_output=True, text=True, check=True).stdout.strip()
+    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree,
+        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports))+'\n')
 
 
 def schedule(root):

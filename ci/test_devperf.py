@@ -78,7 +78,7 @@ class Performance(unittest.TestCase):
                 for status in (0, 1):
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', None, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(high_stall_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', None, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -121,18 +121,18 @@ class Performance(unittest.TestCase):
             (root/'.lane').mkdir()
             registry = SimpleNamespace(tiers={'fast': {'jobs': 8}})
             good = SimpleNamespace(returncode=0, stdout='compiler identity')
-            with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current'), patch('build_graph.subprocess.run', return_value=good):
+            with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed = baseline_context(root, registry)
                 self.assertIsNone(old)
                 candidate = dict(path=str(path), source='ancestor', tiers={})
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
-                with patch('build_graph.subprocess.run', side_effect=[good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\nREADME.md\n')]):
+                with patch('build_graph.subprocess.run', side_effect=[good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
                     same_path, old, changed = baseline_context(root, registry)
                 self.assertEqual(path, same_path)
                 self.assertEqual(old['source'], 'ancestor')
-                self.assertEqual(changed, ['packages/example/src/pins.rs'])
+                self.assertEqual(changed, ['packages/example/src/pins.rs', 'packages/example/src/pins.toml', 'vendor/example/data.bin'])
                 with patch('build_graph.subprocess.run', side_effect=[good, SimpleNamespace(returncode=1)]):
                     self.assertIsNone(baseline_context(root, registry)[1])
                 (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 2\n')
@@ -141,6 +141,34 @@ class Performance(unittest.TestCase):
                 self.assertIsNone(baseline_context(root, registry)[1])
                 registry.tiers['fast']['jobs'] = 4
                 self.assertIsNone(baseline_context(root, registry)[1])
+        # Two commits with identical trees model re-signing without using a key.
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            git = lambda *args, **kw: subprocess.run(['git', '-C', str(root), *args], capture_output=True,
+                text=True, check=True, **kw).stdout.strip()
+            git('init', '-q')
+            git('config', 'user.name', 'Fixture')
+            git('config', 'user.email', 'fixture@example.invalid')
+            (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 1\n')
+            git('add', 'Cargo.toml')
+            tree = git('write-tree')
+            original = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, input='gate source\n')
+            imported = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, input='imported metadata\n')
+            current = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, '-p', imported, input='next import\n')
+            self.assertNotEqual(original, imported)
+            self.assertNotEqual(subprocess.run(['git', '-C', str(root), 'merge-base', '--is-ancestor', original, current]).returncode, 0)
+            (root/'.lane').mkdir()
+            with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
+                path, _, _ = baseline_context(root, registry)
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={})))
+                retain_baseline(root)
+                _, retained, changed = baseline_context(root, registry)
+                self.assertEqual(retained['source'], original)
+                self.assertEqual(retained['match'], 'import-base-tree')
+                self.assertEqual(changed, [])
+                with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
+                    self.assertIsNone(baseline_context(root, registry)[1])
 
     def test_noisy_clock(self):
         """The reporter contract keeps injected noisy evidence inconclusive without changing a predicate or hiding an excess.
