@@ -204,12 +204,50 @@ class Evidence(unittest.TestCase):
         ´claim:testing:sibling-failure-dominates´
         ´test:integration:test-shared-failure´
         """
+        self.combined_members()
         data=fixture()
         self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
         data['results'][1]['outcome']='failed'
         result=evaluate(**data)
         self.assertEqual(result['claims'][0]['status'],'failed')
         self.assertEqual(result['obligations'][0]['status'],'failed')
+
+    def combined_members(self):
+        data = fixture()
+        own = data['sites'][0]['claim']
+        member = 'ROOT::claim:testing:member'
+        data['sites'].append(dict(data['sites'][0], operation='member', claim=member))
+        data['expected_sites'].add('member')
+        data['results'].append(dict(data['results'][0], operation='member'))
+        row = data['declared'][0]
+        row['claims'].append(member)
+        row['combined_claim'] = own
+        data['paragraphs'][row['evidence_paragraph']]['citations'].add(member)
+        self.assertTrue(all(r['status']=='passed' for r in evaluate(**data)['claims']))
+        # A citation contributes evidence to the member but is not another mint.
+        data['sites'].append(dict(data['sites'][-1], operation='citation', mint=False))
+        data['expected_sites'].add('citation')
+        data['results'].append(dict(data['results'][-1], operation='citation', outcome='failed'))
+        result = evaluate(**data)
+        self.assertTrue(all(r['status']=='failed' for r in result['claims']))
+        self.assertEqual(result['obligations'][0]['status'], 'failed')
+        self.assertEqual(next(r for r in result['claims'] if r['name']==own)['members'], [member])
+        absent = deepcopy(data)
+        absent['results'].pop()
+        with self.assertRaisesRegex(StructuralError, 'missing test results'):
+            evaluate(**absent)
+        absent = deepcopy(data)
+        absent['declared'][0]['claims'].append('ROOT::claim:testing:absent')
+        with self.assertRaisesRegex(StructuralError, 'unresolved combined claim member'):
+            evaluate(**absent)
+        absent = deepcopy(data)
+        absent['sites'][-2]['mint'] = False
+        with self.assertRaisesRegex(StructuralError, 'unresolved or duplicate claim mint'):
+            evaluate(**absent)
+        cycle = deepcopy(data)
+        cycle['declared'].append(dict(row, name='cycle', combined_claim=member))
+        with self.assertRaisesRegex(StructuralError, 'cyclic combined claim members'):
+            evaluate(**cycle)
 
     def test_stale_result(self):
         """A passing execution from another source or configuration cannot evidence the checked tree.

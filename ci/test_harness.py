@@ -4,7 +4,7 @@ import copy
 import unittest
 
 from devperf import StructuralError
-from harness import CONFIGURATION, Registry
+from harness import CONFIGURATION, Registry, passing_editions
 
 
 def declarations():
@@ -588,6 +588,13 @@ assert (root/'payload').read_text() == 'committed'
         self.assertIsNone(matrix[-1]['implementation'])
         self.assertEqual(matrix[0]['contract_edition'], 'example-contract')
         self.assertIsNone(matrix[-1]['contract_edition'])
+        self.assertEqual(passing_editions(matrix), {'example-contract': {matrix[0]['implementation']: 1}})
+        companion = dict(matrix[0], implementation='independent-implementation')
+        self.assertEqual(passing_editions([*matrix, companion, matrix[0]]),
+                         {'example-contract': {matrix[0]['implementation']: 2, 'independent-implementation': 1}})
+        companion['implementation'] = None
+        with self.assertRaisesRegex(StructuralError, 'lacks implementation'):
+            passing_editions([companion])
 
     def test_doctest_inventory(self):
         """A never-started or unfinished doctest remains missing, preventing a partial run from passing.

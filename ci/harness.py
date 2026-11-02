@@ -209,6 +209,18 @@ def load():
     return Registry(tomllib.loads(REGISTRY.read_text())['rows'], budgets(REGISTRY.with_name('devperf-budgets.toml')), declarations())
 
 
+def passing_editions(matrix):
+    editions = {}
+    for row in matrix:
+        if row['status'] == 'passed' and row['contract_edition']:
+            implementations = editions.setdefault(row['contract_edition'], {})
+            implementation = row['implementation']
+            if not implementation:
+                raise StructuralError('passing contract edition lacks implementation')
+            implementations[implementation] = implementations.get(implementation, 0) + 1
+    return editions
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--matrix', action='store_true')
@@ -221,7 +233,7 @@ def main():
             matrix = registry.matrix(records, source_id())
             Path('.lane/harness-matrix.json').write_text(json.dumps({'schema': 1, 'rows': matrix}, indent=2)+'\n')
             counts = Counter(row['status'] for row in matrix)
-            editions = Counter(row['contract_edition'] for row in matrix if row['status']=='passed' and row['contract_edition'])
+            editions = passing_editions(matrix)
             print(f'HARNESS-MATRIX cases={len(registry.cases)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} passed_by_edition={json.dumps(editions, sort_keys=True, separators=(",", ":"))} artifact=.lane/harness-matrix.json')
             return int(bool(counts['failed']))
         print(f'HARNESS-REGISTRY levels={len(registry.levels)} suites={len(registry.suites)} implementations={len(registry.implementations)} cases={len(registry.cases)}')

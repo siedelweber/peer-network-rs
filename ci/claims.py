@@ -217,6 +217,37 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
         from build_graph_evidence import held_service
         if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
     states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
+    # Membership is declared by an owning obligation; it is never a mint.
+    combined = {}
+    for row in declared:
+        if 'combined_claim' not in row:
+            continue
+        claim, members = row['combined_claim'], row.get('claims')
+        if not isinstance(claim, str) or claim not in claims:
+            raise StructuralError('unresolved combined claim')
+        if claim in combined:
+            raise StructuralError('duplicate combined claim declaration')
+        if (not isinstance(members, list) or any(not isinstance(n, str) for n in members)
+                or len(members) != len(set(members)) or claim not in members or len(members) < 2):
+            raise StructuralError('malformed combined claim members')
+        if any(member not in claims for member in members):
+            raise StructuralError('unresolved combined claim member')
+        combined[claim] = [member for member in members if member != claim]
+    visited, visiting = set(), set()
+
+    def join_members(claim):
+        if claim in visiting:
+            raise StructuralError('cyclic combined claim members')
+        if claim not in visited:
+            visiting.add(claim)
+            outcomes = [states[claim], *(join_members(member) for member in combined.get(claim, []))]
+            states[claim] = 'failed' if 'failed' in outcomes else ('held' if 'held' in outcomes else 'passed')
+            visiting.remove(claim)
+            visited.add(claim)
+        return states[claim]
+
+    for claim in combined:
+        join_members(claim)
     if len(declared) != len({r['name'] for r in declared}) or {r['name'] for r in declared} != set(obligations):
         raise StructuralError('removed or extra source obligation')
     obligation_results = []
@@ -261,7 +292,7 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             state = 'failed' if 'failed' in dependencies or row['status']=='failed' else ('held' if 'held' in dependencies or row['status']=='held' else 'scoped-passed')
             if state != row['status']: row['status']=state; changed=True
         if not changed: break
-    return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]]) for n,s in sorted(states.items())], obligations=obligation_results)
+    return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
 def bite_one_started(root):
