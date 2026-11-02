@@ -159,7 +159,7 @@
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::package | active | public-surface | pn-epoch-rust | fast | 3 |
 | planned-compiler | active | public-surface | pn-epoch-rust | fast | 5 |
-| planned-numeric | active | public-surface | pn-epoch-rust | fast | 33 |
+| planned-numeric | active | public-surface | pn-epoch-rust | fast | 35 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 17 |
 | pn-graph::reference-maps | active | public-surface | pn-graph-rust | reference-certificate | 2 |
 | pn-graph::reference-local | active | public-surface | pn-graph-rust | reference-certificate | 1 |
@@ -170,7 +170,7 @@
 | pn-graph::reference-wall-work | active | public-surface | pn-graph-rust | reference-certificate | 1 |
 | pn-graph::reference-wall-controls | active | public-surface | pn-graph-rust | reference-certificate | 1 |
 | pn-graph::reference-wall-branches | active | public-surface | pn-graph-rust | reference-certificate | 1 |
-| pn-epoch-doctests | active | doctest | pn-epoch-rust | fast | 2 |
+| pn-epoch-doctests | active | doctest | pn-epoch-rust | fast | 3 |
 
 **Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/contract-edition/tier results and explicit holds under (`rule:harness:tiers`). The service tier executes its registered PostgreSQL and Elements cases on provisioned workers; fast evidence never substitutes for those executions. Planned storage, burn and API rows retain only their stated missing integration scopes, alongside separately executed storage-library and wallet contracts. The implemented ledger, compiler and numeric portions and their outer-corpus holds are separated under (`amend:design:implemented-contract-joins`); a held remainder does not erase an executed scoped contract, and an executed scoped contract does not close that remainder. The support step has completed pn-testkit and its own four registered tests under the level and claim discipline, applicable dependency reviews, property seed/replay and missing-seed probes, benchmark correctness/smoke and regression probes, and all four packages' unit/public-surface/integration levels. The existing conformance cases of documents, cli-common and execwrap and the canonical vectors and properties of pn-interchange are preserved under (`conv:xchg:metatheorems-as-tests`); the support step routes all 93 interchange vector rows through the contract runner. The claims step owns the complete four-package conformance/obligation audit and any missing canonical-vector witnesses it identifies. Item-local lint discipline without test suppressions is met by the current clippy, member-lint and suppression checks; the claims step still audits each site's claim and obligation. Internal-module public-surface declarations were corrected to unit by the support step, with external public-surface witnesses added. Tracing in the observation step is a co-closure condition alongside the claims step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. The performance tier awaits reviewed comparable baseline campaigns, and the service, domain and client implementation steps own their respective held conformance evidence. Registry declaration and successful rendering do not create service conformance or executed claims.
 

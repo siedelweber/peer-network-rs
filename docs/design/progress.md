@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 27 | 40 | 261 | 9 | 36 | 1 028 |
+| implementation | 1 356 | 27 | 37 | 264 | 9 | 36 | 1 028 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,9 +28,9 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 7 | 9 | 80 | 2 | 19 | 275 |
+| pn-epoch | 371 | 7 | 7 | 82 | 2 | 19 | 275 |
 | pn-graph | 223 | 1 | 1 | 27 | 0 | 8 | 194 |
-| pn-host | 166 | 0 | 12 | 29 | 1 | 1 | 125 |
+| pn-host | 166 | 0 | 11 | 30 | 1 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
 | pn-records | 218 | 0 | 9 | 76 | 1 | 4 | 133 |
 | pn-replay | 26 | 0 | 3 | 1 | 0 | 0 | 22 |
@@ -56,7 +56,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 476 | 177 |
+| ROOT (repository-wide) | 1 480 | 179 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -64,16 +64,16 @@
 | Bite | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 15 | 0 | 3 | 11 | 0 | 0 | 1 |
-| 2 | 31 | 2 | 3 | 26 | 0 | 0 | 0 |
+| 2 | 31 | 2 | 2 | 27 | 0 | 0 | 0 |
 | 3 | 20 | 0 | 2 | 17 | 0 | 4 | 1 |
 | 4 | 23 | 0 | 2 | 20 | 0 | 6 | 1 |
 | 5 | 34 | 9 | 4 | 20 | 0 | 3 | 1 |
 | 6 | 17 | 2 | 4 | 10 | 0 | 3 | 1 |
-| 7 | 26 | 1 | 6 | 17 | 0 | 1 | 2 |
+| 7 | 26 | 1 | 3 | 20 | 0 | 1 | 2 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 | 0 |
 | 10 | 5 | 0 | 4 | 1 | 0 | 0 | 0 |
-| 11 | 79 | 9 | 22 | 47 | 0 | 5 | 1 |
+| 11 | 79 | 9 | 19 | 50 | 0 | 5 | 1 |
 | unlinked | 1 545 | 18 | 17 | 184 | 15 | 23 | 1 326 |
 
 ## By inventory kind · `sec:progress:kinds`
@@ -85,9 +85,9 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 11 | 2 | 30 | 6 | 0 | 175 |
 | function | 216 | 3 | 4 | 54 | 0 | 14 | 155 |
-| invariant check | 517 | 10 | 14 | 89 | 2 | 15 | 404 |
+| invariant check | 517 | 10 | 12 | 91 | 2 | 15 | 404 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 15 | 32 | 6 | 4 | 215 |
+| policy | 265 | 3 | 14 | 33 | 6 | 4 | 215 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
 
@@ -876,16 +876,16 @@
 | ``cor:epoch:universal-burn-benchmarks`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:epoch:floor-governance`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``def:epoch:safety-threshold`` | pn-epoch; function | realized | ``CONSTANTS::const.epoch.fenceslack`` ``CONSTANTS::const.epoch.safethresh`` ``ROOT::dec:design:ledger-vintages`` ``ROOT::dec:design:policy-schedules`` ``ROOT::inv:design:charged-value`` ``ROOT::req:vision:ledger-vintages`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:wall-delivery-declaration`` | obligation; ``ROOT::dec:design:ledger-vintages``; ``ROOT::dec:design:ledger-vintages``<br>| | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:ledger-vintages``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 7, 11 | |
-| ``cond:epoch:safety-derivability`` | pn-epoch; invariant check | held | ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``cond:epoch:safety-in-epoch-certification`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``cond:epoch:safety-derivability`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``cond:epoch:safety-in-epoch-certification`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``cond:epoch:safety-wall-step-bound`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``cond:epoch:safety-wall-hysteresis`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``cond:epoch:safety-publication-lead`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``cond:epoch:safety-controller-publication`` | pn-epoch; invariant check | held | ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``cond:epoch:safety-publication-lead`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``cond:epoch:safety-controller-publication`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``cond:epoch:safety-numeraire-covariance`` | pn-epoch; invariant check | held | ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``cond:epoch:safety-declared-floor`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:policy-schedules`` ``ROOT::model:design:wall-floor`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | |
-| ``cond:epoch:safety-input-quarantine`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
-| ``def:epoch:policy-floor`` | pn-host; function | designed | ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``cond:epoch:safety-input-quarantine`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
+| ``def:epoch:policy-floor`` | pn-host; function | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | |
 | ``eq:epoch:floor-validity`` | pn-epoch; function | unassigned | | | | |  | |
 | ``def:epoch:participation-floor`` | pn-epoch; function | designed | ``ROOT::rule:design:reference-wall-branches`` | | | |  | |
 | ``eq:epoch:effective-floor`` | pn-epoch; function | unassigned | | | | |  | |
@@ -905,7 +905,7 @@
 | ``case:epoch:safety-independent-of-controller-nonempty-domain`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:safety-independent-of-controller-empty-domain`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``prop:epoch:wall-controller-total`` | pn-epoch; invariant check | designed | ``GRAPH::amend:numerics:reference-wall`` ``ROOT::alg:design:enclosed-wall-consumers`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:reference-wall`` ``ROOT::alg:design:two-map-verification`` ``ROOT::rec:design:pending-reference-corpus`` | | ``GRAPH::amend:numerics:reference-wall``; ``ROOT::gate:design:bite-6``<br>| |  | |
-| ``prop:epoch:wall-controller-covariance`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` | | | |  | |
+| ``prop:epoch:wall-controller-covariance`` | pn-epoch; invariant check | designed | ``ROOT::inv:design:units`` ``ROOT::rec:design:effective-schedule-fixtures`` | | | |  | |
 | ``case:epoch:wall-controller-covariance-recoinage`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:wall-controller-covariance-fixed-ledger-migration`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:wall-controller-covariance-compensated`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -1735,7 +1735,7 @@
 | ``case:deployment:device-local-depth-three`` | none; none | unassigned | | | | |  | |
 | ``case:deployment:device-local-depth-six`` | none; none | unassigned | | | | |  | |
 | ``case:deployment:device-local-server-assisted`` | none; none | unassigned | | | | |  | |
-| ``subsec:deployment:transparency-of-protocol-formulas`` | pn-host; policy | held | ``ROOT::dec:design:constants`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:constants`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | |
+| ``subsec:deployment:transparency-of-protocol-formulas`` | pn-host; policy | designed | ``ROOT::dec:design:constants`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:effective-schedule-fixtures`` ``ROOT::req:vision:constants`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | |
 | ``case:deployment:transparency-of-protocol-formulas-edition-fixed`` | pn-host; policy | unassigned | | | | |  | |
 | ``case:deployment:transparency-of-protocol-formulas-scheduled-vote`` | pn-host; policy | unassigned | | | | |  | |
 | ``case:deployment:transparency-of-protocol-formulas-time-locked`` | pn-host; policy | unassigned | | | | |  | |

@@ -5397,6 +5397,73 @@
       },
       "reason": "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection.",
       "scope": "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
+    },
+    {
+      "budget_ms": 20200,
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        9807.027999999998,
+        10057.398000000003,
+        9871.958
+      ],
+      "calibration_pending_owner": "lane/graph",
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_walls_ms": [
+        9823.914822191,
+        10077.215888071805,
+        9874.89967700094
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 10057.398000000003,
+      "measured_wall_ms": 10077.215888071805,
+      "name": "calibrated-schedule-covariance-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "20 200",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20 200",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "10 057.398 000 000 003",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 057.398 000 000 003",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "10 077.215 888 071 805",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 077.215 888 071 805",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control.",
+      "scope": "one pn-epoch::solve::schedules::schedule_covariance case"
     }
   ]
 }

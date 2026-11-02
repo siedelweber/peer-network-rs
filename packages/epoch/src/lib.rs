@@ -263,3 +263,7 @@ pub mod anchor;
 /// Checked real base entries with the frozen source and support preserved.
 /// (´def:compiler:real-base´)
 pub mod real_base;
+
+/// Effective schedules over frozen completed epochs.
+/// (´[ROOT-alg:design:effective-schedules]´)
+pub mod schedules;

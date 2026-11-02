@@ -778,6 +778,62 @@ id = "num:numbers:controller-test-work"
 value = "2000000000"
 
 [[rows]]
+id = "num:numbers:effective-schedule-absolute-cap"
+value = "1/10"
+
+[[rows]]
+id = "num:numbers:effective-schedule-arithmetic-ceiling"
+value = "1000000000"
+
+[[rows]]
+id = "num:numbers:effective-schedule-boundary-count"
+value = "3"
+
+[[rows]]
+id = "num:numbers:effective-schedule-bracket-lower"
+value = "1/8"
+
+[[rows]]
+id = "num:numbers:effective-schedule-burn"
+value = "4"
+
+[[rows]]
+id = "num:numbers:effective-schedule-changed-policy"
+value = "1"
+
+[[rows]]
+id = "num:numbers:effective-schedule-failed-precision"
+value = "7"
+
+[[rows]]
+id = "num:numbers:effective-schedule-initial-wall"
+value = "1/2"
+
+[[rows]]
+id = "num:numbers:effective-schedule-policy"
+value = "2"
+
+[[rows]]
+id = "num:numbers:effective-schedule-precision"
+value = "8"
+
+[[rows]]
+id = "num:numbers:effective-schedule-recoinage"
+value = "2"
+
+[[rows]]
+id = "num:numbers:effective-schedule-relative-cap"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:effective-schedule-scope-precision"
+value = "1"
+
+[[rows]]
+id = "num:numbers:effective-schedule-stopping-width"
+value = "1/128"
+
+[[rows]]
 id = "num:numbers:enclosed-depth-mass-count"
 value = "4"
 

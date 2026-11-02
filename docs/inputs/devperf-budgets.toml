@@ -1906,3 +1906,24 @@ calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
 calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-schedule-covariance-case"
+category = "case"
+budget_ms = 20200
+scope = "one pn-epoch::solve::schedules::schedule_covariance case"
+reason = "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control."
+measured_wall_ms = 10077.215888071805
+measured_own_cpu_ms = 10057.398000000003
+calibration_walls_ms = [9823.914822191, 10077.215888071805, 9874.89967700094]
+calibration_own_cpu_ms = [9807.027999999998, 10057.398000000003, 9871.958]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_pending_owner = "lane/graph"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 }, measured_wall_ms = { display = "exact", exact_digits = 32 }, measured_own_cpu_ms = { display = "exact", exact_digits = 32 } }
+

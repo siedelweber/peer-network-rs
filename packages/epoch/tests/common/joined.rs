@@ -264,10 +264,34 @@ pub(crate) fn package_at_numeraires(
     wall_text: &str,
     numeraires: &[&str],
 ) -> pn_epoch::package::VerifiedPackage {
-    use pn_records::{
-        burn::{AcceptedSet, Address},
-        test_support::burn,
-    };
+    let walls = vec![wall_text; usize::try_from(boundary).unwrap()];
+    package_at_prices(acts, boundary, burns, &walls, numeraires)
+}
+
+fn complete_markers(raw: &mut pn_records::test_support::burn::BurnCase, boundary: u64) {
+    let all: std::collections::BTreeSet<_> = raw.history.records.iter().map(|record| record.identity.clone()).collect();
+    for marker in raw.history.markers.iter_mut().skip(1) {
+        marker.lineage.clone_from(&all);
+        marker.accepted = pn_records::burn::AcceptedSet::CompleteList(all.clone());
+    }
+    while raw.history.markers.last().unwrap().index < boundary {
+        let mut next = raw.history.markers.last().unwrap().clone();
+        next.predecessor = Some(next.history_position);
+        next.index += 1;
+        next.history_position += 1;
+        next.name = format!("m{}", next.index);
+        raw.history.markers.push(next);
+    }
+}
+
+pub(crate) fn package_at_prices(
+    acts: &[CandidateAct],
+    boundary: u64,
+    burns: &[(&str, &str)],
+    wall_texts: &[&str],
+    numeraires: &[&str],
+) -> pn_epoch::package::VerifiedPackage {
+    use pn_records::{burn::Address, test_support::burn};
     let mut numeric = numeric();
     let mut raw = burn::generate(&[9]);
     let template = raw.history.records[0].clone();
@@ -293,11 +317,7 @@ pub(crate) fn package_at_numeraires(
         .into_bytes();
         raw.history.records.push(record);
     }
-    let all: std::collections::BTreeSet<_> = raw.history.records.iter().map(|record| record.identity.clone()).collect();
-    for marker in raw.history.markers.iter_mut().skip(1) {
-        marker.lineage.clone_from(&all);
-        marker.accepted = AcceptedSet::CompleteList(all.clone());
-    }
+    complete_markers(&mut raw, boundary);
     let markers = burn::recognize(raw).unwrap();
     let history = history(acts);
     let mut inputs = Vec::new();
@@ -330,7 +350,7 @@ pub(crate) fn package_at_numeraires(
         let record = pn_records::validate_record(&[], &empty, &[declaration]).unwrap();
         let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
         let input = pn_epoch::bind_inputs(&constants, parameters, nrz_cas::limits::Limits::default()).unwrap();
-        let literal = numeric.literal(wall_text).unwrap();
+        let literal = numeric.literal(wall_texts[usize::try_from(epoch - 1).unwrap()]).unwrap();
         let wall = numeric.computed(&literal).unwrap();
         let price = numeric
             .charged_price(&wall, &input.parameters().numeraire, input.constants().content().floor)

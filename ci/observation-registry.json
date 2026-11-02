@@ -7973,6 +7973,44 @@
         "boundary": "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
         "class_decision": "canonical-controller-public"
       }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "item": "schedules::evaluate",
+      "owner": "EPOCH",
+      "signature": "fn evaluate (d : & ScheduleDeclaration , frames : & [Boundary < '_ , '_ >] , ridge : Option < & CheckedRidge > , limits : Limits ,) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "item": "schedules::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (d : & ScheduleDeclaration , frames : & [Boundary < '_ , '_ >] , ridge : Option < & CheckedRidge > , limits : Limits , record : & Record ,) -> Result < CheckedSchedule , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "item": "schedules::CheckedSchedule::record",
+      "owner": "EPOCH",
+      "signature": "fn record (& self) -> & Record",
+      "claim": "ROOT::alg:design:effective-schedules",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits schedule replay and performs no decision.",
+        "witness": "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages",
+        "boundary": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+        "class_decision": "effective-schedule-public"
+      }
     }
   ],
   "metrics": [
@@ -15482,6 +15520,39 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::evaluate",
+      "body": "{ run (d , frames , ridge , limits , None) }",
+      "class_decision": "effective-schedule-public",
+      "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+      "body": "{ Ok (CheckedSchedule { record : run (d , frames , ridge , limits , Some (record)) ? , }) }",
+      "class_decision": "effective-schedule-public",
+      "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::CheckedSchedule::record",
+      "body": "{ & self . record }",
+      "class_decision": "effective-schedule-public",
+      "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -19687,6 +19758,60 @@
       "syntax": "# [derive (Debug , thiserror :: Error)]",
       "class_decision": "canonical-controller-public",
       "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+    },
+    {
+      "item": "schedules::Boundary",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "schedules::Effective",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "schedules::Publication",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "schedules::Record",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "schedules::CheckedSchedule",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "schedules::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "effective-schedule-public",
+      "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
     }
   ],
   "reviewed_types": [
@@ -22709,6 +22834,42 @@
       "syntax": "# [doc = \" Exact entries remain exact; held entries retain their complete source and checked evidence.\"] # [doc = \" (´def:compiler:real-base´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub original : BaseEntry , pub primitive : Option < PrimitiveRecord > , }"
     },
     {
+      "item": "schedules::Boundary",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Public announcement beside a completed epoch; no demand or admission statistics.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [doc = \" Admission statistics are not a schedule or controller input:\"] # [doc = \" ```compile_fail\"] # [doc = \" use pn_epoch::schedules::Boundary;\"] # [doc = \" fn inject(boundary: &mut Boundary<'_, '_>) {\"] # [doc = \"     boundary.admission_statistics = Some(());\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Debug)] pub struct Boundary < 'a , 'b > { pub completed : & 'a BoundProcedure < 'b > , pub search : & 'a InverseSearch , pub announced_at : u64 , pub effective_at : u64 , # [doc = \" Absence retains the preceding effective policy floor.\"] pub policy_floor : Option < String > , }"
+    },
+    {
+      "item": "schedules::Effective",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Exact effective coordinate pair and policy; never an enclosure endpoint charge.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Effective { pub boundary : u64 , pub wall : String , pub charge : String , pub numeraire : Numeraire , pub policy_floor : String , }"
+    },
+    {
+      "item": "schedules::Publication",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Candidate publication retains its completed marker and independently replayable proposal.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Publication { pub marker : Marker , pub announced_at : u64 , pub effective : Effective , pub proposal : Evidence , }"
+    },
+    {
+      "item": "schedules::Record",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Untrusted sequence evidence. Only replay constructs a checked schedule.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub declaration : crate :: admission :: ScheduleInput , pub initial : Effective , pub publications : Vec < Publication > , }"
+    },
+    {
+      "item": "schedules::CheckedSchedule",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Immutable replayed sequence; it does not admit a write or authenticate deployment publication.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug)] pub struct CheckedSchedule { record : Record , }"
+    },
+    {
+      "item": "schedules::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/schedules.rs",
+      "syntax": "# [doc = \" Schedule defects, unresolved comparisons and arithmetic stops remain distinct.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"schedule refusal: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"controller: {0}\")] Controller (# [from] controller :: Error) , # [error (\"ridge: {0}\")] Ridge (# [from] ridge :: Error) , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
       "item": "ContentRequest",
       "package": "pn-act-profile",
       "path": "packages/act-profile/src/lib.rs",
@@ -23311,6 +23472,18 @@
           "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
           "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
           "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence"
+        ]
+      }
+    },
+    {
+      "name": "effective-schedule-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public frozen completed epochs and explicit led announcements, exact policy and charge pairs and independently replayed sequence evidence. No secret, demand input or final-admission authority is introduced.",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/schedules.rs::schedules::evaluate",
+          "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+          "pn-epoch::packages/epoch/src/schedules.rs::schedules::CheckedSchedule::record"
         ]
       }
     }

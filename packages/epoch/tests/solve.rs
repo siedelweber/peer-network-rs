@@ -4404,3 +4404,6 @@ fn standing_scope() {
     assert_eq!(state.view(), &frozen);
     transport_oracle();
 }
+
+#[path = "solve/schedules.rs"]
+mod schedules;

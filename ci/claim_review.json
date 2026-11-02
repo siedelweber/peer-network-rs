@@ -2042,6 +2042,22 @@
       "review": "The publication verifier sees the whole reference input. A changed door refuses publication, an unsupported lower endpoint refuses at the kernel binding check, and zero-width evaluation and replay leave the immutable rational charged price identical."
     },
     {
+      "operation": "pn-epoch::solve::schedules::effective_schedules",
+      "path": "packages/epoch/tests/solve/schedules.rs",
+      "claim": "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages",
+      "before": "",
+      "after": "Claim: The finite complete-history boundary sequence retains explicit initialization, one-boundary lead, policy persistence and validity, exact wall-price identity and unchanged debit vintages; independent replay refuses altered publications and skipped or invalid announcements, without admitting writes or authenticating deployment publication.",
+      "review": "Read the finite sequence and transformed complete histories: the tests reconstruct widths and prices independently, replay each proposal and sequence, retain old vintages and refuse invalid lead, policy and changed evidence. These sites confer no final admission or deployment authentication."
+    },
+    {
+      "operation": "pn-epoch::solve::schedules::schedule_covariance",
+      "path": "packages/epoch/tests/solve/schedules.rs",
+      "claim": "EPOCH::claim:admission:schedule-covariance-retains-transformed-inputs",
+      "before": "",
+      "after": "Claim: The finite changed-width history certifies its own contributing width without repricing earlier debits; recoinage retains reduced controller inputs and scales its charge, while fixed-ledger migration halves the independently recomputed pair width and applies a new controller evaluation, without asserting controller homogeneity or invariant admission gates.",
+      "review": "Read the finite sequence and transformed complete histories: the tests reconstruct widths and prices independently, replay each proposal and sequence, retain old vintages and refuse invalid lead, policy and changed evidence. These sites confer no final admission or deployment authentication."
+    },
+    {
       "operation": "pn-epoch::solve::transport_oracle",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:transport:transport-preserves-balance-and-count-mass",

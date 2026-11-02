@@ -4554,6 +4554,7 @@
         "pn-epoch::solve::partitions::published_retained_act": "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control.",
         "pn-epoch::solve::partitions::receiving_small": "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates.",
         "pn-epoch::solve::partitions::sibling_outside_paths": "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control.",
+        "pn-epoch::solve::schedules::schedule_covariance": "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control.",
         "pn-epoch::solve::two_map_box": "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls."
       },
       "case_budgets": {
@@ -4574,10 +4575,13 @@
         "pn-epoch::solve::partitions::published_retained_act": "calibrated-published-retained-act-case",
         "pn-epoch::solve::partitions::receiving_small": "calibrated-receiving-small-case",
         "pn-epoch::solve::partitions::sibling_outside_paths": "calibrated-sibling-outside-paths-case",
+        "pn-epoch::solve::schedules::schedule_covariance": "calibrated-schedule-covariance-case",
         "pn-epoch::solve::two_map_box": "calibrated-two-map-box-case"
       },
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::schedules::effective_schedules",
+        "pn-epoch::solve::schedules::schedule_covariance",
         "pn-epoch::solve::controller::controller_binding",
         "pn-epoch::solve::standing_scope",
         "pn-epoch::solve::evaluated_scaling",
@@ -4846,7 +4850,8 @@
       "budget": "pure-suite",
       "cases": [
         "doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]",
-        "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]"
+        "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]",
+        "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",

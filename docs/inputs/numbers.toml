@@ -6890,3 +6890,101 @@ value = "1"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-initial-wall"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-policy"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-changed-policy"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-absolute-cap"
+value = "1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-relative-cap"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-burn"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-recoinage"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-scope-precision"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-boundary-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-arithmetic-ceiling"
+value = "1000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-bracket-lower"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-stopping-width"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:effective-schedule-failed-precision"
+value = "7"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
