@@ -374,6 +374,8 @@ def gate():
     if not meson:
         raise ValueError('PN_MESON_BIN must name the provisioned Meson executable')
     root = Path.cwd()
+    from claims import tracker_structure
+    tracker_structure(root)
     build = root/'.lane/build-graph'
     if run(['ninja', '--version']).returncode or prepare(meson, build, root):
         return 1

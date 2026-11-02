@@ -196,7 +196,7 @@ class Evidence(unittest.TestCase):
         bites = [dict(ordinal=1, contracts=['alg:testing:fixture'], requirements=[])]
         projected = tracker_rows(inventory, records, execution, bites)[0]
         self.assertEqual(projected['status'], 'realized')
-        self.assertEqual(projected['routes'], [dict(record=record, claim=claim, scope=scope)])
+        self.assertEqual(projected['routes'], [dict(kind='site-claim', record=record, claim=claim, scope=scope)])
         self.assertEqual(projected['bites'], [1])
         removed = deepcopy(execution)
         removed['sites'] = []
@@ -222,6 +222,70 @@ class Evidence(unittest.TestCase):
         short = [dict(label='sec:testing', crate='none', kind='none')]
         paper = {record: dict(text='(`[PAPER-sec:testing]`)', citations=set())}
         self.assertEqual(tracker_rows(short, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'designed')
+        obligation_records = {scope: dict(text='``def:testing:fixture``', citations=set())}
+        edge = dict(claims=[dict(name=claim, status='passed')],
+                    obligations=[dict(name=scope, status='scoped-passed', claims=[claim])])
+        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites)[0]['routes'],
+                         [dict(kind='obligation', record=scope, scope=scope)])
+        extra = deepcopy(edge)
+        extra['claims'].append(dict(name=claim+'-other', status='passed'))
+        extra['obligations'][0]['claims'].append(claim+'-other')
+        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites),
+                         tracker_rows(inventory, obligation_records, extra, bites))
+        extra['claims'][1]['status'] = 'failed'
+        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'designed')
+        extra['obligations'][0].update(status='held', hold=hold)
+        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'held')
+        mentions = {record: dict(text='``def:testing:fixture``', citations={claim})}
+        self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['routes'],
+                         [dict(kind='record-claim', record=record, claim=claim, scope=scope)])
+        mentions[record].update(citations=set(), exhibits={claim})
+        self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['status'], 'realized')
+        mentions[record].update(exhibits=set(), text='``def:testing:fixture`` ``claim:testing:fixture``')
+        remote = deepcopy(edge)
+        remote['claims'][0]['name'] = 'GRAPH::claim:testing:fixture'
+        remote['obligations'][0]['claims'] = ['GRAPH::claim:testing:fixture']
+        self.assertEqual(tracker_rows(inventory, mentions, remote, bites)[0]['routes'][0]['claim'],
+                         'GRAPH::claim:testing:fixture')
+        remote['claims'].append(dict(name=claim, status='passed'))
+        with self.assertRaisesRegex(StructuralError, 'ambiguous tracker claim exhibit'):
+            tracker_rows(inventory, mentions, remote, bites)
+        for state in ('failed', 'held'):
+            unavailable = deepcopy(edge)
+            unavailable['claims'][0]['status'] = state
+            self.assertEqual(tracker_rows(inventory, mentions, unavailable, bites)[0]['status'], 'designed')
+        constants = [dict(id='const.fixture.value', cites=inventory[0]['label'])]
+        plan = [dict(ordinal=2, labels=[inventory[0]['label']])]
+        carried = tracker_rows(inventory, {}, edge, bites, constants, plan)[0]
+        self.assertEqual(carried['records'], ['CONSTANTS::const.fixture.value'])
+        self.assertEqual(carried['status'], 'designed')
+        self.assertEqual(carried['bites'], [2])
+        constants[0]['cites'] += '-other'
+        self.assertEqual(tracker_rows(inventory, {}, edge, bites, constants, plan)[0]['status'], 'unassigned')
+        for kind in ('open', 'obs'):
+            tentative = {'ROOT::'+kind+':testing:fixture': dict(text='``def:testing:fixture``', citations=set())}
+            self.assertEqual(tracker_rows(inventory, tentative, edge, bites)[0]['tentative'], 1)
+            tentative.update(mentions)
+            self.assertEqual(tracker_rows(inventory, tentative, edge, bites)[0]['tentative'], 0)
+        from claims import tracker_elsewhere
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            text = root/'other.txt'
+            unassigned = [dict(label='def:testing:fixture', status='unassigned')]
+            with patch('build_graph.tracked', return_value=['other.txt']):
+                for spelling in ('def:testing:fixture', '[PAPER-def:testing:fixture]', 'PAPER::def:testing:fixture'):
+                    text.write_text(spelling)
+                    self.assertEqual(tracker_elsewhere(root, unassigned), {'def:testing:fixture': ['other.txt']})
+                text.write_text('def:testing:fixture-extra')
+                self.assertEqual(tracker_elsewhere(root, unassigned), {})
+            with patch('build_graph.tracked', return_value=['docs/design/inventory.md', 'docs/design/progress.md']):
+                self.assertEqual(tracker_elsewhere(root, unassigned), {})
+        from claims import tracker_changes
+        old = dict(category='statement', **carried)
+        new = dict(old, records=['ROOT::alg:testing:other'], bites=[3])
+        self.assertEqual(tracker_changes([old], [new], ('records', 'bites')),
+                         [dict(label=old['label'], fields=dict(records=dict(before=old['records'], after=new['records']),
+                                                             bites=dict(before=[2], after=[3])))])
         name='ROOT::gate:testing:fixture';label='ROOT::amend:testing:admission'
         paragraphs={label:dict(citations={name})}
         row=dict(name=name,entry_gate='ROOT::gate:design:bite-1',status="scoped-passed",claims=[],owner='reviewer',admission_basis='executed',admission=dict(owner='reviewer',evidence_kind='fixture evidence',status='admitted',evidence=label))
@@ -415,7 +479,7 @@ class Evidence(unittest.TestCase):
             stack.callback(os.chdir,previous)
             os.chdir(directory)
             for name in ('.lane','ci','docs/inputs'): Path(name).mkdir(parents=True,exist_ok=True)
-            for name in ('design-inventory', 'implementation-bites'):
+            for name in ('design-inventory', 'implementation-bites', 'design-constants', 'design-bites'):
                 Path('docs/inputs/'+name+'.toml').write_text('rows = []\n')
             for name,rows in (('claim-areas',data['areas']),('claim-obligations',data['declared'])):
                 Path('docs/inputs/'+name+'.toml').write_text('\n'.join(
@@ -440,10 +504,21 @@ class Evidence(unittest.TestCase):
                     carrier = Path('docs/inputs/specification-progress.toml')
                     original = carrier.read_text()
                     carrier.write_text(original+'\n')
-                    with redirect_stderr(io.StringIO()):
+                    with redirect_stderr(io.StringIO()), patch('claims.tracker_artifacts') as artifacts:
                         self.assertEqual(main([]), 2)
+                        artifacts.assert_called_once_with(Path('.'), original)
+                    self.assertTrue(Path('.lane/specification-tracker-moved.json').is_file())
                     self.assertEqual(main(['tracker']), 0)
                     self.assertEqual(carrier.read_text(), original)
+                    from claims import tracker_structure
+                    tracker_structure(Path('.'))
+                    carrier.write_text('rows = [{ category = "statement", label = "def:testing:removed", records = ["ROOT::alg:testing:fixture"], bites = [1] }]\n')
+                    with self.assertRaisesRegex(StructuralError, 'records or bites are stale'):
+                        tracker_structure(Path('.'))
+                    moved = json.loads(Path('.lane/specification-tracker-structure.json').read_text())
+                    self.assertEqual(moved['evidence'], 'structural-only')
+                    self.assertEqual(moved['changes'][0]['label'], 'def:testing:removed')
+                    carrier.write_text(original)
                     execution = Path('.lane/claim-evidence.json')
                     stale = json.loads(execution.read_text())
                     stale['source'] = 'previous'

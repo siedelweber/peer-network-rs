@@ -3,6 +3,7 @@
 import argparse
 from collections import Counter, defaultdict
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -295,7 +296,7 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
-def tracker_rows(inventory, paragraphs, evidence, bites):
+def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
     """Join exact paper mentions, scoped execution and bounded record edges."""
     labels = {row['label'] for row in inventory}
     if len(labels) != len(inventory):
@@ -311,6 +312,9 @@ def tracker_rows(inventory, paragraphs, evidence, bites):
         paper.update(re.findall(r'(?<!`)``([^`\n]+)``(?!`)', record['text']))
         for label in paper & labels:
             mentions[label].add(name)
+    for constant in constants:
+        if constant['cites'] in labels:
+            mentions[constant['cites']].add('CONSTANTS::'+constant['id'])
     claims = {row['name']: row for row in evidence['claims']}
     obligations = {row['name']: row for row in evidence['obligations']}
     supported = defaultdict(set)
@@ -322,8 +326,8 @@ def tracker_rows(inventory, paragraphs, evidence, bites):
             for claim in row['claims']:
                 if claims.get(claim, {}).get('status') == 'passed':
                     scopes[claim].add(name)
-                    if name in records:
-                        supported[name].add((claim, name))
+            if name in records and row['claims'] and all(claims.get(c, {}).get('status') == 'passed' for c in row['claims']):
+                supported[name].add(('obligation', '', name))
         elif row['status'] == 'held' and row.get('hold') and name in records:
             holds[name].add(row['hold'])
     for site in evidence.get('sites', []):
@@ -332,8 +336,21 @@ def tracker_rows(inventory, paragraphs, evidence, bites):
             r'\(´(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')´\)', site['doc'])}
         for name in citations & records.keys():
             for scope in scopes[claim]:
-                supported[name].add((claim, scope))
+                supported[name].add(('site-claim', claim, scope))
+    claim_names = defaultdict(set)
+    for claim in claims:
+        claim_names[claim.split('::', 1)[1]].add(claim)
     for name, record in records.items():
+        cited_claims = (record['citations'] | record.get('exhibits', set())) & claims.keys()
+        # Bare exhibits name cross-package witnesses without guessing an owner.
+        for label in re.findall(r'(?<!`)``(claim:[a-z0-9-]+:[a-z0-9.-]+)``(?!`)', record['text']):
+            matches = claim_names[label]
+            if len(matches) > 1:
+                raise StructuralError('ambiguous tracker claim exhibit: '+label)
+            cited_claims.update(matches)
+        for claim in cited_claims:
+            for scope in scopes[claim]:
+                supported[name].add(('record-claim', claim, scope))
         holds[name].update(record['citations'] & named_holds)
         if name in named_holds:
             holds[name].add(name)
@@ -352,15 +369,108 @@ def tracker_rows(inventory, paragraphs, evidence, bites):
     rows = []
     for item in inventory:
         names = sorted(mentions[item['label']])
-        routes = [dict(record=name, claim=claim, scope=scope)
-                  for name in names for claim, scope in sorted(supported[name])]
+        routes = [dict(kind=kind, record=name, scope=scope, **({'claim': claim} if claim else {}))
+                  for name in names for kind, claim, scope in sorted(supported[name])]
         held = [dict(record=name, hold=hold) for name in names for hold in sorted(holds[name])]
         status = ('realized' if routes else 'held' if names and all(holds[name] for name in names)
                   else 'designed' if names else 'unassigned')
         rows.append(dict(label=item['label'], crate=item['crate'], kind=item['kind'], status=status,
                          records=names, routes=routes, holds=held,
-                         bites=sorted(n for n, roots in bite_records.items() if roots.intersection(names))))
+                         tentative=int(status == 'designed' and all(
+                             name.split('::', 1)[-1].split(':', 1)[0] in {'open', 'obs'} for name in names)),
+                         bites=sorted({n for n, roots in bite_records.items() if roots.intersection(names)} |
+                                      {b['ordinal'] for b in plan if item['label'] in b['labels']})))
     return rows
+
+
+
+def tracker_elsewhere(root, rows):
+    """Count exact labels outside the admitted mention carriers, never substrings."""
+    from build_graph import tracked
+    labels = {row['label'] for row in rows if row['status'] == 'unassigned'}
+    found = defaultdict(set)
+    if not labels:
+        return {}
+    excluded = {'docs/inputs/design-inventory.toml', 'docs/inputs/specification-progress.toml',
+                'docs/datasets/org.peer-network.design.inventory.json',
+                'docs/datasets/org.peer-network.design.progress.json', 'docs/design/progress.md',
+                'docs/design/inventory.md'}
+    token = re.compile(r'(?<![a-z0-9:.-])([a-z][a-z0-9-]*(?::[a-z0-9.-]+)+)(?![a-z0-9:.-])')
+    for name in tracked(root):
+        if name in excluded:
+            continue
+        try:
+            text = (root/name).read_text()
+        except UnicodeError:
+            continue
+        text = re.sub(r'\[PAPER-([^\]\n]+)\]', r'\1', text).replace('PAPER::', '')
+        for label in set(token.findall(text)) & labels:
+            found[label].add(name)
+    return {label: sorted(paths) for label, paths in sorted(found.items())}
+
+
+def tracker_changes(before, after, fields=None):
+    """Describe changed statement fields, not an opaque byte mismatch."""
+    indexed = lambda rows: {r['label']: r for r in rows if r['category'] == 'statement'}
+    left, right = indexed(before), indexed(after)
+    changes = []
+    for label in sorted(left.keys() | right.keys()):
+        old, new = left.get(label, {}), right.get(label, {})
+        keys = fields if fields is not None else sorted(old.keys() | new.keys())
+        changed = {key: dict(before=old.get(key), after=new.get(key)) for key in keys if old.get(key) != new.get(key)}
+        if changed:
+            changes.append(dict(label=label, fields=changed))
+    return changes
+
+
+def tracker_structure(root):
+    """Refuse changed records and bite membership before requiring executions."""
+    root = Path(root)
+    read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
+    rows = tracker_rows(read('design-inventory.toml'), prose(root)[0],
+                        dict(claims=[], obligations=read('claim-obligations.toml')),
+                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
+    changes = tracker_changes(read('specification-progress.toml'),
+                              [dict(category='statement', **row) for row in rows],
+                              ('crate', 'kind', 'records', 'bites'))
+    artifact = root/'.lane/specification-tracker-structure.json'
+    artifact.parent.mkdir(exist_ok=True)
+    artifact.write_text(json.dumps(dict(evidence='structural-only', changes=changes), indent=2)+'\n')
+    for change in changes:
+        print('SPECIFICATION-TRACKER-MOVED '+json.dumps(change, sort_keys=True), flush=True)
+    if changes:
+        raise StructuralError('specification tracker records or bites are stale; see .lane/specification-tracker-structure.json')
+    print('SPECIFICATION-TRACKER structure=passed fields=crate,kind,records,bites', flush=True)
+
+
+def tracker_artifacts(root, projection):
+    """Render checked replacement bytes in the shared commit-isolation boundary."""
+    from build_graph import cancellable
+    from isolation import workspace
+    root = Path(root).resolve()
+    source = source_id()
+    binary = Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ.get('CARGO_TARGET_DIR', root/'target'))).resolve()/'gate/documents'
+    paths = ('docs/inputs/specification-progress.toml',
+             'docs/datasets/org.peer-network.design.progress.json', 'docs/design/progress.md')
+    destination = root/'.lane/specification-tracker'
+    (destination/'manifest.json').unlink(missing_ok=True)
+    with workspace(root, 'specification-tracker', source) as (tree, _target):
+        (tree/paths[0]).write_text(projection)
+        for action in ('generate', 'write'):
+            result = cancellable([str(binary), '--root', str(tree), action], cwd=tree)
+            if result.returncode not in (0, 3):
+                raise StructuralError('tracker artifact '+action+' failed')
+        for name in paths:
+            output = destination/name
+            output.parent.mkdir(parents=True, exist_ok=True)
+            temporary = output.with_name(output.name+'.tmp')
+            temporary.write_bytes((tree/name).read_bytes())
+            temporary.replace(output)
+    manifest = destination/'manifest.json'
+    temporary = manifest.with_name('manifest.json.tmp')
+    temporary.write_text(json.dumps(dict(source=source, evidence='checked-execution', paths=list(paths)), indent=2)+'\n')
+    temporary.replace(manifest)
+    print('SPECIFICATION-TRACKER artifacts=.lane/specification-tracker/manifest.json', flush=True)
 
 
 def tracker_input(root, evidence):
@@ -369,8 +479,16 @@ def tracker_input(root, evidence):
     read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
     paragraphs = prose(root)[0]
     rows = tracker_rows(read('design-inventory.toml'), paragraphs, evidence,
-                        read('implementation-bites.toml'))
-    summaries = []
+                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
+    elsewhere = tracker_elsewhere(root, rows)
+    for row in rows:
+        row['elsewhere'] = elsewhere.get(row['label'], [])
+    obligation_routes = {route['scope'] for row in rows for route in row['routes'] if route['kind'] == 'obligation'}
+    summaries = [dict(category='obligation-support', name=r['name'], claim_count=len(r['claims']),
+                      numeric_display={'claim_count': dict(display='exact', exact_digits=32)})
+                 for r in evidence['obligations'] if r['name'] in obligation_routes]
+    summaries.append(dict(category='citation-gaps', name='exact-elsewhere', total=len(elsewhere),
+                          numeric_display={'total': dict(display='exact', exact_digits=32)}))
     for category, groups in (
             ('total', {'implementation': [r for r in rows if r['crate'] != 'none'],
                        'prose': [r for r in rows if r['crate'] == 'none']}),
@@ -381,14 +499,16 @@ def tracker_input(root, evidence):
         for name, members in groups.items():
             counts = Counter(r['status'] for r in members)
             summaries.append(dict(category=category, name=name, total=len(members),
+                                  tentative=sum(r['tentative'] for r in members),
                                   **{status: counts[status] for status in ('realized', 'held', 'designed', 'unassigned')},
                                   numeric_display={field: dict(display='exact', exact_digits=32)
-                                                   for field in ('total', 'realized', 'held', 'designed', 'unassigned')}))
+                                                   for field in ('total', 'realized', 'held', 'designed', 'unassigned', 'tentative')}))
     packages = {str(path.parent.relative_to(root)): tomllib.loads(path.read_text())['package']['name']
                 for path in sorted((root/'packages').glob('*/Cargo.toml'))}
     records = {name: [] for name in sorted(set(packages.values()) |
                {r['crate'] for r in rows if r['crate'] != 'none'})}
     records['ROOT (repository-wide)'] = []
+    records['CONSTANTS (named carrier)'] = ['CONSTANTS::'+r['id'] for r in read('design-constants.toml')]
     cited = {name for row in rows for name in row['records']}
     for name, paragraph in paragraphs.items():
         path = paragraph['path']
@@ -585,8 +705,15 @@ def main(argv=None):
         projection = tracker_input(root, dict(sites=sites, **result))
         Path('.lane/specification-progress.toml').write_text(projection)
         if Path('docs/inputs/specification-progress.toml').read_text() != projection:
-            raise StructuralError('specification tracker is stale; regenerate from checked execution evidence')
-        print('SPECIFICATION-TRACKER fixed-point=passed artifact=.lane/specification-progress.toml')
+            before = tomllib.loads(Path('docs/inputs/specification-progress.toml').read_text())['rows']
+            changes = tracker_changes(before, tomllib.loads(projection)['rows'])
+            Path('.lane/specification-tracker-moved.json').write_text(json.dumps(changes, indent=2)+'\n')
+            for change in changes:
+                print('SPECIFICATION-TRACKER-MOVED '+json.dumps(change, sort_keys=True), flush=True)
+            tracker_artifacts(root, projection)
+            raise StructuralError('specification tracker is stale; apply .lane/specification-tracker artifacts from checked execution evidence')
+        gap = next(row['total'] for row in tomllib.loads(projection)['rows'] if row['category'] == 'citation-gaps')
+        print(f'SPECIFICATION-TRACKER fixed-point=passed unassigned_exact_elsewhere={gap} artifact=.lane/specification-progress.toml')
         return int(any(r['status']=='failed' for r in result['claims']) or counts['failed']>0 or (args.fail_respellings and bool(offenders)))
     except (ValueError, KeyError, TypeError, OSError) as error:
         print('CLAIM-STRUCTURAL-ERROR '+str(error), file=sys.stderr)
