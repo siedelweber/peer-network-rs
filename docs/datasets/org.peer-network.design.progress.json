@@ -1345,9 +1345,7 @@
       "tentative": 0
     },
     {
-      "bites": [
-        2
-      ],
+      "bites": [],
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
@@ -1356,15 +1354,15 @@
       "label": "def:comparator:frame-binding",
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::model:design:burn"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
+      "status": "unassigned",
       "tentative": 0
     },
     {
-      "bites": [],
+      "bites": [
+        2
+      ],
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
@@ -1373,9 +1371,11 @@
       "label": "rem:comparator:destination-funding-non-transferability",
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::model:design:burn"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -34284,15 +34284,15 @@
     },
     {
       "category": "kind",
-      "designed": 33,
+      "designed": 34,
       "held": 14,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "33",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34337,10 +34337,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "215",
+          "exact": "214",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "215",
+          "num": "214",
           "num_exact": true,
           "num_relation": "="
         }
@@ -34379,7 +34379,7 @@
       "record_granular": 4,
       "tentative": 6,
       "total": 265,
-      "unassigned": 215
+      "unassigned": 214
     },
     {
       "category": "kind",
@@ -34482,15 +34482,15 @@
     },
     {
       "category": "kind",
-      "designed": 43,
+      "designed": 42,
       "held": 4,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "43",
+          "exact": "42",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "43",
+          "num": "42",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34535,10 +34535,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "45",
+          "exact": "46",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45",
+          "num": "46",
           "num_exact": true,
           "num_relation": "="
         }
@@ -34577,7 +34577,7 @@
       "record_granular": 2,
       "tentative": 0,
       "total": 92,
-      "unassigned": 45
+      "unassigned": 46
     },
     {
       "category": "bite",

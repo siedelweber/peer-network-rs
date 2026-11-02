@@ -87,9 +87,9 @@
 | function | 216 | 3 | 4 | 54 | 0 | 14 | 155 |
 | invariant check | 517 | 10 | 12 | 91 | 2 | 15 | 404 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 14 | 33 | 6 | 4 | 215 |
+| policy | 265 | 3 | 14 | 34 | 6 | 4 | 214 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
-| type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
+| type | 92 | 0 | 4 | 42 | 0 | 2 | 46 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -234,8 +234,8 @@
 | ``def:comparator:imported-frame`` | pn-records; type | unassigned | | | | |  | |
 | ``eq:comparator:seam`` | pn-records; function | unassigned | | | | |  | |
 | ``rem:comparator:neutrality-from-silence`` | pn-host; policy | unassigned | | | | |  | |
-| ``def:comparator:frame-binding`` | pn-records; type | designed | ``ROOT::model:design:burn`` | | | | 2 | |
-| ``rem:comparator:destination-funding-non-transferability`` | pn-records; policy | unassigned | | | | |  | |
+| ``def:comparator:frame-binding`` | pn-records; type | unassigned | | | | |  | |
+| ``rem:comparator:destination-funding-non-transferability`` | pn-records; policy | designed | ``ROOT::model:design:burn`` | | | | 2 | |
 | ``rem:comparator:identity-is-layer-2`` | pn-records; policy | unassigned | | | | |  | |
 | ``lem:comparator:frame-stability`` | pn-records; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` | | | | 5 | |
 | ``rem:comparator:auditability`` | pn-host; policy | unassigned | | | | |  | |
