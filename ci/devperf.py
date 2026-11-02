@@ -231,8 +231,8 @@ def assess(record, declared, registry=()):
         findings.append({**record, 'duration_ms': duration, 'kind': kind, 'budget_ms': threshold,
                          'baseline_ms': baseline, 'verdict_effect': 'none',
                          'admission': admitted[0]['label'] if admitted else None,
-                         'classification': 'build-or-aggregate-misconfiguration' if declaration['category'] in
-                         {'build', 'aggregate'} else 'performance'})
+                         'classification': record.get('overrun_class') or ('build-or-aggregate-misconfiguration' if declaration['category'] in
+                         {'build', 'aggregate'} else 'performance')})
     return findings
 
 
@@ -308,6 +308,7 @@ def main():
     parser.add_argument('--outcome')
     parser.add_argument('--source', default='working tree')
     parser.add_argument('--budget', default='ordinary-check')
+    parser.add_argument('--overrun-class', choices=['within-budget', 'unclassified', 'high-stall', 'rebuild', 'plain', 'growth'])
     parser.add_argument('--findings')
     parser.add_argument('--ledger', type=Path)
     parser.add_argument('--registry', default='docs/inputs/devperf-registry.toml')
@@ -327,6 +328,12 @@ def main():
                             owner='foundation implementer', level='operation', suite='gate-operations',
                             implementation='repository-tools', tier='fast', applicable_budgets=[args.budget, 'gate'], utc=datetime.datetime.now(datetime.timezone.utc).isoformat().replace('+00:00', 'Z'))]
         registry = tomllib.loads(Path(args.registry).read_text())['rows']
+        if args.overrun_class:
+            if args.input or not args.operation.startswith('tier::'):
+                raise StructuralError('overrun class requires a tier operation')
+            records[0]['overrun_class'] = args.overrun_class
+            records[0]['tier'] = args.operation.removeprefix('tier::')
+            records[0]['applicable_budgets'] = [args.budget]
         return report(records, budgets(args.budgets), args.findings, registry=registry)
     except (ValueError, KeyError, TypeError, OSError) as error:
         print(f'PERFORMANCE-STRUCTURAL-ERROR {error}', file=sys.stderr)

@@ -538,11 +538,15 @@ def delegate(root, step):
     return result['status']
 
 
-def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None):
+def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None):
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
-    if stall is not None and stall >= policy['high_stall_percent']/100: return 'high-stall'
     if stall is None or own is None or baseline is None: return 'unclassified'
+    if wall is None or baseline_wall is None or baseline_stall is None: return 'unclassified'
+    # Remove the baseline's stall before projecting its work into this interval.
+    # A pressure fraction is context, not an attribution of CPU to this tier.
+    if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
+    if wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
     if (changed and build_cpu is not None and old_build_cpu is not None
             and build_cpu > old_build_cpu*(1+policy['cpu_growth_percent']/100)
             and compile_wall_growth is not None and excess is not None
@@ -610,6 +614,15 @@ def retain_baseline(root):
     """Publish only after the whole invocation is functionally green."""
     candidate = json.loads((root/'.lane/gate-baseline.json').read_text())
     path = Path(candidate.pop('path'))
+    previous = candidate.pop('previous_statuses', None)
+    candidate['evidence_statuses'] = evidence_statuses(root)
+    if previous is None:
+        print('GATE-STATUS-CHANGES baseline=unavailable')
+    else:
+        changes = status_changes(candidate['evidence_statuses'], previous)
+        for change in changes:
+            print('GATE-STATUS-CHANGE '+json.dumps(change, sort_keys=True))
+        print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
@@ -627,6 +640,29 @@ def compile_comparison(current, prior, serialized):
     serial = [name for name in comparable if name in serialized]
     growth = sum(current[name]['wall']-prior[name]['wall'] for name in serial) if serial else None
     return own, old, growth, sorted(set(current)-set(comparable))
+
+
+def status_changes(current, previous):
+    """Name changed evidence, including additions and removals, without aggregation."""
+    return [dict(kind=kind, name=name, before=previous.get(kind, {}).get(name), after=current.get(kind, {}).get(name))
+            for kind in sorted(set(current) | set(previous))
+            for name in sorted(set(current.get(kind, {})) | set(previous.get(kind, {})))
+            if current.get(kind, {}).get(name) != previous.get(kind, {}).get(name)]
+
+
+def evidence_statuses(root):
+    """Read only the completed required result union used by the matrix."""
+    paths = [root/'.lane/performance-events.jsonl', root/'.lane/harness-benchmarks.jsonl',
+             *sorted((root/'.lane').glob('harness-ci-*.jsonl'))]
+    cases = {}
+    for path in paths:
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            if row.get('scope') == 'case':
+                if row['operation'] in cases: raise ValueError('duplicate case in baseline evidence')
+                cases[row['operation']] = row['outcome']
+    evidence = json.loads((root/'.lane/claim-evidence.json').read_text())
+    return dict(case=cases, obligation={row['name']:row['status'] for row in evidence['obligations']})
 
 
 def tier_summary(root, registry, worker_statuses):
@@ -681,27 +717,32 @@ def tier_summary(root, registry, worker_statuses):
         comparable_build = compile_cpu(step_figures) if comparable_cpu is not None else None
         comparable_old_build = compile_cpu(prior.get('step_figures', {})) if comparable_old is not None else None
         stall = measurement.get('node_pressure_fraction', {}).get('cpu.some')
+        old_stall = prior.get('resources', {}).get('node_pressure_fraction', {}).get('cpu.some')
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
-            compile_wall_growth=wall_growth, excess=excess)
+            compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
+            baseline_stall=old_stall)
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
+            baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} '
+              f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
-                '--budget', budget, '--findings', '.lane/performance-findings.jsonl'], cwd=root)
+                '--budget', budget, '--overrun-class', classification, '--findings', '.lane/performance-findings.jsonl'], cwd=root)
             if result.returncode: raise ValueError('tier performance reporting refused')
     (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
     tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
                           capture_output=True, text=True, check=True).stdout.strip()
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree,
-        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports))+'\n')
+        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports,
+        previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 
 
 def schedule(root):

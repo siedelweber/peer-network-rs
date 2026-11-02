@@ -427,7 +427,6 @@
       ],
       "category": "aggregate",
       "cpu_growth_percent": 20,
-      "high_stall_percent": 10,
       "isolation_retention_imports": 3,
       "name": "gate",
       "number_forms": {
@@ -460,14 +459,6 @@
           "exact_exact": true,
           "exact_relation": "=",
           "num": "20",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "high_stall_percent": {
-          "exact": "10",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -550,10 +541,6 @@
           "exact_digits": 32
         },
         "cpu_growth_percent": {
-          "display": "exact",
-          "exact_digits": 32
-        },
-        "high_stall_percent": {
           "display": "exact",
           "exact_digits": 32
         },

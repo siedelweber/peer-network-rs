@@ -166,7 +166,7 @@ class Performance(unittest.TestCase):
         from build_graph import overrun_class
         policy = dict(high_stall_percent=10, cpu_growth_percent=20)
         def classify(own=100, baseline=100, stall=0.09, build=40, old_build=40, changed=()):
-            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21)
+            return overrun_class(True, own, baseline, stall, build, old_build, changed, policy, compile_wall_growth=build-old_build, excess=21, wall=100/.9, baseline_wall=100, baseline_stall=0)
         self.assertEqual(classify(), 'plain')
         self.assertEqual(classify(own=120), 'plain')
         self.assertEqual(classify(stall=0.1), 'high-stall')
@@ -177,6 +177,19 @@ class Performance(unittest.TestCase):
         self.assertEqual(classify(own=121, build=61, changed=['Cargo.lock'], stall=0.1), 'high-stall')
         self.assertEqual(classify(baseline=None), 'unclassified')
         self.assertEqual(classify(stall=None), 'unclassified')
+        # The line is continuous: 5 percent pressure can explain an overrun,
+        # while 15 percent pressure cannot excuse a wall beyond its projection.
+        for stall in (.05, .15):
+            projected = 115*(1-.02)/(1-stall)
+            for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
+                self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
+                    wall=projected+delta, baseline_wall=115, baseline_stall=.02), expected)
+        from build_graph import status_changes
+        self.assertEqual(status_changes({'case':{'selected':'passed'}, 'obligation':{'scope':'scoped-passed'}},
+            {'case':{'selected':'held'}, 'obligation':{'scope':'held'}}), [
+                dict(kind='case', name='selected', before='held', after='passed'),
+                dict(kind='obligation', name='scope', before='held', after='scoped-passed')])
+        self.assertEqual(status_changes({'case':{'same':'passed'}}, {'case':{'same':'passed'}}), [])
         self.assertEqual(overrun_class(False, None, None, None, None, None, [], policy), 'within-budget')
         from build_graph import compile_comparison
         cold = dict(wall=100, own_cpu_s=315, layouts={'owner':'old'}, partial=True)
@@ -187,14 +200,14 @@ class Performance(unittest.TestCase):
         self.assertEqual(omitted, ['isolated'])
         self.assertAlmostEqual(growth, 60.5)
         self.assertEqual(overrun_class(True, own, baseline, .0525, 407.389, 103.153,
-            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179, wall=159.179, baseline_wall=100, baseline_stall=0), 'rebuild')
         # Comparable compile CPU excludes the cold isolated baseline owner.
         self.assertEqual(overrun_class(True, 714.200, 684.486, .0525, 407.389, 103.153,
-            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179, wall=159.179, baseline_wall=100, baseline_stall=0), 'rebuild')
         self.assertEqual(overrun_class(True, 714.200, 684.486, .0525, 407.389, 418.153,
-            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'plain')
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179, wall=159.179, baseline_wall=100, baseline_stall=0), 'plain')
         self.assertEqual(overrun_class(True, 100, 100, .09, 40, 40,
-            ['packages/example/src/pins.rs'], policy, compile_wall_growth=60, excess=21), 'plain')
+            ['packages/example/src/pins.rs'], policy, compile_wall_growth=60, excess=21, wall=141, baseline_wall=100, baseline_stall=0), 'plain')
 
 
     def test_baseline_lineage(self):
@@ -209,6 +222,9 @@ class Performance(unittest.TestCase):
             (root/'.cargo').mkdir()
             (root/'.cargo/config.toml').write_text('fixture')
             (root/'.lane').mkdir()
+            (root/'.lane/performance-events.jsonl').write_text('')
+            (root/'.lane/harness-benchmarks.jsonl').write_text('')
+            (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             registry = SimpleNamespace(tiers={'fast': {'jobs': 8}})
             good = SimpleNamespace(returncode=0, stdout='compiler identity')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
@@ -249,6 +265,9 @@ class Performance(unittest.TestCase):
             self.assertNotEqual(original, imported)
             self.assertNotEqual(subprocess.run(['git', '-C', str(root), 'merge-base', '--is-ancestor', original, current]).returncode, 0)
             (root/'.lane').mkdir()
+            (root/'.lane/performance-events.jsonl').write_text('')
+            (root/'.lane/harness-benchmarks.jsonl').write_text('')
+            (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
                 path, _, _ = baseline_context(root, registry)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={})))
@@ -343,6 +362,10 @@ class Performance(unittest.TestCase):
         for category in ['case', 'suite']:
             finding, = assess(execution(101), {'unit': {'budget_ms': 100, 'category': category}})
             self.assertEqual(finding['classification'], 'performance')
+        for classification in ('high-stall', 'rebuild', 'plain', 'growth', 'unclassified'):
+            finding, = assess(dict(execution(101), operation='tier::fast', overrun_class=classification),
+                {'unit': {'budget_ms': 100, 'category': 'aggregate'}})
+            self.assertEqual(finding['classification'], classification)
 
     def test_version_mismatch(self):
         """An unreviewed stream version is refused before tests, preventing silent schema drift.
