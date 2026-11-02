@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 49 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 48 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 52 | 46 | 338 | 8 | 20 | 920 |
+| implementation | 1 356 | 52 | 45 | 342 | 8 | 20 | 917 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,7 +28,7 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 24 | 9 | 127 | 1 | 11 | 211 |
+| pn-epoch | 371 | 24 | 8 | 131 | 1 | 11 | 208 |
 | pn-graph | 223 | 5 | 7 | 61 | 0 | 4 | 150 |
 | pn-host | 166 | 0 | 12 | 29 | 1 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
@@ -56,25 +56,25 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 481 | 180 |
+| ROOT (repository-wide) | 1 485 | 182 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
 
 | Bite | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | 16 | 0 | 4 | 11 | 0 | 0 | 1 |
+| 1 | 16 | 0 | 3 | 12 | 0 | 0 | 1 |
 | 2 | 32 | 2 | 3 | 27 | 0 | 0 | 0 |
 | 3 | 21 | 0 | 2 | 18 | 0 | 4 | 1 |
 | 4 | 33 | 2 | 9 | 21 | 0 | 4 | 1 |
 | 5 | 41 | 13 | 5 | 22 | 0 | 3 | 1 |
 | 6 | 24 | 4 | 5 | 14 | 0 | 1 | 1 |
-| 7 | 33 | 1 | 4 | 26 | 0 | 1 | 2 |
+| 7 | 33 | 1 | 3 | 28 | 0 | 1 | 1 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 | 0 |
 | 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
-| 11 | 85 | 14 | 22 | 48 | 0 | 4 | 1 |
-| unlinked | 1 509 | 35 | 17 | 239 | 14 | 11 | 1 218 |
+| 11 | 85 | 14 | 21 | 49 | 0 | 4 | 1 |
+| unlinked | 1 509 | 35 | 17 | 241 | 14 | 11 | 1 216 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -84,10 +84,10 @@
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 11 | 2 | 30 | 6 | 0 | 175 |
-| function | 216 | 12 | 7 | 92 | 0 | 8 | 105 |
+| function | 216 | 12 | 6 | 94 | 0 | 8 | 104 |
 | invariant check | 517 | 24 | 17 | 121 | 1 | 6 | 355 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 5 | 15 | 39 | 6 | 3 | 206 |
+| policy | 265 | 5 | 15 | 41 | 6 | 3 | 204 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
 
@@ -306,7 +306,7 @@
 | ``itm:network:host-contract-final-standing`` | pn-host; type | unassigned | | | | |  | |
 | ``itm:network:host-contract-shared-policy`` | pn-host; type | unassigned | | | | |  | |
 | ``itm:network:host-contract-evidence`` | pn-host; type | unassigned | | | | |  | |
-| ``def:network:door-headroom`` | pn-epoch; function | unassigned | | | | | 7 | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.bites.json` `docs/inputs/design-bites.toml` |
+| ``def:network:door-headroom`` | pn-epoch; function | designed | ``ROOT::rec:design:atomic-admission-evidence`` | | | | 7 | |
 | ``rem:network:durations-no-glyph`` | pn-host; policy | unassigned | | | | |  | |
 | ``ins:network:back-pressure`` | pn-host; policy | unassigned | | | | |  | |
 | ``sec:graph`` | none; none | unassigned | | | | |  | |
@@ -843,17 +843,17 @@
 | ``alg:epoch:tilt-backoff`` | pn-epoch; function | designed | ``EPOCH::rule:compiler:fence-refinement`` | | | |  | |
 | ``prop:epoch:epoch-replay-determinism`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:epoch:act-debit`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``post:epoch:act-debit`` | pn-epoch; policy | realized | ``CONSTANTS::fixture.seed.carol_rate_revised`` ``ROOT::alg:design:ledger`` ``ROOT::dec:design:ledger-vintages`` ``ROOT::req:vision:ledger-vintages`` | obligation; ``ROOT::dec:design:ledger-vintages``; ``ROOT::dec:design:ledger-vintages``<br>| | ``ROOT::req:vision:ledger-vintages``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | |
+| ``post:epoch:act-debit`` | pn-epoch; policy | realized | ``CONSTANTS::fixture.seed.carol_rate_revised`` ``ROOT::alg:design:ledger`` ``ROOT::dec:design:ledger-vintages`` ``ROOT::rec:design:atomic-admission-evidence`` ``ROOT::req:vision:ledger-vintages`` | obligation; ``ROOT::dec:design:ledger-vintages``; ``ROOT::dec:design:ledger-vintages``<br>| | ``ROOT::req:vision:ledger-vintages``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | |
 | ``prop:epoch:translation-law`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:epoch:dense-cluster-fairness`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``rem:epoch:two-action-counts`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``subsec:epoch:participation-gates`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``post:epoch:final-act-sequence-write-rule`` | pn-epoch; policy | designed | ``ROOT::alg:design:admission`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
-| ``cond:epoch:write-own-balance-solvency`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:final-ledger`` ``ROOT::alg:design:admission`` ``ROOT::alg:design:ledger`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 5, 7, 11 | |
-| ``cond:epoch:write-individual-safety`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
-| ``cond:epoch:write-epoch-admission`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
-| ``rem:epoch:relational-gate-vs-own-export`` | pn-epoch; policy | unassigned | | | | |  | |
-| ``rem:epoch:admission-statistics-quarantine`` | pn-epoch; policy | unassigned | | | | |  | |
+| ``post:epoch:final-act-sequence-write-rule`` | pn-epoch; policy | designed | ``ROOT::alg:design:admission`` ``ROOT::dec:design:admission`` ``ROOT::rec:design:atomic-admission-evidence`` ``ROOT::req:vision:admission`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
+| ``cond:epoch:write-own-balance-solvency`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:final-ledger`` ``ROOT::alg:design:admission`` ``ROOT::alg:design:atomic-final-admission`` ``ROOT::alg:design:ledger`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 5, 7, 11 | |
+| ``cond:epoch:write-individual-safety`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` ``ROOT::alg:design:atomic-final-admission`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
+| ``cond:epoch:write-epoch-admission`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:admission`` ``ROOT::alg:design:atomic-final-admission`` ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` ``ROOT::verif:design:gate-unit-cases`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:gate-unit-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
+| ``rem:epoch:relational-gate-vs-own-export`` | pn-epoch; policy | designed | ``ROOT::rec:design:atomic-admission-evidence`` | | | |  | |
+| ``rem:epoch:admission-statistics-quarantine`` | pn-epoch; policy | designed | ``ROOT::rec:design:atomic-admission-evidence`` | | | |  | |
 | ``rem:epoch:consent-exposure`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``tbl:epoch:actor-states`` | pn-epoch; function | unassigned | | | | |  | |
 | ``rem:epoch:band-dwell`` | pn-epoch; policy | unassigned | | | | |  | |
@@ -897,7 +897,7 @@
 | ``case:epoch:wall-controller-covariance-fixed-ledger-migration`` | pn-epoch; invariant check | designed | ``ROOT::rec:design:effective-schedule-fixtures`` | | | |  | |
 | ``case:epoch:wall-controller-covariance-compensated`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``case:epoch:wall-controller-covariance-uncompensated`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``def:epoch:final-act-stamps`` | pn-epoch; function | held | ``ROOT::dec:design:admission`` ``ROOT::req:vision:admission`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
+| ``def:epoch:final-act-stamps`` | pn-epoch; function | designed | ``ROOT::dec:design:admission`` ``ROOT::rec:design:atomic-admission-evidence`` ``ROOT::req:vision:admission`` | | | ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | |
 | ``eq:epoch:final-action-stamp`` | pn-epoch; function | unassigned | | | | |  | |
 | ``eq:epoch:final-epoch-stamp`` | pn-epoch; function | unassigned | | | | |  | |
 | ``eq:epoch:final-epoch-headroom`` | pn-epoch; function | unassigned | | | | |  | |

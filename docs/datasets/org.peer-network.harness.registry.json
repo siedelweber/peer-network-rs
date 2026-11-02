@@ -4854,7 +4854,8 @@
       "cases": [
         "doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]",
         "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]",
-        "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]"
+        "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]",
+        "doctest::packages/epoch/src/admission/finalize.rs - admission::finalize::FinalProcedure [example 1]"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4879,6 +4880,25 @@
       "runner": "nextest",
       "status": "active",
       "tier": "reference-certificate"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::admission_equalities",
+        "pn-epoch::solve::admission::admission_refusals",
+        "pn-epoch::solve::admission::admission_empty",
+        "pn-epoch::solve::admission::admission_boundaries",
+        "pn-epoch::solve::admission::admission_refinement",
+        "pn-epoch::solve::admission::admission_quarantine"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::admission",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

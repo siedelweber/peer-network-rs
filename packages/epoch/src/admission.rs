@@ -1,4 +1,4 @@
-//! Declarations for final admission; no gate or controller execution.
+//! Final-admission declarations and atomic candidate gate evaluation.
 //! (´[ROOT-amend:design:admission-declarations]´)
 
 use nrz_cas::{
@@ -7,6 +7,9 @@ use nrz_cas::{
 };
 use pn_records::numerics::{Floor, Numeraire};
 use std::cmp::Ordering;
+
+mod finalize;
+pub use finalize::{FinalEvidence, FinalProcedure, FinalRefusal, Solvency, StampRound, admit};
 
 /// The closed set of controller editions admitted by this interface.
 /// (´[ROOT-amend:design:admission-declarations]´)

@@ -4407,3 +4407,6 @@ fn standing_scope() {
 
 #[path = "solve/schedules.rs"]
 mod schedules;
+
+#[path = "solve/admission.rs"]
+mod admission;

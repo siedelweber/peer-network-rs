@@ -63,6 +63,9 @@ fn inputs(
 ) -> Result<(Procedure, Inputs), Error> {
     let (prepared, hull) = crate::fence::prepare(bound)?;
     let (state, p) = bound.inputs();
+    if !matches!(state.package(), crate::compiler::CompiledSource::Published(_)) {
+        return Err(AdmissionRefusal::Evidence.into());
+    }
     let d = declared.input();
     let init = &d.initialization;
     let parameters = init.parameters.as_ref().ok_or(AdmissionRefusal::Evidence)?;

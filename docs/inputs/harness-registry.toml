@@ -1759,7 +1759,7 @@ level = "doctest"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]", "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]", "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]"]
+cases = ["doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]", "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]", "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]", "doctest::packages/epoch/src/admission/finalize.rs - admission::finalize::FinalProcedure [example 1]"]
 
 [[rows]]
 kind = "suite"
@@ -1774,3 +1774,15 @@ budget = "reference-certificate-suite"
 case_budget = "calibrated-controller-delivery-case"
 case_span = true
 cases = ["pn-graph::numeric::controller::controller_delivery"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::admission"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_equalities", "pn-epoch::solve::admission::admission_refusals", "pn-epoch::solve::admission::admission_empty", "pn-epoch::solve::admission::admission_boundaries", "pn-epoch::solve::admission::admission_refinement", "pn-epoch::solve::admission::admission_quarantine"]

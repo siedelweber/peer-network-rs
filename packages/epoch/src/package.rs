@@ -227,8 +227,7 @@ pub struct CandidateContext {
     input: CandidateInput,
 }
 
-/// Immutable admitted boundary reserved for the final gate producer. This cut has
-/// no constructor: a checked candidate or declaration cannot manufacture admission.
+/// Immutable admitted boundary constructed only after every final gate passes.
 /// (´[ROOT-inv:design:atomic-admission]´)
 /// ```compile_fail
 /// fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {
@@ -238,6 +237,7 @@ pub struct CandidateContext {
 #[derive(Clone, Debug)]
 pub struct AdmittedBoundary {
     candidate: CandidateContext,
+    evidence: crate::admission::FinalEvidence,
 }
 
 /// Validate candidate coherence and independent cause/closure premises, not final gates.
@@ -311,6 +311,17 @@ impl CandidateContext {
 }
 
 impl AdmittedBoundary {
+    pub(crate) fn checked(candidate: CandidateContext, evidence: crate::admission::FinalEvidence) -> Self {
+        Self { candidate, evidence }
+    }
+
+    /// Borrow the final gate evidence without changing the admitted result.
+    /// (´[ROOT-inv:design:atomic-admission]´)
+    /// Justified: Immutable field access inherits the complete admission operation.
+    #[must_use]
+    pub fn evidence(&self) -> &crate::admission::FinalEvidence {
+        &self.evidence
+    }
     /// Borrow the admitted result's candidate without a mutable or constructing path.
     /// (´[ROOT-inv:design:atomic-admission]´)
     /// Justified: Immutable field access does not create an admitted result.

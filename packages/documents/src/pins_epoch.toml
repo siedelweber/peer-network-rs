@@ -302,6 +302,90 @@ id = "num:numbers:act-switch-precision"
 value = "2"
 
 [[rows]]
+id = "num:numbers:admission-endpoint-grid"
+value = "1/4096"
+
+[[rows]]
+id = "num:numbers:admission-insolvent-burn"
+value = "1/4"
+
+[[rows]]
+id = "num:numbers:admission-maximum-ticks"
+value = "10"
+
+[[rows]]
+id = "num:numbers:admission-policy-failed-precision"
+value = "8"
+
+[[rows]]
+id = "num:numbers:admission-policy-precision"
+value = "9"
+
+[[rows]]
+id = "num:numbers:admission-poor-burn"
+value = "3/4"
+
+[[rows]]
+id = "num:numbers:admission-positive-strength"
+value = "1/16"
+
+[[rows]]
+id = "num:numbers:admission-product-ceiling"
+value = "10000"
+
+[[rows]]
+id = "num:numbers:admission-refinement-work-ceiling"
+value = "400000000"
+
+[[rows]]
+id = "num:numbers:admission-refused-policy"
+value = "2"
+
+[[rows]]
+id = "num:numbers:admission-refused-work"
+value = "1"
+
+[[rows]]
+id = "num:numbers:admission-repeated-burn"
+value = "2"
+
+[[rows]]
+id = "num:numbers:admission-rich-burn"
+value = "2"
+
+[[rows]]
+id = "num:numbers:admission-scope-precision"
+value = "2"
+
+[[rows]]
+id = "num:numbers:admission-straddle-policy"
+value = "6/5"
+
+[[rows]]
+id = "num:numbers:admission-straddle-source-burn"
+value = "3"
+
+[[rows]]
+id = "num:numbers:admission-straddle-target-burn"
+value = "5/2"
+
+[[rows]]
+id = "num:numbers:admission-supported-burn"
+value = "101/100"
+
+[[rows]]
+id = "num:numbers:admission-supporting-burn"
+value = "6/5"
+
+[[rows]]
+id = "num:numbers:admission-target"
+value = "8"
+
+[[rows]]
+id = "num:numbers:admission-wall"
+value = "1/2"
+
+[[rows]]
 id = "num:numbers:burn-arithmetic-ceiling"
 value = "1000000000"
 
@@ -1336,6 +1420,10 @@ value = "1762/161"
 [[rows]]
 id = "num:numbers:receiving-small-standing-old"
 value = "962/121"
+
+[[rows]]
+id = "num:numbers:reference-margin"
+value = "5/4"
 
 [[rows]]
 id = "num:numbers:reference-reduction-ceiling"

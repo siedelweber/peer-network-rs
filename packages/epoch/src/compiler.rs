@@ -1,4 +1,4 @@
-//! Joined deterministic compiler over a verified completed package.
+//! Joined deterministic compiler retaining published or candidate cause authority.
 //! (´def:compiler:joined-state´)
 
 use crate::{
@@ -6,7 +6,7 @@ use crate::{
     cells::{CellIdentity, StandingCell},
     coefficients::{CoefficientError, coefficient},
     ledger::{FinalLedger, LedgerError, compile_ledger},
-    package::VerifiedPackage,
+    package::{CandidateContext, PackageInput, VerifiedPackage},
     recipients::{RecipientError, ResolvedCell, resolve_recipients},
     support::{StandingSupport, SupportError, compile_support},
 };
@@ -40,8 +40,29 @@ pub struct CompiledView {
 /// (´def:compiler:joined-state´)
 #[derive(Clone, Debug)]
 pub struct CompiledState {
-    source: VerifiedPackage,
+    source: CompiledSource,
     view: CompiledView,
+}
+
+/// Retain the authority under which causes were checked; compilation never promotes a candidate.
+/// (´[ROOT-amend:design:candidate-admission-boundary]´)
+#[derive(Clone, Debug)]
+pub enum CompiledSource {
+    Published(VerifiedPackage),
+    Candidate(CandidateContext),
+}
+
+impl CompiledSource {
+    /// Borrow shared causes without asserting publication of a candidate.
+    /// (´[ROOT-amend:design:candidate-admission-boundary]´)
+    /// Justified: Immutable field access does not change the retained authority.
+    #[must_use]
+    pub fn input(&self) -> &PackageInput {
+        match self {
+            Self::Published(package) => package.input(),
+            Self::Candidate(candidate) => &candidate.input().causes,
+        }
+    }
 }
 
 /// Whole-result refusal; no partial compiled state escapes.
@@ -87,6 +108,53 @@ pub fn compile_final_state(
     limits: Limits,
     maximum_products: u64,
 ) -> Result<CompiledState, CompileError> {
+    compile_source(
+        CompiledSource::Published(package.clone()),
+        verifier,
+        numeric,
+        limits,
+        maximum_products,
+    )
+}
+
+/// Compile checked proposed causes through the same structural and numerical derivation.
+/// The retained source remains a candidate and supplies no publication authority.
+/// (´[ROOT-alg:design:admission]´)
+/// # Errors
+/// Refuses any formation, ledger, support or bounded arithmetic defect atomically.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "compiler::compile_candidate"
+    ),
+    ret
+)]
+pub fn compile_candidate(
+    candidate: &CandidateContext,
+    verifier: &impl RegistrationVerifier,
+    numeric: &mut NumericContext,
+    limits: Limits,
+    maximum_products: u64,
+) -> Result<CompiledState, CompileError> {
+    compile_source(
+        CompiledSource::Candidate(candidate.clone()),
+        verifier,
+        numeric,
+        limits,
+        maximum_products,
+    )
+}
+
+fn compile_source(
+    package: CompiledSource,
+    verifier: &impl RegistrationVerifier,
+    numeric: &mut NumericContext,
+    limits: Limits,
+    maximum_products: u64,
+) -> Result<CompiledState, CompileError> {
     let source = package.input();
     let inputs = source.inputs.last().ok_or(CompileError::Boundary)?;
     let price = source.prices.last().ok_or(CompileError::Boundary)?;
@@ -115,7 +183,7 @@ pub fn compile_final_state(
     let base = compile_base(inputs, &source.history, verifier, limits.clone())?;
     let support = compile_support(inputs, price, &ledger, &base, numeric, limits, maximum_products)?;
     Ok(CompiledState {
-        source: package.clone(),
+        source: package,
         view: CompiledView {
             title,
             ledger,
@@ -129,11 +197,11 @@ pub fn compile_final_state(
 }
 
 impl CompiledState {
-    /// Borrow the verified source prefix retained with every compiled result.
+    /// Borrow the checked source prefix and its publication or candidate authority.
     /// (´def:compiler:joined-state´)
     /// Justified: Immutable access inherits the joined compiler operation.
     #[must_use]
-    pub fn package(&self) -> &VerifiedPackage {
+    pub fn package(&self) -> &CompiledSource {
         &self.source
     }
 

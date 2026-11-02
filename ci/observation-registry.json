@@ -7069,7 +7069,7 @@
       "path": "packages/epoch/src/compiler.rs",
       "item": "compiler::CompiledState::package",
       "owner": "EPOCH",
-      "signature": "fn package (& self) -> & VerifiedPackage",
+      "signature": "fn package (& self) -> & CompiledSource",
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "exception",
@@ -8011,6 +8011,62 @@
         "boundary": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
         "class_decision": "effective-schedule-public"
       }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "item": "admission::finalize::admit",
+      "owner": "EPOCH",
+      "signature": "fn admit (candidate : & package :: CandidateContext , schedule : & schedules :: CheckedSchedule , procedure : & FinalProcedure , registration : & impl RegistrationVerifier , published : & impl solve :: ProcedureVerifier , mut numeric : NumericContext ,) -> Result < package :: AdmittedBoundary , FinalRefusal >",
+      "claim": "ROOT::alg:design:admission",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::AdmittedBoundary::evidence",
+      "owner": "EPOCH",
+      "signature": "fn evidence (& self) -> & crate :: admission :: FinalEvidence",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access inherits the complete admission operation.",
+        "witness": "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps",
+        "boundary": "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+        "class_decision": "atomic-admission-public"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::CompiledSource::input",
+      "owner": "EPOCH",
+      "signature": "fn input (& self) -> & PackageInput",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access does not change the retained authority.",
+        "witness": "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps",
+        "boundary": "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+        "class_decision": "atomic-admission-public"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::compile_candidate",
+      "owner": "EPOCH",
+      "signature": "fn compile_candidate (candidate : & CandidateContext , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -14654,7 +14710,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
-      "body": "{ let source = package . input () ; let inputs = source . inputs . last () . ok_or (CompileError :: Boundary) ? ; let price = source . prices . last () . ok_or (CompileError :: Boundary) ? ; let ledger = compile_ledger (& source . inputs , & source . prices , & source . markers , & source . history , verifier , numeric , limits . clone () ,) ? ; let graph = pn_graph :: formation :: reconstruct_replay (& source . history , verifier) . map_err (LedgerError :: Formation) ? ; let title = pn_graph :: title :: replay_title (& graph , & source . history , verifier , inputs . parameters () . boundary) ? ; let recipients = resolve_recipients (& source . history , inputs . parameters () . boundary , verifier , limits . clone ()) ? ; let cells : Vec < _ > = recipients . iter () . map (| row | row . cell . clone ()) . collect () ; let mut coefficients = BTreeMap :: new () ; for cell in & cells { let evidence = match coefficient (cell , limits . clone ()) { Ok (value) => CoefficientEvidence :: Exact (value) , Err (CoefficientError :: Irrational { radicand }) => CoefficientEvidence :: Irrational { radicand } , Err (error) => return Err (error . into ()) , } ; coefficients . insert (cell . identity . clone () , evidence) ; } let base = compile_base (inputs , & source . history , verifier , limits . clone ()) ? ; let support = compile_support (inputs , price , & ledger , & base , numeric , limits , maximum_products) ? ; Ok (CompiledState { source : package . clone () , view : CompiledView { title , ledger , cells , coefficients , recipients , base , support , } , }) }",
+      "body": "{ compile_source (CompiledSource :: Published (package . clone ()) , verifier , numeric , limits , maximum_products ,) }",
       "class_decision": "epoch-compiler",
       "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
       "assessments": {
@@ -14667,7 +14723,7 @@
       "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::package",
       "body": "{ & self . source }",
       "class_decision": "epoch-compiler",
-      "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "item_premise": "The joined compiler retains immutable checked public causes and their Published or Candidate authority discriminator, deterministic formation verification, and source, title, ledger, cell, recipient and numeric evidence. The published entry point requires a verified package; the separately instrumented candidate entry point carries no publication authority. Irrational coefficients stay public holds. No secrets, canonical bytes or persistence capability enter; observation is not a premise.",
       "assessments": {
         "full_recording": "epoch-compiler-full_recording",
         "secret_flow": "epoch-compiler-secret_flow",
@@ -14678,7 +14734,7 @@
       "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::view",
       "body": "{ & self . view }",
       "class_decision": "epoch-compiler",
-      "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "item_premise": "The joined compiler retains immutable checked public causes and their Published or Candidate authority discriminator, deterministic formation verification, and source, title, ledger, cell, recipient and numeric evidence. The published entry point requires a verified package; the separately instrumented candidate entry point carries no publication authority. Irrational coefficients stay public holds. No secrets, canonical bytes or persistence capability enter; observation is not a premise.",
       "assessments": {
         "full_recording": "epoch-compiler-full_recording",
         "secret_flow": "epoch-compiler-secret_flow",
@@ -15548,6 +15604,50 @@
       "body": "{ & self . record }",
       "class_decision": "effective-schedule-public",
       "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+      "body": "{ let effective = effective (candidate , schedule) ? ; let binding = candidate . input () . causes . bindings . last () . ok_or (AdmissionRefusal :: Evidence) ? ; if u64 :: try_from (binding . sequence . len ()) . map_err (| _ | AdmissionRefusal :: Failed (Gate :: Capacity)) ? > candidate . input () . closure . policy . target { return Err (AdmissionRefusal :: Failed (Gate :: Capacity) . into ()) ; } let state = match compiler :: compile_candidate (candidate , registration , & mut numeric , procedure . arithmetic . clone () , procedure . maximum_products ,) { Err (compiler :: CompileError :: Ledger (crate :: ledger :: LedgerError :: InsufficientBalance { boundary , .. })) if boundary == binding . marker . index => { return Err (AdmissionRefusal :: Failed (Gate :: OwnSolvency) . into ()) ; } other => other . map_err (| error | FinalRefusal :: Compile (Box :: new (error))) ? , } ; let mut b = Budget :: new (procedure . arithmetic . clone ()) ? ; let solvency = solvency (& state , & mut b) ? ; let mut evidence = FinalEvidence { effective , solvency , standing : None , rounds : Vec :: new () , } ; if binding . sequence . is_empty () { return Ok (package :: AdmittedBoundary :: checked (candidate . clone () , evidence)) ; } let bound = solve :: bind_procedure (& state , procedure . solve . clone () , published , procedure . arithmetic . clone ()) ? ; let fence = fence :: search (& bound , None) ? ; let solved = conserved :: solve (& bound , & fence) . map_err (| error | FinalRefusal :: Solve (Box :: new (error))) ? ; let mut unresolved = Comparison :: IndividualSafety ; for round in & solved . rounds { let stamps = stamps (& state , round , & evidence . effective , & mut b) ? ; let result = verdict (& stamps , & evidence . effective , & mut b) ? ; evidence . rounds . push (stamps) ; if let Some (comparison) = result { unresolved = comparison ; } else { evidence . standing = Some (solved) ; return Ok (package :: AdmittedBoundary :: checked (candidate . clone () , evidence)) ; } } Err (AdmissionRefusal :: Indecisive (unresolved) . into ()) }",
+      "class_decision": "atomic-admission-public",
+      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::evidence",
+      "body": "{ & self . evidence }",
+      "class_decision": "atomic-admission-public",
+      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledSource::input",
+      "body": "{ match self { Self :: Published (package) => package . input () , Self :: Candidate (candidate) => & candidate . input () . causes , } }",
+      "class_decision": "atomic-admission-public",
+      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_candidate",
+      "body": "{ compile_source (CompiledSource :: Candidate (candidate . clone ()) , verifier , numeric , limits , maximum_products ,) }",
+      "class_decision": "atomic-admission-public",
+      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -19812,6 +19912,60 @@
       "syntax": "# [derive (Debug , thiserror :: Error)]",
       "class_decision": "effective-schedule-public",
       "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting an initialization or constructing final admitted writes."
+    },
+    {
+      "item": "admission::finalize::FinalProcedure",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "admission::finalize::Solvency",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "admission::finalize::StampRound",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "admission::finalize::FinalEvidence",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "admission::finalize::FinalRefusal",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "compiler::CompiledSource",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "atomic-admission-public",
+      "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
     }
   ],
   "reviewed_types": [
@@ -22444,6 +22598,36 @@
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     },
     {
+      "item": "admission::finalize::FinalProcedure",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [doc = \" Declared solve and exact assembly limits; no demand or rejected-submission input.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [doc = \"\"] # [doc = \" ```compile_fail,E0609\"] # [doc = \" use pn_epoch::admission::FinalProcedure;\"] # [doc = \" fn rejected_demand(p: &mut FinalProcedure) {\"] # [doc = \"     p.rejected_submissions = 1;\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct FinalProcedure { pub solve : pn_records :: solve :: Procedure , pub arithmetic : Limits , pub maximum_products : u64 , }"
+    },
+    {
+      "item": "admission::finalize::Solvency",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [doc = \" Own balance immediately before and after one complete act's single debit.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Solvency { pub act : ActId , pub before : String , pub debit : String , pub after : String , }"
+    },
+    {
+      "item": "admission::finalize::StampRound",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [doc = \" Boundary-frozen action stamps, act-weighted mean and output-only headroom.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StampRound { pub precision : u32 , pub stamps : BTreeMap < ActId , Bounds > , pub epoch : Bounds , pub headroom : Bounds , }"
+    },
+    {
+      "item": "admission::finalize::FinalEvidence",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [doc = \" Public final-gate record; only attachment to the privately constructed\"] # [doc = \" admitted boundary carries admission authority. A standalone record is untrusted.\"] # [doc = \" Empty epochs retain no stamp, mean or diagnostic invented from a zero denominator.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FinalEvidence { pub effective : schedules :: Effective , pub solvency : Vec < Solvency > , pub standing : Option < pn_records :: conserved :: SolveRecord > , pub rounds : Vec < StampRound > , }"
+    },
+    {
+      "item": "admission::finalize::FinalRefusal",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/admission/finalize.rs",
+      "syntax": "# [doc = \" Invalid causes and operational kernel errors never assert a failed mathematical gate.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Debug , thiserror :: Error)] pub enum FinalRefusal { # [error (\"final admission: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"candidate compilation: {0}\")] Compile (# [source] Box < compiler :: CompileError >) , # [error (\"procedure binding: {0}\")] Procedure (# [from] solve :: ProcedureError) , # [error (\"fence: {0}\")] Fence (# [from] fence :: Error) , # [error (\"standing: {0}\")] Solve (# [source] Box < conserved :: Error >) , # [error (\"bounded exact gate arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
       "item": "admission::ControllerEdition",
       "package": "pn-epoch",
       "path": "packages/epoch/src/admission.rs",
@@ -22699,7 +22883,7 @@
       "item": "package::AdmittedBoundary",
       "package": "pn-epoch",
       "path": "packages/epoch/src/package.rs",
-      "syntax": "# [doc = \" Immutable admitted boundary reserved for the final gate producer. This cut has\"] # [doc = \" no constructor: a checked candidate or declaration cannot manufacture admission.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , }"
+      "syntax": "# [doc = \" Immutable admitted boundary constructed only after every final gate passes.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , evidence : crate :: admission :: FinalEvidence , }"
     },
     {
       "item": "recipients::ResolvedCell",
@@ -22801,7 +22985,13 @@
       "item": "compiler::CompiledState",
       "package": "pn-epoch",
       "path": "packages/epoch/src/compiler.rs",
-      "syntax": "# [doc = \" Frozen joined output, not an admitted epoch or a persistence capability.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug)] pub struct CompiledState { source : VerifiedPackage , view : CompiledView , }"
+      "syntax": "# [doc = \" Frozen joined output, not an admitted epoch or a persistence capability.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug)] pub struct CompiledState { source : CompiledSource , view : CompiledView , }"
+    },
+    {
+      "item": "compiler::CompiledSource",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [doc = \" Retain the authority under which causes were checked; compilation never promotes a candidate.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub enum CompiledSource { Published (VerifiedPackage) , Candidate (CandidateContext) , }"
     },
     {
       "item": "compiler::CompileError",
@@ -23323,7 +23513,7 @@
         ]
       },
       "status": "reviewer-confirmed",
-      "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise."
+      "premises": "The joined compiler retains immutable checked public causes and their Published or Candidate authority discriminator, deterministic formation verification, and source, title, ledger, cell, recipient and numeric evidence. The published entry point requires a verified package; the separately instrumented candidate entry point carries no publication authority. Irrational coefficients stay public holds. No secrets, canonical bytes or persistence capability enter; observation is not a premise."
     },
     {
       "name": "solve-public-records",
@@ -23484,6 +23674,19 @@
           "pn-epoch::packages/epoch/src/schedules.rs::schedules::evaluate",
           "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
           "pn-epoch::packages/epoch/src/schedules.rs::schedules::CheckedSchedule::record"
+        ]
+      }
+    },
+    {
+      "name": "atomic-admission-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public complete candidate causes, checked effective schedules and bounded exact gate evidence; no secrets, rejected-submission counter or demand statistics enter. Persistent publication and deployment remain unsupported.",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+          "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::evidence",
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledSource::input",
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_candidate"
         ]
       }
     }

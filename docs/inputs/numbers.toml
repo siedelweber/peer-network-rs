@@ -6988,3 +6988,152 @@ value = "7"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Atomic admission fixture declarations.
+
+[[rows]]
+id = "num:numbers:admission-wall"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-scope-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-endpoint-grid"
+value = "1/4096"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-target"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-maximum-ticks"
+value = "10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-repeated-burn"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-poor-burn"
+value = "3/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-rich-burn"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-insolvent-burn"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-supported-burn"
+value = "101/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-supporting-burn"
+value = "6/5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-product-ceiling"
+value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-straddle-source-burn"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-straddle-target-burn"
+value = "5/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-straddle-policy"
+value = "6/5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-positive-strength"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-policy-precision"
+value = "9"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-policy-failed-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-refused-work"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-refinement-work-ceiling"
+value = "400000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:admission-refused-policy"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
