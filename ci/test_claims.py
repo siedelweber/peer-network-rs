@@ -241,7 +241,7 @@ class Evidence(unittest.TestCase):
                          [dict(kind='record-claim', record=record, claim=claim, scope=scope)])
         mentions[record].update(citations=set(), exhibits={claim}, text='``def:testing:fixture`` is witnessed by ``claim:testing:fixture``.')
         self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['status'], 'realized')
-        for boundary in ('. ', '? ', '! ', '\n'):
+        for boundary in ('. ', '? ', '! ', '\n', ', e.g. ', ', i.e. '):
             separate = {record: dict(text='Design ``def:testing:fixture``'+boundary+'Evidence ``claim:testing:fixture``.', citations=set())}
             row = tracker_rows(inventory, separate, edge, bites)[0]
             self.assertEqual(row['status'], 'designed')
