@@ -2,7 +2,7 @@ Numeric dependency provenance
 
 The unmodified nrz-scalar, nrz-accuracy and nrz-cas sources are obtained by Cargo from
 https://github.com/naturrhythmuszentrum/naturrhythmuszentrum
-commit ce7c8c4db0bd14016aa30a0815a46d2fd7299479 under AGPL-3.0-only.
+commit 2628abd36f8b700c60a35e5a9134b7f7c8ed2367 under AGPL-3.0-only.
 Their original LICENSE-CODE and source notices remain in the dependency source.
 Registry dependencies retain their archive licence notices. Distribution must retain
 MIT permission notices, foldhash Zlib terms and unicode-ident Unicode-3.0 terms.

@@ -9,7 +9,7 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Explicit cumulative comparison attempt/work limits"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=2628abd36f8b700c60a35e5a9134b7f7c8ed2367#2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 build_time = "No build script or procedural macro"
 
 [[rows]]
@@ -20,7 +20,7 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures consumed by the graph numerical adapter"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=2628abd36f8b700c60a35e5a9134b7f7c8ed2367#2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 build_time = "No build script or procedural macro"
 
 [[rows]]
@@ -31,7 +31,7 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=2628abd36f8b700c60a35e5a9134b7f7c8ed2367#2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 build_time = "No build script or procedural macro"
 
 [[rows]]
