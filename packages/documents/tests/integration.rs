@@ -1,3 +1,6 @@
+#[path = "../src/design_constants.rs"]
+mod design_constants;
+
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -159,14 +162,10 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
     Ok(())
 }
 
-/// Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.
-/// ´claim:render:number-forms-are-exactly-projected´
-/// ´test:integration:number-registry´
-#[test]
-fn number_registry() -> Result<()> {
-    observation_number_pins()?;
-    let constants: serde_json::Value =
-        serde_json::from_str(include_str!("../../../docs/datasets/org.peer-network.design.constants.json"))?;
+fn registry_pin_correspondence() -> Result<()> {
+    let constants: serde_json::Value = serde_json::from_str(&fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
+    )?)?;
     let floor = constants["rows"]
         .as_array()
         .ok_or("constant rows")?
@@ -174,7 +173,7 @@ fn number_registry() -> Result<()> {
         .find(|row| row["id"] == "const.epoch.wall_floor_rational")
         .ok_or("floor declaration")?;
     assert_eq!(
-        pins::DesignConstantId::EpochWallFloorRational.value(),
+        design_constants::DesignConstantId::EpochWallFloorRational.value(),
         floor["definition"]["expr"].as_str().ok_or("floor expression")?
     );
     let input: toml::Value = toml::from_str(include_str!("../../../docs/inputs/numbers.toml"))?;
@@ -188,9 +187,22 @@ fn number_registry() -> Result<()> {
         pin["value"].as_str().ok_or("exact pin")?
     );
     assert!(!include_str!("../src/pins.rs").contains(pin["value"].as_str().ok_or("exact pin")?));
+    Ok(())
+}
+
+/// Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.
+/// ´claim:render:number-forms-are-exactly-projected´
+/// ´test:integration:number-registry´
+#[test]
+fn number_registry() -> Result<()> {
+    observation_number_pins()?;
+    registry_pin_correspondence()?;
     let directory = fixture()?;
     let root = directory.path();
     fs::create_dir_all(root.join("packages/documents/src"))?;
+    let consumer = root.join("packages/documents/src/consumer.rs");
+    fs::write(&consumer, concat!("DesignConstantId", "::Missing"))?;
+
     fs::write(
         root.join("docs/inputs/numbers.toml"),
         concat!(
@@ -202,6 +214,38 @@ fn number_registry() -> Result<()> {
             "[[rows]]\nid = \"num:test:carry\"\nvalue = \"9995\"\nunit = \"bytes\"\ndisplay = \"rounded\"\nmagnitude = 1\nexact_digits = 4\n"
         ),
     )?;
+    assert!(
+        documents::run(root, Operation::Generate { check: false })
+            .unwrap_err()
+            .to_string()
+            .contains("missing code-read constant")
+    );
+    let constant_input = root.join("docs/inputs/design-constants.toml");
+    fs::write(&consumer, concat!("DesignConstantId", "::EpochWallFloorRational"))?;
+    let declaration = concat!(
+        "namespace = \"org.peer-network.design.constants\"\nversion = [1, 0, 0]\n",
+        "[[rows]]\nid = \"const.epoch.wall_floor_rational\"\ndefinition = { expr = \"3/37\" }\n",
+        "[[rows]]\nid = \"const.unused\"\ndefinition = { expr = \"7/9\" }\n"
+    );
+    fs::write(&constant_input, declaration)?;
+    documents::run(root, Operation::Generate { check: false })?;
+    let carrier = root.join("packages/documents/src/design_constants.rs");
+    let exact = fs::read_to_string(&carrier)?;
+    assert!(exact.contains("3/37"));
+    assert!(!exact.contains("7/9"));
+    fs::write(&constant_input, declaration.replace("7/9", "8/9"))?;
+    documents::run(root, Operation::Generate { check: false })?;
+    assert_eq!(fs::read_to_string(&carrier)?, exact);
+    fs::write(&constant_input, declaration.replace("3/37", "1/0"))?;
+    assert!(
+        documents::run(root, Operation::Generate { check: false })
+            .unwrap_err()
+            .to_string()
+            .contains("denominator")
+    );
+    fs::remove_file(constant_input)?;
+    fs::remove_file(root.join("docs/datasets/org.peer-network.design.constants.json"))?;
+    fs::remove_file(consumer)?;
     documents::run(root, Operation::Generate { check: false })?;
     let template = root.join("docs/templates/docs/result.md.j2");
     fs::write(

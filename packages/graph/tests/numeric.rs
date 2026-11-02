@@ -1,3 +1,6 @@
+#[path = "../../documents/src/design_constants.rs"]
+mod design_constants;
+
 #[path = "../../documents/src/pins.rs"]
 pub mod pins;
 use pins::NumberId;
@@ -15,7 +18,7 @@ use pn_records::{
 use std::collections::BTreeSet;
 
 fn wall_floor_rational() -> String {
-    pins::DesignConstantId::EpochWallFloorRational.value().to_owned()
+    design_constants::DesignConstantId::EpochWallFloorRational.value().to_owned()
 }
 
 fn procedure() -> Procedure {

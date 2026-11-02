@@ -2700,26 +2700,3 @@ impl NumberId {
         self.value().parse().expect("registry pin must be an unsigned integer")
     }
 }
-
-/// Dataset-owned design constants; values remain in their carrier.
-#[derive(Clone, Copy, Debug)]
-pub enum DesignConstantId {
-    /// Declaration `const.epoch.wall_floor_rational`.
-    EpochWallFloorRational,
-}
-
-impl DesignConstantId {
-    /// Read the expression from the projected design-constants carrier.
-    ///
-    /// # Panics
-    /// Panics only if generated offsets differ from the carrier, which the fixed-point gate refuses.
-    #[must_use]
-    pub fn value(self) -> &'static str {
-        let (start, end) = match self {
-            Self::EpochWallFloorRational => (22_961, 22_965),
-        };
-        include_str!("../../../docs/datasets/org.peer-network.design.constants.json")
-            .get(start..end)
-            .expect("design constant offsets must be regenerated")
-    }
-}

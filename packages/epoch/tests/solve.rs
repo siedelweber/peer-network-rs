@@ -1,3 +1,6 @@
+#[path = "../../documents/src/design_constants.rs"]
+mod design_constants;
+
 pub use common::pins;
 use pins::NumberId;
 
@@ -10,7 +13,7 @@ mod joined;
 mod partitions;
 
 fn wall_floor_rational() -> String {
-    pins::DesignConstantId::EpochWallFloorRational.value().to_owned()
+    design_constants::DesignConstantId::EpochWallFloorRational.value().to_owned()
 }
 
 fn burn_reference(acts: &mut Vec<pn_records::CandidateAct>, source: &str, target: &str, count: u64) {

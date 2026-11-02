@@ -205,8 +205,27 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
             })
             .map(|(_, bytes)| std::str::from_utf8(bytes))
             .transpose()?;
-        let pins = numbers::pins(&dataset, &input, carrier)?.into_bytes();
-        projections.push((root.join("packages/documents/src/pins.rs"), pins));
+        let mut requested = BTreeSet::new();
+        for path in files(&root.join("packages"))? {
+            if path.extension().is_some_and(|extension| extension == "rs") {
+                let source = read(&path)?;
+                for rest in source.split("DesignConstantId::").skip(1) {
+                    let variant: String = rest
+                        .chars()
+                        .take_while(|letter| letter.is_ascii_alphanumeric() || *letter == '_')
+                        .collect();
+                    if !variant.is_empty() {
+                        requested.insert(variant);
+                    }
+                }
+            }
+        }
+        let (pins, constants) = numbers::pins(&dataset, &input, carrier, &requested)?;
+        projections.push((root.join("packages/documents/src/pins.rs"), pins.into_bytes()));
+        projections.push((
+            root.join("packages/documents/src/design_constants.rs"),
+            constants.into_bytes(),
+        ));
     }
     let expected: BTreeSet<_> = projections.iter().map(|(path, _)| path.clone()).collect();
     let mut findings = Vec::new();

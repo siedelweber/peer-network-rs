@@ -238,9 +238,12 @@ fn historical_constants() {
 /// ´test:integration:constant-correspondence´
 #[test]
 fn constant_correspondence() {
-    let data: serde_json::Value = serde_json::from_str(include_str!(
-        "../../../../docs/datasets/org.peer-network.design.constants.json"
-    ))
+    let data: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
+        )
+        .unwrap(),
+    )
     .unwrap();
     let rows = data["rows"].as_array().unwrap();
     let rational = rows.iter().find(|r| r["id"] == "const.epoch.wall_floor_rational").unwrap();

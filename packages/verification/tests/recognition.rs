@@ -31,8 +31,13 @@ fn node(namespace: &str, name: &str) -> PublicReference {
 /// ´test:integration:paper-time-fixture´
 #[test]
 fn paper_time_fixture() {
-    let data: serde_json::Value =
-        serde_json::from_str(include_str!("../../../docs/datasets/org.peer-network.design.constants.json")).unwrap();
+    let data: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
     let rows = data["rows"].as_array().unwrap();
     let fixture = &rows.iter().find(|row| row["id"] == "act_time_fixture").unwrap()["definition"];
     let identity = |key: &str| ActId {
