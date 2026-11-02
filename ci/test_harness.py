@@ -154,8 +154,18 @@ assert (root/'payload').read_text() == 'committed'
         if host:
             driver += "assert pathlib.Path(os.environ['PN_HOST_TEST_ROOT']).parent == root/'.lane'\n"
         original = Path.cwd()
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ):
+            root = Path(directory)/'checkout'
+            root.mkdir()
+            os.environ['PN_ISOLATION_ROOT'] = str(Path(directory)/'isolated')
+            from isolation import storage_root
+            with patch.dict(os.environ, PN_ISOLATION_ROOT='', CARGO_TARGET_DIR=str(root/'target')):
+                self.assertFalse(storage_root(root).is_relative_to(root))
+            with patch.dict(os.environ, PN_ISOLATION_ROOT='', CARGO_TARGET_DIR=str(Path(directory)/'cargo')):
+                self.assertTrue(storage_root(root).is_relative_to(Path(directory)/'cargo'))
+            with patch.dict(os.environ, PN_ISOLATION_ROOT=str(root/'forbidden')):
+                with self.assertRaisesRegex(ValueError, 'outside the gate checkout'):
+                    storage_root(root)
             (root/'ci').mkdir()
             (root/'ci/run_ci.py').write_text(driver)
             (root/'payload').write_text('committed')
@@ -235,11 +245,12 @@ assert (root/'payload').read_text() == 'committed'
                     self.assertEqual(shared.read_bytes(), b'sibling findings\n')
                     self.assertEqual((root/'payload').read_text(), 'changed during wallet execution' if moving else 'committed')
                     snapshots.append({name:(lane/name).read_bytes() for name in names})
-                    payload, = (root/'target/i').glob('*/s/payload')
+                    payload, = storage_root(root).glob('*/s/payload')
+                    self.assertFalse(payload.is_relative_to(root))
                     if payload_stamp is not None:
                         self.assertEqual(payload.stat().st_mtime_ns, payload_stamp)
                     payload_stamp = payload.stat().st_mtime_ns
-                    retained, = (root/'target/i').glob('*/c/*/retained')
+                    retained, = storage_root(root).glob('*/c/*/retained')
                     self.assertEqual(retained.read_text(), 'owned cache')
                 self.assertEqual(snapshots[0], snapshots[1])
                 from isolation import workspace
@@ -255,6 +266,14 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual(present.returncode, 0)
                 with workspace(root, owner, source) as (_, target):
                     self.assertEqual((target/'retained').read_text(), 'owned cache')
+                (root/'Cargo.lock').write_text('# Changed dependency selection fixture.\nversion = 4\n')
+                git('add', 'Cargo.lock')
+                git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'lock change')
+                changed_lock = git('rev-parse', 'HEAD')
+                with workspace(root, owner, changed_lock) as (isolated, target):
+                    self.assertEqual(target, original_target)
+                    self.assertEqual((target/'retained').read_text(), 'owned cache')
+                    self.assertEqual((isolated/'Cargo.lock').read_text(), (root/'Cargo.lock').read_text())
                 with patch.dict(os.environ, RUSTFLAGS='--cfg isolation_key_witness'):
                     with workspace(root, 'host-observation-runtime' if host else 'wallet-conformance', source) as (_, target):
                         self.assertNotEqual(target, original_target)

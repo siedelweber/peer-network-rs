@@ -9,9 +9,48 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 
 from build_graph import cancellable
+
+
+def storage_root(root):
+    """Keep mutable witnesses outside the checkout, even with an in-tree target."""
+    root = root.resolve()
+    declared = os.environ.get('PN_ISOLATION_ROOT')
+    target = Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()
+    base = Path(declared).resolve() if declared else (
+        target/'isolation' if not target.is_relative_to(root) else root.with_name(root.name+'-isolation'))
+    if base.is_relative_to(root):
+        raise ValueError('isolation storage must be outside the gate checkout')
+    return base/hashlib.sha256(str(root).encode()).hexdigest()
+
+
+@contextmanager
+def tracked_snapshot(root):
+    """Give a traversing census only index-enumerated regular source files."""
+    from build_graph import tracked
+    base = storage_root(root)
+    base.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='census-', dir=base) as directory:
+        tree = Path(directory)
+        paths = []
+        for name in tracked(root):
+            source = root/name
+            if not source.is_file() or source.is_symlink():
+                raise ValueError('missing or nonregular tracked census input: '+name)
+            destination = tree/name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+            paths.append(name)
+        if cancellable(['git', 'init', '--quiet', str(tree)]).returncode:
+            raise ValueError('tracked census snapshot initialization failed')
+        selection = tree/'.git/census-paths'
+        selection.write_bytes(''.join(name+'\0' for name in paths).encode())
+        if cancellable(['git', '-C', str(tree), 'add', '--force', '--pathspec-from-file='+str(selection), '--pathspec-file-nul']).returncode:
+            raise ValueError('tracked census snapshot index failed')
+        yield tree
 
 
 def import_base(root, source, base):
@@ -32,8 +71,7 @@ def workspace(root, name, source):
     """Retain owned build products, but bind every invocation to commit objects."""
     if not re.fullmatch(r'[a-z0-9_-]+', name):
         raise ValueError('invalid isolation owner')
-    # This short source path also leaves room for PostgreSQL's Unix socket.
-    base = root/'target/i'/hashlib.sha256(name.encode()).hexdigest()[:12]
+    base = storage_root(root)/hashlib.sha256(name.encode()).hexdigest()[:12]
     base.mkdir(parents=True, exist_ok=True)
     with (base/'lock').open('a') as lock:
         started = time.monotonic()
@@ -64,7 +102,7 @@ def workspace(root, name, source):
             if checked.returncode or checked.stdout.strip() != expected:
                 raise ValueError('isolated checkout is not clean at the source commit')
         configuration = dict(files={name:(tree/name).read_text() if (tree/name).exists() else None
-                                    for name in ('rust-toolchain.toml', 'Cargo.lock')},
+                                    for name in ('rust-toolchain.toml',)},
                              environment={name:os.environ.get(name) for name in
                                           ('RUSTUP_TOOLCHAIN', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'CARGO_BUILD_TARGET')})
         key = hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()).hexdigest()

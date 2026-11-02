@@ -104,6 +104,55 @@ def exercise(case):
         case.assertEqual(manifest.stat().st_mtime_ns, before)
         print('GRAPH-WITNESS vendor=passed generated=passed fresh-repeat=passed')
 
+        # Pause the census process after snapshot hand-off, then create and
+        # remove an actual isolated checkout before allowing the reader on.
+        import socket
+        import threading
+        import sys
+        case.assertEqual(command(['git', '-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture',
+                                  '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'census fixture']).returncode, 0)
+        source_commit = command(['git', 'rev-parse', 'HEAD']).stdout.strip()
+        address = root/'.lane/census.sock'
+        wrapper = root/'.lane/census-wrapper.py'
+        wrapper.write_text('#!'+sys.executable+'\nimport os,socket,sys\n'
+            'with socket.socket(socket.AF_UNIX) as connection:\n'
+            f' connection.connect({str(address)!r})\n connection.sendall(b"ready")\n assert connection.recv(1)==b"R"\n'
+            f'os.execv({os.environ["LINTER_BIN"]!r},[{os.environ["LINTER_BIN"]!r},*sys.argv[1:]])\n')
+        wrapper.chmod(0o755)
+        mutation = root/'.lane/census-mutation.py'
+        mutation.write_text('import sys,shutil\nfrom pathlib import Path\n'
+            f'sys.path.insert(0,{str(source/"ci")!r})\nfrom isolation import workspace\n'
+            f'root=Path({str(root)!r})\nwith workspace(root,"census-moving-tree",{source_commit!r}) as (tree,target):\n'
+            ' assert not tree.is_relative_to(root)\n assert tree.is_dir()\n'
+            'shutil.rmtree(tree)\nassert not tree.exists()\nprint("created=true removed=true")\n')
+        errors = []
+        with tempfile.TemporaryDirectory() as external, socket.socket(socket.AF_UNIX) as server:
+            server.bind(str(address));server.listen();server.settimeout(30)
+            def mutate_during_census():
+                try:
+                    with server.accept()[0] as connection:
+                        connection.settimeout(30)
+                        case.assertEqual(connection.recv(5), b'ready')
+                        result = subprocess.run([sys.executable, str(mutation)], capture_output=True, text=True,
+                            env=os.environ | {'PN_ISOLATION_ROOT':external}, timeout=30)
+                        case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+                        case.assertIn('created=true removed=true', result.stdout)
+                        connection.sendall(b'R')
+                except BaseException as error:
+                    errors.append(error)
+            worker = threading.Thread(target=mutate_during_census)
+            worker.start()
+            try:
+                with patch.dict(os.environ, LINTER_BIN=str(wrapper)):
+                    result = compile_graph()
+                case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+            finally:
+                worker.join(timeout=30)
+            case.assertFalse(worker.is_alive())
+            case.assertEqual(errors, [])
+        address.unlink()
+        print('GRAPH-WITNESS tracked-census=passed concurrent-isolated-tree=created-and-removed barrier=ordered')
+
         # Direct Ninja invocation retains Meson's regeneration edge. Reusing
         # the build directory must not mean reusing an old configuration.
         meson_source = root/'meson.build'
