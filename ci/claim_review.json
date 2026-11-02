@@ -1934,8 +1934,8 @@
       "path": "packages/epoch/tests/solve/controller.rs",
       "claim": "EPOCH::claim:admission:controller-publication-retains-frozen-epoch-inputs",
       "before": "",
-      "after": "Claim: The zero-width completed-epoch controller derives its width, chartered tilt, bleed, current wall and accepted rung from the frozen compile and independently replayed fence, binds the declared rational numeraire image, and rejects substituted declaration, controller and burn-image evidence without modifying debit vintages; schedule activation and final admission remain separate.",
-      "review": "A complete unsorted self-support history gives exact zero contributing width. The frozen fence, chartered profile, current rational price and numeraire bind the controller inputs; independent reconstruction refuses altered declaration, controller scope and burn image while preserving the full compiled view and debit vintage. This exact scope witness does not establish schedule activation or final admission."
+      "after": "Claim: The zero-width completed-epoch controller retains its frozen width, current wall and accepted rung, binds the declared rational numeraire image, and rejects substituted declaration, controller and burn-image evidence without modifying debit vintages; this fixture does not establish positive-width tilt or bleed sensitivity, schedule activation or final admission.",
+      "review": "The zero-width scope asserts width, current wall, selected rung and the exact burn image. Named replay refusals reject changed declaration, width and burn image. This fixture does not establish positive-width bleed or tilt sensitivity; the narrowed claim and record make no such assertion."
     },
     {
       "operation": "pn-epoch::solve::enclosed_wall_solve",

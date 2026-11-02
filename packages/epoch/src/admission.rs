@@ -155,7 +155,7 @@ pub enum AdmissionRefusal {
     Closure,
     #[error("certified final gate failed: {0:?}")]
     Failed(Gate),
-    #[error("certified delivery has no admissible representation")]
+    #[error("delivery cannot certify an admissible representation in the declared mode")]
     Delivery,
     #[error("replay inputs or retained evidence differ")]
     Evidence,

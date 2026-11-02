@@ -312,7 +312,12 @@ fn signed_caps(p: &Procedure, i: &Inputs, b: &mut nrz_cas::limits::Budget) {
         );
         relative_cap(&used, &x, upward, b);
         if upward {
-            assert_eq!(checked(p, &x).verdict, Verdict::Indecisive);
+            let failed = checked(p, &x);
+            assert_eq!(failed.verdict, Verdict::Indecisive);
+            assert_eq!(
+                failed.attempts.last().unwrap().stopped_at,
+                Some(pn_records::controller::Stage::InverseGain)
+            );
         }
     }
 }

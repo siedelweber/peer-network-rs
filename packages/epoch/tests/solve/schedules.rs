@@ -245,7 +245,20 @@ fn controls(states: &[pn_epoch::compiler::CompiledState], bits: u32, record: &sc
             2 => bad.publications[0].announced_at = 0,
             _ => bad.publications[0].effective.policy_floor = "0".into(),
         }
-        assert!(schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &bad).is_err());
+        let refusal = schedules::replay(&d, std::slice::from_ref(&frame), None, Limits::default(), &bad).unwrap_err();
+        if changed == 1 {
+            assert!(matches!(
+                refusal,
+                schedules::Error::Controller(pn_epoch::controller::Error::Kernel(
+                    pn_graph::numeric::controller::Error::Evidence
+                ))
+            ));
+        } else {
+            assert!(matches!(
+                refusal,
+                schedules::Error::Refused(pn_epoch::admission::AdmissionRefusal::Evidence)
+            ));
+        }
     }
     // Quarantined annotations never enter Boundary or the controller's inputs.
     for _annotation in ["high admission demand", "no admission demand"] {

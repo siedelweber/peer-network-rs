@@ -4,7 +4,7 @@ use pn_epoch::{
     controller::{InverseSearch, evaluate, replay},
 };
 
-/// Claim: The zero-width completed-epoch controller derives its width, chartered tilt, bleed, current wall and accepted rung from the frozen compile and independently replayed fence, binds the declared rational numeraire image, and rejects substituted declaration, controller and burn-image evidence without modifying debit vintages; schedule activation and final admission remain separate.
+/// Claim: The zero-width completed-epoch controller retains its frozen width, current wall and accepted rung, binds the declared rational numeraire image, and rejects substituted declaration, controller and burn-image evidence without modifying debit vintages; this fixture does not establish positive-width tilt or bleed sensitivity, schedule activation or final admission.
 /// ´claim:admission:controller-publication-retains-frozen-epoch-inputs´
 /// ´test:integration:controller-binding´
 #[test]
@@ -67,7 +67,18 @@ fn controller_binding() {
             1 => changed.controller.inputs.width = "1".into(),
             _ => changed.declaration.controller = "unadmitted".into(),
         }
-        assert!(replay(&bound, &d, &search, None, &changed).is_err());
+        let refusal = replay(&bound, &d, &search, None, &changed).unwrap_err();
+        if mutation == 1 {
+            assert!(matches!(
+                refusal,
+                pn_epoch::controller::Error::Kernel(pn_graph::numeric::controller::Error::Evidence)
+            ));
+        } else {
+            assert!(matches!(
+                refusal,
+                pn_epoch::controller::Error::Refused(pn_epoch::admission::AdmissionRefusal::Evidence)
+            ));
+        }
     }
     assert_eq!(state.view(), &before);
     assert_eq!(state.package().input().prices.last().unwrap(), &price);
