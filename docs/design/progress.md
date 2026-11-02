@@ -18,7 +18,7 @@
 
 | Population | Total | Realized | Held | Designed | Question/observation only | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 63 | 30 | 211 | 9 | 1 052 |
+| implementation | 1 356 | 63 | 34 | 231 | 9 | 1 028 |
 | prose | 320 | 0 | 0 | 14 | 6 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -30,7 +30,7 @@
 | pn-graph | 223 | 9 | 0 | 20 | 0 | 194 |
 | pn-host | 166 | 1 | 12 | 28 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 65 |
-| pn-records | 218 | 4 | 3 | 54 | 1 | 157 |
+| pn-records | 218 | 4 | 7 | 74 | 1 | 133 |
 | pn-replay | 26 | 0 | 3 | 1 | 0 | 22 |
 | pn-verification | 281 | 23 | 4 | 40 | 4 | 214 |
 
@@ -49,7 +49,7 @@
 | pn-host | 19 | 0 |
 | pn-interchange | 25 | 0 |
 | pn-readouts | 0 | 0 |
-| pn-records | 44 | 9 |
+| pn-records | 44 | 12 |
 | pn-replay | 0 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
@@ -62,32 +62,32 @@
 | Bite | Total | Realized | Held | Designed | Question/observation only | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 15 | 0 | 3 | 11 | 0 | 1 |
-| 2 | 30 | 2 | 3 | 25 | 0 | 0 |
-| 3 | 19 | 4 | 1 | 13 | 0 | 1 |
+| 2 | 31 | 2 | 3 | 26 | 0 | 0 |
+| 3 | 20 | 4 | 2 | 13 | 0 | 1 |
 | 4 | 23 | 6 | 2 | 14 | 0 | 1 |
-| 5 | 33 | 12 | 4 | 16 | 0 | 1 |
+| 5 | 34 | 12 | 4 | 17 | 0 | 1 |
 | 6 | 17 | 5 | 4 | 7 | 0 | 1 |
 | 7 | 26 | 2 | 4 | 18 | 0 | 2 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 |
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 |
 | 10 | 5 | 0 | 4 | 1 | 0 | 0 |
 | 11 | 79 | 14 | 20 | 44 | 0 | 1 |
-| unlinked | 1 548 | 41 | 10 | 147 | 15 | 1 350 |
+| unlinked | 1 545 | 41 | 13 | 165 | 15 | 1 326 |
 
 ## By inventory kind · `sec:progress:kinds`
 
 | Kind | Total | Realized | Held | Designed | Question/observation only | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | certificate | 6 | 0 | 0 | 5 | 0 | 1 |
-| constant | 4 | 0 | 0 | 1 | 0 | 3 |
+| constant | 4 | 0 | 0 | 2 | 0 | 2 |
 | data type | 4 | 1 | 1 | 2 | 0 | 0 |
 | fixture | 218 | 11 | 2 | 30 | 6 | 175 |
-| function | 216 | 17 | 3 | 35 | 0 | 161 |
-| invariant check | 517 | 25 | 7 | 69 | 2 | 416 |
+| function | 216 | 17 | 3 | 41 | 0 | 155 |
+| invariant check | 517 | 25 | 11 | 77 | 2 | 404 |
 | none | 346 | 0 | 0 | 13 | 1 | 333 |
 | policy | 265 | 7 | 15 | 28 | 6 | 215 |
-| serialization | 8 | 0 | 0 | 3 | 0 | 5 |
-| type | 92 | 2 | 2 | 39 | 0 | 49 |
+| serialization | 8 | 0 | 0 | 4 | 0 | 4 |
+| type | 92 | 2 | 2 | 43 | 0 | 45 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -130,7 +130,7 @@
 | ``subsec:introduction:the-graph`` | pn-host; policy | unassigned | | | |  | |
 | ``subsec:introduction:infrastructure`` | none; none | unassigned | | | |  | |
 | ``post:introduction:public-accessibility`` | pn-host; policy | unassigned | | | |  | |
-| ``post:introduction:record-integrity`` | pn-records; invariant check | unassigned | | | |  | |
+| ``post:introduction:record-integrity`` | pn-records; invariant check | designed | ``ROOT::model:design:storage-history`` | | |  | |
 | ``post:introduction:irrevocability`` | pn-records; invariant check | unassigned | | | |  | |
 | ``post:introduction:authoritative-act-order`` | pn-records; type | unassigned | | | |  | |
 | ``post:introduction:epoch-edge-set`` | pn-host; invariant check | unassigned | | | |  | |
@@ -176,21 +176,21 @@
 | ``def:comparator:imported-frame`` | pn-records; type | unassigned | | | |  | |
 | ``eq:comparator:seam`` | pn-records; function | unassigned | | | |  | |
 | ``rem:comparator:neutrality-from-silence`` | pn-host; policy | unassigned | | | |  | |
-| ``def:comparator:frame-binding`` | pn-records; type | unassigned | | | |  | |
+| ``def:comparator:frame-binding`` | pn-records; type | designed | ``ROOT::model:design:burn`` | | | 2 | |
 | ``rem:comparator:destination-funding-non-transferability`` | pn-records; policy | unassigned | | | |  | |
 | ``rem:comparator:identity-is-layer-2`` | pn-records; policy | unassigned | | | |  | |
-| ``lem:comparator:frame-stability`` | pn-records; invariant check | unassigned | | | |  | |
+| ``lem:comparator:frame-stability`` | pn-records; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` | | | 5 | |
 | ``rem:comparator:auditability`` | pn-host; policy | unassigned | | | |  | |
 | ``subsec:comparator:the-source`` | pn-host; policy | unassigned | | | |  | |
 | ``def:comparator:rate`` | pn-records; function | unassigned | | | |  | |
 | ``eq:comparator:rate`` | pn-records; function | unassigned | | | |  | |
-| ``def:comparator:residual-balance`` | pn-records; function | unassigned | | | |  | |
-| ``eq:comparator:residual-balance`` | pn-records; function | unassigned | | | |  | |
+| ``def:comparator:residual-balance`` | pn-records; function | designed | ``ROOT::model:design:ledger`` | | |  | |
+| ``eq:comparator:residual-balance`` | pn-records; function | designed | ``ROOT::model:design:ledger`` | | |  | |
 | ``rem:comparator:vintage-trichotomy`` | pn-records; invariant check | unassigned | | | |  | |
-| ``rem:comparator:vintage-recorded-parameters`` | pn-records; invariant check | unassigned | | | |  | |
+| ``rem:comparator:vintage-recorded-parameters`` | pn-records; invariant check | designed | ``RECORDS::def:acts:validation`` | | |  | |
 | ``rem:comparator:vintage-read-time-state`` | none; none | unassigned | | | |  | |
 | ``rem:comparator:vintage-consummated-debits`` | none; none | unassigned | | | |  | |
-| ``rem:comparator:type-asymmetry`` | pn-records; type | unassigned | | | |  | |
+| ``rem:comparator:type-asymmetry`` | pn-records; type | designed | ``ROOT::inv:design:units`` | | |  | |
 | ``def:comparator:numeraire`` | pn-records; constant | designed | ``ROOT::inv:design:units`` | | |  | |
 | ``subsec:comparator:two-costs`` | pn-records; constant | unassigned | | | |  | |
 | ``ins:comparator:inherited-costliness`` | pn-host; policy | unassigned | | | |  | |
@@ -218,7 +218,7 @@
 | ``rem:comparator:conserved-allocation-scope`` | pn-epoch; policy | unassigned | | | |  | |
 | ``cor:comparator:sybil-resistance-is-faithfulness`` | pn-epoch; invariant check | designed | ``ROOT::amend:decomposition:standing-response`` ``ROOT::dec:design:conservation`` ``ROOT::req:vision:conservation`` | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | |
 | ``subsec:comparator:capacity-and-admission-benchmarks`` | pn-epoch; invariant check | unassigned | | | |  | |
-| ``def:comparator:bootstrap-capacity`` | pn-records; constant | unassigned | | | |  | |
+| ``def:comparator:bootstrap-capacity`` | pn-records; constant | designed | ``RECORDS::def:burn:disclosures`` | | |  | |
 | ``eq:comparator:admission-benchmark-deposits`` | pn-verification; fixture | designed | ``ROOT::amend:decomposition:dimensional-scope`` ``ROOT::inv:design:units`` | | |  | |
 | ``tbl:comparator:admission-benchmarks`` | pn-verification; fixture | unassigned | | | |  | |
 | ``subsec:comparator:the-surface`` | pn-records; constant | unassigned | | | |  | |
@@ -272,17 +272,17 @@
 | ``rem:graph:ontology-promotion`` | pn-records; policy | unassigned | | | |  | |
 | ``def:graph:identifier-algebra`` | pn-records; type | designed | ``GRAPH::def:formation:endpoint-census`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:minted-reference-carrier`` ``ROOT::amend:design:minted-reference-carrier`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | |
 | ``def:graph:authored-act`` | pn-records; type | unassigned | | | |  | `packages/documents/tests/integration.rs` |
-| ``case:graph:authored-act-binary`` | pn-records; type | unassigned | | | |  | |
-| ``case:graph:authored-act-hyper`` | pn-records; type | unassigned | | | |  | |
+| ``case:graph:authored-act-binary`` | pn-records; type | designed | ``RECORDS::def:acts:projection`` | | |  | |
+| ``case:graph:authored-act-hyper`` | pn-records; type | designed | ``RECORDS::def:acts:projection`` | | |  | |
 | ``def:graph:act-identifier`` | pn-records; type | designed | ``RECORDS::amend:acts:minted-reference-carrier`` ``ROOT::amend:decomposition:minted-reference-carrier`` ``ROOT::amend:design:minted-reference-carrier`` ``ROOT::dec:design:complete-acts`` ``ROOT::req:vision:complete-acts`` | | ``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 4, 11 | |
-| ``lem:graph:identifier-disjointness`` | pn-records; invariant check | unassigned | | | |  | |
+| ``lem:graph:identifier-disjointness`` | pn-records; invariant check | designed | ``RECORDS::amend:acts:minted-reference-carrier`` | | |  | |
 | ``def:graph:anchoring`` | pn-records; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` ``RECORDS::def:acts:references`` ``ROOT::alg:design:formation`` ``ROOT::alg:design:title`` | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | |
 | ``lem:graph:dangling-neutral-fold`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:owner`` ``ROOT::alg:design:formation`` ``ROOT::alg:design:title`` | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | |
 | ``def:graph:node-taxonomy`` | pn-records; type | designed | ``GRAPH::def:formation:endpoint-census`` | | |  | |
-| ``rem:graph:name-equality`` | pn-records; serialization | unassigned | | | |  | |
+| ``rem:graph:name-equality`` | pn-records; serialization | designed | ``RECORDS::def:acts:references`` | | |  | |
 | ``def:graph:genesis-act-and-creator`` | pn-records; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` | | |  | |
-| ``case:graph:genesis-act-and-creator-genesis-role`` | pn-records; function | unassigned | | | |  | |
-| ``case:graph:genesis-act-and-creator-ordinary-role`` | pn-records; function | unassigned | | | |  | |
+| ``case:graph:genesis-act-and-creator-genesis-role`` | pn-records; function | designed | ``RECORDS::amend:acts:minted-reference-carrier`` | | |  | |
+| ``case:graph:genesis-act-and-creator-ordinary-role`` | pn-records; function | designed | ``RECORDS::amend:acts:minted-reference-carrier`` | | |  | |
 | ``case:graph:genesis-act-and-creator-minted-creator`` | pn-records; function | unassigned | | | |  | |
 | ``case:graph:genesis-act-and-creator-address-creator`` | pn-records; function | unassigned | | | |  | |
 | ``case:graph:genesis-act-and-creator-profile-creator`` | pn-records; function | unassigned | | | |  | |
@@ -297,12 +297,12 @@
 | ``case:graph:raw-weight-ceiling-zero-walk`` | pn-graph; invariant check | unassigned | | | |  | |
 | ``def:graph:canonical-folds`` | pn-graph; function | unassigned | | | |  | |
 | ``rem:graph:stance-records-by-family`` | pn-graph; policy | unassigned | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` |
-| ``lem:graph:act-edge-identifier-uniqueness`` | pn-records; invariant check | unassigned | | | |  | |
+| ``lem:graph:act-edge-identifier-uniqueness`` | pn-records; invariant check | designed | ``RECORDS::def:acts:validation`` | | |  | |
 | ``ax:graph:parallel-authored-acts`` | pn-records; policy | unassigned | | | |  | |
 | ``def:graph:authored-act-bundle`` | pn-graph; type | unassigned | | | |  | `packages/documents/tests/integration.rs` |
 | ``def:graph:act-edge-projection`` | pn-records; function | designed | ``GRAPH::def:formation:participant`` ``GRAPH::def:formation:title-inputs`` ``ROOT::alg:design:formation`` ``ROOT::dec:design:complete-acts`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:complete-acts`` ``ROOT::req:vision:formation-title`` | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 3, 4, 11 | |
-| ``case:graph:act-edge-projection-binary-count`` | pn-records; function | unassigned | | | |  | |
-| ``case:graph:act-edge-projection-hyper-count`` | pn-records; function | unassigned | | | |  | |
+| ``case:graph:act-edge-projection-binary-count`` | pn-records; function | designed | ``RECORDS::def:acts:projection`` | | |  | |
+| ``case:graph:act-edge-projection-hyper-count`` | pn-records; function | designed | ``RECORDS::def:acts:projection`` | | |  | |
 | ``rem:graph:authored-act-bundle-consumers`` | pn-graph; policy | designed | ``ROOT::amend:design:epoch-compiler-readings`` | | |  | |
 | ``rem:graph:terminal-folds-alter-nothing`` | pn-graph; invariant check | unassigned | | | |  | |
 | ``post:graph:title-act-bundle-reservation`` | pn-graph; invariant check | unassigned | | | |  | |
@@ -1664,7 +1664,7 @@
 | ``case:deployment:final-epoch-state-agreement-gossip-stability`` | pn-replay; invariant check | unassigned | | | |  | |
 | ``case:deployment:final-epoch-state-agreement-disagreement`` | pn-replay; invariant check | unassigned | | | |  | |
 | ``case:deployment:final-epoch-state-agreement-inconsistent-projection`` | pn-replay; invariant check | unassigned | | | |  | |
-| ``subsec:deployment:immutability`` | pn-records; invariant check | unassigned | | | |  | |
+| ``subsec:deployment:immutability`` | pn-records; invariant check | designed | ``ROOT::model:design:storage-history`` | | |  | |
 | ``case:deployment:immutability-mutable-records`` | pn-records; invariant check | unassigned | | | |  | |
 | ``post:deployment:public-object-replay`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | |
 | ``subsec:deployment:feed-reproducibility`` | none; none | unassigned | | | |  | |
@@ -1749,12 +1749,12 @@
 | ``case:deployment:realization-obligations-snapshot`` | pn-host; policy | unassigned | | | |  | |
 | ``case:deployment:realization-obligations-withheld-evidence`` | pn-host; policy | unassigned | | | |  | |
 | ``case:deployment:realization-obligations-occlusion`` | pn-host; policy | unassigned | | | |  | |
-| ``cond:graph:act-incidence-causality-finalized-predecessors`` | pn-records; invariant check | unassigned | | | |  | |
-| ``cond:graph:act-incidence-causality-frontier-carry`` | pn-records; invariant check | unassigned | | | |  | |
-| ``cond:graph:authoritative-order-dependency-placement`` | pn-records; invariant check | unassigned | | | |  | |
-| ``cond:graph:authoritative-order-parent-placement`` | pn-records; invariant check | unassigned | | | |  | |
-| ``cond:graph:ordering-accountability-parent-placement`` | pn-records; invariant check | unassigned | | | |  | |
-| ``cond:graph:ordering-accountability-stamp`` | pn-records; invariant check | unassigned | | | |  | |
+| ``cond:graph:act-incidence-causality-finalized-predecessors`` | pn-records; invariant check | held | ``RECORDS::amend:acts:retained-finalization-time`` | | ``RECORDS::amend:acts:retained-finalization-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
+| ``cond:graph:act-incidence-causality-frontier-carry`` | pn-records; invariant check | held | ``RECORDS::amend:acts:retained-finalization-time`` | | ``RECORDS::amend:acts:retained-finalization-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
+| ``cond:graph:authoritative-order-dependency-placement`` | pn-records; invariant check | designed | ``RECORDS::def:acts:dependencies`` | | |  | |
+| ``cond:graph:authoritative-order-parent-placement`` | pn-records; invariant check | designed | ``RECORDS::def:acts:dependencies`` | | |  | |
+| ``cond:graph:ordering-accountability-parent-placement`` | pn-records; invariant check | held | ``ROOT::alg:design:formation`` | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | |
+| ``cond:graph:ordering-accountability-stamp`` | pn-records; invariant check | held | ``RECORDS::amend:acts:retained-finalization-time`` | | ``RECORDS::amend:acts:retained-finalization-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
 | ``def:graph:parent-placement-fault`` | pn-records; type | realized | ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``ROOT::open:design:noncompliant-logical-time``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
 | ``def:graph:stamp-fault`` | pn-records; type | realized | ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``ROOT::open:design:noncompliant-logical-time``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
 | ``prop:graph:act-time-finite`` | pn-verification; invariant check | realized | ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``ROOT::open:design:noncompliant-logical-time``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
