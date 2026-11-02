@@ -36,6 +36,63 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 
 class Performance(unittest.TestCase):
+    def test_calibration_identity(self):
+        """A measured function retains exact standing through unrelated edits, while a changed or missing body becomes pending under its owner without changing its allowance.
+        ´claim:devperf:changed-calibration-is-pending´
+        ´test:integration:test-calibration-identity´
+        """
+        from devperf import case_identity, calibration_identities
+        source = 'def probe():\n    return 1\n'
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root/'case.py'
+            identity = dict(path='case.py', function='probe', digest=case_identity(source, 'case.py', 'probe'), owner='fixture-owner')
+            declared = {'case':dict(calibration_campaign='fixture', calibration_source=identity, budget_ms=100)}
+            original = copy.deepcopy(declared)
+            for body, status in ((source, 'exact'), (source+'\ndef other():\n    return 2\n', 'exact'),
+                                 (source.replace('return 1', 'return 2'), 'pending'), ('', 'pending')):
+                path.write_text(body)
+                row, = calibration_identities(declared, root)
+                self.assertEqual(row['status'], status)
+                self.assertEqual(row['owner'], 'fixture-owner')
+                self.assertEqual(declared, original)
+            rust = 'fn probe() { let text = "}"; /* } */ assert!(true); }'
+            self.assertEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust+'\nfn other() {}', 'case.rs', 'probe'))
+            self.assertNotEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust.replace('true','false'), 'case.rs', 'probe'))
+
+    def test_target_retention(self):
+        """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.
+        ´claim:devperf:target-retention-preserves-metadata´
+        ´test:integration:test-target-retention´
+        """
+        from isolation import bound_target, cargo_work, built_executable
+        artifact = dict(reason='compiler-artifact', target=dict(name='documents'), executable='/owned/target/triple/gate/documents')
+        self.assertEqual(built_executable(json.dumps(artifact)), artifact['executable'])
+        with self.assertRaisesRegex(ValueError, 'exactly one executable'):
+            built_executable('{}')
+        with self.assertRaisesRegex(ValueError, 'exactly one executable'):
+            built_executable(json.dumps(artifact)+'\n'+json.dumps(dict(artifact, executable='/other/documents')))
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            (target/'gate/incremental').mkdir(parents=True)
+            (target/'gate/incremental/old').write_bytes(b'x'*32768)
+            (target/'gate/dependency').write_bytes(b'x'*8192)
+            (target/'gate-baselines').mkdir()
+            (target/'gate-baselines/retained').write_text('baseline')
+            self.assertTrue(bound_target(target, 24576, 'fixture'))
+            self.assertFalse((target/'gate/incremental').exists())
+            self.assertTrue((target/'gate/dependency').exists())
+            self.assertFalse(bound_target(target, 24576, 'fixture'))
+            self.assertTrue(bound_target(target, 1, 'fixture'))
+            self.assertFalse((target/'gate').exists())
+            self.assertEqual((target/'gate-baselines/retained').read_text(), 'baseline')
+            log = target/'meter.jsonl'
+            with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
+                for command in ('build', 'check', 'run', 'test'):
+                    self.assertEqual(cargo_work(['cargo', str(log), command]), 0)
+            rows = [json.loads(line) for line in log.read_text().splitlines()]
+            self.assertEqual([row['compile_only'] for row in rows], [True, True, False, False])
+
     def test_distinct_excess_ledger(self):
         """Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.
         ´claim:devperf:distinct-excess-ledger-is-gate-evidence´
@@ -57,11 +114,12 @@ class Performance(unittest.TestCase):
             self.assertEqual(result['distinct_excesses'], 3)
             self.assertEqual(next(row for row in result['entries'] if row['operation']=='probe' and row['budget']=='unit')['duration_ms'], 300)
             self.assertEqual(result['verdict_effect'], 'none')
-        self.tier_overrun()
-        self.overrun_classes()
-        self.baseline_lineage()
 
-    def tier_overrun(self):
+    def test_tier_overrun(self):
+        """Tier summaries keep wall overruns separate from functional verdicts and exclude foreign-source and cold-owner measurements from comparisons.
+        ´claim:devperf:tier-overruns-retain-functional-verdicts´
+        ´test:integration:test-tier-overrun´
+        """
         from contextlib import redirect_stdout
         from build_graph import tier_summary
         tiers = {name: dict(steps=[name], invocation_budget='fixture')
@@ -100,7 +158,11 @@ class Performance(unittest.TestCase):
                     self.assertIn('over_budget='+str(expected).lower(), fast)
                     self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)
 
-    def overrun_classes(self):
+    def test_overrun_classes(self):
+        """Rebuild classification requires comparable compile CPU growth and serialized wall growth covering the excess; load alone cannot establish rebuild work.
+        ´claim:devperf:rebuild-requires-compile-cpu-and-wall´
+        ´test:integration:test-overrun-classes´
+        """
         from build_graph import overrun_class
         policy = dict(high_stall_percent=10, cpu_growth_percent=20)
         def classify(own=100, baseline=100, stall=0.09, build=40, old_build=40, changed=()):
@@ -124,15 +186,22 @@ class Performance(unittest.TestCase):
         own, baseline, growth, omitted = compile_comparison(current, old, ['test-build'])
         self.assertEqual(omitted, ['isolated'])
         self.assertAlmostEqual(growth, 60.5)
-        self.assertEqual(overrun_class(True, own, baseline, .0525, 407.389, 418.153,
+        self.assertEqual(overrun_class(True, own, baseline, .0525, 407.389, 103.153,
             ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
-        # The historical totals alone grew only four percent; serial wall still
-        # identifies the rebuild before the plain branch.
+        # Comparable compile CPU excludes the cold isolated baseline owner.
+        self.assertEqual(overrun_class(True, 714.200, 684.486, .0525, 407.389, 103.153,
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
         self.assertEqual(overrun_class(True, 714.200, 684.486, .0525, 407.389, 418.153,
-            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'rebuild')
+            ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179), 'plain')
+        self.assertEqual(overrun_class(True, 100, 100, .09, 40, 40,
+            ['packages/example/src/pins.rs'], policy, compile_wall_growth=60, excess=21), 'plain')
 
 
-    def baseline_lineage(self):
+    def test_baseline_lineage(self):
+        """Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.
+        ´claim:devperf:baseline-follows-import-tree´
+        ´test:integration:test-baseline-lineage´
+        """
         from build_graph import baseline_context, retain_baseline
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

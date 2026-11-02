@@ -543,7 +543,10 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     if not over: return 'within-budget'
     if stall is not None and stall >= policy['high_stall_percent']/100: return 'high-stall'
     if stall is None or own is None or baseline is None: return 'unclassified'
-    if changed and compile_wall_growth is not None and excess is not None and compile_wall_growth > 0 and compile_wall_growth >= excess:
+    if (changed and build_cpu is not None and old_build_cpu is not None
+            and build_cpu > old_build_cpu*(1+policy['cpu_growth_percent']/100)
+            and compile_wall_growth is not None and excess is not None
+            and compile_wall_growth > 0 and compile_wall_growth >= excess):
         return 'rebuild'
     if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
     return 'growth'
@@ -671,16 +674,23 @@ def tier_summary(root, registry, worker_statuses):
         old_cpu = prior.get('own_cpu_s')
         own_cpu = sum(own) if None not in own else None
         comparable_cpu, comparable_old, wall_growth, omitted = compile_comparison(step_figures, prior.get('step_figures', {}), policy['rebuild_steps'])
+        def compile_cpu(figures):
+            return sum(row['cargo_cpu_s'] if row['layouts'] else row['own_cpu_s']
+                       for name, row in figures.items() if name in step_figures and name not in omitted
+                       and (row['layouts'] or name in policy['rebuild_steps']))
+        comparable_build = compile_cpu(step_figures) if comparable_cpu is not None else None
+        comparable_old_build = compile_cpu(prior.get('step_figures', {})) if comparable_old is not None else None
         stall = measurement.get('node_pressure_fraction', {}).get('cpu.some')
-        classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, build_cpu, prior.get('build_cpu_s'), changed, policy,
+        classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess)
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
+            comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
+        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,

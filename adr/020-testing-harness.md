@@ -40,7 +40,7 @@
 | --- | --- | --- | --- | --- | --- |
 | cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
-| documents::integration | active | integration | documents-rust | fast | 30 |
+| documents::integration | active | integration | documents-rust | fast | 31 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 26 |
 | execwrap::integration | active | integration | execwrap-rust | fast | 20 |
@@ -74,7 +74,7 @@
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
 | ci::test_design | active | integration | ci-python | fast | 10 |
-| ci::test_devperf | active | unit | ci-python | fast | 15 |
+| ci::test_devperf | active | unit | ci-python | fast | 20 |
 | ci::test_discipline | active | integration | ci-python | fast | 30 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | planned-burn | held | held | none | service | 0 |

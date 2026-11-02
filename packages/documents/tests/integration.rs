@@ -396,6 +396,15 @@ fn repository_fixed_point() -> Result<()> {
         );
         assert_eq!(documents::run(&root, Operation::Check)?.findings, Vec::<Finding>::new());
     }
+    Ok(())
+}
+
+/// Claim: A stale tracker emits the exact committed replacement triple without repairing its input or changing the shared tree.
+/// ´claim:render:tracker-replacement-artifacts´
+/// ´test:integration:tracker-replacement-artifacts´
+#[test]
+fn tracker_replacement_artifacts() -> Result<()> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let script = r#"
 import json, os, sys
 from pathlib import Path

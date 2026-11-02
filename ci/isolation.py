@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 
 from build_graph import cancellable
 
@@ -29,10 +30,45 @@ def storage_root(root):
     return base/hashlib.sha256(str(root).encode()).hexdigest()
 
 
+def allocated(paths):
+    """Measure allocated cache bytes, including hard-linked artifacts once."""
+    existing = [str(path) for path in paths if path.exists()]
+    if not existing: return 0
+    output = subprocess.check_output(['du', '-sc', '--block-size=1', *existing], text=True)
+    return int(output.splitlines()[-1].split()[0])
+
+
+def bound_target(target, ceiling, owner):
+    """Bound retained profile caches at a quiescent owner boundary."""
+    if type(ceiling) is not int or ceiling <= 0:
+        raise ValueError('target ceiling must be positive bytes')
+    profiles = [target/name for name in ('debug', 'gate', 'release', 'doc')]
+    before = allocated(profiles)
+    if before > ceiling:
+        for profile in profiles:
+            shutil.rmtree(profile/'incremental', ignore_errors=True)
+        if allocated(profiles) > ceiling:
+            for profile in profiles:
+                if profile.exists(): shutil.rmtree(profile)
+    after = allocated(profiles)
+    print(f'TARGET-DIRS owner={owner} before_bytes={before} after_bytes={after} ceiling_bytes={ceiling} path={target}', flush=True)
+    return before > after
+
+
+def cache_policy(root):
+    path = root/'docs/inputs/devperf-budgets.toml'
+    if not path.exists(): return None
+    return next(row for row in tomllib.loads(path.read_text())['rows'] if row['name'] == 'gate')
+
+
 def retention(root, source, imports):
     """Expire idle owner artifacts on distinct imports, never while in use."""
     if type(imports) is not int or imports < 1:
         raise ValueError('isolation retention must be a positive import count')
+    policy = cache_policy(root)
+    if policy:
+        target = Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()
+        bound_target(target, policy['shared_target_ceiling_bytes'], 'shared-gate')
     base = storage_root(root)
     base.mkdir(parents=True, exist_ok=True)
     # The pre-external layout belongs to this checkout alone. Keep lock inodes
@@ -167,6 +203,9 @@ def workspace(root, name, source):
         target = base/'c'/key
         cold_target = not target.is_dir()
         target.mkdir(parents=True, exist_ok=True)
+        policy = cache_policy(tree)
+        if policy:
+            cold_target |= bound_target(target, policy['owner_target_ceiling_bytes'], name)
         for obsolete in target.parent.iterdir():
             if obsolete != target and obsolete.is_dir():
                 shutil.rmtree(obsolete)
@@ -174,7 +213,7 @@ def workspace(root, name, source):
         (tree/'.lane').mkdir()
         print(f'ISOLATION owner={name} source={source} tree={tree} target={target} cache=retained cargo=fingerprinted', flush=True)
         layout = hashlib.sha256(json.dumps(dict(storage=str(base.parent), configuration=configuration,
-            format='owner-cargo-v1'), sort_keys=True).encode()).hexdigest()
+            format='owner-compile-only-v2'), sort_keys=True).encode()).hexdigest()
         identity = base/'layout'
         layout_changed = identity.exists() and identity.read_text() != layout
         identity.write_text(layout)
@@ -186,8 +225,10 @@ def workspace(root, name, source):
             log = tree/'.lane/cargo-work.jsonl'
             rows = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
             print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, source=source, layout=layout, cold_target=cold_target, layout_changed=layout_changed,
-                cargo_cpu_s=sum(row['own_cpu'] for row in rows), cargo_wall_s=sum(row['wall'] for row in rows),
-                calls=len(rows), scope='cargo-and-waited-descendants')), flush=True)
+                cargo_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')),
+                cargo_wall_s=sum(row['wall'] for row in rows if row.get('compile_only')),
+                cargo_and_run_cpu_s=sum(row['own_cpu'] for row in rows if not row.get('compile_only')),
+                calls=len(rows), scope='compile-only; mixed Cargo-and-run reported separately')), flush=True)
 
 
 def cargo_environment(tree):
@@ -211,7 +252,8 @@ def cargo_work(arguments):
     result = subprocess.run([real, *arguments])
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     row = dict(wall=time.monotonic()-started, own_cpu=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
-               command=arguments, status=result.returncode)
+               command=arguments, status=result.returncode,
+               compile_only=bool(arguments) and arguments[0] in ('build', 'check', 'clippy', 'rustdoc'))
     with Path(destination).open('a') as output:
         fcntl.flock(output, fcntl.LOCK_EX)
         output.write(json.dumps(row)+'\n')
@@ -223,8 +265,14 @@ def generate(action):
     root = Path.cwd()
     source = os.environ.get('PN_GATE_SOURCE') or subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
     with workspace(root, 'fixed-point', source) as (tree, target):
-        result = cancellable(['cargo', 'run', '-p', 'documents', '--locked', '--profile', 'gate', '--', action],
+        result = cancellable(['cargo', 'build', '-p', 'documents', '--bin', 'documents', '--locked',
+                              '--profile', 'gate', '--message-format=json'], stdout=subprocess.PIPE, text=True,
                              cwd=tree, env=os.environ | cargo_environment(tree) | {'CARGO_TARGET_DIR':str(target)})
+        if result.returncode:
+            print(result.stdout)
+            return result.returncode
+        result = cancellable([built_executable(result.stdout), action], cwd=tree,
+                             env=os.environ | {'CARGO_TARGET_DIR':str(target)})
         if result.returncode:
             return result.returncode
         changed = cancellable(['git', '-C', str(tree), 'diff', '--exit-code'], stdout=subprocess.PIPE)
@@ -232,6 +280,16 @@ def generate(action):
             sys.stdout.buffer.write(changed.stdout)
             print('ISOLATION-FIXED-POINT generated bytes differ from the source commit', flush=True)
         return changed.returncode
+
+
+def built_executable(output):
+    """Use Cargo's artifact identity, including a configured target triple."""
+    messages = [json.loads(line) for line in output.splitlines()]
+    paths = {row['executable'] for row in messages if row.get('reason') == 'compiler-artifact'
+             and row.get('target', {}).get('name') == 'documents' and row.get('executable')}
+    if len(paths) != 1:
+        raise ValueError('documents build did not identify exactly one executable')
+    return paths.pop()
 
 
 if __name__ == '__main__':

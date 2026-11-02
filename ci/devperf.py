@@ -7,7 +7,9 @@ duration excess and missing measurements always exit 0. No execution is retried.
 """
 
 import argparse
+import ast
 import datetime
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -81,6 +83,16 @@ def calibration_declarations(declared):
         campaign = campaigns.get(row.get('calibration_campaign'))
         if campaign is None:
             raise StructuralError(name+': calibrated row requires an existing campaign or a pending owner')
+        identity = row.get('calibration_source', {})
+        if not isinstance(identity, dict):
+            raise StructuralError(name+': calibration source must be a record')
+        path = identity.get('path', '')
+        if (not isinstance(identity, dict) or not path or Path(path).is_absolute()
+                or '..' in Path(path).parts or not path.endswith(('.py', '.rs'))
+                or not re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', identity.get('function', ''))
+                or not re.fullmatch(r'[0-9a-f]{64}', identity.get('digest', ''))
+                or not identity.get('owner')):
+            raise StructuralError(name+': calibration requires a named source body and owner')
         walls = row.get('calibration_walls_ms')
         if (not isinstance(walls, list) or len(walls) != campaign['warm_samples']
                 or not all(number(value) for value in walls)
@@ -94,6 +106,50 @@ def calibration_declarations(declared):
         expected = int((max(Decimal(str(value)) for value in walls)*campaign['multiplier']/unit).to_integral_value(rounding=ROUND_CEILING))*campaign['round_ms']
         if row['budget_ms'] != expected:
             raise StructuralError(name+': budget differs from the rule over recorded walls')
+
+
+def case_identity(text, path, function):
+    """Hash the exact named function, independently of neighbouring cases."""
+    if path.endswith('.py'):
+        nodes = [node for node in ast.walk(ast.parse(text))
+                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == function]
+        bodies = [ast.get_source_segment(text, node) for node in nodes]
+    else:
+        from source_sites import rust_mask
+        masked = rust_mask(text)
+        bodies = []
+        for match in re.finditer(r'\bfn\s+'+re.escape(function)+r'\s*\(', masked):
+            opening = masked.find('{', match.end())
+            if opening < 0: raise StructuralError('case has no body: '+function)
+            depth = 1
+            end = opening+1
+            while end < len(masked) and depth:
+                depth += (masked[end] == '{')-(masked[end] == '}')
+                end += 1
+            if depth: raise StructuralError('case has an unclosed body: '+function)
+            bodies.append(text[match.start():end])
+    if len(bodies) != 1:
+        raise StructuralError('case identity is missing or ambiguous: '+path+'::'+function)
+    return hashlib.sha256(bodies[0].encode()).hexdigest()
+
+
+def calibration_identities(declared, root):
+    """Changed bodies retain their allowance but lose calibrated standing."""
+    result = []
+    for name, row in declared.items():
+        if 'calibration_pending_owner' in row:
+            result.append(dict(budget=name, status='pending', owner=row['calibration_pending_owner'], reason='declared-pending'))
+        elif 'calibration_campaign' in row:
+            identity = row['calibration_source']
+            path = root/identity['path']
+            try:
+                actual = case_identity(path.read_text(), identity['path'], identity['function'])
+            except (OSError, StructuralError):
+                actual = None
+            result.append(dict(budget=name, status='exact' if actual == identity['digest'] else 'pending',
+                               owner=identity['owner'], measured=identity['digest'], current=actual,
+                               reason='same-body' if actual == identity['digest'] else 'changed-body'))
+    return result
 
 
 def utc(value):
@@ -234,10 +290,13 @@ def print_ledger(source, declared, root):
                                    'host-observation-runtime-findings.jsonl')]
     paths += sorted(root.glob('ci-test_*-findings.jsonl'))
     ledger = excess_ledger(paths, source, declared)
+    identities = calibration_identities(declared, root.parent)
+    ledger['calibration_identities'] = identities
+    ledger['calibration_pending'] = [row for row in identities if row['status'] == 'pending']
     ledger['case_assessment'] = 'informational; judge case budgets in the separate calibration invocation'
     output = root/'over-budget-ledger.json'
     output.write_text(json.dumps(ledger, sort_keys=True, indent=2)+'\n')
-    print('BUDGET-LEDGER '+json.dumps({key:value for key,value in ledger.items() if key != 'entries'} | {'artifact':str(output)}, sort_keys=True))
+    print('BUDGET-LEDGER '+json.dumps({key:value for key,value in ledger.items() if key not in ('entries', 'calibration_identities')} | {'artifact':str(output)}, sort_keys=True))
     return 0
 
 def main():

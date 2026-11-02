@@ -303,6 +303,29 @@ def establish(root, rule):
         if history.returncode or tree not in history.stdout.splitlines():
             raise ValueError("hash citations: campaign tree is not in HEAD history")
         return lambda value, _line: value == tree
+    if kind == "calibration-bodies" and standing == "recomputable":
+        from devperf import budgets, case_identity
+        declared = budgets(root / rule['input'])
+        campaigns = {row['label']: row for row in declared['gate']['calibration_campaigns']}
+        values = set()
+        historical = {}
+        checked_commits = set()
+        for row in declared.values():
+            if 'calibration_campaign' not in row: continue
+            campaign = campaigns[row['calibration_campaign']]
+            commit = campaign['measured_series'][-1]['commit']
+            identity = row['calibration_source']
+            key = (commit, identity['path'])
+            if commit not in checked_commits:
+                establish(root, dict(reader='ancestor-commit', establishment='resolvable', commit=commit))
+                checked_commits.add(commit)
+            if key not in historical:
+                historical[key] = subprocess.check_output(['git', 'show', commit+':'+identity['path']], cwd=root, text=True)
+            expected = case_identity(historical[key], identity['path'], identity['function'])
+            if identity['digest'] != expected:
+                raise ValueError('hash citations: measured calibration body differs: '+row['name'])
+            values.add(expected)
+        return lambda value, _line: value in values
     if kind == "historical-inputs" and standing == "recomputable":
         commit = rule["commit"]
         establish(root, dict(reader="ancestor-commit", establishment="resolvable", commit=commit))

@@ -720,3 +720,14 @@ commit = "bfca44d02631f9a6f725566c1eb6f0052aee410c"
 patch_id = "c48c310374be9320bb9754a26916a598000394c6"
 definition = "The public ancestor supplies the patch; Git stable patch-id recomputes its identity independently of signing and parent commit identities. Apply the ordered patches to the campaign base to reconstruct the measured series."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "calibrated-case-bodies"
+group = "warm case allowance calibration"
+measures = "Exact named case functions at the public measured series head"
+producer = "SHA-256 over the UTF-8 named function source"
+establishment = "recomputable"
+reader = "calibration-bodies"
+input = "docs/inputs/devperf-budgets.toml"
+definition = "Each campaign row selects a unique function from its public series head; its source bytes recompute the recorded digest. Current body identity is assessed separately and a changed body becomes pending under its owner."
+paths = ["docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]

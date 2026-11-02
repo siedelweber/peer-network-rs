@@ -479,6 +479,14 @@
           "num_exact": true,
           "num_relation": "="
         },
+        "owner_target_ceiling_bytes": {
+          "exact": "4 294 967 296",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 294 967 296",
+          "num_exact": true,
+          "num_relation": "="
+        },
         "record_first_wall_seconds": {
           "exact": "81.2",
           "exact_exact": true,
@@ -508,6 +516,14 @@
           "exact_exact": true,
           "exact_relation": "=",
           "num": "85.5",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "shared_target_ceiling_bytes": {
+          "exact": "17 179 869 184",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "17 179 869 184",
           "num_exact": true,
           "num_relation": "="
         },
@@ -545,6 +561,10 @@
           "display": "exact",
           "exact_digits": 32
         },
+        "owner_target_ceiling_bytes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
         "record_first_wall_seconds": {
           "display": "exact",
           "exact_digits": 32
@@ -558,6 +578,10 @@
           "exact_digits": 32
         },
         "record_second_wall_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "shared_target_ceiling_bytes": {
           "display": "exact",
           "exact_digits": 32
         },
@@ -576,6 +600,7 @@
       "numeric_text": [
         "reason"
       ],
+      "owner_target_ceiling_bytes": 4294967296,
       "reason": "Pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
       "rebuild_steps": [
         "test-build",
@@ -591,6 +616,7 @@
       "record_second_cpu_seconds": 233,
       "record_second_wall_seconds": "85.5",
       "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target",
+      "shared_target_ceiling_bytes": 17179869184,
       "warm_samples": 3
     },
     {
@@ -3277,6 +3303,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "58c13f38a6778edce82dd93762c8c0cb45690d8a2820795c86e6f7be03140d6b",
+        "function": "test_numeric_correspondence",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         8132.409517886117,
         8570.327793015167,
@@ -3313,6 +3345,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "26cd5a220b69aa805f1611e67ef07826ae436b6826e46e943a6cc5248778f8cf",
+        "function": "test_numeric_word_fragments",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         16117.438807850704,
         16564.407753990963,
@@ -3349,6 +3387,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "5db374e6ca44d40747fed5005b922af847c18fd825410853620958a2336badd8",
+        "function": "test_release_tags",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         4249.551088782027,
         4381.821953924373,
@@ -3385,6 +3429,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "68548c12d696122f8e287b8e21c72cc075a2af8ed575025352285f5b08cde9f0",
+        "function": "test_rendered_continuations",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         4388.341172831133,
         4632.0821810513735,
@@ -3421,6 +3471,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "6ca4fe7cdaa820438b71963e8182e53e86c86bbefdb7633988de0721aed64d0d",
+        "function": "test_rendered_spacing",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         3036.0379291232675,
         2978.810225147754,
@@ -3457,6 +3513,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "c1f1ca399b69e9d382b9c6a1af36977752494c63cad195e71f9e6e6ff2c947b7",
+        "function": "test_tracked_prose_boundaries",
+        "owner": "lane/design",
+        "path": "ci/test_design.py"
+      },
       "calibration_walls_ms": [
         2113.2188190240413,
         2042.0358930714428,
@@ -3493,6 +3555,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "adc93899d2815dc5a9d08cbc304656f4cf151135a89f1c275bc66c3ae547ca77",
+        "function": "test_secret_carrier_traits",
+        "owner": "lane/design",
+        "path": "ci/test_discipline.py"
+      },
       "calibration_walls_ms": [
         8883.517784066498,
         8800.954158883542,
@@ -3529,6 +3597,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "53a89c3e837dd15b4576e66b124e134d1945b01b5d9e8bc3ce6905e6fe2bade2",
+        "function": "test_host_commit_isolation",
+        "owner": "lane/design",
+        "path": "ci/test_harness.py"
+      },
       "calibration_walls_ms": [
         777.6503490749747,
         764.0414841007441,
@@ -3565,6 +3639,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "22691c46cd73cf44f870045cf73d9683e5e43bc049d7dfc3bf9e2c9ade1bb156",
+        "function": "test_wallet_commit_isolation",
+        "owner": "lane/design",
+        "path": "ci/test_harness.py"
+      },
       "calibration_walls_ms": [
         715.4435380361974,
         717.1839601360261,
@@ -3601,6 +3681,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "d00da4130df53ea0627e274d7c29ba526f5105381737822e65ee79f3536a8417",
+        "function": "test_independent_instances",
+        "owner": "lane/design",
+        "path": "ci/test_host_runtime.py"
+      },
       "calibration_walls_ms": [
         8933.325961930677,
         9504.246441880241,
@@ -3637,6 +3723,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "4cc188b84144b7d8f59a202d71d017ae346820b17e4d1892445f902317a73359",
+        "function": "test_statement_type_boundary",
+        "owner": "lane/design",
+        "path": "ci/test_host_runtime.py"
+      },
       "calibration_walls_ms": [
         2438.7787599116564,
         2421.314036939293,
@@ -3673,6 +3765,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "e153a8a1bcd806fcbd06d934da9b95847451cc01c9a84a12b41bc8d077e690f5",
+        "function": "test_storage_statements",
+        "owner": "lane/design",
+        "path": "ci/test_host_runtime.py"
+      },
       "calibration_walls_ms": [
         3449.98905621469,
         3489.9166871327907,
@@ -3709,6 +3807,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "17c84242cf76d3472a8394428efd83a3fd60f4db41639c5a6a79634cc5e419bb",
+        "function": "test_build_graph_census",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         5313.021635869518,
         5325.505279935896,
@@ -3745,6 +3849,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "0ea7b1a2cb3cd99d78d132ed5d6e6f8a5b1f8a890f764068139a31feb05fbaaa",
+        "function": "test_build_graph_completion",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         2156.0839018784463,
         2200.1036419533193,
@@ -3781,6 +3891,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "51dc7cdc4a60510e9501fb5c27aea823d0ad3a766572aa6eabae42dadca343ff",
+        "function": "test_build_graph_delegation",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         8976.838394999504,
         9067.803886020556,
@@ -3817,6 +3933,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "b98eac588dcfceae3972a8c40aa6e970623539c9bb5ec4f434bdfe7258556345",
+        "function": "test_cargo_delegation",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         3565.5467950273305,
         3553.662323160097,
@@ -3853,6 +3975,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "a422f60c9a87d5b02ae50e5c2b63c864f97406d5ac71b9681576c054c2938bc0",
+        "function": "test_runtime_delegation",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         9311.954678036273,
         9602.516009937972,
@@ -3889,6 +4017,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "1a290a589f2778efe7ea35d5b0c1c9f6416d16b58f9dc30c2c8c9f3b77f7f305",
+        "function": "test_service_ownership",
+        "owner": "lane/design",
+        "path": "ci/test_linter_entry.py"
+      },
       "calibration_walls_ms": [
         36414.58950494416,
         36248.13404912129,
@@ -3925,6 +4059,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "23df46e3e0b0bcbb106f667f14201335380713ca3afce8c745e08ec5b93f0004",
+        "function": "test_epoch_inputs",
+        "owner": "lane/design",
+        "path": "ci/test_observe_runtime.py"
+      },
       "calibration_walls_ms": [
         2202.147011179477,
         2744.6149769239128,
@@ -3961,6 +4101,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "f6347929394b36bd82a376f62b1aaf4f3b8469e3934c1718614f575c3fdef79f",
+        "function": "test_four_mode_results",
+        "owner": "lane/design",
+        "path": "ci/test_observe_runtime.py"
+      },
       "calibration_walls_ms": [
         5394.187753088772,
         6768.912934930995,
@@ -3997,6 +4143,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "c5f4f40029f2cfa455eb4f0a48ef829012dc49cee945a504f79be5cdf8831062",
+        "function": "test_title_suite",
+        "owner": "lane/design",
+        "path": "ci/test_observe_runtime.py"
+      },
       "calibration_walls_ms": [
         3847.3394990433007,
         5102.067029103637,
@@ -4033,6 +4185,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "0e055049f45cfd29259c1063386e06f9b4e9cab711b5d409a1fd5a706b7edbca",
+        "function": "test_consumer_seed",
+        "owner": "lane/design",
+        "path": "ci/test_testkit.py"
+      },
       "calibration_walls_ms": [
         1640.6814029905945,
         1635.8326429035515,
@@ -4069,6 +4227,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "b76fa0e154becdd9fe2cb7a2c13ece83e461b53d317f4b448080e6b328b8ff64",
+        "function": "test_property_seed",
+        "owner": "lane/design",
+        "path": "ci/test_testkit.py"
+      },
       "calibration_walls_ms": [
         1585.4513440281153,
         1559.7488267812878,
@@ -4105,6 +4269,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "5f04f1a1ca1d13cb614608d9787355daca906c5c6d0356eefe2a17696008200c",
+        "function": "test_confinement",
+        "owner": "lane/design",
+        "path": "ci/test_wallet_boundary.py"
+      },
       "calibration_walls_ms": [
         9812.468798132613,
         9930.28698512353,
@@ -4141,6 +4311,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "22ac4b3e8f97e71840a7a1a76819e95fa0cc606ed010ab97f4893ef2eebaf4d8",
+        "function": "test_dependency_features",
+        "owner": "lane/design",
+        "path": "ci/test_wallet_boundary.py"
+      },
       "calibration_walls_ms": [
         10762.430387083441,
         10541.572659974918,
@@ -4177,6 +4353,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "2c6ce92598b2bdddaa789282bcfd5be420921faf61c623d44e55e640b3dad22e",
+        "function": "repository_fixed_point",
+        "owner": "lane/design",
+        "path": "packages/documents/tests/integration.rs"
+      },
       "calibration_walls_ms": [
         2873.63424198702,
         2716.652800096199,
@@ -4213,6 +4395,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "492f6f7bc09e05121739b71a9e94a2bcbc727197cdab00db55a30115cb492612",
+        "function": "commitment_trace_privacy",
+        "owner": "lane/design",
+        "path": "packages/act-profile/src/tests.rs"
+      },
       "calibration_walls_ms": [
         292.64233401045203,
         181.03591492399573,
@@ -4249,6 +4437,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "9042d4230ca4f7c5c2be595aa7b0bb684e459b2fb2b6ea2326f31522a358e4e0",
+        "function": "real_cancellation",
+        "owner": "lane/design",
+        "path": "packages/host/src/postgresql.rs"
+      },
       "calibration_walls_ms": [
         126.3667109888047,
         128.12169711105525,
@@ -4285,6 +4479,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "42d371123afadeebd669f3b94a7ecfa4d0f108f7de4d4d62a6590aa899c67e67",
+        "function": "relay_throughput",
+        "owner": "lane/design",
+        "path": "packages/host/src/postgresql.rs"
+      },
       "calibration_walls_ms": [
         140.54174395278096,
         141.30662195384502,
@@ -4321,6 +4521,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "fefbf4f348344399425ed6ec9328b8ea0acc48c9da296173ab0a0c84b6c2505e",
+        "function": "ceiling_login_progress",
+        "owner": "lane/design",
+        "path": "packages/host/src/scram.rs"
+      },
       "calibration_walls_ms": [
         139.12851084023714,
         138.61811789683998,
@@ -4357,6 +4563,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "566c2f32e21e283e2f30e1d75bac2a6942777fa7c93a107fa006b52453876956",
+        "function": "derivation_cost",
+        "owner": "lane/design",
+        "path": "packages/host/src/scram.rs"
+      },
       "calibration_walls_ms": [
         402.8484739828855,
         417.72542195394635,
@@ -4393,6 +4605,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "1f1f7d1af58284fa9eadb638a1fd790eedd09aa385056ad88ca839b7b71c5e47",
+        "function": "derivation_permits",
+        "owner": "lane/design",
+        "path": "packages/host/src/scram.rs"
+      },
       "calibration_walls_ms": [
         102.99371811561286,
         103.01655088551342,
@@ -4429,6 +4647,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "7499e807023f07979f6db54d4e7f3610e009e3597cc21802d4e7a319191c52ca",
+        "function": "storage_competing_writers",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         105.53354513831437,
         180.89739582501352,
@@ -4465,6 +4689,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "415bbb9388395943557ebf4b5b6ada954041c6c19dbe53b4f0a0d8a89e1becde",
+        "function": "storage_contract",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         319.1868900321424,
         479.5944979414344,
@@ -4501,6 +4731,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "790ca80327bcc148e0f58e34ff4c06b585018b7fbe150550d9b43719dae0d8c6",
+        "function": "storage_growth",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         9594.503327040002,
         7429.788020905107,
@@ -4537,6 +4773,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "e543f9c6bf5eb7380d73d40871876a9f823415375f4829435ad5fe74c0dc797d",
+        "function": "storage_historical_constants",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         54.60252286866307,
         59.64457895606756,
@@ -4573,6 +4815,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "0cf3662bf9bd44bdeca01dfdf9d0cfda4186e1ffccdca646bbe6c12c013a03b3",
+        "function": "storage_rebuild",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         56.69034086167812,
         60.00225688330829,
@@ -4609,6 +4857,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "d272e8ffbe6cdbdf7ab3b23c835b228caa1307d06107905f614bb131f0b9e0bf",
+        "function": "storage_runtime",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         82.20367203466594,
         84.9797239061445,
@@ -4645,6 +4899,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "9954094c192f555532a89184a35b6224e3584e7649c00f3f139ce83897df12bd",
+        "function": "storage_scaling",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         209.37219797633588,
         227.45824907906353,
@@ -4681,6 +4941,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "2494b5de7d967ee206c51c49520558279b2578d81908922187f51a601eada3a9",
+        "function": "storage_schema_identity",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         335.60585998930037,
         361.53564299456775,
@@ -4717,6 +4983,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "9ec532e0997b46a9227f5abad9ea525cdd782d2b4f7fd0d52d22c6d86fa2b7be",
+        "function": "storage_tamper",
+        "owner": "lane/design",
+        "path": "packages/host/src/storage/tests.rs"
+      },
       "calibration_walls_ms": [
         194.83778695575893,
         206.1436220537871,
@@ -4753,6 +5025,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "f37cbf8fcc779a338bc7d09938c9feeaa0cbd44751d475d4dd97c5b15abffde9",
+        "function": "rotation",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/rpc.rs"
+      },
       "calibration_walls_ms": [
         1249.2145178839564,
         2303.4797401633114,
@@ -4789,6 +5067,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "4fa37fbdddc75d0096c73cbf0e45f40cc7bd10f932a5c283d06e729f92012948",
+        "function": "settlement_forks",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/rpc.rs"
+      },
       "calibration_walls_ms": [
         4168.743625981733,
         4235.1874760352075,
@@ -4825,6 +5109,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "8936052632d72ee1ea94b69aab23072f4b40d2ce92fc8354c8eb08435d91518b",
+        "function": "signed_reads",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/rpc.rs"
+      },
       "calibration_walls_ms": [
         1268.1264239363372,
         1278.1149719376117,
@@ -4861,6 +5151,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "0f4c7200d2c138e78236c8732e4ae3a714f00bee846f3c58a03f86f495c88046",
+        "function": "descriptor_cases",
+        "owner": "lane/design",
+        "path": "packages/wallet/src/rpc_cookie.rs"
+      },
       "calibration_walls_ms": [
         395.73965105228126,
         403.9985300041735,
@@ -4897,6 +5193,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "846a3ed22576e0fe8925bf50783546064f0655d8a4c9acce240622fca3e100ef",
+        "function": "acquisition_cases",
+        "owner": "lane/design",
+        "path": "packages/wallet/src/rpc_http.rs"
+      },
       "calibration_walls_ms": [
         136.67741394601762,
         134.70446993596852,
@@ -4933,6 +5235,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "82e270c7fe2e0226847ccba4b440dbe58f7bb933fcbb6b92f084fffcc5a84037",
+        "function": "wire_compatibility",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/wire.rs"
+      },
       "calibration_walls_ms": [
         4919.922739034519,
         4926.012095995247,
@@ -5371,6 +5679,12 @@
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "b160acc001f06d52339fa76b05f67fde6308c4b5e99c8b36f1f0e3c26bdaebf2",
+        "function": "test_distinct_excess_ledger",
+        "owner": "lane/design",
+        "path": "ci/test_devperf.py"
+      },
       "calibration_walls_ms": [
         155.0595599692315,
         153.39159592986107,

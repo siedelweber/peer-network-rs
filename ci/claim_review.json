@@ -82,12 +82,52 @@
       "review": "A three-commit fixture shows the final parent accepting an earlier addition while the explicit import base refuses it; invalid bases and ceiling growth refuse, while retirement passes. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_baseline_lineage",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:baseline-follows-import-tree",
+      "before": "",
+      "after": "Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_calibration_identity",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:changed-calibration-is-pending",
+      "before": "",
+      "after": "A measured function retains exact standing through unrelated edits, while a changed or missing body becomes pending under its owner without changing its allowance.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_distinct_excess_ledger",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:distinct-excess-ledger-is-gate-evidence",
       "before": "",
       "after": "Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.",
       "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_overrun_classes",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:rebuild-requires-compile-cpu-and-wall",
+      "before": "",
+      "after": "Rebuild classification requires comparable compile CPU growth and serialized wall growth covering the excess; load alone cannot establish rebuild work.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_target_retention",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:target-retention-preserves-metadata",
+      "before": "",
+      "after": "Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_tier_overrun",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:tier-overruns-retain-functional-verdicts",
+      "before": "",
+      "after": "Tier summaries keep wall overruns separate from functional verdicts and exclude foreign-source and cold-owner measurements from comparisons.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
     },
     {
       "operation": "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
@@ -1216,6 +1256,14 @@
       "before": "Claim: stale documents fail checking and writing repairs them while reporting a finding.",
       "after": "Claim: A stale fixture document remains untouched by checking, is repaired to the exact rendered bytes by writing with a finding, and then checks clean.",
       "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::tracker_replacement_artifacts",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:tracker-replacement-artifacts",
+      "before": "",
+      "after": "Claim: A stale tracker emits the exact committed replacement triple without repairing its input or changing the shared tree.",
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
     },
     {
       "operation": "execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure",
