@@ -1545,15 +1545,15 @@
       "scope": "complete pn-graph::numeric suite"
     },
     {
-      "budget_ms": 12000,
+      "budget_ms": 15900,
       "category": "case",
       "name": "calibrated-design-numeric-correspondence-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "12 000",
+          "exact": "15 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12 000",
+          "num": "15 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1568,15 +1568,15 @@
       "scope": "one ci::test_design.Correspondence.test_numeric_correspondence case"
     },
     {
-      "budget_ms": 20000,
+      "budget_ms": 30650,
       "category": "case",
       "name": "calibrated-design-numeric-word-fragments-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "20 000",
+          "exact": "30 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20 000",
+          "num": "30 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1591,15 +1591,15 @@
       "scope": "one ci::test_design.Correspondence.test_numeric_word_fragments case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 8450,
       "category": "case",
       "name": "calibrated-design-release-tags-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "8 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "8 450",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1614,15 +1614,15 @@
       "scope": "one ci::test_design.Correspondence.test_release_tags case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 8750,
       "category": "case",
       "name": "calibrated-design-rendered-continuations-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "8 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "8 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1637,15 +1637,15 @@
       "scope": "one ci::test_design.Correspondence.test_rendered_continuations case"
     },
     {
-      "budget_ms": 4000,
+      "budget_ms": 5850,
       "category": "case",
       "name": "calibrated-design-rendered-spacing-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 000",
+          "exact": "5 850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 000",
+          "num": "5 850",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1660,15 +1660,15 @@
       "scope": "one ci::test_design.Correspondence.test_rendered_spacing case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 4100,
       "category": "case",
       "name": "calibrated-design-tracked-prose-boundaries-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "4 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "4 100",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1683,15 +1683,15 @@
       "scope": "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 30100,
       "category": "case",
       "name": "calibrated-discipline-secret-carrier-traits-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "30 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "30 100",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1706,15 +1706,15 @@
       "scope": "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 1150,
       "category": "case",
       "name": "calibrated-harness-host-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "1 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "1 150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1729,15 +1729,15 @@
       "scope": "one ci::test_harness.Harness.test_host_commit_isolation case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 1200,
       "category": "case",
       "name": "calibrated-harness-wallet-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "1 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "1 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1752,15 +1752,15 @@
       "scope": "one ci::test_harness.Harness.test_wallet_commit_isolation case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 24900,
       "category": "case",
       "name": "calibrated-host-runtime-independent-instances-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "24 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "24 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1775,15 +1775,15 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_independent_instances case"
     },
     {
-      "budget_ms": 7500,
+      "budget_ms": 33650,
       "category": "case",
       "name": "calibrated-host-runtime-statement-type-boundary-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "7 500",
+          "exact": "33 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7 500",
+          "num": "33 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1798,15 +1798,15 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_statement_type_boundary case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 6650,
       "category": "case",
       "name": "calibrated-host-runtime-storage-statements-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "6 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "6 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1821,15 +1821,15 @@
       "scope": "one ci::test_host_runtime.HostRuntime.test_storage_statements case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 8500,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-census-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "8 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "8 500",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1844,15 +1844,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_census case"
     },
     {
-      "budget_ms": 4000,
+      "budget_ms": 4450,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-completion-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 000",
+          "exact": "4 450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 000",
+          "num": "4 450",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1867,15 +1867,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_completion case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 18750,
       "category": "case",
       "name": "calibrated-linter-entry-build-graph-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "18 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "18 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1890,15 +1890,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_build_graph_delegation case"
     },
     {
-      "budget_ms": 6000,
+      "budget_ms": 8100,
       "category": "case",
       "name": "calibrated-linter-entry-cargo-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "6 000",
+          "exact": "8 100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6 000",
+          "num": "8 100",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1913,15 +1913,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_cargo_delegation case"
     },
     {
-      "budget_ms": 18000,
+      "budget_ms": 19700,
       "category": "case",
       "name": "calibrated-linter-entry-runtime-delegation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "18 000",
+          "exact": "19 700",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18 000",
+          "num": "19 700",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1936,15 +1936,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_runtime_delegation case"
     },
     {
-      "budget_ms": 60000,
+      "budget_ms": 74650,
       "category": "case",
       "name": "calibrated-linter-entry-service-ownership-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "60 000",
+          "exact": "74 650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60 000",
+          "num": "74 650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1959,15 +1959,15 @@
       "scope": "one ci::test_linter_entry.Conformance.test_service_ownership case"
     },
     {
-      "budget_ms": 4000,
+      "budget_ms": 5750,
       "category": "case",
       "name": "calibrated-observe-runtime-epoch-inputs-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 000",
+          "exact": "5 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 000",
+          "num": "5 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -1982,15 +1982,15 @@
       "scope": "one ci::test_observe_runtime.Processes.test_epoch_inputs case"
     },
     {
-      "budget_ms": 10000,
+      "budget_ms": 11350,
       "category": "case",
       "name": "calibrated-observe-runtime-four-mode-results-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "10 000",
+          "exact": "11 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 000",
+          "num": "11 350",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2005,15 +2005,15 @@
       "scope": "one ci::test_observe_runtime.Processes.test_four_mode_results case"
     },
     {
-      "budget_ms": 10000,
+      "budget_ms": 9500,
       "category": "case",
       "name": "calibrated-observe-runtime-title-suite-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "10 000",
+          "exact": "9 500",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 000",
+          "num": "9 500",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2028,15 +2028,15 @@
       "scope": "one ci::test_observe_runtime.Processes.test_title_suite case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3200,
       "category": "case",
       "name": "calibrated-testkit-consumer-seed-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "3 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2051,15 +2051,15 @@
       "scope": "one ci::test_testkit.PropertyDeclarations.test_consumer_seed case"
     },
     {
-      "budget_ms": 3000,
+      "budget_ms": 3200,
       "category": "case",
       "name": "calibrated-testkit-property-seed-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "3 000",
+          "exact": "3 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3 000",
+          "num": "3 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2074,15 +2074,15 @@
       "scope": "one ci::test_testkit.SupportGuard.test_property_seed case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 19950,
       "category": "case",
       "name": "calibrated-wallet-boundary-confinement-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "19 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "19 950",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2097,15 +2097,15 @@
       "scope": "one ci::test_wallet_boundary.WalletBoundary.test_confinement case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 23950,
       "category": "case",
       "name": "calibrated-wallet-boundary-dependency-features-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "23 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "23 950",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2120,15 +2120,15 @@
       "scope": "one ci::test_wallet_boundary.WalletBoundary.test_dependency_features case"
     },
     {
-      "budget_ms": 4000,
+      "budget_ms": 4750,
       "category": "case",
       "name": "calibrated-documents-integration-repository-fixed-point-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "4 000",
+          "exact": "4 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 000",
+          "num": "4 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2166,15 +2166,15 @@
       "scope": "one pn-act-profile::tests::commitment_trace_privacy case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 300,
       "category": "case",
       "name": "calibrated-host-postgresql-real-cancellation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "300",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2189,15 +2189,15 @@
       "scope": "one pn-host::postgresql::real_cancellation case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 300,
       "category": "case",
       "name": "calibrated-host-postgresql-relay-throughput-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "300",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2212,15 +2212,15 @@
       "scope": "one pn-host::postgresql::relay_throughput case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 300,
       "category": "case",
       "name": "calibrated-host-scram-ceiling-login-progress-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "300",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "300",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2235,15 +2235,15 @@
       "scope": "one pn-host::scram::tests::ceiling_login_progress case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 850,
       "category": "case",
       "name": "calibrated-host-scram-derivation-cost-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "850",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2281,15 +2281,15 @@
       "scope": "one pn-host::scram::tests::derivation_permits case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 250,
       "category": "case",
       "name": "calibrated-host-storage-storage-competing-writers-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "250",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2304,15 +2304,15 @@
       "scope": "one pn-host::storage::tests::storage_competing_writers case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 650,
       "category": "case",
       "name": "calibrated-host-storage-storage-contract-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "650",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "650",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2327,15 +2327,15 @@
       "scope": "one pn-host::storage::tests::storage_contract case"
     },
     {
-      "budget_ms": 15000,
+      "budget_ms": 14600,
       "category": "case",
       "name": "calibrated-host-storage-storage-growth-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 000",
+          "exact": "14 600",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 000",
+          "num": "14 600",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2350,15 +2350,15 @@
       "scope": "one pn-host::storage::tests::storage_growth case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 150,
       "category": "case",
       "name": "calibrated-host-storage-storage-historical-constants-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2373,15 +2373,15 @@
       "scope": "one pn-host::storage::tests::storage_historical_constants case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 150,
       "category": "case",
       "name": "calibrated-host-storage-storage-rebuild-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "500",
+          "exact": "150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "500",
+          "num": "150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2396,9 +2396,32 @@
       "scope": "one pn-host::storage::tests::storage_rebuild case"
     },
     {
-      "budget_ms": 500,
+      "budget_ms": 200,
       "category": "case",
       "name": "calibrated-host-storage-storage-runtime-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "200",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "200",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values.",
+      "scope": "one pn-host::storage::tests::storage_runtime case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-scaling-case",
       "number_forms": {
         "budget_ms": {
           "exact": "500",
@@ -2415,42 +2438,19 @@
           "exact_digits": 32
         }
       },
-      "reason": "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values.",
-      "scope": "one pn-host::storage::tests::storage_runtime case"
-    },
-    {
-      "budget_ms": 2500,
-      "category": "case",
-      "name": "calibrated-host-storage-storage-scaling-case",
-      "number_forms": {
-        "budget_ms": {
-          "exact": "2 500",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "2 500",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "budget_ms": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      },
       "reason": "The reduced fixture retains the full stated range of unrelated-history growth, selected-row identities, separate audit and excluded-corruption control.",
       "scope": "one pn-host::storage::tests::storage_scaling case"
     },
     {
-      "budget_ms": 1500,
+      "budget_ms": 800,
       "category": "case",
       "name": "calibrated-host-storage-storage-schema-identity-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 500",
+          "exact": "800",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 500",
+          "num": "800",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2465,15 +2465,15 @@
       "scope": "one pn-host::storage::tests::storage_schema_identity case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 450,
       "category": "case",
       "name": "calibrated-host-storage-storage-tamper-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "450",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "450",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2488,15 +2488,15 @@
       "scope": "one pn-host::storage::tests::storage_tamper case"
     },
     {
-      "budget_ms": 5000,
+      "budget_ms": 2750,
       "category": "case",
       "name": "calibrated-wallet-rpc-rotation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 000",
+          "exact": "2 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 000",
+          "num": "2 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2511,15 +2511,15 @@
       "scope": "one pn-wallet::rpc::rotation case"
     },
     {
-      "budget_ms": 20000,
+      "budget_ms": 8950,
       "category": "case",
       "name": "calibrated-wallet-rpc-settlement-forks-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "20 000",
+          "exact": "8 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20 000",
+          "num": "8 950",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2534,15 +2534,15 @@
       "scope": "one pn-wallet::rpc::settlement_forks case"
     },
     {
-      "budget_ms": 5000,
+      "budget_ms": 3000,
       "category": "case",
       "name": "calibrated-wallet-rpc-signed-reads-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 000",
+          "exact": "3 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 000",
+          "num": "3 000",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2557,15 +2557,15 @@
       "scope": "one pn-wallet::rpc::signed_reads case"
     },
     {
-      "budget_ms": 1000,
+      "budget_ms": 850,
       "category": "case",
       "name": "calibrated-wallet-rpc-cookie-descriptor-cases-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 000",
+          "exact": "850",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 000",
+          "num": "850",
           "num_exact": true,
           "num_relation": "="
         }
@@ -2603,15 +2603,15 @@
       "scope": "one pn-wallet::rpc_http::tests::acquisition_cases case"
     },
     {
-      "budget_ms": 7500,
+      "budget_ms": 9900,
       "category": "case",
       "name": "calibrated-wallet-wire-wire-compatibility-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "7 500",
+          "exact": "9 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7 500",
+          "num": "9 900",
           "num_exact": true,
           "num_relation": "="
         }
