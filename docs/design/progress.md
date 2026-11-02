@@ -1,6 +1,6 @@
 # Specification realization tracker at network-v0.31.1 · `reg:progress:overview`
 
-**Convention (Citation coverage)** · `conv:progress:citation-coverage` This tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record cites the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join.
+**Convention (Citation coverage)** · `conv:progress:citation-coverage` This tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record cites the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a citation to one clause does not claim coverage of the others. Shared vocabulary alone is insufficient. Sibling labels are checked against the same criterion, with uncovered clauses distinguished from adopted ones. Citation placement follows the design, never a desired evidence status.
 
 **Convention (Evidence routes)** · `conv:progress:evidence-routes` A statement count is useful only when its route to executed evidence is inspectable. This tracker joins exact inventory labels to labelled design paragraphs harvested by the claim checker and to the cites field of the named design-constants carrier. A paragraph mention is an ordinary PAPER citation or an exact doubled-delimiter inventory label; a constant mention is its whole cites field and retains its constant id. Four route kinds distinguish the evidence: obligation joins a record that is itself a scoped-passed obligation, once per obligation, with its claim count retained in the obligation table; site-claim joins a test site's exact citation of the mentioning record; record-claim joins an exact paper label and an exact claim citation or exhibit in the same sentence of a mentioning record; record joins a mentioning record and scoped obligation when a cited claim occurs only in a separate sentence. Sentence boundaries are periods, question marks or exclamation marks followed by whitespace or the paragraph end, and line endings, outside Markdown code spans; punctuation inside a label or code span does not divide a sentence. The same sentence is the existing prose boundary that says which evidence witnesses which statement, without inferring a relation from neighbouring topics. A bare claim exhibit must resolve to one qualified claim identity across the checked claims; ambiguous names refuse rather than guessing a package. Site-claim and record-claim routes retain the individual claim and its scoped-passed obligation. Record routes are record-granular, rendered separately once per record and obligation with their claim count in the support table; they do not realize a label. The record-granular support sub-count counts only statements without a realized route and overlaps held or designed, never realized. A claim must pass all registered executions and combined members; an obligation route requires every declared claim to pass. Obligation routes are obligation-granular: they do not assert that every member claim witnesses every paper label. A constant mention alone cannot create execution evidence. These relations use the checked evidence of (`rule:testing:results`); planned names and manually written implementation-status prose supply no evidence.
 
@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 27 | 37 | 264 | 9 | 36 | 1 028 |
+| implementation | 1 356 | 27 | 43 | 300 | 9 | 36 | 986 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -29,7 +29,7 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 | pn-epoch | 371 | 7 | 7 | 82 | 2 | 19 | 275 |
-| pn-graph | 223 | 1 | 1 | 27 | 0 | 8 | 194 |
+| pn-graph | 223 | 1 | 7 | 63 | 0 | 8 | 152 |
 | pn-host | 166 | 0 | 11 | 30 | 1 | 1 | 125 |
 | pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
 | pn-records | 218 | 0 | 9 | 76 | 1 | 4 | 133 |
@@ -47,7 +47,7 @@
 | execwrap | 62 | 0 |
 | pn-act-profile | 11 | 0 |
 | pn-epoch | 38 | 14 |
-| pn-graph | 74 | 33 |
+| pn-graph | 74 | 34 |
 | pn-host | 19 | 0 |
 | pn-interchange | 25 | 0 |
 | pn-readouts | 0 | 0 |
@@ -66,15 +66,15 @@
 | 1 | 15 | 0 | 3 | 11 | 0 | 0 | 1 |
 | 2 | 31 | 2 | 2 | 27 | 0 | 0 | 0 |
 | 3 | 20 | 0 | 2 | 17 | 0 | 4 | 1 |
-| 4 | 23 | 0 | 2 | 20 | 0 | 6 | 1 |
+| 4 | 32 | 0 | 8 | 23 | 0 | 6 | 1 |
 | 5 | 34 | 9 | 4 | 20 | 0 | 3 | 1 |
 | 6 | 17 | 2 | 4 | 10 | 0 | 3 | 1 |
 | 7 | 26 | 1 | 3 | 20 | 0 | 1 | 2 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | 9 | 7 | 1 | 4 | 2 | 0 | 0 | 0 |
-| 10 | 5 | 0 | 4 | 1 | 0 | 0 | 0 |
+| 10 | 8 | 0 | 4 | 4 | 0 | 0 | 0 |
 | 11 | 79 | 9 | 19 | 50 | 0 | 5 | 1 |
-| unlinked | 1 545 | 18 | 17 | 184 | 15 | 23 | 1 326 |
+| unlinked | 1 533 | 18 | 17 | 214 | 15 | 23 | 1 284 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -84,12 +84,12 @@
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 11 | 2 | 30 | 6 | 0 | 175 |
-| function | 216 | 3 | 4 | 54 | 0 | 14 | 155 |
-| invariant check | 517 | 10 | 12 | 91 | 2 | 15 | 404 |
+| function | 216 | 3 | 7 | 83 | 0 | 14 | 123 |
+| invariant check | 517 | 10 | 15 | 97 | 2 | 15 | 395 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
 | policy | 265 | 3 | 14 | 34 | 6 | 4 | 214 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
-| type | 92 | 0 | 4 | 42 | 0 | 2 | 46 |
+| type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -414,7 +414,7 @@
 | ``rem:graph:erasure-floor`` | pn-host; policy | designed | ``ROOT::amend:identity:act-concealment`` | | | |  | |
 | ``subsec:graph:sentiment-slice`` | pn-host; policy | designed | ``CONSTANTS::const.graph.sigmoid_floor`` | | | |  | |
 | ``def:graph:sentiment-slice`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
-| ``eq:graph:sentiment-slice`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:graph:sentiment-slice`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
 | ``rem:graph:marginal-archetypes`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``subsec:graph:rank-two-structure`` | pn-verification; fixture | unassigned | | | | |  | |
 | ``prop:graph:rank-two-constraint`` | pn-graph; invariant check | designed | ``CONSTANTS::bound.graph.svd_energy_grid`` ``CONSTANTS::bound.graph.svd_energy_grid_restricted`` ``CONSTANTS::bound.graph.svd_ratio_grid`` | | | |  | |
@@ -425,14 +425,14 @@
 | ``case:graph:rank-two-constraint-restricted-mask`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``ins:graph:rank-two-structural-consequence`` | pn-graph; policy | unassigned | | | | |  | |
 | ``subsec:graph:three-interfaces`` | pn-graph; policy | unassigned | | | | |  | |
-| ``def:graph:dual-view-architecture`` | pn-graph; type | unassigned | | | | |  | |
+| ``def:graph:dual-view-architecture`` | pn-graph; type | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
 | ``tbl:graph:computational-interfaces`` | pn-graph; policy | unassigned | | | | |  | |
 | ``subsec:graph:path-view-and-signed-svd`` | pn-graph; type | unassigned | | | | |  | |
 | ``def:graph:path-view-extraction`` | pn-graph; function | designed | ``CONSTANTS::const.activation.eta_sq`` ``CONSTANTS::const.graph.bleed`` ``CONSTANTS::const.graph.halffloor`` ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
-| ``eq:graph:path-view-extraction`` | pn-graph; function | unassigned | | | | |  | |
-| ``case:graph:path-view-extraction-full-or-minimal`` | pn-graph; function | unassigned | | | | |  | |
-| ``case:graph:path-view-extraction-half-corner`` | pn-graph; function | unassigned | | | | |  | |
-| ``case:graph:path-view-extraction-half-off-corner`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:graph:path-view-extraction`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``case:graph:path-view-extraction-full-or-minimal`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``case:graph:path-view-extraction-half-corner`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``case:graph:path-view-extraction-half-off-corner`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
 | ``def:graph:signed-svd`` | pn-graph; function | unassigned | | | | |  | |
 | ``eq:graph:signed-svd`` | pn-graph; function | unassigned | | | | |  | |
 | ``lem:graph:signed-svd-uniqueness`` | pn-graph; invariant check | unassigned | | | | |  | |
@@ -459,12 +459,12 @@
 | ``case:graph:path-view-determinant-bound-identity-mask`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:graph:path-view-determinant-bound-minimal-mask`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:graph:path-view-determinant-bound-half-tier`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``lem:graph:tier-floor-sign-invariance`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``lem:graph:tier-floor-sign-invariance`` | pn-graph; invariant check | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | |
 | ``lem:graph:quadrant-law`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``rem:graph:sign-semantics`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``subsec:graph:augmented-tensor`` | pn-epoch; invariant check | unassigned | | | | |  | |
-| ``def:graph:augmented-tensor`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:graph:augmented-tensor`` | pn-graph; function | unassigned | | | | |  | |
+| ``def:graph:augmented-tensor`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``eq:graph:augmented-tensor`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
 | ``thm:graph:maturity-amplification`` | pn-graph; invariant check | designed | ``CONSTANTS::const.activation.coherence_cap`` | | | |  | |
 | ``subsec:graph:path-composition`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``def:graph:path-matrix`` | pn-graph; function | unassigned | | | | |  | |
@@ -545,11 +545,11 @@
 | ``def:graph:act-finalization-epoch`` | pn-records; function | designed | ``ROOT::alg:design:title`` | | | | 4 | |
 | ``def:graph:act-envelope`` | pn-records; type | unassigned | | | | |  | |
 | ``def:graph:settlement-recognition`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::alg:design:title`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | |
-| ``itm:graph:settlement-recognition-completeness`` | pn-graph; function | unassigned | | | | |  | |
+| ``itm:graph:settlement-recognition-completeness`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``itm:graph:settlement-recognition-reference-binding`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::open:design:noncompliant-logical-time`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``itm:graph:settlement-recognition-authorization`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::open:design:settlement-partner-clause`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
-| ``itm:graph:settlement-recognition-buyer-consent`` | pn-graph; function | unassigned | | | | |  | |
-| ``itm:graph:settlement-recognition-seller-consent`` | pn-graph; function | unassigned | | | | |  | |
+| ``itm:graph:settlement-recognition-buyer-consent`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
+| ``itm:graph:settlement-recognition-seller-consent`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``itm:graph:settlement-recognition-well-formedness`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::open:design:noncompliant-logical-time`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``rem:graph:title-order-irrelevance`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | | ``ROOT::amend:design:bite-four-close``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
 | ``post:graph:boundary-accountability`` | pn-host; certificate | designed | ``ROOT::amend:design:candidate-admission-boundary`` | | | |  | |
@@ -560,7 +560,7 @@
 | ``thm:graph:epoch-title-fold`` | pn-graph; function | designed | ``GRAPH::def:formation:boundary-title`` ``ROOT::alg:design:title`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | | ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | |
 | ``rem:graph:regret-window`` | pn-host; policy | unassigned | | | | |  | |
 | ``rem:graph:cancellation-best-effort`` | pn-host; policy | unassigned | | | | |  | |
-| ``thm:graph:settlement-order-freeness`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``thm:graph:settlement-order-freeness`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``thm:graph:no-death-by-inaction`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``rem:graph:causal-locality-principle`` | pn-graph; policy | unassigned | | | | |  | |
 | ``rem:graph:settlement-reputation`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -572,11 +572,11 @@
 | ``sec:nodes`` | none; none | unassigned | | | | |  | |
 | ``subsec:nodes:universal-principles`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``post:nodes:canonical-tensor-pipeline`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` ``ROOT::alg:design:geometry`` | | | | 3 | |
-| ``step:nodes:canonical-tensor-pipeline-role-assignment`` | pn-graph; function | unassigned | | | | |  | |
-| ``step:nodes:canonical-tensor-pipeline-extended-slice`` | pn-graph; function | unassigned | | | | |  | |
-| ``step:nodes:canonical-tensor-pipeline-path-view`` | pn-graph; function | unassigned | | | | |  | |
-| ``step:nodes:canonical-tensor-pipeline-temporal-augmentation`` | pn-graph; function | unassigned | | | | |  | |
-| ``step:nodes:canonical-tensor-pipeline-interface-extraction`` | pn-graph; function | unassigned | | | | |  | |
+| ``step:nodes:canonical-tensor-pipeline-role-assignment`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``step:nodes:canonical-tensor-pipeline-extended-slice`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``step:nodes:canonical-tensor-pipeline-path-view`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``step:nodes:canonical-tensor-pipeline-temporal-augmentation`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
+| ``step:nodes:canonical-tensor-pipeline-interface-extraction`` | pn-graph; function | designed | ``GRAPH::alg:formation:tensor-pipeline`` | | | |  | |
 | ``rem:nodes:row-collapse`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``subsec:nodes:standing-recipient-resolution`` | pn-epoch; policy | unassigned | | | | |  | |
 | ``rem:nodes:coherence-does-not-allocate`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -621,9 +621,9 @@
 | ``def:nodes:raw-profile-bridge-amplification`` | pn-readouts; function | unassigned | | | | |  | |
 | ``eq:nodes:commitment-amplification-product`` | pn-graph; function | unassigned | | | | |  | |
 | ``edge:nodes:opinion`` | pn-records; type | designed | ``GRAPH::def:formation:opinion`` ``ROOT::amend:design:opinion-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:opinion`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:opinion`` | pn-graph; function | designed | ``GRAPH::def:formation:opinion`` | | | |  | |
 | ``edge:nodes:affinity`` | pn-records; type | designed | ``ROOT::amend:design:formed-reference-conformance`` | | | |  | |
-| ``eq:nodes:path-view:affinity`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:affinity`` | pn-graph; function | designed | ``GRAPH::def:formation:affinity`` | | | |  | |
 | ``edge:nodes:participant`` | pn-records; type | designed | ``GRAPH::def:formation:participant`` ``ROOT::amend:design:participant-formation-scope`` | | | |  | |
 | ``case:nodes:participant-found`` | pn-records; type | unassigned | | | | |  | |
 | ``case:nodes:participant-join`` | pn-records; type | unassigned | | | | |  | |
@@ -637,32 +637,32 @@
 | ``edge:nodes:owner`` | pn-records; type | designed | ``GRAPH::def:formation:owner`` ``ROOT::amend:design:owner-formation-scope`` | | | |  | |
 | ``eq:nodes:path-view:owner`` | pn-graph; function | unassigned | | | | |  | |
 | ``edge:nodes:join-request`` | pn-records; type | designed | ``GRAPH::def:formation:join-request`` ``ROOT::amend:design:join-request-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:join-request`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:join-request`` | pn-graph; function | designed | ``GRAPH::def:formation:join-request`` | | | |  | |
 | ``edge:nodes:accept`` | pn-records; type | designed | ``GRAPH::def:formation:settlement`` ``ROOT::amend:design:settlement-formation-scope`` | | | ``ROOT::amend:design:settlement-formation-scope``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
-| ``eq:nodes:path-view:accept`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:accept`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement`` | | | |  | |
 | ``edge:nodes:ratify`` | pn-records; type | designed | ``GRAPH::def:formation:settlement`` ``ROOT::amend:design:settlement-formation-scope`` | | | ``ROOT::amend:design:settlement-formation-scope``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | |
-| ``eq:nodes:path-view:ratify`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:ratify`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement`` | | | |  | |
 | ``edge:nodes:withdraw`` | pn-records; type | designed | ``GRAPH::def:formation:withdraw`` ``ROOT::amend:design:withdraw-formation-scope`` | | | |  | |
 | ``edge:nodes:rescind`` | pn-records; type | designed | ``GRAPH::def:formation:rescind`` ``ROOT::amend:design:rescind-formation-scope`` | | | |  | |
 | ``edge:nodes:leave`` | pn-records; type | designed | ``GRAPH::def:formation:leave`` ``ROOT::amend:design:leave-formation-scope`` | | | |  | |
 | ``subsec:nodes:hyper-edges`` | pn-records; type | unassigned | | | | |  | |
 | ``edge:nodes:hyper-tag`` | pn-records; type | designed | ``GRAPH::def:formation:tag`` | | | |  | |
-| ``eq:nodes:path-view:tag-l1`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:tag-l2`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:tag-l1`` | pn-graph; function | designed | ``GRAPH::def:formation:tag`` | | | |  | |
+| ``eq:nodes:path-view:tag-l2`` | pn-graph; function | designed | ``GRAPH::def:formation:tag`` | | | |  | |
 | ``edge:nodes:hyper-review`` | pn-records; type | designed | ``GRAPH::def:formation:review`` | | | |  | |
-| ``eq:nodes:path-view:review-l1`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:review-l2`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:review-l1`` | pn-graph; function | designed | ``GRAPH::def:formation:review`` | | | |  | |
+| ``eq:nodes:path-view:review-l2`` | pn-graph; function | designed | ``GRAPH::def:formation:review`` | | | |  | |
 | ``edge:nodes:hyper-bid`` | pn-records; type | designed | ``GRAPH::def:formation:bid`` ``ROOT::amend:design:bid-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:bid-l1`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:bid-l2`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:bid-l1`` | pn-graph; function | designed | ``GRAPH::def:formation:bid`` | | | |  | |
+| ``eq:nodes:path-view:bid-l2`` | pn-graph; function | designed | ``GRAPH::def:formation:bid`` | | | |  | |
 | ``cor:nodes:bid-leg-parity`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:bid`` | | | |  | |
 | ``edge:nodes:hyper-invitation`` | pn-records; type | designed | ``GRAPH::def:formation:invitation`` ``ROOT::amend:design:invitation-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:invitation-l1`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:invitation-l2`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:invitation-l1`` | pn-graph; function | designed | ``GRAPH::def:formation:invitation`` | | | |  | |
+| ``eq:nodes:path-view:invitation-l2`` | pn-graph; function | designed | ``GRAPH::def:formation:invitation`` | | | |  | |
 | ``edge:nodes:hyper-deinvite`` | pn-records; type | designed | ``GRAPH::def:formation:deinvite`` ``ROOT::amend:design:deinvite-formation-scope`` | | | |  | |
 | ``edge:nodes:hyper-reference`` | pn-records; type | designed | ``GRAPH::def:formation:reference`` ``ROOT::amend:design:reference-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:reference-l1`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:reference-l2`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:reference-l1`` | pn-graph; function | designed | ``GRAPH::def:formation:reference`` | | | |  | |
+| ``eq:nodes:path-view:reference-l2`` | pn-graph; function | designed | ``GRAPH::def:formation:reference`` | | | |  | |
 | ``rem:nodes:reference-author-allocation`` | pn-epoch; invariant check | unassigned | | | | |  | |
 | ``rem:nodes:departure-composes-with-opinion`` | pn-records; policy | unassigned | | | | |  | |
 | ``rem:nodes:chat-proposals-do-not-participate`` | pn-epoch; invariant check | unassigned | | | | |  | |
@@ -670,8 +670,8 @@
 | ``rem:nodes:membership-is-terminal`` | pn-host; policy | unassigned | | | | |  | |
 | ``rem:nodes:membership-not-chain-ordered`` | none; none | unassigned | | | | |  | |
 | ``edge:nodes:hyper-send`` | pn-records; type | designed | ``GRAPH::def:formation:send`` ``ROOT::amend:design:send-formation-scope`` | | | |  | |
-| ``eq:nodes:path-view:send-a`` | pn-graph; function | unassigned | | | | |  | |
-| ``eq:nodes:path-view:send-t`` | pn-graph; function | unassigned | | | | |  | |
+| ``eq:nodes:path-view:send-a`` | pn-graph; function | designed | ``GRAPH::def:formation:send`` | | | |  | |
+| ``eq:nodes:path-view:send-t`` | pn-graph; function | designed | ``GRAPH::def:formation:send`` | | | |  | |
 | ``prop:nodes:self-loop-neutral`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``step:nodes:self-loop-neutral-max-product`` | pn-readouts; invariant check | unassigned | | | | |  | |
 | ``step:nodes:self-loop-neutral-parity`` | pn-readouts; invariant check | unassigned | | | | |  | |
@@ -1632,10 +1632,10 @@
 | ``case:necessity:three-step-settlement-accept-commit`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:explicit-cancels`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:explicit-cancels-expiry`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``subsec:necessity:mutual-consumption`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``case:necessity:mutual-consumption-order-tiebreak`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``case:necessity:mutual-consumption-permanent-void`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``subsec:necessity:epoch-quantized-consent`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``subsec:necessity:mutual-consumption`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | |
+| ``case:necessity:mutual-consumption-order-tiebreak`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | |
+| ``case:necessity:mutual-consumption-permanent-void`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | |
+| ``subsec:necessity:epoch-quantized-consent`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``case:necessity:epoch-quantized-consent-instant-commit`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:epoch-quantized-consent-arrival-order`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:epoch-quantized-consent-asserted-time`` | pn-graph; invariant check | unassigned | | | | |  | |
@@ -1659,11 +1659,11 @@
 | ``case:necessity:declarative-item-identity-external-registry`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:handshake-actor-incidence`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:handshake-actor-incidence-profile-handshake`` | pn-records; invariant check | unassigned | | | | |  | |
-| ``subsec:necessity:settlement-half-routing`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``subsec:necessity:settlement-half-routing`` | pn-graph; invariant check | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | |
 | ``case:necessity:settlement-half-routing-full-routing`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:settlement-half-routing-auction-gravity`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``case:necessity:settlement-half-routing-endorsement-injection`` | pn-graph; invariant check | unassigned | | | | |  | |
-| ``case:necessity:settlement-half-routing-minimal-routing`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``case:necessity:settlement-half-routing-minimal-routing`` | pn-graph; invariant check | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | |
 | ``subsec:necessity:binary-join-request`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:binary-join-request-ternary-request`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:invitation-profile-terminus`` | pn-records; invariant check | unassigned | | | | |  | |
@@ -1704,7 +1704,7 @@
 | ``case:necessity:authoritative-order-local-linearization`` | pn-host; invariant check | unassigned | | | | |  | |
 | ``subsec:necessity:retained-commitment`` | pn-records; invariant check | unassigned | | | | |  | |
 | ``case:necessity:retained-commitment-remove-residue`` | pn-records; invariant check | unassigned | | | | |  | |
-| ``subsec:necessity:title-order-separation`` | pn-graph; invariant check | unassigned | | | | |  | |
+| ``subsec:necessity:title-order-separation`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | |
 | ``case:necessity:title-order-separation-host-title-tiebreak`` | pn-graph; invariant check | unassigned | | | | |  | |
 | ``app:deployment`` | pn-verification; none | unassigned | | | | |  | |
 | ``subsec:deployment:public-availability`` | pn-host; policy | unassigned | | | | |  | |
