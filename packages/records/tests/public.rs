@@ -1,3 +1,5 @@
+#[path = "../../documents/src/design_constants.rs"]
+mod design_constants;
 #[path = "../../documents/src/pins_records.rs"]
 pub mod pins;
 

@@ -171,6 +171,11 @@
         "0.930",
         "0.262"
       ],
+      "calibration_shared_cores": [
+        "3.380",
+        "24.607",
+        "17.144"
+      ],
       "calibration_wall_seconds": [
         "8.274",
         "7.748",
@@ -248,6 +253,32 @@
             "exact_exact": true,
             "exact_relation": "=",
             "num": "0.262",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "calibration_shared_cores": [
+          {
+            "exact": "3.380",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "3.380",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "24.607",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "24.607",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "17.144",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.144",
             "num_exact": true,
             "num_relation": "="
           }
@@ -575,6 +606,10 @@
         "calibration_pressure_percent": {
           "display": "exact",
           "exact_digits": 32
+        },
+        "calibration_shared_cores": {
+          "display": "exact",
+          "exact_digits": 30
         },
         "calibration_wall_seconds": {
           "display": "exact",

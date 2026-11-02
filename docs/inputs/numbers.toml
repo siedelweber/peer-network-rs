@@ -65,13 +65,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-rational-floor"
-value = "3/37"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:reference-cumulative-shape"
 value = "15/8"
 unit = "dimensionless"
@@ -6314,28 +6307,6 @@ value = "1.094"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 30
-
-[[rows]]
-id = "num:numbers:observe-calibration-current-run-1-shared-cores"
-value = "3.380"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 30
-
-[[rows]]
-id = "num:numbers:observe-calibration-current-run-2-shared-cores"
-value = "24.607"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 30
-
-[[rows]]
-id = "num:numbers:observe-calibration-current-run-3-shared-cores"
-value = "17.144"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 30
-
 
 [[rows]]
 id = "num:numbers:observe-record-byte-capacity"

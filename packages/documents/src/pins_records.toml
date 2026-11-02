@@ -44,7 +44,3 @@ value = "8"
 [[rows]]
 id = "num:numbers:records-numeric-case-count"
 value = "6"
-
-[[rows]]
-id = "num:numbers:reference-rational-floor"
-value = "3/37"

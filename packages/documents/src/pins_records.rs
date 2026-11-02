@@ -25,11 +25,9 @@ pub enum NumberId {
     NumbersRecordsDagWordCapacity,
     /// Registry id: num:numbers:records-numeric-case-count.
     NumbersRecordsNumericCaseCount,
-    /// Registry id: num:numbers:reference-rational-floor.
-    NumbersReferenceRationalFloor,
 }
 
-const OFFSETS: [(usize, usize); 12] = [
+const OFFSETS: [(usize, usize); 11] = [
     (136, 138),
     (204, 205),
     (274, 276),
@@ -41,7 +39,6 @@ const OFFSETS: [(usize, usize); 12] = [
     (688, 689),
     (755, 756),
     (823, 824),
-    (889, 893),
 ];
 
 impl NumberId {

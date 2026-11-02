@@ -125,19 +125,6 @@
     },
     {
       "display": "exact",
-      "exact": "3/37",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:reference-rational-floor",
-      "num": "3/37",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "3/37"
-    },
-    {
-      "display": "exact",
       "exact": "15/8",
       "exact_digits": 24,
       "exact_exact": true,
@@ -11193,45 +11180,6 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "1.094"
-    },
-    {
-      "display": "exact",
-      "exact": "3.380",
-      "exact_digits": 30,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:observe-calibration-current-run-1-shared-cores",
-      "num": "3.380",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "3.380"
-    },
-    {
-      "display": "exact",
-      "exact": "24.607",
-      "exact_digits": 30,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:observe-calibration-current-run-2-shared-cores",
-      "num": "24.607",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "24.607"
-    },
-    {
-      "display": "exact",
-      "exact": "17.144",
-      "exact_digits": 30,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:observe-calibration-current-run-3-shared-cores",
-      "num": "17.144",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "17.144"
     },
     {
       "display": "exact",
