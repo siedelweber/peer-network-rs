@@ -2511,6 +2511,29 @@
       },
       "reason": "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged.",
       "scope": "one pn-wallet::wire::wire_compatibility case"
+    },
+    {
+      "budget_ms": 1750,
+      "category": "case",
+      "name": "calibrated-title-exhaustive-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 750",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 750",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The exhaustive two-boundary alphabet retains every history, the baseline and five parent, stamp or dependency variations in both input orders, independent truth-table assertions, and comparison of every retained clause and event. The allowance covers this serial reconstruction cost without sampling or dropping a variation.",
+      "scope": "one pn-verification::title::title_exhaustive case"
     }
   ]
 }

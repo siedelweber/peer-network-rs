@@ -4308,6 +4308,12 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-verification::title::title_exhaustive": "The complete two-boundary alphabet retains the baseline and five fault variations in both input orders, with independently checked clauses, ownership, consumption and events."
+      },
+      "case_budgets": {
+        "pn-verification::title::title_exhaustive": "calibrated-title-exhaustive-case"
+      },
       "cases": [
         "pn-verification::title::title_shared_cases",
         "pn-verification::title::title_exhaustive",
