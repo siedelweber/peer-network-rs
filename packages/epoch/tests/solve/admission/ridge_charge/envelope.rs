@@ -24,6 +24,12 @@ fn ridge_envelope_consumption() {
     let evidence = proof(NumberId::NumbersRidgeCertificatePrecision);
     assert!(unchecked(&evidence).is_ok());
     let mut changed = evidence.clone();
+    changed.analytic_premises = "unknown-ridge-premises".into();
+    assert_eq!(unchecked(&changed), Err(NumericError::RidgeDefinition));
+    changed = evidence.clone();
+    changed.record.input.definition.schema = "different-record-input".into();
+    assert_eq!(unchecked(&changed), Err(NumericError::RidgeEvidence));
+    changed = evidence.clone();
     changed.input.definition.schema = "unknown-ridge".into();
     changed.record.input = changed.input.clone();
     assert_eq!(unchecked(&changed), Err(NumericError::RidgeDefinition));
