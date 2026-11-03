@@ -3,6 +3,7 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "ROOT::dec:api:encoding-boundary"
+witnessed_labels = []
 path = "adr/018-public-api.md"
 status = "held"
 claims = []
@@ -15,6 +16,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:api:graphql"
+witnessed_labels = []
 path = "adr/018-public-api.md"
 status = "held"
 claims = []
@@ -27,6 +29,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:api:schema"
+witnessed_labels = []
 path = "adr/018-public-api.md"
 status = "held"
 claims = []
@@ -39,6 +42,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:compatibility:history"
+witnessed_labels = []
 path = "adr/014-forward-only-development.md"
 status = "held"
 claims = []
@@ -51,6 +55,7 @@ closing_step = "Durable storage implementation slice before its first history co
 
 [[rows]]
 name = "ROOT::dec:decomposition:bites"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -63,6 +68,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:burn"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -75,6 +81,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:constants"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -87,6 +94,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:crates"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -99,6 +107,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:encoding"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -111,6 +120,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:fixtures"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -123,6 +133,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:decomposition:numbers"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -135,6 +146,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:admission"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -147,6 +159,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:burn-boundary"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -159,6 +172,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:certificate"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -171,6 +185,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:complete-acts"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -183,6 +198,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:conservation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -195,6 +211,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:constants"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -207,6 +224,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:final-membership"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -219,6 +237,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:final-state"
+witnessed_labels = ["prop:deployment:allocation-input-completeness"]
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings", "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state", "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results", "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table", "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base", "ROOT::claim:discipline:epoch-inputs-retain-observed-results", "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals", "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence", "EPOCH::claim:standing:certified-splits-retain-hop-premises-and-displacement", "EPOCH::claim:standing:saturated-burn-can-lower-own-standing", "EPOCH::claim:standing:saturated-burn-can-lower-reached-standing", "EPOCH::claim:standing:depleted-burn-can-lower-anchor-recipient", "EPOCH::claim:standing:burn-rung-switch-retains-finite-loss-bound", "EPOCH::claim:standing:sole-contributor-burn-increases-throughout-path", "EPOCH::claim:standing:accepted-acts-have-opposite-certified-responses", "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response", "EPOCH::claim:standing:accepted-act-rung-switch-retains-finite-response", "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence", "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration", "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement", "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises", "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages", "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs", "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss", "EPOCH::claim:standing:published-retained-act-has-certified-own-increase"]
@@ -234,6 +253,7 @@ evidence_paragraph = "EPOCH::amend:compiler:bite-five-evidence"
 
 [[rows]]
 name = "ROOT::dec:design:formation-title"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -246,6 +266,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:ledger-vintages"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger", "RECORDS::claim:ledger:later-prices-preserve-charged-vintages", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages"]
@@ -261,6 +282,7 @@ evidence_paragraph = "EPOCH::amend:compiler:bite-five-evidence"
 
 [[rows]]
 name = "ROOT::dec:design:policy-schedules"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -273,6 +295,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:public-inputs"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -285,6 +308,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:publication"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -297,6 +321,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:raw-readings"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -309,6 +334,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:replay"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -321,6 +347,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:rung-verdicts"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -333,6 +360,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:terminal-separation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -345,6 +373,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:devnet:elements"
+witnessed_labels = []
 path = "adr/019-development-network.md"
 status = "held"
 claims = []
@@ -357,6 +386,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:devnet:release"
+witnessed_labels = []
 path = "adr/019-development-network.md"
 status = "held"
 claims = []
@@ -369,6 +399,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:devperf:feedback"
+witnessed_labels = []
 path = "adr/021-development-performance.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:category-controls-classification"]
@@ -383,6 +414,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-devperf-feedback"
 
 [[rows]]
 name = "ROOT::dec:devperf:profiles"
+witnessed_labels = []
 path = "adr/021-development-performance.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:devperf:gate-profile-guards"]
@@ -397,6 +429,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-devperf-profiles"
 
 [[rows]]
 name = "ROOT::dec:harness:client-packages"
+witnessed_labels = []
 path = "adr/020-testing-harness.md"
 status = "held"
 claims = []
@@ -409,6 +442,7 @@ closing_step = "Client harness slice"
 
 [[rows]]
 name = "ROOT::dec:harness:client-schema"
+witnessed_labels = []
 path = "adr/020-testing-harness.md"
 status = "held"
 claims = []
@@ -421,6 +455,7 @@ closing_step = "Client harness slice"
 
 [[rows]]
 name = "ROOT::dec:harness:levels"
+witnessed_labels = []
 path = "adr/020-testing-harness.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:dropped-case-refused"]
@@ -435,6 +470,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-harness-levels"
 
 [[rows]]
 name = "ROOT::dec:labels:policy"
+witnessed_labels = []
 path = "adr/001-label-calculus.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:declaration-authority"]
@@ -449,6 +485,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-labels-policy"
 
 [[rows]]
 name = "ROOT::dec:lint:policy"
+witnessed_labels = []
 path = "adr/005-lint-discipline.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:configuration-cannot-relax-lints"]
@@ -463,6 +500,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-lint-policy"
 
 [[rows]]
 name = "ROOT::dec:observe:foundation"
+witnessed_labels = []
 path = "adr/016-observability.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:public-bodies-require-parsed-boundaries", "ROOT::claim:discipline:semantic-review-is-bound-to-source"]
@@ -477,6 +515,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-observe-foundation
 
 [[rows]]
 name = "ROOT::dec:observe:secrets"
+witnessed_labels = []
 path = "adr/016-observability.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:secret-carriers-reject-printable-traits"]
@@ -491,6 +530,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-observe-secrets"
 
 [[rows]]
 name = "ROOT::dec:observe:sinks"
+witnessed_labels = []
 path = "adr/016-observability.md"
 status = "scoped-supported"
 claims = ["CLICOMMON::claim:cli:observation-loss-is-nonbinding", "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion", "CLICOMMON::claim:cli:summary-capacity-survives-ordinary-saturation"]
@@ -505,6 +545,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-observe-sinks"
 
 [[rows]]
 name = "ROOT::dec:output:policy"
+witnessed_labels = []
 path = "adr/004-command-line-output-contract.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:cli:control-records", "DOCUMENTS::claim:cli:terminal-refusal", "DOCUMENTS::claim:cli:clean-result", "DOCUMENTS::claim:cli:finding-status", "DOCUMENTS::claim:cli:runtime-error", "DOCUMENTS::claim:cli:panic-proxy"]
@@ -519,6 +560,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-output-policy"
 
 [[rows]]
 name = "ROOT::dec:render:policy"
+witnessed_labels = []
 path = "adr/003-templated-documentation.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:repository-fixed-point", "DOCUMENTS::claim:render:dataset-mutation", "DOCUMENTS::claim:render:stale-rendering", "DOCUMENTS::claim:render:protected-outputs", "DOCUMENTS::claim:envelope:json-model", "DOCUMENTS::claim:render:tracked-census", "DOCUMENTS::claim:render:git-required"]
@@ -533,6 +575,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-render-policy"
 
 [[rows]]
 name = "ROOT::dec:storage:postgresql"
+witnessed_labels = []
 path = "adr/015-durable-storage.md"
 status = "held"
 claims = []
@@ -545,6 +588,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:testing:evidence"
+witnessed_labels = []
 path = "adr/017-claim-based-testing.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:python-edges-require-known-claims"]
@@ -559,6 +603,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-testing-evidence"
 
 [[rows]]
 name = "ROOT::dec:toolchain:compiler"
+witnessed_labels = []
 path = "adr/013-toolchain-and-build-profile.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:toolchain-family-is-consistent", "ROOT::claim:devperf:gate-profile-guards"]
@@ -573,6 +618,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-toolchain-compiler
 
 [[rows]]
 name = "ROOT::dec:toolchain:minimum"
+witnessed_labels = []
 path = "adr/013-toolchain-and-build-profile.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:toolchain-family-is-consistent", "ROOT::claim:devperf:gate-profile-guards"]
@@ -587,6 +633,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-toolchain-minimum"
 
 [[rows]]
 name = "ROOT::dec:toolchain:release"
+witnessed_labels = []
 path = "adr/013-toolchain-and-build-profile.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:toolchain-family-is-consistent", "ROOT::claim:devperf:gate-profile-guards"]
@@ -601,6 +648,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-toolchain-release"
 
 [[rows]]
 name = "ROOT::dec:xchg:cddl-coverage"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:parse:the-standards-corpus-parses", "INTERCHANGE::claim:cddl:every-operator-of-the-subset-is-admitted", "INTERCHANGE::claim:cddl:an-unevaluable-operator-is-refused-wherever-it-stands"]
@@ -615,6 +663,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-cddl-coverage
 
 [[rows]]
 name = "ROOT::dec:xchg:crate-layout"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:harness:interchange-structure-is-declared"]
@@ -629,6 +678,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-crate-layout"
 
 [[rows]]
 name = "ROOT::dec:xchg:evaluable-subset"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:cddl:every-operator-of-the-subset-is-admitted", "INTERCHANGE::claim:cddl:an-unevaluable-operator-is-refused-wherever-it-stands"]
@@ -643,6 +693,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-evaluable-sub
 
 [[rows]]
 name = "ROOT::dec:xchg:float-bits"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form", "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"]
@@ -657,6 +708,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-float-bits"
 
 [[rows]]
 name = "ROOT::dec:xchg:nan-policy"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:encoding:float-acquisition-refuses-noncanonical-nans", "INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form", "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"]
@@ -671,6 +723,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-nan-policy"
 
 [[rows]]
 name = "ROOT::dec:xchg:nesting-policy"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:properties:the-deep-paths-are-iterative", "INTERCHANGE::claim:properties:the-derived-walks-are-iterative-too"]
@@ -685,6 +738,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-nesting-polic
 
 [[rows]]
 name = "ROOT::dec:xchg:prefix-public"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:vectors:public-prefix-extent", "INTERCHANGE::claim:properties:generated-prefix-dispatch-preserves-envelope-routing"]
@@ -699,6 +753,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-prefix-public
 
 [[rows]]
 name = "ROOT::dec:xchg:public-printer"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question"]
@@ -713,6 +768,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-public-printe
 
 [[rows]]
 name = "ROOT::dec:xchg:refused-dependencies"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:harness:interchange-structure-is-declared"]
@@ -727,6 +783,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-refused-depen
 
 [[rows]]
 name = "ROOT::dec:xchg:regexp-engine"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"]
@@ -741,6 +798,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-regexp-engine
 
 [[rows]]
 name = "ROOT::dec:xchg:regexp-seam"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"]
@@ -755,6 +813,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-regexp-seam"
 
 [[rows]]
 name = "ROOT::dec:xchg:registry-loading"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:registry:acquire-all-stops-at-the-first-refusal", "INTERCHANGE::claim:registry:acquire-all-takes-a-whole-ascending-chain"]
@@ -769,6 +828,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-registry-load
 
 [[rows]]
 name = "ROOT::dec:xchg:restraint-enforcement"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:registry:an-implicit-reach-is-refused", "INTERCHANGE::claim:registry:leniency-relaxes-the-reach-alone"]
@@ -783,6 +843,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-restraint-enf
 
 [[rows]]
 name = "ROOT::dec:xchg:slice-sequencing"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "held"
 claims = []
@@ -799,6 +860,7 @@ admission_basis = "review"
 
 [[rows]]
 name = "ROOT::dec:xchg:theory-sharing"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:registry:a-held-theory-is-immutable", "INTERCHANGE::claim:registry:re-acquiring-the-held-theory-changes-nothing"]
@@ -813,6 +875,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-theory-sharin
 
 [[rows]]
 name = "ROOT::dec:xchg:type-identity"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question", "INTERCHANGE::claim:inclusion:an-identity-is-the-expression-and-the-rules-it-reaches"]
@@ -827,6 +890,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-type-identity
 
 [[rows]]
 name = "ROOT::dec:xchg:utf8-policy"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:encoding:a-text-string-must-be-valid-utf8"]
@@ -841,6 +905,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-utf8-policy"
 
 [[rows]]
 name = "ROOT::dec:xchg:value-exhaustive"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:harness:interchange-structure-is-declared"]
@@ -855,6 +920,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-value-exhaust
 
 [[rows]]
 name = "ROOT::gate:api:implementation"
+witnessed_labels = []
 path = "adr/018-public-api.md"
 status = "held"
 claims = []
@@ -867,6 +933,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:compatibility:release"
+witnessed_labels = []
 path = "adr/014-forward-only-development.md"
 status = "held"
 claims = []
@@ -879,6 +946,7 @@ closing_step = "Release qualification; stable upgrade qualification before 1.0"
 
 [[rows]]
 name = "ROOT::gate:decomposition:correspondence"
+witnessed_labels = []
 path = "adr/007-crate-decomposition.md"
 status = "held"
 claims = []
@@ -891,6 +959,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:api-bites"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -903,6 +972,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-1"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["RECORDS::claim:acts:identity-is-structural", "RECORDS::claim:acts:complete-acts-are-counted-once", "RECORDS::claim:acts:duplicates-refuse-and-parallel-identities-survive", "RECORDS::claim:acts:both-co-legs-are-required", "RECORDS::claim:acts:protocol-references-outlive-dependency-removal", "RECORDS::claim:acts:invalid-local-fields-refuse", "RECORDS::claim:acts:removal-belongs-to-act-projections", "RECORDS::claim:acts:references-resolve-against-accepted-history", "RECORDS::claim:acts:opaque-editions-preserve-as-of-selection", "RECORDS::claim:acts:ambiguous-declaration-histories-refuse", "RECORDS::claim:acts:dependency-lists-have-canonical-content", "RECORDS::claim:acts:dependencies-require-earlier-accepted-acts", "RECORDS::claim:acts:history-owns-its-structural-references", "RECORDS::claim:acts:overlapping-closures-retain-complete-inputs", "RECORDS::claim:acts:incomplete-boundary-inputs-refuse", "RECORDS::claim:acts:asserted-parents-are-canonical-and-earlier", "ROOT::claim:discipline:records-entry-is-observed-without-changing-results", "RECORDS::claim:acts:generated-closures-match-independent-search", "RECORDS::claim:acts:single-corruptions-retain-typed-causes", "RECORDS::claim:acts:shared-conformance-preserves-whole-acts", "VERIFICATION::claim:verification:generated-closures-match-independent-search", "VERIFICATION::claim:verification:single-corruptions-retain-typed-causes", "VERIFICATION::claim:verification:shared-conformance-preserves-whole-acts", "ROOT::claim:discipline:generated-records-refusals-retain-outcomes", "TESTKIT::claim:testkit:recorded-seed-replays-a-shrunk-failure"]
@@ -919,6 +989,7 @@ premises = "Finite structural, act-removal, whole-history, canonical dependency 
 
 [[rows]]
 name = "ROOT::gate:design:bite-10"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -931,6 +1002,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-11"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -943,6 +1015,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-2"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -955,6 +1028,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-3"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -967,6 +1041,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-4"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["VERIFICATION::claim:verification:title-voids-dangling-items-and-keeps-faults-as-evidence", "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history", "VERIFICATION::claim:verification:small-title-histories-match-independent-table", "VERIFICATION::claim:verification:recorded-title-cases-match-independent-table", "VERIFICATION::claim:verification:title-replay-preserves-epoch-and-dangling-semantics", "VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults", "VERIFICATION::claim:verification:recognition-preserves-unavailable-time-evidence", "ROOT::claim:discipline:title-suite-retains-observed-evidence"]
@@ -982,6 +1057,7 @@ evidence_paragraph = "VERIFICATION::amend:verification:bite-four-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:bite-5"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings", "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state", "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results", "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table", "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base", "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters", "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger", "RECORDS::claim:ledger:later-prices-preserve-charged-vintages", "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping", "EPOCH::claim:compiler:coefficients-are-exact-or-held-with-numeric-evidence", "EPOCH::claim:compiler:recipients-read-persistent-title-events", "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free", "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum", "EPOCH::claim:compiler:emission-and-support-follow-final-pairs-and-depths", "ROOT::claim:discipline:epoch-inputs-retain-observed-results", "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals", "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence", "EPOCH::claim:standing:certified-splits-retain-hop-premises-and-displacement", "EPOCH::claim:standing:saturated-burn-can-lower-own-standing", "EPOCH::claim:standing:saturated-burn-can-lower-reached-standing", "EPOCH::claim:standing:depleted-burn-can-lower-anchor-recipient", "EPOCH::claim:standing:burn-rung-switch-retains-finite-loss-bound", "EPOCH::claim:standing:sole-contributor-burn-increases-throughout-path", "EPOCH::claim:standing:accepted-acts-have-opposite-certified-responses", "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response", "EPOCH::claim:standing:accepted-act-rung-switch-retains-finite-response", "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence", "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration", "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement", "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises", "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages", "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs", "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss", "EPOCH::claim:standing:published-retained-act-has-certified-own-increase"]
@@ -997,6 +1073,7 @@ evidence_paragraph = "EPOCH::amend:compiler:bite-five-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:bite-6"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees", "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals", "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence", "EPOCH::claim:compiler:endpoint-transport-contains-dense-rational-oracle", "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes", "EPOCH::claim:compiler:projected-residual-replays-conserved-map", "EPOCH::claim:compiler:projected-proposals-keep-hull-and-start-binding", "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises", "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries", "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor", "EPOCH::claim:rungs:rung-selection-respects-certified-verdicts", "GRAPH::claim:numerics:activation-costs-have-exact-resource-boundaries", "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises", "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance", "GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets", "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain", "GRAPH::claim:numerics:primitive-bounds-agree-with-independent-oracles", "GRAPH::claim:numerics:primitive-domains-keep-generalized-slopes-distinct", "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome", "GRAPH::claim:numerics:primitive-limits-retain-actual-work", "EPOCH::claim:compiler:solve-declarations-bind-to-admitted-primitives", "EPOCH::claim:compiler:solve-records-refuse-malformed-procedures", "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption", "EPOCH::claim:transport:transport-preserves-balance-and-count-mass", "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds", "EPOCH::claim:compiler:reference-wall-binding-preserves-charged-price", "GRAPH::claim:numerics:reference-wall-encloses-independent-gain-root", "GRAPH::claim:numerics:reference-wall-retains-measured-work", "GRAPH::claim:numerics:reference-wall-refuses-unproved-signs-and-replay-changes", "GRAPH::claim:numerics:reference-wall-certifies-floor-deadband-and-policy", "EPOCH::claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual", "GRAPH::claim:numerics:enclosed-wall-clamp-retains-independent-coordinate", "EPOCH::claim:compiler:two-map-verification-retains-frozen-fixture", "GRAPH::claim:numerics:two-map-reference-keeps-box-and-residual-evidence", "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives", "GRAPH::claim:certificate:certified-residuals-enclose-the-selected-solution", "RECORDS::claim:numerics:boundary-comparisons-remain-sound-or-indecisive", "EPOCH::claim:standing:certified-splits-retain-hop-premises-and-displacement", "EPOCH::claim:standing:saturated-burn-can-lower-own-standing", "EPOCH::claim:standing:saturated-burn-can-lower-reached-standing", "EPOCH::claim:standing:depleted-burn-can-lower-anchor-recipient", "EPOCH::claim:standing:burn-rung-switch-retains-finite-loss-bound", "EPOCH::claim:standing:sole-contributor-burn-increases-throughout-path", "EPOCH::claim:standing:accepted-acts-have-opposite-certified-responses", "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response", "EPOCH::claim:standing:accepted-act-rung-switch-retains-finite-response", "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence", "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration", "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement", "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises", "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages", "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs", "EPOCH::claim:numerics:compiled-scaling-retains-width-premises", "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss", "EPOCH::claim:standing:published-retained-act-has-certified-own-increase"]
@@ -1013,6 +1090,7 @@ closing_step = "Bite 6 finite scope closed; named later holds retain their owner
 
 [[rows]]
 name = "ROOT::gate:design:bite-7"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = ["EPOCH::claim:admission:ridge-charge-requires-defining-replay", "EPOCH::claim:admission:both-floors-retain-production-charge-gates", "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs", "EPOCH::claim:admission:candidate-context-retains-separate-authority", "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages", "EPOCH::claim:admission:schedule-covariance-retains-transformed-inputs", "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps", "EPOCH::claim:admission:individual-and-own-gates-cannot-be-averaged", "EPOCH::claim:admission:empty-final-set-has-no-stamp-or-debit", "EPOCH::claim:admission:relational-support-and-uncertainty-do-not-waive-gates", "EPOCH::claim:admission:final-policy-refines-without-guessing", "EPOCH::claim:admission:scheduled-policy-compares-at-the-led-wall", "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall", "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks", "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers", "EPOCH::claim:admission:closure-requires-attested-cause-and-duration", "EPOCH::claim:admission:closure-replay-binds-one-common-context", "EPOCH::claim:admission:individual-straddles-withhold-publication", "EPOCH::claim:admission:real-support-cannot-fund-own-debits", "EPOCH::claim:admission:shared-contract-retains-identical-final-gates"]
@@ -1027,6 +1105,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::gate:design:bite-8"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1039,6 +1118,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:bite-9"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1051,6 +1131,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:claim-foundation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:evidence-exhibits-cannot-claim-support", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
@@ -1065,6 +1146,7 @@ evidence_paragraph = "ROOT::amend:testing:claims-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:dependency-readiness"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1077,6 +1159,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:devnet-bites"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1089,6 +1172,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:document-integrity"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1101,6 +1185,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:domain-entry"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1113,6 +1198,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:harness-bites"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1125,6 +1211,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:harness-foundation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
@@ -1139,6 +1226,7 @@ evidence_paragraph = "TESTKIT::amend:testkit:harness-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:implementation-evidence"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1151,6 +1239,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:design:observability-foundation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["CLICOMMON::claim:cli:artifact-root-is-fixed-before-directory-change", "CLICOMMON::claim:cli:accounting-survives-trace-filtering", "CLICOMMON::claim:cli:all-bootstrap-routes-preserve-configuration-refusal", "CLICOMMON::claim:cli:async-context-follows-polls-not-thread-lifetime", "CLICOMMON::claim:cli:custom-debug-errors-remain-errors", "CLICOMMON::claim:cli:default-emission-retains-problems-and-cost", "CLICOMMON::claim:cli:dropped-futures-record-cancellation-without-a-result", "CLICOMMON::claim:cli:invalid-clock-cannot-change-outcome", "CLICOMMON::claim:cli:large-content-is-addressed-once", "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work", "CLICOMMON::claim:cli:metric-series-are-declared-and-bounded", "CLICOMMON::claim:cli:observation-loss-is-nonbinding", "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop", "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary", "CLICOMMON::claim:cli:public-content-encoding-is-lossless", "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion", "CLICOMMON::claim:cli:secret-carriers-protect-nested-errors", "CLICOMMON::claim:cli:terminal-accounting-distinguishes-incomplete-work", "CLICOMMON::claim:cli:utc-input-never-infers-a-zone", "EXECWRAP::claim:cli:observation-preserves-child-results", "EXECWRAP::claim:cli:public-child-arguments-are-observed", "EXECWRAP::claim:cli:public-child-urls-are-observed", "EXECWRAP::claim:cli:raw-redirect-is-byte-exact", "INTERCHANGE::claim:vectors:deep-debug-retains-public-structure", "ROOT::claim:discipline:coverage-exceptions-are-local-and-witnessed", "ROOT::claim:discipline:coverage-recognition-comes-from-rust-syntax", "ROOT::claim:discipline:four-observation-modes-preserve-command-results", "ROOT::claim:discipline:generated-entry-points-need-explicit-admission", "ROOT::claim:discipline:metric-names-have-one-declaration", "ROOT::claim:discipline:metric-units-and-attributes-are-declared", "ROOT::claim:discipline:operation-identity-matches-its-source", "ROOT::claim:discipline:operation-roster-cannot-retain-stale-items", "ROOT::claim:discipline:public-bodies-require-parsed-boundaries", "ROOT::claim:discipline:secret-carriers-reject-printable-traits", "ROOT::claim:discipline:semantic-review-is-bound-to-source"]
@@ -1165,6 +1254,7 @@ evidence_paragraph = "EXECWRAP::amend:observe:foundation-operation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:performance-foundation"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
@@ -1179,6 +1269,7 @@ evidence_paragraph = "ROOT::amend:testing:performance-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:devnet:implementation"
+witnessed_labels = []
 path = "adr/019-development-network.md"
 status = "held"
 claims = []
@@ -1191,6 +1282,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:devperf:foundation"
+witnessed_labels = []
 path = "adr/021-development-performance.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
@@ -1205,6 +1297,7 @@ evidence_paragraph = "ROOT::amend:testing:performance-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:foundation:verification"
+witnessed_labels = []
 path = "README.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:discipline:public-bodies-require-parsed-boundaries"]
@@ -1219,6 +1312,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-foundation-verifi
 
 [[rows]]
 name = "ROOT::gate:harness:foundation"
+witnessed_labels = []
 path = "adr/020-testing-harness.md"
 status = "scoped-supported"
 claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
@@ -1233,6 +1327,7 @@ evidence_paragraph = "TESTKIT::amend:testkit:harness-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:identity:implementation"
+witnessed_labels = []
 path = "adr/006-identity-adjudication.md"
 status = "held"
 claims = []
@@ -1245,6 +1340,7 @@ closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::gate:kinds:adoption"
+witnessed_labels = []
 path = "adr/002-environment-kinds.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:registry-relation", "DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:repository-fixed-point"]
@@ -1259,6 +1355,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-kinds-adoption"
 
 [[rows]]
 name = "ROOT::gate:labels:implementation"
+witnessed_labels = []
 path = "adr/001-label-calculus.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:duplicate-fixtures-name-both-sites", "ROOT::claim:discipline:fixture-carriers-separate-text-from-evidence", "ROOT::claim:discipline:fixture-import-owner-must-be-registered", "ROOT::claim:discipline:fixture-import-requires-citation-parentheses", "ROOT::claim:discipline:fixture-imports-preserve-owner-boundaries", "ROOT::claim:discipline:fixture-index-cannot-supply-its-target", "ROOT::claim:discipline:fixture-inventory-follows-the-asset", "ROOT::claim:discipline:fixture-kind-warrants-cannot-overlap", "ROOT::claim:discipline:fixture-near-misses-are-not-occurrences", "ROOT::claim:discipline:fixture-no-form-span-is-text", "ROOT::claim:discipline:fixture-projection-is-scoped-to-its-inputs", "ROOT::claim:discipline:fixture-projection-reaches-a-fixed-point", "ROOT::claim:discipline:fixture-reserved-kinds-require-a-profile", "ROOT::claim:discipline:fixture-resolution-requires-a-mint", "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic", "ROOT::claim:discipline:fixture-traversal-order-does-not-select-meaning"]
@@ -1277,6 +1374,7 @@ admission_basis = "executed"
 
 [[rows]]
 name = "ROOT::gate:labels:verification"
+witnessed_labels = []
 path = "adr/001-label-calculus.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:declaration-authority"]
@@ -1291,6 +1389,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-labels-verificati
 
 [[rows]]
 name = "ROOT::gate:lint:verification"
+witnessed_labels = []
 path = "adr/005-lint-discipline.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:configuration-cannot-relax-lints"]
@@ -1305,6 +1404,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-lint-verification
 
 [[rows]]
 name = "ROOT::gate:observe:foundation"
+witnessed_labels = []
 path = "adr/016-observability.md"
 status = "scoped-supported"
 claims = ["CLICOMMON::claim:cli:artifact-root-is-fixed-before-directory-change", "CLICOMMON::claim:cli:accounting-survives-trace-filtering", "CLICOMMON::claim:cli:all-bootstrap-routes-preserve-configuration-refusal", "CLICOMMON::claim:cli:async-context-follows-polls-not-thread-lifetime", "CLICOMMON::claim:cli:custom-debug-errors-remain-errors", "CLICOMMON::claim:cli:default-emission-retains-problems-and-cost", "CLICOMMON::claim:cli:dropped-futures-record-cancellation-without-a-result", "CLICOMMON::claim:cli:invalid-clock-cannot-change-outcome", "CLICOMMON::claim:cli:large-content-is-addressed-once", "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work", "CLICOMMON::claim:cli:metric-series-are-declared-and-bounded", "CLICOMMON::claim:cli:observation-loss-is-nonbinding", "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop", "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary", "CLICOMMON::claim:cli:public-content-encoding-is-lossless", "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion", "CLICOMMON::claim:cli:secret-carriers-protect-nested-errors", "CLICOMMON::claim:cli:terminal-accounting-distinguishes-incomplete-work", "CLICOMMON::claim:cli:utc-input-never-infers-a-zone", "EXECWRAP::claim:cli:observation-preserves-child-results", "EXECWRAP::claim:cli:public-child-arguments-are-observed", "EXECWRAP::claim:cli:public-child-urls-are-observed", "EXECWRAP::claim:cli:raw-redirect-is-byte-exact", "INTERCHANGE::claim:vectors:deep-debug-retains-public-structure", "ROOT::claim:discipline:coverage-exceptions-are-local-and-witnessed", "ROOT::claim:discipline:coverage-recognition-comes-from-rust-syntax", "ROOT::claim:discipline:four-observation-modes-preserve-command-results", "ROOT::claim:discipline:generated-entry-points-need-explicit-admission", "ROOT::claim:discipline:metric-names-have-one-declaration", "ROOT::claim:discipline:metric-units-and-attributes-are-declared", "ROOT::claim:discipline:operation-identity-matches-its-source", "ROOT::claim:discipline:operation-roster-cannot-retain-stale-items", "ROOT::claim:discipline:public-bodies-require-parsed-boundaries", "ROOT::claim:discipline:secret-carriers-reject-printable-traits", "ROOT::claim:discipline:semantic-review-is-bound-to-source"]
@@ -1319,6 +1419,7 @@ evidence_paragraph = "EXECWRAP::amend:observe:foundation-operation-evidence"
 
 [[rows]]
 name = "ROOT::gate:output:verification"
+witnessed_labels = []
 path = "adr/004-command-line-output-contract.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:cli:control-records", "DOCUMENTS::claim:cli:terminal-refusal", "DOCUMENTS::claim:cli:clean-result", "DOCUMENTS::claim:cli:finding-status", "DOCUMENTS::claim:cli:runtime-error", "DOCUMENTS::claim:cli:panic-proxy"]
@@ -1333,6 +1434,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-output-verificati
 
 [[rows]]
 name = "ROOT::gate:render:verification"
+witnessed_labels = []
 path = "adr/003-templated-documentation.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:repository-fixed-point", "DOCUMENTS::claim:render:dataset-mutation", "DOCUMENTS::claim:render:stale-rendering", "DOCUMENTS::claim:render:protected-outputs", "DOCUMENTS::claim:envelope:json-model", "DOCUMENTS::claim:render:tracked-census", "DOCUMENTS::claim:render:git-required"]
@@ -1347,6 +1449,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-render-verificati
 
 [[rows]]
 name = "ROOT::gate:storage:evidence"
+witnessed_labels = []
 path = "adr/015-durable-storage.md"
 status = "held"
 claims = []
@@ -1359,6 +1462,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:testing:foundation"
+witnessed_labels = []
 path = "adr/017-claim-based-testing.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:evidence-exhibits-cannot-claim-support", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
@@ -1373,6 +1477,7 @@ evidence_paragraph = "ROOT::amend:testing:claims-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:toolchain:verification"
+witnessed_labels = []
 path = "adr/013-toolchain-and-build-profile.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:toolchain-family-is-consistent", "ROOT::claim:devperf:gate-profile-guards"]
@@ -1387,6 +1492,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-toolchain-verific
 
 [[rows]]
 name = "ROOT::gate:vision:contract"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1399,6 +1505,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:vision:current-evidence"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1411,6 +1518,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:vision:uncertainty"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1423,6 +1531,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::gate:xchg:concept-review"
+witnessed_labels = []
 path = "adr/009-interchange-concept.md"
 status = "held"
 claims = []
@@ -1439,6 +1548,7 @@ admission_basis = "review"
 
 [[rows]]
 name = "ROOT::gate:xchg:implementation"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts", "INTERCHANGE::claim:vectors:a-canonical-vector-re-encodes-to-its-own-bytes", "INTERCHANGE::claim:vectors:a-refusal-vector-is-refused-where-it-stands"]
@@ -1457,6 +1567,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:entry-interchange-execution"
 
 [[rows]]
 name = "ROOT::req:design:limits"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1469,6 +1580,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:identity:admission-record"
+witnessed_labels = []
 path = "adr/006-identity-adjudication.md"
 status = "held"
 claims = []
@@ -1481,6 +1593,7 @@ closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::req:identity:stop-record"
+witnessed_labels = []
 path = "adr/006-identity-adjudication.md"
 status = "held"
 claims = []
@@ -1493,6 +1606,7 @@ closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::req:interchange:fixed-once"
+witnessed_labels = []
 path = "adr/008-interchange-conventions.md"
 status = "held"
 claims = []
@@ -1509,6 +1623,7 @@ admission_basis = "review"
 
 [[rows]]
 name = "ROOT::req:kinds:attestation-register"
+witnessed_labels = []
 path = "adr/002-environment-kinds.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:registry-relation", "DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:repository-fixed-point"]
@@ -1523,6 +1638,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-kinds-attestation-
 
 [[rows]]
 name = "ROOT::req:vision:admission"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
@@ -1537,6 +1653,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:burn-boundary"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1549,6 +1666,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:certificate"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1561,6 +1679,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:complete-acts"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1573,6 +1692,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:conservation"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1585,6 +1705,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:constants"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1597,6 +1718,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:final-membership"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
@@ -1611,6 +1733,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:final-state"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1623,6 +1746,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:formation-title"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1635,6 +1759,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:ledger-vintages"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1647,6 +1772,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:policy-schedules"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"]
@@ -1661,6 +1787,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::req:vision:public-inputs"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1673,6 +1800,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:publication"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1685,6 +1813,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:raw-readings"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1697,6 +1826,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:replay"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1709,6 +1839,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:rung-verdicts"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1721,6 +1852,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:terminal-separation"
+witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
 claims = []
@@ -1733,6 +1865,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:xchg:determinism"
+witnessed_labels = []
 path = "adr/009-interchange-concept.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names", "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved"]
@@ -1747,6 +1880,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-determinism"
 
 [[rows]]
 name = "ROOT::req:xchg:regexp-guard"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"]
@@ -1761,6 +1895,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-regexp-guard"
 
 [[rows]]
 name = "ROOT::req:xchg:std-only"
+witnessed_labels = []
 path = "adr/009-interchange-concept.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:harness:interchange-structure-is-declared"]
@@ -1775,6 +1910,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-std-only"
 
 [[rows]]
 name = "ROOT::req:xchg:timing"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:result-accounting-is-explicit"]
@@ -1789,6 +1925,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-timing"
 
 [[rows]]
 name = "ROOT::req:xchg:workspace-discipline"
+witnessed_labels = []
 path = "adr/009-interchange-concept.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:harness:interchange-structure-is-declared"]
@@ -1803,6 +1940,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-workspace-dis
 
 [[rows]]
 name = "ROOT::verif:design:api-conformance"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1815,6 +1953,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:burn-disclosures"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1827,6 +1966,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:canonical-package-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1839,6 +1979,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:charged-vintage-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1851,6 +1992,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:client-workflows"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1863,6 +2005,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:closure-partition-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = ["GRAPH::claim:membership:dependency-closures-partition-the-final-act-set", "GRAPH::claim:membership:small-dags-preserve-partition-and-indices", "GRAPH::claim:membership:partition-publication-requires-exact-cover", "GRAPH::claim:membership:invalid-records-never-reach-partition", "GRAPH::claim:membership:generated-partitions-match-set-oracle", "GRAPH::claim:membership:shared-partitions-retain-complete-results", "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks", "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers", "EPOCH::claim:admission:closure-requires-attested-cause-and-duration", "EPOCH::claim:admission:closure-replay-binds-one-common-context"]
@@ -1878,6 +2021,7 @@ evidence_paragraph = "EPOCH::rec:admission:closure-witnesses"
 
 [[rows]]
 name = "ROOT::verif:design:compiler-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings", "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state", "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results", "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table", "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base", "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters", "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger", "RECORDS::claim:ledger:later-prices-preserve-charged-vintages", "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping", "EPOCH::claim:compiler:coefficients-are-exact-or-held-with-numeric-evidence", "EPOCH::claim:compiler:recipients-read-persistent-title-events", "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free", "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum", "EPOCH::claim:compiler:emission-and-support-follow-final-pairs-and-depths", "ROOT::claim:discipline:epoch-inputs-retain-observed-results"]
@@ -1893,6 +2037,7 @@ evidence_paragraph = "EPOCH::amend:compiler:bite-five-evidence"
 
 [[rows]]
 name = "ROOT::verif:design:complete-cause-package"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1905,6 +2050,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:core-standing-properties"
+witnessed_labels = ["ex:epoch:split-showcase", "ex:epoch:split-small"]
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees", "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals", "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence", "EPOCH::claim:transport:transport-preserves-balance-and-count-mass", "EPOCH::claim:standing:certified-splits-retain-hop-premises-and-displacement", "EPOCH::claim:standing:saturated-burn-can-lower-own-standing", "EPOCH::claim:standing:saturated-burn-can-lower-reached-standing", "EPOCH::claim:standing:depleted-burn-can-lower-anchor-recipient", "EPOCH::claim:standing:burn-rung-switch-retains-finite-loss-bound", "EPOCH::claim:standing:sole-contributor-burn-increases-throughout-path", "EPOCH::claim:standing:accepted-acts-have-opposite-certified-responses", "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response", "EPOCH::claim:standing:accepted-act-rung-switch-retains-finite-response", "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence", "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration", "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement", "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises", "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement", "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss", "EPOCH::claim:standing:published-retained-act-has-certified-own-increase", "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages", "EPOCH::claim:numerics:compiled-scaling-retains-width-premises", "EPOCH::claim:compiler:shared-boundary-compiles-retain-fixed-inputs", "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state"]
@@ -1922,6 +2068,7 @@ evidence_paragraph = "EPOCH::amend:compiler:solve-record-evidence"
 
 [[rows]]
 name = "ROOT::verif:design:devnet-conformance"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1934,6 +2081,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:effective-edition-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1946,6 +2094,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:fence-residual-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1958,6 +2107,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:formation-title-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1970,6 +2120,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:gate-unit-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
@@ -1984,6 +2135,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::verif:design:numerical-boundaries"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -1996,6 +2148,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:read-site-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2008,6 +2161,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:reconstruction-mutations"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2020,6 +2174,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:rung-policy-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2032,6 +2187,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:simple-path-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2044,6 +2200,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:storage-history"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2056,6 +2213,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:transport-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2068,6 +2226,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:wall-controller-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs"]
@@ -2082,6 +2241,7 @@ evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
 [[rows]]
 name = "ROOT::verif:design:whole-act-counting"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2094,6 +2254,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:xchg:label-pattern-crosscheck"
+witnessed_labels = []
 path = "adr/010-interchange-design.md"
 status = "scoped-supported"
 claims = ["INTERCHANGE::claim:regexp:the-namespace-pattern-recognizes-labels"]
@@ -2108,6 +2269,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-verif-xchg-label-patte
 
 [[rows]]
 name = "ROOT::verif:testing:foundation-admissions"
+witnessed_labels = []
 path = "adr/017-claim-based-testing.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:registry-relation", "DOCUMENTS::claim:render:repository-fixed-point", "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names", "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved", "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:harness:interchange-structure-is-declared"]
@@ -2122,6 +2284,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:requirement-admissions"
 
 [[rows]]
 name = "ROOT::dec:storage:secret-shim"
+witnessed_labels = []
 path = "adr/015-durable-storage.md"
 status = "held"
 claims = []
@@ -2134,6 +2297,7 @@ closing_step = "Bite 2 storage integration admission before persistence"
 
 [[rows]]
 name = "ROOT::dec:intranet:host-secured-first"
+witnessed_labels = []
 path = "adr/022-host-intranet.md"
 status = "held"
 claims = []
@@ -2146,6 +2310,7 @@ closing_step = "Bite 2 storage integration, wallet integration and telemetry ser
 
 [[rows]]
 name = "ROOT::dec:crypto:base-library"
+witnessed_labels = []
 path = "adr/023-cryptographic-base.md"
 status = "held"
 claims = []
@@ -2158,6 +2323,7 @@ closing_step = "First signing or verifying slice, before operation enablement"
 
 [[rows]]
 name = "ROOT::dec:intranet:signed-tokens"
+witnessed_labels = []
 path = "adr/022-host-intranet.md"
 status = "held"
 claims = []
@@ -2170,6 +2336,7 @@ closing_step = "First token-authenticated service integration before enablement"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-crypto"
+witnessed_labels = []
 case_census = ["exact versions, checksums, unified features and C modules", "pinned toolchain and both C provenance records", "invalid generator, commitment and public-key encodings", "invalid proof metadata and encodings without claiming proof verification", "global-context first use, entropy failure, concurrency, lifetime and fork review", "confinement rejects aliases, re-exports and non-adapter use"]
 path = "adr/019-development-network.md"
 status = "held"
@@ -2183,6 +2350,7 @@ closing_step = "Bite 2 wallet integration, before enabling the adapter"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-layout"
+witnessed_labels = []
 case_census = ["full layout and inclusion with confidential non-evidence transactions", "issuance and peg-in non-evidence layouts and witnesses", "explicit evidence assets and integer amounts; wrong asset or opaque evidence refused", "malformed prefixes, truncated and trailing bytes", "independent decoder and raw vector agreement", "hostile count prefixes and nested allocation measured by counting allocator", "permanent target and run/request binding; missing or altered commitments refused"]
 path = "adr/019-development-network.md"
 status = "scoped-supported"
@@ -2199,6 +2367,7 @@ evidence_paragraph = "WALLET::amend:wallet:layout-evidence"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-profile"
+witnessed_labels = []
 case_census = ["missing service, wrong binary, run, genesis or mode refused", "nontrivial declared challenge and invalid block signature refused by real node", "genesis asset outputs, ownership and fixed stock independently reconciled", "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed", "all supported funding paths and pre-opening transfers audited for distribution bypass", "transfers, fees and grants give zero burn; destruction gives exact amount", "harness producer credential isolated from read-only adapter"]
 path = "adr/019-development-network.md"
 status = "held"
@@ -2212,6 +2381,7 @@ closing_step = "Bite 2 wallet integration, before enabling the adapter"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-settlement"
+witnessed_labels = []
 case_census = ["depth immediately below and at the declared threshold", "shallow replacement and pinned-floor fault", "duplicate outpoints and aliases cannot double count", "wrong policy edition and lineage refused", "missing or ambiguous opening and unavailable evidence refused", "non-development adapter refusal", "old evidence reads unchanged; epoch snapshot derivation remains bite 5"]
 path = "adr/019-development-network.md"
 status = "held"
@@ -2225,6 +2395,7 @@ closing_step = "Bite 2 wallet integration, before enabling the adapter"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-http"
+witnessed_labels = []
 case_census = ["status 200 result and error; 400, 404 and 500 error-only bodies", "401 closes without body parsing or retry; other statuses refused", "bare LF, folded lines, 1xx and close-delimited bodies refused", "duplicate or conflicting lengths, transfer encoding, compression and redirects refused", "header/body truncation, trailing bytes and excessive size refused", "slow-drip traffic cannot renew the single exchange deadline", "one attempt per exchange and aggregate reconnection ceiling before cookie access"]
 path = "adr/019-development-network.md"
 status = "scoped-supported"
@@ -2241,6 +2412,7 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-json"
+witnessed_labels = []
 case_census = ["JSON-RPC 2.0 and exact correlated identifier", "result and error exclusive, including successful null result", "integer error code, string message and bounded optional data", "invalid UTF-8, BOM and duplicate keys refused", "depth, item and numeric conversion bounds", "unsupported method, batch, notification and wallet-admin routes refused"]
 path = "adr/019-development-network.md"
 status = "scoped-supported"
@@ -2257,6 +2429,7 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-cookie"
+witnessed_labels = []
 case_census = ["declared same UID owner and exact permitted file modes", "parent ownership, write permissions, ACL and symlink refusals", "regular file, single hard link and descriptor substitution checks", "exact username, separator, hexadecimal password and optional single LF", "oversized, partial, changed, malformed or missing cookie refused", "restart rotation with fresh read; authentication refusal has no replay or fallback"]
 path = "adr/019-development-network.md"
 status = "scoped-supported"
@@ -2273,6 +2446,7 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 
 [[rows]]
 name = "ROOT::verif:devnet:wallet-secrets"
+witnessed_labels = []
 case_census = ["compile-time carrier checks with reviewed data flow", "endpoint, port, username, cookie path/bytes and wallet-selection sentinels", "retained Debug, Display, source chains, panics and all observation streams", "private acquisition and parser failures retain no secret bytes under the trusted-service boundary", "wrong credentials, unreachable peer, disconnect and timeout errors", "unmodified generic client demonstrates real retention or leakage", "successful public objects and public diagnostics remain fully recorded"]
 path = "adr/019-development-network.md"
 status = "scoped-supported"
@@ -2289,6 +2463,7 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 
 [[rows]]
 name = "ROOT::dec:buildgraph:composition"
+witnessed_labels = []
 path = "adr/024-build-graph.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:service-delegation-preserves-ownership", "ROOT::claim:discipline:build-graph-completion-is-current-and-exact", "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held", "ROOT::claim:discipline:retained-gates-preserve-complete-evidence", "ROOT::claim:discipline:build-graph-slices-cover-roster"]
@@ -2305,6 +2480,7 @@ evidence_paragraph = "ROOT::amend:buildgraph:implementation-admission"
 
 [[rows]]
 name = "ROOT::gate:buildgraph:implementation"
+witnessed_labels = []
 path = "adr/024-build-graph.md"
 status = "scoped-supported"
 claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:build-graph-completion-is-current-and-exact", "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held", "ROOT::claim:discipline:retained-gates-preserve-complete-evidence", "ROOT::claim:discipline:build-graph-slices-cover-roster"]
@@ -2320,6 +2496,7 @@ evidence_paragraph = "ROOT::amend:buildgraph:implementation-admission"
 
 [[rows]]
 name = "ROOT::verif:design:dependency-opening-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = ["ACTPROFILE::claim:profile:opened-replay-preserves-structure-and-title", "ACTPROFILE::claim:profile:fixed-recipes-bind-exact-authored-inputs", "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments", "ACTPROFILE::claim:profile:proposal-vectors-cover-projection-branches", "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse"]
@@ -2334,6 +2511,7 @@ closing_step = "Dependency-opening implementation after identity admission"
 
 [[rows]]
 name = "ROOT::verif:design:invitation-netting-cases"
+witnessed_labels = ["ver:membership:invitation-netting"]
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free", "EPOCH::claim:compiler:invitation-netting-retains-every-charge"]
@@ -2349,6 +2527,7 @@ evidence_paragraph = "EPOCH::amend:compiler:invitation-netting-evidence"
 
 [[rows]]
 name = "ROOT::verif:design:settlement-party-cases"
+witnessed_labels = ["rem:graph:settlement-party-mismatch", "ver:settlement:wrong-party"]
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization"]
@@ -2365,6 +2544,7 @@ evidence_paragraph = "VERIFICATION::amend:verification:bite-four-evidence"
 
 [[rows]]
 name = "ROOT::verif:design:title-certificate-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2378,6 +2558,7 @@ closing_step = "Bites 4, 5, 8, 9 and 11"
 
 [[rows]]
 name = "ROOT::verif:design:marker-registration-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2391,6 +2572,7 @@ closing_step = "Bites 2, 5, 7, 8, 9 and 11"
 
 [[rows]]
 name = "ROOT::verif:design:finality-breach-cases"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
 claims = []
@@ -2402,6 +2584,7 @@ closing_condition = "Attach reviewed test-site claims and passing source/configu
 closing_step = "Bites 8, 9 and 11"
 [[rows]]
 name = "ROOT::dec:design:activation-evaluation-policy"
+witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises", "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries", "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes", "EPOCH::claim:compiler:projected-residual-replays-conserved-map"]
@@ -2416,6 +2599,7 @@ evidence_paragraph = "EPOCH::amend:compiler:solve-record-evidence"
 
 [[rows]]
 name = "ROOT::gate:render:numeric-correspondence"
+witnessed_labels = []
 path = "adr/003-templated-documentation.md"
 status = "scoped-supported"
 claims = ["DOCUMENTS::claim:render:directed-displays-enclose-exact-values", "ROOT::claim:design:numeric-word-fragments-refuse", "ROOT::claim:design:numeric-displays-match-rational-operands", "DOCUMENTS::claim:render:number-forms-are-exactly-projected", "DOCUMENTS::claim:render:repository-fixed-point", "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local"]

@@ -47,6 +47,13 @@ class Evidence(unittest.TestCase):
         formatted = {name: register_form(json.dumps(data), field)[2] for name, field, data in (
             ('ci/claim_review.json', 'sites', review), ('ci/claim_gloss_baseline.json', 'glosses', baseline))}
         self.assertEqual(check_register(formatted['ci/claim_review.json'], 'sites'), review)
+        witnessed = deepcopy(review)
+        witnessed['sites'][0]['paper_witnesses'] = {'def:testing:fixture': 'The independent expected output changes when the tested rule fails.'}
+        canonical = register_form(json.dumps(witnessed), 'sites')[2]
+        self.assertEqual(check_register(canonical, 'sites'), witnessed)
+        witnessed['sites'][0]['paper_witnesses']['def:testing:fixture'] = ''
+        with self.assertRaisesRegex(StructuralError, 'failure assessment'):
+            register_form(json.dumps(witnessed), 'sites')
         self.assertEqual(check_register(formatted['ci/claim_gloss_baseline.json'], 'glosses'), baseline)
         invalid = [
             ('ci/claim_review.json', json.dumps(review | {'sites': [second, first]}), 'order: entry zeta'),
@@ -268,18 +275,30 @@ class Evidence(unittest.TestCase):
         self.assertEqual(tracker_rows(short, paper, dict(claims=[], obligations=[]), bites)[0]['status'], 'designed')
         obligation_records = {scope: dict(text='``def:testing:fixture``', citations=set())}
         edge = dict(claims=[dict(name=claim, status='passed')],
-                    obligations=[dict(name=scope, status='scoped-passed', claims=[claim])])
-        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites)[0]['routes'],
+                    obligations=[dict(name=scope, status='scoped-passed', claims=[claim], witnessed_labels=['def:testing:fixture'])])
+        witnesses = {claim: {'def:testing:fixture': 'The fixture assertion detects a changed output, not its retained premise.'}}
+        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites, witnesses=witnesses)[0]['routes'],
                          [dict(kind='obligation', record=scope, scope=scope)])
+        both = {scope: dict(text='``def:testing:fixture`` uses the premise ``def:testing:premise``.', citations=set())}
+        pair = inventory+[dict(inventory[0], label='def:testing:premise')]
+        self.assertEqual([row['status'] for row in tracker_rows(pair, both, edge, bites, witnesses=witnesses)],
+                         ['realized', 'designed'])
+        overclaim = deepcopy(edge)
+        overclaim['obligations'][0]['witnessed_labels'].append('def:testing:premise')
+        with self.assertRaisesRegex(StructuralError, 'lacks reviewed failure-sensitive claim'):
+            tracker_rows(pair, both, overclaim, bites, witnesses=witnesses)
+        with self.assertRaisesRegex(StructuralError, 'lacks reviewed failure-sensitive claim'):
+            tracker_rows(inventory, obligation_records, edge, bites)
         extra = deepcopy(edge)
         extra['claims'].append(dict(name=claim+'-other', status='passed'))
         extra['obligations'][0]['claims'].append(claim+'-other')
-        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites),
-                         tracker_rows(inventory, obligation_records, extra, bites))
+        self.assertEqual(tracker_rows(inventory, obligation_records, edge, bites, witnesses=witnesses),
+                         tracker_rows(inventory, obligation_records, extra, bites, witnesses=witnesses))
         extra['claims'][1]['status'] = 'failed'
-        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'designed')
+        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites, witnesses=witnesses)[0]['status'], 'designed')
         extra['obligations'][0].update(status='held', hold=hold)
-        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites)[0]['status'], 'held')
+        self.assertEqual(tracker_rows(inventory, obligation_records, extra, bites, witnesses=witnesses)[0]['status'], 'held')
+        edge['obligations'][0]['witnessed_labels'] = []
         mentions = {record: dict(text='``def:testing:fixture`` is witnessed by (`claim:testing:fixture`).', citations={claim})}
         self.assertEqual(tracker_rows(inventory, mentions, edge, bites)[0]['routes'],
                          [dict(kind='record-claim', record=record, claim=claim, scope=scope)])

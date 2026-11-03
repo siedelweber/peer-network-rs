@@ -1935,14 +1935,8 @@
       "records": [
         "ROOT::dec:design:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -2792,14 +2786,8 @@
       "records": [
         "ROOT::dec:design:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10144,14 +10132,8 @@
         "ROOT::model:design:ledger",
         "ROOT::req:vision:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10245,14 +10227,8 @@
       "records": [
         "ROOT::dec:design:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10389,14 +10365,8 @@
         "ROOT::dec:design:final-state",
         "ROOT::req:vision:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10488,14 +10458,8 @@
         "ROOT::dec:design:final-state",
         "ROOT::req:vision:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10771,14 +10735,8 @@
         "ROOT::dec:design:final-state",
         "ROOT::req:vision:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -12509,7 +12467,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:split-pair-displacement",
       "portions": [],
-      "record_granular": 0,
+      "record_granular": 1,
       "record_routes": [
         {
           "kind": "record",
@@ -12538,14 +12496,8 @@
         "ROOT::rule:design:distinct-target-displacement",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -12573,7 +12525,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:split-fibre-capacity",
       "portions": [],
-      "record_granular": 0,
+      "record_granular": 1,
       "record_routes": [
         {
           "kind": "record",
@@ -12601,14 +12553,8 @@
         "ROOT::rule:design:distinct-target-displacement",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -12719,14 +12665,8 @@
         "ROOT::rule:design:receiving-annotation-comparison",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -12746,14 +12686,8 @@
         "ROOT::rule:design:receiving-completion-premises",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13009,14 +12943,8 @@
         "ROOT::req:vision:conservation",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13035,14 +12963,8 @@
         "ROOT::rule:design:burn-feedback-instantiation",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13062,14 +12984,8 @@
         "ROOT::rule:design:burn-monotone-path",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13089,14 +13005,8 @@
         "ROOT::rule:design:burn-finite-response",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13470,14 +13380,8 @@
         "ROOT::rec:design:atomic-admission-evidence",
         "ROOT::req:vision:ledger-vintages"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:ledger-vintages",
-          "scope": "ROOT::dec:design:ledger-vintages"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13901,14 +13805,8 @@
         "ROOT::req:vision:policy-schedules",
         "ROOT::rule:design:wall-delivery-declaration"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:ledger-vintages",
-          "scope": "ROOT::dec:design:ledger-vintages"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -26413,34 +26311,23 @@
     },
     {
       "bites": [
-        5
+        5,
+        11
       ],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [
-        "adr/007-crate-decomposition.md",
-        "docs/datasets/org.peer-network.design.bites.json",
-        "docs/datasets/org.peer-network.design.questions.json",
-        "docs/design/implementation.md",
-        "docs/design/questions.md",
-        "docs/inputs/design-bites.toml",
-        "docs/inputs/design-questions.toml",
-        "docs/templates/docs/design/implementation.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "fixture",
       "label": "ver:standing:epoch-permutation-invariance",
-      "portions": [
-        {
-          "clause": "dependency-compliant permutation independence of the compiled inputs",
-          "record": "ROOT::dec:design:final-state"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::dec:design:final-state"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -27077,11 +26964,6 @@
           "kind": "record-claim",
           "record": "ROOT::rule:design:receiving-capacity-concentration",
           "scope": "ROOT::verif:design:core-standing-properties"
-        },
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
         }
       ],
       "status": "realized",
@@ -27564,14 +27446,8 @@
         "ROOT::amend:design:burn-own-fixture",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -27600,14 +27476,8 @@
         "ROOT::amend:design:burn-depleted-fixture",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -27633,14 +27503,8 @@
         "ROOT::amend:design:burn-switch-fixture",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -27674,14 +27538,8 @@
         "ROOT::rule:design:published-act-correspondence",
         "ROOT::verif:design:core-standing-properties"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::verif:design:core-standing-properties",
-          "scope": "ROOT::verif:design:core-standing-properties"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -29264,14 +29122,8 @@
       "records": [
         "ROOT::dec:design:final-state"
       ],
-      "routes": [
-        {
-          "kind": "obligation",
-          "record": "ROOT::dec:design:final-state",
-          "scope": "ROOT::dec:design:final-state"
-        }
-      ],
-      "status": "realized",
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -33894,27 +33746,6 @@
     },
     {
       "category": "obligation-support",
-      "claim_count": 3,
-      "name": "ROOT::dec:design:ledger-vintages",
-      "number_forms": {
-        "claim_count": {
-          "exact": "3",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "3",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "claim_count": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      }
-    },
-    {
-      "category": "obligation-support",
       "claim_count": 25,
       "name": "ROOT::verif:design:core-standing-properties",
       "number_forms": {
@@ -34729,10 +34560,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "62",
+          "exact": "61",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "61",
           "num_exact": true,
           "num_relation": "="
         }
@@ -34743,19 +34574,19 @@
           "exact_digits": 32
         }
       },
-      "total": 62
+      "total": 61
     },
     {
       "category": "total",
-      "designed": 374,
+      "designed": 397,
       "held": 55,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "374",
+          "exact": "397",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "374",
+          "num": "397",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34768,18 +34599,18 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "48",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "48",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "25",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34800,10 +34631,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "879",
+          "exact": "878",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "879",
+          "num": "878",
           "num_exact": true,
           "num_relation": "="
         }
@@ -34838,11 +34669,11 @@
           "exact_digits": 32
         }
       },
-      "realized": 48,
-      "record_granular": 25,
+      "realized": 26,
+      "record_granular": 27,
       "tentative": 10,
       "total": 1356,
-      "unassigned": 879
+      "unassigned": 878
     },
     {
       "category": "total",
@@ -35044,15 +34875,15 @@
     },
     {
       "category": "crate",
-      "designed": 133,
+      "designed": 143,
       "held": 8,
       "name": "pn-epoch",
       "number_forms": {
         "designed": {
-          "exact": "133",
+          "exact": "143",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "133",
+          "num": "143",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35065,10 +34896,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "22",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35135,7 +34966,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 22,
+      "realized": 12,
       "record_granular": 13,
       "tentative": 1,
       "total": 371,
@@ -35638,15 +35469,15 @@
     },
     {
       "category": "crate",
-      "designed": 57,
+      "designed": 70,
       "held": 8,
       "name": "pn-verification",
       "number_forms": {
         "designed": {
-          "exact": "57",
+          "exact": "70",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "70",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35659,18 +35490,18 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "20",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "4",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35691,10 +35522,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "196",
+          "exact": "195",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "196",
+          "num": "195",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35729,11 +35560,11 @@
           "exact_digits": 32
         }
       },
-      "realized": 20,
-      "record_granular": 4,
+      "realized": 8,
+      "record_granular": 6,
       "tentative": 6,
       "total": 281,
-      "unassigned": 196
+      "unassigned": 195
     },
     {
       "category": "kind",
@@ -36034,15 +35865,15 @@
     },
     {
       "category": "kind",
-      "designed": 47,
+      "designed": 52,
       "held": 4,
       "name": "fixture",
       "number_forms": {
         "designed": {
-          "exact": "47",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "47",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36055,10 +35886,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "9",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36087,10 +35918,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "158",
+          "exact": "157",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "158",
+          "num": "157",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36125,23 +35956,23 @@
           "exact_digits": 32
         }
       },
-      "realized": 9,
+      "realized": 5,
       "record_granular": 3,
       "tentative": 8,
       "total": 218,
-      "unassigned": 158
+      "unassigned": 157
     },
     {
       "category": "kind",
-      "designed": 94,
+      "designed": 97,
       "held": 6,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "94",
+          "exact": "97",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "94",
+          "num": "97",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36154,10 +35985,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "12",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36224,7 +36055,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 12,
+      "realized": 9,
       "record_granular": 8,
       "tentative": 0,
       "total": 216,
@@ -36232,15 +36063,15 @@
     },
     {
       "category": "kind",
-      "designed": 129,
+      "designed": 140,
       "held": 22,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "129",
+          "exact": "140",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "129",
+          "num": "140",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36253,18 +36084,18 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "22",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "8",
+          "exact": "10",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36323,8 +36154,8 @@
           "exact_digits": 32
         }
       },
-      "realized": 22,
-      "record_granular": 8,
+      "realized": 11,
+      "record_granular": 10,
       "tentative": 1,
       "total": 517,
       "unassigned": 344
@@ -36430,15 +36261,15 @@
     },
     {
       "category": "kind",
-      "designed": 48,
+      "designed": 52,
       "held": 18,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "48",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "48",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36451,10 +36282,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "5",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36521,7 +36352,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 5,
+      "realized": 1,
       "record_granular": 3,
       "tentative": 6,
       "total": 265,
@@ -36826,15 +36657,15 @@
     },
     {
       "category": "bite",
-      "designed": 28,
+      "designed": 30,
       "held": 5,
       "name": "2",
       "number_forms": {
         "designed": {
-          "exact": "28",
+          "exact": "30",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "30",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36847,10 +36678,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "2",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36917,7 +36748,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 2,
+      "realized": 0,
       "record_granular": 0,
       "tentative": 0,
       "total": 35,
@@ -37123,15 +36954,15 @@
     },
     {
       "category": "bite",
-      "designed": 25,
+      "designed": 38,
       "held": 5,
       "name": "5",
       "number_forms": {
         "designed": {
-          "exact": "25",
+          "exact": "38",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "38",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37144,10 +36975,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "13",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37176,10 +37007,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37214,23 +37045,23 @@
           "exact_digits": 32
         }
       },
-      "realized": 13,
+      "realized": 1,
       "record_granular": 3,
       "tentative": 0,
       "total": 44,
-      "unassigned": 1
+      "unassigned": 0
     },
     {
       "category": "bite",
-      "designed": 14,
+      "designed": 16,
       "held": 6,
       "name": "6",
       "number_forms": {
         "designed": {
-          "exact": "14",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37243,10 +37074,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "4",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37313,7 +37144,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 4,
+      "realized": 2,
       "record_granular": 1,
       "tentative": 0,
       "total": 25,
@@ -37321,15 +37152,15 @@
     },
     {
       "category": "bite",
-      "designed": 31,
+      "designed": 32,
       "held": 6,
       "name": "7",
       "number_forms": {
         "designed": {
-          "exact": "31",
+          "exact": "32",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "31",
+          "num": "32",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37342,10 +37173,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "1",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37412,7 +37243,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 1,
+      "realized": 0,
       "record_granular": 1,
       "tentative": 1,
       "total": 38,
@@ -37717,15 +37548,15 @@
     },
     {
       "category": "bite",
-      "designed": 49,
+      "designed": 62,
       "held": 27,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "49",
+          "exact": "62",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49",
+          "num": "62",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37738,10 +37569,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "14",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37762,10 +37593,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "91",
+          "exact": "92",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "91",
+          "num": "92",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37808,23 +37639,23 @@
           "exact_digits": 32
         }
       },
-      "realized": 14,
+      "realized": 2,
       "record_granular": 4,
       "tentative": 0,
-      "total": 91,
+      "total": 92,
       "unassigned": 1
     },
     {
       "category": "bite",
-      "designed": 263,
+      "designed": 273,
       "held": 18,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "263",
+          "exact": "273",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "263",
+          "num": "273",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37837,18 +37668,18 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "31",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "31",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "16",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37907,8 +37738,8 @@
           "exact_digits": 32
         }
       },
-      "realized": 31,
-      "record_granular": 16,
+      "realized": 21,
+      "record_granular": 18,
       "tentative": 15,
       "total": 1492,
       "unassigned": 1180

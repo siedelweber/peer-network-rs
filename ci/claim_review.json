@@ -1751,7 +1751,10 @@
       "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
       "before": "",
       "after": "Claim: For verified fixture packages and deterministic formation verification, the joined compiler derives one frozen state from one complete prefix. Independent literal tables cover all nineteen families, ledger counts and debits, cells, coefficients, recipients, sparse base, source emission and support; numeric holds remain explicit and title-dependent recipients follow the released settlement-party rule. The result is neither a solve nor persistent epoch admission.",
-      "review": "Literal coordinate, recipient, ledger, sparse base and support tables cover the nineteen-family census. Separate cancellation, irrational and successful settlement rows exercise joined outputs, and product-budget and insolvency failures return no partial state."
+      "review": "Literal coordinate, recipient, ledger, sparse base and support tables cover the nineteen-family census. Separate cancellation, irrational and successful settlement rows exercise joined outputs, and product-budget and insolvency failures return no partial state.",
+      "paper_witnesses": {
+        "prop:deployment:allocation-input-completeness": "Independent family_table, base_table and ledger_table assertions compare complete cells, recipients, base, emission and support against literal expectations; input reversal must retain the compiled view. An omitted projection or different deterministic compilation fails those comparisons. The declared verifier and finite family fixtures delimit this witness."
+      }
     },
     {
       "operation": "pn-epoch::compiler::ledger_contract",
@@ -1831,7 +1834,10 @@
       "claim": "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
       "before": "",
       "after": "Claim: The released Invitation netting fixture and independent rational tables cancel one author's bundle to zero and home, restore a later positive vouch, preserve independent authors, and keep De-invite singleton at self with coefficient one. Both compliant co-epoch placements produce identical cells, coefficients and recipients; the released positive nonsquare coefficient remains explicit irrational evidence.",
-      "review": "The released Invitation fixture and an independent rational table assert each literal urgency/formality sum at every boundary, including zero cancellation and positive re-establishment. Independent authors, member identities, outward recipients, De-invite self-retention and both compliant co-epoch placements are checked; the nonsquare coefficient remains typed evidence."
+      "review": "The released Invitation fixture and an independent rational table assert each literal urgency/formality sum at every boundary, including zero cancellation and positive re-establishment. Independent authors, member identities, outward recipients, De-invite self-retention and both compliant co-epoch placements are checked; the nonsquare coefficient remains typed evidence.",
+      "paper_witnesses": {
+        "ver:membership:invitation-netting": "The released fixture and separate rational tables assert cancellation to zero and home, restored positive vouch, independent authors, singleton De-invite and equal outputs for both compliant placements; a netting, recipient or placement defect fails the comparisons."
+      }
     },
     {
       "operation": "pn-epoch::recipients::recipient_classes",
@@ -2207,7 +2213,10 @@
       "claim": "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration",
       "before": "",
       "after": "Claim: The tagged showcase receiving comparison retains its full Registration and donor multiplicities. Both annotation readings independently compile, certify and replay identically for each public record; the pooled and partitioned records differ and the retained gain satisfies the receiving concentration formula under absorbing participant rows and fixed incoming acts. This finite reproduction establishes no intent classifier or unrestricted strategic-history completion.",
-      "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
+      "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal.",
+      "paper_witnesses": {
+        "ex:epoch:split-showcase": "receiving(true) checks the published multiplicities and pair partitions, certified retained gain against the receiving formula, and identical independently compiled and replayed annotation runs. A changed showcase comparison or annotation-dependent result fails. The witness retains its deterministic receiving-family premises."
+      }
     },
     {
       "operation": "pn-epoch::solve::partitions::receiving_small",
@@ -2215,7 +2224,10 @@
       "claim": "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence",
       "before": "",
       "after": "Claim: The tagged small receiving comparison is compiled, certified and replayed with unchanged donor acts and proportional participant pairs. Legitimate-role and strategic-purpose annotations of each identical public record give identical compiled views and solve records. The different pooled and partitioned records strictly increase retained standing under the checked receiving premises; annotation equality supplies no equality of those records or inference of actual intent.",
-      "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. This site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
+      "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. This site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal.",
+      "paper_witnesses": {
+        "ex:epoch:split-small": "receiving checks exact published pairs and certified retained standings, complete inputs, role-completion predicates and identical independently compiled and replayed annotation runs; completion_probes rejects unsupported purpose inferences. A changed published small comparison or annotation-dependent result fails. The witness covers this deterministic receiving example, not arbitrary randomized consumers."
+      }
     },
     {
       "operation": "pn-epoch::solve::partitions::sibling_outside_paths",
@@ -4375,7 +4387,11 @@
       "claim": "VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization",
       "before": "",
       "after": "Claim: On compliant histories, record-derived buyer and certified or fresh-thread seller determine authorization clause (iii), separately from reference binding (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify retain written incidence and exact binding but fail only (iii), preserve the owner and consume no records, with no host fault. The independent enumerator checks every clause and the wrong-party fixture.",
-      "review": "Retires VERIFICATION::claim:verification:partner-mismatches-retain-distinct-binding-evidence. Released record-derived parties belong to authorization (iii), not binding (ii); the full clause map and unchanged owner, consumption and host-fault evidence establish the wrong-party fixture."
+      "review": "Retires VERIFICATION::claim:verification:partner-mismatches-retain-distinct-binding-evidence. Released record-derived parties belong to authorization (iii), not binding (ii); the full clause map and unchanged owner, consumption and host-fault evidence establish the wrong-party fixture.",
+      "paper_witnesses": {
+        "rem:graph:settlement-party-mismatch": "The independent clause enumerator asserts that wrong written parties fail authorization alone while incidence, exact binding, ownership and record consumption retain their required values; conflating written endpoints with the record-derived buyer or seller fails these checks.",
+        "ver:settlement:wrong-party": "The released wrong-party fixture and independent enumerator check each recognition clause, unchanged ownership, no consumed records and no host fault. Recognizing the wrong party or changing the wrong clause fails these assertions."
+      }
     },
     {
       "operation": "pn-verification::recognition::settlement_replay_faults",

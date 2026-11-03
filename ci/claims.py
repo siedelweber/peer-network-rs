@@ -42,13 +42,19 @@ def register_form(text, field):
         rows = []
         seen = set()
         for index, row in enumerate(data[field]):
-            if not isinstance(row, dict) or set(row) != set(REVIEW_FIELDS) or any(not isinstance(row[key], str) for key in REVIEW_FIELDS):
+            if not isinstance(row, dict) or set(row) - {'paper_witnesses'} != set(REVIEW_FIELDS) or any(not isinstance(row[key], str) for key in REVIEW_FIELDS):
                 raise StructuralError('malformed register entry: '+str(index))
+            witnesses = row.get('paper_witnesses', {})
+            if not isinstance(witnesses, dict) or any(not isinstance(label, str) or not isinstance(reason, str) or not reason.strip()
+                                                     for label, reason in witnesses.items()):
+                raise StructuralError('paper witness review lacks a label or failure assessment')
             name = row['operation']
             if name in seen:
                 raise StructuralError('duplicate register operation: '+name)
             seen.add(name)
             rows.append({key: row[key] for key in REVIEW_FIELDS})
+            if 'paper_witnesses' in row:
+                rows[-1]['paper_witnesses'] = dict(sorted(witnesses.items()))
         ordered = sorted(rows, key=lambda row: (row['operation'], row['path'], row['claim']))
     else:
         if not isinstance(data[field], dict) or any(not isinstance(value, str) for value in data[field].values()):
@@ -361,7 +367,7 @@ def tracker_selection_sites(root):
                             doc=ast.get_docstring(functions[0]) or ''))]
 
 
-def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
+def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), witnesses=None):
     """Join exact paper mentions, scoped execution and bounded record edges."""
     labels = {row['label'] for row in inventory}
     if len(labels) != len(inventory):
@@ -386,6 +392,16 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
             mentions[constant['cites']].add('CONSTANTS::'+constant['id'])
     claims = {row['name']: row for row in evidence['claims']}
     obligations = {row['name']: row for row in evidence['obligations']}
+    witnesses = witnesses or {}
+    for name, row in obligations.items():
+        declared = row.get('witnessed_labels', [])
+        if not isinstance(declared, list) or any(not isinstance(label, str) for label in declared) or len(set(declared)) != len(declared):
+            raise StructuralError('malformed obligation witnessed labels: '+name)
+        for label in declared:
+            if label not in labels or name not in mentions[label]:
+                raise StructuralError('obligation witnessed label lacks a plain design citation: '+name+' '+label)
+            if not any(label in witnesses.get(claim, {}) for claim in row['claims']):
+                raise StructuralError('obligation label lacks reviewed failure-sensitive claim: '+name+' '+label)
     from build_graph_evidence import SERVICE_CASE
     selected_claims = {site['claim'] for site in evidence.get('sites', []) if site.get('operation') == SERVICE_CASE}
     unstable = {name for name, row in obligations.items() if selected_claims.intersection(row['claims'])}
@@ -460,7 +476,8 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=()):
         names = sorted(mentions[item['label']])
         designs = [name for name in names if name not in attention]
         routes = [dict(kind=kind, record=name, scope=scope, **({'claim': claim} if claim else {}))
-                  for name in designs for kind, claim, scope in sorted(supported[name] | precise[item['label'], name])]
+                  for name in designs for kind, claim, scope in sorted(supported[name] | precise[item['label'], name])
+                  if kind != 'obligation' or item['label'] in obligations[scope].get('witnessed_labels', [])]
         record_routes = [dict(kind='record', record=name, scope=scope)
                          for name in names for scope in sorted(granular[item['label'], name])]
         held = [dict(record=name, hold=hold) for name in names for hold in sorted(holds[name])]
@@ -516,13 +533,32 @@ def tracker_changes(before, after, fields=None):
     return changes
 
 
+def tracker_witnesses(root, sites=None):
+    """Read source-resolved assertion reviews, not inferred semantic entailment."""
+    root = Path(root)
+    manifest = read_register(root/'ci/claim_review.json', 'sites')
+    if not any(row.get('paper_witnesses') for row in manifest['sites']):
+        return {}
+    sites = sites if sites is not None else [site_claim(site) for site in census(root)]
+    reviews = reviewed_sites(sites, manifest)
+    labels = {row['label'] for row in tomllib.loads((root/'docs/inputs/design-inventory.toml').read_text())['rows']}
+    witnesses = defaultdict(dict)
+    for row in reviews:
+        for label, reason in row.get('paper_witnesses', {}).items():
+            if label not in labels:
+                raise StructuralError('paper witness review names an unknown label: '+label)
+            witnesses[row['claim']][label] = reason
+    return witnesses
+
+
 def tracker_structure(root):
     """Refuse changed records and bite membership before requiring executions."""
     root = Path(root)
     read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
     rows = tracker_rows(read('design-inventory.toml'), prose(root)[0],
                         dict(claims=[], obligations=read('claim-obligations.toml'), sites=tracker_selection_sites(root)),
-                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
+                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
+                        tracker_witnesses(root))
     changes = tracker_changes(read('specification-progress.toml'),
                               [dict(category='statement', **row) for row in rows],
                               ('crate', 'kind', 'records', 'bites', 'portions'))
@@ -589,7 +625,8 @@ def tracker_input(root, evidence):
     read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
     paragraphs = prose(root)[0]
     rows = tracker_rows(read('design-inventory.toml'), paragraphs, evidence,
-                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'))
+                        read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
+                        tracker_witnesses(root, evidence.get('sites')))
     elsewhere = tracker_elsewhere(root, rows)
     for row in rows:
         row['elsewhere'] = elsewhere.get(row['label'], [])

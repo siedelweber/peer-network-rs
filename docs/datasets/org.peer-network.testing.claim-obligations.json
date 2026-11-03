@@ -16,7 +16,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/018-public-api.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -28,7 +29,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/018-public-api.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -40,7 +42,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/018-public-api.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -52,7 +55,8 @@
       "owner": "Storage implementer and history reviewer",
       "path": "adr/014-forward-only-development.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -64,7 +68,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -76,7 +81,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -88,7 +94,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -100,7 +107,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -112,7 +120,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -124,7 +133,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -136,7 +146,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -148,7 +159,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -160,7 +172,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -172,7 +185,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -184,7 +198,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -196,7 +211,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -208,7 +224,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -220,7 +237,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -261,7 +279,10 @@
       "path": "docs/design/implementation.md",
       "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "prop:deployment:allocation-input-completeness"
+      ]
     },
     {
       "claims": [],
@@ -273,7 +294,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -291,7 +313,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -303,7 +326,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -315,7 +339,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -327,7 +352,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -339,7 +365,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -351,7 +378,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -363,7 +391,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -375,7 +404,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -387,7 +417,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -399,7 +430,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -416,7 +448,8 @@
       "path": "adr/021-development-performance.md",
       "premises": "Controlled passing and failing executions retain their outcomes under excess durations; budget categories distinguish performance evidence from structural configuration. This supports the current reporter, not a latency promise.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -432,7 +465,8 @@
       "path": "adr/021-development-performance.md",
       "premises": "The current workspace profile retains assertions and overflow checks and the guard refuses drift. The accepted cold/warm comparison samples and profile decision remain recorded in records 013 and 021; this witness checks continued configuration, not a new measurement campaign.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -444,7 +478,8 @@
       "owner": "Client implementer and schema reviewer",
       "path": "adr/020-testing-harness.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -456,7 +491,8 @@
       "owner": "Client implementer and schema reviewer",
       "path": "adr/020-testing-harness.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -473,7 +509,8 @@
       "path": "adr/020-testing-harness.md",
       "premises": "The complete current roster declares every case and level; controlled omissions refuse structurally. The public-surface layout amendment bounds the present package witnesses; future packages require their own levels.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -490,7 +527,8 @@
       "path": "adr/001-label-calculus.md",
       "premises": "The current adoption inputs and rendered owner declarations are one checked fixed point, and the deployed linter checks the actual current corpus without warnings. This is adoption and corpus resolution evidence, not a proof of all linter algorithms.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -508,7 +546,8 @@
       "path": "adr/005-lint-discipline.md",
       "premises": "Manifest inheritance, forbidden configuration relaxation and test-tree suppressions have negative fixtures; the current gate supplies formatting, required Clippy and the separate advisory pass. Vendor policy remains the documented exception.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -525,7 +564,8 @@
       "path": "adr/016-observability.md",
       "premises": "The source-bound production operation census and negative fixtures establish mechanical admission; body-bound class decisions remain semantic reviews. Current local execution and export witnesses do not admit a network service.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -541,7 +581,8 @@
       "path": "adr/016-observability.md",
       "premises": "Compile-fail probes reject Display and accidental serde serialization for the current protected carriers. Acquisition and future explicit exposure consumers remain governed by their separate admission boundary.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -559,7 +600,8 @@
       "path": "adr/016-observability.md",
       "premises": "Current executable-owned JSON delivery, queue saturation and recursive-entry fixtures preserve binding results and reserve summary capacity. Real service export and service configuration are outside this scope.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -580,7 +622,8 @@
       "path": "adr/004-command-line-output-contract.md",
       "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -602,7 +645,8 @@
       "path": "adr/003-templated-documentation.md",
       "premises": "The actual repository and controlled fixtures establish deterministic projections, rendering, protected outputs, JSON envelopes and tracked-path census. The engine-generated bytes are checked as a clean fixed point.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -614,7 +658,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/015-durable-storage.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -631,7 +676,8 @@
       "path": "adr/017-claim-based-testing.md",
       "premises": "The current checked carriers and source-matched runner results support scoped obligations only through resolving evidence edges; a failed sibling dominates. Meaning is the reviewed gloss premise, not a passing count.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -648,7 +694,8 @@
       "path": "adr/013-toolchain-and-build-profile.md",
       "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -665,7 +712,8 @@
       "path": "adr/013-toolchain-and-build-profile.md",
       "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -682,7 +730,8 @@
       "path": "adr/013-toolchain-and-build-profile.md",
       "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -700,7 +749,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The committed grammar corpus and operator fixtures cover parsing and the documented evaluation subset. This is the current corpus witness, not a proof over every grammar derivation.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -716,7 +766,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -733,7 +784,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Each supported operator is admitted and the unsupported operators are refused at their actual sites; no unsupported operator is approximated.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -750,7 +802,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Canonical float fixtures pin accepted widths and NaN refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -768,7 +821,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Acquisition fixtures refuse noncanonical NaN payloads and the negative sign with `NonCanonicalFloat`; canonical float fixtures pin accepted widths and decoder refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -785,7 +839,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Deep canonical decode/encode and derived value walks, including teardown, execute with explicit work stacks. These concrete depth witnesses do not claim an unbounded machine resource supply.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -802,7 +857,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "An external public consumer distinguishes consumed prefix extent from strict whole-input decoding; generated envelopes preserve routing within the declared prefix bound.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -818,7 +874,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The externally exercised printer normalizes layout while the type-identity witness distinguishes spelling from structural identity; the current public surface remains callable by consumers.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -834,7 +891,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -852,7 +910,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -870,7 +929,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -887,7 +947,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The public sequence acquisition witnesses retain an ascending chain and stop at the first named refusal, without inventing a different loading service.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -904,7 +965,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Acquisition refuses undeclared restrained reaches; the explicit lenient option changes that check alone in the fixture.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -924,7 +986,8 @@
       "owner": "Interchange contract reviewer",
       "path": "adr/010-interchange-design.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -941,7 +1004,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Registry reacquisition preserves the held theory and refuses a changed same identity. This witnesses immutable sharing at the current public registry boundary.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -958,7 +1022,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "Expression printing and reached rule identities determine the checked type identity; equivalent layout alone cannot alter it.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -974,7 +1039,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The canonical decoder refuses invalid UTF-8 at the named byte while valid text remains in the single string representation.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -990,7 +1056,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1002,7 +1069,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/018-public-api.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1014,7 +1082,8 @@
       "owner": "Release implementer and reviewer",
       "path": "adr/014-forward-only-development.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1026,7 +1095,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1038,7 +1108,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -1084,7 +1155,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Finite structural, act-removal, whole-history, canonical dependency and asserted-parent, opaque declaration and outside-history causal closure-input fixtures, with local unit/public/integration levels, shared conformance, recorded inner and outer properties and runtime outcomes; no partition, family formation or declaration payload semantics is claimed.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1096,7 +1168,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1108,7 +1181,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1120,7 +1194,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1132,7 +1207,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1155,7 +1231,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and record-derived partners are established under released clause (iii), including the wrong-party fixture.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1205,7 +1282,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1276,7 +1354,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Frozen verified-prefix, compiler and full-payload publication premises remain explicit. Cuts 6-a through 6-f cover the carriers, anchor, scalar adapters, activation, width fence, declared rational proposal sequence, endpoint map and independently replayed projected residual on the scoped fixtures. Cut 6-g-wall-a supplies the separate strict-sign inverse procedure and its scoped branch and replay witnesses; cut 6-g-wall-b supplies checked interval consumption, conservative fence and full-coordinate clamp witnesses with complete solve replay. Cut 6-g-2 adds image-first box residuals and a separate interval-forward local inclusion on the declared reference inputs, with published reference wall and equilibrium containment, fence and local-root intersection, and matching verdict evidence. Method-specific bounds retain their separate scopes. Finite fixtures prove no general deployment profile or public certificate authentication.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1311,7 +1390,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; the final admission witnesses establish finite rational and checked-ridge-floor gates and immutable evidence, not authenticated publication or persistent atomic application.",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1323,7 +1403,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1335,7 +1416,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1369,7 +1451,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1381,7 +1464,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1393,7 +1477,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1405,7 +1490,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1417,7 +1503,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1429,7 +1516,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1469,7 +1557,8 @@
       "path": "docs/design/implementation.md",
       "premises": "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1481,7 +1570,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1531,7 +1621,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Four production packages on the declared host configuration, public fixed inputs, controlled clocks and local exporters; syntax coverage and source-bound semantic reviews are distinct, generic capabilities retain their declared representation limits, and no real collector or service is assumed.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1564,7 +1655,8 @@
       "path": "docs/design/implementation.md",
       "premises": "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1576,7 +1668,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1609,7 +1702,8 @@
       "path": "adr/021-development-performance.md",
       "premises": "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1627,7 +1721,8 @@
       "path": "README.md",
       "premises": "The current source commit must finish every gate step with status zero; structural policy, evidence and observation checks are independently exercised. Duration warnings remain nonverdict outputs. Services and later domain evidence are not inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1667,7 +1762,8 @@
       "path": "adr/020-testing-harness.md",
       "premises": "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1679,7 +1775,8 @@
       "owner": "Identity-class implementer and adjudication reviewer",
       "path": "adr/006-identity-adjudication.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1697,7 +1794,8 @@
       "path": "adr/002-environment-kinds.md",
       "premises": "The accepted adoption data, relation/status fixtures and actual rendered register establish the current ordered register and its derived counts and homonyms. Evidence/status judgments are accepted input facts; the renderer does not invent them.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -1736,7 +1834,8 @@
       "path": "adr/001-label-calculus.md",
       "premises": "Finite isolated deployed-checker fixtures for the itemized active clauses, current-corpus checking for this record, and adoption-data discharge with a re-entry trigger for the two inactive clauses. Admission is recorded independently of current execution support.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1753,7 +1852,8 @@
       "path": "adr/001-label-calculus.md",
       "premises": "The current adoption inputs and rendered owner declarations are one checked fixed point, and the deployed linter checks the actual current corpus without warnings. This is adoption and corpus resolution evidence, not a proof of all linter algorithms.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1771,7 +1871,8 @@
       "path": "adr/005-lint-discipline.md",
       "premises": "Manifest inheritance, forbidden configuration relaxation and test-tree suppressions have negative fixtures; the current gate supplies formatting, required Clippy and the separate advisory pass. Vendor policy remains the documented exception.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1821,7 +1922,8 @@
       "path": "adr/016-observability.md",
       "premises": "Four production packages on the declared host configuration, public fixed inputs, controlled clocks and local exporters; syntax coverage and source-bound semantic reviews are distinct, generic capabilities retain their declared representation limits, and no real collector or service is assumed.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1842,7 +1944,8 @@
       "path": "adr/004-command-line-output-contract.md",
       "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1864,7 +1967,8 @@
       "path": "adr/003-templated-documentation.md",
       "premises": "The actual repository and controlled fixtures establish deterministic projections, rendering, protected outputs, JSON envelopes and tracked-path census. The engine-generated bytes are checked as a clean fixed point.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1876,7 +1980,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "adr/015-durable-storage.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1910,7 +2015,8 @@
       "path": "adr/017-claim-based-testing.md",
       "premises": "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -1927,7 +2033,8 @@
       "path": "adr/013-toolchain-and-build-profile.md",
       "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1939,7 +2046,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1951,7 +2059,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -1963,7 +2072,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/concept.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -1983,7 +2093,8 @@
       "owner": "Interchange contract reviewer",
       "path": "adr/009-interchange-concept.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -2009,7 +2120,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2021,7 +2133,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2033,7 +2146,8 @@
       "owner": "Identity-class implementer and adjudication reviewer",
       "path": "adr/006-identity-adjudication.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2045,7 +2159,8 @@
       "owner": "Identity-class implementer and adjudication reviewer",
       "path": "adr/006-identity-adjudication.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "admission": {
@@ -2065,7 +2180,8 @@
       "owner": "Bite 1 implementer and interchange contract reviewer",
       "path": "adr/008-interchange-conventions.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2085,7 +2201,8 @@
       "realizers": [
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2105,7 +2222,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-7"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2122,7 +2240,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-2"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2138,7 +2257,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-6"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2155,7 +2275,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-4"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2172,7 +2293,8 @@
         "ROOT::gate:design:bite-5",
         "ROOT::gate:design:bite-6"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2188,7 +2310,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-2"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2210,7 +2333,8 @@
         "ROOT::gate:design:bite-7",
         "ROOT::req:vision:admission"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2226,7 +2350,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-5"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2243,7 +2368,8 @@
         "ROOT::gate:design:bite-3",
         "ROOT::gate:design:bite-4"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2260,7 +2386,8 @@
         "ROOT::gate:design:bite-2",
         "ROOT::gate:design:bite-5"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2280,7 +2407,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-7"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2297,7 +2425,8 @@
         "ROOT::gate:design:bite-8",
         "ROOT::gate:design:bite-9"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2313,7 +2442,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-8"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2329,7 +2459,8 @@
         "ROOT::gate:design:bite-10",
         "ROOT::gate:design:bite-11"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2345,7 +2476,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-9"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2361,7 +2493,8 @@
         "ROOT::gate:design:bite-11",
         "ROOT::gate:design:bite-6"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2377,7 +2510,8 @@
         "ROOT::gate:design:bite-10",
         "ROOT::gate:design:bite-11"
       ],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2396,7 +2530,8 @@
       "realizers": [
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2416,7 +2551,8 @@
       "realizers": [
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2435,7 +2571,8 @@
         "ROOT::dec:xchg:crate-layout",
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2454,7 +2591,8 @@
       "realizers": [
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2473,7 +2611,8 @@
       "realizers": [
         "ROOT::verif:testing:foundation-admissions"
       ],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2485,7 +2624,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2497,7 +2637,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2509,7 +2650,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2521,7 +2663,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2533,7 +2676,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2558,7 +2702,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Validated records and fixed history supply whole acts and principal closures. Exhaustive finite DAGs, generated word vectors and six shared cases witness the records-level partition and deterministic temporary indices. The finite complete candidates separately join attested closure, consecutive markers, common context and independently replayed final gates; no deployment or host-recovery claim follows.",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2588,7 +2733,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2600,7 +2746,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2641,7 +2788,11 @@
       "path": "docs/design/implementation.md",
       "premises": "Matched complete histories under declared sound public binding and formation verifiers, fixed writing price and effective parameters, positive proportional pairs and checked recipient, title, emission and admission premises. Independent replay, published exact receiving and distinct-target values, certified positive-rung enclosures and the exact all-factor hop identity establish only the named finite fixtures and semantic-assumption probes.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "ex:epoch:split-showcase",
+        "ex:epoch:split-small"
+      ]
     },
     {
       "claims": [],
@@ -2653,7 +2804,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2665,7 +2817,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2677,7 +2830,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2689,7 +2843,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2705,7 +2860,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission.",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2717,7 +2873,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2729,7 +2886,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2741,7 +2899,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2753,7 +2912,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2765,7 +2925,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2777,7 +2938,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2789,7 +2951,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2805,7 +2968,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission.",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2817,7 +2981,8 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2833,7 +2998,8 @@
       "path": "adr/010-interchange-design.md",
       "premises": "The declared namespace pattern is compared with the hand-written label recognizer over the committed near-miss and generated subject corpus; the premise is the current declared pattern set.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -2860,7 +3026,8 @@
       "path": "adr/017-claim-based-testing.md",
       "premises": "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2872,7 +3039,8 @@
       "owner": "Storage implementer and independent integration reviewer",
       "path": "adr/015-durable-storage.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2884,7 +3052,8 @@
       "owner": "Storage, wallet and telemetry integration implementers",
       "path": "adr/022-host-intranet.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2896,7 +3065,8 @@
       "owner": "First signing or verifying slice implementer and independent cryptographic integration reviewer",
       "path": "adr/023-cryptographic-base.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -2908,7 +3078,8 @@
       "owner": "Telemetry and host-intranet integration implementers with independent review",
       "path": "adr/022-host-intranet.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -2928,7 +3099,8 @@
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -2956,7 +3128,8 @@
       "path": "adr/019-development-network.md",
       "premises": "The seven layout cases run through the public adapter, byte-only independent oracle and per-vector heap profiler; the fixture target selector is not a real-chain relay-policy admission.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -2977,7 +3150,8 @@
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -2998,7 +3172,8 @@
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -3028,7 +3203,8 @@
       "path": "adr/019-development-network.md",
       "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -3055,7 +3231,8 @@
       "path": "adr/019-development-network.md",
       "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -3082,7 +3259,8 @@
       "path": "adr/019-development-network.md",
       "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "case_census": [
@@ -3114,7 +3292,8 @@
       "path": "adr/019-development-network.md",
       "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3138,7 +3317,8 @@
       "path": "adr/024-build-graph.md",
       "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3161,7 +3341,8 @@
       "path": "adr/024-build-graph.md",
       "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3181,7 +3362,8 @@
       "path": "docs/design/implementation.md",
       "premises": "Fixed, supplied anchors and secret inputs establish deterministic equality, evidence refusal, protected computation and recurrence recovery with unchanged title. They establish no producer, approval, inclusion or finalized-anchor authority.",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3198,7 +3380,10 @@
       "path": "docs/design/implementation.md",
       "premises": "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "ver:membership:invitation-netting"
+      ]
     },
     {
       "claims": [
@@ -3214,7 +3399,11 @@
       "path": "docs/design/implementation.md",
       "premises": "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "rem:graph:settlement-party-mismatch",
+        "ver:settlement:wrong-party"
+      ]
     },
     {
       "claims": [],
@@ -3226,7 +3415,8 @@
       "owner": "Records and verification implementers; host and deployment for publication",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -3238,7 +3428,8 @@
       "owner": "Records and epoch implementers; host and deployment for realized history",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [],
@@ -3250,7 +3441,8 @@
       "owner": "Host implementer and deployment; offline replay reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
-      "status": "held"
+      "status": "held",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3269,7 +3461,8 @@
       "path": "docs/design/implementation.md",
       "premises": "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     },
     {
       "claims": [
@@ -3290,7 +3483,8 @@
       "path": "adr/003-templated-documentation.md",
       "premises": "Finite nearest and directed exact-rational rounding, rendered number-word controls, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
       "realizers": [],
-      "status": "scoped-supported"
+      "status": "scoped-supported",
+      "witnessed_labels": []
     }
   ]
 }
