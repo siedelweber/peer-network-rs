@@ -1,6 +1,7 @@
 # Exact defining-ridge charge boundary consumers.
 local_inputs = [
   ['packages/epoch/tests/solve/admission/ridge_charge.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,tests,test-build,reference-certificates,service-tests,test-evidence,benchmarks,observation-build,observation-runtime,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
+  ['packages/epoch/tests/solve/admission/ridge_charge/envelope.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,tests,test-build,reference-certificates,service-tests,test-evidence,benchmarks,observation-build,observation-runtime,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
   ['ci/build-inputs/packages/epoch/tests/solve/admission/meson.build', 'build-graph', ''],
 ]
 foreach row : local_inputs

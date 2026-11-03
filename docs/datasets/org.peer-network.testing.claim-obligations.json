@@ -1359,6 +1359,7 @@
     },
     {
       "claims": [
+        "EPOCH::claim:admission:ridge-consumption-selects-admitted-replay",
         "EPOCH::claim:admission:ridge-charge-requires-defining-replay",
         "EPOCH::claim:admission:both-floors-retain-production-charge-gates",
         "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs",

@@ -422,6 +422,7 @@
     "pn-epoch::solve::admission::closure_markers": "",
     "pn-epoch::solve::admission::closure_maximum": "",
     "pn-epoch::solve::admission::closure_membership": "",
+    "pn-epoch::solve::admission::ridge_charge::envelope::ridge_envelope_consumption": "",
     "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission": "",
     "pn-epoch::solve::admission::ridge_charge::ridge_charge_controls": "",
     "pn-epoch::solve::anchor_tables": "",

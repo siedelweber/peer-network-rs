@@ -44,7 +44,7 @@ fn charge(e: &ChargeEvidence, wall: &str) -> Result<pn_records::numerics::Charge
     n.charged_price_with_ridge(&wall, &edition.numeraire, e, &kernel::ChargeReplay)
 }
 
-/// Claim: The finite ridge charge controls retain the closed defining object, complete cover and independently replayed attachments; a changed definition or image is refused, and an unresolved image or wall straddle constructs no charge. The retained rational wall, not a rounded floor image, supplies the charge.
+/// Claim: The finite ridge charge controls retain the declared defining transcript under graph replay; changed bleed, image and query precision are refused, and an unresolved image or wall straddle constructs no charge. The retained rational wall, not a rounded floor image, supplies the charge.
 /// ´claim:admission:ridge-charge-requires-defining-replay´
 /// ´test:integration:ridge-charge-controls´
 #[test]
@@ -163,3 +163,6 @@ fn ridge_charge_admission() {
         previous = Some(final_round.clone());
     }
 }
+
+#[path = "ridge_charge/envelope.rs"]
+mod envelope;

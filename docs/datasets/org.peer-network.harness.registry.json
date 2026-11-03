@@ -5087,6 +5087,20 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::envelope::ridge_envelope_consumption"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::ridge-envelope",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

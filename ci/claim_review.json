@@ -2008,6 +2008,14 @@
       "review": "The finite candidate fixtures keep complete acts and use independent closure replay. The assertions distinguish exact cover, attested closure conditions, consecutive markers and full context equality; the declared verifier supplies host determination rather than deriving earliest opportunity from timestamps. No deployment, persistence, recovery or unrestricted history claim is made."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::envelope::ridge_envelope_consumption",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/envelope.rs",
+      "claim": "EPOCH::claim:admission:ridge-consumption-selects-admitted-replay",
+      "before": "",
+      "after": "Claim: With a permissive test verifier, records refuses altered schema, bracket, cover cell and image envelopes; epoch ledger compilation independently refuses a price formed from a changed query precision. These finite controls establish explicit verifier selection at consumption, not a sealed records authority.",
+      "review": "The permissive verifier returns success for every transcript. Four independent mutations fail records envelope checks; a query-precision mutation passes those checks and forms a price, but ledger consumption refuses it through graph replay. The same complete reversed history supplies the ledger context."
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission",
       "path": "packages/epoch/tests/solve/admission/ridge_charge.rs",
       "claim": "EPOCH::claim:admission:both-floors-retain-production-charge-gates",
@@ -2020,8 +2028,8 @@
       "path": "packages/epoch/tests/solve/admission/ridge_charge.rs",
       "claim": "EPOCH::claim:admission:ridge-charge-requires-defining-replay",
       "before": "",
-      "after": "Claim: The finite ridge charge controls retain the closed defining object, complete cover and independently replayed attachments; a changed definition or image is refused, and an unresolved image or wall straddle constructs no charge. The retained rational wall, not a rounded floor image, supplies the charge.",
-      "review": "Finite defining-transcript refusal controls and complete self-supported admission under both floors retain exact supplied charges and independent replay. The verifier obligation remains explicit; no deployment or unrestricted family claim is made."
+      "after": "Claim: The finite ridge charge controls retain the declared defining transcript under graph replay; changed bleed, image and query precision are refused, and an unresolved image or wall straddle constructs no charge. The retained rational wall, not a rounded floor image, supplies the charge.",
+      "review": "Names the mutated bleed, image and query precision exactly. Separate permissive-verifier envelope and ledger-consumption controls carry the records/consumer distinction."
     },
     {
       "operation": "pn-epoch::solve::anchor_tables",
