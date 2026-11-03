@@ -92,7 +92,7 @@ fields = ["public protocol references", "causal parents and authenticated placem
 [[rows]]
 name = "act-commitments"
 category = "act-fields"
-fields = ["payload commitment C_P and dependency commitment C_D", "proposal precommitment P, Actor proposal signature, content and dependency edition tags, verified header V and host verification seal"]
+fields = ["payload and dependency commitments with their distinct recipe identifiers", "proposal precommitment P, Actor proposal signature, content and dependency edition tags, verified header V and host verification seal"]
 
 [[rows]]
 name = "act-approval"

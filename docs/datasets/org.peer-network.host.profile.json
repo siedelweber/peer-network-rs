@@ -154,7 +154,7 @@
     {
       "category": "act-fields",
       "fields": [
-        "payload commitment C_P and dependency commitment C_D",
+        "payload and dependency commitments with their distinct recipe identifiers",
         "proposal precommitment P, Actor proposal signature, content and dependency edition tags, verified header V and host verification seal"
       ],
       "name": "act-commitments"

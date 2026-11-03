@@ -1,0 +1,399 @@
+namespace = "org.peer-network.host.workflow"
+version = [1, 0, 0]
+
+[[rows]]
+name = "submitAct"
+category = "operation"
+surface = "node"
+kind = "mutation"
+inputs = "stage, act identifier and exact public proposal header or approval document; private handshake material stays in the reviewed custody context"
+outcome = "receipt and durable stage; never implicit admission"
+contract = "sig:design:host"
+status = "planned; not served"
+
+[[rows]]
+name = "actStatus"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "act identifier"
+outcome = "received, verified, eligible, admitted or published status with evidence"
+contract = "rule:api:submission"
+status = "planned; not served"
+
+[[rows]]
+name = "readPublished"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "explicit boundary or latest resolved once, typed keys and bounded page"
+outcome = "standing, title and retained effective declarations at that boundary"
+contract = "sig:design:storage"
+status = "planned; not served"
+
+[[rows]]
+name = "fetchPublication"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "explicit boundary"
+outcome = "complete exact canonical package bytes or explicit unavailable"
+contract = "proto:design:encoding"
+status = "planned; not served"
+
+[[rows]]
+name = "fetchReplayInputs"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "explicit boundary"
+outcome = "complete public causes or unsupported until the replay cut"
+contract = "sig:design:replay"
+status = "planned; not served"
+
+[[rows]]
+name = "rawService"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "declared request and boundary"
+outcome = "unsupported until the optional readout cut"
+contract = "sig:design:readouts"
+status = "planned; not served"
+
+[[rows]]
+name = "grant"
+category = "operation"
+surface = "node"
+kind = "mutation"
+inputs = "run, request, destination and exact amount"
+outcome = "durable reservation and funding status, development profile only"
+contract = "sig:devnet:faucet"
+status = "planned; not served"
+
+[[rows]]
+name = "grantStatus"
+category = "operation"
+surface = "node"
+kind = "query"
+inputs = "run and request"
+outcome = "reserved, uncertain or reconciled funding receipt"
+contract = "rule:devnet:grant-outcomes"
+status = "planned; not served"
+
+[[rows]]
+name = "clientFund"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "run, request and wallet selection"
+outcome = "funding workflow stage"
+contract = "rule:harness:wallet-recovery"
+status = "planned; not served"
+
+[[rows]]
+name = "clientBurnNew"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "run, request, prepared authenticated binding, asset, amount and fee policy"
+outcome = "new-account destruction stage; no inferred admission"
+contract = "rule:harness:burn-targets"
+status = "planned; not served"
+
+[[rows]]
+name = "clientBurnExisting"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "run, request, existing binding, asset, amount and fee policy"
+outcome = "fresh destruction stage, including gift funding; no transferred old burn"
+contract = "rule:harness:burn-targets"
+status = "planned; not served"
+
+[[rows]]
+name = "clientRecover"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "original run and request"
+outcome = "authoritative recovered stage or unknown effect"
+contract = "rule:harness:wallet-recovery"
+status = "planned; not served"
+
+[[rows]]
+name = "clientPrepareAct"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "public intent and secret custody capability supplied outside public variables"
+outcome = "prepared proposal status or unsupported custody"
+contract = "open:identity:act-production-concealment"
+status = "planned; not served"
+
+[[rows]]
+name = "clientApproveAct"
+category = "operation"
+surface = "client"
+kind = "mutation"
+inputs = "exact verified act and original custody request"
+outcome = "approval and submission stage after all equality and opening checks"
+contract = "open:crypto:dependency-admission"
+status = "planned; not served"
+
+[[rows]]
+name = "clientRecoverAct"
+category = "operation"
+surface = "client"
+kind = "query"
+inputs = "original Actor and request"
+outcome = "retained proposal, approval or publication stage; no replacement identity"
+contract = "open:identity:act-production-concealment"
+status = "planned; not served"
+
+[[rows]]
+name = "start"
+category = "operation"
+surface = "control"
+kind = "mutation"
+inputs = "private typed bootstrap context outside public variables"
+outcome = "listener start outcome through local executor"
+contract = "amend:api:node-package"
+status = "planned; not served"
+
+[[rows]]
+name = "inspect"
+category = "operation"
+surface = "control"
+kind = "query"
+inputs = "authenticated local selection"
+outcome = "bounded operational state"
+contract = "amend:api:node-package"
+status = "planned; not served"
+
+[[rows]]
+name = "administer"
+category = "operation"
+surface = "control"
+kind = "mutation"
+inputs = "explicit allow-listed local operation"
+outcome = "durable administration outcome or unsupported"
+contract = "amend:api:node-package"
+status = "planned; not served"
+
+[[rows]]
+name = "preflight"
+category = "recovery"
+action = "Validate profile, run, immutable intent, target, authority and resource limits before effects."
+recovery = "Unsupported or refused performs no effect; a capability study must precede spending."
+
+[[rows]]
+name = "prepared"
+category = "recovery"
+action = "Recover or atomically retain the authenticated account binding and request; confirm wallet association capability."
+recovery = "Reuse the original request and prepared binding; a different intent refuses."
+
+[[rows]]
+name = "funding"
+category = "recovery"
+action = "Reserve node quota and grant intent, then recover node and selected-wallet status for that request."
+recovery = "Retain the reservation during uncertainty; no second grant request."
+
+[[rows]]
+name = "associated"
+category = "recovery"
+action = "The wallet atomically and durably associates intent, chosen inputs and exact signed transaction before any broadcast."
+recovery = "Only complete authoritative no-creation under serialized ownership permits first creation."
+
+[[rows]]
+name = "broadcast"
+category = "recovery"
+action = "Broadcast the retained signed bytes, or recover their existing transaction."
+recovery = "Lost response is unknown effect; only the identical transaction may be rebroadcast."
+
+[[rows]]
+name = "settlement"
+category = "recovery"
+action = "Verify actual signed destruction, permanent target, amount and shared settled marker."
+recovery = "Pending, conflicted, abandoned, inaccessible and incomplete history remain distinct; none is admission."
+
+[[rows]]
+name = "submitted"
+category = "recovery"
+action = "Submit the same structural act or request and recover its recorded receipt."
+recovery = "Receipt and approval do not promise final inclusion."
+
+[[rows]]
+name = "published"
+category = "recovery"
+action = "Read admitted result and its complete package at the named boundary."
+recovery = "Publication completes the act-publication workflow only; funding and burn workflows retain their own narrower terminal receipts."
+
+[[rows]]
+name = "uncertain"
+category = "recovery"
+action = "Reconcile the original request through the authoritative store before any further effect."
+recovery = "Cancellation never proves rollback; unavailable or incomplete lookup cannot become no-creation."
+
+[[rows]]
+name = "8-b"
+category = "hold"
+owner = "lane/design"
+scope = "bounded transport"
+evidence = "pn-interchange equal typed outer variants; duplicate keys, chunk work, item/depth/byte limits and unchanged strict-document refusals"
+hold = "open:design:api-evidence"
+
+[[rows]]
+name = "8-c"
+category = "hold"
+owner = "lane/graph then lane/design"
+scope = "semantic carrier and codec"
+evidence = "all section/act fields, complete causes, exact scalar variants, independent canonical vectors, unknown edition refusal and restored ridge replay under admitted verifier"
+hold = "open:design:publication-profile"
+
+[[rows]]
+name = "8-d"
+category = "hold"
+owner = "lane/graph and lane/design"
+scope = "marker realization"
+evidence = "real signed lineage, operator placement/cadence, both set encodings, unique openings, both bounds, aliases, delayed acceptance and lost-predecessor refusals"
+hold = "open:design:devnet-evidence"
+
+[[rows]]
+name = "8-e"
+category = "hold"
+owner = "lane/design"
+scope = "atomic persistence"
+evidence = "real PostgreSQL admitted-result/debit/input transaction, duplicate event idempotence, concurrency and failure injection, unchanged historical reads and public-input rebuild"
+hold = "open:host:admitted-epoch-result"
+
+[[rows]]
+name = "8-f"
+category = "hold"
+owner = "lane/design with independent crypto reviewer and lane/graph verifier hand-off"
+scope = "authentication and secret custody"
+evidence = "admitted dependency and exact signature operations, Actor retry-state review, secret containers and counted exits, durable salt reservation, entropy/rollback/exhaustion and removal witnesses"
+hold = "open:identity:act-production-concealment"
+
+[[rows]]
+name = "8-g"
+category = "hold"
+owner = "lane/design"
+scope = "daemon capability study"
+evidence = "real durable atomic intent/transaction association, complete lookup across pending/conflicted/abandoned history, all-writer serialization and least-authority spending identity; unsupported capability returns a contract decision"
+hold = "open:devnet:spending-rpc-identity"
+
+[[rows]]
+name = "8-h"
+category = "hold"
+owner = "lane/design"
+scope = "wallet recovery and grants"
+evidence = "only after successful capability study: crash/cancel matrix around association/signing/broadcast, no duplicate payment, uncertain quota retention and immutable target"
+hold = "open:design:harness-evidence"
+
+[[rows]]
+name = "8-i"
+category = "hold"
+owner = "lane/design"
+scope = "node API"
+evidence = "reviewed SDL/register/introspection equality, native exact scalars, measured finite limits, HTTPS trust boundary, independent messages and historical package reads"
+hold = "open:design:api-evidence"
+
+[[rows]]
+name = "8-j"
+category = "hold"
+owner = "lane/graph numerical context and lane/design host"
+scope = "live boundary"
+evidence = "complete measured operational declaration, both floor routes, exact replay attachments, earliest-close attestation, no-write indecision and fresh PostgreSQL rebuild of an admitted epoch"
+hold = "open:design:deployment-profile"
+
+[[rows]]
+name = "8-k"
+category = "hold"
+owner = "lane/design"
+scope = "client workflows"
+evidence = "unchanged node schema subset, wallet-only spending authority, reviewed Actor custody, shared mock/real suites and explicit uncertain outcomes"
+hold = "open:design:harness-evidence"
+
+[[rows]]
+name = "8-l"
+category = "hold"
+owner = "lane/design"
+scope = "both command surfaces"
+evidence = "node/client GraphQL only, start before listener, terminal refusal before effects, exact artifact output, exit outcomes and secret sentinels"
+hold = "open:design:harness-evidence"
+
+[[rows]]
+name = "8-m"
+category = "hold"
+owner = "lane/design with lane/graph semantic review"
+scope = "faults and monitoring"
+evidence = "title mismatch evidence without rewrite, lost-marker freeze and selected re-anchor with published ledger continuity, measured monitors and cadence freeze"
+hold = "open:design:devnet-evidence"
+
+[[rows]]
+name = "8-n"
+category = "hold"
+owner = "both lanes and independent reviewer"
+scope = "joint close"
+evidence = "required suite union, independent completeness/rebuild evidence, observations, warm calibration, one writer per package and bite-seven reference disposition; no decentralized-agreement claim"
+hold = "open:design:publication-profile"
+
+[[rows]]
+name = "Unsigned"
+category = "scalar"
+encoding = "native CBOR unsigned integer"
+rule = "full unsigned range; no signed or floating intermediate; literal coercion reviewed with the SDL"
+status = "planned; not served"
+
+[[rows]]
+name = "Bytes"
+category = "scalar"
+encoding = "native CBOR byte string"
+rule = "variables only; no text, base64 or integer-array substitute"
+status = "planned; not served"
+
+[[rows]]
+name = "Document"
+category = "scalar"
+encoding = "native CBOR byte string"
+rule = "strict validation of unchanged inner bytes against the assigned theory"
+status = "planned; not served"
+
+[[rows]]
+name = "Int"
+category = "scalar"
+encoding = "native integer in GraphQL Int range"
+rule = "the GraphQL signed range remains structural; no widened counter alias"
+status = "planned; not served"
+
+[[rows]]
+name = "Float"
+category = "scalar"
+encoding = "finite CBOR float at a Float position only"
+rule = "never a ledger value, charge, exact constant or binding comparison"
+status = "planned; not served"
+
+[[rows]]
+name = "funded"
+category = "recovery"
+action = "Reconcile the node grant and receiving-wallet transaction under the original funding intent."
+recovery = "This completes funding only, never burn settlement or act admission."
+
+[[rows]]
+name = "verified-act"
+category = "recovery"
+action = "Recover the exact host-sealed header and its private openings; check all proposal fields, editions and both legs."
+recovery = "A host seal grants no inclusion; a mismatch refuses approval."
+
+[[rows]]
+name = "approved"
+category = "recovery"
+action = "The Actor authorizes only the exact checked verified header and host seal."
+recovery = "Retain the exact approval before delivery; never approve substituted host fields."
+
+[[rows]]
+name = "admitted"
+category = "recovery"
+action = "Read the host result produced by all final gates and atomic persistence."
+recovery = "Eligibility, receipt or approval alone cannot reach this state."
