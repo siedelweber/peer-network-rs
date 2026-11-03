@@ -1,0 +1,391 @@
+{
+  "namespace": "org.peer-network.host.profile",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "deployment",
+      "namespace": "org.peer-network.test.publication",
+      "owner": "lane/design",
+      "status": "reserved; complete theory and independent vectors pending",
+      "theory": "publication"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "act",
+      "namespace": "org.peer-network.test.act",
+      "owner": "lane/design",
+      "status": "reserved; complete theory and independent vectors pending",
+      "theory": "act-envelope"
+    },
+    {
+      "category": "choice",
+      "name": "accepted-set",
+      "owner": "lane/design and lane/graph",
+      "reason": "A finite complete list exposes every member and both acceptance bounds directly, without an additional opening-availability dependency.",
+      "value": "complete-list"
+    },
+    {
+      "category": "choice",
+      "name": "finality-response",
+      "owner": "lane/design",
+      "reason": "Loss of a final marker freezes the last closed state and publishes the fault; resumption requires an explicit reviewed re-anchor and a new published policy edition, preserving the old history.",
+      "value": "freeze-and-reanchor"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "epoch and predecessor boundary",
+        "authoritative ordered act identifiers and complete accepted envelopes",
+        "final edge union with parent-act and leg references",
+        "complete finalized prior-history references",
+        "disjoint dependent blocks and authoritative positions",
+        "realized size, closure cause, clock, opening and determination times, attested boundary timestamp and earliest-determination evidence"
+      ],
+      "key": 2,
+      "name": "accepted-records"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "shared recognized marker and policy reference",
+        "gross settled burn snapshot, destruction identities, address attribution and first-acceptance increments",
+        "final residual balance and final action count per Actor",
+        "accepted-act increments per Actor",
+        "immutable debit vintages: charged amount, numeraire, policy, effective boundary and predecessor ledger",
+        "units and exact admitted rational charged values"
+      ],
+      "key": 3,
+      "name": "final-ledger"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "every accepted Actor-authored act and complete structural projections",
+        "fold-cell membership and coefficient with exact defining object",
+        "recipient resolution including neutral and unresolved outcomes",
+        "normalized family domain profiles and separate domain weights",
+        "Actor and support ordering, self-retention and sparse base allocation"
+      ],
+      "key": 4,
+      "name": "semantic-projection"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "tilt shape and finite backoff grid",
+        "accepted rung and each attempted higher rung with PASS, FAIL or INDECISIVE",
+        "depth masses and deepest supported depth",
+        "source emission fractions",
+        "hop allocation factors and full support sufficient to reconstruct the conserved emitted transport"
+      ],
+      "key": 5,
+      "name": "allocation-transport"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "rate hull and contributing width",
+        "certificate scalar, clearance and verdict",
+        "fixed-point enclosure and final standing",
+        "final action and epoch stamps",
+        "door headroom",
+        "own-balance solvency, individual safety and final epoch admission verdicts with comparison evidence"
+      ],
+      "key": 6,
+      "name": "standing-admission"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "title certificate and settlement recognition with resolved parties and act references",
+        "target size and minimum and maximum durations",
+        "fixed structural declaration, numeraire and exact floor defining object",
+        "wall and rational price in force, policy-floor and threshold schedules and margin",
+        "controller edition, initialization, reduced constants and complete retained policy history",
+        "completed width and rung, proposal, delivered led wall and burn image",
+        "publication marker, pair, numeraire, policy and proposal; sequence declaration carried once"
+      ],
+      "key": 7,
+      "name": "closure-policy"
+    },
+    {
+      "category": "section",
+      "fields": [
+        "formula editions, exact constants and activation definitions",
+        "immutable marker policy identity, edition, placement, cadence, initial marker and settlement/finality assumptions",
+        "recognized marker, predecessors, fixed interpretation data and settled lineage evidence",
+        "complete accepted sets and destruction/member evidence, including uniquely verifiable openings for commitment conformance",
+        "numerical procedure edition, precision, refinement, equality, stopping and resource settings",
+        "defining ridge, rational charge, complete floor comparison and charge replay attachments",
+        "public interval boxes, residual bounds, certificate and rounding disclosures",
+        "public previous-wall state and all input references required for independent reconstruction",
+        "capacity bounds and provenance, dimensioned unit destruction cost, separate event costs and operator bound/proof or declared absence"
+      ],
+      "key": 8,
+      "name": "reproduction"
+    },
+    {
+      "category": "act-fields",
+      "fields": [
+        "act identifier I, author and family",
+        "structural body B: identifier, author, family, binary/hyper shape, incidence, authored semantic coordinates, protocol references and requested payload/dependency publication states; both hyper-edge projections"
+      ],
+      "name": "act-identity"
+    },
+    {
+      "category": "act-fields",
+      "fields": [
+        "public protocol references",
+        "causal parents and authenticated placement evidence"
+      ],
+      "name": "act-causality"
+    },
+    {
+      "category": "act-fields",
+      "fields": [
+        "payload commitment C_P and dependency commitment C_D",
+        "proposal precommitment P, Actor proposal signature, content and dependency edition tags, verified header V and host verification seal"
+      ],
+      "name": "act-commitments"
+    },
+    {
+      "category": "act-fields",
+      "fields": [
+        "exact verified header V and host seal bound by the Actor approval witness; no epoch, position, logical time, membership, standing or title signed by that witness",
+        "authentication edition and public verification material"
+      ],
+      "name": "act-approval"
+    },
+    {
+      "category": "act-fields",
+      "fields": [
+        "finalization epoch and act time",
+        "parent-act links shared by both projections"
+      ],
+      "name": "act-finalization"
+    },
+    {
+      "category": "sidecars",
+      "fields": [
+        "payload bytes and payload salt",
+        "dependency opening and dependency salt",
+        "availability/removal state and authenticated retained anchors; private proposal nonce remains off-record submission state, never a publication field"
+      ],
+      "name": "openings",
+      "reason": "Removable openings travel beside the immutable act envelope; removal never permits rebinding."
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j measured candidate search and earliest-close cases",
+      "name": "target-size",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "acts"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j measured boundary policy",
+      "name": "minimum-duration",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j measured boundary policy and fallback",
+      "name": "maximum-duration",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-d real marker placement and settled lineage",
+      "name": "marker-cadence",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-d declared finality assumptions and replacement cases",
+      "name": "settlement-depth",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "blocks"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j complete validation measurements",
+      "name": "trial-budget",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "candidate trials"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j measured solve and replay envelope",
+      "name": "validation-timeout",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j measured supported workload",
+      "name": "solver-availability-target",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "fraction"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-c and 8-j certify comparisons for both floor routes",
+      "name": "precision",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "bits"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j deterministic refinement and replay agreement",
+      "name": "refinement",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "precision schedule"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j finite failure and indecision witnesses",
+      "name": "stopping",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "iterations and Work"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j defining-ridge and rational-floor replay measurements",
+      "name": "comparison-resources",
+      "owner": "lane/graph",
+      "status": "pending",
+      "unit": "Work and bytes"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-n service and numerical integration on the admitted backend platform",
+      "name": "platform",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "target and configuration"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-j and 8-n measured service envelope",
+      "name": "resource-envelope",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "cores, bytes and seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-m cadence freeze and maturity drift",
+      "name": "adaptation-window",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "seconds"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-m thresholds, persistence windows, sampling and review schedule",
+      "name": "monitor-thresholds",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "declared metric units"
+    },
+    {
+      "category": "setting",
+      "evidence": "8-b and 8-i finite transport and resolver workload measurements",
+      "name": "api-limits",
+      "owner": "lane/design",
+      "status": "pending",
+      "unit": "bytes, items, depth, work, concurrency and seconds"
+    },
+    {
+      "category": "procedure",
+      "name": "equality",
+      "owner": "lane/graph",
+      "value": "exact equality or certified comparison; a straddling enclosure refines or refuses, never rounds to a verdict"
+    },
+    {
+      "category": "procedure",
+      "name": "floor-routes",
+      "owner": "lane/graph",
+      "value": "admitted rational charged values with both rational-floor and defining-ridge verification routes; replay restored charge evidence under the admitted verifier at consumption"
+    },
+    {
+      "category": "procedure",
+      "name": "fallback",
+      "owner": "lane/graph and lane/design",
+      "value": "retain the previous closed state when no candidate certifies within the declared budget; no write on indecision and no fabricated empty epoch"
+    },
+    {
+      "category": "procedure",
+      "name": "monitoring",
+      "owner": "lane/design",
+      "value": "publish certificate/backoff, title comparison, emission, controller response, standing work and cadence observations; crossings trigger recorded review, never a new binding input"
+    },
+    {
+      "category": "nested-fields",
+      "fields": [
+        "tagged act identifier: author, sequence and family",
+        "layout discriminant; each leg identity, role, source, target and removal state",
+        "settlement references; license attribution/provenance rational qualifiers",
+        "asserted parents; named quantities with exact value, unit and vintage",
+        "payload and dependency publication-state discriminants; protocol references"
+      ],
+      "name": "structural-body"
+    },
+    {
+      "category": "nested-fields",
+      "fields": [
+        "declaration namespace/name/edition and effective boundary",
+        "procedure name, backend, allowed primitives, precision and equality policies",
+        "backoff grid, margin, endpoint grid and optional enclosure/fence profiles",
+        "production, solve and replay Work ceilings and iteration limit"
+      ],
+      "name": "procedure"
+    },
+    {
+      "category": "nested-fields",
+      "fields": [
+        "per-Actor lower/upper rate hull",
+        "ordered attempts: rung, margined fence interval, Work, completion, stop cause and primitive references",
+        "residual candidate map, residual upper bound, contraction upper bound and radius",
+        "complete primitive records, with exact arguments, domains, results and validation evidence"
+      ],
+      "name": "solve-evidence"
+    },
+    {
+      "category": "nested-fields",
+      "fields": [
+        "definition schema, inverse temperature, bleed squared and core power",
+        "input bracket, depth ceiling and production/replay Work ceilings",
+        "ordered primitive queries, subdivision cells, optional image and consumed Work",
+        "floor comparison wall and floor variants, queries, verdict and Work",
+        "charge analytic premises, procedure, input and complete ridge record"
+      ],
+      "name": "ridge-evidence"
+    }
+  ]
+}

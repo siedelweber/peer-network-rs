@@ -1,0 +1,291 @@
+namespace = "org.peer-network.host.profile"
+version = [1, 0, 0]
+
+[[rows]]
+name = "deployment"
+category = "allocation"
+namespace = "org.peer-network.test.publication"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "publication"
+status = "reserved; complete theory and independent vectors pending"
+owner = "lane/design"
+
+[[rows]]
+name = "act"
+category = "allocation"
+namespace = "org.peer-network.test.act"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "act-envelope"
+status = "reserved; complete theory and independent vectors pending"
+owner = "lane/design"
+
+[[rows]]
+name = "accepted-set"
+category = "choice"
+value = "complete-list"
+reason = "A finite complete list exposes every member and both acceptance bounds directly, without an additional opening-availability dependency."
+owner = "lane/design and lane/graph"
+
+[[rows]]
+name = "finality-response"
+category = "choice"
+value = "freeze-and-reanchor"
+reason = "Loss of a final marker freezes the last closed state and publishes the fault; resumption requires an explicit reviewed re-anchor and a new published policy edition, preserving the old history."
+owner = "lane/design"
+
+[[rows]]
+name = "accepted-records"
+category = "section"
+key = 2
+fields = ["epoch and predecessor boundary", "authoritative ordered act identifiers and complete accepted envelopes", "final edge union with parent-act and leg references", "complete finalized prior-history references", "disjoint dependent blocks and authoritative positions", "realized size, closure cause, clock, opening and determination times, attested boundary timestamp and earliest-determination evidence"]
+
+[[rows]]
+name = "final-ledger"
+category = "section"
+key = 3
+fields = ["shared recognized marker and policy reference", "gross settled burn snapshot, destruction identities, address attribution and first-acceptance increments", "final residual balance and final action count per Actor", "accepted-act increments per Actor", "immutable debit vintages: charged amount, numeraire, policy, effective boundary and predecessor ledger", "units and exact admitted rational charged values"]
+
+[[rows]]
+name = "semantic-projection"
+category = "section"
+key = 4
+fields = ["every accepted Actor-authored act and complete structural projections", "fold-cell membership and coefficient with exact defining object", "recipient resolution including neutral and unresolved outcomes", "normalized family domain profiles and separate domain weights", "Actor and support ordering, self-retention and sparse base allocation"]
+
+[[rows]]
+name = "allocation-transport"
+category = "section"
+key = 5
+fields = ["tilt shape and finite backoff grid", "accepted rung and each attempted higher rung with PASS, FAIL or INDECISIVE", "depth masses and deepest supported depth", "source emission fractions", "hop allocation factors and full support sufficient to reconstruct the conserved emitted transport"]
+
+[[rows]]
+name = "standing-admission"
+category = "section"
+key = 6
+fields = ["rate hull and contributing width", "certificate scalar, clearance and verdict", "fixed-point enclosure and final standing", "final action and epoch stamps", "door headroom", "own-balance solvency, individual safety and final epoch admission verdicts with comparison evidence"]
+
+[[rows]]
+name = "closure-policy"
+category = "section"
+key = 7
+fields = ["title certificate and settlement recognition with resolved parties and act references", "target size and minimum and maximum durations", "fixed structural declaration, numeraire and exact floor defining object", "wall and rational price in force, policy-floor and threshold schedules and margin", "controller edition, initialization, reduced constants and complete retained policy history", "completed width and rung, proposal, delivered led wall and burn image", "publication marker, pair, numeraire, policy and proposal; sequence declaration carried once"]
+
+[[rows]]
+name = "reproduction"
+category = "section"
+key = 8
+fields = ["formula editions, exact constants and activation definitions", "immutable marker policy identity, edition, placement, cadence, initial marker and settlement/finality assumptions", "recognized marker, predecessors, fixed interpretation data and settled lineage evidence", "complete accepted sets and destruction/member evidence, including uniquely verifiable openings for commitment conformance", "numerical procedure edition, precision, refinement, equality, stopping and resource settings", "defining ridge, rational charge, complete floor comparison and charge replay attachments", "public interval boxes, residual bounds, certificate and rounding disclosures", "public previous-wall state and all input references required for independent reconstruction", "capacity bounds and provenance, dimensioned unit destruction cost, separate event costs and operator bound/proof or declared absence"]
+
+[[rows]]
+name = "act-identity"
+category = "act-fields"
+fields = ["act identifier I, author and family", "structural body B: identifier, author, family, binary/hyper shape, incidence, authored semantic coordinates, protocol references and requested payload/dependency publication states; both hyper-edge projections"]
+
+[[rows]]
+name = "act-causality"
+category = "act-fields"
+fields = ["public protocol references", "causal parents and authenticated placement evidence"]
+
+[[rows]]
+name = "act-commitments"
+category = "act-fields"
+fields = ["payload commitment C_P and dependency commitment C_D", "proposal precommitment P, Actor proposal signature, content and dependency edition tags, verified header V and host verification seal"]
+
+[[rows]]
+name = "act-approval"
+category = "act-fields"
+fields = ["exact verified header V and host seal bound by the Actor approval witness; no epoch, position, logical time, membership, standing or title signed by that witness", "authentication edition and public verification material"]
+
+[[rows]]
+name = "act-finalization"
+category = "act-fields"
+fields = ["finalization epoch and act time", "parent-act links shared by both projections"]
+
+[[rows]]
+name = "openings"
+category = "sidecars"
+fields = ["payload bytes and payload salt", "dependency opening and dependency salt", "availability/removal state and authenticated retained anchors; private proposal nonce remains off-record submission state, never a publication field"]
+reason = "Removable openings travel beside the immutable act envelope; removal never permits rebinding."
+
+[[rows]]
+name = "target-size"
+category = "setting"
+status = "pending"
+unit = "acts"
+owner = "lane/design"
+evidence = "8-j measured candidate search and earliest-close cases"
+
+[[rows]]
+name = "minimum-duration"
+category = "setting"
+status = "pending"
+unit = "seconds"
+owner = "lane/design"
+evidence = "8-j measured boundary policy"
+
+[[rows]]
+name = "maximum-duration"
+category = "setting"
+status = "pending"
+unit = "seconds"
+owner = "lane/design"
+evidence = "8-j measured boundary policy and fallback"
+
+[[rows]]
+name = "marker-cadence"
+category = "setting"
+status = "pending"
+unit = "seconds"
+owner = "lane/design"
+evidence = "8-d real marker placement and settled lineage"
+
+[[rows]]
+name = "settlement-depth"
+category = "setting"
+status = "pending"
+unit = "blocks"
+owner = "lane/design"
+evidence = "8-d declared finality assumptions and replacement cases"
+
+[[rows]]
+name = "trial-budget"
+category = "setting"
+status = "pending"
+unit = "candidate trials"
+owner = "lane/graph"
+evidence = "8-j complete validation measurements"
+
+[[rows]]
+name = "validation-timeout"
+category = "setting"
+status = "pending"
+unit = "seconds"
+owner = "lane/graph"
+evidence = "8-j measured solve and replay envelope"
+
+[[rows]]
+name = "solver-availability-target"
+category = "setting"
+status = "pending"
+unit = "fraction"
+owner = "lane/graph"
+evidence = "8-j measured supported workload"
+
+[[rows]]
+name = "precision"
+category = "setting"
+status = "pending"
+unit = "bits"
+owner = "lane/graph"
+evidence = "8-c and 8-j certify comparisons for both floor routes"
+
+[[rows]]
+name = "refinement"
+category = "setting"
+status = "pending"
+unit = "precision schedule"
+owner = "lane/graph"
+evidence = "8-j deterministic refinement and replay agreement"
+
+[[rows]]
+name = "stopping"
+category = "setting"
+status = "pending"
+unit = "iterations and Work"
+owner = "lane/graph"
+evidence = "8-j finite failure and indecision witnesses"
+
+[[rows]]
+name = "comparison-resources"
+category = "setting"
+status = "pending"
+unit = "Work and bytes"
+owner = "lane/graph"
+evidence = "8-j defining-ridge and rational-floor replay measurements"
+
+[[rows]]
+name = "platform"
+category = "setting"
+status = "pending"
+unit = "target and configuration"
+owner = "lane/design"
+evidence = "8-n service and numerical integration on the admitted backend platform"
+
+[[rows]]
+name = "resource-envelope"
+category = "setting"
+status = "pending"
+unit = "cores, bytes and seconds"
+owner = "lane/design"
+evidence = "8-j and 8-n measured service envelope"
+
+[[rows]]
+name = "adaptation-window"
+category = "setting"
+status = "pending"
+unit = "seconds"
+owner = "lane/design"
+evidence = "8-m cadence freeze and maturity drift"
+
+[[rows]]
+name = "monitor-thresholds"
+category = "setting"
+status = "pending"
+unit = "declared metric units"
+owner = "lane/design"
+evidence = "8-m thresholds, persistence windows, sampling and review schedule"
+
+[[rows]]
+name = "api-limits"
+category = "setting"
+status = "pending"
+unit = "bytes, items, depth, work, concurrency and seconds"
+owner = "lane/design"
+evidence = "8-b and 8-i finite transport and resolver workload measurements"
+
+[[rows]]
+name = "equality"
+category = "procedure"
+value = "exact equality or certified comparison; a straddling enclosure refines or refuses, never rounds to a verdict"
+owner = "lane/graph"
+
+[[rows]]
+name = "floor-routes"
+category = "procedure"
+value = "admitted rational charged values with both rational-floor and defining-ridge verification routes; replay restored charge evidence under the admitted verifier at consumption"
+owner = "lane/graph"
+
+[[rows]]
+name = "fallback"
+category = "procedure"
+value = "retain the previous closed state when no candidate certifies within the declared budget; no write on indecision and no fabricated empty epoch"
+owner = "lane/graph and lane/design"
+
+[[rows]]
+name = "monitoring"
+category = "procedure"
+value = "publish certificate/backoff, title comparison, emission, controller response, standing work and cadence observations; crossings trigger recorded review, never a new binding input"
+owner = "lane/design"
+
+[[rows]]
+name = "structural-body"
+category = "nested-fields"
+fields = ["tagged act identifier: author, sequence and family", "layout discriminant; each leg identity, role, source, target and removal state", "settlement references; license attribution/provenance rational qualifiers", "asserted parents; named quantities with exact value, unit and vintage", "payload and dependency publication-state discriminants; protocol references"]
+
+[[rows]]
+name = "procedure"
+category = "nested-fields"
+fields = ["declaration namespace/name/edition and effective boundary", "procedure name, backend, allowed primitives, precision and equality policies", "backoff grid, margin, endpoint grid and optional enclosure/fence profiles", "production, solve and replay Work ceilings and iteration limit"]
+
+[[rows]]
+name = "solve-evidence"
+category = "nested-fields"
+fields = ["per-Actor lower/upper rate hull", "ordered attempts: rung, margined fence interval, Work, completion, stop cause and primitive references", "residual candidate map, residual upper bound, contraction upper bound and radius", "complete primitive records, with exact arguments, domains, results and validation evidence"]
+
+[[rows]]
+name = "ridge-evidence"
+category = "nested-fields"
+fields = ["definition schema, inverse temperature, bleed squared and core power", "input bracket, depth ceiling and production/replay Work ceilings", "ordered primitive queries, subdivision cells, optional image and consumed Work", "floor comparison wall and floor variants, queries, verdict and Work", "charge analytic premises, procedure, input and complete ridge record"]
