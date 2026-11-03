@@ -1,6 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['ci/vendor_rustc.py', 'clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,extended-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,discipline-tests,design-tests,linter-entry-tests', ''],
   ['ci/vendor-packages.toml', 'vendor-set,member-lints,clippy,nursery-advisory,discipline-tests,wallet-conformance,design-tests', ''],
   ['ci/precheck.py', 'build-graph,claim-tests', ''],
   ['ci/isolation.py', 'build-graph,fixed-point-generate,fixed-point-write,harness-tests,discipline-tests,linter-entry-tests,design-tests,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser', ''],

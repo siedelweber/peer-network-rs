@@ -814,8 +814,45 @@ class SourceDiscipline(unittest.TestCase):
         self.assertTrue(inherits_lints(tomllib.loads('[lints]\nworkspace = true\n')))
         for source in ['', '[lints]\nworkspace = false\n', '[lints]\nworkspace = true\n[lints.rust]\nunused = "allow"\n']:
             self.assertFalse(inherits_lints(tomllib.loads(source)))
+        from vendor_rustc import capped
+        from clippy_fixture import run
+        with tempfile.TemporaryDirectory(prefix='vendor-cap-', dir=os.environ['TMPDIR']) as directory:
+            root = Path(directory)
+            for folder in ['ci', '.cargo', 'app/src', 'vendor/dependency/src', 'vendor/fork/src']:
+                (root/folder).mkdir(parents=True)
+            wrapper = root/'ci/vendor_rustc.py'
+            wrapper.write_bytes(Path('ci/vendor_rustc.py').read_bytes())
+            wrapper.chmod(0o755)
+            (root/'.cargo/config.toml').write_text('[build]\nrustc-wrapper="ci/vendor_rustc.py"\n')
+            (root/'Cargo.toml').write_text('[workspace]\nresolver="3"\nmembers=["app","vendor/fork"]\nexclude=["vendor/dependency"]\n[workspace.lints.rust]\nunexpected_cfgs="deny"\n[patch.crates-io]\ndependency={path="vendor/dependency"}\n')
+            (root/'ci/vendor-packages.toml').write_text('[[packages]]\nname="dependency"\nversion="0.0.0"\npath="vendor/dependency"\nmode="patch"\n[[packages]]\nname="fork"\nversion="0.0.0"\npath="vendor/fork"\nmode="member"\n')
+            (root/'app/Cargo.toml').write_text('[package]\nname="app"\nversion="0.0.0"\nedition="2024"\n[dependencies]\ndependency="=0.0.0"\n[lints]\nworkspace=true\n')
+            (root/'vendor/fork/Cargo.toml').write_text('[package]\nname="fork"\nversion="0.0.0"\nedition="2024"\n[lints]\nworkspace=true\n')
+            (root/'vendor/dependency/Cargo.toml').write_text('[package]\nname="dependency"\nversion="0.0.0"\nedition="2024"\n[lints.rust]\nunexpected_cfgs="deny"\n')
+            bad='#[cfg(undeclared_vendor_probe)] pub fn probe() {}\n'
+            (root/'vendor/dependency/src/lib.rs').write_text(bad)
+            (root/'vendor/dependency/build.rs').write_text(bad+'fn main() {}\n')
+            (root/'vendor/fork/src/lib.rs').write_text(bad)
+            (root/'app/src/lib.rs').write_text('pub fn ordinary() {}\n')
+            command=['cargo','check','--offline','-p','app']
+            result=run(command,root)
+            self.assertEqual(result.returncode,0,result.stderr)
+            (root/'app/src/lib.rs').write_text(bad)
+            result=run(command,root)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('unexpected `cfg` condition name',result.stderr)
+            result=run(['cargo','check','--offline','-p','fork'],root)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('unexpected `cfg` condition name',result.stderr)
+            environment={'CARGO_MANIFEST_DIR':str(root/'vendor/dependency')}
+            self.assertTrue(capped(root,['vendor/dependency/src/lib.rs'],environment,root))
+            self.assertFalse(capped(root,['app/src/lib.rs'],environment,root))
+            self.assertFalse(capped(root,['--print','sysroot'],environment,root))
+            self.assertFalse(capped(root,['vendor/dependency/src/lib.rs'],{},root))
+            declaration=root/'ci/vendor-packages.toml'
+            declaration.write_text(declaration.read_text().replace('mode="patch"','mode="member"'))
+            self.assertFalse(capped(root,['vendor/dependency/src/lib.rs'],environment,root))
         from discipline import vendor_packages
-        import tempfile
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root/'ci').mkdir(); (root/'vendor/example').mkdir(parents=True)
