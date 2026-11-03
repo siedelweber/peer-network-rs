@@ -50,6 +50,8 @@ pub struct CompiledState {
 pub enum CompiledSource {
     Published(VerifiedPackage),
     Candidate(CandidateContext),
+    /// Locally admitted causes, without an assertion of external publication.
+    Admitted(Box<crate::package::AdmittedBoundary>),
 }
 
 impl CompiledSource {
@@ -61,6 +63,7 @@ impl CompiledSource {
         match self {
             Self::Published(package) => package.input(),
             Self::Candidate(candidate) => &candidate.input().causes,
+            Self::Admitted(admitted) => &admitted.candidate().input().causes,
         }
     }
 }
@@ -212,4 +215,34 @@ impl CompiledState {
     pub fn view(&self) -> &CompiledView {
         &self.view
     }
+}
+
+/// Compile a locally admitted boundary without asserting external publication.
+/// (´rule:admission:semantic-carrier´)
+/// # Errors
+/// Refuses any changed formation, charge or bounded derivation.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "compiler::compile_admitted"
+    ),
+    ret
+)]
+pub fn compile_admitted(
+    admitted: &crate::package::AdmittedBoundary,
+    verifier: &impl RegistrationVerifier,
+    numeric: &mut NumericContext,
+    limits: Limits,
+    maximum_products: u64,
+) -> Result<CompiledState, CompileError> {
+    compile_source(
+        CompiledSource::Admitted(Box::new(admitted.clone())),
+        verifier,
+        numeric,
+        limits,
+        maximum_products,
+    )
 }

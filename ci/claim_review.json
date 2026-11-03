@@ -2051,6 +2051,30 @@
       "review": "The permissive verifier returns success for every transcript. Four independent mutations fail records envelope checks; a query-precision mutation passes those checks and forms a price, but ledger consumption refuses it through graph replay. The same complete reversed history supplies the ledger context."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication.rs",
+      "claim": "EPOCH::claim:admission:mixed-semantic-sections-are-refused",
+      "before": "",
+      "after": "Claim: The finite semantic restoration controls refuse omitted and mixed public causes, changed sequence, compilation, final gates, next-announcement prefix and profile; a restored record alone never supplies admission authority.",
+      "review": "Finite complete self-supported fixture and explicit mutations exercise the semantic restore boundary. The tests do not assert encoding, persistence, authenticated deployment or unrestricted publication completeness."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication.rs",
+      "claim": "EPOCH::claim:admission:restored-ridge-prices-reselect-replay",
+      "before": "",
+      "after": "Claim: The finite ridge semantic disclosure controls reselect the admitted graph verifier at consumption and refuse changed defining bleed, query precision and transcript image; an unresolved ridge never becomes a restored charge. Neither a stored digest nor a different verifier supplies checked authority.",
+      "review": "Finite complete self-supported fixture and explicit mutations exercise the semantic restore boundary. The tests do not assert encoding, persistence, authenticated deployment or unrestricted publication completeness."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication.rs",
+      "claim": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+      "before": "",
+      "after": "Claim: The finite reversed self-supported complete history forms an immutable semantic package only through admission and independent restoration under each chartered floor; restored compilation, final gates and the next announcement retain their complete records. No encoding, persistence or deployment authentication is inferred.",
+      "review": "Finite complete self-supported fixture and explicit mutations exercise the semantic restore boundary. The tests do not assert encoding, persistence, authenticated deployment or unrestricted publication completeness."
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission",
       "path": "packages/epoch/tests/solve/admission/ridge_charge.rs",
       "claim": "EPOCH::claim:admission:both-floors-retain-production-charge-gates",

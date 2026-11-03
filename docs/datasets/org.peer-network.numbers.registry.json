@@ -12798,6 +12798,32 @@
       "num_relation": "=",
       "unit": "Work",
       "value": "200418307"
+    },
+    {
+      "display": "exact",
+      "exact": "1 000",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:publication:comparison-attempt-ceiling",
+      "num": "1 000",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "1000"
+    },
+    {
+      "display": "exact",
+      "exact": "1 000",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:publication:comparison-work-ceiling",
+      "num": "1 000",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "Work",
+      "value": "1000"
     }
   ]
 }

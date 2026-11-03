@@ -166,3 +166,6 @@ fn ridge_charge_admission() {
 
 #[path = "ridge_charge/envelope.rs"]
 mod envelope;
+
+#[path = "ridge_charge/publication.rs"]
+mod publication;

@@ -2579,6 +2579,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:design:test-publication-profile"
       ],
       "routes": [],
@@ -2862,10 +2863,18 @@
       "kind": "type",
       "label": "post:network:host-contract",
       "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "EPOCH::verif:admission:semantic-package-restoration",
+          "scope": "EPOCH::verif:admission:semantic-package-restoration"
+        }
+      ],
       "records": [
         "EPOCH::def:compiler:completed-package",
+        "EPOCH::rule:admission:semantic-carrier",
+        "EPOCH::verif:admission:semantic-package-restoration",
         "ROOT::amend:design:test-publication-profile",
         "ROOT::dec:design:admission",
         "ROOT::dec:design:final-membership",
@@ -2895,6 +2904,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -2913,6 +2923,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -2931,6 +2942,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -2949,6 +2961,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -2967,6 +2980,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -2985,6 +2999,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -3003,6 +3018,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
@@ -32961,6 +32977,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rule:admission:semantic-carrier",
+        "ROOT::amend:design:publication-field-inventory",
         "ROOT::cav:devnet:assurance",
         "ROOT::dec:design:burn-boundary",
         "ROOT::req:vision:burn-boundary"
@@ -33995,6 +34013,28 @@
     },
     {
       "category": "record-support",
+      "claim_count": 3,
+      "name": "EPOCH::verif:admission:semantic-package-restoration",
+      "number_forms": {
+        "claim_count": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "scope": "EPOCH::verif:admission:semantic-package-restoration"
+    },
+    {
+      "category": "record-support",
       "claim_count": 4,
       "name": "GRAPH::amend:numerics:reference-wall",
       "number_forms": {
@@ -34771,10 +34811,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "27",
+          "exact": "28",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "28",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34834,7 +34874,7 @@
         }
       },
       "realized": 28,
-      "record_granular": 27,
+      "record_granular": 28,
       "tentative": 7,
       "total": 1356,
       "unassigned": 859
@@ -35266,10 +35306,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "1",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35329,7 +35369,7 @@
         }
       },
       "realized": 0,
-      "record_granular": 1,
+      "record_granular": 2,
       "tentative": 1,
       "total": 166,
       "unassigned": 96
@@ -36652,10 +36692,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "2",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36715,7 +36755,7 @@
         }
       },
       "realized": 0,
-      "record_granular": 2,
+      "record_granular": 3,
       "tentative": 0,
       "total": 92,
       "unassigned": 35
@@ -36751,10 +36791,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36814,7 +36854,7 @@
         }
       },
       "realized": 0,
-      "record_granular": 0,
+      "record_granular": 1,
       "tentative": 0,
       "total": 19,
       "unassigned": 1
@@ -37345,10 +37385,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "1",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37408,7 +37448,7 @@
         }
       },
       "realized": 1,
-      "record_granular": 1,
+      "record_granular": 2,
       "tentative": 0,
       "total": 38,
       "unassigned": 0
@@ -37444,10 +37484,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37507,7 +37547,7 @@
         }
       },
       "realized": 1,
-      "record_granular": 0,
+      "record_granular": 1,
       "tentative": 0,
       "total": 4,
       "unassigned": 0
@@ -37543,10 +37583,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37606,7 +37646,7 @@
         }
       },
       "realized": 1,
-      "record_granular": 0,
+      "record_granular": 1,
       "tentative": 0,
       "total": 11,
       "unassigned": 0
@@ -37741,10 +37781,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37804,7 +37844,7 @@
         }
       },
       "realized": 4,
-      "record_granular": 4,
+      "record_granular": 5,
       "tentative": 0,
       "total": 93,
       "unassigned": 1
@@ -38046,22 +38086,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 13,
+      "exact_citing": 16,
       "name": "pn-epoch",
       "number_forms": {
         "exact_citing": {
-          "exact": "13",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "39",
+          "exact": "43",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "39",
+          "num": "43",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38076,7 +38116,7 @@
           "exact_digits": 32
         }
       },
-      "total": 39
+      "total": 43
     },
     {
       "category": "record-coverage",
@@ -38228,10 +38268,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "44",
+          "exact": "45",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "44",
+          "num": "45",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38246,7 +38286,7 @@
           "exact_digits": 32
         }
       },
-      "total": 44
+      "total": 45
     },
     {
       "category": "record-coverage",

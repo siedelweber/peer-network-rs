@@ -7198,3 +7198,18 @@ value = "200418307"
 unit = "Work"
 display = "exact"
 exact_digits = 24
+
+# Semantic publication replay comparison ledger.
+[[rows]]
+id = "num:publication:comparison-attempt-ceiling"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:publication:comparison-work-ceiling"
+value = "1000"
+unit = "Work"
+display = "exact"
+exact_digits = 24

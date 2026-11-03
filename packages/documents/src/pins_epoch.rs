@@ -919,9 +919,13 @@ pub enum NumberId {
     NumbersVerificationTrialWorkCeiling,
     /// Registry id: num:numbers:zero-width-reference-work-ceiling.
     NumbersZeroWidthReferenceWorkCeiling,
+    /// Registry id: num:publication:comparison-attempt-ceiling.
+    PublicationComparisonAttemptCeiling,
+    /// Registry id: num:publication:comparison-work-ceiling.
+    PublicationComparisonWorkCeiling,
 }
 
-const OFFSETS: [(usize, usize); 458] = [
+const OFFSETS: [(usize, usize); 460] = [
     (131, 132),
     (195, 196),
     (260, 267),
@@ -1380,6 +1384,8 @@ const OFFSETS: [(usize, usize); 458] = [
     (41_802, 41_803),
     (41_875, 41_886),
     (41_960, 41_969),
+    (42_040, 42_044),
+    (42_112, 42_116),
 ];
 
 impl NumberId {

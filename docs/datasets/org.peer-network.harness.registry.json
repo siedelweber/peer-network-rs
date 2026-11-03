@@ -5101,6 +5101,23 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::semantic-publication",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

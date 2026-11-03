@@ -1,6 +1,7 @@
 # Exact defining-ridge charge boundary consumers.
 local_inputs = [
   ['packages/records/src/numerics/ridge_charge.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
+  ['packages/records/src/numerics/price_input.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
   ['ci/build-inputs/packages/records/src/numerics/meson.build', 'build-graph', ''],
 ]
 foreach row : local_inputs

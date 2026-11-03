@@ -259,6 +259,10 @@ pub fn replay(
 }
 
 impl ClosedBoundary {
+    pub(crate) fn admitted(&self) -> &package::AdmittedBoundary {
+        &self.admitted
+    }
+
     /// Borrow the immutable registered record; this access creates no authority.
     /// (´[ROOT-alg:design:closure-registration]´)
     /// Justified: Immutable evidence access inherits complete closure and admission.

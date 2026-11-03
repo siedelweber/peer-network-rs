@@ -3496,6 +3496,25 @@
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+        "EPOCH::claim:admission:mixed-semantic-sections-are-refused",
+        "EPOCH::claim:admission:restored-ridge-prices-reselect-replay"
+      ],
+      "closing_condition": "Passing current-source finite semantic restoration and mutation controls under the declared verifier premises.",
+      "closing_step": "Bite 8 semantic carrier; encoding and persistence belong to their own cuts.",
+      "evidence_paragraph": "EPOCH::rec:admission:semantic-restoration-evidence",
+      "hold": "",
+      "missing": "Outside scope: canonical bytes, host persistence and authenticated deployment.",
+      "name": "EPOCH::verif:admission:semantic-package-restoration",
+      "owner": "Epoch implementer and publication reviewer",
+      "path": "packages/epoch/README.md",
+      "premises": "Complete self-supported finite fixture; explicit public destruction, registration, candidate, closure-attestation and numerical-profile verifiers. Both chartered floors retain rational charged values.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
     }
   ]
 }

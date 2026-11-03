@@ -6,7 +6,9 @@ use nrz_cas::{
 };
 use std::cmp::Ordering;
 
+mod price_input;
 mod ridge_charge;
+pub use price_input::PriceInput;
 
 /// Explicit cumulative comparison attempt/work limits.
 /// (´def:numerics:exact-carriers´)

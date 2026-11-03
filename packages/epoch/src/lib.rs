@@ -11,6 +11,7 @@ pub mod controller;
 pub mod fence;
 pub mod ledger;
 pub mod package;
+pub mod publication;
 pub mod recipients;
 pub mod solve;
 pub mod support;

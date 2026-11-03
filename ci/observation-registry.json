@@ -8147,6 +8147,101 @@
       "claim": "ROOT::sig:design:graph",
       "shape": "shape-graph",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/price_input.rs",
+      "item": "numerics::price_input::ChargedPrice::disclosure",
+      "owner": "RECORDS",
+      "signature": "fn disclosure (& self) -> PriceInput",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable disclosure carries no new charge authority.",
+        "witness": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+        "boundary": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+        "class_decision": "semantic-publication-public"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/price_input.rs",
+      "item": "numerics::price_input::NumericContext::restore_charged_price",
+      "owner": "RECORDS",
+      "signature": "fn restore_charged_price (& mut self , input : & PriceInput , verifier : & impl crate :: ridge :: ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-replay-charged-price"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "item": "publication::consume",
+      "owner": "EPOCH",
+      "signature": "fn consume (carrier : Carrier , verifier : & impl Verifier) -> Result < AdmittedPackage , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "item": "publication::assemble",
+      "owner": "EPOCH",
+      "signature": "fn assemble (closed : & closure :: ClosedBoundary , carrier : Carrier , verifier : & impl Verifier) -> Result < AdmittedPackage , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "item": "publication::AdmittedPackage::boundary",
+      "owner": "EPOCH",
+      "signature": "fn boundary (& self) -> & package :: AdmittedBoundary",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access retains the independent admission boundary.",
+        "witness": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+        "boundary": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+        "class_decision": "semantic-publication-public"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "item": "publication::AdmittedPackage::carrier",
+      "owner": "EPOCH",
+      "signature": "fn carrier (& self) -> & Carrier",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access creates no new authority.",
+        "witness": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+        "boundary": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+        "class_decision": "semantic-publication-public"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::compile_admitted",
+      "owner": "EPOCH",
+      "signature": "fn compile_admitted (admitted : & crate :: package :: AdmittedBoundary , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -15718,9 +15813,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledSource::input",
-      "body": "{ match self { Self :: Published (package) => package . input () , Self :: Candidate (candidate) => & candidate . input () . causes , } }",
+      "body": "{ match self { Self :: Published (package) => package . input () , Self :: Candidate (candidate) => & candidate . input () . causes , Self :: Admitted (admitted) => & admitted . candidate () . input () . causes , } }",
       "class_decision": "atomic-admission-public",
-      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -15809,6 +15904,83 @@
       "body": "{ use pn_records :: numerics :: NumericError ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } replay (& evidence . procedure , & evidence . input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { Error :: Definition => NumericError :: RidgeDefinition , Error :: Numeric (super :: Error :: Backend (fault)) | Error :: Arithmetic (fault) | Error :: Operational { fault : Some (fault) , .. } => NumericError :: Backend (fault) , _ => NumericError :: RidgeEvidence , }) }",
       "class_decision": "binding-ridge-public",
       "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::ChargedPrice::disclosure",
+      "body": "{ PriceInput { wall : self . wall () . exact () . into () , numeraire : self . numeraire () . clone () , price : self . price () . exact () . into () , floor : self . floor , ridge : self . ridge . clone () , } }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+      "body": "{ let literal = self . literal (& input . wall) ? ; let wall = self . computed (& literal) ? ; let price = match (input . floor , input . ridge . as_deref ()) { (Floor :: RidgeImage , Some (evidence)) => self . charged_price_with_ridge (& wall , & input . numeraire , evidence , verifier) ? , (Floor :: RationalThreeThirtySevenths , None) => self . charged_price (& wall , & input . numeraire , input . floor) ? , _ => return Err (NumericError :: RidgeEvidence) , } ; if price . price () . exact () != input . price { return Err (NumericError :: RidgeEvidence) ; } Ok (price) }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+      "body": "{ if carrier . frames . iter () . any (| frame | ! frame . realization . complete ()) { return Err (Error :: Structure (\"missing realization disclosure\")) ; } if ! verifier . publication_profile (& carrier) { return Err (Error :: Structure (\"publication profile\")) ; } let empty = pn_records :: validate_history (& [] , & []) ? ; let declarations = pn_records :: validate_record (& [] , & empty , & carrier . causes . declarations) ? ; let constants = constants :: bind_constants (& declarations , carrier . causes . editions . clone ()) ? ; let length = u64 :: try_from (carrier . frames . len ()) . map_err (| _ | Error :: Structure (\"boundary count\")) ? ; if carrier . causes . acts . iter () . any (| a | a . finalization_epoch == 0 || a . finalization_epoch > length) { return Err (Error :: Structure (\"act outside boundary sequence\")) ; } let mut led = initial (& carrier) ? ; let mut prior = None ; let mut states = Vec :: new () ; let mut inputs = Vec :: new () ; let mut prices = Vec :: new () ; let mut bindings = Vec :: new () ; for (offset , frame) in carrier . frames . iter () . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | Error :: Structure (\"boundary count\")) ? + 1 ; if frame . parameters . boundary != boundary || frame . closure . schedule != * led . record () { return Err (Error :: Structure (\"mixed boundary or led schedule\")) ; } let RebuiltFrame { markers , input , price , history , binding , } = rebuild (& carrier , frame , offset , & declarations , & constants , verifier) ? ; bindings . push (binding) ; inputs . push (input) ; prices . push (price) ; let candidate = package :: verify_candidate (package :: CandidateInput { causes : package :: PackageInput { markers : markers . clone () , history , inputs : inputs . clone () , prices : prices . clone () , bindings : bindings . clone () , } , closure : frame . closure . statement . clone () , } , verifier , verifier ,) ? ; let closed = closure :: replay (& closure :: ClosureInput { candidate : & candidate , partition : & frame . closure . partition , schedule : & led , previous : prior . as_ref () , } , & frame . procedure , verifier , verifier , carrier . numeric . context () ? , & frame . closure ,) ? ; let state = compiler :: compile_admitted (closed . admitted () , verifier , & mut carrier . numeric . context () ? , frame . procedure . arithmetic . clone () , frame . procedure . maximum_products ,) . map_err (| error | Error :: Compile (Box :: new (error))) ? ; if state . view () != & frame . compiled { return Err (Error :: Structure (\"changed compiled section\")) ; } standing (& state , frame , verifier) ? ; states . push (state) ; led = next (& carrier , & states , verifier) ? ; prior = Some (closed) ; } Ok (AdmittedPackage { carrier , closed : prior . ok_or (Error :: Structure (\"empty boundary sequence\")) ? , }) }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::assemble",
+      "body": "{ if carrier . frames . last () . map (| frame | & frame . closure) != Some (closed . record ()) { return Err (Error :: Structure (\"mixed admitted close\")) ; } let result = consume (carrier , verifier) ? ; if result . closed . record () != closed . record () { return Err (Error :: Structure (\"mixed admitted close\")) ; } Ok (result) }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::boundary",
+      "body": "{ self . closed . admitted () }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
+      "body": "{ & self . carrier }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted",
+      "body": "{ compile_source (CompiledSource :: Admitted (Box :: new (admitted . clone ())) , verifier , numeric , limits , maximum_products ,) }",
+      "class_decision": "semantic-publication-public",
+      "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -20181,6 +20353,87 @@
       "syntax": "# [derive (Debug)]",
       "class_decision": "binding-ridge-public",
       "expansion_review": "Structural cloning, equality and diagnostics retain untrusted defining evidence or the stateless replay adapter. No unchecked charge constructor, default or encoding is generated."
+    },
+    {
+      "item": "numerics::price_input::PriceInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/price_input.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::Causes",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::Frame",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::NumericPolicy",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::Carrier",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::AdmittedPackage",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::RealizationEvidence",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "publication::OperatorEvidence",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "semantic-publication-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
     }
   ],
   "reviewed_types": [
@@ -21407,6 +21660,12 @@
       "package": "pn-records",
       "path": "packages/records/src/controller.rs",
       "syntax": "# [doc = \" The mathematical proposal and its evidence are never replaced by a rounded charge.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub procedure : crate :: solve :: Procedure , pub inputs : Inputs , pub attempts : Vec < Attempt > , pub verdict : Verdict , }"
+    },
+    {
+      "item": "numerics::price_input::PriceInput",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/price_input.rs",
+      "syntax": "# [doc = \" Complete rational charge assertion and defining evidence; no stored trust bit.\"] # [doc = \" (´rule:numerics:restored-charge´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PriceInput { pub wall : String , pub numeraire : Numeraire , pub price : String , pub floor : Floor , pub ridge : Option < Box < crate :: ridge :: ChargeEvidence > > , }"
     },
     {
       "item": "numerics::NumericError",
@@ -23137,6 +23396,60 @@
       "syntax": "# [doc = \" Immutable admitted boundary constructed only after every final gate passes.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext, evidence: pn_epoch::admission::FinalEvidence) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate, evidence }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , evidence : crate :: admission :: FinalEvidence , }"
     },
     {
+      "item": "publication::Causes",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Complete public causes. Act presentation is a set; each frame's sequence is ordered.\"] # [doc = \" Declaration payloads and marker disclosures are retained, not replaced by identities.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug)] pub struct Causes { pub acts : Vec < CandidateAct > , pub names : BTreeSet < PublicReference > , pub declarations : Vec < Declaration > , pub editions : Vec < constants :: EditionInput > , }"
+    },
+    {
+      "item": "publication::RealizationEvidence",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Public realization audit disclosures, retained without becoming standing inputs.\"] # [doc = \" The declared publication verifier checks their edition and substantive evidence.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RealizationEvidence { pub edition : String , pub provenance : Vec < u8 > , pub capacity_bound : Vec < u8 > , pub dimensioned_unit_cost : Vec < u8 > , pub recording_event_costs : Vec < u8 > , pub settlement_and_finality : Vec < u8 > , pub operator : OperatorEvidence , }"
+    },
+    {
+      "item": "publication::OperatorEvidence",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" An operator bound and proof, or an explicit absence statement with its explanation.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum OperatorEvidence { Bound { bound : Vec < u8 > , proof : Vec < u8 > } , Absent { statement : Vec < u8 > , explanation : Vec < u8 > } , }"
+    },
+    {
+      "item": "publication::Frame",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" One complete boundary's assertions and replay attachments, never authority by itself.\"] # [doc = \" Compiled view carries title/recognition, ledger, cells, recipients, base and emission.\"] # [doc = \" Closure carries final gates, standing, all attempted rungs and transport attachments.\"] # [doc = \" The next schedule includes this completed boundary's proposal and delivered led value.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug)] pub struct Frame { pub realization : RealizationEvidence , pub burn : burn :: BurnInput , pub marker_policy : burn :: PolicyInput , pub marker_history : burn :: HistoryInput , pub parameters : ParameterInput , pub price : numerics :: PriceInput , pub sequence : Vec < ActId > , pub procedure : admission :: FinalProcedure , pub compiled : compiler :: CompiledView , pub closure : closure :: ClosureRecord , pub standing : pn_records :: conserved :: SolveRecord , pub next : schedules :: Record , }"
+    },
+    {
+      "item": "publication::NumericPolicy",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Explicit bounded numeric context, retained separately from displayed values.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct NumericPolicy { pub arithmetic : nrz_cas :: limits :: Limits , pub comparison_attempts : u32 , pub comparison_work : u64 , }"
+    },
+    {
+      "item": "publication::Carrier",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Untrusted complete immutable-field theory before verification; encoding is not defined.\"] # [doc = \" Frames retain boundary order and complete prefixes; no previous-standing input exists.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug)] pub struct Carrier { pub causes : Causes , pub numeric : NumericPolicy , pub frames : Vec < Frame > , }"
+    },
+    {
+      "item": "publication::AdmittedPackage",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Inhabited only after independent restoration has passed closure and final admission.\"] # [doc = \" No mutable field escapes, and this carrier does not perform persistence or publication.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Debug)] pub struct AdmittedPackage { carrier : Carrier , closed : closure :: ClosedBoundary , }"
+    },
+    {
+      "item": "publication::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "# [doc = \" Missing causes, changed evidence and operational failures remain distinguishable.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"publication structure: {0}\")] Structure (& 'static str) , # [error (\"publication records: {0}\")] Records (# [from] pn_records :: ValidationError) , # [error (\"publication marker disclosure: {0}\")] Burn (# [from] burn :: BurnError) , # [error (\"publication constants: {0}\")] Constants (# [from] constants :: ConstantsError) , # [error (\"publication inputs: {0}\")] Inputs (# [from] crate :: InputError) , # [error (\"publication charge: {0}\")] Numeric (# [from] numerics :: NumericError) , # [error (\"publication candidate: {0}\")] Candidate (# [from] package :: PackageError) , # [error (\"publication compilation: {0}\")] Compile (# [source] Box < compiler :: CompileError >) , # [error (\"publication procedure: {0}\")] Procedure (# [from] solve :: ProcedureError) , # [error (\"publication standing: {0}\")] Standing (# [source] Box < crate :: conserved :: Error >) , # [error (\"publication closure: {0}\")] Closure (# [from] closure :: ClosureError) , # [error (\"publication schedule: {0}\")] Schedule (# [from] schedules :: Error) , # [error (\"publication declaration: {0}\")] Declaration (# [from] admission :: DeclarationError) , # [error (\"publication ridge: {0}\")] Ridge (# [from] ridge :: Error) , }"
+    },
+    {
+      "item": "publication::RebuiltFrame",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication.rs",
+      "syntax": "struct RebuiltFrame { markers : burn :: RecognizedMarkers , input : crate :: CompilerInputs , price : numerics :: ChargedPrice , history : pn_records :: ValidatedHistory , binding : package :: EpochBinding , }"
+    },
+    {
       "item": "recipients::ResolvedCell",
       "package": "pn-epoch",
       "path": "packages/epoch/src/recipients.rs",
@@ -23242,7 +23555,7 @@
       "item": "compiler::CompiledSource",
       "package": "pn-epoch",
       "path": "packages/epoch/src/compiler.rs",
-      "syntax": "# [doc = \" Retain the authority under which causes were checked; compilation never promotes a candidate.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub enum CompiledSource { Published (VerifiedPackage) , Candidate (CandidateContext) , }"
+      "syntax": "# [doc = \" Retain the authority under which causes were checked; compilation never promotes a candidate.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub enum CompiledSource { Published (VerifiedPackage) , Candidate (CandidateContext) , # [doc = \" Locally admitted causes, without an assertion of external publication.\"] Admitted (Box < crate :: package :: AdmittedBoundary >) , }"
     },
     {
       "item": "compiler::CompileError",
@@ -23952,6 +24265,22 @@
           "pn-epoch::packages/epoch/src/closure.rs::closure::close",
           "pn-epoch::packages/epoch/src/closure.rs::closure::replay",
           "pn-epoch::packages/epoch/src/closure.rs::closure::ClosedBoundary::record"
+        ]
+      }
+    },
+    {
+      "name": "semantic-publication-public",
+      "status": "reviewer-confirmed",
+      "premises": "Complete public semantic causes, per-boundary marker disclosures, declarations and replay attachments. Restored assertions are not checked authority; only independent replay and final admission construct it. No private verifier credentials, codecs, storage or deployment authentication enter this contract.",
+      "membership": {
+        "explicit": [
+          "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::ChargedPrice::disclosure",
+          "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+          "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+          "pn-epoch::packages/epoch/src/publication.rs::publication::assemble",
+          "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::boundary",
+          "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted"
         ]
       }
     }

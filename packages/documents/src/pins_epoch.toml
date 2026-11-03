@@ -1832,3 +1832,11 @@ value = "20000000000"
 [[rows]]
 id = "num:numbers:zero-width-reference-work-ceiling"
 value = "200000000"
+
+[[rows]]
+id = "num:publication:comparison-attempt-ceiling"
+value = "1000"
+
+[[rows]]
+id = "num:publication:comparison-work-ceiling"
+value = "1000"

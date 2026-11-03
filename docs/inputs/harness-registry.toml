@@ -1902,3 +1902,15 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::ridge_charge::envelope::ridge_envelope_consumption"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::semantic-publication"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip", "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals", "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals", "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix"]
