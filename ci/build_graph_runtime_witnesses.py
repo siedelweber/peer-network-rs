@@ -66,6 +66,7 @@ def runtime_delegation(case):
         'claim-evidence':'python3 -B ci/claims.py --fail-respellings',
     }
     expected.update({'test-build':'python3 -B ci/run_tests.py prepare',
+                     'extended-tests':'python3 -B ci/run_tests.py extended',
                      'reference-certificates':'python3 -B ci/run_tests.py reference-certificate',
                      'service-tests':'python3 -B ci/run_tests.py service',
                      'test-evidence':'python3 -B ci/run_tests.py merge'})

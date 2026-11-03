@@ -280,6 +280,11 @@
       "name": "test-evidence",
       "reason": "Required invocation with a current inventory and exact evidence join.",
       "slice": 4
+    },
+    {
+      "name": "extended-tests",
+      "reason": "Required prebuilt case invocation selected by the declared allowance threshold; the disjoint result union retains every case.",
+      "slice": 4
     }
   ]
 }

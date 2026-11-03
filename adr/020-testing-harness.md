@@ -26,7 +26,7 @@
 
 **Proposal (Packages and dependency direction)** · `proposal:harness:packages` Accepted under (`amend:decomposition:infrastructure`): pn-testkit is a development-only support crate for generic contract runners, independent models, generators, functional mocks and fault control. It imports no production domain crate; tests adapt typed public contracts through generic operations and carriers, preventing a development-dependency cycle with the crate under test. Keep domain-specific conformance instances, independent mathematical oracles and cross-crate clients in pn-verification, which grows as an outer consumer from the first domain bite. Production crates may use pn-testkit only as a development dependency and never depend on pn-verification; no production answer comes from a mock. The client-side names, responsibilities and dependency directions are decided by (`dec:harness:client-packages`): pn-command depends on pn-client and the pn node library, with cli-common for output; pn-client depends on pn-wallet, pn-records and pn-interchange; pn-wallet depends on the reviewed Elements RPC client. The added crates, edges and bite refinement are recorded in (`amend:decomposition:infrastructure`) before any implementation lands; this discharges the placement condition while preserving the original domain boundaries and order. The node never depends on pn-client or pn-command. The support package is development-only; production dependency graphs exclude it.
 
-**Rule (Execution tiers)** · `rule:harness:tiers` On every change, run existing repository checks, all available unit/public-surface/integration tests using declared functional substitutes where appropriate, shared conformance for each available pure/mock implementation, bounded property cases with recorded seeds, benchmark correctness/smoke cases and client tests for its available surface. A separately named service tier runs the same storage and burn suites against their real services, API/client end-to-end cases and service-specific faults on provisioned workers. A measured performance tier runs on declared suitable workers; expanded property searches supplement the bounded set. From a bite claiming the corresponding supported surface, service results are mandatory for that source before its gate is green; relevant workload/resource/dependency changes also require the performance tier and its reviewed baseline. A fast-only result is partial and cannot satisfy a service-dependent record gate. Publish a source/configuration/implementation/tier matrix with every required result, failure and hold; unavailable workers leave the obligation held rather than silently reducing the matrix. No provisioning is performed by this decision.
+**Rule (Execution tiers)** · `rule:harness:tiers` On every change, run existing repository checks, all available unit/public-surface/integration tests using declared functional substitutes where appropriate, shared conformance for each available pure/mock implementation, bounded property cases with recorded seeds, benchmark correctness/smoke cases and client tests for its available surface. A separately named service tier runs the same storage and burn suites against their real services, API/client end-to-end cases and service-specific faults on provisioned workers. A measured performance tier runs on declared suitable workers; expanded property searches supplement the bounded set. From a bite claiming the corresponding supported surface, service results are mandatory for that source before its gate is green; relevant workload/resource/dependency changes also require the performance tier and its reviewed baseline. For prebuilt nextest cases, a declared case allowance strictly above 5000 milliseconds selects the required extended invocation. Equality remains in fast. This separates longer integration work from author feedback by a reproducible cost rule, retaining each case's original level, assertions, allowance, implementation and contract edition. The measured fast path includes a serialized nextest interval; moving its longer admitted workloads to the concurrent required invocation restores margin without removing evidence. Existing whole-checker and process-observation suites remain extended under their own composition rule; service and reference cases retain their dedicated tiers. All four nextest invocations consume one prebuilt inventory and join a disjoint, exhaustive result union. A fast-only result is partial and cannot satisfy a service-dependent record gate. Publish a source/configuration/implementation/tier matrix with every required result, failure and hold; unavailable workers leave the obligation held rather than silently reducing the matrix. No provisioning is performed by this decision.
 
 **Gate (Harness foundation)** · `gate:harness:foundation` In the shared foundation bite before record 007's first domain bite, establish the level/suite/implementation registry and result join, discharge the accepted dependency conditions and implement the support package, and apply the three test levels to documents, pn-interchange, cli-common and execwrap. Preserve and extend the canonical-vector/property practice of (`conv:xchg:metatheorems-as-tests`). Exercise missing levels, unregistered implementations, dropped suite cases, missing seeds, ignored tests, mock results misreported as real, stale source results and benchmark correctness failures as negative probes. Timing-only regressions must instead preserve passing verdicts while emitting warnings and findings under (`rule:devperf:nonverdict`). Check test-site claims, owner registers and item-local lint discipline without test suppressions (`rec:testing:decision`), (`dec:lint:policy`). Later domain crates must be born with their local/public/integration tests and first conformance claims; the full corpus is not deferred wholesale to the final bite. The implementing foundation and bite owners close the explicit holds in (`open:design:harness-evidence`); this record creates no harness code or executed test evidence.
 
@@ -34,13 +34,14 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). The support step re-declares the 73 cli-common and 25 execwrap internal-module cases as unit, and adds external public-surface witnesses under tests/; internal access is not public-surface evidence. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`).
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 149 suites and 17 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 153 suites and 17 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
 | cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
-| documents::integration | active | integration | documents-rust | fast | 31 |
+| documents::integration | active | integration | documents-rust | fast | 30 |
+| documents::integration-extended | active | integration | documents-rust | extended | 1 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 26 |
 | execwrap::integration | active | integration | execwrap-rust | fast | 20 |
@@ -132,7 +133,7 @@
 | pn-wallet | active | unit | pn-wallet-rust | fast | 13 |
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::allocation | active | integration | pn-wallet-rust | fast | 1 |
-| pn-wallet::wire | active | integration | pn-wallet-rust | fast | 1 |
+| pn-wallet::wire | active | integration | pn-wallet-rust | extended | 1 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 7 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 11 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
@@ -159,7 +160,8 @@
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::package | active | public-surface | pn-epoch-rust | fast | 3 |
 | planned-compiler | active | public-surface | pn-epoch-rust | fast | 5 |
-| planned-numeric | active | public-surface | pn-epoch-rust | fast | 35 |
+| planned-numeric | active | public-surface | pn-epoch-rust | fast | 27 |
+| planned-numeric-extended | active | public-surface | pn-epoch-rust | extended | 8 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 16 |
 | pn-graph::reference-maps | active | public-surface | pn-graph-rust | reference-certificate | 2 |
 | pn-graph::reference-local | active | public-surface | pn-graph-rust | reference-certificate | 1 |
@@ -173,14 +175,16 @@
 | pn-epoch-doctests | active | doctest | pn-epoch-rust | fast | 4 |
 | pn-graph::reference-controller | active | public-surface | pn-graph-rust | reference-certificate | 1 |
 | pn-epoch::admission | active | public-surface | pn-epoch-rust | fast | 6 |
-| pn-epoch::schedule-policy | active | public-surface | pn-epoch-rust | fast | 2 |
+| pn-epoch::schedule-policy | active | public-surface | pn-epoch-rust | fast | 1 |
+| pn-epoch::schedule-policy-extended | active | public-surface | pn-epoch-rust | extended | 1 |
 | pn-epoch::closure | active | public-surface | pn-epoch-rust | fast | 5 |
 | pn-epoch::admission-review | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::admission-contract | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::admission-work | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::ridge-charge | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::ridge-envelope | active | public-surface | pn-epoch-rust | fast | 1 |
-| pn-epoch::semantic-publication | active | public-surface | pn-epoch-rust | fast | 4 |
+| pn-epoch::semantic-publication | active | public-surface | pn-epoch-rust | fast | 2 |
+| pn-epoch::semantic-publication-extended | active | public-surface | pn-epoch-rust | extended | 2 |
 | pn-interchange::transport | active | integration | pn-interchange-rust | fast | 4 |
 | pn-records::live-markers | active | public-surface | pn-records-rust | fast | 3 |
 | pn-epoch::live-publication | active | public-surface | pn-epoch-rust | fast | 3 |

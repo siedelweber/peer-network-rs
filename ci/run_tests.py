@@ -235,7 +235,7 @@ def suite_events(observations, inventory, registry, source, runner, selected=Non
 
 
 def invocation_tier(suite):
-    return suite['tier'] if suite['tier'] in {'reference-certificate', 'service'} else 'fast'
+    return suite['tier'] if suite['tier'] in {'reference-certificate', 'service', 'extended'} else 'fast'
 
 
 def split_main(action):
@@ -261,7 +261,7 @@ def split_main(action):
         wall = time.monotonic()-start
         (run/(name+'.observations.json')).write_text(json.dumps(result.observations))
         record = event(name, budget, wall*1000, f'exit:{result.returncode}', source, CONFIGURATION)
-        if action in {'service', 'reference-certificate'}:
+        if action in {'service', 'reference-certificate', 'extended'}:
             record['tier'] = action
             record['applicable_budgets'] = [budget, registry.tiers[action]['invocation_budget']]
         records.append(record)
@@ -273,7 +273,7 @@ def split_main(action):
     if action == 'prepare':
         run.mkdir(parents=True, exist_ok=True)
         (run/'manifest.json').unlink(missing_ok=True)
-        for name in ('fast', 'service', 'reference-certificate'):
+        for name in ('fast', 'service', 'reference-certificate', 'extended'):
             (run/(name+'.result.json')).unlink(missing_ok=True)
         version = execute('version', ['cargo', 'nextest', '--version'])
         if version or (run/'version.stdout').read_text().strip().split()[:2] != ['cargo-nextest', '0.9.149']:
@@ -302,7 +302,7 @@ def split_main(action):
     if action == 'merge':
         records = list(manifest['records'])
         status = 0
-        for tier in ('fast', 'reference-certificate', 'service'):
+        for tier in ('fast', 'reference-certificate', 'service', 'extended'):
             result = json.loads((run/(tier+'.result.json')).read_text())
             if result['manifest'] != manifest or result['tier'] != tier:
                 raise StructuralError('stale or mismatched required tier')
@@ -315,9 +315,9 @@ def split_main(action):
             raise StructuralError('required invocation omitted or ignored a case')
         records += contract_events(run/'contracts', registry, source, cases)
         Path('.lane/performance-events.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in records))
-        print(f'REQUIRED-TIERS joined=3 cases={len(cases)} exactly_once=true status={status}')
+        print(f'REQUIRED-TIERS joined=4 cases={len(cases)} exactly_once=true status={status}')
         return status
-    if action not in {'fast', 'service', 'reference-certificate'}:
+    if action not in {'fast', 'service', 'reference-certificate', 'extended'}:
         raise StructuralError('unknown required invocation')
     selected = {name for name, suite in registry.cases.items() if suite['runner'] == 'nextest' and invocation_tier(suite) == action}
     if not selected: raise StructuralError('required invocation is empty')
@@ -335,7 +335,7 @@ def split_main(action):
            **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON':'1',
            'PN_CONTRACT_RESULTS':str((run/'contracts').resolve()), 'PN_HARNESS_SOURCE':source,
            'PN_HARNESS_CONFIGURATION':CONFIGURATION, 'PN_HARNESS_UTC':instant()}
-    budget = {'fast':'test-command', 'service':'service-gate', 'reference-certificate':'reference-gate'}[action]
+    budget = {'fast':'test-command', 'service':'service-gate', 'reference-certificate':'reference-gate', 'extended':'extended-gate'}[action]
     status = execute(action, ['cargo', 'nextest', 'run', '--config-file', str(config_path), '--user-config-file', 'none',
         '--profile', 'default', '--retries', '0', '--no-fail-fast', '--ignore-default-filter', '--run-ignored', 'default',
         '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',

@@ -76,6 +76,7 @@
       "name": "ci-composition-services"
     },
     {
+      "extended_case_threshold_ms": 5000,
       "finalize_steps": [
         "test-evidence",
         "test-budgets",
@@ -290,12 +291,8 @@
     },
     {
       "budget": "pure-suite",
-      "case_budget_reasons": {
-        "documents::integration::repository_fixed_point": "The full repository generator and renderer fixed point retains every committed input and output comparison."
-      },
-      "case_budgets": {
-        "documents::integration::repository_fixed_point": "calibrated-documents-integration-repository-fixed-point-case"
-      },
+      "case_budget_reasons": {},
+      "case_budgets": {},
       "cases": [
         "documents::integration::atomic_refresh",
         "documents::integration::clean_result",
@@ -317,7 +314,6 @@
         "documents::integration::record_row_key",
         "documents::integration::registry_relation",
         "documents::integration::release_premises",
-        "documents::integration::repository_fixed_point",
         "documents::integration::tracker_replacement_artifacts",
         "documents::integration::number_registry",
         "documents::integration::directed_number_displays",
@@ -336,6 +332,25 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_budget_reasons": {
+        "documents::integration::repository_fixed_point": "The full repository generator and renderer fixed point retains every committed input and output comparison."
+      },
+      "case_budgets": {
+        "documents::integration::repository_fixed_point": "calibrated-documents-integration-repository-fixed-point-case"
+      },
+      "cases": [
+        "documents::integration::repository_fixed_point"
+      ],
+      "implementation": "documents-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "documents::integration-extended",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",
@@ -4014,7 +4029,7 @@
       "name": "pn-wallet::wire",
       "runner": "nextest",
       "status": "active",
-      "tier": "fast"
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",
@@ -4568,23 +4583,15 @@
         "pn-epoch::solve::act_switch": "The complete pn-epoch::solve::act_switch mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::burn_depleted": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock at the minimum-supported execution, including the preceding Scope-refusal control.",
         "pn-epoch::solve::burn_monotone": "The sole-contributor pair retains both complete solves, independent replay and whole-path regime premises at the minimum-supported execution, including the preceding Scope-refusal control.",
-        "pn-epoch::solve::burn_sibling": "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors.",
-        "pn-epoch::solve::burn_switch": "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport.",
         "pn-epoch::solve::certified_splits": "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds.",
         "pn-epoch::solve::conserved_projection": "Supported and chartered depth projections retain the nonzero-depth cells, exact cell and Work pins, and refusal controls.",
-        "pn-epoch::solve::conserved_residual": "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals.",
         "pn-epoch::solve::evaluated_scaling": "The complete pn-epoch::solve::evaluated_scaling mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::fence_shapes": "Frozen-support shapes retain descending evaluated rung searches, independent primitive replay and width, tilt, wall and attachment refusal controls.",
         "pn-epoch::solve::partitions::compiled_conservation": "The named transport mechanisms retain derived ledger export ceilings, declared conservation-width tolerance, passing and failing precision controls and replayed nonlinear transport.",
         "pn-epoch::solve::partitions::distinct_target_split": "The complete pn-epoch::solve::partitions::distinct_target_split mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
         "pn-epoch::solve::partitions::nonconstant_matched_split": "Real nonconstant matched transport retains its calibrated disjoint-image precision, compiled hop identities, common positive rung, solves and independent replay.",
-        "pn-epoch::solve::partitions::positive_rung_split": "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay.",
         "pn-epoch::solve::partitions::published_isolated_acts": "The unsorted exact-rate sample family retains every complete before/after history, final-gate checks, independent solve replay and exact loss identity.",
-        "pn-epoch::solve::partitions::published_retained_act": "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control.",
-        "pn-epoch::solve::partitions::receiving_small": "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates.",
-        "pn-epoch::solve::partitions::sibling_outside_paths": "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control.",
-        "pn-epoch::solve::schedules::schedule_covariance": "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control.",
-        "pn-epoch::solve::two_map_box": "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls."
+        "pn-epoch::solve::partitions::receiving_small": "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates."
       },
       "case_budgets": {
         "pn-epoch::solve::act_directions": "calibrated-act-directions-case",
@@ -4592,37 +4599,25 @@
         "pn-epoch::solve::act_switch": "calibrated-act-switch-case",
         "pn-epoch::solve::burn_depleted": "calibrated-burn-depleted-case",
         "pn-epoch::solve::burn_monotone": "calibrated-burn-monotone-case",
-        "pn-epoch::solve::burn_sibling": "calibrated-burn-sibling-case",
-        "pn-epoch::solve::burn_switch": "calibrated-burn-switch-case",
         "pn-epoch::solve::certified_splits": "calibrated-certified-splits-case",
         "pn-epoch::solve::conserved_projection": "calibrated-conserved-projection-case",
-        "pn-epoch::solve::conserved_residual": "calibrated-conserved-residual-case",
         "pn-epoch::solve::evaluated_scaling": "calibrated-evaluated-scaling-case",
         "pn-epoch::solve::fence_shapes": "calibrated-fence-shapes-case",
         "pn-epoch::solve::partitions::compiled_conservation": "calibrated-compiled-conservation-case",
         "pn-epoch::solve::partitions::distinct_target_split": "calibrated-distinct-target-split-case",
         "pn-epoch::solve::partitions::nonconstant_matched_split": "calibrated-nonconstant-matched-split-case",
-        "pn-epoch::solve::partitions::positive_rung_split": "calibrated-positive-rung-split-case",
         "pn-epoch::solve::partitions::published_isolated_acts": "calibrated-published-isolated-acts-case",
-        "pn-epoch::solve::partitions::published_retained_act": "calibrated-published-retained-act-case",
-        "pn-epoch::solve::partitions::receiving_small": "calibrated-receiving-small-case",
-        "pn-epoch::solve::partitions::sibling_outside_paths": "calibrated-sibling-outside-paths-case",
-        "pn-epoch::solve::schedules::schedule_covariance": "calibrated-schedule-covariance-case",
-        "pn-epoch::solve::two_map_box": "calibrated-two-map-box-case"
+        "pn-epoch::solve::partitions::receiving_small": "calibrated-receiving-small-case"
       },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::schedules::effective_schedules",
-        "pn-epoch::solve::schedules::schedule_covariance",
         "pn-epoch::solve::controller::controller_binding",
         "pn-epoch::solve::standing_scope",
         "pn-epoch::solve::evaluated_scaling",
         "pn-epoch::solve::partitions::published_isolated_acts",
-        "pn-epoch::solve::partitions::published_retained_act",
-        "pn-epoch::solve::partitions::sibling_outside_paths",
         "pn-epoch::solve::partitions::compiled_conservation",
         "pn-epoch::solve::partitions::distinct_target_split",
-        "pn-epoch::solve::partitions::positive_rung_split",
         "pn-epoch::solve::partitions::nonconstant_matched_split",
         "pn-epoch::solve::partitions::receiving_small",
         "pn-epoch::solve::procedure_binding",
@@ -4635,14 +4630,10 @@
         "pn-epoch::solve::fence_refinement",
         "pn-epoch::solve::endpoint_transport",
         "pn-epoch::solve::conserved_map",
-        "pn-epoch::solve::conserved_residual",
         "pn-epoch::solve::conserved_projection",
         "pn-epoch::solve::reference_wall_binding",
-        "pn-epoch::solve::two_map_box",
         "pn-epoch::solve::certified_splits",
-        "pn-epoch::solve::burn_sibling",
         "pn-epoch::solve::burn_depleted",
-        "pn-epoch::solve::burn_switch",
         "pn-epoch::solve::burn_monotone",
         "pn-epoch::solve::act_directions",
         "pn-epoch::solve::act_emission",
@@ -4657,6 +4648,49 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "calibrated-epoch-numeric-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::burn_sibling": "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors.",
+        "pn-epoch::solve::burn_switch": "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport.",
+        "pn-epoch::solve::conserved_residual": "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals.",
+        "pn-epoch::solve::partitions::positive_rung_split": "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay.",
+        "pn-epoch::solve::partitions::published_retained_act": "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control.",
+        "pn-epoch::solve::partitions::sibling_outside_paths": "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control.",
+        "pn-epoch::solve::schedules::schedule_covariance": "Complete changed-width, recoinage and compensated/uncompensated migration histories retain independent proposal and sequence replay at the measured inverse-sign floor, including the preceding straddle control.",
+        "pn-epoch::solve::two_map_box": "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::burn_sibling": "calibrated-burn-sibling-case",
+        "pn-epoch::solve::burn_switch": "calibrated-burn-switch-case",
+        "pn-epoch::solve::conserved_residual": "calibrated-conserved-residual-case",
+        "pn-epoch::solve::partitions::positive_rung_split": "calibrated-positive-rung-split-case",
+        "pn-epoch::solve::partitions::published_retained_act": "calibrated-published-retained-act-case",
+        "pn-epoch::solve::partitions::sibling_outside_paths": "calibrated-sibling-outside-paths-case",
+        "pn-epoch::solve::schedules::schedule_covariance": "calibrated-schedule-covariance-case",
+        "pn-epoch::solve::two_map_box": "calibrated-two-map-box-case"
+      },
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::schedules::schedule_covariance",
+        "pn-epoch::solve::burn_sibling",
+        "pn-epoch::solve::burn_switch",
+        "pn-epoch::solve::conserved_residual",
+        "pn-epoch::solve::partitions::positive_rung_split",
+        "pn-epoch::solve::partitions::published_retained_act",
+        "pn-epoch::solve::partitions::sibling_outside_paths",
+        "pn-epoch::solve::two_map_box"
+      ],
+      "contract": "Declared rational-endpoint procedure, evaluated fence, deterministic refusal, conserved solve and replay on the finite fixtures; no unrestricted grammar or production controller admission.",
+      "contract_edition": "epoch-numeric-1",
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "planned-numeric-extended",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     },
     {
       "budget": "calibrated-graph-numeric-suite",
@@ -4952,8 +4986,25 @@
         "design-tests",
         "observation-build",
         "observation-runtime",
-        "observation-parser"
+        "observation-parser",
+        "extended-tests"
       ]
+    },
+    {
+      "budget": "pure-suite",
+      "case_budget_reasons": {},
+      "case_budgets": {},
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::schedules::policy_edges"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::schedule-policy",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     },
     {
       "budget": "pure-suite",
@@ -4965,16 +5016,15 @@
       },
       "case_span": true,
       "cases": [
-        "pn-epoch::solve::schedules::policy_edges",
         "pn-epoch::solve::schedules::retained_policy"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
-      "name": "pn-epoch::schedule-policy",
+      "name": "pn-epoch::schedule-policy-extended",
       "runner": "nextest",
       "status": "active",
-      "tier": "fast"
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",
@@ -5110,21 +5160,15 @@
       "budget": "pure-suite",
       "case_budget_reasons": {
         "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix": "The public boundary prefix retains original marker disclosure, empty-final-set standing evidence and independent complete-sequence restoration.",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "The complete semantic carrier retains every omitted or mixed cause, sequence, compilation, final-gate, announcement-prefix and profile refusal, with fresh restoration for each distinct mutation.",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "Defining ridge, query and transcript mutations retain independent charge replay at consumption and unresolved-image withholding over a complete admitted fixture.",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "Both chartered floors retain complete admission, semantic assembly and independent restoration; successful assemblies each keep their own replay while immutable fixture construction is shared."
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "The complete semantic carrier retains every omitted or mixed cause, sequence, compilation, final-gate, announcement-prefix and profile refusal, with fresh restoration for each distinct mutation."
       },
       "case_budgets": {
         "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix": "calibrated-publication-prefix-case",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "calibrated-publication-refusals-case",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "calibrated-publication-ridge-refusals-case",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "calibrated-publication-roundtrip-case"
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "calibrated-publication-refusals-case"
       },
       "case_span": true,
       "cases": [
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
         "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals",
-        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals",
         "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix"
       ],
       "implementation": "pn-epoch-rust",
@@ -5134,6 +5178,29 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "Defining ridge, query and transcript mutations retain independent charge replay at consumption and unresolved-image withholding over a complete admitted fixture.",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "Both chartered floors retain complete admission, semantic assembly and independent restoration; successful assemblies each keep their own replay while immutable fixture construction is shared."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "calibrated-publication-ridge-refusals-case",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "calibrated-publication-roundtrip-case"
+      },
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::semantic-publication-extended",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",

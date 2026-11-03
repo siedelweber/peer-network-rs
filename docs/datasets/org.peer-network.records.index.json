@@ -377,6 +377,7 @@
           "steps": [
             "test-build",
             "tests",
+            "extended-tests",
             "reference-certificates",
             "service-tests",
             "test-evidence",
@@ -493,6 +494,7 @@
         "suppressions",
         "printing",
         "tests",
+        "extended-tests",
         "reference-certificates",
         "service-tests",
         "wallet-conformance",

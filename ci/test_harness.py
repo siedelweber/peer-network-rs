@@ -431,6 +431,19 @@ assert (root/'payload').read_text() == 'committed'
         self.assertEqual(registry.case_budget('example::calibrated'), 'integration')
         result = registry.join(dict(operation='example::calibrated', outcome='passed'), 'current')
         self.assertEqual((result['tier'], result['level'], result['implementation']), ('fast', 'unit', 'example'))
+        placement = copy.deepcopy(data)
+        placement.insert(-1, dict(kind='tier', name='extended', status='active'))
+        fast = next(row for row in placement if row.get('kind') == 'tier' and row['name'] == 'fast')
+        fast['extended_case_threshold_ms'] = 1999
+        with self.assertRaisesRegex(StructuralError, 'placement threshold'):
+            Registry(placement, declarations())
+        fast['extended_case_threshold_ms'] = 2000
+        self.assertEqual(Registry(placement, declarations()).cases['example::calibrated']['tier'], 'fast')
+        fast['extended_case_threshold_ms'] = 1999
+        placement[-1]['tier'] = 'extended'
+        moved = Registry(placement, declarations())
+        self.assertEqual(moved.case_budget('example::calibrated'), 'integration')
+        self.assertEqual(moved.cases['example::calibrated']['tier'], 'extended')
         with self.assertRaisesRegex(StructuralError, 'budget'):
             registry.join(dict(result, budget='unit'), 'current')
         for mutation in ('missing-cost', 'empty-cost', 'unknown-case', 'category', 'unknown-budget', 'tier-policy'):

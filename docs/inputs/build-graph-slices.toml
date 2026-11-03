@@ -275,3 +275,8 @@ reason = "Required invocation with a current inventory and exact evidence join."
 name = "test-evidence"
 slice = 4
 reason = "Required invocation with a current inventory and exact evidence join."
+
+[[rows]]
+name = "extended-tests"
+slice = 4
+reason = "Required prebuilt case invocation selected by the declared allowance threshold; the disjoint result union retains every case."

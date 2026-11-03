@@ -112,6 +112,15 @@ class Registry:
                     self.cases[case]['case_budget'] = case_budgets[case]
         if not set(self.properties).issubset(self.cases):
             raise StructuralError('unregistered property case')
+        threshold = self.tiers.get('fast', {}).get('extended_case_threshold_ms')
+        if threshold is not None:
+            if not isinstance(threshold, int) or isinstance(threshold, bool) or threshold <= 0:
+                raise StructuralError('invalid extended case threshold')
+            if self.tiers.get('extended', {}).get('status') != 'active':
+                raise StructuralError('allowance placement requires an active extended tier')
+            for name, suite in self.cases.items():
+                if suite['runner'] == 'nextest' and suite['tier'] == 'fast' and 'case_budget' in suite and declared[self.case_budget(name)]['budget_ms'] > threshold:
+                    raise StructuralError('calibrated case exceeds fast placement threshold: '+name)
         for suite in self.suites.values():
             if suite.get('runner') == 'contract' and (suite.get('parent_case') not in self.cases or not suite.get('contract_edition') or not suite.get('claim')):
                 raise StructuralError('contract case mapping lacks parent, edition or establishing claim')

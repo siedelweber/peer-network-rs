@@ -94,6 +94,7 @@ run_step() {
     local budget=ordinary-check
     if [ "$name" = tests ]; then budget=test-command; fi
     if [ "$name" = reference-certificates ]; then budget=reference-gate; fi
+    if [ "$name" = extended-tests ]; then budget=extended-gate; fi
     if [ "$name" = service-tests ]; then budget=service-gate; fi
     if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
