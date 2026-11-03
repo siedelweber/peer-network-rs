@@ -112,7 +112,12 @@ pub fn compile_ledger(
         if input.parameters().numeraire.amount().unit() != unit {
             return Err(LedgerError::Units);
         }
-        let expected = numeric.charged_price(price.wall(), &input.parameters().numeraire, input.constants().content().floor)?;
+        let expected = numeric.replay_charged_price(
+            price,
+            &input.parameters().numeraire,
+            input.constants().content().floor,
+            &pn_graph::numeric::ridge::ChargeReplay,
+        )?;
         if &expected != price {
             return Err(LedgerError::Price);
         }

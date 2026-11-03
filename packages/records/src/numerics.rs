@@ -6,6 +6,8 @@ use nrz_cas::{
 };
 use std::cmp::Ordering;
 
+mod ridge_charge;
+
 /// Explicit cumulative comparison attempt/work limits.
 /// (´def:numerics:exact-carriers´)
 pub use nrz_accuracy::Limits as ComparisonLimits;
@@ -17,6 +19,12 @@ pub use nrz_cas::limits::Limits as ExactLimits;
 /// (´def:numerics:exact-carriers´)
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum NumericError {
+    /// The ridge defining object or analytic-premise edition is not admitted.
+    #[error("unsupported ridge charge definition")]
+    RidgeDefinition,
+    /// Defining evidence failed its structural or independent replay checks.
+    #[error("ridge charge evidence refused")]
+    RidgeEvidence,
     /// Backend syntax or finite resource refusal.
     #[error("exact backend: {0}")]
     Backend(#[from] nrz_cas::Fault),
@@ -176,6 +184,7 @@ pub struct ChargedPrice {
     numeraire: Numeraire,
     price: BurnPerAction,
     floor: Floor,
+    ridge: Option<Box<crate::ridge::ChargeEvidence>>,
 }
 
 /// Immutable consummated charge with its own price, action count and boundary.
@@ -801,6 +810,7 @@ impl NumericContext {
                 numeraire: numeraire.clone(),
                 floor,
                 price,
+                ridge: None,
             })
         })();
         if result.is_err() {

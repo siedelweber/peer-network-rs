@@ -56,7 +56,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 494 | 191 |
+| ROOT (repository-wide) | 1 496 | 192 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -873,11 +873,11 @@
 | ``def:epoch:participation-floor`` | pn-epoch; function | designed | ``ROOT::rule:design:reference-wall-branches`` | | | |  | | |
 | ``eq:epoch:effective-floor`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``def:epoch:safety-wall`` | pn-epoch; function | designed | ``ROOT::inv:design:charged-value`` | | | | 2 | | |
-| ``def:epoch:safety-wall-floor`` | pn-records; type | designed | ``CONSTANTS::bound.epoch.wall_floor_ridge_hi`` ``CONSTANTS::bound.epoch.wall_floor_ridge_lo`` ``CONSTANTS::const.epoch.wall_floor_rational`` ``CONSTANTS::const.epoch.wall_floor_ridge`` ``ROOT::alg:design:binding-ridge`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
+| ``def:epoch:safety-wall-floor`` | pn-records; type | designed | ``CONSTANTS::bound.epoch.wall_floor_ridge_hi`` ``CONSTANTS::bound.epoch.wall_floor_ridge_lo`` ``CONSTANTS::const.epoch.wall_floor_rational`` ``CONSTANTS::const.epoch.wall_floor_ridge`` ``ROOT::alg:design:binding-ridge`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` ``ROOT::rule:design:ridge-charge-contract`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``case:epoch:safety-wall-floor-ridge-floor`` | pn-epoch; invariant check | designed | ``RECORDS::def:declarations:constants-edition`` ``ROOT::model:design:wall-floor`` | | | | 2 | | |
 | ``case:epoch:safety-wall-floor-rational-floor`` | pn-epoch; invariant check | designed | ``ROOT::model:design:wall-floor`` | | | | 2 | | |
 | ``cor:epoch:floor-economics`` | pn-epoch; none | designed | ``CONSTANTS::const.epoch.floor_capacity_rational`` ``CONSTANTS::const.epoch.floor_capacity_ridge`` ``CONSTANTS::const.epoch.floor_price_rational`` ``CONSTANTS::const.epoch.floor_price_ridge`` ``ROOT::model:design:wall-floor`` | | | | 2 | | |
-| ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` | | | | 2 | | |
+| ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` ``ROOT::rule:design:ridge-charge-contract`` | | | | 2 | | |
 | ``def:epoch:wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``def:epoch:canonical-interim-wall-controller`` | pn-epoch; function | designed | ``CONSTANTS::const.epoch.deadband`` ``CONSTANTS::const.epoch.step_abs`` ``CONSTANTS::const.epoch.step_rel`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:admission-declarations`` ``ROOT::amend:design:reference-wall-measurements`` ``ROOT::dec:design:policy-schedules`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::amend:design:reference-wall-measurements``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``case:epoch:canonical-interim-wall-controller-zero-width`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | | |

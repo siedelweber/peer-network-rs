@@ -459,3 +459,36 @@ pub(super) fn compare_limited(
     limited.input.maximum_work = limited.input.maximum_work.min(remaining_work);
     comparison(&limited, wall, floor, None)
 }
+
+/// Independent records-layer charge verifier for the admitted clean ridge transcript.
+/// (´[ROOT-rule:design:ridge-charge-contract]´)
+#[derive(Debug)]
+pub struct ChargeReplay;
+
+impl pn_records::ridge::ChargeVerifier for ChargeReplay {
+    #[tracing::instrument(
+        name = "sig:design:graph",
+        fields(
+            execution_owner = "GRAPH",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:graph",
+            source_item = "numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay"
+        ),
+        ret
+    )]
+    fn replay(&self, evidence: &pn_records::ridge::ChargeEvidence) -> Result<(), pn_records::numerics::NumericError> {
+        use pn_records::numerics::NumericError;
+        if evidence.analytic_premises != "clean-ridge-analytic-v1" {
+            return Err(NumericError::RidgeDefinition);
+        }
+        replay(&evidence.procedure, &evidence.input, &evidence.record)
+            .map(|_| ())
+            .map_err(|error| match error {
+                Error::Definition => NumericError::RidgeDefinition,
+                Error::Numeric(super::Error::Backend(fault))
+                | Error::Arithmetic(fault)
+                | Error::Operational { fault: Some(fault), .. } => NumericError::Backend(fault),
+                _ => NumericError::RidgeEvidence,
+            })
+    }
+}

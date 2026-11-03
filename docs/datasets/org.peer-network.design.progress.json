@@ -14338,7 +14338,8 @@
         "ROOT::amend:decomposition:wall-reference",
         "ROOT::dec:design:policy-schedules",
         "ROOT::req:vision:policy-schedules",
-        "ROOT::rule:design:reference-wall-branches"
+        "ROOT::rule:design:reference-wall-branches",
+        "ROOT::rule:design:ridge-charge-contract"
       ],
       "routes": [],
       "status": "designed",
@@ -14423,7 +14424,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::model:design:wall-floor"
+        "ROOT::model:design:wall-floor",
+        "ROOT::rule:design:ridge-charge-contract"
       ],
       "routes": [],
       "status": "designed",
@@ -38383,22 +38385,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 191,
+      "exact_citing": 192,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "191",
+          "exact": "192",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "191",
+          "num": "192",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 494",
+          "exact": "1 496",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 494",
+          "num": "1 496",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38413,7 +38415,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1494
+      "total": 1496
     },
     {
       "category": "record-coverage",

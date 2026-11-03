@@ -8115,6 +8115,38 @@
         "boundary": "pn-epoch::packages/epoch/src/closure.rs::closure::close",
         "class_decision": "closure-admission-public"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/ridge_charge.rs",
+      "item": "numerics::ridge_charge::NumericContext::charged_price_with_ridge",
+      "owner": "RECORDS",
+      "signature": "fn charged_price_with_ridge (& mut self , wall : & Computed , numeraire : & Numeraire , evidence : & ChargeEvidence , verifier : & impl ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-ridge-charged-price"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics/ridge_charge.rs",
+      "item": "numerics::ridge_charge::NumericContext::replay_charged_price",
+      "owner": "RECORDS",
+      "signature": "fn replay_charged_price (& mut self , price : & ChargedPrice , numeraire : & Numeraire , floor : Floor , verifier : & impl ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-replay-charged-price"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "item": "numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (& self , evidence : & pn_records :: ridge :: ChargeEvidence) -> Result < () , pn_records :: numerics :: NumericError >",
+      "claim": "ROOT::sig:design:graph",
+      "shape": "shape-graph",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -9009,8 +9041,10 @@
           "numeric-recording-cost",
           "numeric-reduce",
           "numeric-reduce-burn",
+          "numeric-replay-charged-price",
           "numeric-reprice",
           "numeric-reprice-standing",
+          "numeric-ridge-charged-price",
           "numeric-standing",
           "numeric-unit-cost",
           "recognize-markers",
@@ -9066,8 +9100,10 @@
           "numeric-recording-cost",
           "numeric-reduce",
           "numeric-reduce-burn",
+          "numeric-replay-charged-price",
           "numeric-reprice",
           "numeric-reprice-standing",
+          "numeric-ridge-charged-price",
           "numeric-standing",
           "numeric-unit-cost",
           "recognize-markers",
@@ -12845,13 +12881,13 @@
     {
       "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::charged_price",
       "class_decision": "public-records",
-      "body": "{ let result = (| | { match self . compare_floor (wall , floor) ? { FloorComparison :: Below => return Err (NumericError :: BelowFloor) , FloorComparison :: Indecisive => return Err (NumericError :: Indecisive) , FloorComparison :: Equal | FloorComparison :: Above => { } } let price = self . per_action (wall , numeraire) ? ; Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , floor , price , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "body": "{ let result = (| | { match self . compare_floor (wall , floor) ? { FloorComparison :: Below => return Err (NumericError :: BelowFloor) , FloorComparison :: Indecisive => return Err (NumericError :: Indecisive) , FloorComparison :: Equal | FloorComparison :: Above => { } } let price = self . per_action (wall , numeraire) ? ; Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , floor , price , ridge : None , }) }) () ; if result . is_err () { super :: refused () ; } result }",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body. Ridge charges retain public defining evidence and are reconstructed through the admitted independent replay contract; the rational path remains exact."
     },
     {
       "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::consummate",
@@ -14494,9 +14530,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/ledger.rs::ledger::compile_ledger",
-      "body": "{ let last = inputs . last () . ok_or (LedgerError :: Boundary) ? . parameters () . boundary ; if inputs . len () != prices . len () || u64 :: try_from (inputs . len ()) . ok () != Some (last) || markers . markers () . first () . is_none_or (| m | m . identity () . index != 0 || ! m . destructions () . is_empty ()) || markers . markers () . len () <= inputs . len () || history . acts () . iter () . any (| a | a . position () . 0 > last) { return Err (LedgerError :: Boundary) ; } pn_graph :: formation :: reconstruct_replay (history , verifier) ? ; let mut budget = Budget :: new (limits) ? ; let mut gross = BTreeMap :: new () ; let mut balances = BTreeMap :: new () ; let mut counts = BTreeMap :: new () ; let mut debits = BTreeMap :: new () ; let mut snapshots = Vec :: new () ; let mut seen = BTreeSet :: new () ; let unit = inputs [0] . parameters () . numeraire . amount () . unit () ; for (offset , (input , price)) in inputs . iter () . zip (prices) . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | LedgerError :: Boundary) ? + 1 ; if input . parameters () . boundary != boundary || markers . markers () [offset + 1] . identity () . index != boundary { return Err (LedgerError :: Boundary) ; } if input . parameters () . numeraire . amount () . unit () != unit { return Err (LedgerError :: Units) ; } let expected = numeric . charged_price (price . wall () , & input . parameters () . numeraire , input . constants () . content () . floor) ? ; if & expected != price { return Err (LedgerError :: Price) ; } let mut increment = BTreeMap :: new () ; for (identity , record) in markers . markers () [offset + 1] . destructions () { if record . amount . unit () != unit { return Err (LedgerError :: Units) ; } counts . entry (record . address . clone ()) . or_insert (ActionCount (0)) ; if seen . insert (identity . clone ()) { add (& mut gross , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut increment , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut balances , & record . address , record . amount . exact () , & mut budget) ? ; } } for act in history . acts () . iter () . filter (| act | act . position () . 0 == boundary) { let address = Address (act . id () . author . clone ()) ; let count = counts . entry (address . clone ()) . or_insert (ActionCount (0)) ; count . 0 = count . 0 . checked_add (1) . ok_or (LedgerError :: Count) ? ; let debit = numeric . consummate (price , ActionCount (1) , boundary) ? ; let charged = Rational :: parse (debit . charged () . exact () , & mut budget) ? ; let balance = balances . entry (address) . or_insert (Rational :: parse (\"0\" , & mut budget) ?) ; * balance = balance . sub (& charged , & mut budget) ? ; debits . insert (act . id () . clone () , debit) ; } if let Some ((address , _)) = balances . iter () . find (| (_ , balance) | balance . is_negative ()) { return Err (LedgerError :: InsufficientBalance { address : address . clone () , boundary , }) ; } snapshots . push (BurnSnapshot { boundary , gross : amounts (& gross , unit , numeric , & mut budget) ? , increment : amounts (& increment , unit , numeric , & mut budget) ? , }) ; } Ok (FinalLedger { snapshots , balances : amounts (& balances , unit , numeric , & mut budget) ? , counts , debits , }) }",
+      "body": "{ let last = inputs . last () . ok_or (LedgerError :: Boundary) ? . parameters () . boundary ; if inputs . len () != prices . len () || u64 :: try_from (inputs . len ()) . ok () != Some (last) || markers . markers () . first () . is_none_or (| m | m . identity () . index != 0 || ! m . destructions () . is_empty ()) || markers . markers () . len () <= inputs . len () || history . acts () . iter () . any (| a | a . position () . 0 > last) { return Err (LedgerError :: Boundary) ; } pn_graph :: formation :: reconstruct_replay (history , verifier) ? ; let mut budget = Budget :: new (limits) ? ; let mut gross = BTreeMap :: new () ; let mut balances = BTreeMap :: new () ; let mut counts = BTreeMap :: new () ; let mut debits = BTreeMap :: new () ; let mut snapshots = Vec :: new () ; let mut seen = BTreeSet :: new () ; let unit = inputs [0] . parameters () . numeraire . amount () . unit () ; for (offset , (input , price)) in inputs . iter () . zip (prices) . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | LedgerError :: Boundary) ? + 1 ; if input . parameters () . boundary != boundary || markers . markers () [offset + 1] . identity () . index != boundary { return Err (LedgerError :: Boundary) ; } if input . parameters () . numeraire . amount () . unit () != unit { return Err (LedgerError :: Units) ; } let expected = numeric . replay_charged_price (price , & input . parameters () . numeraire , input . constants () . content () . floor , & pn_graph :: numeric :: ridge :: ChargeReplay ,) ? ; if & expected != price { return Err (LedgerError :: Price) ; } let mut increment = BTreeMap :: new () ; for (identity , record) in markers . markers () [offset + 1] . destructions () { if record . amount . unit () != unit { return Err (LedgerError :: Units) ; } counts . entry (record . address . clone ()) . or_insert (ActionCount (0)) ; if seen . insert (identity . clone ()) { add (& mut gross , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut increment , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut balances , & record . address , record . amount . exact () , & mut budget) ? ; } } for act in history . acts () . iter () . filter (| act | act . position () . 0 == boundary) { let address = Address (act . id () . author . clone ()) ; let count = counts . entry (address . clone ()) . or_insert (ActionCount (0)) ; count . 0 = count . 0 . checked_add (1) . ok_or (LedgerError :: Count) ? ; let debit = numeric . consummate (price , ActionCount (1) , boundary) ? ; let charged = Rational :: parse (debit . charged () . exact () , & mut budget) ? ; let balance = balances . entry (address) . or_insert (Rational :: parse (\"0\" , & mut budget) ?) ; * balance = balance . sub (& charged , & mut budget) ? ; debits . insert (act . id () . clone () , debit) ; } if let Some ((address , _)) = balances . iter () . find (| (_ , balance) | balance . is_negative ()) { return Err (LedgerError :: InsufficientBalance { address : address . clone () , boundary , }) ; } snapshots . push (BurnSnapshot { boundary , gross : amounts (& gross , unit , numeric , & mut budget) ? , increment : amounts (& increment , unit , numeric , & mut budget) ? , }) ; } Ok (FinalLedger { snapshots , balances : amounts (& balances , unit , numeric , & mut budget) ? , counts , debits , }) }",
       "class_decision": "epoch-ledger",
-      "item_premise": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
+      "item_premise": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent. Ridge charges retain public defining evidence and are reconstructed through the admitted independent replay contract; the rational path remains exact.",
       "assessments": {
         "full_recording": "epoch-ledger-full_recording",
         "secret_flow": "epoch-ledger-secret_flow",
@@ -14725,9 +14761,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/support.rs::support::compile_support",
-      "body": "{ let boundary = inputs . parameters () . boundary ; if base . boundary != boundary || base . edition != inputs . parameters () . edition || ledger . snapshots . last () . map (| snapshot | snapshot . boundary) != Some (boundary) || price . numeraire () != & inputs . parameters () . numeraire || numeric . charged_price (price . wall () , & inputs . parameters () . numeraire , inputs . constants () . content () . floor ,) ? != * price || ledger . debits . values () . any (| debit | debit . boundary () == boundary && debit . price () != price) { return Err (SupportError :: Boundary) ; } let mut budget = Budget :: new (limits) ? ; let mut adjacency = BTreeMap :: new () ; for (source , row) in & base . rows { let mut targets = BTreeSet :: new () ; for (target , entry) in row { if ! base . rows . contains_key (target) { return Err (SupportError :: Base) ; } if positive (& entry . score , & mut budget) ? { targets . insert (target . clone ()) ; } } if ! targets . contains (source) { return Err (SupportError :: Base) ; } adjacency . insert (source . clone () , targets) ; } let (sources , rates) = source_pairs (inputs , price , ledger , base , & mut budget) ? ; let mut current : SupportRows = base . rows . keys () . map (| source | (source . clone () , BTreeSet :: from ([source . clone ()]))) . collect () ; let mut by_depth = BTreeMap :: new () ; let mut products = 0_u64 ; for (index , mass_name) in inputs . parameters () . depth_mass . iter () . enumerate () { let mut next = BTreeMap :: new () ; for (source , reached) in & current { let mut targets = BTreeSet :: new () ; for relay in reached { for target in adjacency . get (relay) . ok_or (SupportError :: Base) ? { products = products . checked_add (1) . filter (| value | * value <= maximum_products) . ok_or (SupportError :: Products) ? ; targets . insert (target . clone ()) ; } } next . insert (source . clone () , targets) ; } current = next ; if ! crate :: constant (inputs . constants () , mass_name , & mut budget) ? . is_zero () { by_depth . insert (index + 1 , current . clone ()) ; } } let mut emitted = BTreeMap :: new () ; let mut contributors : SupportRows = base . rows . keys () . map (| actor | (actor . clone () , BTreeSet :: new ())) . collect () ; for (source , evidence) in & sources { let mut targets = BTreeSet :: new () ; if evidence . emission != \"0\" { for support in by_depth . values () { targets . extend (support [source] . iter () . cloned ()) ; } } if evidence . retained != \"0\" { targets . insert (source . clone ()) ; } for target in & targets { contributors . get_mut (target) . ok_or (SupportError :: Base) ? . insert (source . clone ()) ; } emitted . insert (source . clone () , targets) ; } let ranges = contributing_ranges (& contributors , & rates , & mut budget) ? ; Ok (StandingSupport { boundary , sources , by_depth , emitted , contributors , ranges , products , }) }",
+      "body": "{ let boundary = inputs . parameters () . boundary ; if base . boundary != boundary || base . edition != inputs . parameters () . edition || ledger . snapshots . last () . map (| snapshot | snapshot . boundary) != Some (boundary) || price . numeraire () != & inputs . parameters () . numeraire || numeric . replay_charged_price (price , & inputs . parameters () . numeraire , inputs . constants () . content () . floor , & pn_graph :: numeric :: ridge :: ChargeReplay ,) ? != * price || ledger . debits . values () . any (| debit | debit . boundary () == boundary && debit . price () != price) { return Err (SupportError :: Boundary) ; } let mut budget = Budget :: new (limits) ? ; let mut adjacency = BTreeMap :: new () ; for (source , row) in & base . rows { let mut targets = BTreeSet :: new () ; for (target , entry) in row { if ! base . rows . contains_key (target) { return Err (SupportError :: Base) ; } if positive (& entry . score , & mut budget) ? { targets . insert (target . clone ()) ; } } if ! targets . contains (source) { return Err (SupportError :: Base) ; } adjacency . insert (source . clone () , targets) ; } let (sources , rates) = source_pairs (inputs , price , ledger , base , & mut budget) ? ; let mut current : SupportRows = base . rows . keys () . map (| source | (source . clone () , BTreeSet :: from ([source . clone ()]))) . collect () ; let mut by_depth = BTreeMap :: new () ; let mut products = 0_u64 ; for (index , mass_name) in inputs . parameters () . depth_mass . iter () . enumerate () { let mut next = BTreeMap :: new () ; for (source , reached) in & current { let mut targets = BTreeSet :: new () ; for relay in reached { for target in adjacency . get (relay) . ok_or (SupportError :: Base) ? { products = products . checked_add (1) . filter (| value | * value <= maximum_products) . ok_or (SupportError :: Products) ? ; targets . insert (target . clone ()) ; } } next . insert (source . clone () , targets) ; } current = next ; if ! crate :: constant (inputs . constants () , mass_name , & mut budget) ? . is_zero () { by_depth . insert (index + 1 , current . clone ()) ; } } let mut emitted = BTreeMap :: new () ; let mut contributors : SupportRows = base . rows . keys () . map (| actor | (actor . clone () , BTreeSet :: new ())) . collect () ; for (source , evidence) in & sources { let mut targets = BTreeSet :: new () ; if evidence . emission != \"0\" { for support in by_depth . values () { targets . extend (support [source] . iter () . cloned ()) ; } } if evidence . retained != \"0\" { targets . insert (source . clone ()) ; } for target in & targets { contributors . get_mut (target) . ok_or (SupportError :: Base) ? . insert (source . clone ()) ; } emitted . insert (source . clone () , targets) ; } let ranges = contributing_ranges (& contributors , & rates , & mut budget) ? ; Ok (StandingSupport { boundary , sources , by_depth , emitted , contributors , ranges , products , }) }",
       "class_decision": "epoch-support",
-      "item_premise": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+      "item_premise": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result. Ridge charges retain public defining evidence and are reconstructed through the admitted independent replay contract; the rational path remains exact.",
       "assessments": {
         "full_recording": "epoch-support-full_recording",
         "secret_flow": "epoch-support-secret_flow",
@@ -15740,6 +15776,39 @@
       "body": "{ & self . record }",
       "class_decision": "closure-admission-public",
       "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics/ridge_charge.rs::numerics::ridge_charge::NumericContext::charged_price_with_ridge",
+      "body": "{ let result = (| | { if self . comparisons . reserve_attempt (1) . is_err () { return Err (NumericError :: Indecisive) ; } let envelope = self . ridge_envelope (evidence) ? ; verifier . replay (evidence) ? ; let (lower , upper) = envelope . ok_or (NumericError :: Indecisive) ? ; if wall . exact . value . compare (& lower , & mut self . budget) ? . is_lt () { return Err (NumericError :: BelowFloor) ; } if wall . exact . value . compare (& upper , & mut self . budget) ? . is_lt () { return Err (NumericError :: Indecisive) ; } Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , price : self . per_action (wall , numeraire) ? , floor : Floor :: RidgeImage , ridge : Some (Box :: new (evidence . clone ())) , }) }) () ; if result . is_err () { crate :: refused () ; } result }",
+      "class_decision": "public-records",
+      "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics/ridge_charge.rs::numerics::ridge_charge::NumericContext::replay_charged_price",
+      "body": "{ if floor == Floor :: RidgeImage { self . charged_price_with_ridge (price . wall () , numeraire , price . ridge . as_deref () . ok_or (NumericError :: RidgeEvidence) ? , verifier ,) } else { self . charged_price (price . wall () , numeraire , floor) } }",
+      "class_decision": "public-records",
+      "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
+      "body": "{ use pn_records :: numerics :: NumericError ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } replay (& evidence . procedure , & evidence . input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { Error :: Definition => NumericError :: RidgeDefinition , Error :: Numeric (super :: Error :: Backend (fault)) | Error :: Arithmetic (fault) | Error :: Operational { fault : Some (fault) , .. } => NumericError :: Backend (fault) , _ => NumericError :: RidgeEvidence , }) }",
+      "class_decision": "binding-ridge-public",
+      "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -20094,6 +20163,24 @@
       "syntax": "# [derive (Debug , thiserror :: Error)]",
       "class_decision": "closure-admission-public",
       "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+    },
+    {
+      "item": "ridge::ChargeEvidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality and diagnostics retain untrusted defining evidence or the stateless replay adapter. No unchecked charge constructor, default or encoding is generated."
+    },
+    {
+      "item": "numeric::ridge::ChargeReplay",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "binding-ridge-public",
+      "expansion_review": "Structural cloning, equality and diagnostics retain untrusted defining evidence or the stateless replay adapter. No unchecked charge constructor, default or encoding is generated."
     }
   ],
   "reviewed_types": [
@@ -21325,7 +21412,7 @@
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
-      "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
+      "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" The ridge defining object or analytic-premise edition is not admitted.\"] # [error (\"unsupported ridge charge definition\")] RidgeDefinition , # [doc = \" Defining evidence failed its structural or independent replay checks.\"] # [error (\"ridge charge evidence refused\")] RidgeEvidence , # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
     },
     {
       "item": "numerics::Exact",
@@ -21403,7 +21490,7 @@
       "item": "numerics::ChargedPrice",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
-      "syntax": "# [doc = \" One coupled wall and numeraire; its burn-per-action image cannot be set separately.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedPrice { wall : Computed , numeraire : Numeraire , price : BurnPerAction , floor : Floor , }"
+      "syntax": "# [doc = \" One coupled wall and numeraire; its burn-per-action image cannot be set separately.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedPrice { wall : Computed , numeraire : Numeraire , price : BurnPerAction , floor : Floor , ridge : Option < Box < crate :: ridge :: ChargeEvidence > > , }"
     },
     {
       "item": "numerics::ChargedVintage",
@@ -21530,6 +21617,12 @@
       "package": "pn-records",
       "path": "packages/records/src/ridge.rs",
       "syntax": "# [doc = \" Untrusted floor comparison, retaining every attempted precision and attachment.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ComparisonRecord { pub wall : Wall , pub floor : Floor , pub queries : Vec < PrimitiveRecord > , pub verdict : FloorComparison , pub work : u64 , }"
+    },
+    {
+      "item": "ridge::ChargeEvidence",
+      "package": "pn-records",
+      "path": "packages/records/src/ridge.rs",
+      "syntax": "# [doc = \" Untrusted defining evidence for a rational charge, never a graph authority carrier.\"] # [doc = \" (´[ROOT-rule:design:ridge-charge-contract]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargeEvidence { pub analytic_premises : String , pub procedure : crate :: solve :: Procedure , pub input : Inputs , pub record : Record , }"
     },
     {
       "item": "solve::Primitive",
@@ -22340,6 +22433,12 @@
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/ridge.rs",
       "syntax": "struct Run < 'a > { procedure : & 'a Procedure , supplied : Option < & 'a [PrimitiveRecord] > , budget : Budget , queries : Vec < PrimitiveRecord > , }"
+    },
+    {
+      "item": "numeric::ridge::ChargeReplay",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/ridge.rs",
+      "syntax": "# [doc = \" Independent records-layer charge verifier for the admitted clean ridge transcript.\"] # [doc = \" (´[ROOT-rule:design:ridge-charge-contract]´)\"] # [derive (Debug)] pub struct ChargeReplay ;"
     },
     {
       "item": "numeric::verification::arithmetic::Arithmetic",
@@ -23799,7 +23898,8 @@
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::evaluate",
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
           "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
-          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison"
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison",
+          "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay"
         ]
       }
     },

@@ -5048,6 +5048,21 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::ridge_charge_controls",
+        "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::ridge-charge",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

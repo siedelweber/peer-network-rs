@@ -57,3 +57,28 @@ pub struct ComparisonRecord {
     pub verdict: FloorComparison,
     pub work: u64,
 }
+
+/// Untrusted defining evidence for a rational charge, never a graph authority carrier.
+/// (´[ROOT-rule:design:ridge-charge-contract]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChargeEvidence {
+    pub analytic_premises: String,
+    pub procedure: crate::solve::Procedure,
+    pub input: Inputs,
+    pub record: Record,
+}
+
+/// Declared verifier obligation: reconstruct and independently check every ridge query,
+/// attachment and cover decision under the supplied procedure and analytic premises.
+/// A successful return attests that the entire record is valid, including an unresolved prefix;
+/// it does not authorize a charge or turn an absent image into a floor.
+/// Only the graph kernel replay implementation is admitted by the current design.
+/// Implementing this trait does not mechanically establish that obligation.
+/// (´[ROOT-rule:design:ridge-charge-contract]´)
+pub trait ChargeVerifier: std::fmt::Debug {
+    /// Replay untrusted defining evidence in a fresh bounded context.
+    /// (´[ROOT-rule:design:ridge-charge-contract]´)
+    /// # Errors
+    /// Refuses malformed, substituted or unchecked evidence and operational exhaustion.
+    fn replay(&self, evidence: &ChargeEvidence) -> Result<(), crate::numerics::NumericError>;
+}

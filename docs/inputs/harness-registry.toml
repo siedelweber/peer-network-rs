@@ -1872,3 +1872,15 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::admission_work"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::ridge-charge"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::ridge_charge_controls", "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission"]

@@ -1466,6 +1466,26 @@ id = "num:numbers:reference-work-ceiling"
 value = "2000000000"
 
 [[rows]]
+id = "num:numbers:ridge-bracket-lower"
+value = "679/10000"
+
+[[rows]]
+id = "num:numbers:ridge-bracket-upper"
+value = "17/250"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-failed-precision"
+value = "20"
+
+[[rows]]
+id = "num:numbers:ridge-certificate-precision"
+value = "21"
+
+[[rows]]
+id = "num:numbers:ridge-concavity-depth-ceiling"
+value = "8"
+
+[[rows]]
 id = "num:numbers:scaling-base-fence-lower"
 value = "1/16"
 

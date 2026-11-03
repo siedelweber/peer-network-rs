@@ -101,10 +101,11 @@ pub fn compile_support(
         || base.edition != inputs.parameters().edition
         || ledger.snapshots.last().map(|snapshot| snapshot.boundary) != Some(boundary)
         || price.numeraire() != &inputs.parameters().numeraire
-        || numeric.charged_price(
-            price.wall(),
+        || numeric.replay_charged_price(
+            price,
             &inputs.parameters().numeraire,
             inputs.constants().content().floor,
+            &pn_graph::numeric::ridge::ChargeReplay,
         )? != *price
         || ledger
             .debits

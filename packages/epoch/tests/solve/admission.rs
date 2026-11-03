@@ -1192,3 +1192,6 @@ fn admission_work() {
     plan.solve.maximum_replay_work -= 1;
     assert!(run(&context, &plan, &led).is_ok());
 }
+
+#[path = "admission/ridge_charge.rs"]
+mod ridge_charge;
