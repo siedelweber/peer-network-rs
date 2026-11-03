@@ -18,6 +18,7 @@ pub mod constants;
 /// Public burn disclosures and pure marker recognition, without snapshot derivation.
 /// (´def:burn:carriers´)
 pub mod burn;
+pub mod live_markers;
 
 /// Typed opaque act commitments; interpretation belongs to the shared profile.
 /// (´def:acts:commitment-residues´)

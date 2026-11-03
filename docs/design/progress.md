@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 28 | 59 | 410 | 7 | 28 | 859 |
+| implementation | 1 356 | 32 | 59 | 406 | 7 | 28 | 859 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -30,7 +30,7 @@
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 | pn-epoch | 371 | 14 | 8 | 141 | 0 | 13 | 208 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
-| pn-host | 166 | 0 | 17 | 53 | 1 | 2 | 96 |
+| pn-host | 166 | 4 | 17 | 49 | 1 | 2 | 96 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
 | pn-records | 218 | 1 | 10 | 75 | 1 | 3 | 132 |
 | pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
@@ -51,7 +51,7 @@
 | pn-host | 19 | 0 |
 | pn-interchange | 26 | 0 |
 | pn-readouts | 0 | 0 |
-| pn-records | 45 | 15 |
+| pn-records | 48 | 18 |
 | pn-replay | 0 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
@@ -64,16 +64,16 @@
 | Bite | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 19 | 0 | 6 | 12 | 0 | 1 | 1 |
-| 2 | 35 | 2 | 5 | 28 | 0 | 0 | 0 |
+| 2 | 35 | 6 | 5 | 24 | 0 | 0 | 0 |
 | 3 | 22 | 0 | 3 | 18 | 0 | 4 | 1 |
 | 4 | 36 | 2 | 11 | 23 | 0 | 4 | 0 |
-| 5 | 44 | 3 | 5 | 36 | 0 | 3 | 0 |
+| 5 | 44 | 4 | 5 | 35 | 0 | 3 | 0 |
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 1 | 0 |
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
-| 11 | 93 | 4 | 28 | 60 | 0 | 5 | 1 |
+| 11 | 93 | 8 | 28 | 56 | 0 | 5 | 1 |
 | unlinked | 1 484 | 21 | 20 | 282 | 13 | 18 | 1 161 |
 
 ## By inventory kind · `sec:progress:kinds`
@@ -85,7 +85,7 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 6 | 50 | 6 | 3 | 157 |
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
-| invariant check | 517 | 11 | 22 | 145 | 1 | 10 | 339 |
+| invariant check | 517 | 15 | 22 | 141 | 1 | 10 | 339 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
 | policy | 265 | 2 | 19 | 53 | 5 | 3 | 191 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
@@ -100,6 +100,7 @@
 | ``ROOT::verif:design:core-standing-properties`` | 25 |
 | ``ROOT::verif:design:invitation-netting-cases`` | 2 |
 | ``ROOT::verif:design:settlement-party-cases`` | 1 |
+| ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
 
 ## Record-granular support · `sec:progress:record-support`
 
@@ -111,6 +112,7 @@
 | ``GRAPH::def:formation:settlement-recognition`` | ``ROOT::gate:design:bite-4`` | 2 |
 | ``GRAPH::def:formation:title-events`` | ``ROOT::gate:design:bite-4`` | 1 |
 | ``GRAPH::def:numerics:activation-endpoints`` | ``ROOT::gate:design:bite-6`` | 1 |
+| ``RECORDS::rec:burn:live-marker-evidence`` | ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
 | ``ROOT::amend:design:bite-six-activation`` | ``ROOT::gate:design:bite-6`` | 3 |
 | ``ROOT::amend:design:bite-six-conserved-solve`` | ``ROOT::dec:design:activation-evaluation-policy`` | 2 |
 | ``ROOT::amend:design:bite-six-conserved-solve`` | ``ROOT::dec:design:final-state`` | 1 |
@@ -207,10 +209,10 @@
 | ``cond:comparator:burn-unit-cost-projection`` | pn-host; invariant check | designed | ``ROOT::amend:decomposition:dimensional-scope`` ``ROOT::amend:decomposition:marker-settlement`` ``ROOT::amend:devnet:burn-obligation-labels`` ``ROOT::amend:devnet:marker-settlement`` ``ROOT::cav:devnet:assurance`` ``ROOT::dec:design:burn-boundary`` ``ROOT::inv:design:units`` ``ROOT::req:vision:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
 | ``cond:comparator:burn-operator-audit-bound`` | pn-host; invariant check | designed | ``ROOT::amend:devnet:marker-settlement`` ``ROOT::dec:design:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
 | ``post:comparator:marker-bound-settlement`` | pn-host; policy | designed | ``ROOT::amend:decomposition:marker-settlement`` ``ROOT::amend:devnet:marker-settlement`` ``ROOT::conv:vision:burn-realization`` ``ROOT::conv:vision:deployment-declarations`` ``ROOT::dec:design:burn-boundary`` ``ROOT::model:design:declarations`` ``ROOT::req:vision:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
-| ``cond:comparator:marker-lineage-succession`` | pn-host; invariant check | designed | ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
-| ``cond:comparator:marker-network-acceptance`` | pn-host; invariant check | designed | ``ROOT::amend:design:test-marker-policy`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
-| ``cond:comparator:marker-causal-dependence`` | pn-host; invariant check | designed | ``ROOT::amend:design:test-marker-policy`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
-| ``cond:comparator:marker-single-count`` | pn-host; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
+| ``cond:comparator:marker-lineage-succession`` | pn-host; invariant check | realized | ``RECORDS::rec:burn:live-marker-evidence`` ``RECORDS::rule:burn:live-marker-settlement`` ``RECORDS::verif:burn:live-marker-semantics`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | obligation; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-acceptance-requires-complete-proof``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-aliases-retain-first-acceptance``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-markers-require-complete-lineage``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``RECORDS::rec:burn:live-marker-evidence``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
+| ``cond:comparator:marker-network-acceptance`` | pn-host; invariant check | realized | ``RECORDS::rec:burn:live-marker-evidence`` ``RECORDS::rule:burn:live-marker-settlement`` ``RECORDS::verif:burn:live-marker-semantics`` ``ROOT::amend:design:test-marker-policy`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | obligation; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-acceptance-requires-complete-proof``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-aliases-retain-first-acceptance``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-markers-require-complete-lineage``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``RECORDS::rec:burn:live-marker-evidence``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
+| ``cond:comparator:marker-causal-dependence`` | pn-host; invariant check | realized | ``RECORDS::rec:burn:live-marker-evidence`` ``RECORDS::rule:burn:live-marker-settlement`` ``RECORDS::verif:burn:live-marker-semantics`` ``ROOT::amend:design:test-marker-policy`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:marker-recognition`` | obligation; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-acceptance-requires-complete-proof``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-aliases-retain-first-acceptance``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-markers-require-complete-lineage``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``RECORDS::rec:burn:live-marker-evidence``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
+| ``cond:comparator:marker-single-count`` | pn-host; invariant check | realized | ``RECORDS::rec:burn:live-marker-evidence`` ``RECORDS::rule:burn:live-marker-settlement`` ``RECORDS::verif:burn:live-marker-semantics`` ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` | obligation; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-acceptance-requires-complete-proof``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-aliases-retain-first-acceptance``; ``RECORDS::verif:burn:live-marker-semantics``<br>record-claim; ``RECORDS::verif:burn:live-marker-semantics``; ``RECORDS::claim:burn:live-markers-require-complete-lineage``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``RECORDS::rec:burn:live-marker-evidence``; ``RECORDS::verif:burn:live-marker-semantics``<br>| ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
 | ``def:comparator:marker-burn-snapshot`` | pn-records; type | designed | ``EPOCH::def:compiler:final-ledger`` ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` ``ROOT::rule:design:closure-marker-registration`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
 | ``eq:comparator:marker-burn-snapshot`` | pn-records; function | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
 | ``prop:comparator:marker-settlement-consistency`` | pn-host; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` ``ROOT::dec:design:replay`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 9, 11 | | |

@@ -5147,6 +5147,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-records::public::live_markers::live_marker_rules",
+        "pn-records::public::live_markers::live_marker_openings",
+        "pn-records::public::live_markers::live_marker_aliases"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-records::live-markers",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

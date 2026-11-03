@@ -8252,6 +8252,35 @@
       "claim": "ROOT::rule:observe:spans",
       "mode": "instrumented",
       "shape": "shape-001"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "item": "live_markers::verify",
+      "owner": "RECORDS",
+      "signature": "fn verify (input : HistoryInput , policy : & ValidatedPolicy , evidence : & [u8] , verifier : & impl LiveVerifier ,) -> Result < LiveMarkers , Error >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "verify-live-markers"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "item": "live_markers::LiveMarkers::markers",
+      "owner": "RECORDS",
+      "signature": "fn markers (& self) -> & RecognizedMarkers",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits the live verification operation.",
+        "witness": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+        "boundary": "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+        "class_decision": "live-marker-public"
+      }
     }
   ],
   "metrics": [
@@ -9163,7 +9192,8 @@
           "validate-history",
           "validate-marker-history",
           "validate-marker-policy",
-          "validate-record"
+          "validate-record",
+          "verify-live-markers"
         ]
       }
     },
@@ -9222,7 +9252,8 @@
           "validate-history",
           "validate-marker-history",
           "validate-marker-policy",
-          "validate-record"
+          "validate-record",
+          "verify-live-markers"
         ]
       }
     },
@@ -13347,17 +13378,6 @@
       "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
     },
     {
-      "operation": "pn-records::packages/records/src/constants.rs::constants::bind_marker_policy",
-      "class_decision": "public-records",
-      "body": "{ let result = (| | { let validated = crate :: burn :: validate_policy (input . clone () , burn) ? ; let mut deployments = records . declarations . iter () . filter (| d | d . id . namespace == \"deployment\" && d . id . name == \"genesis\") ; let deployment = deployments . next () . ok_or (crate :: burn :: BurnError :: DeploymentBinding) ? ; let DeclarationContent :: Deployment { genesis_at } = deployment . content else { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } ; if deployments . next () . is_some () || deployment . announced_at > genesis_at || deployment . effective_at > genesis_at || input . genesis_at != genesis_at { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , genesis_at) ? ; if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } if let DeclarationContent :: MarkerPolicy { recipe , .. } = & declaration . content && recipe != MARKER_POLICY_RECIPE { return Err (crate :: burn :: BurnError :: UnsupportedPolicyRecipe) ; } if declaration . content != (DeclarationContent :: MarkerPolicy { recipe : MARKER_POLICY_RECIPE . into () , digest : marker_policy_digest (& input) , }) { return Err (crate :: burn :: BurnError :: PolicyDigest) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "This body binds public policy to the unique validated deployment genesis and the effective marker declaration, including its complete content digest. Trace records arguments and the typed refusal or validated policy. No private credential enters the body. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing. The one recipe constant supplies the framed domain and binder comparison; unsupported recipes refuse separately before content comparison. The raw digest helper remains recomputation rather than publication."
-    },
-    {
       "operation": "pn-records::packages/records/src/constants.rs::constants::marker_policy_digest",
       "class_decision": "public-records",
       "body": "{ use crate :: burn :: { CandidateRule , Encoding } ; let crate :: burn :: PolicyInput { identity , edition , sequence , initial_marker , placement_procedure , cadence , verification_profile , published_at , genesis_at , stability_buffer , open_placement , encoding , candidate_rule , } = input ; let mut digest = Sha256 :: new () ; digest . update (MARKER_POLICY_RECIPE . as_bytes ()) ; digest . update ([0]) ; for text in [identity , edition , sequence , initial_marker , placement_procedure , cadence , verification_profile ,] { digest . update ((text . len () as u64) . to_be_bytes ()) ; digest . update (text . as_bytes ()) ; } for value in [published_at , genesis_at , stability_buffer] { digest . update (value . to_be_bytes ()) ; } digest . update ([u8 :: from (* open_placement)]) ; digest . update ([match encoding { Encoding :: CompleteList => 0 , Encoding :: PublicCommitment => 1 , Encoding :: WholePrefixAcceptAll => 2 , }]) ; digest . update ([match candidate_rule { CandidateRule :: FirstValidInHistoryOrder => 0 , CandidateRule :: UniquePerIndex => 1 , }]) ; digest . finalize () . into () }",
@@ -13416,17 +13436,6 @@
       "operation": "pn-records::packages/records/src/burn.rs::burn::validate_burn",
       "class_decision": "public-records",
       "body": "{ let result = validate_disclosures (input) ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
-      "class_decision": "public-records",
-      "body": "{ let result = (| | { if [& input . identity , & input . edition , & input . sequence , & input . initial_marker , & input . placement_procedure , & input . cadence , & input . verification_profile ,] . iter () . any (| s | s . trim () . is_empty ()) || ! input . open_placement || input . published_at >= input . genesis_at { return Err (BurnError :: Policy) ; } if input . stability_buffer <= burn . 0 . evidence . settlement_depth . unwrap_or (u64 :: MAX) { return Err (BurnError :: Buffer) ; } Ok (ValidatedPolicy { input , burn : burn . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
@@ -16006,6 +16015,50 @@
         "full_recording": "review-047",
         "secret_flow": "review-002",
         "exposure_consumers": "review-003"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::bind_marker_policy",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , input . genesis_at) ? ; let host = matches ! (& declaration . content , DeclarationContent :: MarkerPolicy { recipe , .. } if recipe == HOST_MARKER_POLICY_RECIPE) ; let validated = if host { crate :: burn :: validate_policy_placement (input . clone () , burn , false) ? } else { crate :: burn :: validate_policy (input . clone () , burn) ? } ; let mut deployments = records . declarations . iter () . filter (| d | d . id . namespace == \"deployment\" && d . id . name == \"genesis\") ; let deployment = deployments . next () . ok_or (crate :: burn :: BurnError :: DeploymentBinding) ? ; let DeclarationContent :: Deployment { genesis_at } = deployment . content else { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } ; if deployments . next () . is_some () || deployment . announced_at > genesis_at || deployment . effective_at > genesis_at || input . genesis_at != genesis_at { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } if let DeclarationContent :: MarkerPolicy { recipe , .. } = & declaration . content && recipe != MARKER_POLICY_RECIPE && recipe != HOST_MARKER_POLICY_RECIPE { return Err (crate :: burn :: BurnError :: UnsupportedPolicyRecipe) ; } if declaration . content != (DeclarationContent :: MarkerPolicy { recipe : if host { HOST_MARKER_POLICY_RECIPE } else { MARKER_POLICY_RECIPE } . into () , digest : marker_policy_digest (& input) , }) { return Err (crate :: burn :: BurnError :: PolicyDigest) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body binds public policy to the unique validated deployment genesis and the effective marker declaration, including its complete content digest. Trace records arguments and the typed refusal or validated policy. No private credential enters the body. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing. The one recipe constant supplies the framed domain and binder comparison; unsupported recipes refuse separately before content comparison. The raw digest helper remains recomputation rather than publication. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
+      "class_decision": "public-records",
+      "body": "{ validate_policy_placement (input , burn , true) }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition."
+    },
+    {
+      "operation": "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+      "body": "{ if evidence . is_empty () { return Err (Error :: MissingEvidence) ; } let history = burn :: validate_marker_history (input , policy , verifier) ? ; let markers = burn :: recognize_markers (& history) ; if let Some (refusal) = markers . first_refusal () { return Err (refusal . cause . clone () . into ()) ; } let (input , policy , burn) = history . disclosure () ; match verifier . settlement (input , policy , burn , evidence) { Status :: Final => Ok (LiveMarkers { markers }) , Status :: Pending => Err (Error :: Pending) , Status :: Lost => Err (Error :: Lost) , } }",
+      "class_decision": "live-marker-public",
+      "item_premise": "Complete public marker, burn and policy disclosures are checked locally and by an explicitly selected trusted live verifier. Immutable getters disclose the checked recognition without adding authority. No private credentials or real-chain assertion enter this semantic boundary.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/live_markers.rs::live_markers::LiveMarkers::markers",
+      "body": "{ & self . markers }",
+      "class_decision": "live-marker-public",
+      "item_premise": "Complete public marker, burn and policy disclosures are checked locally and by an explicitly selected trusted live verifier. Immutable getters disclose the checked recognition without adding authority. No private credentials or real-chain assertion enter this semantic boundary.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
       }
     }
   ],
@@ -20473,6 +20526,33 @@
       "syntax": "# [derive (Default , Debug)]",
       "expansion_review": "The derived structural transport declarations, usage counters and located refusal variants contain only explicit public scalars and fields; generated operations inherit the consuming interchange boundary.",
       "class_decision": "public-interchange"
+    },
+    {
+      "item": "live_markers::Status",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "live-marker-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "live_markers::LiveMarkers",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "live-marker-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "live_markers::Error",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "live-marker-public",
+      "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
     }
   ],
   "reviewed_types": [
@@ -22227,6 +22307,24 @@
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
       "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"marker policy declaration selection: {0}\")] PolicySelection (# [from] crate :: ValidationError) , # [error (\"policy identity, edition or publication differs from the declaration effective at genesis\")] PolicyBinding , # [error (\"missing, ambiguous or mismatched structural deployment genesis\")] DeploymentBinding , # [error (\"marker policy content differs from its declared digest\")] PolicyDigest , # [doc = \" The declaration requires a recipe this implementation does not interpret.\"] # [error (\"unsupported marker policy recipe\")] UnsupportedPolicyRecipe , # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"duplicate disclosed marker history position\")] HistoryPosition , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
+    },
+    {
+      "item": "live_markers::Status",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [doc = \" A declared live service's assessment, not a conclusion from a depth counter.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Status { Final , Pending , Lost , }"
+    },
+    {
+      "item": "live_markers::LiveMarkers",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [doc = \" Complete recognized prefix rechecked under one explicitly selected live verifier.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LiveMarkers { markers : RecognizedMarkers , }"
+    },
+    {
+      "item": "live_markers::Error",
+      "package": "pn-records",
+      "path": "packages/records/src/live_markers.rs",
+      "syntax": "# [doc = \" Missing proof never authorizes a smaller accepted set.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"marker recognition: {0}\")] Recognition (# [from] burn :: BurnError) , # [error (\"missing live settlement evidence\")] MissingEvidence , # [error (\"live settlement or placement is not established\")] Pending , # [error (\"the bound final lineage is lost\")] Lost , }"
     },
     {
       "item": "commitments::ProposalCommitment",
@@ -24338,6 +24436,17 @@
           "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::boundary",
           "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
           "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted"
+        ]
+      }
+    },
+    {
+      "name": "live-marker-public",
+      "status": "reviewer-confirmed",
+      "premises": "Complete public marker histories, policies and live-verifier evidence. Local recognition and the declared trusted live service are separate checks. No private credentials, chain adapter or offline cryptographic authority enter this contract.",
+      "membership": {
+        "explicit": [
+          "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+          "pn-records::packages/records/src/live_markers.rs::live_markers::LiveMarkers::markers"
         ]
       }
     }

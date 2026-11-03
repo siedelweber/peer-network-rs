@@ -3552,6 +3552,30 @@
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "RECORDS::claim:burn:live-markers-require-complete-lineage",
+        "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+        "RECORDS::claim:burn:live-aliases-retain-first-acceptance"
+      ],
+      "closing_condition": "Current-source finite recognition and refusal controls pass with matching review closure identities.",
+      "closing_step": "Bite 8 marker semantics; real adapter in 8-d2 and offline evidence in bite 9.",
+      "evidence_paragraph": "RECORDS::rec:burn:live-marker-evidence",
+      "hold": "",
+      "missing": "Outside scope: real-chain settlement authenticity and offline cryptographic verification.",
+      "name": "RECORDS::verif:burn:live-marker-semantics",
+      "owner": "Records and live-adapter implementers",
+      "path": "packages/records/README.md",
+      "premises": "Finite declared live-verifier fixtures; complete disclosed histories and sound destruction, opening and settlement predicates.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "cond:comparator:marker-lineage-succession",
+        "cond:comparator:marker-causal-dependence",
+        "cond:comparator:marker-network-acceptance",
+        "cond:comparator:marker-single-count"
+      ]
     }
   ]
 }

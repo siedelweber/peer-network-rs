@@ -4171,6 +4171,55 @@
       "review": "Each of ten mutations is matched to an exact InvalidCause, including the two distinct parent mutations; the test also exercises Error display. It asserts no missing-role outcome."
     },
     {
+      "operation": "pn-records::public::live_markers::live_marker_aliases",
+      "path": "packages/records/tests/public/live_markers.rs",
+      "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
+      "before": "",
+      "after": "Claim: Declared live fixture recognition retains delayed acceptance and deduplicates consistent aliases by destruction identity; an alias with changed attribution refuses. No observed lineage total substitutes for acceptance.",
+      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "paper_witnesses": {
+        "cond:comparator:marker-single-count": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_marker_aliases",
+        "digest": "9261043d58fe3430483e11df179d5947a29de547676c8ff2ebc3ceae17316855"
+      }
+    },
+    {
+      "operation": "pn-records::public::live_markers::live_marker_openings",
+      "path": "packages/records/tests/public/live_markers.rs",
+      "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+      "before": "",
+      "after": "Claim: Complete lists and uniquely opened commitments yield the same accepted sets under declared fixture verifiers; missing member proof, missing or ambiguous opening, out-of-lineage acceptance and dropped predecessor acceptance refuse without substituting a smaller set.",
+      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "paper_witnesses": {
+        "cond:comparator:marker-network-acceptance": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_marker_openings",
+        "digest": "9367f6f59e724ac7b7d2e95880be2830b88cd840823747e0c437bc07e9c54599"
+      }
+    },
+    {
+      "operation": "pn-records::public::live_markers::live_marker_rules",
+      "path": "packages/records/tests/public/live_markers.rs",
+      "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+      "before": "",
+      "after": "Claim: Under a declared live fixture verifier, complete reversed disclosures retain immediate marker succession and refuse skipped, competing, lost-lineage and copied-name candidates. A name or a depth assumption alone supplies no live settlement authority.",
+      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "paper_witnesses": {
+        "cond:comparator:marker-causal-dependence": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier.",
+        "cond:comparator:marker-lineage-succession": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_marker_rules",
+        "digest": "a1e5484d27c492e91172f68438ab5fae03ff8d2c5ddfe92c0eac7162b4069ebf"
+      }
+    },
+    {
       "operation": "pn-records::public::minted::genesis_license_pair",
       "path": "packages/records/tests/public/minted.rs",
       "claim": "RECORDS::claim:acts:content-genesis-retains-bounded-license-pair",

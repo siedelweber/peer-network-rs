@@ -697,3 +697,6 @@ fn asserted_parents() {
 #[cfg(feature = "test-support")]
 #[path = "public/burn.rs"]
 mod burn;
+
+#[path = "public/live_markers.rs"]
+mod live_markers;

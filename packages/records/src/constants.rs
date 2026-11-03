@@ -10,6 +10,10 @@ use std::collections::BTreeSet;
 /// (´def:burn:marker-policy´)
 pub const MARKER_POLICY_RECIPE: &str = "pn-records/marker-policy/v1";
 
+/// Explicit host-only marker placement; accumulator extension remains open.
+/// (´rule:burn:live-marker-settlement´)
+pub const HOST_MARKER_POLICY_RECIPE: &str = "pn-records/host-marker-policy/v1";
+
 /// Bind the marker/policy payload to the declaration effective at its genesis.
 /// The identity is the name within this fixed namespace; editions use canonical decimal spelling.
 /// (´def:burn:marker-policy´)
@@ -33,7 +37,13 @@ pub fn bind_marker_policy(
     burn: &crate::burn::ValidatedBurn,
 ) -> Result<crate::burn::ValidatedPolicy, crate::burn::BurnError> {
     let result = (|| {
-        let validated = crate::burn::validate_policy(input.clone(), burn)?;
+        let declaration = select_effective_declaration(records, "marker", "policy", input.genesis_at)?;
+        let host = matches!(&declaration.content, DeclarationContent::MarkerPolicy { recipe, .. } if recipe == HOST_MARKER_POLICY_RECIPE);
+        let validated = if host {
+            crate::burn::validate_policy_placement(input.clone(), burn, false)?
+        } else {
+            crate::burn::validate_policy(input.clone(), burn)?
+        };
         let mut deployments = records
             .declarations
             .iter()
@@ -49,7 +59,6 @@ pub fn bind_marker_policy(
         {
             return Err(crate::burn::BurnError::DeploymentBinding);
         }
-        let declaration = select_effective_declaration(records, "marker", "policy", genesis_at)?;
         if input.identity != declaration.id.name
             || input.edition != declaration.id.edition.to_string()
             || input.published_at != declaration.announced_at
@@ -58,12 +67,18 @@ pub fn bind_marker_policy(
         }
         if let DeclarationContent::MarkerPolicy { recipe, .. } = &declaration.content
             && recipe != MARKER_POLICY_RECIPE
+            && recipe != HOST_MARKER_POLICY_RECIPE
         {
             return Err(crate::burn::BurnError::UnsupportedPolicyRecipe);
         }
         if declaration.content
             != (DeclarationContent::MarkerPolicy {
-                recipe: MARKER_POLICY_RECIPE.into(),
+                recipe: if host {
+                    HOST_MARKER_POLICY_RECIPE
+                } else {
+                    MARKER_POLICY_RECIPE
+                }
+                .into(),
                 digest: marker_policy_digest(&input),
             })
         {

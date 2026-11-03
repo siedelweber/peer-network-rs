@@ -435,6 +435,19 @@ fn validate_disclosures(input: BurnInput) -> Result<ValidatedBurn, BurnError> {
     ret
 )]
 pub(crate) fn validate_policy(input: PolicyInput, burn: &ValidatedBurn) -> Result<ValidatedPolicy, BurnError> {
+    validate_policy_placement(input, burn, true)
+}
+
+/// Validate the placement mode selected by the effective recipe.
+/// (´rule:burn:live-marker-settlement´)
+/// # Errors
+/// Refuses inconsistent placement, incomplete declarations and insufficient buffer.
+/// Justified: The selected policy validator or declaration binder owns this shared check.
+pub(crate) fn validate_policy_placement(
+    input: PolicyInput,
+    burn: &ValidatedBurn,
+    open: bool,
+) -> Result<ValidatedPolicy, BurnError> {
     let result = (|| {
         if [
             &input.identity,
@@ -447,7 +460,7 @@ pub(crate) fn validate_policy(input: PolicyInput, burn: &ValidatedBurn) -> Resul
         ]
         .iter()
         .any(|s| s.trim().is_empty())
-            || !input.open_placement
+            || input.open_placement != open
             || input.published_at >= input.genesis_at
         {
             return Err(BurnError::Policy);

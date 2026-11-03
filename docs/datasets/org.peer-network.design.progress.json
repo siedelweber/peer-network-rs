@@ -1176,13 +1176,46 @@
       "label": "cond:comparator:marker-lineage-succession",
       "portions": [],
       "record_granular": 0,
-      "record_routes": [],
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::rec:burn:live-marker-evidence",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
       "records": [
+        "RECORDS::rec:burn:live-marker-evidence",
+        "RECORDS::rule:burn:live-marker-settlement",
+        "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:marker-recognition"
       ],
-      "routes": [],
-      "status": "designed",
+      "routes": [
+        {
+          "kind": "obligation",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -1203,14 +1236,47 @@
       "label": "cond:comparator:marker-network-acceptance",
       "portions": [],
       "record_granular": 0,
-      "record_routes": [],
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::rec:burn:live-marker-evidence",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
       "records": [
+        "RECORDS::rec:burn:live-marker-evidence",
+        "RECORDS::rule:burn:live-marker-settlement",
+        "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::amend:design:test-marker-policy",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:marker-recognition"
       ],
-      "routes": [],
-      "status": "designed",
+      "routes": [
+        {
+          "kind": "obligation",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -1231,14 +1297,47 @@
       "label": "cond:comparator:marker-causal-dependence",
       "portions": [],
       "record_granular": 0,
-      "record_routes": [],
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::rec:burn:live-marker-evidence",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
       "records": [
+        "RECORDS::rec:burn:live-marker-evidence",
+        "RECORDS::rule:burn:live-marker-settlement",
+        "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::amend:design:test-marker-policy",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:marker-recognition"
       ],
-      "routes": [],
-      "status": "designed",
+      "routes": [
+        {
+          "kind": "obligation",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -1260,13 +1359,46 @@
       "label": "cond:comparator:marker-single-count",
       "portions": [],
       "record_granular": 0,
-      "record_routes": [],
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::rec:burn:live-marker-evidence",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
       "records": [
+        "RECORDS::rec:burn:live-marker-evidence",
+        "RECORDS::rule:burn:live-marker-settlement",
+        "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::alg:design:burn-snapshot",
         "ROOT::dec:design:burn-boundary"
       ],
-      "routes": [],
-      "status": "designed",
+      "routes": [
+        {
+          "kind": "obligation",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        },
+        {
+          "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+          "kind": "record-claim",
+          "record": "RECORDS::verif:burn:live-marker-semantics",
+          "scope": "RECORDS::verif:burn:live-marker-semantics"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -33990,6 +34122,27 @@
       }
     },
     {
+      "category": "obligation-support",
+      "claim_count": 3,
+      "name": "RECORDS::verif:burn:live-marker-semantics",
+      "number_forms": {
+        "claim_count": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      }
+    },
+    {
       "category": "record-support",
       "claim_count": 2,
       "name": "EPOCH::amend:compiler:invitation-netting-evidence",
@@ -34120,6 +34273,28 @@
         }
       },
       "scope": "ROOT::gate:design:bite-6"
+    },
+    {
+      "category": "record-support",
+      "claim_count": 3,
+      "name": "RECORDS::rec:burn:live-marker-evidence",
+      "number_forms": {
+        "claim_count": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "scope": "RECORDS::verif:burn:live-marker-semantics"
     },
     {
       "category": "record-support",
@@ -34782,15 +34957,15 @@
     },
     {
       "category": "total",
-      "designed": 410,
+      "designed": 406,
       "held": 59,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "410",
+          "exact": "406",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "410",
+          "num": "406",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34803,10 +34978,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "28",
+          "exact": "32",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "32",
           "num_exact": true,
           "num_relation": "="
         },
@@ -34873,7 +35048,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 28,
+      "realized": 32,
       "record_granular": 28,
       "tentative": 7,
       "total": 1356,
@@ -35277,15 +35452,15 @@
     },
     {
       "category": "crate",
-      "designed": 53,
+      "designed": 49,
       "held": 17,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "53",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "53",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35298,10 +35473,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "0",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35368,7 +35543,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 0,
+      "realized": 4,
       "record_granular": 2,
       "tentative": 1,
       "total": 166,
@@ -36267,15 +36442,15 @@
     },
     {
       "category": "kind",
-      "designed": 145,
+      "designed": 141,
       "held": 22,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "145",
+          "exact": "141",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "145",
+          "num": "141",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36288,10 +36463,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "11",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36358,7 +36533,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 11,
+      "realized": 15,
       "record_granular": 10,
       "tentative": 1,
       "total": 517,
@@ -36861,15 +37036,15 @@
     },
     {
       "category": "bite",
-      "designed": 28,
+      "designed": 24,
       "held": 5,
       "name": "2",
       "number_forms": {
         "designed": {
-          "exact": "28",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36882,10 +37057,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "2",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36952,7 +37127,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 2,
+      "realized": 6,
       "record_granular": 0,
       "tentative": 0,
       "total": 35,
@@ -37158,15 +37333,15 @@
     },
     {
       "category": "bite",
-      "designed": 36,
+      "designed": 35,
       "held": 5,
       "name": "5",
       "number_forms": {
         "designed": {
-          "exact": "36",
+          "exact": "35",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "36",
+          "num": "35",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37179,10 +37354,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37249,7 +37424,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 3,
+      "realized": 4,
       "record_granular": 3,
       "tentative": 0,
       "total": 44,
@@ -37752,15 +37927,15 @@
     },
     {
       "category": "bite",
-      "designed": 60,
+      "designed": 56,
       "held": 28,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "60",
+          "exact": "56",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60",
+          "num": "56",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37773,10 +37948,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "4",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37843,7 +38018,7 @@
           "exact_digits": 32
         }
       },
-      "realized": 4,
+      "realized": 8,
       "record_granular": 5,
       "tentative": 0,
       "total": 93,
@@ -38256,22 +38431,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 15,
+      "exact_citing": 18,
       "name": "pn-records",
       "number_forms": {
         "exact_citing": {
-          "exact": "15",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "45",
+          "exact": "48",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45",
+          "num": "48",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38286,7 +38461,7 @@
           "exact_digits": 32
         }
       },
-      "total": 45
+      "total": 48
     },
     {
       "category": "record-coverage",
