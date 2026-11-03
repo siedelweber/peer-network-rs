@@ -555,6 +555,10 @@ impl Negative {
 pub struct Bytes(Box<[u8]>);
 
 impl Bytes {
+    /// Already allocated payload from the bounded decoder.
+    pub(crate) fn from_decoded(bytes: Box<[u8]>) -> Self {
+        Self(bytes)
+    }
     /// The payload.
     ///
     /// ```
@@ -651,6 +655,10 @@ impl AsRef<[u8]> for Bytes {
 pub struct Text(Box<str>);
 
 impl Text {
+    /// Already validated and allocated text from the bounded decoder.
+    pub(crate) fn from_decoded(text: Box<str>) -> Self {
+        Self(text)
+    }
     /// The payload.
     ///
     /// ```
@@ -777,6 +785,10 @@ impl Hash for Array {
 }
 
 impl Array {
+    /// Transfer a decoder-owned buffer without collecting a new one.
+    pub(crate) fn from_decoded(items: Vec<Value>) -> Self {
+        Self(items)
+    }
     /// Collect a sequence. Total: a sequence carries no invariant beyond
     /// those its elements already carry.
     ///
@@ -979,6 +991,11 @@ impl Hash for Map {
 }
 
 impl Map {
+    /// Transfer entries ordered and checked by the transport walk's text-key
+    /// insertion. No general value comparison or extra buffer is needed here.
+    pub(crate) fn from_transport(entries: Vec<(Value, Value)>) -> Self {
+        Self(entries)
+    }
     /// Sort into canonical order and refuse duplicate keys.
     ///
     /// ```

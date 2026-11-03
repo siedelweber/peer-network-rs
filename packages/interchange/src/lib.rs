@@ -14,9 +14,10 @@
 //! A name is a byte sequence that is a single CBOR data item encoded
 //! under RFC 8949 §4.2, and [`Value`] denotes every structure such a
 //! name denotes. Membership is exact: bytes outside the language are
-//! refused, never repaired, so there is no canonicalizing decode, no
-//! lenient mode, and no constructor that takes bytes and returns a
-//! repaired value.
+//! refused, never repaired. The canonical entry points have no lenient mode.
+//! The separate [`Value::from_transport_bytes`] entry reads bounded transient
+//! API messages; it does not establish canonical document membership or repair
+//! embedded document bytes.
 //!
 //! ```
 //! use pn_interchange::{Map, Text, Value};
@@ -93,6 +94,7 @@ pub use cddl::{
     BaseTheory, ImplicitReach, Inclusion, InclusionBreach, KeySlot, Mismatch, MismatchKind, OpenTheory, Provision, Restrained,
     RestraintReport, Satisfaction, Theory, check_inclusion, global, satisfies, satisfies_global, satisfies_open,
 };
+pub use decode::{TransportLimits, TransportUsage};
 pub use encode::{SecretEncodingLimit, SecretValue};
 pub use envelope::{Content, ContentKey, Document, Envelope, MAX_ENVELOPE_PREFIX};
 pub use error::{AcquireError, DecodeError, EnvelopeError, Error, LabelError, RegexpError, TheoryError, ValueError};

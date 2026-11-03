@@ -80,7 +80,7 @@
 | pn-epoch | 63 | 46 | 17 | 0 | 88 |
 | pn-graph | 50 | 42 | 8 | 0 | 62 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
-| pn-interchange | 155 | 119 | 35 | 1 | 91 |
+| pn-interchange | 156 | 120 | 35 | 1 | 93 |
 | pn-records | 113 | 44 | 69 | 0 | 149 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |
 

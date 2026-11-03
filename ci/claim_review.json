@@ -3875,6 +3875,38 @@
       "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
     },
     {
+      "operation": "pn-interchange::transport::strict_entry_selects_strict_policy",
+      "path": "packages/interchange/tests/transport.rs",
+      "claim": "INTERCHANGE::claim:encoding:strict-entry-selects-strict-policy",
+      "before": "",
+      "after": "Claim: The canonical entry selects the Strict policy independently of transport declarations, retaining its refusal classes for nonpreferred heads, indefinite items, unsorted keys and wide floats.",
+      "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
+    },
+    {
+      "operation": "pn-interchange::transport::transport_limits_precede_reservations",
+      "path": "packages/interchange/tests/transport.rs",
+      "claim": "INTERCHANGE::claim:encoding:transport-limits-precede-reservations",
+      "before": "",
+      "after": "Claim: Each transport ceiling refuses at its reservation boundary, with zero reservation calls for a refused first allocation and unchanged prior calls at a nested refusal; empty chunks consume work and items.",
+      "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
+    },
+    {
+      "operation": "pn-interchange::transport::transport_refusals_retain_valid_controls",
+      "path": "packages/interchange/tests/transport.rs",
+      "claim": "INTERCHANGE::claim:encoding:transport-refusals-retain-valid-controls",
+      "before": "",
+      "after": "Claim: Transport refuses duplicate decoded keys, malformed chunks, breaks, UTF-8, reserved heads, unsupported values, truncation and trailing data while accepting each class's valid control.",
+      "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
+    },
+    {
+      "operation": "pn-interchange::transport::transport_variants_preserve_values",
+      "path": "packages/interchange/tests/transport.rs",
+      "claim": "INTERCHANGE::claim:encoding:transport-variants-preserve-values",
+      "before": "",
+      "after": "Claim: Allowed transport heads, map order, indefinite containers and empty or nonempty chunks yield the canonical reader's typed value without changing embedded document bytes.",
+      "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
+    },
+    {
       "operation": "pn-interchange::vectors::corpus_has_the_seeded_shape",
       "path": "packages/interchange/tests/vectors.rs",
       "claim": "INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts",

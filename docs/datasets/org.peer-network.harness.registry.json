@@ -5130,6 +5130,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-interchange::transport::transport_variants_preserve_values",
+        "pn-interchange::transport::transport_refusals_retain_valid_controls",
+        "pn-interchange::transport::transport_limits_precede_reservations",
+        "pn-interchange::transport::strict_entry_selects_strict_policy"
+      ],
+      "implementation": "pn-interchange-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-interchange::transport",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

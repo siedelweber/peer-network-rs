@@ -77,6 +77,28 @@ pub enum ValueError {
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum DecodeError {
+    /// A declared transport resource ceiling would be exceeded.
+    #[error("transport {resource} limit {limit} exceeded at byte {offset}")]
+    TransportLimit {
+        /// The resource charged before the operation.
+        resource: &'static str,
+        /// The caller's declared ceiling.
+        limit: usize,
+        /// Where the refused operation begins.
+        offset: usize,
+    },
+    /// A well-formed CBOR value outside the API transport vocabulary.
+    #[error("unsupported transport value at byte {offset}")]
+    TransportValue {
+        /// Where the unsupported value begins.
+        offset: usize,
+    },
+    /// The allocator refused a previously budgeted reservation.
+    #[error("transport allocation refused at byte {offset}")]
+    TransportAllocation {
+        /// Where the reservation was needed.
+        offset: usize,
+    },
     /// The input ended before the item did.
     #[error("input ends inside an item at byte {offset}")]
     Truncated {

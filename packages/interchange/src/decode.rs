@@ -32,11 +32,13 @@ enum Frame {
     Array {
         items: Vec<Value>,
         remaining: usize,
+        indefinite: bool,
         start: usize,
     },
     Map {
         entries: Vec<(Value, Value)>,
         remaining: usize,
+        indefinite: bool,
         pending_key: Option<Value>,
         previous_key: Option<(usize, usize)>,
         start: usize,
@@ -53,7 +55,208 @@ enum Frame {
 /// primitive costing the attacker nine bytes.
 const CONTAINER_CAPACITY_BOUND: u64 = 4;
 
+/// Mandatory caller declarations for one transient API message.
+///
+/// There is no production default. Bytes count received input and cumulative
+/// allocation requests separately; items include string chunks. Depth counts
+/// value and chunk heads from one at the root; nesting counts active containers and chunked
+/// strings. Work counts inspected/copied bytes, heads and map insertion work.
+#[derive(Clone, Copy, Debug)]
+pub struct TransportLimits {
+    /// Maximum received bytes, checked before parsing.
+    pub input_bytes: usize,
+    /// Maximum cumulative bytes requested by decoder buffer reservations.
+    pub allocation_bytes: usize,
+    /// Maximum value and chunk heads.
+    pub items: usize,
+    /// Maximum value or chunk-head depth, with the root at one.
+    pub depth: usize,
+    /// Maximum simultaneously open containers, including chunked strings.
+    pub nesting: usize,
+    /// Maximum deterministic decoding work units.
+    pub work: usize,
+}
+
+/// Decoder-owned reservation counters, retained on success and refusal.
+///
+/// These count actual calls at the decoder's buffer reservation boundary, not
+/// allocator metadata, tracing subscribers or subsequent consumer operations.
+#[derive(Default, Debug)]
+pub struct TransportUsage {
+    /// Number of buffer reservation calls actually made.
+    pub allocation_calls: usize,
+    /// Cumulative requested buffer bytes, including replacement buffers.
+    pub allocation_bytes: usize,
+    /// Value and chunk heads charged.
+    pub items: usize,
+    /// Work units charged.
+    pub work: usize,
+}
+
+/// Strict is selected explicitly by both canonical entry points. Transport
+/// cannot change that selection or supply limits to the canonical language.
+enum ReadPolicy<'a> {
+    Strict,
+    Transport {
+        limits: TransportLimits,
+        usage: &'a mut TransportUsage,
+    },
+}
+
+impl ReadPolicy<'_> {
+    fn array(&self, items: Vec<Value>) -> Value {
+        Value::Array(if self.transport() {
+            Array::from_decoded(items)
+        } else {
+            Array::new(items)
+        })
+    }
+
+    fn map(&self, entries: Vec<(Value, Value)>) -> Value {
+        Value::Map(if self.transport() {
+            Map::from_transport(entries)
+        } else {
+            Map::from_sorted(entries)
+        })
+    }
+    fn transport(&self) -> bool {
+        matches!(self, Self::Transport { .. })
+    }
+
+    fn limit(value: usize, limit: usize, resource: &'static str, offset: usize) -> Result<(), DecodeError> {
+        if value > limit {
+            return Err(DecodeError::TransportLimit { resource, limit, offset });
+        }
+        Ok(())
+    }
+
+    fn add(value: &mut usize, amount: usize, limit: usize, resource: &'static str, offset: usize) -> Result<(), DecodeError> {
+        let next = value
+            .checked_add(amount)
+            .ok_or(DecodeError::TransportLimit { resource, limit, offset })?;
+        Self::limit(next, limit, resource, offset)?;
+        *value = next;
+        Ok(())
+    }
+
+    fn work(&mut self, amount: usize, offset: usize) -> Result<(), DecodeError> {
+        if let Self::Transport { limits, usage } = self {
+            Self::add(&mut usage.work, amount, limits.work, "work", offset)?;
+        }
+        Ok(())
+    }
+
+    fn item(&mut self, depth: usize, offset: usize) -> Result<(), DecodeError> {
+        if let Self::Transport { limits, usage } = self {
+            Self::limit(depth, limits.depth, "depth", offset)?;
+            Self::add(&mut usage.items, 1, limits.items, "items", offset)?;
+        }
+        self.work(1, offset)
+    }
+
+    fn container(&self, count: u64, nesting: usize, offset: usize) -> Result<(), DecodeError> {
+        if let Self::Transport { limits, usage } = self {
+            Self::limit(nesting, limits.nesting, "nesting", offset)?;
+            if count > (limits.items - usage.items) as u64 {
+                return Err(DecodeError::TransportLimit {
+                    resource: "items",
+                    limit: limits.items,
+                    offset,
+                });
+            }
+        }
+        Ok(())
+    }
+
+    fn reserve<T>(&mut self, values: &mut Vec<T>, additional: usize, offset: usize) -> Result<(), DecodeError> {
+        let Some(length) = values.len().checked_add(additional) else {
+            return Err(DecodeError::TransportAllocation { offset });
+        };
+        if length <= values.capacity() {
+            return Ok(());
+        }
+        self.work(values.len(), offset)?;
+        if let Self::Transport { limits, usage } = self {
+            let amount = length
+                .checked_mul(std::mem::size_of::<T>())
+                .ok_or(DecodeError::TransportLimit {
+                    resource: "allocation bytes",
+                    limit: limits.allocation_bytes,
+                    offset,
+                })?;
+            Self::add(
+                &mut usage.allocation_bytes,
+                amount,
+                limits.allocation_bytes,
+                "allocation bytes",
+                offset,
+            )?;
+            usage.allocation_calls += 1;
+            values
+                .try_reserve_exact(additional)
+                .map_err(|_| DecodeError::TransportAllocation { offset })?;
+        } else {
+            values.reserve(additional);
+        }
+        Ok(())
+    }
+
+    fn boxed(&mut self, bytes: Vec<u8>, offset: usize) -> Result<Box<[u8]>, DecodeError> {
+        if bytes.capacity() != bytes.len()
+            && let Self::Transport { limits, usage } = self
+        {
+            Self::add(
+                &mut usage.allocation_bytes,
+                bytes.len(),
+                limits.allocation_bytes,
+                "allocation bytes",
+                offset,
+            )?;
+            usage.allocation_calls += 1;
+        }
+        Ok(bytes.into_boxed_slice())
+    }
+}
+
 impl Value {
+    /// Decode a bounded transient API value, never a canonical document.
+    ///
+    /// The caller supplies every ceiling; `usage` is reset for this invocation
+    /// and remains available on refusal. Embedded byte strings are not decoded
+    /// or repaired. Their consumer must validate those original bytes strictly.
+    ///
+    /// # Errors
+    /// Refuses malformed CBOR, values outside the API vocabulary, duplicate
+    /// text keys, trailing bytes, exhausted declarations or failed allocations.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "decode::Value::from_transport_bytes"
+        ),
+        ret
+    )]
+    pub fn from_transport_bytes(bytes: &[u8], limits: TransportLimits, usage: &mut TransportUsage) -> Result<Value, DecodeError> {
+        *usage = TransportUsage::default();
+        let result = (|| {
+            ReadPolicy::limit(bytes.len(), limits.input_bytes, "input bytes", 0)?;
+            let mut policy = ReadPolicy::Transport { limits, usage };
+            let (value, consumed) = decode_one(bytes, &mut policy)?;
+            if consumed != bytes.len() {
+                return Err(DecodeError::TrailingBytes {
+                    offset: consumed,
+                    count: bytes.len() - consumed,
+                });
+            }
+            Ok(value)
+        })();
+        tracing::event!(tracing::Level::TRACE, transport_usage = ?usage);
+        result.inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
+    }
     /// Decode one canonical name; trailing bytes are an error.
     ///
     /// ```
@@ -114,26 +317,28 @@ impl Value {
         ret
     )]
     pub fn from_canonical_prefix(bytes: &[u8]) -> Result<(Value, usize), DecodeError> {
-        decode_one(bytes).inspect_err(|_| {
+        decode_one(bytes, &mut ReadPolicy::Strict).inspect_err(|_| {
             tracing::event!(tracing::Level::TRACE, outcome = "refusal");
         })
     }
 }
 
-fn decode_one(input: &[u8]) -> Result<(Value, usize), DecodeError> {
+fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize), DecodeError> {
     let mut position = 0usize;
     let mut stack: Vec<Frame> = Vec::new();
 
     'item: loop {
         let start = position;
-        let mut value = match read_item(input, &mut position)? {
-            Item::Complete(value) => value,
+        let next = read_next(input, &mut position, &mut stack, policy)?;
+        let (mut value, mut value_start) = match next {
+            Item::Complete(value) => (value, start),
+            Item::CompleteAt(value, start) => (value, start),
             Item::Container(frame) => {
+                policy.reserve(&mut stack, 1, start)?;
                 stack.push(frame);
                 continue 'item;
             }
         };
-        let mut value_start = start;
 
         loop {
             let Some(frame) = stack.pop() else {
@@ -147,56 +352,69 @@ fn decode_one(input: &[u8]) -> Result<(Value, usize), DecodeError> {
                 Frame::Array {
                     mut items,
                     remaining,
+                    indefinite,
                     start,
                 } => {
+                    policy.reserve(&mut items, 1, value_start)?;
                     items.push(value);
-                    let remaining = remaining - 1;
-                    if remaining == 0 {
-                        value = Value::Array(Array::new(items));
+                    let remaining = if indefinite { remaining } else { remaining - 1 };
+                    if !indefinite && remaining == 0 {
+                        value = policy.array(items);
                         value_start = start;
                     } else {
-                        stack.push(Frame::Array { items, remaining, start });
+                        stack.push(Frame::Array {
+                            items,
+                            remaining,
+                            indefinite,
+                            start,
+                        });
                         continue 'item;
                     }
                 }
                 Frame::Map {
                     mut entries,
                     remaining,
+                    indefinite,
                     pending_key,
                     previous_key,
                     start,
                 } => match pending_key {
                     None => {
-                        if let Some((from, to)) = previous_key {
-                            match input[from..to].cmp(&input[value_start..position]) {
-                                Ordering::Less => {}
-                                Ordering::Equal => {
-                                    return Err(DecodeError::DuplicateMapKey { offset: value_start });
-                                }
-                                Ordering::Greater => {
-                                    return Err(DecodeError::UnsortedMapKeys { offset: value_start });
-                                }
-                            }
+                        let next_key = if policy.transport() {
+                            Some((transport_key_position(&entries, &value, policy, value_start)?, 0))
+                        } else {
+                            Some((value_start, position))
+                        };
+                        if !policy.transport() {
+                            strict_key_order(input, previous_key, value_start, position)?;
                         }
                         stack.push(Frame::Map {
                             entries,
                             remaining,
+                            indefinite,
                             pending_key: Some(value),
-                            previous_key: Some((value_start, position)),
+                            previous_key: next_key,
                             start,
                         });
                         continue 'item;
                     }
                     Some(key) => {
-                        entries.push((key, value));
-                        let remaining = remaining - 1;
-                        if remaining == 0 {
-                            value = Value::Map(Map::from_sorted(entries));
+                        policy.reserve(&mut entries, 1, value_start)?;
+                        if policy.transport() {
+                            let index = previous_key.map_or(0, |(index, _)| index);
+                            entries.insert(index, (key, value));
+                        } else {
+                            entries.push((key, value));
+                        }
+                        let remaining = if indefinite { remaining } else { remaining - 1 };
+                        if !indefinite && remaining == 0 {
+                            value = policy.map(entries);
                             value_start = start;
                         } else {
                             stack.push(Frame::Map {
                                 entries,
                                 remaining,
+                                indefinite,
                                 pending_key: None,
                                 previous_key,
                                 start,
@@ -210,9 +428,143 @@ fn decode_one(input: &[u8]) -> Result<(Value, usize), DecodeError> {
     }
 }
 
+fn strict_key_order(input: &[u8], previous: Option<(usize, usize)>, start: usize, end: usize) -> Result<(), DecodeError> {
+    if let Some((from, to)) = previous {
+        match input[from..to].cmp(&input[start..end]) {
+            Ordering::Less => {}
+            Ordering::Equal => return Err(DecodeError::DuplicateMapKey { offset: start }),
+            Ordering::Greater => return Err(DecodeError::UnsortedMapKeys { offset: start }),
+        }
+    }
+    Ok(())
+}
+
+fn read_next(
+    input: &[u8],
+    position: &mut usize,
+    stack: &mut Vec<Frame>,
+    policy: &mut ReadPolicy<'_>,
+) -> Result<Item, DecodeError> {
+    let closing = policy.transport()
+        && input.get(*position) == Some(&0xff)
+        && matches!(
+            stack.last(),
+            Some(Frame::Array { indefinite: true, .. } | Frame::Map { indefinite: true, .. })
+        );
+    Ok(if closing {
+        policy.work(1, *position)?;
+        *position += 1;
+        match stack.pop() {
+            Some(Frame::Array { items, start, .. }) => Item::CompleteAt(Value::Array(Array::from_decoded(items)), start),
+            Some(Frame::Map {
+                entries,
+                pending_key: None,
+                start,
+                ..
+            }) => Item::CompleteAt(Value::Map(Map::from_transport(entries)), start),
+            _ => return Err(DecodeError::IllFormed { offset: *position - 1 }),
+        }
+    } else {
+        policy.item(stack.len() + 1, *position)?;
+        read_item(input, position, policy, stack.len())?
+    })
+}
+
+fn transport_key_position(
+    entries: &[(Value, Value)],
+    key: &Value,
+    policy: &mut ReadPolicy<'_>,
+    offset: usize,
+) -> Result<usize, DecodeError> {
+    let Value::Text(key) = key else {
+        return Err(DecodeError::TransportValue { offset });
+    };
+    let key = key.as_str();
+    for (index, (existing, _)) in entries.iter().enumerate() {
+        let Value::Text(existing) = existing else {
+            return Err(DecodeError::TransportValue { offset });
+        };
+        let existing = existing.as_str();
+        policy.work(key.len().min(existing.len()).saturating_add(1), offset)?;
+        match existing.len().cmp(&key.len()).then_with(|| existing.cmp(key)) {
+            Ordering::Equal => return Err(DecodeError::DuplicateMapKey { offset }),
+            Ordering::Greater => {
+                policy.work(entries.len() - index, offset)?;
+                return Ok(index);
+            }
+            Ordering::Less => {}
+        }
+    }
+    Ok(entries.len())
+}
+
 enum Item {
     Complete(Value),
+    CompleteAt(Value, usize),
     Container(Frame),
+}
+
+fn read_transport_string(
+    input: &[u8],
+    position: &mut usize,
+    head: &Head,
+    policy: &mut ReadPolicy<'_>,
+    nesting: usize,
+    start: usize,
+) -> Result<Value, DecodeError> {
+    let mut bytes = Vec::new();
+    if head.additional == 31 {
+        policy.container(0, nesting + 1, start)?;
+        loop {
+            if input.get(*position) == Some(&0xff) {
+                policy.work(1, *position)?;
+                *position += 1;
+                break;
+            }
+            let chunk_start = *position;
+            policy.item(nesting + 2, chunk_start)?;
+            let chunk = read_head_policy(input, position, policy)?;
+            if chunk.major != head.major || chunk.additional == 31 {
+                return Err(DecodeError::IllFormed { offset: chunk_start });
+            }
+            append_payload(input, position, chunk.argument, head.major, &mut bytes, policy)?;
+        }
+    } else {
+        append_payload(input, position, head.argument, head.major, &mut bytes, policy)?;
+    }
+    if head.major == 3 {
+        policy.work(bytes.len(), start)?;
+    }
+    let bytes = policy.boxed(bytes, start)?;
+    if head.major == 2 {
+        return Ok(Value::Bytes(Bytes::from_decoded(bytes)));
+    }
+    let text = String::from_utf8(bytes.into_vec()).map_err(|error| DecodeError::InvalidUtf8 {
+        offset: start + error.utf8_error().valid_up_to(),
+    })?;
+    Ok(Value::Text(Text::from_decoded(text.into_boxed_str())))
+}
+
+fn append_payload(
+    input: &[u8],
+    position: &mut usize,
+    length: u64,
+    major: u8,
+    bytes: &mut Vec<u8>,
+    policy: &mut ReadPolicy<'_>,
+) -> Result<(), DecodeError> {
+    let offset = *position;
+    let payload = read_payload(input, position, length)?;
+    policy.work(payload.len(), offset)?;
+    if major == 3 {
+        std::str::from_utf8(payload).map_err(|error| DecodeError::InvalidUtf8 {
+            offset: offset + error.valid_up_to(),
+        })?;
+    }
+    policy.work(payload.len(), offset)?;
+    policy.reserve(bytes, payload.len(), offset)?;
+    bytes.extend_from_slice(payload);
+    Ok(())
 }
 
 /// One item, complete or the head of a container.
@@ -223,9 +575,9 @@ enum Item {
 /// bound cannot be met however the rest is spelled.
 // Justified: the initial capacity bound is four and fits every supported pointer width.
 #[allow(clippy::cast_possible_truncation)]
-fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
+fn read_item(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>, nesting: usize) -> Result<Item, DecodeError> {
     let start = *position;
-    let head = read_head(input, position)?;
+    let head = read_head_policy(input, position, policy)?;
     let Head {
         major,
         additional,
@@ -235,6 +587,7 @@ fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
     let item = match major {
         0 => Item::Complete(Value::Unsigned(argument)),
         1 => Item::Complete(Value::Negative(Negative::from_argument(argument))),
+        2 | 3 if policy.transport() => Item::Complete(read_transport_string(input, position, &head, policy, nesting, start)?),
         2 => {
             let payload = read_payload(input, position, argument)?;
             Item::Complete(Value::Bytes(Bytes::from(payload.to_vec())))
@@ -252,14 +605,21 @@ fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
             }
         }
         4 => {
-            if argument > remaining_bytes(input, *position) {
+            let indefinite = additional == 31;
+            policy.container(if indefinite { 0 } else { argument }, nesting + 1, start)?;
+            if !indefinite && argument > remaining_bytes(input, *position) {
                 return Err(DecodeError::Truncated { offset: input.len() });
             }
             match usize::try_from(argument) {
-                Ok(0) => Item::Complete(Value::Array(Array::new([]))),
+                Ok(0) if !indefinite => Item::Complete(Value::Array(Array::new([]))),
                 Ok(count) => Item::Container(Frame::Array {
-                    items: Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize)),
+                    items: if policy.transport() {
+                        Vec::new()
+                    } else {
+                        Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize))
+                    },
                     remaining: count,
+                    indefinite,
                     start,
                 }),
                 Err(_) => {
@@ -268,14 +628,21 @@ fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
             }
         }
         5 => {
-            if argument > remaining_bytes(input, *position) / 2 {
+            let indefinite = additional == 31;
+            policy.container(if indefinite { 0 } else { argument.saturating_mul(2) }, nesting + 1, start)?;
+            if !indefinite && argument > remaining_bytes(input, *position) / 2 {
                 return Err(DecodeError::Truncated { offset: input.len() });
             }
             match usize::try_from(argument) {
-                Ok(0) => Item::Complete(Value::Map(Map::from_sorted(Vec::new()))),
+                Ok(0) if !indefinite => Item::Complete(Value::Map(Map::from_sorted(Vec::new()))),
                 Ok(count) => Item::Container(Frame::Map {
-                    entries: Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize)),
+                    entries: if policy.transport() {
+                        Vec::new()
+                    } else {
+                        Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize))
+                    },
                     remaining: count,
+                    indefinite,
                     pending_key: None,
                     previous_key: None,
                     start,
@@ -285,8 +652,9 @@ fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
                 }
             }
         }
+        6 if policy.transport() => return Err(DecodeError::TransportValue { offset: start }),
         6 => Item::Container(Frame::Tag { number: argument, start }),
-        _ => Item::Complete(read_major_seven(additional, argument, start)?),
+        _ => Item::Complete(read_major_seven(additional, argument, start, policy.transport())?),
     };
     Ok(item)
 }
@@ -298,11 +666,13 @@ fn read_item(input: &[u8], position: &mut usize) -> Result<Item, DecodeError> {
 /// (RFC 8949 §3.3), the one-byte form being the only spelling of those values.
 // Justified: the simple-value branch admits only an eight-bit argument from the validated CBOR head.
 #[allow(clippy::cast_possible_truncation)]
-fn read_major_seven(additional: u8, argument: u64, start: usize) -> Result<Value, DecodeError> {
+fn read_major_seven(additional: u8, argument: u64, start: usize, transport: bool) -> Result<Value, DecodeError> {
     match additional {
         20 => Ok(Value::Bool(false)),
         21 => Ok(Value::Bool(true)),
         22 => Ok(Value::Null),
+        24 if argument < 32 => Err(DecodeError::IllFormed { offset: start }),
+        0..=19 | 23 | 24 if transport => Err(DecodeError::TransportValue { offset: start }),
         0..=19 | 23 => Simple::new(additional)
             .map(Value::Simple)
             .map_err(|_| DecodeError::IllFormed { offset: start }),
@@ -320,9 +690,12 @@ fn read_major_seven(additional: u8, argument: u64, start: usize) -> Result<Value
                 26 => FloatWidth::Single,
                 _ => FloatWidth::Double,
             };
-            let canonical =
-                Float::from_f64(bits_to_f64(width, argument)).map_err(|_| DecodeError::NonShortestFloat { offset: start })?;
-            if canonical.width() != width || canonical.bits() != argument {
+            let number = bits_to_f64(width, argument);
+            if transport && !number.is_finite() {
+                return Err(DecodeError::TransportValue { offset: start });
+            }
+            let canonical = Float::from_f64(number).map_err(|_| DecodeError::NonShortestFloat { offset: start })?;
+            if !transport && (canonical.width() != width || canonical.bits() != argument) {
                 return Err(DecodeError::NonShortestFloat { offset: start });
             }
             Ok(Value::Float(canonical))
@@ -363,10 +736,15 @@ pub(crate) const fn head_span(initial: u8) -> usize {
 /// only: major type 7's additional information is not an argument magnitude,
 /// and §3.3 rules it instead.
 pub(crate) fn read_head(input: &[u8], position: &mut usize) -> Result<Head, DecodeError> {
+    read_head_policy(input, position, &mut ReadPolicy::Strict)
+}
+
+fn read_head_policy(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>) -> Result<Head, DecodeError> {
     let start = *position;
     let &initial = input.get(start).ok_or(DecodeError::Truncated { offset: input.len() })?;
     let major = initial >> 5;
     let additional = initial & 0x1f;
+    policy.work(head_span(initial), start)?;
     *position = start + 1;
 
     let argument = match additional {
@@ -376,6 +754,7 @@ pub(crate) fn read_head(input: &[u8], position: &mut usize) -> Result<Head, Deco
         26 => read_argument::<4>(input, position)?,
         27 => read_argument::<8>(input, position)?,
         28..=30 => return Err(DecodeError::IllFormed { offset: start }),
+        _ if policy.transport() && (2..=5).contains(&major) => 0,
         _ => {
             return Err(if (2..=5).contains(&major) {
                 DecodeError::IndefiniteLength { offset: start }
@@ -385,7 +764,7 @@ pub(crate) fn read_head(input: &[u8], position: &mut usize) -> Result<Head, Deco
         }
     };
 
-    if major != 7 && additional >= 24 && initial_byte(0, argument) & 0x1f != additional {
+    if !policy.transport() && major != 7 && additional >= 24 && initial_byte(0, argument) & 0x1f != additional {
         return Err(DecodeError::NonPreferredHead { offset: start });
     }
 

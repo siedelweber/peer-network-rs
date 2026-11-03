@@ -8242,6 +8242,16 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "item": "decode::Value::from_transport_bytes",
+      "owner": "INTERCHANGE",
+      "signature": "fn from_transport_bytes (bytes : & [u8] , limits : TransportLimits , usage : & mut TransportUsage) -> Result < Value , DecodeError >",
+      "claim": "ROOT::rule:observe:spans",
+      "mode": "instrumented",
+      "shape": "shape-001"
     }
   ],
   "metrics": [
@@ -9796,7 +9806,7 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_prefix",
-      "body": "{ decode_one (bytes) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+      "body": "{ decode_one (bytes , & mut ReadPolicy :: Strict) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
       "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for decode::Value::from_canonical_prefix.",
       "assessments": {
@@ -15986,6 +15996,17 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_transport_bytes",
+      "body": "{ * usage = TransportUsage :: default () ; let result = (| | { ReadPolicy :: limit (bytes . len () , limits . input_bytes , \"input bytes\" , 0) ? ; let mut policy = ReadPolicy :: Transport { limits , usage } ; let (value , consumed) = decode_one (bytes , & mut policy) ? ; if consumed != bytes . len () { return Err (DecodeError :: TrailingBytes { offset : consumed , count : bytes . len () - consumed , }) ; } Ok (value) }) () ; tracing :: event ! (tracing :: Level :: TRACE , transport_usage = ? usage) ; result . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+      "class_decision": "public-interchange",
+      "item_premise": "The bounded transport boundary records public transient bytes, caller declarations and the typed result or refusal. Counter state is reset per invocation. It does not acquire secret keys or establish document membership; decoder reservation counters exclude observation subscribers.",
+      "assessments": {
+        "full_recording": "review-047",
+        "secret_flow": "review-002",
+        "exposure_consumers": "review-003"
+      }
     }
   ],
   "generators": [
@@ -20434,6 +20455,24 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "semantic-publication-public",
       "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+    },
+    {
+      "item": "decode::TransportLimits",
+      "kind": "derive",
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "syntax": "# [derive (Clone , Copy , Debug)]",
+      "expansion_review": "The derived structural transport declarations, usage counters and located refusal variants contain only explicit public scalars and fields; generated operations inherit the consuming interchange boundary.",
+      "class_decision": "public-interchange"
+    },
+    {
+      "item": "decode::TransportUsage",
+      "kind": "derive",
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "syntax": "# [derive (Default , Debug)]",
+      "expansion_review": "The derived structural transport declarations, usage counters and located refusal variants contain only explicit public scalars and fields; generated operations inherit the consuming interchange boundary.",
+      "class_decision": "public-interchange"
     }
   ],
   "reviewed_types": [
@@ -20819,13 +20858,31 @@
       "item": "decode::Frame",
       "package": "pn-interchange",
       "path": "packages/interchange/src/decode.rs",
-      "syntax": "# [doc = \" A container whose head has been read and whose items have not.\"] # [doc = \"\"] # [doc = \" `start` is where the container's own head began, which becomes the\"] # [doc = \" start of the finished value — the byte range a map needs to compare its\"] # [doc = \" keys by.\"] # [derive (Debug)] enum Frame { Array { items : Vec < Value > , remaining : usize , start : usize , } , Map { entries : Vec < (Value , Value) > , remaining : usize , pending_key : Option < Value > , previous_key : Option < (usize , usize) > , start : usize , } , Tag { number : u64 , start : usize , } , }"
+      "syntax": "# [doc = \" A container whose head has been read and whose items have not.\"] # [doc = \"\"] # [doc = \" `start` is where the container's own head began, which becomes the\"] # [doc = \" start of the finished value — the byte range a map needs to compare its\"] # [doc = \" keys by.\"] # [derive (Debug)] enum Frame { Array { items : Vec < Value > , remaining : usize , indefinite : bool , start : usize , } , Map { entries : Vec < (Value , Value) > , remaining : usize , indefinite : bool , pending_key : Option < Value > , previous_key : Option < (usize , usize) > , start : usize , } , Tag { number : u64 , start : usize , } , }"
+    },
+    {
+      "item": "decode::TransportLimits",
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "syntax": "# [doc = \" Mandatory caller declarations for one transient API message.\"] # [doc = \"\"] # [doc = \" There is no production default. Bytes count received input and cumulative\"] # [doc = \" allocation requests separately; items include string chunks. Depth counts\"] # [doc = \" value and chunk heads from one at the root; nesting counts active containers and chunked\"] # [doc = \" strings. Work counts inspected/copied bytes, heads and map insertion work.\"] # [derive (Clone , Copy , Debug)] pub struct TransportLimits { # [doc = \" Maximum received bytes, checked before parsing.\"] pub input_bytes : usize , # [doc = \" Maximum cumulative bytes requested by decoder buffer reservations.\"] pub allocation_bytes : usize , # [doc = \" Maximum value and chunk heads.\"] pub items : usize , # [doc = \" Maximum value or chunk-head depth, with the root at one.\"] pub depth : usize , # [doc = \" Maximum simultaneously open containers, including chunked strings.\"] pub nesting : usize , # [doc = \" Maximum deterministic decoding work units.\"] pub work : usize , }"
+    },
+    {
+      "item": "decode::TransportUsage",
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "syntax": "# [doc = \" Decoder-owned reservation counters, retained on success and refusal.\"] # [doc = \"\"] # [doc = \" These count actual calls at the decoder's buffer reservation boundary, not\"] # [doc = \" allocator metadata, tracing subscribers or subsequent consumer operations.\"] # [derive (Default , Debug)] pub struct TransportUsage { # [doc = \" Number of buffer reservation calls actually made.\"] pub allocation_calls : usize , # [doc = \" Cumulative requested buffer bytes, including replacement buffers.\"] pub allocation_bytes : usize , # [doc = \" Value and chunk heads charged.\"] pub items : usize , # [doc = \" Work units charged.\"] pub work : usize , }"
+    },
+    {
+      "item": "decode::ReadPolicy",
+      "package": "pn-interchange",
+      "path": "packages/interchange/src/decode.rs",
+      "syntax": "# [doc = \" Strict is selected explicitly by both canonical entry points. Transport\"] # [doc = \" cannot change that selection or supply limits to the canonical language.\"] enum ReadPolicy < 'a > { Strict , Transport { limits : TransportLimits , usage : & 'a mut TransportUsage , } , }"
     },
     {
       "item": "decode::Item",
       "package": "pn-interchange",
       "path": "packages/interchange/src/decode.rs",
-      "syntax": "enum Item { Complete (Value) , Container (Frame) , }"
+      "syntax": "enum Item { Complete (Value) , CompleteAt (Value , usize) , Container (Frame) , }"
     },
     {
       "item": "decode::Head",
@@ -20885,7 +20942,7 @@
       "item": "error::DecodeError",
       "package": "pn-interchange",
       "path": "packages/interchange/src/error.rs",
-      "syntax": "# [doc = \" Bytes refused as a name of the data language.\"] # [doc = \"\"] # [doc = \" Every variant carries the byte offset at which the failure was\"] # [doc = \" detected, so that a consumer can locate it in the input.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{DecodeError, Value};\"] # [doc = \"\"] # [doc = \" // 0x18 0x00 spells 0 with a uint8 argument; 0 belongs in the head.\"] # [doc = \" let err = Value::from_canonical_bytes(&[0x18, 0x00])\"] # [doc = \"     .expect_err(\\\"non-preferred head\\\");\"] # [doc = \" assert!(matches!(err, DecodeError::NonPreferredHead { offset: 0 }));\"] # [doc = \" ```\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum DecodeError { # [doc = \" The input ended before the item did.\"] # [error (\"input ends inside an item at byte {offset}\")] Truncated { # [doc = \" Where the input ended.\"] offset : usize , } , # [doc = \" One item was decoded and bytes remain.\"] # [error (\"{count} bytes remain after the item at byte {offset}\")] TrailingBytes { # [doc = \" Where the item ended.\"] offset : usize , # [doc = \" How many bytes follow it.\"] count : usize , } , # [doc = \" A head spells its argument in a wider form than the argument needs.\"] # [error (\"head at byte {offset} is not the shortest form for its argument\")] NonPreferredHead { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" An indefinite-length string, array, or map.\"] # [error (\"indefinite-length item at byte {offset}\")] IndefiniteLength { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A map key sorts before its predecessor.\"] # [error (\"map keys out of canonical order at byte {offset}\")] UnsortedMapKeys { # [doc = \" Where the offending key begins.\"] offset : usize , } , # [doc = \" A map key repeats its predecessor.\"] # [error (\"duplicate map key at byte {offset}\")] DuplicateMapKey { # [doc = \" Where the offending key begins.\"] offset : usize , } , # [doc = \" A floating-point value spelled other than in the shortest form that\"] # [doc = \" preserves it — a NaN other than the canonical one included.\"] # [error (\"floating-point value at byte {offset} is not in shortest form\")] NonShortestFloat { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A head no well-formed encoding produces.\"] # [error (\"ill-formed head at byte {offset}\")] IllFormed { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A text string whose payload is not valid UTF-8.\"] # [error (\"text string at byte {offset} is not valid UTF-8\")] InvalidUtf8 { # [doc = \" The first byte not part of a valid UTF-8 sequence.\"] offset : usize , } , }"
+      "syntax": "# [doc = \" Bytes refused as a name of the data language.\"] # [doc = \"\"] # [doc = \" Every variant carries the byte offset at which the failure was\"] # [doc = \" detected, so that a consumer can locate it in the input.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{DecodeError, Value};\"] # [doc = \"\"] # [doc = \" // 0x18 0x00 spells 0 with a uint8 argument; 0 belongs in the head.\"] # [doc = \" let err = Value::from_canonical_bytes(&[0x18, 0x00])\"] # [doc = \"     .expect_err(\\\"non-preferred head\\\");\"] # [doc = \" assert!(matches!(err, DecodeError::NonPreferredHead { offset: 0 }));\"] # [doc = \" ```\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum DecodeError { # [doc = \" A declared transport resource ceiling would be exceeded.\"] # [error (\"transport {resource} limit {limit} exceeded at byte {offset}\")] TransportLimit { # [doc = \" The resource charged before the operation.\"] resource : & 'static str , # [doc = \" The caller's declared ceiling.\"] limit : usize , # [doc = \" Where the refused operation begins.\"] offset : usize , } , # [doc = \" A well-formed CBOR value outside the API transport vocabulary.\"] # [error (\"unsupported transport value at byte {offset}\")] TransportValue { # [doc = \" Where the unsupported value begins.\"] offset : usize , } , # [doc = \" The allocator refused a previously budgeted reservation.\"] # [error (\"transport allocation refused at byte {offset}\")] TransportAllocation { # [doc = \" Where the reservation was needed.\"] offset : usize , } , # [doc = \" The input ended before the item did.\"] # [error (\"input ends inside an item at byte {offset}\")] Truncated { # [doc = \" Where the input ended.\"] offset : usize , } , # [doc = \" One item was decoded and bytes remain.\"] # [error (\"{count} bytes remain after the item at byte {offset}\")] TrailingBytes { # [doc = \" Where the item ended.\"] offset : usize , # [doc = \" How many bytes follow it.\"] count : usize , } , # [doc = \" A head spells its argument in a wider form than the argument needs.\"] # [error (\"head at byte {offset} is not the shortest form for its argument\")] NonPreferredHead { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" An indefinite-length string, array, or map.\"] # [error (\"indefinite-length item at byte {offset}\")] IndefiniteLength { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A map key sorts before its predecessor.\"] # [error (\"map keys out of canonical order at byte {offset}\")] UnsortedMapKeys { # [doc = \" Where the offending key begins.\"] offset : usize , } , # [doc = \" A map key repeats its predecessor.\"] # [error (\"duplicate map key at byte {offset}\")] DuplicateMapKey { # [doc = \" Where the offending key begins.\"] offset : usize , } , # [doc = \" A floating-point value spelled other than in the shortest form that\"] # [doc = \" preserves it — a NaN other than the canonical one included.\"] # [error (\"floating-point value at byte {offset} is not in shortest form\")] NonShortestFloat { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A head no well-formed encoding produces.\"] # [error (\"ill-formed head at byte {offset}\")] IllFormed { # [doc = \" Where the head begins.\"] offset : usize , } , # [doc = \" A text string whose payload is not valid UTF-8.\"] # [error (\"text string at byte {offset} is not valid UTF-8\")] InvalidUtf8 { # [doc = \" The first byte not part of a valid UTF-8 sequence.\"] offset : usize , } , }"
     },
     {
       "item": "error::LabelError",
