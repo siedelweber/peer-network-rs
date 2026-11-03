@@ -1938,6 +1938,8 @@ implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-records::public::live_markers::live_marker_rules", "pn-records::public::live_markers::live_marker_openings", "pn-records::public::live_markers::live_marker_aliases"]
+case_budgets = { "pn-records::public::live_markers::live_marker_rules" = "calibrated-live-marker-rules-case" }
+case_budget_reasons = { "pn-records::public::live_markers::live_marker_rules" = "Declared live recognition checks valid reversed history and exact lineage, initial-marker, policy-binding, copied-name and missing or lost evidence refusals." }
 [[rows]]
 kind = "suite"
 name = "pn-epoch::live-publication"
@@ -1950,6 +1952,8 @@ tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix", "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach", "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots"]
 
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach" = "calibrated-live-publication-breach-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach" = "Complete old and replacement admissions retain sticky finality halt, separate successful re-anchor and follow replay, and independently refused response-policy substitutions." }
 [[rows]]
 kind = "suite"
 name = "pn-epoch::publication-disclosures"
@@ -1960,8 +1964,9 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip", "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix"]
-
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip" = "calibrated-disclosure-roundtrip-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip" = "Complete rational-floor admission and disclosure restoration compare every asserted section and retain independent replay." }
 [[rows]]
 kind = "suite"
 name = "pn-epoch::publication-disclosure-matrix"
@@ -1973,3 +1978,18 @@ implementation = "pn-epoch-rust"
 tier = "extended"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "calibrated-disclosure-refusals-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "The complete section-refusal matrix independently restores every distinct mutation and compares its refusal class." }
+[[rows]]
+kind = "suite"
+name = "pn-epoch::publication-ridge-integration"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix" = "calibrated-disclosure-ridge-prefix-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix" = "The slower two-boundary ridge integration check keeps independent carrier consumption and disclosure restoration, with successful assembly and later-frame proof refusal in both entries; the paths cannot share a replay result." }

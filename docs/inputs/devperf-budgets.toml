@@ -235,6 +235,22 @@ rounding = "upward"
 warm = true
 measured_series = [{ "commit" = "b2d117cf150543a7d5300cf54e9887e55eb8adef", "patch_id" = "9439b935be543c0e860308838790f697a3dec13d" }]
 
+
+[[rows.calibration_campaigns]]
+label = "campaign:devperf:disclosure-public-warm"
+base_commit = "94fcd633db72c6983636f0383a9c1cfead3076e1"
+configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+warmup_wall_seconds = 16.94198489189148
+sample_walls_seconds = [17.966455221176147, 17.569737672805786, 18.238426685333252]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ "commit" = "5e897aef4a99492c3c2dd23b986e9ebb54b80720", "patch_id" = "29a20de661214b86296dfb0945f9e5bd9f7a4f0b" }]
+
 [[rows]]
 name = "service-gate"
 category = "aggregate"
@@ -2674,3 +2690,108 @@ calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
 calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-live-marker-rules-case"
+category = "case"
+budget_ms = 50
+scope = "one pn-records::public::live_markers::live_marker_rules execution"
+reason = "Declared live recognition checks valid reversed history and exact lineage, initial-marker, policy-binding, copied-name and missing or lost evidence refusals."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 4.027690039947629
+measured_own_cpu_ms = 3.4490000000001464
+calibration_walls_ms = [4.027690039947629, 3.712001023814082, 3.154533915221691]
+calibration_own_cpu_ms = [3.4490000000001464, 3.255000000000008, 3.051000000000026]
+calibration_selected_sample = 1
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_pending_owner = "lane/graph"
+calibration_pending_reason = "The new refusal assertions changed this case closure after public main. Three warm serial samples measure the carrying lane commit; a public-source campaign must establish its identity after import."
+
+[[rows]]
+name = "calibrated-live-publication-breach-case"
+category = "case"
+budget_ms = 1950
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach execution"
+reason = "Complete old and replacement admissions retain sticky finality halt, separate successful re-anchor and follow replay, and independently refused response-policy substitutions."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 955.7179200928658
+measured_own_cpu_ms = 860.9859999999996
+calibration_walls_ms = [893.5852630529553, 955.7179200928658, 849.7762139886618]
+calibration_own_cpu_ms = [827.5110000000001, 860.9859999999996, 783.9969999999998]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_pending_owner = "lane/graph"
+calibration_pending_reason = "The new refusal assertions changed this case closure after public main. Three warm serial samples measure the carrying lane commit; a public-source campaign must establish its identity after import."
+
+[[rows]]
+name = "calibrated-disclosure-roundtrip-case"
+category = "case"
+budget_ms = 1000
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip execution"
+reason = "Complete rational-floor admission and disclosure restoration compare every asserted section and retain independent replay."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 475.56421789340675
+measured_own_cpu_ms = 471.29500000000667
+calibration_walls_ms = [450.2237772103399, 475.56421789340675, 450.1830891240388]
+calibration_own_cpu_ms = [448.63099999999355, 471.29500000000667, 449.9700000000129]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:disclosure-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs", "function" = "disclosure_roundtrip", "digest" = "528afe8d4c96aa0754cd92ed070d3aa00aa34d46e8a92f903810b543ad5a23c2", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-disclosure-ridge-prefix-case"
+category = "case"
+budget_ms = 31500
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix execution"
+reason = "The slower two-boundary ridge integration check keeps independent carrier consumption and disclosure restoration, with successful assembly and later-frame proof refusal in both entries; the paths cannot share a replay result."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 15737.179107032716
+measured_own_cpu_ms = 15669.568999999996
+calibration_walls_ms = [15461.012938059866, 15068.301412975416, 15737.179107032716]
+calibration_own_cpu_ms = [15344.487000000006, 15028.522999999983, 15669.568999999996]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:disclosure-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs", "function" = "disclosure_ridge_prefix", "digest" = "9d676ded7216e6a841f54d60986386e0ff885d15d724ed134e0751ccc7a9efc6", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-disclosure-refusals-case"
+category = "case"
+budget_ms = 2550
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals execution"
+reason = "The complete section-refusal matrix independently restores every distinct mutation and compares its refusal class."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 1271.9190460629761
+measured_own_cpu_ms = 1264.9019999999994
+calibration_walls_ms = [1271.9190460629761, 1204.0052791126072, 1265.1667899917811]
+calibration_own_cpu_ms = [1264.9019999999994, 1203.8700000000215, 1247.8269999999902]
+calibration_selected_sample = 1
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:disclosure-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs", "function" = "disclosure_refusals", "digest" = "87a12c92036b319ad5849dd2f9a9bc40e07d121e3435dc6ac148d5ed4009cb60", "owner" = "lane/graph" }

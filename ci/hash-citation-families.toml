@@ -845,3 +845,26 @@ commit = "9d5c8f92764bd20e5959193ae6782e1cc2d86194"
 patch_id = "eeb9029adfedb64fbe3805469de8f401829ed101"
 definition = "The public imported source is the measured tree; its stable patch identity is independently recomputed."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "disclosure-calibration-base"
+group = "warm case allowance calibration"
+measures = "Public parent beneath the measured disclosure restoration"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "94fcd633db72c6983636f0383a9c1cfead3076e1"
+definition = "The public parent and the imported restoration patch identify the measured source."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "disclosure-calibration-series"
+group = "warm case allowance calibration"
+measures = "Public measured disclosure commit and stable patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "5e897aef4a99492c3c2dd23b986e9ebb54b80720"
+patch_id = "29a20de661214b86296dfb0945f9e5bd9f7a4f0b"
+definition = "The imported restoration source is measured; its stable patch identity recomputes independently."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
