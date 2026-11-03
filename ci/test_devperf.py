@@ -318,14 +318,15 @@ wait
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
                     (lane/f'gate-{name}.log').write_text('\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
-                for status, changed_selection in ((0, False), (1, False), (0, True)):
+                for status, changed_selection in ((0, False), (1, False), (0, True), (0, 'rebuild')):
                     if changed_selection:
                         baseline["tiers"]["service"]["selected_cases"] = ["previous-case"]
                     else:
                         baseline["tiers"]["service"]["selected_cases"] = []
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=[])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    rebuilding = changed_selection == 'rebuild'
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -337,12 +338,15 @@ wait
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
                         selection_differs = changed_selection and name == 'service'
                         self.assertEqual(measured[name]['comparable_cases'], not selection_differs)
-                        self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold or selection_differs else 0.5)
-                        self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold or selection_differs else 0.25)
+                        self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold else 0.5)
+                        self.assertEqual(measured[name]['baseline_comparable_build_cpu_s'], None if cold or old_cold else 0.25)
+                        if selection_differs:
+                            self.assertIsNone(measured[name]['comparable_cpu_s'])
+                            self.assertIsNone(measured[name]['baseline_comparable_cpu_s'])
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                         self.assertEqual(measured[name]['baseline_stall'], old_stall)
                         if wall == 3 and not cold:
-                            self.assertEqual(measured[name]['classification'], 'unclassified' if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
+                            self.assertEqual(measured[name]['classification'], ('rebuild' if rebuilding else 'unclassified') if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
@@ -385,7 +389,7 @@ wait
             measured = dict(step='gate', wall_seconds=1.2, own_user_s=1, own_sys_s=.1,
                             node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
             (lane/'gate-resources.json').write_text(json.dumps([measured]))
-            figures = dict(comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
+            figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
                            baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
                            own_user_s=1, own_sys_s=0, baseline_cpu_s=1,
                            changed_build_inputs=[], baseline_source='prior', baseline_match='import-base-tree')
@@ -433,7 +437,7 @@ wait
             self.assertEqual(finding['outcome'], 'exit:1')
             self.assertEqual(finding['verdict_effect'], 'none')
     def test_overrun_classes(self):
-        """Rebuild classification requires comparable compile CPU growth and serialized wall growth covering the excess; load alone cannot establish rebuild work.
+        """Rebuild classification requires comparable compile CPU growth and positive serialized wall growth, with either excess coverage or stable comparable non-compile work; changed case sets retain compile evidence but not aggregate comparisons, and load alone cannot establish rebuild work.
         ´claim:devperf:rebuild-requires-compile-cpu-and-wall´
         ´test:integration:test-overrun-classes´
         """
@@ -446,7 +450,8 @@ wait
         self.assertEqual(classify(stall=0.1), 'high-stall')
         self.assertEqual(classify(own=121), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['packages/example/src/pins.rs']), 'rebuild')
-        self.assertEqual(classify(own=121, build=60, changed=['packages/example/src/pins.rs']), 'growth')
+        self.assertEqual(classify(own=121, build=60, changed=['packages/example/src/pins.rs']), 'rebuild')
+        self.assertEqual(classify(own=150, build=60, changed=['packages/example/src/pins.rs']), 'growth')
         self.assertEqual(classify(own=121, build=61), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['Cargo.lock'], stall=0.1), 'high-stall')
         self.assertEqual(classify(baseline=None), 'unclassified')
@@ -498,6 +503,23 @@ wait
             ['packages/epoch/src/controller.rs'], policy, compile_wall_growth=growth, excess=39.179, wall=159.179, baseline_wall=100, baseline_stall=0), 'plain')
         self.assertEqual(overrun_class(True, 100, 100, .09, 40, 40,
             ['packages/example/src/pins.rs'], policy, compile_wall_growth=60, excess=21, wall=141, baseline_wall=100, baseline_stall=0), 'plain')
+        # Round 149's rounded ridge extended figures: almost all extra CPU
+        # compiled, including the isolated owner; serial wall alone is short.
+        ridge = dict(compile_wall_growth=10.52, excess=30, wall=150,
+                     baseline_wall=120, baseline_stall=0)
+        self.assertAlmostEqual((182.2-87.6)/(91.8-.94), 1.0411622276)
+        self.assertEqual(overrun_class(True, 182.2, 91.8, .0349, 87.6, .94,
+            ['packages/records/src/ridge.rs'], policy, **ridge), 'rebuild')
+        self.assertEqual(overrun_class(True, 182.2, 91.8, .0349, 87.6, .94,
+            ['packages/records/src/ridge.rs'], policy, **(ridge | dict(compile_wall_growth=0))), 'plain')
+        # The ridge's fast compile-CPU pair, with a controlled wall boundary:
+        # a changed case set withholds aggregate CPU, not this compile evidence.
+        for added in (False, True):
+            self.assertEqual(overrun_class(True, None if added else 700, None if added else 300,
+                .0349, 531.9, 111.2, ['packages/records/src/ridge.rs'], policy,
+                **(ridge | dict(compile_wall_growth=30)), comparable_cases=not added), 'rebuild')
+        self.assertEqual(overrun_class(True, None, None, .0349, 531.9, 111.2,
+            ['packages/records/src/ridge.rs'], policy, **ridge, comparable_cases=False), 'unclassified')
 
 
     def test_baseline_lineage(self):

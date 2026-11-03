@@ -134,8 +134,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:rebuild-requires-compile-cpu-and-wall",
       "before": "",
-      "after": "Rebuild classification requires comparable compile CPU growth and serialized wall growth covering the excess; load alone cannot establish rebuild work.",
-      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+      "after": "Rebuild classification requires comparable compile CPU growth and positive serialized wall growth, with either excess coverage or stable comparable non-compile work; changed case sets retain compile evidence but not aggregate comparisons, and load alone cannot establish rebuild work.",
+      "review": "Read the retained wall, pressure, exact-margin and symmetric cold-owner controls. The ridge extended fixture now separates comparable compile CPU from remaining work; a second exact assertion retains genuine non-compile growth. The changed-case controls retain compile attribution before refusing aggregate attribution, with the recorded fast compile-CPU pair and an explicitly controlled covering-wall boundary."
     },
     {
       "operation": "ci::test_devperf.Performance.test_target_retention",

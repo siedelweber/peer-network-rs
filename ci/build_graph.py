@@ -538,24 +538,34 @@ def delegate(root, step):
     return result['status']
 
 
-def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None):
+def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None, comparable_cases=True):
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
-    if stall is None or own is None or baseline is None: return 'unclassified'
+    if stall is None: return 'unclassified'
     if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return 'unclassified'
     # Remove the baseline's stall before projecting its work into this interval.
     # A pressure fraction is context, not an attribution of CPU to this tier.
     if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
-    if wall*stall >= excess and wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
+    if comparable_cases and wall*stall >= excess and wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
+    margin = 1+policy['cpu_growth_percent']/100
+    noncompile = (comparable_cases and None not in (own, baseline, build_cpu, old_build_cpu)
+                  and own >= build_cpu and baseline >= old_build_cpu)
+    remaining = own-build_cpu if noncompile else None
+    old_remaining = baseline-old_build_cpu if noncompile else None
     if (changed and build_cpu is not None and old_build_cpu is not None
-            and build_cpu > old_build_cpu*(1+policy['cpu_growth_percent']/100)
+            and build_cpu > old_build_cpu*margin
             and compile_wall_growth is not None and excess is not None
-            and compile_wall_growth > 0 and compile_wall_growth >= excess):
+            and compile_wall_growth > 0
+            and (compile_wall_growth >= excess or
+                 (noncompile and remaining <= old_remaining*margin))):
         return 'rebuild'
+    if not comparable_cases or own is None or baseline is None: return 'unclassified'
     # Pressure can inflate CPU as well as wall. Without a quiet measurement,
     # the remainder is not attributable to plain work or owned growth.
     if stall > policy['load_unresolved_pressure_percent']/100: return 'load-unresolved'
-    if own <= baseline*(1+policy['cpu_growth_percent']/100): return 'plain'
+    if changed and noncompile:
+        own, baseline = remaining, old_remaining
+    if own <= baseline*margin: return 'plain'
     return 'growth'
 
 
@@ -734,10 +744,9 @@ def tier_summary(root, registry, worker_statuses):
         old_stall = prior.get('resources', {}).get('node_pressure_fraction', {}).get('cpu.some')
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
-            baseline_stall=old_stall)
+            baseline_stall=old_stall, comparable_cases=comparable_cases)
         if not comparable_cases:
-            comparable_cpu = comparable_old = comparable_build = comparable_old_build = wall_growth = None
-            classification = 'unclassified' if over_budget else 'within-budget'
+            comparable_cpu = comparable_old = None
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             selected_cases=cases, comparable_cases=comparable_cases,
@@ -806,7 +815,8 @@ def wall_summary(root, status, interval=None):
     limit = budget['budget_ms']/1000
     excess = max(0.0, wall-limit)
     classification = overrun_class(excess > 0, current_cpu, prior_cpu, stall, current_build, prior_build, changed, policy,
-        compile_wall_growth=growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'))
+        compile_wall_growth=growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
+        comparable_cases=bool(tiers) and all(row.get('comparable_cases') for row in tiers.values()))
     fast = tiers.get('fast', {})
     result = dict(wall=wall, budget_s=limit, excess_s=excess, over_budget=excess > 0, classification=classification,
         status=status, own_user_s=measured['own_user_s'], own_sys_s=measured['own_sys_s'],
