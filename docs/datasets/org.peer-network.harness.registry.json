@@ -4064,7 +4064,8 @@
         "pn-wallet::rpc::rotation",
         "pn-wallet::rpc::signed_reads",
         "pn-wallet::rpc::reader_limit_hold",
-        "pn-wallet::rpc::settlement_forks"
+        "pn-wallet::rpc::settlement_forks",
+        "pn-wallet::rpc::recovery::daemon_capabilities"
       ],
       "implementation": "pn-wallet-elements",
       "kind": "suite",

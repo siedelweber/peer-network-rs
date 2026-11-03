@@ -400,6 +400,40 @@ def restart(root):
             raise RuntimeError('Elements restart failed')
 
 
+def study_auth(root, methods, intersection):
+    """External test configurator: receive a protected pipe exit, retain only rpcauth."""
+    credential = sys.stdin.buffer.read(1025)
+    if len(credential) != len(b'capability:') + 64 or not credential.startswith(b'capability:'):
+        raise RuntimeError('study credential grammar refused')
+    password = credential[len(b'capability:'):]
+    if any(byte not in b'0123456789abcdef' for byte in password):
+        raise RuntimeError('study credential grammar refused')
+    if not methods or any(not method.isalpha() for method in methods.split(',')):
+        raise RuntimeError('study method declaration refused')
+    salt = secrets.token_hex(16)
+    verifier = hmac.new(salt.encode(), password, hashlib.sha256).hexdigest()
+    path = root/'elements.conf'
+    original = [line for line in path.read_text().splitlines()
+                if not line.startswith(('rpcauth=capability:', 'rpcwhitelist=capability:', 'walletbroadcast='))
+                and line != 'wallet=producer']
+    settings = ['rpcauth=capability:'+salt+'$'+verifier, 'rpcwhitelist=capability:'+methods, 'walletbroadcast=0']
+    if intersection:
+        settings.append('rpcwhitelist=capability:getblockcount,getwalletinfo')
+    path.write_text('\n'.join(settings + original + ['wallet=producer'])+'\n')
+    path.chmod(0o600)
+
+
+def study_start(root):
+    """Prepare independent confirmed inputs before disabling broadcast for the study."""
+    signed(root)
+    config, _ = producer(root)
+    sign_block(root, False)
+    for _ in range(5):
+        address = rpc(config, "getaddressinfo", [rpc(config, "getnewaddress", ["study-reserve", "bech32"])])["unconfidential"]
+        rpc(config, "sendtoaddress", dict(address=address, amount="0.01", fee_rate=1))
+    sign_block(root, False)
+
+
 EXPLICIT = '0' * 64
 # Run, target and request bindings of the settlement fixture's evidence
 # outputs; each burn takes a distinct request.
@@ -532,12 +566,14 @@ def report_rpc(root):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart', 'report-rpc', 'stop-report'])
+    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart', 'report-rpc', 'stop-report', 'study-auth', 'study-start'])
     parser.add_argument('--root', required=True, type=Path)
     parser.add_argument('--units', type=int, default=0)
     parser.add_argument('--blocks', type=int, default=0)
     parser.add_argument('--replace', type=int, default=0)
     parser.add_argument('--exclude', action='store_true')
+    parser.add_argument('--study-methods', default='')
+    parser.add_argument('--study-intersection', action='store_true')
     args = parser.parse_args()
     if args.action in ('start', 'signed', 'settlement', 'restart') and not os.environ.get('PN_ELEMENTS_BIN'):
         print('PN_ELEMENTS_BIN must name the Elements binary directory', file=sys.stderr)
@@ -551,7 +587,11 @@ def main():
     signal.signal(signal.SIGTERM, interrupted)
     signal.signal(signal.SIGINT, interrupted)
     try:
-        if args.action == 'stop-all':
+        if args.action == 'study-start':
+            study_start(root)
+        elif args.action == 'study-auth':
+            study_auth(root, args.study_methods, args.study_intersection)
+        elif args.action == 'stop-all':
             stop(root)
             for child in root.parent.iterdir():
                 if child.is_dir() and child.name.startswith(('wallet-signed-', 'wallet-rotation-', 'wallet-settlement-')):
@@ -573,7 +613,7 @@ def main():
         if root.is_dir():
             with (root/'harness-error.log').open('w') as log:
                 traceback.print_exc(file=log)
-        if args.action in ('start','signed','settlement','restart'):
+        if args.action in ('start','signed','settlement','restart','study-start'):
             stop(root)
         raise
 

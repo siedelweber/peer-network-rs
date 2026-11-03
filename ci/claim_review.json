@@ -4676,6 +4676,14 @@
       "review": "Read the real-node negative verdicts, raw typed reads, independent field comparisons and integer output sums, or the exact retained block/Bytes hold on later requests. These witnesses do not implement recognition, settlement, faucet enforcement or signature verification."
     },
     {
+      "operation": "pn-wallet::rpc::recovery::daemon_capabilities",
+      "path": "packages/wallet/tests/rpc/recovery.rs",
+      "claim": "WALLET::claim:wallet:daemon-recovery-study-retains-capability-boundaries",
+      "before": "",
+      "after": "Claim: The real regtest daemon intersects per-user method whitelists, refuses stale credentials after rotation, preserves nonbroadcast wallet-created bytes across restart, and accepts distinct transactions with the same request comment; raw signed drafts are absent from wallet lookup, so these primitives do not establish the required request-unique recovery contract.",
+      "review": "Assertions compare real daemon responses before and after credential rotation and wallet restart, and require distinct durable transactions for repeated comments. This demonstrates the observed primitive boundaries and missing request uniqueness, not production spending, crash atomicity or complete history."
+    },
+    {
       "operation": "pn-wallet::rpc::rotation",
       "path": "packages/wallet/tests/rpc.rs",
       "claim": "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay",

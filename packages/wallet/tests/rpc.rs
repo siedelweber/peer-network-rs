@@ -1,5 +1,7 @@
 //! Real daemon genesis reads; fixture production and credentials live outside the crate.
 mod oracle;
+#[path = "rpc/recovery.rs"]
+mod recovery;
 use pn_wallet::{Limits, Provisioning, Read, ReadResult, RpcClient, RpcConfig, RpcLimits, RpcLink, RpcRefusal};
 use secrecy::{SecretBox, SecretString};
 use std::{fs::File, io::Read as _, path::PathBuf};

@@ -55,8 +55,8 @@
 | pn-replay | 0 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
-| pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 510 | 198 |
+| pn-wallet | 40 | 0 |
+| ROOT (repository-wide) | 1 521 | 198 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

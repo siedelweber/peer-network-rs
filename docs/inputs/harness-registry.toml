@@ -1269,7 +1269,7 @@ level = "integration"
 implementation = "pn-wallet-elements"
 tier = "service"
 budget = "pure-suite"
-cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold", "pn-wallet::rpc::settlement_forks"]
+cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold", "pn-wallet::rpc::settlement_forks", "pn-wallet::rpc::recovery::daemon_capabilities"]
 case_budgets = { "pn-wallet::rpc::rotation" = "calibrated-wallet-rpc-rotation-case", "pn-wallet::rpc::settlement_forks" = "calibrated-wallet-rpc-settlement-forks-case", "pn-wallet::rpc::signed_reads" = "calibrated-wallet-rpc-signed-reads-case" }
 case_budget_reasons = { "pn-wallet::rpc::rotation" = "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal.", "pn-wallet::rpc::settlement_forks" = "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results.", "pn-wallet::rpc::signed_reads" = "Real Elements setup and signed reads retain their complete public transaction and authentication checks." }
 

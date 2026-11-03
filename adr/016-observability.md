@@ -454,6 +454,24 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-fixture-digest` In `packages/act-profile/src/tests.rs`, function `fixture_digest`: Fixed test pre-digests are borrowed solely for hexadecimal equality with independently authored fixture vectors; the borrow ends at this comparison and the helper never receives production material. Source method: `expose_secret`. Fixture-only boundary.
 
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-entropy-fill` In `packages/wallet/tests/rpc/recovery.rs`, function `identity`: Study entropy is filled directly in protected storage until the operating-system read returns; the input API requires a mutable slice. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-entropy-format` In `packages/wallet/tests/rpc/recovery.rs`, function `identity`: Study entropy is borrowed solely to construct the secret-owned fixture credential; hexadecimal formatting requires ordinary bytes for that call. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-read` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: The private producer bootstrap is acquired directly into protected bytes until read returns; its descriptor API requires a mutable buffer. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-parse` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: Bootstrap bytes are borrowed only to extract the fixture port into its secret carrier; temporary JSON fields are confined to this acquisition boundary and never observed. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-config-producer` In `packages/wallet/tests/rpc/recovery.rs`, function `configure`: The protected study credential leaves its carrier only through the private stdin pipe to the external fixture configurator; that producer uses temporary ordinary bytes to derive rpcauth and writes only the verifier into the restricted daemon configuration, then exits. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-port-connect` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The fixture endpoint port is borrowed for a loopback socket connection; the networking API requires its scalar address and no original connection error is retained. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-auth-encode` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The isolated credential is borrowed to form a protected Basic-auth request; the encoding routine requires bytes and the temporary wire buffer is not observed. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-auth-format` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The protected authorization spelling is borrowed only to construct the secret-owned request; formatting cannot consume the secret carrier directly. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-request-write` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The secret-owned HTTP request leaves its carrier only at the test daemon socket write; the daemon is the intended credential consumer. Source method: `expose_secret`. Fixture-only boundary.
+
 
 
 **Amendment (Ordered reserved drain)** · `amend:observe:ordered-drain` Repository amendment: (`amend:observe:compact-content`) keeps the reserved drain-request slot so a full ordinary queue cannot reject the request. Before acknowledging a request, the worker drains up to the ordinary queue capacity after taking that request. Every ordinary record enqueued before the request lies in that FIFO prefix; later sends cannot overtake it. Reserved diagnostics and summaries are drained before acknowledgement too. The cli-common drain-timeout fixture pauses the worker after its batch ends, queues one record or a full backlog before requesting the drain, and checks delivery at acknowledgement and at guard close without a timing verdict. The close path does not join the worker: (`amend:observe:delivery-cause-and-exit`) retains its bounded drain and synchronous disjoint delivered, lost, queued-undelivered and in-flight disclosure, because joining a blocked writer would remove the exit bound. Successful drainage now obeys the same prefix ordering; deadline or disconnected paths still disclose outstanding work rather than asserting delivery. The cutoff and shared-transport witnesses retain the unstarted-publication refusal and in-flight accounting.
