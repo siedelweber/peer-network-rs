@@ -346,14 +346,22 @@ class Conformance(unittest.TestCase):
                 self.assertFalse(selection['run'])
                 # An independent row and a sibling case (including its overrides)
                 # do not alter the selected witness's execution declaration.
-                unrelated = registry_text.replace('cases = ["'+SERVICE_CASE+'"', 'cases = ["unrelated-case", "'+SERVICE_CASE+'"')
-                unrelated = unrelated.replace('"'+SERVICE_CASE+'",', '"'+SERVICE_CASE+'", "unrelated-case",', 1)
+                def replaced(text, old, new):
+                    changed = text.replace(old, new, 1)
+                    self.assertNotEqual(changed, text, old)
+                    return changed
+                unrelated = replaced(registry_text, '"'+SERVICE_CASE+'",', '"'+SERVICE_CASE+'", "unrelated-case",')
+                for field, value in (('case_budgets', 'sibling-budget'), ('case_budget_reasons', 'sibling reason')):
+                    anchor = field+' = { "ci::test_linter_entry.'
+                    unrelated = replaced(unrelated, anchor, field+' = { "unrelated-case" = "'+value+'", "ci::test_linter_entry.')
+                unrelated = replaced(unrelated, 'name = "ci::test_linter_entry"\n',
+                                     'name = "ci::test_linter_entry"\ncase_levels = { "unrelated-case" = "unit" }\n')
                 unrelated += '\n[[rows]]\nkind = "suite"\nname = "unrelated-suite"\ncases = []\n'
                 registry_path.write_text(unrelated)
                 self.assertEqual(service_selection(root), selection)
-                registry_path.write_text(registry_text.replace('scenario_jobs = 4', 'scenario_jobs = 5'))
+                registry_path.write_text(replaced(registry_text, 'scenario_jobs = 4', 'scenario_jobs = 5'))
                 self.assertTrue(service_selection(root)['run'])
-                registry_path.write_text(registry_text.replace('"'+SERVICE_CASE+'" = "calibrated-linter-entry-service-ownership-case"',
+                registry_path.write_text(replaced(registry_text, '"'+SERVICE_CASE+'" = "calibrated-linter-entry-service-ownership-case"',
                                       '"'+SERVICE_CASE+'" = "changed-service-budget"'))
                 self.assertTrue(service_selection(root)['run'])
                 registry_path.write_text(registry_text)
