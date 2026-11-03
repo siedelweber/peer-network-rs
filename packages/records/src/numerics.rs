@@ -30,6 +30,9 @@ pub enum NumericError {
     /// Backend syntax or finite resource refusal.
     #[error("exact backend: {0}")]
     Backend(#[from] nrz_cas::Fault),
+    /// An operational refusal projected from retained numerical evidence.
+    #[error("retained exact backend: {0:?}")]
+    RetainedFault(crate::primitive::FaultAssertion),
     /// Scalar spelling or display refusal; never an approximate binding answer.
     #[error("literal or display: {0}")]
     Scalar(#[from] nrz_scalar::ArithmeticFailure),

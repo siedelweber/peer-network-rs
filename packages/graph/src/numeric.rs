@@ -176,7 +176,7 @@ fn mapped(report: EnclosureReport, usage: &nrz_cas::limits::BudgetUsage, width_o
         evaluation_work: report.work,
         precision_met: report.precision_met,
         completed_rounds: report.completed_rounds,
-        resource_fault: report.resource_fault,
+        resource_fault: report.resource_fault.map(Into::into),
     })
 }
 
@@ -223,7 +223,7 @@ fn run_budget(
                 evaluation_work: 0,
                 precision_met: false,
                 completed_rounds: 0,
-                resource_fault: Some(fault),
+                resource_fault: Some(fault.into()),
             });
         }
         Err(error) => return Err(error),

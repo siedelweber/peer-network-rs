@@ -30,7 +30,7 @@ pub enum Error {
     #[error("wall scalar evaluation stopped: {outcome:?}; resource fault: {resource_fault:?}")]
     Operational {
         outcome: Outcome,
-        resource_fault: Option<nrz_cas::Fault>,
+        resource_fault: Option<pn_records::primitive::FaultAssertion>,
     },
     #[error("wall iteration allowance exhausted")]
     Iterations,

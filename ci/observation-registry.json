@@ -8436,6 +8436,24 @@
         "boundary": "pn-records::packages/records/src/authentication.rs::authentication::AuthenticationDisclosure::new",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "item": "primitive::<FaultAssertion as From < nrz_cas :: Fault >>::from",
+      "owner": "RECORDS",
+      "signature": "fn from (fault : nrz_cas :: Fault) -> Self",
+      "claim": "RECORDS::def:numerics:primitive-records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure field projection inherits the enclosing numerical operation.",
+        "witness": "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome",
+        "boundary": "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
+        "class_decision": "certified-primitives-public"
+      }
     }
   ],
   "metrics": [
@@ -16077,7 +16095,7 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
-      "body": "{ use pn_records :: numerics :: NumericError ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } replay (& evidence . procedure , & evidence . input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { Error :: Definition => NumericError :: RidgeDefinition , Error :: Numeric (super :: Error :: Backend (fault)) | Error :: Arithmetic (fault) | Error :: Operational { fault : Some (fault) , .. } => NumericError :: Backend (fault) , _ => NumericError :: RidgeEvidence , }) }",
+      "body": "{ use pn_records :: numerics :: NumericError ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } replay (& evidence . procedure , & evidence . input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { Error :: Definition => NumericError :: RidgeDefinition , Error :: Numeric (super :: Error :: Backend (fault)) | Error :: Arithmetic (fault) => NumericError :: Backend (fault) , Error :: Operational { fault : Some (fault) , .. } => NumericError :: RetainedFault (fault) , _ => NumericError :: RidgeEvidence , }) }",
       "class_decision": "binding-ridge-public",
       "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
       "assessments": {
@@ -16338,6 +16356,17 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Only named public, untrusted authentication disclosures enter. Presence checks retain bytes and edition strings without interpreting them, admitting a cryptographic edition, or authenticating a signature, header, seal or approval. Trace may retain these public disclosures; no key generation, secret custody, codec or publication effect enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/primitive.rs::primitive::<FaultAssertion as From < nrz_cas :: Fault >>::from",
+      "body": "{ Self { kind : fault . kind , operation : fault . location . operation . into () , logical_id : fault . location . logical_id , } }",
+      "class_decision": "certified-primitives-public",
+      "item_premise": "Every backend fault field is projected without interpretation into owned public diagnostic evidence; the numeric producer already observes its result. No secret, authority or operation vocabulary is introduced.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -21020,6 +21049,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
       "expansion_review": "Clone, Debug, equality and error formatting retain named untrusted public fields and absent-field refusals. These derive no encoding, cryptographic verdict or authenticity authority."
+    },
+    {
+      "item": "primitive::FaultAssertion",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Owned diagnostic kind, operation text and optional logical id preserve evaluator output exactly. Derivations clone and compare public numerical assertions; no secret or checked authority is introduced."
     }
   ],
   "reviewed_types": [
@@ -22275,7 +22313,7 @@
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
-      "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" The ridge defining object or analytic-premise edition is not admitted.\"] # [error (\"unsupported ridge charge definition\")] RidgeDefinition , # [doc = \" Defining evidence failed its structural or independent replay checks.\"] # [error (\"ridge charge evidence refused\")] RidgeEvidence , # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
+      "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" The ridge defining object or analytic-premise edition is not admitted.\"] # [error (\"unsupported ridge charge definition\")] RidgeDefinition , # [doc = \" Defining evidence failed its structural or independent replay checks.\"] # [error (\"ridge charge evidence refused\")] RidgeEvidence , # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" An operational refusal projected from retained numerical evidence.\"] # [error (\"retained exact backend: {0:?}\")] RetainedFault (crate :: primitive :: FaultAssertion) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
     },
     {
       "item": "numerics::Exact",
@@ -22440,10 +22478,16 @@
       "syntax": "# [doc = \" Checked stopping reasons are kept apart from mathematical verdicts.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Outcome { Pass , Fail , Bound , Indecisive (nrz_cas :: enclosure :: UndecidedReason) , Exhausted , Interrupted , Unsupported , DomainBoundary , }"
     },
     {
+      "item": "primitive::FaultAssertion",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Owned projection of an evaluator fault, with no operation vocabulary or authority.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FaultAssertion { pub kind : nrz_cas :: FaultKind , pub operation : String , pub logical_id : Option < u64 > , }"
+    },
+    {
       "item": "primitive::PrimitiveEvidence",
       "package": "pn-records",
       "path": "packages/records/src/primitive.rs",
-      "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub usage : nrz_cas :: limits :: BudgetUsage , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < nrz_cas :: Fault > , }"
+      "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub usage : nrz_cas :: limits :: BudgetUsage , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < FaultAssertion > , }"
     },
     {
       "item": "primitive::PrimitiveRecord",
@@ -23319,7 +23363,7 @@
       "item": "numeric::ridge::Error",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/ridge.rs",
-      "syntax": "# [doc = \" Refusals preserve the first failed defining, query, attachment or arithmetic check.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"unsupported clean ridge defining object\")] Definition , # [error (\"invalid ridge declaration\")] Declaration , # [error (\"certified wrong ridge endpoint sign\")] Bracket , # [error (\"ridge query or precision differs from its reconstruction\")] Query , # [error (\"ridge attachment absent or invalid\")] Attachment , # [error (\"ridge record differs from independently checked evidence\")] Record , # [error (\"ridge query {query} stopped without mathematical evidence: {outcome:?}, {fault:?}\")] Operational { query : usize , outcome : Outcome , fault : Option < nrz_cas :: Fault > , } , # [error (\"ridge numerical kernel: {0}\")] Numeric (# [from] super :: Error) , # [error (\"ridge exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+      "syntax": "# [doc = \" Refusals preserve the first failed defining, query, attachment or arithmetic check.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"unsupported clean ridge defining object\")] Definition , # [error (\"invalid ridge declaration\")] Declaration , # [error (\"certified wrong ridge endpoint sign\")] Bracket , # [error (\"ridge query or precision differs from its reconstruction\")] Query , # [error (\"ridge attachment absent or invalid\")] Attachment , # [error (\"ridge record differs from independently checked evidence\")] Record , # [error (\"ridge query {query} stopped without mathematical evidence: {outcome:?}, {fault:?}\")] Operational { query : usize , outcome : Outcome , fault : Option < pn_records :: primitive :: FaultAssertion > , } , # [error (\"ridge numerical kernel: {0}\")] Numeric (# [from] super :: Error) , # [error (\"ridge exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
       "item": "numeric::ridge::CheckedRidge",
@@ -23373,7 +23417,7 @@
       "item": "numeric::wall::Error",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/wall.rs",
-      "syntax": "# [doc = \" Refusals identify the first failed admission or evidence check.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"invalid reference wall declaration\")] Declaration , # [error (\"lower bracket endpoint is outside the declared reduction range\")] Binding , # [error (\"initial bracket has a certified wrong endpoint sign\")] Bracket , # [error (\"supplied wall query or precision differs from the rebuilt query\")] Query , # [error (\"supplied wall attachment is absent or invalid\")] Attachment , # [error (\"supplied wall result differs from independently replayed evidence\")] Record , # [error (\"wall scalar evaluation stopped: {outcome:?}; resource fault: {resource_fault:?}\")] Operational { outcome : Outcome , resource_fault : Option < nrz_cas :: Fault > , } , # [error (\"wall iteration allowance exhausted\")] Iterations , # [error (\"binding ridge floor requires its exact defining object\")] Ridge , # [error (\"wall numeric request: {0}\")] Numeric (# [from] super :: Error) , # [error (\"wall exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+      "syntax": "# [doc = \" Refusals identify the first failed admission or evidence check.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"invalid reference wall declaration\")] Declaration , # [error (\"lower bracket endpoint is outside the declared reduction range\")] Binding , # [error (\"initial bracket has a certified wrong endpoint sign\")] Bracket , # [error (\"supplied wall query or precision differs from the rebuilt query\")] Query , # [error (\"supplied wall attachment is absent or invalid\")] Attachment , # [error (\"supplied wall result differs from independently replayed evidence\")] Record , # [error (\"wall scalar evaluation stopped: {outcome:?}; resource fault: {resource_fault:?}\")] Operational { outcome : Outcome , resource_fault : Option < pn_records :: primitive :: FaultAssertion > , } , # [error (\"wall iteration allowance exhausted\")] Iterations , # [error (\"binding ridge floor requires its exact defining object\")] Ridge , # [error (\"wall numeric request: {0}\")] Numeric (# [from] super :: Error) , # [error (\"wall exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
       "item": "numeric::wall::Run",

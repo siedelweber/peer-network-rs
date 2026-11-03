@@ -198,7 +198,7 @@ fn work_stop(procedure: &Procedure, attempt: &Attempt, records: &[crate::primiti
             crate::primitive::Outcome::Exhausted
                 | crate::primitive::Outcome::Indecisive(nrz_cas::enclosure::UndecidedReason::WorkExhausted)
         )
-        && last.resource_fault.is_some_and(|fault| {
+        && last.resource_fault.as_ref().is_some_and(|fault| {
             matches!(fault.kind,
             nrz_cas::FaultKind::Exhausted { budget: nrz_cas::limits::BudgetKind::Work, limit, needed, .. }
             if limit == remaining && needed > limit)

@@ -27,7 +27,7 @@ fn exact(rung: &str) -> Attempt {
 }
 
 fn stopped(record: &PrimitiveRecord, remaining: u64) -> bool {
-    record.evidence.resource_fault.is_some_and(|fault| {
+    record.evidence.resource_fault.as_ref().is_some_and(|fault| {
         matches!(fault.kind,
         nrz_cas::FaultKind::Exhausted { budget: BudgetKind::Work, limit, needed, .. } if limit == remaining && needed > limit)
     })

@@ -903,6 +903,17 @@ fn primitive_domains() {
 /// ´test:integration:primitive-replay´
 #[test]
 fn primitive_replay() {
+    let fault = nrz_cas::Fault {
+        kind: nrz_cas::FaultKind::Invalid(nrz_cas::InvalidCode::UnsupportedCertificate),
+        location: nrz_cas::Location {
+            operation: "retained diagnostic projection",
+            logical_id: Some(7),
+        },
+    };
+    let assertion = pn_records::primitive::FaultAssertion::from(fault);
+    assert_eq!(assertion.kind, fault.kind);
+    assert_eq!(assertion.operation, fault.location.operation);
+    assert_eq!(assertion.logical_id, fault.location.logical_id);
     assert_eq!(
         nrz_cas::enclosure::ENCLOSURE_SCHEMAS.map(|schema| (schema.name, schema.version)),
         pn_graph::numeric::SCHEMAS.map(|name| (name, 1))

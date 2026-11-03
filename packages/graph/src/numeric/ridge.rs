@@ -31,7 +31,7 @@ pub enum Error {
     Operational {
         query: usize,
         outcome: Outcome,
-        fault: Option<nrz_cas::Fault>,
+        fault: Option<pn_records::primitive::FaultAssertion>,
     },
     #[error("ridge numerical kernel: {0}")]
     Numeric(#[from] super::Error),
@@ -485,9 +485,8 @@ impl pn_records::ridge::ChargeVerifier for ChargeReplay {
             .map(|_| ())
             .map_err(|error| match error {
                 Error::Definition => NumericError::RidgeDefinition,
-                Error::Numeric(super::Error::Backend(fault))
-                | Error::Arithmetic(fault)
-                | Error::Operational { fault: Some(fault), .. } => NumericError::Backend(fault),
+                Error::Numeric(super::Error::Backend(fault)) | Error::Arithmetic(fault) => NumericError::Backend(fault),
+                Error::Operational { fault: Some(fault), .. } => NumericError::RetainedFault(fault),
                 _ => NumericError::RidgeEvidence,
             })
     }

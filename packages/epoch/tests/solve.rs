@@ -2911,6 +2911,7 @@ fn fence_refinement() {
     assert_eq!(first.selected, Some("0".into()));
     validate_evidence(&p, &first.evidence, Limits::default()).unwrap();
     let mut capped = p.clone();
+    capped.endpoint_grid = "1/16".into();
     capped.precision = Precision::AbsoluteWidthBits(vec![4, 8]);
     capped.maximum_work = first.evidence.attempts[0].work + 1_000_000;
     let cap = capped.maximum_work;
@@ -2926,6 +2927,24 @@ fn fence_refinement() {
     alternate.enclosure.as_mut().unwrap().refinement.precision = 8;
     assert_eq!(search(&state, &alternate), limited);
     let bound = bind_procedure(&state, capped.clone(), &Published(capped.clone()), Limits::default()).unwrap();
+    let restored = pn_epoch::conserved::solve(&bound, &limited);
+    assert!(restored.is_ok(), "{restored:?}");
+    for field in 0..3 {
+        let mut changed = limited.clone();
+        let fault = changed
+            .evidence
+            .primitives
+            .iter_mut()
+            .find_map(|p| p.evidence.resource_fault.as_mut())
+            .unwrap();
+        match field {
+            0 => fault.operation.push_str(" altered"),
+            1 => fault.logical_id = Some(fault.logical_id.unwrap_or(0) + 1),
+            _ => fault.kind = nrz_cas::FaultKind::Invalid(nrz_cas::InvalidCode::UnsupportedCertificate),
+        }
+        assert_ne!(changed, limited);
+        assert!(pn_epoch::conserved::solve(&bound, &changed).is_err());
+    }
     let interrupted = pn_epoch::fence::search(&bound, Some(0)).unwrap();
     assert_eq!(
         interrupted.operational_stop,
@@ -3209,6 +3228,14 @@ fn conserved_map() {
     let mut changed = result.clone();
     changed.image.values_mut().next().unwrap().upper = "100".into();
     assert!(pn_epoch::conserved::replay_map(&bound, &changed).is_err());
+    let mut fault_bearing = result.clone();
+    fault_bearing.primitives[0].evidence.resource_fault = Some(pn_records::primitive::FaultAssertion {
+        kind: nrz_cas::FaultKind::Invalid(nrz_cas::InvalidCode::UnsupportedCertificate),
+        operation: "owned map refusal".into(),
+        logical_id: Some(1),
+    });
+    fault_bearing.primitives[0].evidence.attachment = None;
+    assert!(pn_epoch::conserved::replay_map(&bound, &fault_bearing).is_err());
 }
 
 fn check_map_joins(state: &pn_epoch::compiler::CompiledState, map: &pn_records::conserved::MapRecord) {

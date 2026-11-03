@@ -925,7 +925,7 @@
 |---|---|
 {% for item in host_profile if item.category == 'act-fields' or item.category == 'sidecars' %}| {{ item.name }} | {{ item.fields | join('; ') }}. |
 {% endfor %}
-**Amendment (Nested publication carriers)** · `amend:design:nested-publication-fields` The nested groups below make the schema skeleton auditable against the existing records carriers. They preserve variant tags, optional absence, order and exact values rather than serializing opaque debug text. Each primitive attachment carries the full evidence required by (`rule:design:backend-evidence`), not merely its numeric answer; unresolved verification or a missing attachment refuses consumption. These are inventory obligations for the complete theory, not new constructors or an assertion that every carrier is already publishable.
+**Amendment (Nested publication carriers)** · `amend:design:nested-publication-fields` The nested groups below make the schema skeleton auditable against the existing records carriers. They preserve variant tags, optional absence, order and exact values rather than serializing opaque debug text. Each primitive attachment carries the full evidence required by (`rule:design:backend-evidence`), not merely its numeric answer; unresolved verification or a missing attachment refuses consumption. Retained numerical faults carry owned operation text, kind and optional logical id; replay compares their projections without decoding backend static text or granting authority to a diagnostic. These are inventory obligations for the complete theory, not new constructors or an assertion that every carrier is already publishable.
 
 | Nested group | Fields |
 |---|---|

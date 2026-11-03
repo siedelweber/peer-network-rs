@@ -95,6 +95,28 @@ pub enum Outcome {
     DomainBoundary,
 }
 
+/// Owned projection of an evaluator fault, with no operation vocabulary or authority.
+/// (´def:numerics:primitive-records´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FaultAssertion {
+    pub kind: nrz_cas::FaultKind,
+    pub operation: String,
+    pub logical_id: Option<u64>,
+}
+
+impl From<nrz_cas::Fault> for FaultAssertion {
+    /// Preserve every fault field at its producer, including diagnostic identity.
+    /// (´def:numerics:primitive-records´)
+    /// Justified: Pure field projection inherits the enclosing numerical operation.
+    fn from(fault: nrz_cas::Fault) -> Self {
+        Self {
+            kind: fault.kind,
+            operation: fault.location.operation.into(),
+            logical_id: fault.location.logical_id,
+        }
+    }
+}
+
 /// Actual consumed Work and checked bounds; never padded to a declared limit.
 /// (´def:numerics:primitive-records´)
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -107,7 +129,7 @@ pub struct PrimitiveEvidence {
     pub evaluation_work: u64,
     pub precision_met: bool,
     pub completed_rounds: u32,
-    pub resource_fault: Option<nrz_cas::Fault>,
+    pub resource_fault: Option<FaultAssertion>,
 }
 
 /// One original primitive request, its declared policy and its untrusted evidence.
