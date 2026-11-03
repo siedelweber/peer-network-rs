@@ -313,7 +313,7 @@ fn current(state: &pn_epoch::compiler::CompiledState, bits: u32, policy_scale: F
     r
 }
 
-/// Claim: The finite changed-width history certifies its own contributing width without repricing earlier debits; recoinage retains reduced controller inputs and scales its charge, while fixed-ledger migration halves the independently recomputed pair width and applies a new controller evaluation, without asserting controller homogeneity or invariant admission gates.
+/// Claim: The finite changed-width history certifies its own contributing width without repricing earlier debits; recoinage retains reduced controller inputs and scales its charge, while fixed-ledger migration halves the independently recomputed pair width and applies a new controller evaluation, without asserting controller homogeneity or invariant admission gates. The failed inverse neighbour withholds the defining proposal.
 /// ´claim:admission:schedule-covariance-retains-transformed-inputs´
 /// ´test:integration:schedule-covariance´
 #[test]

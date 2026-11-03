@@ -2286,8 +2286,8 @@
       "path": "packages/epoch/tests/solve/schedules.rs",
       "claim": "EPOCH::claim:admission:schedule-covariance-retains-transformed-inputs",
       "before": "",
-      "after": "Claim: The finite changed-width history certifies its own contributing width without repricing earlier debits; recoinage retains reduced controller inputs and scales its charge, while fixed-ledger migration halves the independently recomputed pair width and applies a new controller evaluation, without asserting controller homogeneity or invariant admission gates.",
-      "review": "Read the finite sequence and transformed complete histories: the tests reconstruct widths and prices independently, replay each proposal and sequence, retain old vintages and refuse invalid lead, policy and changed evidence. These sites confer no final admission or deployment authentication."
+      "after": "Claim: The finite changed-width history certifies its own contributing width without repricing earlier debits; recoinage retains reduced controller inputs and scales its charge, while fixed-ledger migration halves the independently recomputed pair width and applies a new controller evaluation, without asserting controller homogeneity or invariant admission gates. The failed inverse neighbour withholds the defining proposal.",
+      "review": "Read the finite sequence and transformed complete histories: the tests reconstruct widths and prices independently, replay each proposal and sequence, retain old vintages and refuse invalid lead, policy and changed evidence. These sites confer no final admission or deployment authentication. Its floor_control call asserts that the preceding inverse precision withholds the defining proposal at InverseGain; this finite refusal confers no monotonic-accuracy law."
     },
     {
       "operation": "pn-epoch::solve::transport_oracle",
