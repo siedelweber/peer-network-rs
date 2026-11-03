@@ -233,6 +233,7 @@ class WalletBoundary(unittest.TestCase):
         self.assertTrue(wallet_crypto.check())
         import tempfile
         import hashlib
+        from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'vendor/example').mkdir(parents=True)
             file = root/'vendor/example/lib.rs'; file.write_bytes(b'public fixture')
@@ -242,6 +243,19 @@ class WalletBoundary(unittest.TestCase):
                             files={'lib.rs':hashlib.sha256(file.read_bytes()).hexdigest()})
             manifest = root/'contents.json'; manifest.write_text(json.dumps(evidence))
             self.assertIsNone(wallet_crypto.check_vendor_contents(root,row,reviewed))
+            from wallet_boundary import check_reviewed_archives
+            pin_rows=[dict(name='example', version='1.0.0', checksum='a'*64)]
+            with patch('wallet_boundary.vendor_packages', return_value=[dict(row,mode='patch')]):
+                self.assertIsNone(check_reviewed_archives(root,[dict(name='example',version='1.0.0')],pin_rows))
+                with self.assertRaisesRegex(ValueError,'missing from lock'):
+                    check_reviewed_archives(root,[],pin_rows)
+                with self.assertRaisesRegex(ValueError,'checksum differs'):
+                    check_reviewed_archives(root,[dict(name='example',version='1.0.0',checksum='b'*64)],pin_rows)
+                with self.assertRaisesRegex(ValueError,'duplicated'):
+                    check_reviewed_archives(root,[dict(name='example',version='1.0.0')],pin_rows*2)
+            with patch('wallet_boundary.vendor_packages', return_value=[]):
+                with self.assertRaisesRegex(ValueError,'checksum differs'):
+                    check_reviewed_archives(root,[dict(name='example',version='1.0.0')],pin_rows)
             for field in ['name','version','archive_checksum']:
                 manifest.write_text(json.dumps(dict(evidence, **{field:'changed'})))
                 with self.assertRaises(ValueError): wallet_crypto.check_vendor_contents(root,row,reviewed)

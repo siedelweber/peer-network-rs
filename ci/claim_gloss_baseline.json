@@ -322,7 +322,7 @@
     "documents::integration::text_output": "Claim: non-Markdown text outputs render from datasets and participate in fixed-point checking.",
     "documents::integration::tracked_census": "Claim: untracked Markdown is outside the census, while tracked Markdown under a nested target directory still needs a template.",
     "documents::integration::tracker_replacement_artifacts": "",
-    "documents::integration::vendor_census": "Claim: the census excludes vendor members declared by the workspace, not a fixed crate list.",
+    "documents::integration::vendor_census": "Claim: the census excludes explicitly declared vendor package roots, including excluded patches, and refuses an undeclared Markdown file or a non-normalized vendor path.",
     "documents::numbers::tests::rust_integer_boundaries": "Rust pin offsets retain their integer value with underscore groups across digit boundaries.",
     "documents::panic_contract::panic_proxy": "Claim: The shared production startup preserves the public panic payload in one JSON diagnostic, with empty stdout and status one.",
     "documents::public::report_carrier": "Claim: Public reports preserve every finding's kind and path, while empty optional collections stay absent.",

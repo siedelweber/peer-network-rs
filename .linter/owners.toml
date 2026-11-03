@@ -11,7 +11,7 @@ partitions = [
   { name = "host-package", owner = "HOST", pattern = '%s"packages/host/" *VCHAR' },
   { name = "verification-package", owner = "VERIFICATION", pattern = '%s"packages/verification/" *VCHAR' },
   { name = "records-package", owner = "RECORDS", pattern = '%s"packages/records/" *VCHAR' },
-  { name = "vendor", owner = "VENDOR", pattern = '( %s"vendor/regexml/" *VCHAR )' },
+  { name = "vendor", owner = "VENDOR", pattern = '( %s"vendor/elements/" *VCHAR / %s"vendor/regexml/" *VCHAR / %s"vendor/secp256k1/" *VCHAR / %s"vendor/secp256k1-sys/" *VCHAR / %s"vendor/secp256k1-zkp/" *VCHAR / %s"vendor/secp256k1-zkp-sys/" *VCHAR )' },
   { name = "root", owner = "ROOT", pattern = '( %s".cargo/config.toml" / %s"clippy.toml" / %s"meson.build" / %s".gitignore" / %s"Cargo.toml" / %s"Cargo.lock" / %s"rust-toolchain.toml" / %s"rustfmt.toml" / %s"LICENSE-CODE" / %s"LICENSE-DOCS" / %s"README.md" )' },
   { name = "interchange", owner = "INTERCHANGE", pattern = '%s"packages/interchange/" *VCHAR' },
   { name = "documents", owner = "DOCUMENTS", pattern = '%s"packages/documents/" *VCHAR' },

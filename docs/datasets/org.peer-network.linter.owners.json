@@ -245,7 +245,7 @@
         {
           "name": "vendor",
           "owner": "VENDOR",
-          "pattern": "( %s\"vendor/regexml/\" *VCHAR )"
+          "pattern": "( %s\"vendor/elements/\" *VCHAR / %s\"vendor/regexml/\" *VCHAR / %s\"vendor/secp256k1/\" *VCHAR / %s\"vendor/secp256k1-sys/\" *VCHAR / %s\"vendor/secp256k1-zkp/\" *VCHAR / %s\"vendor/secp256k1-zkp-sys/\" *VCHAR )"
         },
         {
           "name": "root",

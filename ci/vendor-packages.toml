@@ -3,3 +3,38 @@ name = "regexml"
 version = "0.2.2"
 path = "vendor/regexml"
 mode = "member"
+
+[[packages]]
+name = "elements"
+version = "0.27.0"
+path = "vendor/elements"
+mode = "patch"
+content_manifest = "ci/vendor-content/elements.json"
+
+[[packages]]
+name = "secp256k1"
+version = "0.29.1"
+path = "vendor/secp256k1"
+mode = "patch"
+content_manifest = "ci/vendor-content/secp256k1.json"
+
+[[packages]]
+name = "secp256k1-sys"
+version = "0.10.1"
+path = "vendor/secp256k1-sys"
+mode = "patch"
+content_manifest = "ci/vendor-content/secp256k1-sys.json"
+
+[[packages]]
+name = "secp256k1-zkp"
+version = "0.11.2"
+path = "vendor/secp256k1-zkp"
+mode = "patch"
+content_manifest = "ci/vendor-content/secp256k1-zkp.json"
+
+[[packages]]
+name = "secp256k1-zkp-sys"
+version = "0.10.1"
+path = "vendor/secp256k1-zkp-sys"
+mode = "patch"
+content_manifest = "ci/vendor-content/secp256k1-zkp-sys.json"

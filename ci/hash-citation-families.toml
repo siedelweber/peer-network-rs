@@ -880,3 +880,113 @@ commit = "716fdcb07e29177b94a55613803510eee4cbf9aa"
 patch_id = "49b0c9f7f1c49952240e58739eac9bc18b1f95d5"
 definition = "The public imported source is the measured tree; its stable patch identity is independently recomputed."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "vendor-elements-content"
+group = "unchanged public vendor archives"
+measures = "Published bytes and their per-file SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-content"
+source = "ci/vendor-content/elements.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["vendor/elements/**", "ci/vendor-content/elements.json"]
+
+[[rows]]
+family = "vendor-elements-archive"
+group = "unchanged public vendor archives"
+measures = "Reviewed registry archive SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-archive"
+source = "ci/vendor-content/elements.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.host.dependencies.json", "packages/wallet/NOTICE-DEPENDENCIES", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "vendor-secp256k1-content"
+group = "unchanged public vendor archives"
+measures = "Published bytes and their per-file SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-content"
+source = "ci/vendor-content/secp256k1.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["vendor/secp256k1/**", "ci/vendor-content/secp256k1.json"]
+
+[[rows]]
+family = "vendor-secp256k1-archive"
+group = "unchanged public vendor archives"
+measures = "Reviewed registry archive SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-archive"
+source = "ci/vendor-content/secp256k1.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.host.dependencies.json", "packages/wallet/NOTICE-DEPENDENCIES", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "vendor-secp256k1-sys-content"
+group = "unchanged public vendor archives"
+measures = "Published bytes and their per-file SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-content"
+source = "ci/vendor-content/secp256k1-sys.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["vendor/secp256k1-sys/**", "ci/vendor-content/secp256k1-sys.json"]
+
+[[rows]]
+family = "vendor-secp256k1-sys-archive"
+group = "unchanged public vendor archives"
+measures = "Reviewed registry archive SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-archive"
+source = "ci/vendor-content/secp256k1-sys.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.host.dependencies.json", "packages/wallet/NOTICE-DEPENDENCIES", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "vendor-secp256k1-zkp-content"
+group = "unchanged public vendor archives"
+measures = "Published bytes and their per-file SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-content"
+source = "ci/vendor-content/secp256k1-zkp.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["vendor/secp256k1-zkp/**", "ci/vendor-content/secp256k1-zkp.json"]
+
+[[rows]]
+family = "vendor-secp256k1-zkp-archive"
+group = "unchanged public vendor archives"
+measures = "Reviewed registry archive SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-archive"
+source = "ci/vendor-content/secp256k1-zkp.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.host.dependencies.json", "packages/wallet/NOTICE-DEPENDENCIES", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "vendor-secp256k1-zkp-sys-content"
+group = "unchanged public vendor archives"
+measures = "Published bytes and their per-file SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-content"
+source = "ci/vendor-content/secp256k1-zkp-sys.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["vendor/secp256k1-zkp-sys/**", "ci/vendor-content/secp256k1-zkp-sys.json"]
+
+[[rows]]
+family = "vendor-secp256k1-zkp-sys-archive"
+group = "unchanged public vendor archives"
+measures = "Reviewed registry archive SHA-256"
+producer = "Public registry archive"
+establishment = "recomputable"
+reader = "vendor-archive"
+source = "ci/vendor-content/secp256k1-zkp-sys.json"
+definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.host.dependencies.json", "packages/wallet/NOTICE-DEPENDENCIES", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]

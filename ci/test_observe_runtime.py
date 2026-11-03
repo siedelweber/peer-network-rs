@@ -675,6 +675,8 @@ class Processes(unittest.TestCase):
             (root/'docs/inputs').mkdir(parents=True)
             (root/'docs/templates/docs').mkdir(parents=True)
             (root/'Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+            (root/'ci').mkdir()
+            (root/'ci/vendor-packages.toml').write_text('schema=1\npackages=[]\n')
             (root/'docs/inputs/items.toml').write_text('namespace="org.peer-network.test.items"\nversion=[1,0,0]\n[[rows]]\nname="alpha"\ncount=2\n')
             (root/'docs/templates/docs/result.md.j2').write_text("{{ row('org.peer-network.test.items', name='alpha').count | number }}\n")
             for command in (['git','init','--quiet'],[str(target/'documents'),'generate'],[str(target/'documents'),'write'],['git','add','-A']):

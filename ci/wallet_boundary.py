@@ -5,7 +5,8 @@ import json
 import subprocess
 import tomllib
 import itertools
-from discipline import item_end
+from discipline import item_end, vendor_packages
+from wallet_crypto import check_vendor_contents
 from dependency_identity import metadata, spellings
 from source_sites import rust_mask
 
@@ -89,6 +90,25 @@ def check_production_tree(owner, tree, allowed, host_wallet=False):
         raise ValueError('development dependency reached production graph: '+owner+' '+repr(sorted(unknown)))
 
 
+def check_reviewed_archives(root, lock, rows):
+    """Registry checksums or fully content-bound path patches satisfy each reviewed row."""
+    declared = {(row['name'], row['version']): row for row in vendor_packages(root) if row['mode'] == 'patch'}
+    locked = {(p['name'], p['version']): p for p in lock}
+    reviewed = {(row['name'], row['version']): row['checksum'] for row in rows}
+    if len(reviewed) != len(rows):
+        raise ValueError('wallet archive review is duplicated')
+    for key, checksum in reviewed.items():
+        package = locked.get(key)
+        if package is None:
+            raise ValueError('wallet reviewed package missing from lock')
+        if package.get('checksum') == checksum:
+            continue
+        if not package.get('source') and not package.get('checksum') and key in declared:
+            check_vendor_contents(root, declared[key], reviewed)
+        else:
+            raise ValueError('wallet dependency checksum differs from reviewed pin')
+
+
 def check_features(root=Path('.')):
     profile = tomllib.loads((root/'docs/inputs/devnet-profile.toml').read_text())['rows'][0]
     output = subprocess.check_output(['cargo', 'metadata', '--offline', '--locked', '--format-version', '1',
@@ -117,10 +137,7 @@ def check_features(root=Path('.')):
     if 'elements 0.27.0' not in resolved or not resolved <= set(evaluated['packages']):
         raise ValueError('wallet decoder build exceeds evaluated packages: '+repr(sorted(resolved - set(evaluated['packages']))))
     lock = tomllib.loads((root/'Cargo.lock').read_text())['package']
-    locked = {(p['name'],p['version']): p.get('checksum') for p in lock}
-    for row in tomllib.loads((root/'docs/inputs/wallet-dependencies.toml').read_text())['rows']:
-        if locked.get((row['name'],row['version'])) != row['checksum']:
-            raise ValueError('wallet dependency checksum differs from reviewed pin')
+    check_reviewed_archives(root, lock, tomllib.loads((root/'docs/inputs/wallet-dependencies.toml').read_text())['rows'])
     check_build_scripts(tomllib.loads((root/'docs/inputs/wallet-dependencies.toml').read_text())['rows'], packages.values())
     for row in profile['wallet_unified_features']:
         matches = [p for p in packages.values() if (p['name'], p['version']) == (row['name'], row['version'])]

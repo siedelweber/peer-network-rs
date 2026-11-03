@@ -24,6 +24,8 @@ fn write_dataset(path: &Path, data: &serde_json::Value) -> Result<()> {
 fn fixture() -> Result<tempfile::TempDir> {
     let directory = tempfile::tempdir()?;
     fs::write(directory.path().join("Cargo.toml"), "[workspace]\nmembers = []\n")?;
+    fs::create_dir_all(directory.path().join("ci"))?;
+    fs::write(directory.path().join("ci/vendor-packages.toml"), "packages = []\n")?;
     git(directory.path(), &["init", "--quiet"])?;
     fs::create_dir_all(directory.path().join("docs/inputs"))?;
     fs::create_dir_all(directory.path().join("docs/templates/docs"))?;
@@ -714,6 +716,10 @@ fn protected_outputs() -> Result<()> {
         let directory = fixture()?;
         let root = directory.path();
         fs::write(root.join("Cargo.toml"), "[workspace]\nmembers = ['vendor/new-member']\n")?;
+        fs::write(
+            root.join("ci/vendor-packages.toml"),
+            "[[packages]]\npath = 'vendor/new-member'\n",
+        )?;
         let template = root.join("docs/templates").join(format!("{document}.j2"));
         fs::create_dir_all(template.parent().ok_or("template parent")?)?;
         fs::write(template, "overwrite\n")?;
@@ -1204,7 +1210,7 @@ fn tracked_census() -> Result<()> {
     Ok(())
 }
 
-/// Claim: the census excludes vendor members declared by the workspace, not a fixed crate list.
+/// Claim: the census excludes explicitly declared vendor package roots, including excluded patches, and refuses an undeclared Markdown file or a non-normalized vendor path.
 /// ´claim:render:vendor-census´
 /// ´test:integration:vendor-census´
 #[test]
@@ -1213,12 +1219,27 @@ fn vendor_census() -> Result<()> {
     let root = directory.path();
     fs::create_dir_all(root.join("vendor/new-member"))?;
     fs::write(root.join("vendor/new-member/README.md"), "third-party\n")?;
-    fs::write(root.join("Cargo.toml"), "[workspace]\nmembers = ['vendor/new-member']\n")?;
+    fs::write(
+        root.join("Cargo.toml"),
+        "[workspace]\nmembers = []\nexclude = ['vendor/new-member']\n",
+    )?;
+    fs::write(
+        root.join("ci/vendor-packages.toml"),
+        "[[packages]]\npath = 'vendor/new-member'\nmode = 'patch'\n",
+    )?;
     git(root, &["add", "-A"])?;
     assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
-    fs::write(root.join("Cargo.toml"), "[workspace]\nmembers = []\n")?;
-    let error = documents::run(root, Operation::Check).expect_err("no longer a vendor member");
+    fs::write(root.join("Cargo.toml"), "[workspace]\nmembers = ['vendor/new-member']\n")?;
+    assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
+    fs::write(root.join("ci/vendor-packages.toml"), "packages = []\n")?;
+    let error = documents::run(root, Operation::Check).expect_err("no longer a declared vendor");
     assert!(error.to_string().contains("vendor/new-member/README.md"));
+    fs::write(
+        root.join("ci/vendor-packages.toml"),
+        "[[packages]]\npath = 'vendor/../docs'\n",
+    )?;
+    let error = documents::run(root, Operation::Check).expect_err("non-normalized vendor path");
+    assert!(error.to_string().contains("explicit and normalized"));
     Ok(())
 }
 

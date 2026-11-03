@@ -1,0 +1,25 @@
+{
+  "name": "secp256k1-zkp",
+  "version": "0.11.2",
+  "archive_checksum": "403f6ab6ef5189ded7d11cb384a96a9f871001e50b391a8fcbb310c9ebc2099b",
+  "files": {
+    "CHANGELOG.md": "f844ff3e4eb76c8641c68d440fe1efd17e856a3a6d28cc25c1426709362159f8",
+    "Cargo.lock": "514637943ee2a2c889da29e554703a217fb44d88c30aad538f589532d86ebc7d",
+    "Cargo.toml": "b9f9ccb14a0409f04a04d6fa154958581dfb67c73a3cc72c5937c8ea7b240d64",
+    "Cargo.toml.orig": "5895735ea726cb9af60d6bdd3445f199ad386532b69d24667034ce442824ded1",
+    "LICENSE": "7179683e8000e6bdc9bbc60d85edf0a4ac8e76f951857f54fcb775d5886f1309",
+    "Makefile": "8936e0c98819fb4120b8cf342161195de3e8334aa793a1a0fa10e3c82cfc0d23",
+    "README.md": "5a66f2da1b7f62f9f722f520ed6fb327b1addb047d8b443cfba36475dd315785",
+    "contrib/test.sh": "5c4c6a5ef7ba62cd710f50770a3702f0c4c56b8cf8fad08cd7259a4f07e4d641",
+    "src/lib.rs": "2e32c5fe29ade0800f8fbba62206a7a4441237503e82f0ee48394326379d69c0",
+    "src/serde_util.rs": "ccc300c33afd593b9389c072fd42a68505fb86f9a066568cf5c2d5d92d0c4458",
+    "src/zkp/ecdsa_adaptor.rs": "8fed5e6aa2732bda9e1cf1a8e40a24e7d229835db1f9aec7c30116d3dd2f0542",
+    "src/zkp/generator.rs": "a3044067ac8819be6567b60553bb9cb9d92f325acaa2e0883bb86411412e1561",
+    "src/zkp/mod.rs": "83be02c95b0f2fbc3a80e2359c9c69d44539e676c4973672d2304270215a2906",
+    "src/zkp/pedersen.rs": "166bcb4e7d9040dad3a7b1795a9e62c0ef4233c487b087afd462cb5c748da88e",
+    "src/zkp/rangeproof.rs": "96e8f311c71d72e92483cf216a1a8668f1db2658848e2af7717ba06f5ad2e8d6",
+    "src/zkp/surjection_proof.rs": "927cf9dc5690a86ce8aea78f331112f1e4060da660690b909d6d141cfbcc7b1c",
+    "src/zkp/tag.rs": "326c7eb575c5576c8b0f3a9eea7b2b61efe4ad5fe4f2710073cf24f7e68ed368",
+    "src/zkp/whitelist.rs": "0d90ddd7e379c9b2bd4762f527e07d555623e563b2df4906bfe0f8a0bc689b47"
+  }
+}

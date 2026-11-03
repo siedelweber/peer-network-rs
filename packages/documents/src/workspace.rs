@@ -13,23 +13,26 @@ use crate::{Result, read};
     ret
 )]
 pub fn vendors(root: &Path) -> Result<Vec<PathBuf>> {
-    let manifest_path = root.join("Cargo.toml");
+    let manifest_path = root.join("ci/vendor-packages.toml");
     let manifest: toml::Value =
         toml::from_str(&read(&manifest_path)?).map_err(|error| format!("{}: {error}", manifest_path.display()))?;
-    let members = manifest
-        .get("workspace")
-        .and_then(|table| table.get("members"))
+    let packages = manifest
+        .get("packages")
         .and_then(toml::Value::as_array)
-        .ok_or("Cargo.toml: workspace.members must be explicit member paths")?;
+        .ok_or("ci/vendor-packages.toml: packages must be an explicit list")?;
     let mut vendors = Vec::new();
-    for member in members {
-        let name = member.as_str().ok_or("Cargo.toml: member path must be a string")?;
-        if name.split('/').any(|part| part.is_empty() || part == "." || part == "..") || name.contains(['*', '?', '[', '\\']) {
-            return Err(format!("Cargo.toml: member path must be explicit and normalized: {name}").into());
+    for package in packages {
+        let name = package
+            .get("path")
+            .and_then(toml::Value::as_str)
+            .ok_or("ci/vendor-packages.toml: package path must be a string")?;
+        if !name.starts_with("vendor/")
+            || name.split('/').any(|part| part.is_empty() || part == "." || part == "..")
+            || name.contains(['*', '?', '[', '\\'])
+        {
+            return Err(format!("ci/vendor-packages.toml: package path must be explicit and normalized: {name}").into());
         }
-        if name.starts_with("vendor/") {
-            vendors.push(PathBuf::from(name));
-        }
+        vendors.push(PathBuf::from(name));
     }
     Ok(vendors)
 }

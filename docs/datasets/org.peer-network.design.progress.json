@@ -38857,10 +38857,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 523",
+          "exact": "1 525",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 523",
+          "num": "1 525",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38875,7 +38875,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1523
+      "total": 1525
     },
     {
       "category": "record-coverage",

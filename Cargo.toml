@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-exclude = ["packages/interchange/fuzz", "packages/wallet/fuzz"]
+exclude = ["packages/interchange/fuzz", "packages/wallet/fuzz", "vendor/elements", "vendor/secp256k1", "vendor/secp256k1-sys", "vendor/secp256k1-zkp", "vendor/secp256k1-zkp-sys"]
 members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records", "packages/verification", "packages/host", "packages/wallet", "packages/graph", "packages/epoch", "packages/act-profile"]
 
 [workspace.package]
@@ -101,3 +101,10 @@ opt-level = 1
 debug = 0
 debug-assertions = true
 overflow-checks = true
+
+[patch.crates-io]
+elements = { path = "vendor/elements" }
+secp256k1 = { path = "vendor/secp256k1" }
+secp256k1-sys = { path = "vendor/secp256k1-sys" }
+secp256k1-zkp = { path = "vendor/secp256k1-zkp" }
+secp256k1-zkp-sys = { path = "vendor/secp256k1-zkp-sys" }
