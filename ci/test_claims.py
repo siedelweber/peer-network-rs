@@ -48,6 +48,7 @@ class Evidence(unittest.TestCase):
             ('ci/claim_review.json', 'sites', review), ('ci/claim_gloss_baseline.json', 'glosses', baseline))}
         self.assertEqual(check_register(formatted['ci/claim_review.json'], 'sites'), review)
         witnessed = deepcopy(review)
+        witnessed['sites'][0]['witness_identity'] = dict(recipe='same-file-case-closure/v1', function='alpha', digest='a'*64)
         witnessed['sites'][0]['paper_witnesses'] = {'def:testing:fixture': 'The independent expected output changes when the tested rule fails.'}
         canonical = register_form(json.dumps(witnessed), 'sites')[2]
         self.assertEqual(check_register(canonical, 'sites'), witnessed)
@@ -645,6 +646,69 @@ class Evidence(unittest.TestCase):
         for key,value in (('operation','missing'),('path','other.rs'),('claim','ROOT::claim:testing:other'),('after','Old wording.')):
             with self.assertRaises(StructuralError): reviewed_sites([site],dict(schema=1,sites=[dict(row,**{key:value})]))
         with self.assertRaises(StructuralError): reviewed_sites([site],dict(schema=1,sites=[row,row]))
+
+        from claims import REVIEW_RECIPE, tracker_witnesses, tracker_rows, witness_currency
+        from devperf import case_identity
+        from hash_citations import establish
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = 'def probe():\n    """Unchanged claim text."""\n    assert 1 == 1\n'
+            path = root/'case.py'
+            path.write_text(source)
+            for args in (['init', '-q'], ['add', '.'], ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+                         '-c', 'commit.gpgsign=false', 'commit', '-qm', 'reviewed assertions']):
+                subprocess.run(['git', '-C', str(root), *args], check=True, capture_output=True)
+            public = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+            label = 'def:testing:fixture'
+            claim = 'ROOT::claim:testing:fixture'
+            reviewed = dict(operation='probe', path='case.py', claim=claim, before='', after='Unchanged claim text.', review='Read assertions.',
+                            paper_witnesses={label: 'The equality assertion detects the wrong result.'},
+                            witness_identity=dict(recipe=REVIEW_RECIPE, function='probe', digest=case_identity(source, 'case.py', 'probe')))
+            register = root/'ci/claim_review.json'
+            register.parent.mkdir()
+            inventory = root/'docs/inputs/design-inventory.toml'
+            inventory.parent.mkdir(parents=True)
+            inventory.write_text('[[rows]]\nlabel = "'+label+'"\n')
+            sites = [dict(operation='probe', path='case.py', claim=claim, gloss=reviewed['after'])]
+            def save():
+                register.write_text(register_form(json.dumps(dict(schema=1, sites=[reviewed])), 'sites')[2])
+            family = dict(reader='assertion-reviews', establishment='recomputable', source='ci/claim_review.json', paths=['ci/claim_review.json'])
+            save()
+            check = establish(root, family)
+            digest = reviewed['witness_identity']['digest']
+            self.assertTrue(check(digest, '        "digest": "'+digest+'"'))
+            self.assertFalse(check(digest, '        "review": "'+digest+'"'))
+            self.assertTrue(witness_currency(root, reviewed))
+            self.assertTrue(tracker_witnesses(root, sites)[claim][label])
+            path.write_text(source.replace('assert 1 == 1', 'assert 1 == 2'))
+            with self.assertRaisesRegex(StructuralError, 'unrecomputable'):
+                establish(root, family)
+            reviewed['witness_identity']['public_commit'] = public
+            save()
+            self.assertFalse(witness_currency(root, reviewed))
+            self.assertTrue(establish(root, family)(digest, '        "digest": "'+digest+'"'))
+            witnesses = tracker_witnesses(root, sites)
+            self.assertIsNone(witnesses[claim][label])
+            obligation = 'ROOT::dec:testing:fixture'
+            data = dict(claims=[dict(name=claim, status='passed')], obligations=[dict(name=obligation,
+                        claims=[claim], status='scoped-passed', witnessed_labels=[label])])
+            records = {obligation: dict(text='``'+label+'``', citations=set())}
+            self.assertEqual(tracker_rows([dict(label=label, crate='fixture', kind='def')], records, data, [], witnesses=witnesses)[0]['status'], 'designed')
+            path.write_text(source)
+            self.assertEqual(tracker_rows([dict(label=label, crate='fixture', kind='def')], records, data, [],
+                             witnesses=tracker_witnesses(root, sites))[0]['status'], 'realized')
+            for key, value in (('recipe', 'unknown'), ('function', 'other'), ('digest', 'bad'), ('extra', 'ignored')):
+                invalid = deepcopy(reviewed)
+                invalid['witness_identity'][key] = value
+                with self.assertRaises(StructuralError):
+                    witness_currency(root, invalid)
+            invalid = deepcopy(reviewed)
+            invalid['witness_identity']['digest'] = 'b'*64
+            with self.assertRaisesRegex(StructuralError, 'unrecomputable'):
+                witness_currency(root, invalid)
+            with self.assertRaisesRegex(ValueError, 'exact register path'):
+                establish(root, family | dict(paths=['other.json']))
 
     def test_python_exhibits(self):
         """Evidence requires checked citations for both carriers; an exhibited known or unknown claim cannot establish support, while planned names outside evidence remain harmless.

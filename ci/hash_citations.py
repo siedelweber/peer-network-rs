@@ -236,6 +236,22 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == 'assertion-reviews' and standing == 'recomputable':
+        from claims import read_register, witness_currency
+        if rule.get('source') != 'ci/claim_review.json' or rule.get('paths') != ['ci/claim_review.json']:
+            raise ValueError('hash citations: assertion reviews require their exact register path')
+        values = {'digest': set(), 'public_commit': set()}
+        for row in read_register(root/rule['source'], 'sites')['sites']:
+            if not row.get('paper_witnesses'): continue
+            witness_currency(root, row)
+            binding = row['witness_identity']
+            values['digest'].add(binding['digest'])
+            if 'public_commit' in binding:
+                commit = binding['public_commit']
+                establish(root, dict(reader='ancestor-commit', establishment='resolvable', commit=commit))
+                values['public_commit'].add(commit)
+        return lambda value, line: any(value in allowed and re.fullmatch(
+            r'\s*"'+field+r'": "'+re.escape(value)+r'",?\s*', line) for field, allowed in values.items())
     if kind == "act-profile-vector" and standing == "recomputable":
         values = act_profile_vectors(relative_file(root, rule["source"]))[rule["vector"]]
         return lambda value, _line: value in values

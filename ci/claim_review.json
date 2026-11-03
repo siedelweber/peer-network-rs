@@ -1754,6 +1754,11 @@
       "review": "Literal coordinate, recipient, ledger, sparse base and support tables cover the nineteen-family census. Separate cancellation, irrational and successful settlement rows exercise joined outputs, and product-budget and insolvency failures return no partial state.",
       "paper_witnesses": {
         "prop:deployment:allocation-input-completeness": "Independent family_table, base_table and ledger_table assertions compare complete cells, recipients, base, emission and support against literal expectations; input reversal must retain the compiled view. An omitted projection or different deterministic compilation fails those comparisons. The declared verifier and finite family fixtures delimit this witness."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "compiler_tables",
+        "digest": "8992e8ae079331af50fe0073bbb67d88181fa59197e247e47feba0521988326e"
       }
     },
     {
@@ -1786,7 +1791,15 @@
       "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
       "before": "",
       "after": "Claim: Replaying one recognized marker prefix derives exact cumulative and first-accepted burn by destruction identity, including aliases, delayed acceptance and empty-act epochs; final balances subtract each complete act's writing-price debit once, retain prior vintages and refuse own-balance insolvency without returning a partial ledger.",
-      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling."
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling.",
+      "paper_witnesses": {
+        "post:epoch:act-debit": "Exact final balance and complete-act count assertions detect a missing, repeated or wrong writing-price debit; empty histories retain burn without an act debit. This witnesses the accepted-act ledger rule in the finite recognized-prefix fixture, not deployment finality."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "ledger_derivation",
+        "digest": "9d4cc5962d8e52897585a5f9c80818de3316ad5b0c7f4436e6c49bd8a27cebe5"
+      }
     },
     {
       "operation": "pn-epoch::ledger::ledger_vintages",
@@ -1794,7 +1807,16 @@
       "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
       "before": "",
       "after": "Claim: A later epoch charges its new price while the earlier act retains its original exact debit.",
-      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again.",
+      "paper_witnesses": {
+        "def:epoch:safety-threshold": "The exact charged values are asserted against the prices published for the two writing boundaries, independently of the debit under test; an implementation charging a different value fails. This witnesses the definition that the published threshold is the charged value in the declared rational fixture, not controller certification or deployment calibration. Wider consumers are not an additional prerequisite of the could-fail witnessing criterion.",
+        "post:epoch:act-debit": "The earlier debit must remain byte-for-byte equal after the later epoch; independent exact expectations bind the first and later acts to their respective published writing prices. Repricing the earlier act or charging another value fails."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "ledger_vintages",
+        "digest": "6962b0573e85e2f9508b33320c70a014f9ba4c890a374c3f92013cdc80010521"
+      }
     },
     {
       "operation": "pn-epoch::ledger::whole_act_ledger",
@@ -1802,7 +1824,15 @@
       "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
       "before": "",
       "after": "Claim: Registration and a complete paired Send give two identities, three projections, two debits and two counts.",
-      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again.",
+      "paper_witnesses": {
+        "post:epoch:act-debit": "The complete Registration and paired Send have three projections but exactly two debits and two author counts. Counting a hyperedge projection as another act fails these assertions."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "whole_act_ledger",
+        "digest": "41513c22ba1e0aead9ef398d82eb38b275180f70a7185833c15df78b645bd55e"
+      }
     },
     {
       "operation": "pn-epoch::package::candidate_boundaries",
@@ -1837,6 +1867,11 @@
       "review": "The released Invitation fixture and an independent rational table assert each literal urgency/formality sum at every boundary, including zero cancellation and positive re-establishment. Independent authors, member identities, outward recipients, De-invite self-retention and both compliant co-epoch placements are checked; the nonsquare coefficient remains typed evidence.",
       "paper_witnesses": {
         "ver:membership:invitation-netting": "The released fixture and separate rational tables assert cancellation to zero and home, restored positive vouch, independent authors, singleton De-invite and equal outputs for both compliant placements; a netting, recipient or placement defect fails the comparisons."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "invitation_netting",
+        "digest": "7cb97a37cb67f7e68dd59466cb608a23a046cfb3050e7204a72d7df3f9e55703"
       }
     },
     {
@@ -2224,6 +2259,11 @@
       "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal.",
       "paper_witnesses": {
         "ex:epoch:split-showcase": "receiving(true) checks the published multiplicities and pair partitions, certified retained gain against the receiving formula, and identical independently compiled and replayed annotation runs. A changed showcase comparison or annotation-dependent result fails. The witness retains its deterministic receiving-family premises."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "receiving_showcase",
+        "digest": "675654a41edb842f3b6acc433f11d7ac050e8c29243501342922c6a72d434e78"
       }
     },
     {
@@ -2235,6 +2275,11 @@
       "review": "Both public histories are reconstructed and independently compiled under each purpose annotation. Each identical public history is solved once and independently cross-replayed under the other compilation, with record equality asserted. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. This site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal.",
       "paper_witnesses": {
         "ex:epoch:split-small": "receiving checks exact published pairs and certified retained standings, complete inputs, role-completion predicates and identical independently compiled and replayed annotation runs; completion_probes rejects unsupported purpose inferences. A changed published small comparison or annotation-dependent result fails. The witness covers this deterministic receiving example, not arbitrary randomized consumers."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "receiving_small",
+        "digest": "4209bc3d5aad6d5e46142fa671da6371fe883b66a5a0081fe44a47260a40ec08"
       }
     },
     {
@@ -4399,6 +4444,11 @@
       "paper_witnesses": {
         "rem:graph:settlement-party-mismatch": "The independent clause enumerator asserts that wrong written parties fail authorization alone while incidence, exact binding, ownership and record consumption retain their required values; conflating written endpoints with the record-derived buyer or seller fails these checks.",
         "ver:settlement:wrong-party": "The released wrong-party fixture and independent enumerator check each recognition clause, unchanged ownership, no consumed records and no host fault. Recognizing the wrong party or changing the wrong clause fails these assertions."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "recognition_partners",
+        "digest": "c1f52ebaaeb99e4ba71aabf9d772bc99ce8cbc6c128b9073818198f232778df2"
       }
     },
     {

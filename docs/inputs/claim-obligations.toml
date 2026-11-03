@@ -266,7 +266,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::dec:design:ledger-vintages"
-witnessed_labels = []
+witnessed_labels = ["def:epoch:safety-threshold", "post:epoch:act-debit"]
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger", "RECORDS::claim:ledger:later-prices-preserve-charged-vintages", "EPOCH::claim:compiler:shared-boundary-ledgers-retain-vintages"]

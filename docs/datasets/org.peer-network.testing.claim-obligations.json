@@ -314,7 +314,10 @@
       "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
       "status": "scoped-supported",
-      "witnessed_labels": []
+      "witnessed_labels": [
+        "def:epoch:safety-threshold",
+        "post:epoch:act-debit"
+      ]
     },
     {
       "claims": [],

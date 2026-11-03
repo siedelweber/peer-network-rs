@@ -7,11 +7,12 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
 import time
 import tomllib
 
-from devperf import StructuralError
+from devperf import StructuralError, case_identity
 from harness import CONFIGURATION, load as load_registry, source_id
 from source_sites import census, claim_mints, OWNERS
 
@@ -19,6 +20,51 @@ LABEL = r'[a-z][a-z0-9-]*:[a-z0-9-]+:[a-z0-9.-]+'
 OBLIGATION_KINDS = {'req', 'dec', 'verif', 'plan', 'gate'}
 REGISTERS = {'ci/claim_review.json': 'sites', 'ci/claim_gloss_baseline.json': 'glosses'}
 REVIEW_FIELDS = ('operation', 'path', 'claim', 'before', 'after', 'review')
+REVIEW_RECIPE = 'same-file-case-closure/v1'
+
+
+def witness_binding(row):
+    """Exhaustively validate the complete reviewed case identity before use."""
+    binding = row.get('witness_identity')
+    if not isinstance(binding, dict) or set(binding) not in (
+            {'recipe', 'function', 'digest'}, {'recipe', 'function', 'digest', 'public_commit'}):
+        raise StructuralError('paper witness requires a complete closure binding')
+    recipe, function, digest = (binding[key] for key in ('recipe', 'function', 'digest'))
+    public_commit = binding.get('public_commit')
+    path = row['path']
+    expected = row['operation'].rsplit('::', 1)[-1].rsplit('.', 1)[-1]
+    if (recipe != REVIEW_RECIPE or not isinstance(function, str) or function != expected
+            or not re.fullmatch(r'[A-Za-z_]\w*', function)
+            or not isinstance(digest, str) or not re.fullmatch(r'[0-9a-f]{64}', digest)
+            or not path.endswith(('.py', '.rs')) or Path(path).is_absolute()
+            or any(part in ('', '.', '..') for part in path.split('/'))
+            or ('public_commit' in binding and (not isinstance(public_commit, str)
+                or not re.fullmatch(r'[0-9a-f]{40}', public_commit)))):
+        raise StructuralError('malformed paper witness closure binding: '+row['operation'])
+    return recipe, function, digest, public_commit
+
+
+def witness_currency(root, row):
+    """Validate recomputability separately from current assertion-review currency."""
+    _, function, digest, public_commit = witness_binding(row)
+    root = Path(root)
+    try:
+        current = case_identity((root/row['path']).read_text(), row['path'], function)
+    except (OSError, StructuralError):
+        current = None
+    if current == digest:
+        return True
+    if public_commit is not None:
+        ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', public_commit, 'HEAD'],
+                                  cwd=root, capture_output=True)
+        source = subprocess.run(['git', 'show', public_commit+':'+row['path']], cwd=root, capture_output=True, text=True)
+        if ancestor.returncode == 0 and source.returncode == 0:
+            try:
+                if case_identity(source.stdout, row['path'], function) == digest:
+                    return False
+            except StructuralError:
+                pass
+    raise StructuralError('paper witness closure is unrecomputable: '+row['operation'])
 
 
 def unique_members(pairs):
@@ -42,7 +88,7 @@ def register_form(text, field):
         rows = []
         seen = set()
         for index, row in enumerate(data[field]):
-            if not isinstance(row, dict) or set(row) - {'paper_witnesses'} != set(REVIEW_FIELDS) or any(not isinstance(row[key], str) for key in REVIEW_FIELDS):
+            if not isinstance(row, dict) or set(row) - {'paper_witnesses', 'witness_identity'} != set(REVIEW_FIELDS) or any(not isinstance(row[key], str) for key in REVIEW_FIELDS):
                 raise StructuralError('malformed register entry: '+str(index))
             witnesses = row.get('paper_witnesses', {})
             if not isinstance(witnesses, dict) or any(not isinstance(label, str) or not isinstance(reason, str) or not reason.strip()
@@ -54,7 +100,12 @@ def register_form(text, field):
             seen.add(name)
             rows.append({key: row[key] for key in REVIEW_FIELDS})
             if 'paper_witnesses' in row:
+                witness_binding(row)
                 rows[-1]['paper_witnesses'] = dict(sorted(witnesses.items()))
+                rows[-1]['witness_identity'] = {key: row['witness_identity'][key] for key in
+                                              ('recipe', 'function', 'digest', 'public_commit') if key in row['witness_identity']}
+            elif 'witness_identity' in row:
+                raise StructuralError('closure binding without a paper witness review')
         ordered = sorted(rows, key=lambda row: (row['operation'], row['path'], row['claim']))
     else:
         if not isinstance(data[field], dict) or any(not isinstance(value, str) for value in data[field].values()):
@@ -477,7 +528,9 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), 
         designs = [name for name in names if name not in attention]
         routes = [dict(kind=kind, record=name, scope=scope, **({'claim': claim} if claim else {}))
                   for name in designs for kind, claim, scope in sorted(supported[name] | precise[item['label'], name])
-                  if kind != 'obligation' or item['label'] in obligations[scope].get('witnessed_labels', [])]
+                  if (kind != 'obligation' or (item['label'] in obligations[scope].get('witnessed_labels', [])
+                      and any(witnesses.get(member, {}).get(item['label']) for member in obligations[scope]['claims'])))
+                  and not (claim and item['label'] in witnesses.get(claim, {}) and not witnesses[claim][item['label']])]
         record_routes = [dict(kind='record', record=name, scope=scope)
                          for name in names for scope in sorted(granular[item['label'], name])]
         held = [dict(record=name, hold=hold) for name in names for hold in sorted(holds[name])]
@@ -544,10 +597,14 @@ def tracker_witnesses(root, sites=None):
     labels = {row['label'] for row in tomllib.loads((root/'docs/inputs/design-inventory.toml').read_text())['rows']}
     witnesses = defaultdict(dict)
     for row in reviews:
+        current = witness_currency(root, row) if row.get('paper_witnesses') else True
         for label, reason in row.get('paper_witnesses', {}).items():
             if label not in labels:
                 raise StructuralError('paper witness review names an unknown label: '+label)
-            witnesses[row['claim']][label] = reason
+            # A stale assessment still proves that a declaration was reviewed,
+            # but supplies no execution route. Another current case may do so.
+            if current or label not in witnesses[row['claim']]:
+                witnesses[row['claim']][label] = reason if current else None
     return witnesses
 
 

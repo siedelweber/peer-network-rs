@@ -2,6 +2,17 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "assertion-review-closures"
+group = "reviewed paper witnesses"
+measures = "The reviewed case's same-file closure under the calibration identity recipe"
+producer = "ci/devperf.py case_identity, validated by ci/claims.py witness_currency"
+establishment = "recomputable"
+reader = "assertion-reviews"
+source = "ci/claim_review.json"
+definition = "Only digest and public_commit fields in validated review bindings qualify. A closure must recompute from the carrying tree or its named public ancestor. Current equality supports the reviewed route; historical equality only accounts for a stale review. Unknown recipes, fields, paths and unrecomputable identities refuse."
+paths = ["ci/claim_review.json"]
+
+[[rows]]
 family = "number-registry-values"
 group = "first-party numeric declarations"
 measures = "Exact numeric values, not content identities"
