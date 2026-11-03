@@ -157,6 +157,7 @@ fn transport_refusals_retain_valid_controls() {
 /// ´test:integration:transport-limits-precede-reservations´
 #[test]
 fn transport_limits_precede_reservations() {
+    geometric_reservations();
     let bytes = [0x41, 0];
     let mut control = TransportUsage::default();
     assert!(Value::from_transport_bytes(&bytes, LIMITS, &mut control).is_ok());
@@ -279,4 +280,70 @@ fn strict_entry_selects_strict_policy() {
         Value::from_canonical_bytes(&[0, 1]),
         Err(DecodeError::TrailingBytes { offset: 1, count: 1 })
     ));
+}
+
+// Additional controls for transport_limits_precede_reservations.
+fn geometric_reservations() {
+    // Cumulative replacement buffers form a geometric sum, not the sum of
+    // every prefix. Include the frame reservation separately from the values.
+    let element_bytes = std::mem::size_of::<Value>();
+    let mut singleton = TransportUsage::default();
+    assert!(Value::from_transport_bytes(&[0x9f, 0, 0xff], LIMITS, &mut singleton).is_ok());
+    let frame_bytes = singleton.allocation_bytes - element_bytes;
+    for count in [1usize, 2, 4, 8, 16, 32] {
+        let mut input = vec![0x9f];
+        input.extend(std::iter::repeat_n(0, count));
+        input.push(0xff);
+        let allocation_bytes = frame_bytes + (2 * count - 1) * element_bytes;
+        let limits = TransportLimits {
+            allocation_bytes,
+            ..LIMITS
+        };
+        let mut usage = TransportUsage::default();
+        assert!(Value::from_transport_bytes(&input, limits, &mut usage).is_ok());
+        assert_eq!(usage.allocation_bytes, allocation_bytes);
+        assert_eq!(usage.allocation_calls, 2 + count.ilog2() as usize);
+        let mut refused = TransportUsage::default();
+        assert!(matches!(
+            Value::from_transport_bytes(
+                &input,
+                TransportLimits {
+                    allocation_bytes: allocation_bytes - 1,
+                    ..limits
+                },
+                &mut refused
+            ),
+            Err(DecodeError::TransportLimit {
+                resource: "allocation bytes",
+                ..
+            })
+        ));
+        assert_eq!(refused.allocation_calls + 1, usage.allocation_calls);
+        assert_eq!(refused.allocation_bytes, allocation_bytes - count * element_bytes);
+    }
+    // The last growth of a definite three-element array stops at three.
+    let mut definite = TransportUsage::default();
+    assert!(Value::from_transport_bytes(&[0x83, 0, 0, 0], LIMITS, &mut definite).is_ok());
+    assert_eq!(definite.allocation_bytes, frame_bytes + 6 * element_bytes);
+    // The same growth boundary serves joined chunks and the active frame stack.
+    let mut chunks = vec![0x5f];
+    for _ in 0..16 {
+        chunks.extend([0x41, 0]);
+    }
+    chunks.push(0xff);
+    let mut joined = TransportUsage::default();
+    assert!(Value::from_transport_bytes(&chunks, LIMITS, &mut joined).is_ok());
+    assert_eq!((joined.allocation_calls, joined.allocation_bytes), (5, 31));
+    let mut nested = vec![0x81; 8];
+    nested.push(0);
+    let mut frames = TransportUsage::default();
+    assert!(Value::from_transport_bytes(&nested, LIMITS, &mut frames).is_ok());
+    assert_eq!(frames.allocation_calls, 4 + 8);
+    assert_eq!(frames.allocation_bytes, 15 * frame_bytes + 8 * element_bytes);
+    let mut map = TransportUsage::default();
+    assert!(Value::from_transport_bytes(&[0xa3, 0x61, b'a', 0, 0x61, b'b', 0, 0x61, b'c', 0], LIMITS, &mut map).is_ok());
+    assert_eq!(
+        map.allocation_bytes,
+        frame_bytes + 6 * std::mem::size_of::<(Value, Value)>() + 3
+    );
 }

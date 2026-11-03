@@ -168,7 +168,13 @@ impl ReadPolicy<'_> {
         Ok(())
     }
 
-    fn reserve<T>(&mut self, values: &mut Vec<T>, additional: usize, offset: usize) -> Result<(), DecodeError> {
+    fn reserve<T>(
+        &mut self,
+        values: &mut Vec<T>,
+        additional: usize,
+        remaining: Option<usize>,
+        offset: usize,
+    ) -> Result<(), DecodeError> {
         let Some(length) = values.len().checked_add(additional) else {
             return Err(DecodeError::TransportAllocation { offset });
         };
@@ -177,7 +183,14 @@ impl ReadPolicy<'_> {
         }
         self.work(values.len(), offset)?;
         if let Self::Transport { limits, usage } = self {
-            let amount = length
+            // Doubling amortizes relocation without trusting a declared count
+            // as an initial allocation. A definite container caps spare capacity.
+            let capacity = values
+                .capacity()
+                .saturating_mul(2)
+                .max(length)
+                .min(remaining.map_or(usize::MAX, |count| values.len().saturating_add(count)));
+            let amount = capacity
                 .checked_mul(std::mem::size_of::<T>())
                 .ok_or(DecodeError::TransportLimit {
                     resource: "allocation bytes",
@@ -193,7 +206,7 @@ impl ReadPolicy<'_> {
             )?;
             usage.allocation_calls += 1;
             values
-                .try_reserve_exact(additional)
+                .try_reserve_exact(capacity - values.len())
                 .map_err(|_| DecodeError::TransportAllocation { offset })?;
         } else {
             values.reserve(additional);
@@ -334,7 +347,7 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
             Item::Complete(value) => (value, start),
             Item::CompleteAt(value, start) => (value, start),
             Item::Container(frame) => {
-                policy.reserve(&mut stack, 1, start)?;
+                policy.reserve(&mut stack, 1, None, start)?;
                 stack.push(frame);
                 continue 'item;
             }
@@ -355,7 +368,7 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
                     indefinite,
                     start,
                 } => {
-                    policy.reserve(&mut items, 1, value_start)?;
+                    policy.reserve(&mut items, 1, (!indefinite).then_some(remaining), value_start)?;
                     items.push(value);
                     let remaining = if indefinite { remaining } else { remaining - 1 };
                     if !indefinite && remaining == 0 {
@@ -399,7 +412,7 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
                         continue 'item;
                     }
                     Some(key) => {
-                        policy.reserve(&mut entries, 1, value_start)?;
+                        policy.reserve(&mut entries, 1, (!indefinite).then_some(remaining), value_start)?;
                         if policy.transport() {
                             let index = previous_key.map_or(0, |(index, _)| index);
                             entries.insert(index, (key, value));
@@ -562,7 +575,7 @@ fn append_payload(
         })?;
     }
     policy.work(payload.len(), offset)?;
-    policy.reserve(bytes, payload.len(), offset)?;
+    policy.reserve(bytes, payload.len(), None, offset)?;
     bytes.extend_from_slice(payload);
     Ok(())
 }
