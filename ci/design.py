@@ -40,8 +40,7 @@ def tracked_paths():
 
 
 def first_party_prose():
-    members = tomllib.loads(Path('Cargo.toml').read_text())['workspace']['members']
-    vendors = [Path(member) for member in members if member.startswith('vendor/')]
+    vendors = [Path(row['path']) for row in tomllib.loads(Path('ci/vendor-packages.toml').read_text())['packages']]
     return [path for path in tracked_paths() if path.suffix in {'.md', '.j2'}
             and not any(path.is_relative_to(vendor) for vendor in vendors)]
 

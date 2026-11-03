@@ -236,6 +236,30 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind in {'vendor-content', 'vendor-archive'} and standing == 'recomputable':
+        from discipline import vendor_packages
+        from wallet_crypto import check_vendor_contents
+        declared = [row for row in vendor_packages(root) if row.get('content_manifest') == rule['source']]
+        if len(declared) != 1 or declared[0]['mode'] != 'patch':
+            raise ValueError('hash citations: vendor manifest is not a declared patch')
+        row = declared[0]
+        if kind == 'vendor-content' and rule['paths'] != [row['path'] + '/**', row['content_manifest']]:
+            raise ValueError('hash citations: vendor family exceeds its bound paths')
+        reviewed = {}
+        for register in ('wallet', 'host'):
+            for entry in tomllib.loads(relative_file(root, f'docs/inputs/{register}-dependencies.toml').read_text())['rows']:
+                key = (entry['name'].split()[0], entry['version'])
+                if entry.get('checksum') and reviewed.setdefault(key, entry['checksum']) != entry['checksum']:
+                    raise ValueError('hash citations: vendor archive reviews disagree')
+        check_vendor_contents(root, row, reviewed)
+        manifest = relative_file(root, rule['source'])
+        evidence = json.loads(manifest.read_text())
+        if kind == 'vendor-archive':
+            return lambda value, _line: value == evidence['archive_checksum']
+        files = [manifest, *(root / row['path'] / name for name in evidence['files'])]
+        values = {match.group() for file in files for line in file.read_bytes().decode('utf-8', errors='replace').splitlines()
+                  for match in occurrences(line)}
+        return lambda value, _line: value in values
     if kind == 'assertion-reviews' and standing == 'recomputable':
         from claims import read_register, witness_currency
         if rule.get('source') != 'ci/claim_review.json' or rule.get('paths') != ['ci/claim_review.json']:

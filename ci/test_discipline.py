@@ -134,6 +134,15 @@ class WorkspaceChecks(unittest.TestCase):
                 self.assertEqual(main(), 7)
                 self.assertEqual(run.call_args_list[0].args[0], ["cargo", "metadata", "--no-deps", "--format-version=1", "--locked"])
                 self.assertEqual(run.call_args_list[1].args[0], ["cargo", subcommand, "-p", "documents", "-p", "new-tool", flag, "--locked", "--profile", "gate"])
+        metadata['packages'][0]['name'] = 'other-vendor'
+        for mode in ['fmt','minimal','rustdoc']:
+            with patch('sys.argv',['discipline.py',mode]), patch('discipline.vendor_members',return_value=[('vendor/other','other-vendor')]), patch('discipline.subprocess.run') as run:
+                run.side_effect=[subprocess.CompletedProcess([],0,json.dumps(metadata)),subprocess.CompletedProcess([],0)]
+                self.assertEqual(main(),0)
+                command=run.call_args_list[1].args[0]
+                self.assertNotIn('other-vendor',command)
+                self.assertIn('new-tool',command)
+                self.assertNotIn('external',command)
 
 
 class HashCitations(unittest.TestCase):
@@ -507,6 +516,46 @@ class HashCitations(unittest.TestCase):
         ´claim:discipline:identity-occurrences-need-warrants´
         ´test:integration:test-hash-accounting´
         """
+        from hash_citations import establish
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'vendor/sample').mkdir(parents=True)
+            (root/'ci').mkdir(); (root/'docs/inputs').mkdir(parents=True)
+            (root/'Cargo.toml').write_text('[workspace]\nmembers=[]\nexclude=["vendor/sample"]\n[patch.crates-io]\nsample={path="vendor/sample"}\n')
+            (root/'ci/vendor-packages.toml').write_text('[[packages]]\nname="sample"\nversion="1.0.0"\npath="vendor/sample"\nmode="patch"\ncontent_manifest="contents.json"\n')
+            (root/'vendor/sample/Cargo.toml').write_text('[package]\nname="sample"\nversion="1.0.0"\n')
+            sample_value = 'abcd' + 'ef12' + '3456'
+            other_value = 'abcd' + 'ef99' + '9999'
+            sample = root/'vendor/sample/vector.txt'; sample.write_text(json.dumps(sample_value)+'\n')
+            review='[[rows]]\nname="sample"\nversion="1.0.0"\nchecksum="'+'a'*64+'"\n'
+            (root/'docs/inputs/wallet-dependencies.toml').write_text(review)
+            (root/'docs/inputs/host-dependencies.toml').write_text('rows=[]\n')
+            evidence=dict(name='sample',version='1.0.0',archive_checksum='a'*64,
+                files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sample.parent.iterdir()})
+            manifest=root/'contents.json'; manifest.write_text(json.dumps(evidence))
+            rule=dict(reader='vendor-content', establishment='recomputable',source='contents.json',paths=['vendor/sample/**','contents.json'])
+            reader=establish(root,rule)
+            self.assertTrue(reader(sample_value,''))
+            self.assertFalse(reader(other_value,''))
+            archive=establish(root,dict(rule,reader='vendor-archive',paths=['record.md']))
+            self.assertTrue(archive('a'*64,''))
+            self.assertFalse(archive(sample_value,''))
+            self.assertFalse(archive('b'*64,''))
+            with self.assertRaisesRegex(ValueError,'bound paths'): establish(root,dict(rule,paths=['**']))
+            for changed in [dict(evidence,name='other'),dict(evidence,version='2.0.0'),dict(evidence,archive_checksum='b'*64)]:
+                manifest.write_text(json.dumps(changed))
+                with self.assertRaises(ValueError): establish(root,rule)
+            manifest.write_text(json.dumps(evidence))
+            (root/'docs/inputs/wallet-dependencies.toml').write_text('rows=[]\n')
+            with self.assertRaisesRegex(ValueError,'review missing'): establish(root,rule)
+            (root/'docs/inputs/wallet-dependencies.toml').write_text(review)
+            sample.write_text('changed')
+            with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
+            sample.unlink()
+            with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
+            sample.write_text(json.dumps(sample_value)+'\n'); (sample.parent/'extra').write_text('extra')
+            with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = root / "sample.rs"

@@ -619,6 +619,7 @@ class Evidence(unittest.TestCase):
                 Path('docs/inputs/'+name+'.toml').write_text('\n'.join(
                     '[[rows]]\n'+'\n'.join(key+' = '+json.dumps(value) for key,value in row.items()) for row in rows))
             Path('Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+            Path('ci/vendor-packages.toml').write_text('packages=[]\n')
             Path('.lane/performance-events.jsonl').write_text('\n'.join(json.dumps(r) for r in records)+'\n')
             Path('.lane/harness-benchmarks.jsonl').write_text('')
             Path('ci/claim_review.json').write_text(register_form('{"schema":1,"sites":[]}', 'sites')[2])

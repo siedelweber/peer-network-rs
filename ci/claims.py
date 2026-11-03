@@ -878,8 +878,10 @@ def registration_check(root, registers, registry, sites, *, structure=True):
     paragraphs, obligations = prose(root)
     areas = tomllib.loads((root/'docs/inputs/claim-areas.toml').read_text())['rows']
     declared = tomllib.loads((root/'docs/inputs/claim-obligations.toml').read_text())['rows']
+    from discipline import vendor_packages
+    vendor_implementations = {row['name'] + '-rust' for row in vendor_packages(root)}
     expected = {n for n, case in registry.cases.items() if case['runner'] == 'ci'
-                or (case['runner'] == 'nextest' and case['implementation'] != 'regexml-rust')}
+                or (case['runner'] == 'nextest' and case['implementation'] not in vendor_implementations)}
     registrations(sites, expected, areas, obligations, declared, paragraphs)
     reviewed_sites(sites, registers['sites'], registers['glosses'])
     from wallet_cases import repository_check

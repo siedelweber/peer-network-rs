@@ -387,16 +387,9 @@ def vendor_packages(root):
 
 
 def vendor_members(root):
-    manifest = tomllib.loads((root / "Cargo.toml").read_text())
-    members = manifest.get("workspace", {}).get("members", [])
-    vendors = []
-    for member in members:
-        if any(part in {"", ".", ".."} for part in member.split("/")) or any(char in member for char in "*?[\\"):
-            raise ValueError(f"Cargo.toml: member path must be explicit and normalized: {member}")
-        if member.startswith("vendor/"):
-            package = tomllib.loads((root / member / "Cargo.toml").read_text())["package"]["name"]
-            vendors.append((member, package))
-    return sorted(vendors)
+    if not (root / 'vendor').exists():
+        return []  # Standalone compiler probes have no vendor boundary.
+    return sorted((row['path'], row['name']) for row in vendor_packages(root) if row['mode'] == 'member')
 
 
 def run_clippy(root, advisory=False):
@@ -466,8 +459,9 @@ def validate_build_policy(root):
     manifest = tomllib.loads((root / "Cargo.toml").read_text())
     if "rust-version" in manifest["workspace"]["package"]:
         raise ValueError("pinned compiler declares no checked minimum compiler")
+    vendors = {path for path, _ in vendor_members(root)}
     for member in manifest["workspace"]["members"]:
-        if member.startswith("vendor/"):
+        if member in vendors:
             continue
         if "rust-version" in tomllib.loads((root / member / "Cargo.toml").read_text())["package"]:
             raise ValueError(f"{member}: no minimum compiler declaration is checked")
@@ -492,16 +486,18 @@ def main():
         return run_tests("fast") if os.environ.get("PN_GATE_PARALLEL") == "1" else run_tests()
     if mode == "fmt":
         command = ["cargo", "fmt"]
+        vendors = {name for _, name in vendor_members(pathlib.Path.cwd())}
         for package in workspace_packages():
             # regexml preserves the reviewed upstream engine layout.
-            if package["name"] != "regexml":
+            if package["name"] not in vendors:
                 command.extend(["-p", package["name"]])
         return subprocess.run([*command, "--check"]).returncode
     if mode in {"minimal", "rustdoc"}:
         command = ["cargo", "check" if mode == "minimal" else "doc"]
+        vendors = {name for _, name in vendor_members(pathlib.Path.cwd())}
         for package in workspace_packages():
             # regexml retains its upstream feature and documentation policy.
-            if package["name"] != "regexml":
+            if package["name"] not in vendors:
                 command.extend(["-p", package["name"]])
         command.extend(["--no-default-features" if mode == "minimal" else "--no-deps", "--locked"])
         command.extend(["--profile", "gate"])

@@ -159,6 +159,8 @@ class Correspondence(unittest.TestCase):
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
         (self.root / 'Cargo.toml').write_text('[workspace]\nmembers = ["vendor/example"]\n')
+        (self.root / 'ci').mkdir()
+        (self.root / 'ci/vendor-packages.toml').write_text('[[packages]]\npath="vendor/example"\nmode="patch"\n')
         git(self.root, 'init', '--quiet')
         for name in PENDING_RENDERED_SPACING:
             destination = self.root / name
@@ -505,9 +507,17 @@ class Correspondence(unittest.TestCase):
         vendor = self.root / 'vendor/example/README.md'
         vendor.parent.mkdir(parents=True)
         vendor.write_text('`def:comparator:burn-interface`\n')
+        (self.root / 'Cargo.toml').write_text('[workspace]\nmembers=[]\nexclude=["vendor/example"]\n')
         git(self.root, 'add', 'vendor/example/README.md')
         baseline = self.check()
         self.assertEqual(baseline.returncode, 0, baseline.stderr)
+        declaration = self.root / 'ci/vendor-packages.toml'
+        saved = declaration.read_text()
+        declaration.write_text('packages=[]\n')
+        result = self.check()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('vendor/example/README.md: bare paper mint', result.stderr)
+        declaration.write_text(saved)
         for name in ['README.md', 'docs/templates/other.md.j2']:
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
