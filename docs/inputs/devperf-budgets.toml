@@ -204,6 +204,22 @@ rounding = "upward"
 warm = true
 measured_series = [{ "commit" = "d9a6701971366b1d31c3e60f6028c3e6dfdb3213", "patch_id" = "1446ebd827588bee967143b90856f56a0edae3fe" }]
 
+
+[[rows.calibration_campaigns]]
+label = "campaign:devperf:publication-public-warm"
+base_commit = "8ccfb5bff68a9db862eeccf4bafa04d39e294438"
+configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+warmup_wall_seconds = 10.227203607559204
+sample_walls_seconds = [10.26158094406128, 10.295001983642578, 11.063312530517578]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ "commit" = "b2d117cf150543a7d5300cf54e9887e55eb8adef", "patch_id" = "9439b935be543c0e860308838790f697a3dec13d" }]
+
 [[rows]]
 name = "service-gate"
 category = "aggregate"
@@ -2541,3 +2557,87 @@ calibration_warm = true
 calibration_discarded_warmups = 1
 calibration_campaign = "campaign:devperf:graph-public-top-up"
 calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge.rs", "function" = "ridge_charge_admission", "digest" = "11093d20448f686a642e6525febd0b2b1e6391315f40b17921d61efb79967c85", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-publication-roundtrip-case"
+category = "case"
+budget_ms = 12500
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip execution"
+reason = "Both chartered floors retain complete admission, semantic assembly and independent restoration; successful assemblies each keep their own replay while immutable fixture construction is shared."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 6229.857723927125
+measured_own_cpu_ms = 6092.401000000001
+calibration_walls_ms = [5988.595167873427, 5915.457698982209, 6229.857723927125]
+calibration_own_cpu_ms = [5985.3279999999995, 5910.848000000001, 6092.401000000001]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:publication-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication.rs", "function" = "publication_roundtrip", "digest" = "2727336718218b4e642541199c1a0d325b7e2c631b98c239cb357626f45af34a", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-publication-refusals-case"
+category = "case"
+budget_ms = 2450
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::publication_refusals execution"
+reason = "The complete semantic carrier retains every omitted or mixed cause, sequence, compilation, final-gate, announcement-prefix and profile refusal, with fresh restoration for each distinct mutation."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 1217.0881947968155
+measured_own_cpu_ms = 1116.358999999997
+calibration_walls_ms = [1060.4181988164783, 1067.6974148955196, 1217.0881947968155]
+calibration_own_cpu_ms = [1060.0490000000027, 1065.311999999999, 1116.358999999997]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:publication-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication.rs", "function" = "publication_refusals", "digest" = "a947ed1320a6321604e61c997684e1a9432cf27a632731b2e91eedad6798657d", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-publication-ridge-refusals-case"
+category = "case"
+budget_ms = 5550
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals execution"
+reason = "Defining ridge, query and transcript mutations retain independent charge replay at consumption and unresolved-image withholding over a complete admitted fixture."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 2763.7349141296
+measured_own_cpu_ms = 2530.1760000000017
+calibration_walls_ms = [2370.2609550673515, 2436.961272964254, 2763.7349141296]
+calibration_own_cpu_ms = [2367.2319999999986, 2434.6899999999987, 2530.1760000000017]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:publication-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication.rs", "function" = "publication_ridge_refusals", "digest" = "4e5a5351c90f307152180712b93c56923891ba945bafbf765b6e8dfd9df9b1a8", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-publication-prefix-case"
+category = "case"
+budget_ms = 1750
+scope = "one pn-epoch::solve::admission::ridge_charge::publication::publication_prefix execution"
+reason = "The public boundary prefix retains original marker disclosure, empty-final-set standing evidence and independent complete-sequence restoration."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 860.4840040206909
+measured_own_cpu_ms = 859.9210000000011
+calibration_walls_ms = [828.2694879453629, 860.4840040206909, 837.3709130100906]
+calibration_own_cpu_ms = [827.8520000000004, 859.9210000000011, 831.9640000000037]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:publication-public-warm"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication.rs", "function" = "publication_prefix", "digest" = "f0c651ce98af247bbb80f1283f11b5b86398c9e908450f598cee96a16fe3420f", "owner" = "lane/graph" }

@@ -5104,6 +5104,18 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix": "The public boundary prefix retains original marker disclosure, empty-final-set standing evidence and independent complete-sequence restoration.",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "The complete semantic carrier retains every omitted or mixed cause, sequence, compilation, final-gate, announcement-prefix and profile refusal, with fresh restoration for each distinct mutation.",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "Defining ridge, query and transcript mutations retain independent charge replay at consumption and unresolved-image withholding over a complete admitted fixture.",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "Both chartered floors retain complete admission, semantic assembly and independent restoration; successful assemblies each keep their own replay while immutable fixture construction is shared."
+      },
+      "case_budgets": {
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_prefix": "calibrated-publication-prefix-case",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals": "calibrated-publication-refusals-case",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals": "calibrated-publication-ridge-refusals-case",
+        "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip": "calibrated-publication-roundtrip-case"
+      },
       "case_span": true,
       "cases": [
         "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
