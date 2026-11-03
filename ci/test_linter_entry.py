@@ -271,7 +271,7 @@ class Conformance(unittest.TestCase):
         completion(self)
 
     def test_service_selection(self):
-        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs without passed evidence produce a standing selection hold, while matching last-passed evidence carries its execution source without a current execution, and admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
+        """Claim: The real service ownership witness executes without a retained pass matching its current inputs and configuration, including a multi-commit slice whose head leaves inputs unchanged; configured service-tool paths bind the fingerprint and its single runner line names source and flag; matching last-passed evidence carries its execution source without a current execution, while admission requests execution; another case, a stale input binding or a selected execution cannot reuse a selection hold.
         ´claim:discipline:service-selection-keeps-unexecuted-evidence-held´
         ´test:integration:test-service-selection´
         """
@@ -315,15 +315,29 @@ class Conformance(unittest.TestCase):
                 self.assertFalse(retained_service(retained | dict(execution_source='b'*40), Path.cwd()))
             remember_service(execution | dict(outcome='failed'))
             self.assertIsNone(retained_service_source(decision, CONFIGURATION))
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_BUILD_TARGET=''):
             root = Path(directory)
             for name in SERVICE_INPUTS:
                 path = root/name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'unchanged')
-            def previous(argv, **kwargs):
-                return subprocess.CompletedProcess(argv, 0, b'unchanged', b'')
-            with patch('build_graph_evidence.subprocess.run', side_effect=previous), patch.dict(os.environ, {'PN_BUILDGRAPH_ADMISSION': '0'}):
+            def commit(message):
+                for args in (['add', '.'], ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message]):
+                    subprocess.run(['git', '-C', str(root), *args], check=True, capture_output=True)
+            subprocess.run(['git', '-C', str(root), 'init', '-q'], check=True, capture_output=True)
+            commit('base')
+            (root/SERVICE_INPUTS[0]).write_bytes(b'changed earlier in slice')
+            commit('change service input')
+            (root/'unrelated').write_text('head leaves service inputs alone')
+            commit('unrelated head')
+            with patch.dict(os.environ, {'PN_BUILDGRAPH_ADMISSION': '0'}):
+                self.assertTrue(service_selection(root)['run'])
+                fresh = service_selection(root)
+                remember_service(dict(operation=SERVICE_CASE, outcome='passed', source='b'*40,
+                                      configuration='wrong', selection_inputs=fresh['inputs']))
+                self.assertTrue(service_selection(root)['run'])
+                remember_service(dict(operation=SERVICE_CASE, outcome='passed', source='b'*40,
+                                      configuration=CONFIGURATION, selection_inputs=fresh['inputs']))
                 selection = service_selection(root)
                 self.assertFalse(selection['run'])
                 for tool in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN'):
@@ -335,10 +349,12 @@ class Conformance(unittest.TestCase):
                 for field in ('operation', 'hold', 'reason', 'selection_inputs'):
                     self.assertFalse(held_service(record | {field: 'other'}, root))
                 for name in SERVICE_INPUTS:
+                    original = (root/name).read_bytes()
                     (root/name).write_bytes(b'changed')
-                    self.assertEqual(service_selection(root)['changed'], [name])
+                    self.assertTrue(service_selection(root)['run'])
+                    self.assertNotEqual(service_selection(root)['inputs'], selection['inputs'])
                     self.assertFalse(held_service(record, root))
-                    (root/name).write_bytes(b'unchanged')
+                    (root/name).write_bytes(original)
 
         from test_harness import fixture, result
         from test_claims import fixture as claim_fixture

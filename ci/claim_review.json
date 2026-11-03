@@ -398,8 +398,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
       "before": "",
-      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs without passed evidence produce a standing selection hold, while matching last-passed evidence carries its execution source without a current execution, and admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.",
-      "review": "Read the configured-path fingerprint mutations, captured single source/flag line, actual runner pass metadata, current named-hold refusals and admitted-gate/decision status controls. The added retained-evidence controls require exact input and configuration binding, preserve passed case and obligation status with the execution source named, count no current execution, and invalidate the carrier on failure; the existing no-evidence hold and refusal controls remain."
+      "after": "Claim: The real service ownership witness executes without a retained pass matching its current inputs and configuration, including a multi-commit slice whose head leaves inputs unchanged; configured service-tool paths bind the fingerprint and its single runner line names source and flag; matching last-passed evidence carries its execution source without a current execution, while admission requests execution; another case, a stale input binding or a selected execution cannot reuse a selection hold.",
+      "review": "Read the unchanged hold, retention, execution-source and admission controls together with the three-commit fixture: absent or configuration-mismatched retained evidence executes even when the final commit leaves service inputs unchanged. Each input mutation invalidates the retained binding. No required case or assertion is removed."
     },
     {
       "operation": "ci::test_observe.Admission.test_resource_samples",

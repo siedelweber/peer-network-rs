@@ -28,17 +28,16 @@ SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_gr
 
 
 def service_selection(root, admission=False):
-    """Select fresh execution independently of retained, input-bound evidence."""
+    """Execute unless the current inputs and configuration have a retained pass."""
+    from harness import CONFIGURATION
     tools = {name: os.environ.get(name) for name in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN')}
     fingerprint = identity(dict(files=[(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS], tools=tools))
-    changed = []
-    for name in SERVICE_INPUTS:
-        parent = subprocess.run(['git', '-C', str(root), 'show', 'HEAD^:'+name], capture_output=True)
-        if parent.returncode or parent.stdout != (root/name).read_bytes():
-            changed.append(name)
-    return dict(run=bool(admission or changed), inputs=fingerprint, changed=changed,
-                reason='admission requested' if admission else ('service inputs changed' if changed else
-                'service ownership held: unchanged inputs; execute on input change or explicit admission request'), hold=SERVICE_HOLD)
+    selection = dict(run=False, inputs=fingerprint, changed=[], hold=SERVICE_HOLD)
+    retained = retained_service_source(selection, CONFIGURATION)
+    selection.update(run=bool(admission or not retained),
+                     reason='admission requested' if admission else ('matching retained service pass' if retained else
+                     'service execution required: no matching retained pass'))
+    return selection
 
 
 def held_service(record, root):
