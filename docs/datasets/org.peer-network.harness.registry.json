@@ -5321,6 +5321,34 @@
       "runner": "nextest",
       "status": "active",
       "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::replay_work::solve_replay_work"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::replay-work",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-graph::numeric::singleton_residual::singleton_image_residual"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::singleton-residual",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

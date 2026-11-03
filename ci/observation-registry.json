@@ -15507,9 +15507,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
-      "body": "{ let result = driver :: run (bound , & accepted . evidence , accepted . selected . as_deref () . ok_or (Error :: Scope) ? , None ,) ? ; replay (bound , & result) ? ; Ok (result) }",
+      "body": "{ let mut result = driver :: run (bound , & accepted . evidence , accepted . selected . as_deref () . ok_or (Error :: Scope) ? , None ,) ? ; let checked = driver :: run (bound , & result . fence , & result . rounds . first () . ok_or (Error :: Scope) ? . certified . rung , Some (& result) ,) ? ; result . replay_work = checked . work ; Ok (result) }",
       "class_decision": "conserved-public-evaluation",
-      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and the mandatory replay budget count; replay refuses a changed count. Separately bounded fence validation is outside this count. No private material or publication bytes enter, and no subscriber or digest is admitted.",
       "assessments": {
         "full_recording": "conserved-public-evaluation",
         "secret_flow": "conserved-public-evaluation",
@@ -15518,9 +15518,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay",
-      "body": "{ let rung = & supplied . rounds . first () . ok_or (Error :: Scope) ? . certified . rung ; driver :: run (bound , & supplied . fence , rung , Some (supplied)) }",
+      "body": "{ let rung = & supplied . rounds . first () . ok_or (Error :: Scope) ? . certified . rung ; let checked = driver :: run (bound , & supplied . fence , rung , Some (supplied)) ? ; if checked . work != supplied . replay_work { return Err (Error :: ReplayWork) ; } Ok (checked) }",
       "class_decision": "conserved-public-evaluation",
-      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and the mandatory replay budget count; replay refuses a changed count. Separately bounded fence validation is outside this count. No private material or publication bytes enter, and no subscriber or digest is admitted.",
       "assessments": {
         "full_recording": "conserved-public-evaluation",
         "secret_flow": "conserved-public-evaluation",
@@ -22081,7 +22081,7 @@
       "item": "conserved::SolveRecord",
       "package": "pn-records",
       "path": "packages/records/src/conserved.rs",
-      "syntax": "# [doc = \" The rational proposal prefix and final certified map remain separately accounted.\"] # [doc = \" These carriers grant no authority until the frozen-package checker accepts them.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SolveRecord { pub fence : crate :: solve :: Evidence , pub rounds : Vec < ResidualRound > , pub work : u64 , }"
+      "syntax": "# [doc = \" The rational proposal prefix and final certified map remain separately accounted.\"] # [doc = \" These carriers grant no authority until the frozen-package checker accepts them.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SolveRecord { pub fence : crate :: solve :: Evidence , pub rounds : Vec < ResidualRound > , pub work : u64 , # [doc = \" Actual cumulative Work charged to the mandatory solve replay budget.\"] # [doc = \" Fence validation retains its separate operation limits.\"] pub replay_work : u64 , }"
     },
     {
       "item": "conserved::ResidualRound",
@@ -23821,7 +23821,7 @@
       "item": "conserved::Error",
       "package": "pn-epoch",
       "path": "packages/epoch/src/conserved.rs",
-      "syntax": "# [doc = \" A refusal never constitutes a standing or convergence verdict.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"conserved solve declaration or frozen scope refused\")] Scope , # [error (\"map evidence or endpoint composition refused\")] Map , # [error (\"residual bound refused\")] Residual , # [error (\"residual radius refused\")] Radius , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"primitive: {0}\")] Primitive (# [from] pn_graph :: numeric :: Error) , # [error (\"transport: {0}\")] Transport (# [from] pn_records :: transport :: KernelError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"frozen constants: {0}\")] Input (# [from] crate :: InputError) , # [error (\"accepted fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"records: {0}\")] Records (# [from] pn_records :: solve :: RecordError) , }"
+      "syntax": "# [doc = \" A refusal never constitutes a standing or convergence verdict.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"conserved solve declaration or frozen scope refused\")] Scope , # [error (\"mandatory replay Work differs from the independently measured count\")] ReplayWork , # [error (\"map evidence or endpoint composition refused\")] Map , # [error (\"residual bound refused\")] Residual , # [error (\"residual radius refused\")] Radius , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"primitive: {0}\")] Primitive (# [from] pn_graph :: numeric :: Error) , # [error (\"transport: {0}\")] Transport (# [from] pn_records :: transport :: KernelError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"frozen constants: {0}\")] Input (# [from] crate :: InputError) , # [error (\"accepted fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"records: {0}\")] Records (# [from] pn_records :: solve :: RecordError) , }"
     },
     {
       "item": "controller::InverseSearch",

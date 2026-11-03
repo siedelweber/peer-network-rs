@@ -931,16 +931,16 @@
     },
     {
       "display": "exact",
-      "exact": "27 962 035/18 885 640 192",
+      "exact": "24 536 635/18 885 640 192",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:reference-image-first-radius",
-      "num": "27 962 035/18 885 640 192",
+      "num": "24 536 635/18 885 640 192",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "27962035/18885640192"
+      "value": "24536635/18885640192"
     },
     {
       "display": "exact",
@@ -1009,55 +1009,55 @@
     },
     {
       "display": "exact",
-      "exact": "3 954 534 051",
+      "exact": "3 957 559 493",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:local-check-work",
-      "num": "3 954 534 051",
+      "num": "3 957 559 493",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "3954534051"
+      "value": "3957559493"
     },
     {
       "display": "exact",
-      "exact": "385 543 179 193/77 355 582 226 432",
+      "exact": "357 482 302 393/77 355 582 226 432",
       "exact_digits": 26,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:local-reference-residual-radius",
-      "num": "385 543 179 193/77 355 582 226 432",
+      "num": "357 482 302 393/77 355 582 226 432",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "385543179193/77355582226432"
+      "value": "357482302393/77355582226432"
     },
     {
       "display": "exact",
-      "exact": "16 690 803/4 294 967 296",
+      "exact": "985 301/268 435 456",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:local-jacobian-norm-upper",
-      "num": "16 690 803/4 294 967 296",
+      "num": "985 301/268 435 456",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "16690803/4294967296"
+      "value": "985301/268435456"
     },
     {
       "display": "exact",
-      "exact": "587 447/1 073 741 824",
+      "exact": "585 515/1 073 741 824",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:local-image-radius-upper",
-      "num": "587 447/1 073 741 824",
+      "num": "585 515/1 073 741 824",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "587447/1073741824"
+      "value": "585515/1073741824"
     },
     {
       "display": "exact",

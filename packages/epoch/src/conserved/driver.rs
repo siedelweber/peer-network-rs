@@ -199,5 +199,6 @@ pub(super) fn run(
         fence: accepted.clone(),
         rounds,
         work: budget.usage().work,
+        replay_work: budget.usage().work,
     })
 }

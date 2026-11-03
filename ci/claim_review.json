@@ -2419,6 +2419,14 @@
       "review": "The publication verifier sees the whole reference input. A changed door refuses publication, an unsupported lower endpoint refuses at the kernel binding check, and zero-width evaluation and replay leave the immutable rational charged price identical."
     },
     {
+      "operation": "pn-epoch::solve::replay_work::solve_replay_work",
+      "path": "packages/epoch/tests/solve/replay_work.rs",
+      "claim": "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work",
+      "before": "",
+      "after": "Claim: On the frozen four-Actor fixture, mandatory solve replay retains its measured cumulative solve-budget Work; independent replay agrees, succeeds at that allowance and refuses one Work below it. Production also refuses that insufficient replay allowance, and a changed reported count refuses. Separately bounded fence validation is outside this count.",
+      "review": "On the frozen four-Actor fixture, mandatory solve replay retains its measured cumulative solve-budget Work; independent replay agrees, succeeds at that allowance and refuses one Work below it. Production also refuses that insufficient replay allowance, and a changed reported count refuses. Separately bounded fence validation is outside this count."
+    },
+    {
       "operation": "pn-epoch::solve::schedules::effective_schedules",
       "path": "packages/epoch/tests/solve/schedules.rs",
       "claim": "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages",
@@ -3009,6 +3017,14 @@
       "before": "Claim: Independent ridge replay reconstructs the defining formula, complete cover and expected floor query, refusing changed defining inputs, queries, attachments, cells, image and asserted comparison; finite wrong-sign and exhausted-cover controls never establish a ridge.",
       "after": "Claim: Independent ridge replay reconstructs the defining formula, complete cover and expected floor query, refusing changed defining inputs, queries, attachments, cells, image and asserted comparison; finite wrong-sign and exhausted-cover controls never establish a ridge.",
       "review": "Read the closed formula, analytic concavity majorant and independently rebuilt query joins. The finite fixture checks checked premises, exact image/order, refusal or replay as named; it does not infer uniqueness from sampled values, adopt a decimal floor or certify production admission."
+    },
+    {
+      "operation": "pn-graph::numeric::singleton_residual::singleton_image_residual",
+      "path": "packages/graph/tests/numeric/singleton_residual.rs",
+      "claim": "GRAPH::claim:numerics:singleton-image-residual-keeps-wall-uncertainty",
+      "before": "",
+      "after": "Claim: On the declared singleton source with a non-point wall enclosure, the image-first residual is exactly zero while the source image retains its wall uncertainty. Independent replay preserves the zero radius and enclosure and refuses a changed singleton assertion. This is a structural constant-row witness, not arbitrary-map or deployment coverage.",
+      "review": "On the declared singleton source with a non-point wall enclosure, the image-first residual is exactly zero while the source image retains its wall uncertainty. Independent replay preserves the zero radius and enclosure and refuses a changed singleton assertion. This is a structural constant-row witness, not arbitrary-map or deployment coverage."
     },
     {
       "operation": "pn-graph::numeric::verification_box",

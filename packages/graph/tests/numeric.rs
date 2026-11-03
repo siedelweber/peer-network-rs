@@ -1,5 +1,7 @@
 #[path = "../../documents/src/design_constants.rs"]
 mod design_constants;
+#[path = "numeric/singleton_residual.rs"]
+mod singleton_residual;
 
 #[path = "../../documents/src/pins_graph.rs"]
 pub mod pins;

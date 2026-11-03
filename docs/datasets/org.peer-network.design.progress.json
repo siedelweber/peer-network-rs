@@ -27441,7 +27441,8 @@
         "ROOT::open:design:nrz-capabilities",
         "ROOT::open:design:reference-wall-route",
         "ROOT::rec:design:pending-reference-corpus",
-        "ROOT::req:vision:certificate"
+        "ROOT::req:vision:certificate",
+        "ROOT::rule:design:two-map-residual"
       ],
       "routes": [],
       "status": "designed",
@@ -38375,10 +38376,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "49",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38393,7 +38394,7 @@
           "exact_digits": 32
         }
       },
-      "total": 49
+      "total": 51
     },
     {
       "category": "record-coverage",
@@ -38409,10 +38410,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "74",
+          "exact": "76",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "74",
+          "num": "76",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38427,7 +38428,7 @@
           "exact_digits": 32
         }
       },
-      "total": 74
+      "total": 76
     },
     {
       "category": "record-coverage",

@@ -1,5 +1,7 @@
 #[path = "../../documents/src/design_constants.rs"]
 mod design_constants;
+#[path = "solve/replay_work.rs"]
+mod replay_work;
 
 pub use common::pins;
 use pins::NumberId;

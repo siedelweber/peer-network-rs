@@ -3635,6 +3635,40 @@
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"
+      ],
+      "closing_condition": "The declared exact identity and refusal controls pass.",
+      "closing_step": "Bite 8 numerical measurement.",
+      "evidence_paragraph": "EPOCH::rec:numerics:replay-work-controls",
+      "hold": "",
+      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
+      "name": "EPOCH::verif:numerics:replay-work",
+      "owner": "Numerical implementer",
+      "path": "packages/epoch/README.md",
+      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "GRAPH::claim:numerics:singleton-image-residual-keeps-wall-uncertainty"
+      ],
+      "closing_condition": "The declared exact identity and refusal controls pass.",
+      "closing_step": "Bite 8 numerical measurement.",
+      "evidence_paragraph": "GRAPH::rec:numerics:singleton-residual-controls",
+      "hold": "",
+      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
+      "name": "GRAPH::verif:numerics:singleton-residual",
+      "owner": "Numerical implementer",
+      "path": "packages/graph/README.md",
+      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
     }
   ]
 }

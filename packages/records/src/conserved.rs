@@ -31,6 +31,9 @@ pub struct SolveRecord {
     pub fence: crate::solve::Evidence,
     pub rounds: Vec<ResidualRound>,
     pub work: u64,
+    /// Actual cumulative Work charged to the mandatory solve replay budget.
+    /// Fence validation retains its separate operation limits.
+    pub replay_work: u64,
 }
 
 /// One declared precision's complete proposal prefix and residual construction.

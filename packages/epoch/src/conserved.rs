@@ -23,6 +23,8 @@ use std::collections::BTreeMap;
 pub enum Error {
     #[error("conserved solve declaration or frozen scope refused")]
     Scope,
+    #[error("mandatory replay Work differs from the independently measured count")]
+    ReplayWork,
     #[error("map evidence or endpoint composition refused")]
     Map,
     #[error("residual bound refused")]
@@ -177,13 +179,19 @@ pub fn replay_map(bound: &BoundProcedure<'_>, record: &MapRecord) -> Result<MapR
     ret
 )]
 pub fn solve(bound: &BoundProcedure<'_>, accepted: &crate::fence::Search) -> Result<pn_records::conserved::SolveRecord, Error> {
-    let result = driver::run(
+    let mut result = driver::run(
         bound,
         &accepted.evidence,
         accepted.selected.as_deref().ok_or(Error::Scope)?,
         None,
     )?;
-    replay(bound, &result)?;
+    let checked = driver::run(
+        bound,
+        &result.fence,
+        &result.rounds.first().ok_or(Error::Scope)?.certified.rung,
+        Some(&result),
+    )?;
+    result.replay_work = checked.work;
     Ok(result)
 }
 
@@ -206,5 +214,9 @@ pub fn replay(
     supplied: &pn_records::conserved::SolveRecord,
 ) -> Result<pn_records::conserved::SolveRecord, Error> {
     let rung = &supplied.rounds.first().ok_or(Error::Scope)?.certified.rung;
-    driver::run(bound, &supplied.fence, rung, Some(supplied))
+    let checked = driver::run(bound, &supplied.fence, rung, Some(supplied))?;
+    if checked.work != supplied.replay_work {
+        return Err(Error::ReplayWork);
+    }
+    Ok(checked)
 }

@@ -500,7 +500,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:reference-image-first-radius"
-value = "27962035/18885640192"
+value = "24536635/18885640192"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -542,28 +542,28 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:local-check-work"
-value = "3954534051"
+value = "3957559493"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
 id = "num:numbers:local-reference-residual-radius"
-value = "385543179193/77355582226432"
+value = "357482302393/77355582226432"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 26
 
 [[rows]]
 id = "num:numbers:local-jacobian-norm-upper"
-value = "16690803/4294967296"
+value = "985301/268435456"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
 id = "num:numbers:local-image-radius-upper"
-value = "587447/1073741824"
+value = "585515/1073741824"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24

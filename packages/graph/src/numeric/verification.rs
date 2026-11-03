@@ -68,12 +68,17 @@ pub fn replay_box(
     map::run(p, input, coordinates, Some(record))
 }
 
-fn residual(a: &[Range], z: &[Range], c: &Rational, arithmetic: &mut Arithmetic) -> Result<Rational, Error> {
-    if a.len() != z.len() {
+fn residual(a: &[Range], z: &[Range], singleton: &[bool], c: &Rational, arithmetic: &mut Arithmetic) -> Result<Rational, Error> {
+    if a.len() != z.len() || a.len() != singleton.len() {
         return Err(Error::Declaration);
     }
     let mut maximum = Rational::parse("0", &mut arithmetic.budget)?;
-    for (a, z) in a.iter().zip(z) {
+    for ((a, z), singleton) in a.iter().zip(z).zip(singleton) {
+        // At each fixed wall a singleton row is the same source rate in both images.
+        // Its parameter enclosure remains in Y; subtracting independent copies loses this identity.
+        if *singleton {
+            continue;
+        }
         let left = arithmetic.range(a)?;
         let right = arithmetic.range(z)?;
         let difference = arithmetic.sub(&left, &right)?;
@@ -112,8 +117,8 @@ fn assemble(p: &Procedure, first: BoxMapRecord, second: BoxMapRecord) -> Result<
             }
         }
     }
-    let one_map = residual(&first.image, &comparison, &c, &mut a)?;
-    let radius = residual(&second.image, &first.image, &c, &mut a)?;
+    let one_map = residual(&first.image, &comparison, &vec![false; comparison.len()], &c, &mut a)?;
+    let radius = residual(&second.image, &first.image, &first.singleton, &c, &mut a)?;
     let mut enclosure = Vec::new();
     for value in &first.image {
         let value = a.range(value)?;

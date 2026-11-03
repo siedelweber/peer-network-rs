@@ -46,8 +46,8 @@
 | documents | 10 | 0 |
 | execwrap | 62 | 0 |
 | pn-act-profile | 11 | 0 |
-| pn-epoch | 49 | 19 |
-| pn-graph | 74 | 34 |
+| pn-epoch | 51 | 19 |
+| pn-graph | 76 | 34 |
 | pn-host | 19 | 0 |
 | pn-interchange | 26 | 0 |
 | pn-readouts | 0 | 0 |
@@ -1470,7 +1470,7 @@
 | ``ver:standing:conservation-witness`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:epoch:final-backpressure`` | pn-verification; fixture | held | ``ROOT::open:design:reference-registration-base`` | | | ``ROOT::open:design:reference-registration-base``; ``ROOT::open:design:reference-registration-base``<br>|  | | |
 | ``subsec:verification:graph-dependent-certificate`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:standing:conserved-equilibrium-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::standing_profile`` ``ROOT::alg:design:local-inclusion`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:two-map-measurements`` ``ROOT::conv:render:numeric-displays`` ``ROOT::conv:vision:vectors-properties`` ``ROOT::dec:design:certificate`` ``ROOT::obs:design:reference-certificate`` ``ROOT::obs:inventory:constants`` ``ROOT::open:design:nrz-capabilities`` ``ROOT::open:design:reference-wall-route`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::req:vision:certificate`` | | | ``ROOT::dec:design:certificate``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:certificate``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | | |
+| ``ver:standing:conserved-equilibrium-enclosure`` | pn-verification; fixture | designed | ``CONSTANTS::standing_profile`` ``ROOT::alg:design:local-inclusion`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:two-map-measurements`` ``ROOT::conv:render:numeric-displays`` ``ROOT::conv:vision:vectors-properties`` ``ROOT::dec:design:certificate`` ``ROOT::obs:design:reference-certificate`` ``ROOT::obs:inventory:constants`` ``ROOT::open:design:nrz-capabilities`` ``ROOT::open:design:reference-wall-route`` ``ROOT::rec:design:pending-reference-corpus`` ``ROOT::req:vision:certificate`` ``ROOT::rule:design:two-map-residual`` | | | ``ROOT::dec:design:certificate``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:certificate``; ``ROOT::open:testing:obligation-evidence``<br>| 6, 11 | | |
 | ``ver:standing:interval-certificate`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``ver:standing:depth-support-comparison`` | pn-verification; fixture | designed (attention only) | ``ROOT::obs:design:released-witnesses`` | | | |  | | |
 | ``subsec:verification:registration-benchmarks`` | pn-verification; fixture | designed | ``CONSTANTS::result.epoch.one_credit_balance`` ``CONSTANTS::result.epoch.one_credit_rate`` ``CONSTANTS::result.epoch.unsupported_door_burn`` ``CONSTANTS::result.epoch.unsupported_safety_burn`` | | | |  | | |
