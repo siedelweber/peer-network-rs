@@ -240,7 +240,28 @@ def reconcile_mints(sites, minted):
     if expected != minted: raise StructuralError('orphan or missing source claim mint')
 
 
-def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, results, source, configuration=CONFIGURATION):
+def combined_order(combined):
+    """Check declared membership cycles before considering execution outcomes."""
+    ordered, visited, visiting = [], set(), set()
+
+    def visit(claim):
+        if claim in visiting:
+            raise StructuralError('cyclic combined claim members')
+        if claim not in visited:
+            visiting.add(claim)
+            for member in combined.get(claim, []):
+                visit(member)
+            visiting.remove(claim)
+            visited.add(claim)
+            ordered.append(claim)
+
+    for claim in combined:
+        visit(claim)
+    return ordered
+
+
+def registrations(sites, expected_sites, areas, obligations, declared, paragraphs):
+    """Check declared edges independently of execution; the evaluator calls this too."""
     if len({s['operation'] for s in sites}) != len(sites) or {s['operation'] for s in sites} != set(expected_sites):
         raise StructuralError('undeclared or omitted source site')
     if len({a['owner']+'::'+a['area'] for a in areas}) != len(areas): raise StructuralError('duplicate area register')
@@ -266,17 +287,6 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
         exhibits = paragraphs.get(name, {}).get('exhibits', set())
         if exhibits:
             raise StructuralError('evidence exhibits cannot claim support; use checked citations')
-    if len({r['operation'] for r in results}) != len(results): raise StructuralError('duplicate result')
-    actual = {r['operation']:r for r in results}
-    missing = set(expected_sites)-set(actual)
-    if missing: raise StructuralError('missing test results: '+str(sorted(missing)))
-    for site in sites:
-        result = actual[site['operation']]
-        if result.get('source') != source or result.get('configuration') != configuration: raise StructuralError('stale result')
-        from build_graph_evidence import held_service, retained_service
-        if result.get('retained') and not retained_service(result, Path.cwd()): raise StructuralError('invalid retained service evidence')
-        if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
-    states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
     # Membership is declared by an owning obligation; it is never a mint.
     combined = {}
     for row in declared:
@@ -293,24 +303,9 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
         if any(member not in claims for member in members):
             raise StructuralError('unresolved combined claim member')
         combined[claim] = [member for member in members if member != claim]
-    visited, visiting = set(), set()
-
-    def join_members(claim):
-        if claim in visiting:
-            raise StructuralError('cyclic combined claim members')
-        if claim not in visited:
-            visiting.add(claim)
-            outcomes = [states[claim], *(join_members(member) for member in combined.get(claim, []))]
-            states[claim] = 'failed' if 'failed' in outcomes else ('held' if 'held' in outcomes else 'passed')
-            visiting.remove(claim)
-            visited.add(claim)
-        return states[claim]
-
-    for claim in combined:
-        join_members(claim)
+    order = combined_order(combined)
     if len(declared) != len({r['name'] for r in declared}) or {r['name'] for r in declared} != set(obligations):
         raise StructuralError('removed or extra source obligation')
-    obligation_results = []
     for row in declared:
         name = row['name']
         if row.get('path') != obligations[name]['path']: raise StructuralError('obligation source differs')
@@ -336,13 +331,34 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             if not edges and row['status'] != 'held': raise StructuralError('requirement lacks realizing decision or plan')
         for target in row['realizers']:
             if target not in obligations: raise StructuralError('unresolved obligation edge')
-        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' or any(states[c]=='held' for c in row['claims']) else 'scoped-passed')
-        obligation_results.append({**row,'status':state})
     for name in {r.get('evidence_paragraph') for r in declared if r.get('evidence_paragraph')}:
         paragraph = paragraphs[name]
         displayed = paragraph.get('exhibits',set()) | {n for n in paragraph.get('citations',set()) if '::claim:' in n}
         edges = {n for row in declared if row.get('evidence_paragraph')==name for n in row['claims']}
         if displayed != edges: raise StructuralError('evidence paragraph and row edges differ')
+    return claims, combined, order
+
+
+def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, results, source, configuration=CONFIGURATION):
+    claims, combined, order = registrations(sites, expected_sites, areas, obligations, declared, paragraphs)
+    if len({r['operation'] for r in results}) != len(results): raise StructuralError('duplicate result')
+    actual = {r['operation']:r for r in results}
+    missing = set(expected_sites)-set(actual)
+    if missing: raise StructuralError('missing test results: '+str(sorted(missing)))
+    for site in sites:
+        result = actual[site['operation']]
+        if result.get('source') != source or result.get('configuration') != configuration: raise StructuralError('stale result')
+        from build_graph_evidence import held_service, retained_service
+        if result.get('retained') and not retained_service(result, Path.cwd()): raise StructuralError('invalid retained service evidence')
+        if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
+    states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
+    for claim in order:
+        outcomes = [states[claim], *(states[member] for member in combined.get(claim, []))]
+        states[claim] = 'failed' if 'failed' in outcomes else ('held' if 'held' in outcomes else 'passed')
+    obligation_results = []
+    for row in declared:
+        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' or any(states[c]=='held' for c in row['claims']) else 'scoped-passed')
+        obligation_results.append({**row,'status':state})
     # Dependent requirements inherit failed or held realizers to a fixed point.
     indexed = {r['name']:r for r in obligation_results}
     for _ in obligation_results:
@@ -608,17 +624,21 @@ def tracker_witnesses(root, sites=None):
     return witnesses
 
 
-def tracker_structure(root):
+def tracker_structure(root, sites=None, paragraphs=None):
     """Refuse changed records and bite membership before requiring executions."""
     root = Path(root)
     read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
-    rows = tracker_rows(read('design-inventory.toml'), prose(root)[0],
+    rows = tracker_rows(read('design-inventory.toml'), paragraphs if paragraphs is not None else prose(root)[0],
                         dict(claims=[], obligations=read('claim-obligations.toml'), sites=tracker_selection_sites(root)),
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
-                        tracker_witnesses(root))
+                        tracker_witnesses(root, sites))
     changes = tracker_changes(read('specification-progress.toml'),
                               [dict(category='statement', **row) for row in rows],
                               ('crate', 'kind', 'records', 'bites', 'portions'))
+    expected_coverage = tracker_record_coverage(root, rows, paragraphs if paragraphs is not None else prose(root)[0], read('design-constants.toml'))
+    committed_coverage = [row for row in read('specification-progress.toml') if row['category'] == 'record-coverage']
+    if committed_coverage != expected_coverage:
+        changes.append(dict(category='record-coverage', before=committed_coverage, after=expected_coverage))
     artifact = root/'.lane/specification-tracker-structure.json'
     artifact.parent.mkdir(exist_ok=True)
     artifact.write_text(json.dumps(dict(evidence='structural-only', changes=changes), indent=2)+'\n')
@@ -676,6 +696,29 @@ def check_tracker(root, projection):
     print(f'SPECIFICATION-TRACKER fixed-point=passed unassigned_exact_elsewhere={gap} artifact=.lane/specification-progress.toml')
 
 
+def tracker_record_coverage(root, rows, paragraphs, constants):
+    """Count evidence-free record coverage through the same projection."""
+    summaries = []
+    packages = {str(path.parent.relative_to(root)): tomllib.loads(path.read_text())['package']['name']
+                for path in sorted((root/'packages').glob('*/Cargo.toml'))}
+    records = {name: [] for name in sorted(set(packages.values()) |
+               {r['crate'] for r in rows if r['crate'] != 'none'})}
+    records['ROOT (repository-wide)'] = []
+    records['CONSTANTS (named carrier)'] = ['CONSTANTS::'+r['id'] for r in constants]
+    cited = {name for row in rows for name in row['records']}
+    for name, paragraph in paragraphs.items():
+        path = paragraph['path']
+        if path == 'docs/design/progress.md': continue
+        crate = packages.get(str(Path(path).parent), 'ROOT (repository-wide)')
+        records[crate].append(name)
+    for name, members in records.items():
+        summaries.append(dict(category='record-coverage', name=name, total=len(members),
+                              exact_citing=sum(member in cited for member in members),
+                              numeric_display={field: dict(display='exact', exact_digits=32)
+                                               for field in ('total', 'exact_citing')}))
+    return summaries
+
+
 def tracker_input(root, evidence):
     """Project execution-backed rows and disjoint totals into a TOML carrier."""
     root = Path(root)
@@ -718,23 +761,7 @@ def tracker_input(root, evidence):
                                   **{status: counts[status] for status in ('realized', 'held', 'designed', 'unassigned')},
                                   numeric_display={field: dict(display='exact', exact_digits=32)
                                                    for field in ('total', 'realized', 'held', 'designed', 'unassigned', 'tentative', 'record_granular')}))
-    packages = {str(path.parent.relative_to(root)): tomllib.loads(path.read_text())['package']['name']
-                for path in sorted((root/'packages').glob('*/Cargo.toml'))}
-    records = {name: [] for name in sorted(set(packages.values()) |
-               {r['crate'] for r in rows if r['crate'] != 'none'})}
-    records['ROOT (repository-wide)'] = []
-    records['CONSTANTS (named carrier)'] = ['CONSTANTS::'+r['id'] for r in read('design-constants.toml')]
-    cited = {name for row in rows for name in row['records']}
-    for name, paragraph in paragraphs.items():
-        path = paragraph['path']
-        if path == 'docs/design/progress.md': continue
-        crate = packages.get(str(Path(path).parent), 'ROOT (repository-wide)')
-        records[crate].append(name)
-    for name, members in records.items():
-        summaries.append(dict(category='record-coverage', name=name, total=len(members),
-                              exact_citing=sum(member in cited for member in members),
-                              numeric_display={field: dict(display='exact', exact_digits=32)
-                                               for field in ('total', 'exact_citing')}))
+    summaries.extend(tracker_record_coverage(root, rows, paragraphs, read('design-constants.toml')))
     def value(item):
         if isinstance(item, str): return json.dumps(item, ensure_ascii=False)
         if isinstance(item, int): return str(item)
@@ -845,12 +872,33 @@ def reviewed_sites(sites, manifest, baseline=None):
     return manifest['sites']
 
 
+def registration_check(root, registers, registry, sites, *, structure=True):
+    """Use the execution evaluator's declaration checks without inventing results."""
+    root = Path(root)
+    paragraphs, obligations = prose(root)
+    areas = tomllib.loads((root/'docs/inputs/claim-areas.toml').read_text())['rows']
+    declared = tomllib.loads((root/'docs/inputs/claim-obligations.toml').read_text())['rows']
+    expected = {n for n, case in registry.cases.items() if case['runner'] == 'ci'
+                or (case['runner'] == 'nextest' and case['implementation'] != 'regexml-rust')}
+    registrations(sites, expected, areas, obligations, declared, paragraphs)
+    reviewed_sites(sites, registers['sites'], registers['glosses'])
+    from wallet_cases import repository_check
+    repository_check(sites)
+    if structure:
+        tracker_structure(root, sites, paragraphs)
+    else:
+        tracker_witnesses(root, sites)
+    print('CLAIM-REGISTRATION passed execution=not-evaluated', flush=True)
+    return expected, paragraphs, obligations, areas, declared
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--fail-respellings', action='store_true')
     commands = parser.add_subparsers(dest='command')
     canonicalize = commands.add_parser('canonicalize', help='explicitly reorder and format claim registers without changing entries')
     canonicalize.add_argument('registers', nargs='*', help='registered path(s); defaults to both registers')
+    commands.add_parser('registration', help='check declaration edges without execution results')
     commands.add_parser('tracker', help='project the current checked execution evidence into the tracker carrier')
     args = parser.parse_args(argv)
     try:
@@ -878,11 +926,11 @@ def main(argv=None):
         registry = load_registry()
         sites = [site_claim(s) for s in census(root)]
         reconcile_mints(sites, claim_mints(root))
+        expected, paragraphs, obligations, areas, declared = registration_check(
+            root, registers, registry, sites, structure=args.command == 'registration')
+        if args.command == 'registration':
+            return 0
         checked_linter('.lane/gate-linter.log',sites)
-        expected = {n for n,c in registry.cases.items() if c['runner']=='ci' or (c['runner']=='nextest' and c['implementation']!='regexml-rust')}
-        paragraphs, obligations = prose(root)
-        areas = tomllib.loads(Path('docs/inputs/claim-areas.toml').read_text())['rows']
-        declared = tomllib.loads(Path('docs/inputs/claim-obligations.toml').read_text())['rows']
         paths = [Path('.lane/performance-events.jsonl'), Path('.lane/harness-benchmarks.jsonl'), *sorted(Path('.lane').glob('harness-ci-*.jsonl'))]
         records = [json.loads(line) for path in paths for line in path.read_text().splitlines()]
         source = source_id()

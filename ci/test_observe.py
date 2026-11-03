@@ -165,6 +165,24 @@ class Admission(unittest.TestCase):
         self.assertEqual(validate(*args)['instrumented'],1)
         args[0]['functions'][0]['boundary']=None
         with self.assertRaisesRegex(StructuralError,'omitted instrumentation'):validate(*args)
+        from unittest.mock import patch
+        from observe import syntax_census
+        requests = []
+        refusals = []
+        for binary in (None, '/prepared/observe_census'):
+            with patch('observe.command', side_effect=(json.dumps(dict(packages=[], workspace_members=[])), '', json.dumps(args[0]))) as reader, patch('observe.source_id', return_value='fixture'):
+                parsed = syntax_census(binary)
+                requests.append(reader.call_args.kwargs['input'])
+                invoked = reader.call_args.args[0]
+                self.assertEqual(invoked[0], 'cargo' if binary is None else binary)
+                if binary is not None:
+                    self.assertNotIn('run', invoked)
+                with self.assertRaises(StructuralError) as refusal:
+                    validate(parsed, *args[1:])
+                refusals.append(str(refusal.exception))
+        self.assertEqual(requests[0], requests[1])
+        self.assertEqual(refusals, ['omitted instrumentation'] * 2)
+
 
     def test_wrong_identity(self):
         """Claim: A boundary cannot claim another owner or an unresolved or different label while retaining a valid source item and review.

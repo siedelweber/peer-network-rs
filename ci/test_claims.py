@@ -517,6 +517,32 @@ class Evidence(unittest.TestCase):
         ´claim:testing:cited-evidence-or-owned-holds´
         ´test:integration:test-uncited-evidence-and-holds´
         """
+        from claims import registrations
+        from precheck import commands
+        stages = dict(commands(Path('/prepared'), '/deployed/linter'))
+        self.assertEqual(set(stages), {'census', 'linter', 'claims', 'observations', 'datasets', 'documents'})
+        self.assertEqual(stages['claims'][-2:], ['ci/claims.py', 'registration'])
+        self.assertEqual(stages['linter'], ['/deployed/linter', 'check', '--root', '.'])
+        self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', '--check'])
+        self.assertEqual(stages['documents'], ['/prepared/gate/documents', 'check'])
+        for mutation in ('citation', 'site', 'area', 'obligation', 'edge'):
+            control = fixture()
+            if mutation == 'citation':
+                control['paragraphs']['ROOT::amend:testing:fixture-evidence']['citations'].clear()
+            elif mutation == 'site':
+                control['expected_sites'].remove('sibling')
+            elif mutation == 'area':
+                control['areas'].clear()
+            elif mutation == 'obligation':
+                control['declared'].clear()
+            else:
+                control['declared'][0]['claims'] = ['ROOT::claim:testing:unknown']
+            arguments = {key: control[key] for key in ('sites', 'expected_sites', 'areas', 'obligations', 'declared', 'paragraphs')}
+            with self.assertRaises(StructuralError) as early:
+                registrations(**arguments)
+            with self.assertRaises(StructuralError) as full:
+                evaluate(**control)
+            self.assertEqual(str(early.exception), str(full.exception))
         data=fixture(); data['paragraphs']['ROOT::amend:testing:fixture-evidence']['citations']=set()
         with self.assertRaisesRegex(StructuralError,'uncited evidence'): evaluate(**data)
         data=fixture(); data['declared'][0].update(status='held',claims=[])
@@ -606,6 +632,36 @@ class Evidence(unittest.TestCase):
                 with patch('wallet_cases.repository_check', return_value=None):
                     from claims import tracker_input
                     Path('docs/inputs/specification-progress.toml').write_text(tracker_input('.', dict(claims=[], obligations=[])))
+                    self.assertEqual(main(['registration']), 0)
+                    import precheck
+                    with patch('sys.argv', ['ci/precheck.py', '--only', 'linter']), patch.dict(os.environ, {'LINTER_BIN': '/fixture/linter'}), patch('precheck.subprocess.run', return_value=SimpleNamespace(returncode=-15)):
+                        self.assertEqual(precheck.main(), 143)
+
+                    # Every static refusal is identical before and after the
+                    # execution join; missing results cannot mask it anymore.
+                    review_path = Path('ci/claim_review.json')
+                    gloss_path = Path('ci/claim_gloss_baseline.json')
+                    for fault in ('citation', 'review-form', 'gloss-site'):
+                        original_review = review_path.read_text()
+                        original_gloss = gloss_path.read_text()
+                        original_citations = set(evidence['citations'])
+                        if fault == 'citation':
+                            evidence['citations'].remove('ROOT::gate:testing:fixture')
+                        elif fault == 'review-form':
+                            review_path.write_text(original_review+'\n')
+                        else:
+                            glossary = json.loads(original_gloss)
+                            del glossary['glosses']['sibling']
+                            gloss_path.write_text(register_form(json.dumps(glossary), 'glosses')[2])
+                        early, full = io.StringIO(), io.StringIO()
+                        with redirect_stderr(early):
+                            self.assertEqual(main(['registration']), 2)
+                        with redirect_stderr(full):
+                            self.assertEqual(main([]), 2)
+                        self.assertEqual(early.getvalue(), full.getvalue())
+                        evidence['citations'] = original_citations
+                        review_path.write_text(original_review)
+                        gloss_path.write_text(original_gloss)
                     self.assertEqual(main([]),0)
                     self.assertEqual(main(['--fail-respellings']),1)
                     self.assertEqual(main(['tracker']), 0)

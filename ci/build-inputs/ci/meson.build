@@ -1,6 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['ci/precheck.py', 'build-graph,claim-tests', ''],
   ['ci/isolation.py', 'build-graph,fixed-point-generate,fixed-point-write,harness-tests,discipline-tests,linter-entry-tests,design-tests,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser', ''],
   ['ci/calibrate.py', 'build-graph,fixed-point-generate,fixed-point-write,harness-tests,discipline-tests,linter-entry-tests,design-tests,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser', ''],
   ['ci/flake_ledger.py', 'test-build,tests,reference-certificates,service-tests,test-evidence,harness-tests,discipline-tests,linter-entry-tests,wallet-conformance,build-graph', ''],

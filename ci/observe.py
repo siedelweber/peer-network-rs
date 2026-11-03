@@ -182,7 +182,7 @@ def command(argv, **kwargs):
     return result.stdout
 
 
-def syntax_census():
+def syntax_census(binary=None):
     metadata=json.loads(command(['cargo','metadata','--offline','--locked','--no-deps','--format-version','1']))
     roots=[]
     for package in metadata['packages']:
@@ -194,7 +194,8 @@ def syntax_census():
             roots.append(dict(package=package['name'],owner=OWNERS[path.name],path=str(Path(target['src_path']).relative_to(Path.cwd()))))
     cfg=command(['rustc','--print','cfg']).splitlines()
     request=dict(roots=roots,cfg=cfg)
-    output=command(['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census'],input=json.dumps(request))
+    argv = [str(binary)] if binary else ['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census']
+    output=command(argv,input=json.dumps(request))
     result=json.loads(output)
     result['source']=source_id()
     result['declared_configuration']='nine production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration'
@@ -216,6 +217,7 @@ def operation_source(registry):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--census-binary', type=Path, help='use a prepared syntax reader without compiling')
     parser.add_argument('--census-only',action='store_true')
     parser.add_argument('--write-operation-vocabulary',action='store_true')
     args=parser.parse_args()
@@ -227,7 +229,7 @@ def main():
     try:
         if vocabulary_path.read_text()!=operation_source(raw_registry):
             raise StructuralError('operation vocabulary differs from registry; regenerate with --write-operation-vocabulary')
-        data=syntax_census()
+        data=syntax_census(args.census_binary)
         Path('.lane/observation-syntax.json').write_text(json.dumps(data,indent=2)+'\n')
         if not args.census_only:
             from claims import prose, site_claim
