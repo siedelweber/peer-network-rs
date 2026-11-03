@@ -643,3 +643,6 @@ fn publication_prefix() {
     carrier.frames[1].price = carrier.frames[0].price.clone();
     assert!(publication::consume(carrier, &check).is_err());
 }
+
+#[path = "publication/live.rs"]
+mod live;

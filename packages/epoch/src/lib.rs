@@ -10,6 +10,7 @@ pub mod conserved;
 pub mod controller;
 pub mod fence;
 pub mod ledger;
+pub mod live_publication;
 pub mod package;
 pub mod publication;
 pub mod recipients;

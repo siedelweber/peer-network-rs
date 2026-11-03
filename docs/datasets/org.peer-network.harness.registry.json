@@ -5163,6 +5163,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix",
+        "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach",
+        "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::live-publication",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

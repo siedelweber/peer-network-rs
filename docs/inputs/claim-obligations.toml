@@ -2678,3 +2678,17 @@ owner = "Records and live-adapter implementers"
 missing = "Outside scope: real-chain settlement authenticity and offline cryptographic verification."
 closing_condition = "Current-source finite recognition and refusal controls pass with matching review closure identities."
 closing_step = "Bite 8 marker semantics; real adapter in 8-d2 and offline evidence in bite 9."
+[[rows]]
+name = "EPOCH::verif:admission:live-publication"
+witnessed_labels = ["cond:comparator:marker-epoch-registration", "def:comparator:marker-burn-snapshot", "rem:comparator:finality-breach-halts"]
+path = "packages/epoch/README.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:admission:live-publication-retains-marker-registration", "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments", "EPOCH::claim:admission:finality-loss-freezes-live-publication"]
+realizers = []
+premises = "Finite complete histories, declared live and publication verifiers, sound destruction/opening predicates and existing admitted numerical procedures."
+evidence_paragraph = "EPOCH::rec:admission:live-publication-evidence"
+hold = ""
+owner = "Epoch and live-adapter implementers"
+missing = "Outside scope: real-chain settlement authenticity, persistence and offline cryptographic verification."
+closing_condition = "Current-source finite restoration, snapshot and loss-response controls pass with matching review closure identities."
+closing_step = "Bite 8 marker semantics; adapter 8-d2 and offline evidence bite 9."

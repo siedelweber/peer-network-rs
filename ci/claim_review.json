@@ -2051,6 +2051,54 @@
       "review": "The permissive verifier returns success for every transcript. Four independent mutations fail records envelope checks; a query-precision mutation passes those checks and forms a price, but ledger consumption refuses it through graph replay. The same complete reversed history supplies the ledger context."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
+      "claim": "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
+      "before": "",
+      "after": "Claim: In the finite delayed-acceptance fixture the ledger's snapshot sums each canonical destruction at its first accepted marker, including an older lineage member, and counts an alias only once. A later empty increment and changed read-time totals do not rewrite these gross snapshots. External destruction and finality remain verifier premises.",
+      "review": "An empty-act ledger at three boundaries independently checks each first-accepted increment, exact rational gross addition, alias deduplication and an empty final increment. Changing the read-time amount map leaves the whole ledger equal. No nonempty debit history, publication replay or external authenticity is claimed by this site.",
+      "paper_witnesses": {
+        "def:comparator:marker-burn-snapshot": "The increment and exact gross assertions fail if an older burn is counted before acceptance, a consistent alias is counted again, or a later read-time total replaces the first-accepted snapshot. This finite fixture has no debits."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_marker_snapshots",
+        "digest": "74eea62b550a4daa47b0ac6357b0c2423542d0e0217782aca77dc49a83730f1e"
+      }
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
+      "claim": "EPOCH::claim:admission:finality-loss-freezes-live-publication",
+      "before": "",
+      "after": "Claim: In the declared live fixture a lost final marker freezes the complete last closed package and prevents same-policy continuation. Re-anchor and follow are separate explicitly published new-policy responses, replaying replacement admission while preserving the old package and the exact supersession list; no real-chain finality or automatic Layer-1 repair is claimed.",
+      "review": "A declared lost-final assessment sets the sticky halt, blocks further continuation and leaves the complete old carrier equal. Two independently restored new-policy responses separately exercise re-anchor and follow. Wrong supersession and absent continuity are refused locally even with a response verifier that accepts the exact bad payload. No chain finality, durable storage or automatic repair is inferred.",
+      "paper_witnesses": {
+        "rem:comparator:finality-breach-halts": "The sticky halt, same-policy refusal and complete old-carrier equality assertions fail if a lost final marker allows continuation or rewrites a closed state. Explicit new-policy responses are separate deployment choices under declared publication and continuity verification."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_publication_breach",
+        "digest": "358ca74724ae4a588f433af8fbd7e651b971e519065c37f314187801cc634578"
+      }
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
+      "claim": "EPOCH::claim:admission:live-publication-retains-marker-registration",
+      "before": "",
+      "after": "Claim: The finite host-only complete prefix closes one marker once, retains original disclosures and empty-increment snapshots, and independently rechecks each live assessment and admission. Skipped, repeated, copied and pending proposals refuse under a declared verifier, not a real chain or offline authenticator.",
+      "review": "A complete two-boundary fixture is independently consumed and compared field-for-field. Repeated and skipped closes, a copied prior marker, pending live settlement, missing live evidence and a doubled asserted gross snapshot refuse at their named checks. A future recognized marker remains unclosed; original gates and bindings stay equal. Settlement authenticity is the declared live verifier premise.",
+      "paper_witnesses": {
+        "cond:comparator:marker-epoch-registration": "The one-step prefix, repeated/skip refusals and future-marker control detect failure of ordered one-to-one closure registration in the finite fixture. Independent admission restoration binds each closed frame to its original recognized marker."
+      },
+      "witness_identity": {
+        "recipe": "same-file-case-closure/v1",
+        "function": "live_publication_prefix",
+        "digest": "150c2037153f4d06aaa86b8761d292b1c21f4140cbab7706d9f7781ab1745950"
+      }
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::publication::publication_refusals",
       "path": "packages/epoch/tests/solve/admission/ridge_charge/publication.rs",
       "claim": "EPOCH::claim:admission:mixed-semantic-sections-are-refused",

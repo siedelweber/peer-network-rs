@@ -18,7 +18,7 @@ pub trait Verifier:
 /// Complete public causes. Act presentation is a set; each frame's sequence is ordered.
 /// Declaration payloads and marker disclosures are retained, not replaced by identities.
 /// (´rule:admission:semantic-carrier´)
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Causes {
     pub acts: Vec<CandidateAct>,
     pub names: BTreeSet<PublicReference>,
@@ -74,7 +74,7 @@ impl RealizationEvidence {
 /// Closure carries final gates, standing, all attempted rungs and transport attachments.
 /// The next schedule includes this completed boundary's proposal and delivered led value.
 /// (´rule:admission:semantic-carrier´)
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Frame {
     pub realization: RealizationEvidence,
     pub burn: burn::BurnInput,
@@ -111,7 +111,7 @@ impl NumericPolicy {
 /// Untrusted complete immutable-field theory before verification; encoding is not defined.
 /// Frames retain boundary order and complete prefixes; no previous-standing input exists.
 /// (´rule:admission:semantic-carrier´)
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Carrier {
     pub causes: Causes,
     pub numeric: NumericPolicy,

@@ -20,7 +20,7 @@ use std::collections::BTreeMap;
 ///     p.rejected_submissions = 1;
 /// }
 /// ```
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FinalProcedure {
     pub solve: pn_records::solve::Procedure,
     pub arithmetic: Limits,

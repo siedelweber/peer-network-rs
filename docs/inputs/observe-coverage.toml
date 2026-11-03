@@ -39,11 +39,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-epoch"
-operations = 63
-instrumented = 46
-exceptions = 17
+operations = 70
+instrumented = 50
+exceptions = 20
 helpers = 0
-generators = 88
+generators = 91
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
