@@ -1095,13 +1095,13 @@ name = "ROOT::gate:design:bite-7"
 witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
-claims = ["EPOCH::claim:admission:ridge-consumption-selects-admitted-replay", "EPOCH::claim:admission:ridge-charge-requires-defining-replay", "EPOCH::claim:admission:both-floors-retain-production-charge-gates", "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs", "EPOCH::claim:admission:candidate-context-retains-separate-authority", "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages", "EPOCH::claim:admission:schedule-covariance-retains-transformed-inputs", "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps", "EPOCH::claim:admission:individual-and-own-gates-cannot-be-averaged", "EPOCH::claim:admission:empty-final-set-has-no-stamp-or-debit", "EPOCH::claim:admission:relational-support-and-uncertainty-do-not-waive-gates", "EPOCH::claim:admission:final-policy-refines-without-guessing", "EPOCH::claim:admission:scheduled-policy-compares-at-the-led-wall", "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall", "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks", "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers", "EPOCH::claim:admission:closure-requires-attested-cause-and-duration", "EPOCH::claim:admission:closure-replay-binds-one-common-context", "EPOCH::claim:admission:individual-straddles-withhold-publication", "EPOCH::claim:admission:real-support-cannot-fund-own-debits", "EPOCH::claim:admission:shared-contract-retains-identical-final-gates"]
+claims = ["GRAPH::claim:numerics:ridge-definition-retains-analytic-premises", "GRAPH::claim:numerics:ridge-comparisons-refine-or-remain-indecisive", "GRAPH::claim:numerics:ridge-replay-refuses-defining-and-query-substitution", "GRAPH::claim:numerics:controller-branches-retain-ordered-comparisons", "GRAPH::claim:numerics:controller-delivery-retains-defining-and-replay-evidence", "GRAPH::claim:numerics:controller-ridge-delivery-retains-defining-floor", "EPOCH::claim:admission:controller-publication-retains-frozen-epoch-inputs", "EPOCH::claim:admission:ridge-consumption-selects-admitted-replay", "EPOCH::claim:admission:ridge-charge-requires-defining-replay", "EPOCH::claim:admission:both-floors-retain-production-charge-gates", "EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-invalid-inputs", "EPOCH::claim:admission:candidate-context-retains-separate-authority", "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages", "EPOCH::claim:admission:schedule-covariance-retains-transformed-inputs", "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps", "EPOCH::claim:admission:individual-and-own-gates-cannot-be-averaged", "EPOCH::claim:admission:empty-final-set-has-no-stamp-or-debit", "EPOCH::claim:admission:relational-support-and-uncertainty-do-not-waive-gates", "EPOCH::claim:admission:final-policy-refines-without-guessing", "EPOCH::claim:admission:scheduled-policy-compares-at-the-led-wall", "EPOCH::claim:admission:retained-policy-must-cover-a-rising-wall", "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks", "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers", "EPOCH::claim:admission:closure-requires-attested-cause-and-duration", "EPOCH::claim:admission:closure-replay-binds-one-common-context", "EPOCH::claim:admission:individual-straddles-withhold-publication", "EPOCH::claim:admission:real-support-cannot-fund-own-debits", "EPOCH::claim:admission:shared-contract-retains-identical-final-gates"]
 realizers = []
-hold = "ROOT::open:testing:obligation-evidence"
-owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery, finite effective schedules and both-floor atomic final gates have witnesses; final admission remains held for rec:design:bite-seven-checklist: the published reference complete-history repair under open:design:reference-registration-base and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Assigned domain bite, with evidence review in bite 11"
+hold = "ROOT::open:design:reference-registration-base"
+owner = "Paper fixture maintainers for the repair; epoch implementer for its complete-history join"
+missing = "Only the published repaired complete-history reference fixture and its production join remain under open:design:reference-registration-base. The finite implemented surface, explicit consumption-verifier controls, public calibration and close evidence review are recorded in amend:design:bite-seven-close-assessment; no repaired-reference comparison is inferred."
+closing_condition = "Publish the repaired complete act census and regenerated standings, final gates and certificate, then reproduce the complete-history reference with same-source passing evidence."
+closing_step = "Reference repair follow-up owned by the paper maintainers and epoch implementer; all implemented bite-seven evidence joined."
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; the final admission witnesses establish finite rational and checked-ridge-floor gates and immutable evidence, not authenticated publication or persistent atomic application."
 evidence_paragraph = "EPOCH::sec:admission:area-admission"
 
@@ -1640,6 +1640,7 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-kinds-attestation-
 
 [[rows]]
 name = "ROOT::req:vision:admission"
+# The declared candidate-authority claim checks causes and attestations, not the cited W1/W2a/W2b gates, final stamps or host contract.
 witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
@@ -1647,7 +1648,7 @@ claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = ["ROOT::dec:design:admission", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery and finite effective schedules have witnesses; final admission remains held for rec:design:bite-seven-checklist: ridge-floor charge admission, the reference Registration/base discrepancy under open:design:reference-registration-base, calibration and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
+missing = "The finite declaration, ridge, controller, schedule, both-floor atomic admission and closure evidence is implemented and publicly calibrated. Only the published repaired complete-history reference join remains in bite seven under open:design:reference-registration-base; amend:design:bite-seven-close-assessment records the supported surface and required evidence join. Outer histories and deployment remain with their named owners."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission."
@@ -1720,6 +1721,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:final-membership"
+# The candidate claim retains supplied authority and host attestation; it does not witness the full write, host contract, final edge set or earliest closure statement.
 witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
@@ -1727,7 +1729,7 @@ claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = ["ROOT::dec:design:final-membership", "ROOT::gate:design:bite-1", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7", "ROOT::req:vision:admission"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery and finite effective schedules have witnesses; final admission remains held for rec:design:bite-seven-checklist: ridge-floor charge admission, the reference Registration/base discrepancy under open:design:reference-registration-base, calibration and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
+missing = "The finite declaration, ridge, controller, schedule, both-floor atomic admission and closure evidence is implemented and publicly calibrated. Only the published repaired complete-history reference join remains in bite seven under open:design:reference-registration-base; amend:design:bite-seven-close-assessment records the supported surface and required evidence join. Outer histories and deployment remain with their named owners."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission."
@@ -1774,6 +1776,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::req:vision:policy-schedules"
+# Declaration validation does not execute the delivered controller or effective boundary sequence. No full cited controller or schedule statement is attributed to this declaration-only member.
 witnessed_labels = []
 path = "docs/design/concept.md"
 status = "held"
@@ -1781,7 +1784,7 @@ claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-inv
 realizers = ["ROOT::dec:design:policy-schedules", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery and finite effective schedules have witnesses; final admission remains held for rec:design:bite-seven-checklist: ridge-floor charge admission, the reference Registration/base discrepancy under open:design:reference-registration-base, calibration and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
+missing = "The finite declaration, ridge, controller, schedule, both-floor atomic admission and closure evidence is implemented and publicly calibrated. Only the published repaired complete-history reference join remains in bite seven under open:design:reference-registration-base; amend:design:bite-seven-close-assessment records the supported surface and required evidence join. Outer histories and deployment remain with their named owners."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission."
@@ -2122,6 +2125,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:gate-unit-cases"
+# Its sole candidate-authority member does not execute the cited own-solvency, individual-safety or epoch-admission conditions.
 witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
@@ -2129,7 +2133,7 @@ claims = ["EPOCH::claim:admission:candidate-context-retains-separate-authority"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery and finite effective schedules have witnesses; final admission remains held for rec:design:bite-seven-checklist: ridge-floor charge admission, the reference Registration/base discrepancy under open:design:reference-registration-base, calibration and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
+missing = "The finite declaration, ridge, controller, schedule, both-floor atomic admission and closure evidence is implemented and publicly calibrated. Only the published repaired complete-history reference join remains in bite seven under open:design:reference-registration-base; amend:design:bite-seven-close-assessment records the supported surface and required evidence join. Outer histories and deployment remain with their named owners."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission."
@@ -2228,6 +2232,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
 name = "ROOT::verif:design:wall-controller-cases"
+# Its sole declaration-validation member does not witness the cited executed controller and boundary conditions.
 witnessed_labels = []
 path = "docs/design/implementation.md"
 status = "held"
@@ -2235,7 +2240,7 @@ claims = ["EPOCH::claim:admission:schedule-declarations-refuse-incomplete-or-inv
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Declarations, binding ridge, production delivery and finite effective schedules have witnesses; final admission remains held for rec:design:bite-seven-checklist: ridge-floor charge admission, the reference Registration/base discrepancy under open:design:reference-registration-base, calibration and independent source-matched close. Finite shared admission conformance is registered as epoch-admission-1."
+missing = "The finite declaration, ridge, controller, schedule, both-floor atomic admission and closure evidence is implemented and publicly calibrated. Only the published repaired complete-history reference join remains in bite seven under open:design:reference-registration-base; amend:design:bite-seven-close-assessment records the supported surface and required evidence join. Outer histories and deployment remain with their named owners."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 premises = "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission."
