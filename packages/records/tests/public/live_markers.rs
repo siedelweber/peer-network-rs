@@ -101,6 +101,15 @@ fn live_marker_rules() {
     bad.history.records.remove(0);
     assert_eq!(verify(&bad, &service), Err(Error::Recognition(BurnError::MissingLineage)));
     bad = c.clone();
+    bad.history.markers[2].lineage.remove("r0");
+    assert_eq!(verify(&bad, &service), Err(Error::Recognition(BurnError::RegressedLineage)));
+    bad = c.clone();
+    bad.history.markers[0].initial_snapshot = None;
+    assert_eq!(verify(&bad, &service), Err(Error::Recognition(BurnError::Initial)));
+    bad = c.clone();
+    bad.history.markers[2].policy_edition.push_str("-foreign");
+    assert_eq!(verify(&bad, &service), Err(Error::Recognition(BurnError::HistoryPolicy)));
+    bad = c.clone();
     bad.history.markers[1].name = "copied-marker".into();
     assert_eq!(verify(&bad, &service), Err(Error::Pending));
     assert_eq!(

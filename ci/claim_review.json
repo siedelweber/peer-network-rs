@@ -2096,14 +2096,14 @@
       "claim": "EPOCH::claim:admission:finality-loss-freezes-live-publication",
       "before": "",
       "after": "Claim: In the declared live fixture a lost final marker freezes the complete last closed package and prevents same-policy continuation. Re-anchor and follow are separate explicitly published new-policy responses, replaying replacement admission while preserving the old package and the exact supersession list; no real-chain finality or automatic Layer-1 repair is claimed.",
-      "review": "A declared lost-final assessment sets the sticky halt, blocks further continuation and leaves the complete old carrier equal. Two independently restored new-policy responses separately exercise re-anchor and follow. Wrong supersession and absent continuity are refused locally even with a response verifier that accepts the exact bad payload. No chain finality, durable storage or automatic repair is inferred.",
+      "review": "A declared lost-final assessment sets the sticky halt, blocks further continuation and leaves the complete old carrier equal. Two independently restored new-policy responses separately exercise re-anchor and follow. Wrong supersession and absent continuity are refused locally even with a response verifier that accepts the exact bad payload. No chain finality, durable storage or automatic repair is inferred. New-policy replacements retaining the old initial marker, non-later publication or unchanged sequence, and follow divergence at the old frame count each refuse Response despite a matching permissive response attestation.",
       "paper_witnesses": {
         "rem:comparator:finality-breach-halts": "The sticky halt, same-policy refusal and complete old-carrier equality assertions fail if a lost final marker allows continuation or rewrites a closed state. Explicit new-policy responses are separate deployment choices under declared publication and continuity verification."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "live_publication_breach",
-        "digest": "358ca74724ae4a588f433af8fbd7e651b971e519065c37f314187801cc634578"
+        "digest": "1008ff7a82cfdf22e368d9adbf14cc0203f15a6f7e267d8121f457df66520d2b"
       }
     },
     {
@@ -4248,9 +4248,9 @@
       "claim": "RECORDS::claim:burn:live-aliases-retain-first-acceptance",
       "before": "",
       "after": "Claim: Declared live fixture recognition retains delayed acceptance and deduplicates consistent aliases by destruction identity; an alias with changed attribution refuses. No observed lineage total substitutes for acceptance.",
-      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "review": "The delayed member is in lineage but absent from the first accepted set, then present in the next. The destruction count equals record count minus the consistent alias. Changed alias attribution refuses InconsistentAlias even with its matching proof; counting both aliases or accepting changed attribution breaks these assertions.",
       "paper_witnesses": {
-        "cond:comparator:marker-single-count": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+        "cond:comparator:marker-single-count": "The delayed member is in lineage but absent from the first accepted set, then present in the next. The destruction count equals record count minus the consistent alias. Changed alias attribution refuses InconsistentAlias even with its matching proof; counting both aliases or accepting changed attribution breaks these assertions."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
@@ -4264,9 +4264,9 @@
       "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
       "before": "",
       "after": "Claim: Complete lists and uniquely opened commitments yield the same accepted sets under declared fixture verifiers; missing member proof, missing or ambiguous opening, out-of-lineage acceptance and dropped predecessor acceptance refuse without substituting a smaller set.",
-      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "review": "The complete-list and uniquely opened commitment accepted sets are equal. Missing and duplicate openings refuse MissingOpening and AmbiguousOpening; absent member proof refuses InvalidMember in both representations; acceptance outside lineage refuses OutOfLineage and dropped predecessor acceptance refuses RegressedAcceptance. No smaller set is substituted.",
       "paper_witnesses": {
-        "cond:comparator:marker-network-acceptance": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+        "cond:comparator:marker-network-acceptance": "The complete-list and uniquely opened commitment accepted sets are equal. Missing and duplicate openings refuse MissingOpening and AmbiguousOpening; absent member proof refuses InvalidMember in both representations; acceptance outside lineage refuses OutOfLineage and dropped predecessor acceptance refuses RegressedAcceptance. No smaller set is substituted."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
@@ -4280,15 +4280,15 @@
       "claim": "RECORDS::claim:burn:live-markers-require-complete-lineage",
       "before": "",
       "after": "Claim: Under a declared live fixture verifier, complete reversed disclosures retain immediate marker succession and refuse skipped, competing, lost-lineage and copied-name candidates. A name or a depth assumption alone supplies no live settlement authority.",
-      "review": "Finite fixture mutations have exact expected refusals and successful controls. The trusted live predicate binds complete disclosures; this is not settlement authenticity or offline verification.",
+      "review": "A copied marker name refuses Pending under the complete-disclosure live predicate, missing lineage refuses MissingLineage, absent live evidence refuses MissingEvidence and lost settlement refuses Lost. A name or mere depth cannot pass these controls; external causal authenticity remains a verifier premise. The valid reversed history is recognized. Removing or duplicating a successor refuses Succession; deleting predecessor lineage refuses RegressedLineage; omitting the initial empty snapshot refuses Initial; substituting the policy edition refuses HistoryPolicy. Removing these checks changes the corresponding exact refusal assertion. Scope is the declared live fixture verifier, not settlement authenticity.",
       "paper_witnesses": {
-        "cond:comparator:marker-causal-dependence": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier.",
-        "cond:comparator:marker-lineage-succession": "The finite control fails if the stated succession, acceptance or destruction-identity premise is ignored; scope is conditional on the declared sound fixture verifier."
+        "cond:comparator:marker-causal-dependence": "A copied marker name refuses Pending under the complete-disclosure live predicate, missing lineage refuses MissingLineage, absent live evidence refuses MissingEvidence and lost settlement refuses Lost. A name or mere depth cannot pass these controls; external causal authenticity remains a verifier premise.",
+        "cond:comparator:marker-lineage-succession": "The valid reversed history is recognized. Removing or duplicating a successor refuses Succession; deleting predecessor lineage refuses RegressedLineage; omitting the initial empty snapshot refuses Initial; substituting the policy edition refuses HistoryPolicy. Removing these checks changes the corresponding exact refusal assertion. Scope is the declared live fixture verifier, not settlement authenticity."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "live_marker_rules",
-        "digest": "a1e5484d27c492e91172f68438ab5fae03ff8d2c5ddfe92c0eac7162b4069ebf"
+        "digest": "b1fe297cdfbd570ca38b8c249ec1a7d50d8b6e0dcedf7d7b55206eefd06a1da0"
       }
     },
     {

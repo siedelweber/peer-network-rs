@@ -428,6 +428,50 @@ fn check_response(state: &live_publication::LiveState, old: &Carrier, replacemen
     assert!(!restored.halted());
 }
 
+fn response_policy_refusals(
+    state: &live_publication::LiveState,
+    carrier: &Carrier,
+    replacement: &Carrier,
+    replacement_check: &Check,
+    response: &Response,
+) {
+    let mut old_initial = replacement.clone();
+    old_initial.frames[0]
+        .marker_policy
+        .initial_marker
+        .clone_from(&carrier.frames[0].marker_policy.initial_marker);
+    let mut non_later = replacement.clone();
+    non_later.frames[0].marker_policy.published_at = carrier.frames[0].marker_policy.published_at;
+    let mut unchanged_sequence = replacement.clone();
+    unchanged_sequence.frames[0]
+        .marker_policy
+        .sequence
+        .clone_from(&carrier.frames[0].marker_policy.sequence);
+    let late_divergence = Response::Follow {
+        divergence: carrier.frames.len(),
+        superseded: vec![],
+        continuity: b"explicit ledger continuity".to_vec(),
+        publication: b"published new policy".to_vec(),
+    };
+    for (invalid, response) in [
+        (old_initial, response.clone()),
+        (non_later, response.clone()),
+        (unchanged_sequence, response.clone()),
+        (replacement.clone(), late_divergence),
+    ] {
+        let permits = ResponseCheck {
+            old: carrier.clone(),
+            replacement: invalid.clone(),
+            response: response.clone(),
+        };
+        assert!(permits.published_response(carrier, &invalid, &response));
+        assert!(matches!(
+            state.respond(invalid.clone(), response, replacement_check, &live(&invalid), &permits),
+            Err(Error::Response)
+        ));
+    }
+}
+
 /// Claim: In the declared live fixture a lost final marker freezes the complete last closed package and prevents same-policy continuation. Re-anchor and follow are separate explicitly published new-policy responses, replaying replacement admission while preserving the old package and the exact supersession list; no real-chain finality or automatic Layer-1 repair is claimed.
 /// ´claim:admission:finality-loss-freezes-live-publication´
 /// ´test:integration:live-publication-breach´
@@ -471,6 +515,7 @@ fn live_publication_breach() {
         publication: b"published new policy".to_vec(),
     };
     check_response(&state, &carrier, &replacement, &replacement_check, &follow);
+    response_policy_refusals(&state, &carrier, &replacement, &replacement_check, &response);
     assert_eq!(state.closed().carrier(), &carrier);
     let Response::Follow {
         mut superseded,
