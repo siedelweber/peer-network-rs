@@ -231,6 +231,33 @@ class WalletBoundary(unittest.TestCase):
         ´test:integration:test-codec-pins´
         """
         self.assertTrue(wallet_crypto.check())
+        import tempfile
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'vendor/example').mkdir(parents=True)
+            file = root/'vendor/example/lib.rs'; file.write_bytes(b'public fixture')
+            row = dict(name='example', version='1.0.0', path='vendor/example', content_manifest='contents.json')
+            reviewed = {('example','1.0.0'):'a'*64}
+            evidence = dict(name='example',version='1.0.0',archive_checksum='a'*64,
+                            files={'lib.rs':hashlib.sha256(file.read_bytes()).hexdigest()})
+            manifest = root/'contents.json'; manifest.write_text(json.dumps(evidence))
+            self.assertIsNone(wallet_crypto.check_vendor_contents(root,row,reviewed))
+            for field in ['name','version','archive_checksum']:
+                manifest.write_text(json.dumps(dict(evidence, **{field:'changed'})))
+                with self.assertRaises(ValueError): wallet_crypto.check_vendor_contents(root,row,reviewed)
+            manifest.write_text(json.dumps(evidence))
+            with self.assertRaisesRegex(ValueError,'review missing'): wallet_crypto.check_vendor_contents(root,row,{})
+            file.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
+            file.unlink()
+            with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
+            file.write_bytes(b'public fixture'); (file.parent/'extra').write_bytes(b'extra')
+            with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
+        with self.assertRaisesRegex(ValueError,'unbound'):
+            wallet_crypto.check_checksums(dict(package=[dict(name='secp256k1',version='0.29.1')]),[],{('secp256k1','0.29.1')})
+        for source in ['registry+https://example.invalid/index#secp256k1-sys@0.10.1',
+                       'path+file:///fixture/vendor/secp256k1-sys#0.10.1']:
+            self.assertEqual(wallet_crypto.artifact_package(dict(package_id=source)),('secp256k1-sys','0.10.1'))
         rows = [dict(name='elements', version='0.27.0', checksum='a' * 64)]
         lock = dict(package=[dict(name='elements', version='0.27.0', checksum='a' * 64), dict(name='pn-wallet', version='0.1.0')])
         tree = {('elements', '0.27.0'), ('pn-wallet', '0.1.0')}

@@ -1,0 +1,5 @@
+[[packages]]
+name = "regexml"
+version = "0.2.2"
+path = "vendor/regexml"
+mode = "member"

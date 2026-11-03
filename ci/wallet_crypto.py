@@ -4,6 +4,41 @@ from pathlib import Path
 import re
 import subprocess
 import tomllib
+import hashlib
+from discipline import vendor_packages
+
+
+def check_vendor_contents(root, declaration, reviewed):
+    """Bind the complete extracted tree to its reviewed archive and file manifest."""
+    path = root / declaration['path']
+    evidence = json.loads((root / declaration['content_manifest']).read_text())
+    identity = (declaration['name'], declaration['version'])
+    if (evidence.get('name'), evidence.get('version')) != identity:
+        raise ValueError('vendor content identity differs')
+    if reviewed.get(identity) != evidence.get('archive_checksum') or not reviewed.get(identity):
+        raise ValueError('vendor archive review missing or different')
+    files = evidence.get('files')
+    if not isinstance(files, dict) or not files:
+        raise ValueError('vendor content manifest empty')
+    actual = {}
+    for file in path.rglob('*'):
+        if file.is_symlink():
+            raise ValueError('vendor symlink refused')
+        if file.is_file():
+            actual[file.relative_to(path).as_posix()] = hashlib.sha256(file.read_bytes()).hexdigest()
+    if actual != files:
+        raise ValueError('vendor contents differ')
+
+
+def artifact_package(message):
+    """Cargo targets name path and registry artifacts without parsing source-ID syntax."""
+    identifier = message.get('package_id', '')
+    suffix = identifier.rsplit('#', 1)[-1]
+    if '@' in suffix:
+        return tuple(suffix.rsplit('@', 1))
+    if identifier.startswith('path+') and '#' in identifier:
+        return identifier.split('#', 1)[0].rstrip('/').rsplit('/', 1)[-1], suffix
+    return None, None
 
 # Bundled C snapshots as record 023 states them. Each module is witnessed by
 # one exported function of its public header, found in the built archive's
@@ -97,16 +132,22 @@ def check_compiler(package, rlib, version, commit):
         raise ValueError(f'codec built by another compiler: {package}')
 
 
-def check_checksums(lock, rows, tree):
+def check_checksums(lock, rows, tree, root=None):
     """Every registry package of the wallet's normal and build closure has its reviewed archive checksum."""
     reviewed = {}
     for row in rows:
         key = (row['name'], row['version'])
         if row.get('checksum') and reviewed.setdefault(key, row['checksum']) != row['checksum']:
             raise ValueError('reviewed archive checksums disagree: ' + ' '.join(key))
+    vendors = [] if root is None else [r for r in vendor_packages(root) if r['mode'] == 'patch']
+    for declaration in vendors:
+        check_vendor_contents(root, declaration, reviewed)
+    bound = {(r['name'], r['version']) for r in vendors}
     locked = {(p['name'], p['version']): p.get('checksum') for p in lock['package']}
     for key in sorted(tree):
         if locked.get(key) is None:
+            if key[0] in {'secp256k1', 'secp256k1-zkp', *SNAPSHOTS} and key not in bound:
+                raise ValueError('vendored binding is unbound: ' + ' '.join(key))
             continue
         if reviewed.get(key) != locked[key]:
             raise ValueError('codec archive checksum differs from review: ' + ' '.join(key))
@@ -128,16 +169,16 @@ def build_artifacts(root):
     artifacts = {}
     for line in output.splitlines():
         message = json.loads(line)
-        package = re.search(r'#([\w-]+)@', message.get('package_id', ''))
-        if not package or package.group(1) not in SNAPSHOTS:
+        package, version = artifact_package(message)
+        if package not in SNAPSHOTS:
             continue
-        entry = artifacts.setdefault(package.group(1), {})
+        entry = artifacts.setdefault(package, {})
         if message['reason'] == 'build-script-executed':
             entry['out_dir'] = Path(message['out_dir'])
         elif message['reason'] == 'compiler-artifact' and 'custom-build' not in message['target']['kind']:
             entry['rlib'] = next(Path(name) for name in message['filenames'] if name.endswith('.rlib'))
             entry['manifest'] = Path(message['manifest_path']).parent
-            entry['version'] = message['package_id'].rsplit('@', 1)[1]
+            entry['version'] = version
     return artifacts
 
 
@@ -156,7 +197,7 @@ def check(root=Path('.')):
     # The host register spells each name with its version, as "name version".
     rows = [dict(row, name=row['name'].split()[0]) for name in ('wallet', 'host')
             for row in tomllib.loads((root/f'docs/inputs/{name}-dependencies.toml').read_text())['rows']]
-    check_checksums(tomllib.loads((root/'Cargo.lock').read_text()), rows, packages)
+    check_checksums(tomllib.loads((root/'Cargo.lock').read_text()), rows, packages, root)
     artifacts = build_artifacts(root)
     for package, spec in SNAPSHOTS.items():
         entry = artifacts.get(package, {})

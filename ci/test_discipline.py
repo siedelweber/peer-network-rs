@@ -765,6 +765,34 @@ class SourceDiscipline(unittest.TestCase):
         self.assertTrue(inherits_lints(tomllib.loads('[lints]\nworkspace = true\n')))
         for source in ['', '[lints]\nworkspace = false\n', '[lints]\nworkspace = true\n[lints.rust]\nunused = "allow"\n']:
             self.assertFalse(inherits_lints(tomllib.loads(source)))
+        from discipline import vendor_packages
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'ci').mkdir(); (root/'vendor/example').mkdir(parents=True)
+            (root/'vendor/example/Cargo.toml').write_text('[package]\nname="example"\nversion="1.0.0"\n')
+            manifest = '[workspace]\nmembers=[]\nexclude=["vendor/example"]\n[patch.crates-io]\nexample={path="vendor/example"}\n'
+            declaration = '[[packages]]\nname="example"\nversion="1.0.0"\npath="vendor/example"\nmode="patch"\n'
+            (root/'Cargo.toml').write_text(manifest)
+            (root/'ci/vendor-packages.toml').write_text(declaration)
+            self.assertEqual(vendor_packages(root)[0]['mode'], 'patch')
+            for changed, reason in [(manifest.replace('example={path="vendor/example"}', ''), 'not routed'),
+                                    (manifest.replace('exclude=["vendor/example"]','exclude=[]'), 'must be excluded')]:
+                (root/'Cargo.toml').write_text(changed)
+                with self.assertRaisesRegex(ValueError, reason): vendor_packages(root)
+            (root/'Cargo.toml').write_text(manifest)
+            (root/'vendor/extra').write_text('undeclared')
+            with self.assertRaisesRegex(ValueError, 'undeclared vendor file'): vendor_packages(root)
+            (root/'vendor/extra').unlink()
+            (root/'ci/vendor-packages.toml').write_text('packages=[]\n')
+            with self.assertRaisesRegex(ValueError, 'undeclared vendor patch'): vendor_packages(root)
+            (root/'ci/vendor-packages.toml').write_text(declaration.replace('1.0.0','2.0.0'))
+            with self.assertRaisesRegex(ValueError, 'identity differs'): vendor_packages(root)
+            (root/'ci/vendor-packages.toml').write_text(declaration.replace('patch','member'))
+            (root/'Cargo.toml').write_text('[workspace]\nmembers=["vendor/example"]\n')
+            self.assertEqual(vendor_packages(root)[0]['mode'], 'member')
+            (root/'Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+            with self.assertRaisesRegex(ValueError, 'not a member'): vendor_packages(root)
 
     def test_external_test_modules(self):
         """out-of-line test modules and their descendants are suppression-free test trees.

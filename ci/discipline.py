@@ -344,6 +344,48 @@ def secret_dependency_findings(metadata):
             (package["version"] != "0.10.3" or "serde" in nodes[package["id"]]["features"])]
 
 
+def vendor_packages(root):
+    """The declared vendor boundary includes members and excluded registry patches."""
+    manifest = tomllib.loads((root / 'Cargo.toml').read_text())
+    rows = tomllib.loads((root / 'ci/vendor-packages.toml').read_text())['packages']
+    members = manifest.get('workspace', {}).get('members', [])
+    excluded = manifest.get('workspace', {}).get('exclude', [])
+    patches = manifest.get('patch', {}).get('crates-io', {})
+    paths = set()
+    names = set()
+    for row in rows:
+        path, name = row['path'], row['name']
+        if not path.startswith('vendor/') or any(p in ('', '.', '..') for p in path.split('/')):
+            raise ValueError('vendor path must be normalized: ' + path)
+        if path in paths or name in names:
+            raise ValueError('duplicate vendor declaration')
+        paths.add(path); names.add(name)
+        package = tomllib.loads((root / path / 'Cargo.toml').read_text())['package']
+        if (package['name'], package['version']) != (name, row['version']):
+            raise ValueError('vendor package identity differs: ' + path)
+        if row['mode'] == 'member':
+            if path not in members:
+                raise ValueError('vendor member is not a member: ' + path)
+        elif row['mode'] == 'patch':
+            if path in members or path not in excluded:
+                raise ValueError('vendor patch must be excluded: ' + path)
+            if patches.get(name) != {'path': path}:
+                raise ValueError('vendor patch is not routed: ' + name)
+        else:
+            raise ValueError('unknown vendor mode')
+    for name, patch in patches.items():
+        if isinstance(patch, dict) and patch.get('path', '').startswith('vendor/'):
+            if not any(r['name'] == name and r['path'] == patch['path'] and r['mode'] == 'patch' for r in rows):
+                raise ValueError('undeclared vendor patch: ' + name)
+    for path in members:
+        if path.startswith('vendor/') and path not in paths:
+            raise ValueError('undeclared vendor member: ' + path)
+    for path in (root / 'vendor').rglob('*'):
+        if path.is_symlink() or (path.is_file() and not any(path.is_relative_to(root / p) for p in paths)):
+            raise ValueError('undeclared vendor file: ' + str(path))
+    return rows
+
+
 def vendor_members(root):
     manifest = tomllib.loads((root / "Cargo.toml").read_text())
     members = manifest.get("workspace", {}).get("members", [])
@@ -481,10 +523,11 @@ def main():
         manifests = {pathlib.Path(package["manifest_path"]) for package in workspace["packages"] if package["id"] in members}
         if not manifests:
             raise ValueError("workspace has no member manifests")
+        vendor_paths = {pathlib.Path.cwd() / row['path'] for row in vendor_packages(pathlib.Path.cwd()) if row['mode'] == 'member'}
         for path in sorted(manifests):
             manifest = tomllib.loads(path.read_text())
             # The engine retains its upstream manifest and compiler policy.
-            if path.parent == pathlib.Path.cwd() / "vendor/regexml":
+            if path.parent in vendor_paths:
                 continue
             if not inherits_lints(manifest):
                 raise ValueError(f"{path}: expected only [lints] workspace = true; local lint tables are forbidden")
@@ -524,7 +567,7 @@ def main():
                     raise ValueError(f"{path}: tracked Cargo configuration may not carry rustflags or lint flags")
         return 0
     if mode == "vendor-set":
-        vendors = vendor_members(pathlib.Path.cwd())
+        vendors = sorted((row['path'], row['name']) for row in vendor_packages(pathlib.Path.cwd()))
         expected = "( " + " / ".join(f'%s"{path}/" *VCHAR' for path, _ in vendors) + " )"
         owners = tomllib.loads(pathlib.Path(".linter/owners.toml").read_text())
         declared = [row["pattern"] for row in owners["partitions"] if row["owner"] == "VENDOR"]
