@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 61 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 64 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 26 | 55 | 397 | 10 | 27 | 878 |
+| implementation | 1 356 | 26 | 56 | 404 | 10 | 27 | 870 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -31,9 +31,9 @@
 | pn-epoch | 371 | 12 | 8 | 143 | 1 | 13 | 208 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
 | pn-host | 166 | 0 | 17 | 43 | 1 | 1 | 106 |
-| pn-readouts | 71 | 0 | 1 | 5 | 1 | 0 | 65 |
+| pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
 | pn-records | 218 | 1 | 9 | 75 | 1 | 3 | 133 |
-| pn-replay | 26 | 0 | 3 | 1 | 0 | 0 | 22 |
+| pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
 | pn-verification | 281 | 8 | 8 | 70 | 6 | 6 | 195 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
@@ -56,7 +56,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 39 | 0 |
-| ROOT (repository-wide) | 1 497 | 192 |
+| ROOT (repository-wide) | 1 497 | 193 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -71,10 +71,10 @@
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 0 | 6 | 32 | 1 | 1 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
-| 9 | 8 | 1 | 4 | 3 | 0 | 0 | 0 |
-| 10 | 9 | 0 | 4 | 5 | 0 | 0 | 0 |
-| 11 | 92 | 2 | 27 | 62 | 0 | 4 | 1 |
-| unlinked | 1 492 | 21 | 18 | 273 | 15 | 18 | 1 180 |
+| 9 | 11 | 1 | 4 | 6 | 0 | 0 | 0 |
+| 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
+| 11 | 93 | 2 | 28 | 62 | 0 | 4 | 1 |
+| unlinked | 1 484 | 21 | 18 | 273 | 15 | 18 | 1 172 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -84,12 +84,12 @@
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 4 | 52 | 8 | 3 | 157 |
-| function | 216 | 9 | 6 | 97 | 0 | 8 | 104 |
-| invariant check | 517 | 11 | 22 | 140 | 1 | 10 | 344 |
+| function | 216 | 9 | 6 | 98 | 0 | 8 | 103 |
+| invariant check | 517 | 11 | 22 | 145 | 1 | 10 | 339 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 1 | 18 | 52 | 6 | 3 | 194 |
+| policy | 265 | 1 | 19 | 52 | 6 | 3 | 193 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
-| type | 92 | 0 | 4 | 43 | 0 | 2 | 45 |
+| type | 92 | 0 | 4 | 44 | 0 | 2 | 44 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -331,7 +331,7 @@
 | ``def:graph:derived-raw-edges`` | pn-readouts; function | unassigned | | | | |  | | |
 | ``def:graph:raw-traversal-snapshot`` | pn-readouts; type | held | ``ROOT::dec:design:raw-readings`` ``ROOT::req:vision:raw-readings`` | | | ``ROOT::dec:design:raw-readings``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:raw-readings``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
 | ``def:graph:derived-self-reading`` | pn-readouts; function | unassigned | | | | |  | | |
-| ``def:graph:raw-snapshot-path`` | pn-readouts; type | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
+| ``def:graph:raw-snapshot-path`` | pn-readouts; type | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | | |
 | ``thm:graph:raw-weight-ceiling`` | pn-graph; invariant check | designed | ``CONSTANTS::bound.raw.wmax`` ``CONSTANTS::bound.raw.wmax_marginal`` | | | |  | | |
 | ``case:graph:raw-weight-ceiling-positive-walk`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``case:graph:raw-weight-ceiling-zero-walk`` | pn-graph; invariant check | unassigned | | | | |  | | |
@@ -654,7 +654,7 @@
 | ``edge:nodes:hyper-send`` | pn-records; type | designed | ``GRAPH::def:formation:send`` ``ROOT::amend:design:send-formation-scope`` | | | |  | | |
 | ``eq:nodes:path-view:send-a`` | pn-graph; function | designed | ``GRAPH::def:formation:send`` | | | |  | | |
 | ``eq:nodes:path-view:send-t`` | pn-graph; function | designed | ``GRAPH::def:formation:send`` | | | |  | | |
-| ``prop:nodes:self-loop-neutral`` | pn-readouts; invariant check | unassigned | | | | |  | | |
+| ``prop:nodes:self-loop-neutral`` | pn-readouts; invariant check | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:raw-paths``; no return to a visited original vertex in the signed raw service<br>|
 | ``step:nodes:self-loop-neutral-max-product`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``step:nodes:self-loop-neutral-parity`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``prop:nodes:raw-self-edge-properties`` | pn-readouts; invariant check | unassigned | | | | |  | | |
@@ -684,7 +684,7 @@
 | ``subsec:epoch:damped-edge-weight`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``def:epoch:damped-edge-weight`` | pn-readouts; function | unassigned | | | | |  | | |
 | ``eq:epoch:damped-edge-weight`` | pn-readouts; function | unassigned | | | | |  | | |
-| ``rem:epoch:shared-raw-edge-primitive`` | pn-readouts; policy | unassigned | | | | |  | | |
+| ``rem:epoch:shared-raw-edge-primitive`` | pn-readouts; policy | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:raw-paths``; separation of signed raw routing from standing transport<br>|
 | ``prop:epoch:damped-weight-bounds`` | pn-readouts; invariant check | designed | ``CONSTANTS::const.activation.g_half`` | | | |  | | |
 | ``prop:epoch:damped-weight-bounds:positive`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``prop:epoch:damped-weight-bounds:upper`` | pn-readouts; invariant check | unassigned | | | | |  | | |
@@ -780,7 +780,7 @@
 | ``subsec:epoch:raw-signed-service`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``eq:epoch:path-sign`` | pn-readouts; function | unassigned | | | | |  | | |
 | ``rem:epoch:parity-not-balance`` | pn-readouts; policy | unassigned | | | | |  | | |
-| ``def:epoch:double-cover-bfs-state`` | pn-readouts; function | unassigned | | | | |  | | |
+| ``def:epoch:double-cover-bfs-state`` | pn-readouts; function | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | | |
 | ``alg:epoch:exact-signed-raw-traversal`` | pn-readouts; function | designed | ``ROOT::alg:design:raw-paths`` ``ROOT::dec:design:raw-readings`` ``ROOT::req:vision:raw-readings`` | | | ``ROOT::dec:design:raw-readings``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:raw-readings``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
 | ``lem:epoch:double-cover-bfs-correctness`` | pn-readouts; invariant check | designed | ``ROOT::rule:design:costs`` | | | |  | | |
 | ``prop:epoch:bfs-reduction-to-feed-ranking`` | pn-readouts; invariant check | unassigned | | | | |  | | |
@@ -832,7 +832,7 @@
 | ``itm:epoch:final-act-sequence-closure-policy`` | pn-host; policy | designed | ``ROOT::alg:design:admission`` | | | | 7 | | |
 | ``post:epoch:final-edge-set`` | pn-epoch; policy | designed | ``CONSTANTS::const.epoch.epochlen`` ``CONSTANTS::const.epoch.snapbuf`` ``EPOCH::def:compiler:completed-package`` ``EPOCH::def:compiler:joined-state`` ``EPOCH::def:compiler:standing-cells`` ``ROOT::amend:decomposition:marker-settlement`` ``ROOT::amend:design:bite-five-close`` ``ROOT::dec:design:final-membership`` ``ROOT::dec:design:publication`` ``ROOT::model:design:frozen-epoch`` ``ROOT::req:vision:final-membership`` ``ROOT::req:vision:publication`` ``ROOT::rule:design:closure-common-context`` ``ROOT::rule:design:marker-recognition`` | | | ``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:devnet-evidence``<br>``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:publication``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 2, 7, 8, 11 | | |
 | ``rem:epoch:shared-burn-snapshot-rationale`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:ledger`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` | | | | 5 | | |
-| ``def:epoch:raw-self-edge-reading`` | pn-readouts; function | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
+| ``def:epoch:raw-self-edge-reading`` | pn-readouts; function | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/implementation.md` `docs/design/questions.md` `docs/inputs/design-questions.toml` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::sig:design:readouts``; derivation from final standing and registration tenure rather than an authored Self act<br>|
 | ``eq:epoch:raw-self-edge-reading`` | pn-readouts; function | unassigned | | | | |  | | |
 | ``alg:epoch:conserved-standing-computation`` | pn-epoch; function | unassigned | | | | |  | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.design.crates.json` `docs/inputs/design-crates.toml` | |
 | ``alg:epoch:tilt-backoff`` | pn-epoch; function | designed | ``EPOCH::rule:compiler:fence-refinement`` | | | |  | | |
@@ -925,7 +925,7 @@
 | ``alg:sorting:exact-feed-traversal`` | pn-readouts; function | unassigned | | | | |  | | |
 | ``lem:sorting:bfs-correctness`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``rem:sorting:matrix-bfs`` | none; none | unassigned | | | | |  | | |
-| ``rem:sorting:raw-pruning-is-implementation`` | pn-readouts; policy | unassigned | | | | |  | | |
+| ``rem:sorting:raw-pruning-is-implementation`` | pn-readouts; policy | held | ``ROOT::dec:design:raw-readings`` | | | ``ROOT::dec:design:raw-readings``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
 | ``rem:sorting:mc-estimator-semantics`` | none; none | unassigned | | | | |  | | |
 | ``alg:sorting:monte-carlo-sum-of-paths`` | none; none | unassigned | | | | |  | | |
 | ``thm:sorting:monte-carlo-concentration`` | none; none | unassigned | | | | |  | | |
@@ -1005,7 +1005,7 @@
 | ``prop:scalability:exact-component-reuse`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``rem:scalability:warm-start-neutrality`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``subsec:scalability:checking-a-claim`` | pn-epoch; policy | unassigned | | | | |  | | |
-| ``prop:scalability:fixed-point-check-cost`` | pn-replay; invariant check | unassigned | | | | |  | | |
+| ``prop:scalability:fixed-point-check-cost`` | pn-replay; invariant check | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:residual``; one certified map evaluation and residual reduction for checking the proposed equilibrium<br>|
 | ``rem:scalability:certification-is-one-sweep`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``subsec:scalability:boundary-search`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``rem:scalability:boundary-search-cost`` | pn-host; policy | unassigned | | | | |  | | |
@@ -1557,8 +1557,8 @@
 | ``case:necessity:per-author-netting-derived-bond-netting`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:per-author-netting-settlement-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | | |
 | ``case:necessity:per-author-netting-control-netting`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` | | | |  | | |
-| ``subsec:necessity:max-product-path-scoring`` | pn-readouts; invariant check | unassigned | | | | |  | | |
-| ``case:necessity:max-product-path-scoring-sum-of-paths`` | pn-readouts; invariant check | unassigned | | | | |  | | |
+| ``subsec:necessity:max-product-path-scoring`` | pn-readouts; invariant check | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | | |
+| ``case:necessity:max-product-path-scoring-sum-of-paths`` | pn-readouts; invariant check | designed | ``ROOT::alg:design:raw-paths`` | | | | 10 | | |
 | ``subsec:necessity:conserved-rival-allocation`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:conserved-rival-allocation-independent-weights`` | pn-epoch; invariant check | held | ``ROOT::dec:design:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | | |
 | ``subsec:necessity:self-retention-base`` | pn-epoch; invariant check | unassigned | | | | |  | | |
@@ -1590,7 +1590,7 @@
 | ``case:necessity:dual-view-architecture-frobenius-only`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:dual-view-architecture-determinant-only`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:positive-parity-routing`` | pn-readouts; invariant check | unassigned | | | | |  | | |
-| ``case:necessity:positive-parity-routing-magnitude-only`` | pn-readouts; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:positive-parity-routing-magnitude-only`` | pn-readouts; invariant check | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:raw-paths``; retaining separate positive and negative raw path maxima instead of discarding determinant sign<br>|
 | ``subsec:necessity:strict-transmission-decay`` | none; none | unassigned | | | | |  | | |
 | ``case:necessity:strict-transmission-decay-lossless`` | none; none | unassigned | | | | |  | | |
 | ``subsec:necessity:inverse-temperature`` | pn-records; invariant check | unassigned | | | | |  | | |
@@ -1703,7 +1703,7 @@
 | ``case:deployment:final-epoch-state-agreement-bft-finality`` | pn-replay; invariant check | unassigned | | | | |  | | |
 | ``case:deployment:final-epoch-state-agreement-gossip-stability`` | pn-replay; invariant check | unassigned | | | | |  | | |
 | ``case:deployment:final-epoch-state-agreement-disagreement`` | pn-replay; invariant check | unassigned | | | | |  | | |
-| ``case:deployment:final-epoch-state-agreement-inconsistent-projection`` | pn-replay; invariant check | unassigned | | | | |  | | |
+| ``case:deployment:final-epoch-state-agreement-inconsistent-projection`` | pn-replay; invariant check | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
 | ``subsec:deployment:immutability`` | pn-records; invariant check | designed | ``ROOT::model:design:storage-history`` | | | |  | | |
 | ``case:deployment:immutability-mutable-records`` | pn-records; invariant check | unassigned | | | | |  | | |
 | ``post:deployment:public-object-replay`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
@@ -1754,10 +1754,10 @@
 | ``case:deployment:concealment-entropy-secret-derived`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:deployment:concealment-entropy-unassigned-custody`` | pn-host; policy | unassigned | | | | |  | | |
 | ``subsec:deployment:conserved-standing-reproducibility`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
-| ``case:deployment:conserved-standing-reproducibility-reference-compiler`` | pn-replay; invariant check | unassigned | | | | |  | | |
+| ``case:deployment:conserved-standing-reproducibility-reference-compiler`` | pn-replay; invariant check | designed | ``ROOT::sig:design:replay`` | | | | 9 | | |
 | ``case:deployment:conserved-standing-reproducibility-formal-compiler`` | pn-replay; invariant check | unassigned | | | | |  | | |
 | ``case:deployment:conserved-standing-reproducibility-equivalent-compiler`` | pn-replay; invariant check | unassigned | | | | |  | | |
-| ``case:deployment:conserved-standing-reproducibility-mismatched-package`` | pn-replay; invariant check | unassigned | | | | |  | | |
+| ``case:deployment:conserved-standing-reproducibility-mismatched-package`` | pn-replay; invariant check | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
 | ``prop:deployment:allocation-input-completeness`` | pn-epoch; invariant check | realized | ``EPOCH::def:compiler:joined-state`` ``ROOT::amend:design:bite-five-close`` ``ROOT::dec:design:final-state`` ``ROOT::dec:design:public-inputs`` ``ROOT::req:vision:final-state`` ``ROOT::req:vision:public-inputs`` | obligation; ``ROOT::dec:design:final-state``; ``ROOT::dec:design:final-state``<br>| | ``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:bite-five-close``; ``ROOT::open:design:devnet-evidence``<br>``ROOT::dec:design:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 8, 9, 11 | | |
 | ``rem:deployment:completeness-safety-orthogonal`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
 | ``subsec:deployment:canonical-standing-encoding`` | pn-host; serialization | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
