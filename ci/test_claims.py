@@ -198,9 +198,24 @@ class Evidence(unittest.TestCase):
         self.assertEqual(list(tracker_sentences(text)), [text])
         partial[hold] = dict(text='``'+label+'``', citations=set())
         held = dict(claims=[], obligations=[dict(name=hold, status='held', claims=[], hold=hold)])
+        attention = tracker_rows(inventory, {hold: dict(text=text, citations=set())}, held, [])[0]
+        self.assertEqual(attention['status'], 'unassigned')
+        self.assertEqual(attention['holds'], [])
+        self.assertEqual(attention['records'], [])
+        self.assertEqual(attention['portions'], [dict(record=hold, clause='local admission, e.g. ordering')])
         self.assertEqual(tracker_rows(inventory, partial, held, [])[0]['status'], 'held')
         partial[record]['text'] += ' The whole ``'+label+'`` is designed separately.'
         self.assertEqual(tracker_rows(inventory, partial, held, [])[0]['status'], 'designed')
+        claim = 'ROOT::claim:testing:fixture'
+        scope = 'ROOT::gate:testing:fixture'
+        executed = dict(claims=[dict(name=claim, status='passed')],
+                        obligations=[dict(name=scope, status='scoped-passed', claims=[claim])])
+        whole = {record: dict(text='Design the whole ``'+label+'``. The narrower consumer is checked by ``claim:testing:fixture``.', citations=set())}
+        designed = tracker_rows(inventory, whole, executed, [])[0]
+        self.assertEqual(designed['status'], 'designed')
+        self.assertEqual(designed['portions'], [])
+        self.assertEqual(designed['routes'], [])
+        self.assertEqual(designed['record_routes'], [dict(kind='record', record=record, scope=scope)])
         for malformed in ('portion{``'+label+'``}', 'portion{``'+label+'``; }',
                           'portion{``def:testing:absent``; local admission}'):
             with self.subTest(malformed=malformed), self.assertRaises(StructuralError):
