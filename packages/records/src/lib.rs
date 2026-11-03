@@ -24,6 +24,10 @@ pub mod live_markers;
 /// (´def:acts:commitment-residues´)
 pub mod commitments;
 
+/// Named untrusted act handshake disclosures.
+/// (´def:acts:authentication-disclosure´)
+pub mod authentication;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
@@ -297,7 +301,7 @@ pub struct CandidateAct {
     /// Immutable protocol references, independently required even after removal.
     pub protocol_references: Vec<PublicReference>,
     /// Public authentication evidence; retained, not cryptographically certified.
-    pub authentication_evidence: Vec<u8>,
+    pub authentication_evidence: authentication::AuthenticationFields,
     /// Accepted finalization epoch, not identity or a quantity's vintage.
     pub finalization_epoch: u64,
     /// Host-authoritative order; never used for identity equality.
@@ -378,7 +382,7 @@ pub struct ValidatedAct {
     /// Immutable required public references.
     protocol_references: Vec<PublicReference>,
     /// Public evidence retained without cryptographic certification.
-    authentication_evidence: Vec<u8>,
+    authentication_evidence: authentication::AuthenticationFields,
     /// Finalization epoch, not identity.
     finalization_epoch: u64,
     /// Authoritative position, not identity.
@@ -936,7 +940,7 @@ fn validate_act(
     if act.id.family.is_empty() {
         return Err(invalid(InvalidCause::EmptyFamily));
     }
-    if act.authentication_evidence.is_empty() {
+    if authentication::check(&act.authentication_evidence).is_err() {
         return Err(invalid(InvalidCause::EmptyAuthentication));
     }
     validate_license(act)?;
@@ -1776,7 +1780,7 @@ impl ValidatedAct {
     /// (´def:acts:carrier´)
     #[must_use]
     /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
-    pub fn authentication_evidence(&self) -> &[u8] {
+    pub fn authentication_evidence(&self) -> &authentication::AuthenticationFields {
         &self.authentication_evidence
     }
     /// Read the validated finalization epoch without permitting replacement.

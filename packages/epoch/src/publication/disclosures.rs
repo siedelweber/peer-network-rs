@@ -500,3 +500,7 @@ pub(super) fn compare(actual: &compiler::CompiledView, asserted: &compiler::Comp
     .into_iter()
     .find_map(|(equal, section)| (!equal).then_some(section))
 }
+
+/// Retained act handshake fields, presence-checked but not authenticated.
+/// (´[RECORDS-def:acts:authentication-disclosure]´)
+pub use pn_records::authentication::{AuthenticationDisclosure, AuthenticationFields, MissingField};

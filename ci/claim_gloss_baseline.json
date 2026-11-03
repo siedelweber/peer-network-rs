@@ -1119,6 +1119,7 @@
     "pn-records::properties::numeric_coordinates": "",
     "pn-records::properties::typed_corruptions": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
     "pn-records::public::asserted_parents": "Claim: Asserted parents are canonical structural identifiers independent of removable dependency content; missing, self, duplicate, unsorted, excessive and non-earlier parents refuse their typed cause, while an earlier in-epoch parent is accepted.",
+    "pn-records::public::authentication::authentication_disclosures": "",
     "pn-records::public::boundary_refusals": "Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.",
     "pn-records::public::burn::alias_deduplication": "",
     "pn-records::public::burn::competing_candidates": "",

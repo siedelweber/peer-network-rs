@@ -91,7 +91,7 @@ pub(crate) fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> Cand
             dependency: DependencyProjection::FullEmpty,
         },
         protocol_references: vec![],
-        authentication_evidence: vec![1],
+        authentication_evidence: authentication(),
         finalization_epoch: epoch,
         authoritative_position: sequence,
         logical_time: sequence,
@@ -412,4 +412,18 @@ pub(crate) fn reordered_package(
     }
     let publication = Publication(input.bindings.clone());
     pn_epoch::package::verify_package(input, &publication).unwrap()
+}
+
+fn authentication() -> pn_records::authentication::AuthenticationFields {
+    pn_records::authentication::AuthenticationFields {
+        proposal_precommitment: b"fixture-P".to_vec(),
+        actor_proposal_signature: vec![1],
+        content_edition: "fixture-content".into(),
+        dependency_edition: "fixture-dependency".into(),
+        verified_header: b"fixture-V".to_vec(),
+        host_seal: b"fixture-seal".to_vec(),
+        approval_binding: b"fixture-approval".to_vec(),
+        authentication_edition: "fixture-authentication".into(),
+        public_verification_material: b"fixture-public-key".to_vec(),
+    }
 }

@@ -914,7 +914,7 @@ fn ledger_contract() {
         for (act, debit) in old.debits {
             assert_eq!(ledger.debits[&act], debit);
         }
-        fixture.acts[0].authentication_evidence = vec![2];
+        fixture.acts[0].authentication_evidence.actor_proposal_signature = vec![2];
         let refused = boundary::boundary_package(&fixture);
         let input = refused.input();
         assert_eq!(
@@ -936,7 +936,7 @@ fn ledger_contract() {
 struct EvidenceByteVerifier;
 impl pn_graph::registration::RegistrationVerifier for EvidenceByteVerifier {
     fn approval(&self, act: &pn_records::ValidatedAct) -> bool {
-        act.authentication_evidence() == [1]
+        act.authentication_evidence().actor_proposal_signature == [1]
     }
     fn removal(&self, _: &pn_records::ValidatedAct, _: pn_graph::registration::OpeningKind, _: pn_records::Position) -> bool {
         true

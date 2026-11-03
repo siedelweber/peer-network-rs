@@ -2751,3 +2751,18 @@ owner = "Numerical implementer"
 missing = "Outside scope: deployment-wide precision, availability and resource guarantees."
 closing_condition = "The declared exact identity and refusal controls pass."
 closing_step = "Bite 8 numerical measurement."
+
+[[rows]]
+name = "RECORDS::verif:acts:authentication-disclosures"
+witnessed_labels = []
+path = "packages/records/README.md"
+status = "scoped-supported"
+claims = ["RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures"]
+realizers = []
+premises = "Named untrusted disclosures, exact retention and finite absent-field mutations under local structural validation."
+evidence_paragraph = "RECORDS::rec:acts:authentication-disclosure-controls"
+hold = ""
+owner = "Records authentication implementer"
+missing = "Outside scope: cryptographic validity, header consistency, exact approval and deployment authentication."
+closing_condition = "Every named absent field refuses and complete disclosures retain their exact fields."
+closing_step = "Bite 8 authentication layout."

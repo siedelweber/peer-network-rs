@@ -3,6 +3,8 @@ mod design_constants;
 #[path = "../../documents/src/pins_records.rs"]
 pub mod pins;
 
+#[path = "public/authentication.rs"]
+mod authentication;
 mod common;
 #[path = "public/minted.rs"]
 mod minted;
@@ -126,7 +128,7 @@ fn invalid_local_fields() {
             3 => record.legs[0].id.act.sequence = 2,
             4 => record.body.quantities.push(record.body.quantities[0].clone()),
             5 => record.body.quantities[0].0.clear(),
-            6 => record.authentication_evidence.clear(),
+            6 => record.authentication_evidence.actor_proposal_signature.clear(),
             7 => record.legs[0].id.role = Role::A,
             8 => record.legs[0].source = named(""),
             _ => record.legs[0].id.act.family = "different-family".into(),
@@ -507,7 +509,7 @@ fn assert_retained(history: &pn_records::ValidatedHistory, records: &[pn_records
         assert_eq!(retained.body(), &original.body);
         assert_eq!(retained.projections(), &original.projections);
         assert_eq!(retained.protocol_references(), original.protocol_references);
-        assert_eq!(retained.authentication_evidence(), original.authentication_evidence);
+        assert_eq!(retained.authentication_evidence(), &original.authentication_evidence);
         assert_eq!(retained.finalization_epoch(), original.finalization_epoch);
         assert_eq!(retained.authoritative_position(), original.authoritative_position);
         assert_eq!(retained.logical_time(), original.logical_time);

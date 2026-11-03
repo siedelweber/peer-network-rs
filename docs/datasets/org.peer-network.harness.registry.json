@@ -5349,6 +5349,20 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-records::public::authentication::authentication_disclosures"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-records::authentication-disclosures",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

@@ -2729,7 +2729,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "def:network:conserved-standing-package",
       "portions": [],
@@ -3056,7 +3061,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-accepted-records",
       "portions": [],
@@ -3075,7 +3085,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-final-ledger",
       "portions": [],
@@ -3094,7 +3109,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-semantic-projection",
       "portions": [],
@@ -3113,7 +3133,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-transport",
       "portions": [],
@@ -3132,7 +3157,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-final-standing",
       "portions": [],
@@ -3151,7 +3181,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-shared-policy",
       "portions": [],
@@ -3171,7 +3206,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "itm:network:host-contract-evidence",
       "portions": [],
@@ -6935,14 +6975,31 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
+      ],
       "kind": "type",
       "label": "def:graph:proposal-pre-commitment",
       "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::def:acts:authentication-disclosure",
+          "scope": "RECORDS::verif:acts:authentication-disclosures"
+        }
+      ],
       "records": [
+        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::amend:decomposition:act-profile",
+        "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission"
       ],
@@ -6960,18 +7017,34 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::alg:design:formation"
+        },
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
         }
       ],
       "kind": "type",
       "label": "def:graph:verified-act",
       "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::def:acts:authentication-disclosure",
+          "scope": "RECORDS::verif:acts:authentication-disclosures"
+        }
+      ],
       "records": [
+        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::alg:design:formation",
         "ROOT::amend:decomposition:act-profile",
+        "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission"
       ],
@@ -6983,11 +7056,17 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "docs/design/implementation.md",
-        "docs/templates/docs/design/implementation.md.j2"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        }
       ],
-      "holds": [],
       "kind": "invariant check",
       "label": "def:graph:approval-witness",
       "portions": [
@@ -6996,11 +7075,20 @@
           "record": "ROOT::alg:design:closure-registration"
         }
       ],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::def:acts:authentication-disclosure",
+          "scope": "RECORDS::verif:acts:authentication-disclosures"
+        }
+      ],
+      "records": [
+        "RECORDS::def:acts:authentication-disclosure",
+        "ROOT::amend:design:publication-field-inventory"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7078,6 +7166,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:act-envelope-field-inventory"
         },
@@ -7089,9 +7181,16 @@
       "kind": "policy",
       "label": "post:graph:act-authentication-requirements",
       "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "RECORDS::def:acts:authentication-disclosure",
+          "scope": "RECORDS::verif:acts:authentication-disclosures"
+        }
+      ],
       "records": [
+        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::amend:design:act-envelope-field-inventory",
         "ROOT::dec:crypto:base-library"
       ],
@@ -33142,6 +33241,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:burn-boundary"
         },
@@ -34395,6 +34498,28 @@
     },
     {
       "category": "record-support",
+      "claim_count": 1,
+      "name": "RECORDS::def:acts:authentication-disclosure",
+      "number_forms": {
+        "claim_count": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "scope": "RECORDS::verif:acts:authentication-disclosures"
+    },
+    {
+      "category": "record-support",
       "claim_count": 3,
       "name": "RECORDS::rec:burn:live-marker-evidence",
       "number_forms": {
@@ -35058,10 +35183,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "61",
+          "exact": "60",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "61",
+          "num": "60",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35072,12 +35197,12 @@
           "exact_digits": 32
         }
       },
-      "total": 61
+      "total": 60
     },
     {
       "category": "total",
       "designed": 404,
-      "held": 58,
+      "held": 59,
       "name": "implementation",
       "number_forms": {
         "designed": {
@@ -35089,10 +35214,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "58",
+          "exact": "59",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "58",
+          "num": "59",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35105,10 +35230,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "28",
+          "exact": "32",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "32",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35129,10 +35254,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "859",
+          "exact": "858",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "859",
+          "num": "858",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35168,10 +35293,10 @@
         }
       },
       "realized": 35,
-      "record_granular": 28,
+      "record_granular": 32,
       "tentative": 7,
       "total": 1356,
-      "unassigned": 859
+      "unassigned": 858
     },
     {
       "category": "total",
@@ -35770,7 +35895,7 @@
     {
       "category": "crate",
       "designed": 74,
-      "held": 10,
+      "held": 11,
       "name": "pn-records",
       "number_forms": {
         "designed": {
@@ -35782,10 +35907,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "10",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35798,10 +35923,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "3",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35822,10 +35947,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "132",
+          "exact": "131",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "132",
+          "num": "131",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35861,10 +35986,10 @@
         }
       },
       "realized": 2,
-      "record_granular": 3,
+      "record_granular": 7,
       "tentative": 1,
       "total": 218,
-      "unassigned": 132
+      "unassigned": 131
     },
     {
       "category": "crate",
@@ -36562,7 +36687,7 @@
     {
       "category": "kind",
       "designed": 140,
-      "held": 22,
+      "held": 23,
       "name": "invariant check",
       "number_forms": {
         "designed": {
@@ -36574,10 +36699,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "22",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36590,10 +36715,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "10",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36614,10 +36739,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "339",
+          "exact": "338",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "339",
+          "num": "338",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36653,10 +36778,10 @@
         }
       },
       "realized": 16,
-      "record_granular": 10,
+      "record_granular": 11,
       "tentative": 1,
       "total": 517,
-      "unassigned": 339
+      "unassigned": 338
     },
     {
       "category": "kind",
@@ -36788,10 +36913,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36851,7 +36976,7 @@
         }
       },
       "realized": 3,
-      "record_granular": 3,
+      "record_granular": 4,
       "tentative": 5,
       "total": 265,
       "unassigned": 191
@@ -36986,10 +37111,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "3",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37049,7 +37174,7 @@
         }
       },
       "realized": 1,
-      "record_granular": 3,
+      "record_granular": 5,
       "tentative": 0,
       "total": 92,
       "unassigned": 35
@@ -37283,10 +37408,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37346,7 +37471,7 @@
         }
       },
       "realized": 0,
-      "record_granular": 4,
+      "record_granular": 5,
       "tentative": 0,
       "total": 22,
       "unassigned": 1
@@ -37382,10 +37507,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37445,7 +37570,7 @@
         }
       },
       "realized": 2,
-      "record_granular": 4,
+      "record_granular": 5,
       "tentative": 0,
       "total": 36,
       "unassigned": 0
@@ -38146,7 +38271,7 @@
     {
       "category": "bite",
       "designed": 282,
-      "held": 19,
+      "held": 20,
       "name": "unlinked",
       "number_forms": {
         "designed": {
@@ -38158,10 +38283,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "19",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38174,10 +38299,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "18",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38198,10 +38323,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 161",
+          "exact": "1 160",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 161",
+          "num": "1 160",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38237,10 +38362,10 @@
         }
       },
       "realized": 22,
-      "record_granular": 18,
+      "record_granular": 21,
       "tentative": 13,
       "total": 1484,
-      "unassigned": 1161
+      "unassigned": 1160
     },
     {
       "category": "record-coverage",
@@ -38550,22 +38675,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 18,
+      "exact_citing": 19,
       "name": "pn-records",
       "number_forms": {
         "exact_citing": {
-          "exact": "18",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "48",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "48",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38580,7 +38705,7 @@
           "exact_digits": 32
         }
       },
-      "total": 48
+      "total": 51
     },
     {
       "category": "record-coverage",

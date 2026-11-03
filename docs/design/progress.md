@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 61 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 60 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 35 | 58 | 404 | 7 | 28 | 859 |
+| implementation | 1 356 | 35 | 59 | 404 | 7 | 32 | 858 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -32,7 +32,7 @@
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
 | pn-host | 166 | 5 | 16 | 49 | 1 | 2 | 96 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 218 | 2 | 10 | 74 | 1 | 3 | 132 |
+| pn-records | 218 | 2 | 11 | 74 | 1 | 7 | 131 |
 | pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
 | pn-verification | 281 | 8 | 10 | 68 | 4 | 6 | 195 |
 
@@ -51,7 +51,7 @@
 | pn-host | 19 | 0 |
 | pn-interchange | 26 | 0 |
 | pn-readouts | 0 | 0 |
-| pn-records | 48 | 18 |
+| pn-records | 51 | 19 |
 | pn-replay | 0 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
@@ -65,8 +65,8 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 19 | 0 | 6 | 12 | 0 | 1 | 1 |
 | 2 | 35 | 7 | 5 | 23 | 0 | 0 | 0 |
-| 3 | 22 | 0 | 3 | 18 | 0 | 4 | 1 |
-| 4 | 36 | 2 | 11 | 23 | 0 | 4 | 0 |
+| 3 | 22 | 0 | 3 | 18 | 0 | 5 | 1 |
+| 4 | 36 | 2 | 11 | 23 | 0 | 5 | 0 |
 | 5 | 44 | 6 | 5 | 33 | 0 | 3 | 0 |
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
@@ -74,7 +74,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 9 | 28 | 55 | 0 | 5 | 1 |
-| unlinked | 1 484 | 22 | 19 | 282 | 13 | 18 | 1 161 |
+| unlinked | 1 484 | 22 | 20 | 282 | 13 | 21 | 1 160 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -85,11 +85,11 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 6 | 50 | 6 | 3 | 157 |
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
-| invariant check | 517 | 16 | 22 | 140 | 1 | 10 | 339 |
+| invariant check | 517 | 16 | 23 | 140 | 1 | 11 | 338 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 18 | 53 | 5 | 3 | 191 |
+| policy | 265 | 3 | 18 | 53 | 5 | 4 | 191 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
-| type | 92 | 1 | 5 | 51 | 0 | 3 | 35 |
+| type | 92 | 1 | 5 | 51 | 0 | 5 | 35 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -113,6 +113,7 @@
 | ``GRAPH::def:formation:settlement-recognition`` | ``ROOT::gate:design:bite-4`` | 2 |
 | ``GRAPH::def:formation:title-events`` | ``ROOT::gate:design:bite-4`` | 1 |
 | ``GRAPH::def:numerics:activation-endpoints`` | ``ROOT::gate:design:bite-6`` | 1 |
+| ``RECORDS::def:acts:authentication-disclosure`` | ``RECORDS::verif:acts:authentication-disclosures`` | 1 |
 | ``RECORDS::rec:burn:live-marker-evidence`` | ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
 | ``ROOT::amend:design:bite-six-activation`` | ``ROOT::gate:design:bite-6`` | 3 |
 | ``ROOT::amend:design:bite-six-conserved-solve`` | ``ROOT::dec:design:activation-evaluation-policy`` | 2 |
@@ -285,7 +286,7 @@
 | ``rem:network:boundary-one-sentence`` | pn-host; policy | unassigned | | | | |  | | |
 | ``subsec:network:object-taxonomy`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:network:object-taxonomy`` | pn-host; type | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
-| ``def:network:conserved-standing-package`` | pn-host; type | designed | ``EPOCH::rule:admission:publication-disclosures`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:design:test-publication-profile`` | | | |  | | |
+| ``def:network:conserved-standing-package`` | pn-host; type | designed | ``EPOCH::rule:admission:publication-disclosures`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:design:test-publication-profile`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
 | ``itm:network:conserved-standing-package-final-state`` | pn-host; type | unassigned | | | | |  | | |
 | ``itm:network:conserved-standing-package-folds`` | pn-host; type | unassigned | | | | |  | | |
 | ``itm:network:conserved-standing-package-activation`` | pn-host; type | unassigned | | | | |  | | |
@@ -299,13 +300,13 @@
 | ``rem:network:within-epoch-solve-freeze`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:final-state`` | | | | 5, 11 | | |
 | ``subsec:network:host-contract`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``post:network:host-contract`` | pn-host; type | designed | ``EPOCH::def:compiler:completed-package`` ``EPOCH::rule:admission:publication-disclosures`` ``EPOCH::rule:admission:semantic-carrier`` ``EPOCH::verif:admission:semantic-package-restoration`` ``ROOT::amend:design:test-publication-profile`` ``ROOT::dec:design:admission`` ``ROOT::dec:design:final-membership`` ``ROOT::dec:design:public-inputs`` ``ROOT::dec:design:publication`` ``ROOT::dec:design:replay`` ``ROOT::model:design:package`` ``ROOT::req:vision:admission`` ``ROOT::req:vision:final-membership`` ``ROOT::req:vision:public-inputs`` ``ROOT::req:vision:publication`` ``ROOT::req:vision:replay`` | | ``EPOCH::verif:admission:semantic-package-restoration``; ``EPOCH::verif:admission:semantic-package-restoration``<br>| ``ROOT::dec:design:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:admission``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:public-inputs``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:publication``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 8, 9, 11 | | |
-| ``itm:network:host-contract-accepted-records`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | |  | | |
-| ``itm:network:host-contract-final-ledger`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | |  | | |
-| ``itm:network:host-contract-semantic-projection`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | |  | | |
-| ``itm:network:host-contract-transport`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | |  | | |
-| ``itm:network:host-contract-final-standing`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | |  | | |
-| ``itm:network:host-contract-shared-policy`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::rule:design:ridge-charge-contract`` | | | |  | | |
-| ``itm:network:host-contract-evidence`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::rule:design:ridge-charge-contract`` | | | |  | | |
+| ``itm:network:host-contract-accepted-records`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-final-ledger`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-semantic-projection`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-transport`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-final-standing`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-shared-policy`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::rule:design:ridge-charge-contract`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``itm:network:host-contract-evidence`` | pn-host; type | designed | ``EPOCH::rec:admission:semantic-package-sections`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::rule:design:ridge-charge-contract`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
 | ``def:network:door-headroom`` | pn-epoch; function | designed | ``ROOT::rec:design:atomic-admission-evidence`` | | | | 7 | | |
 | ``rem:network:durations-no-glyph`` | pn-host; policy | held | ``ROOT::dec:design:final-membership`` | | | ``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | | |
 | ``ins:network:back-pressure`` | pn-host; policy | unassigned | | | | |  | | |
@@ -516,12 +517,12 @@
 | ``case:graph:act-dependency-projection-tombstoned`` | pn-records; serialization | unassigned | | | | |  | | |
 | ``def:graph:act-dependency-tombstone`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``rem:graph:authentication-realization-out-of-scope`` | pn-host; policy | held | ``ROOT::dec:crypto:base-library`` ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
-| ``def:graph:proposal-pre-commitment`` | pn-records; type | designed | ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | | |  | | |
-| ``def:graph:verified-act`` | pn-records; type | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | | |
-| ``def:graph:approval-witness`` | pn-records; invariant check | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:closure-registration``; delegation to the declared approval verifier<br>|
+| ``def:graph:proposal-pre-commitment`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``def:graph:verified-act`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>| 3, 4 | | |
+| ``def:graph:approval-witness`` | pn-records; invariant check | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:design:publication-field-inventory`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | ``ROOT::alg:design:closure-registration``; delegation to the declared approval verifier<br>|
 | ``def:graph:ordering-fraud-proof`` | pn-records; certificate | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
 | ``post:graph:ordering-accountability`` | pn-host; policy | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:authoritative-history-carrier`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
-| ``post:graph:act-authentication-requirements`` | pn-records; policy | held | ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::dec:crypto:base-library`` | | | ``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``post:graph:act-authentication-requirements`` | pn-records; policy | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::dec:crypto:base-library`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
 | ``itm:graph:act-authentication-requirements-authorship`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-proposal-integrity`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-transparency`` | pn-records; policy | unassigned | | | | |  | | |
@@ -1788,7 +1789,7 @@
 | ``case:deployment:completeness-unpublished-epoch`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:deployment:completeness-unpublished-parity`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:deployment:completeness-unpublished-standing`` | pn-host; policy | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
-| ``subsec:deployment:realization-obligations`` | pn-host; policy | designed | ``EPOCH::rule:admission:semantic-carrier`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::cav:devnet:assurance`` ``ROOT::dec:design:burn-boundary`` ``ROOT::req:vision:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
+| ``subsec:deployment:realization-obligations`` | pn-host; policy | designed | ``EPOCH::rule:admission:semantic-carrier`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::cav:devnet:assurance`` ``ROOT::dec:design:burn-boundary`` ``ROOT::req:vision:burn-boundary`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
 | ``case:deployment:realization-obligations-pointer`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:deployment:realization-obligations-mirror`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:deployment:realization-obligations-snapshot`` | pn-host; policy | unassigned | | | | |  | | |

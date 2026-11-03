@@ -141,7 +141,17 @@ fn candidate(family: &str, sequence: u64) -> CandidateAct {
             dependency: DependencyProjection::FullEmpty,
         },
         protocol_references: vec![],
-        authentication_evidence: vec![1],
+        authentication_evidence: pn_records::authentication::AuthenticationFields {
+            proposal_precommitment: b"fixture-P".to_vec(),
+            actor_proposal_signature: vec![1],
+            content_edition: "fixture-content".into(),
+            dependency_edition: "fixture-dependency".into(),
+            verified_header: b"fixture-V".to_vec(),
+            host_seal: b"fixture-seal".to_vec(),
+            approval_binding: b"fixture-approval".to_vec(),
+            authentication_edition: "fixture-authentication".into(),
+            public_verification_material: b"fixture-public-key".to_vec(),
+        },
         finalization_epoch: 1,
         authoritative_position: sequence,
         logical_time: sequence,
@@ -415,7 +425,7 @@ impl RegistrationVerifier for Verifier {
         self.acts.iter().any(|input| {
             &input.id == act.id()
                 && &input.body == act.body()
-                && input.authentication_evidence == act.authentication_evidence()
+                && &input.authentication_evidence == act.authentication_evidence()
                 && input.protocol_references == act.protocol_references()
                 && input.legs.len() == act.legs().len()
                 && act.legs().iter().all(|right| {

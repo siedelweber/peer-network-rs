@@ -21,7 +21,7 @@ use pn_records::{
 struct Verifier;
 impl RegistrationVerifier for Verifier {
     fn approval(&self, act: &ValidatedAct) -> bool {
-        act.authentication_evidence() == [1]
+        act.authentication_evidence().actor_proposal_signature == [1]
     }
     fn removal(&self, _: &ValidatedAct, _: OpeningKind, _: Position) -> bool {
         true
@@ -93,7 +93,17 @@ fn acts() -> Vec<CandidateAct> {
             dependency: DependencyProjection::FullEmpty,
         },
         protocol_references: vec![],
-        authentication_evidence: vec![1],
+        authentication_evidence: pn_records::authentication::AuthenticationFields {
+            proposal_precommitment: b"fixture-P".to_vec(),
+            actor_proposal_signature: vec![1],
+            content_edition: "fixture-content".into(),
+            dependency_edition: "fixture-dependency".into(),
+            verified_header: b"fixture-V".to_vec(),
+            host_seal: b"fixture-seal".to_vec(),
+            approval_binding: b"fixture-approval".to_vec(),
+            authentication_edition: "fixture-authentication".into(),
+            public_verification_material: b"fixture-public-key".to_vec(),
+        },
         finalization_epoch: 1,
         authoritative_position: 1,
         logical_time: 1,
@@ -379,7 +389,7 @@ fn ledger_derivation() {
         Err(LedgerError::Boundary)
     );
     let mut unapproved = accepted;
-    unapproved[0].authentication_evidence = vec![2];
+    unapproved[0].authentication_evidence.actor_proposal_signature = vec![2];
     let unapproved = validate_history(&unapproved, &[]).unwrap();
     assert_eq!(
         compile_ledger(

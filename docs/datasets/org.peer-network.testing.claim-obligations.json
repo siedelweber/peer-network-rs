@@ -3669,6 +3669,23 @@
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures"
+      ],
+      "closing_condition": "Every named absent field refuses and complete disclosures retain their exact fields.",
+      "closing_step": "Bite 8 authentication layout.",
+      "evidence_paragraph": "RECORDS::rec:acts:authentication-disclosure-controls",
+      "hold": "",
+      "missing": "Outside scope: cryptographic validity, header consistency, exact approval and deployment authentication.",
+      "name": "RECORDS::verif:acts:authentication-disclosures",
+      "owner": "Records authentication implementer",
+      "path": "packages/records/README.md",
+      "premises": "Named untrusted disclosures, exact retention and finite absent-field mutations under local structural validation.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
     }
   ]
 }

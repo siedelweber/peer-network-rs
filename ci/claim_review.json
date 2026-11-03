@@ -1798,7 +1798,7 @@
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "ledger_derivation",
-        "digest": "9d4cc5962d8e52897585a5f9c80818de3316ad5b0c7f4436e6c49bd8a27cebe5"
+        "digest": "7032186fa4cff1087646bc08aaf2aa67b89f0cc018829d1294e572b1b3382be7"
       }
     },
     {
@@ -1815,7 +1815,7 @@
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "ledger_vintages",
-        "digest": "6962b0573e85e2f9508b33320c70a014f9ba4c890a374c3f92013cdc80010521"
+        "digest": "d42a544961ae5a0560953f0fa540494c544766ae751fb31197603a794bc83169"
       }
     },
     {
@@ -1831,7 +1831,7 @@
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "whole_act_ledger",
-        "digest": "41513c22ba1e0aead9ef398d82eb38b275180f70a7185833c15df78b645bd55e"
+        "digest": "ae9f2c42d2a562fcabd2f4ffb90d4e53d1f140d2c7e72968e2c10262999729e1"
       }
     },
     {
@@ -1871,7 +1871,7 @@
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "invitation_netting",
-        "digest": "7cb97a37cb67f7e68dd59466cb608a23a046cfb3050e7204a72d7df3f9e55703"
+        "digest": "fb02ea7d5bacf1bcbb91c7179f3893a1a4a8cf1622ef5bd71ea6c3ee25360358"
       }
     },
     {
@@ -4067,6 +4067,14 @@
       "review": "Read all mutation constructors: the two over-bound lists also repeat an unresolved identity, so the stated premise is precedence rather than isolated invalidity."
     },
     {
+      "operation": "pn-records::public::authentication::authentication_disclosures",
+      "path": "packages/records/tests/public/authentication.rs",
+      "claim": "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures",
+      "before": "",
+      "after": "Claim: Named untrusted authentication disclosures retain every supplied byte and edition; omission of each field refuses presence construction and local record construction, without claiming a signature or binding verdict.",
+      "review": "Each named field is individually removed in unsorted presentation order. The constructor reports that field, and candidate and history validation refuse before building records. Exact equality compares all retained fields; a changed nonempty seal remains untrusted and is retained, so no cryptographic or cross-field binding claim is made. The obligation declares no paper witnessed labels."
+    },
+    {
       "operation": "pn-records::public::boundary_refusals",
       "path": "packages/records/tests/public.rs",
       "claim": "RECORDS::claim:acts:incomplete-boundary-inputs-refuse",
@@ -4641,7 +4649,7 @@
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "recognition_partners",
-        "digest": "c1f52ebaaeb99e4ba71aabf9d772bc99ce8cbc6c128b9073818198f232778df2"
+        "digest": "1162175f527c2149af8be7337d84334e4e34c6f3c7ef5683fe901cfa1042ab25"
       }
     },
     {

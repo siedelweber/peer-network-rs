@@ -46,7 +46,17 @@ fn candidate(author: &str, sequence: u64, position: u64) -> CandidateAct {
             dependency: DependencyProjection::FullEmpty,
         },
         protocol_references: vec![],
-        authentication_evidence: vec![1],
+        authentication_evidence: pn_records::authentication::AuthenticationFields {
+            proposal_precommitment: b"fixture-P".to_vec(),
+            actor_proposal_signature: vec![1],
+            content_edition: "fixture-content".into(),
+            dependency_edition: "fixture-dependency".into(),
+            verified_header: b"fixture-V".to_vec(),
+            host_seal: b"fixture-seal".to_vec(),
+            approval_binding: b"fixture-approval".to_vec(),
+            authentication_edition: "fixture-authentication".into(),
+            public_verification_material: b"fixture-public-key".to_vec(),
+        },
         finalization_epoch: 1,
         authoritative_position: position,
         logical_time: position,
@@ -72,7 +82,7 @@ impl RegistrationVerifier for FixtureVerifier {
         self.approved.iter().any(|approved| {
             &approved.id == act.id()
                 && &approved.body == act.body()
-                && approved.authentication_evidence == act.authentication_evidence()
+                && &approved.authentication_evidence == act.authentication_evidence()
                 && approved.protocol_references == act.protocol_references()
                 && approved.legs.len() == act.legs().len()
                 && approved.legs.iter().zip(act.legs()).all(|(left, right)| {
@@ -114,7 +124,7 @@ fn complete_projection() {
         (1, (1, 1), 1)
     );
     let mut changed = original.clone();
-    changed.authentication_evidence = vec![2];
+    changed.authentication_evidence.actor_proposal_signature = vec![2];
     let view = validate_history(&[changed], &names()).unwrap();
     assert_eq!(
         project_complete_registration(&view.acts()[0], &auth),

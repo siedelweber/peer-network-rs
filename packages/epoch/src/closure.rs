@@ -75,7 +75,7 @@ fn raw(act: &pn_records::ValidatedAct) -> CandidateAct {
             .collect(),
         projections: act.projections().clone(),
         protocol_references: act.protocol_references().to_vec(),
-        authentication_evidence: act.authentication_evidence().to_vec(),
+        authentication_evidence: act.authentication_evidence().clone(),
         finalization_epoch: act.finalization_epoch(),
         authoritative_position: act.authoritative_position(),
         logical_time: act.logical_time(),

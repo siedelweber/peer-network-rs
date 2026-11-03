@@ -4193,7 +4193,7 @@
       "path": "packages/records/src/lib.rs",
       "item": "ValidatedAct::authentication_evidence",
       "owner": "RECORDS",
-      "signature": "fn authentication_evidence (& self) -> & [u8]",
+      "signature": "fn authentication_evidence (& self) -> & authentication :: AuthenticationFields",
       "claim": "ROOT::sig:design:records",
       "mode": "exception",
       "shape": "shape-records",
@@ -8407,6 +8407,35 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "item": "authentication::AuthenticationDisclosure::new",
+      "owner": "RECORDS",
+      "signature": "fn new (fields : AuthenticationFields) -> Result < Self , MissingField >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "authentication-disclosure"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "item": "authentication::AuthenticationDisclosure::fields",
+      "owner": "RECORDS",
+      "signature": "const fn fields (& self) -> & AuthenticationFields",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "const",
+        "justification": "Justified: Immutable field access inherits the operation that constructed the disclosure; it performs no verification.",
+        "witness": "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures",
+        "boundary": "pn-records::packages/records/src/authentication.rs::authentication::AuthenticationDisclosure::new",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -9278,6 +9307,7 @@
       "attributes": {
         "operation": [
           "assemble-boundary-inputs",
+          "authentication-disclosure",
           "bind-constants",
           "bind-marker-policy",
           "complete-act-access",
@@ -9338,6 +9368,7 @@
         ],
         "operation": [
           "assemble-boundary-inputs",
+          "authentication-disclosure",
           "bind-constants",
           "bind-marker-policy",
           "complete-act-access",
@@ -16285,6 +16316,28 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-records::packages/records/src/authentication.rs::authentication::AuthenticationDisclosure::new",
+      "class_decision": "public-records",
+      "body": "{ let result = check (& fields) . map (| () | Self (fields)) ; if result . is_err () { crate :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Only named public, untrusted authentication disclosures enter. Presence checks retain bytes and edition strings without interpreting them, admitting a cryptographic edition, or authenticating a signature, header, seal or approval. Trace may retain these public disclosures; no key generation, secret custody, codec or publication effect enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/authentication.rs::authentication::AuthenticationDisclosure::fields",
+      "body": "{ & self . 0 }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Only named public, untrusted authentication disclosures enter. Presence checks retain bytes and edition strings without interpreting them, admitting a cryptographic edition, or authenticating a signature, header, seal or approval. Trace may retain these public disclosures; no key generation, secret custody, codec or publication effect enters this body."
     }
   ],
   "generators": [
@@ -20940,6 +20993,33 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "publication-disclosures-public",
       "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "authentication::AuthenticationFields",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Clone, Debug, equality and error formatting retain named untrusted public fields and absent-field refusals. These derive no encoding, cryptographic verdict or authenticity authority."
+    },
+    {
+      "item": "authentication::MissingField",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Clone, Debug, equality and error formatting retain named untrusted public fields and absent-field refusals. These derive no encoding, cryptographic verdict or authenticity authority."
+    },
+    {
+      "item": "authentication::AuthenticationDisclosure",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Clone, Debug, equality and error formatting retain named untrusted public fields and absent-field refusals. These derive no encoding, cryptographic verdict or authenticity authority."
     }
   ],
   "reviewed_types": [
@@ -22744,6 +22824,24 @@
       "syntax": "# [doc = \" Refusal of supplied opening evidence, never a refusal of retained history.\"] # [doc = \" (´def:acts:opening-evidence´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum OpeningError { # [doc = \" The evidence target is absent, repeated or not tombstoned.\"] # [error (\"opening target is not a unique retained tombstone\")] Target , # [doc = \" No supported recorded anchor was supplied.\"] # [error (\"opening has no supported retained anchor\")] Anchor , # [doc = \" The opening's shape or bounds are invalid.\"] # [error (\"opening representation is invalid\")] Representation , # [doc = \" The supplied bytes do not match the supplied recorded anchor.\"] # [error (\"opening does not match the supplied commitment\")] Mismatch , # [doc = \" The opened representation is refused independently of placement faults.\"] # [error (\"opened history representation is invalid\")] History , }"
     },
     {
+      "item": "authentication::AuthenticationFields",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [doc = \" Untrusted public handshake fields. Bytes are retained exactly; their encoding,\"] # [doc = \" bindings and signatures belong to the declared authentication verifier.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationFields { # [doc = \" Actor's proposal pre-commitment P, separate from its signature.\"] pub proposal_precommitment : Vec < u8 > , # [doc = \" Actor signature over P.\"] pub actor_proposal_signature : Vec < u8 > , # [doc = \" Content commitment edition, separate from its recipe identifier.\"] pub content_edition : String , # [doc = \" Dependency commitment edition, separate from its recipe identifier.\"] pub dependency_edition : String , # [doc = \" Exact disclosed representation of V; no decoding or hash is performed here.\"] pub verified_header : Vec < u8 > , # [doc = \" Host seal over V, not an inclusion promise.\"] pub host_seal : Vec < u8 > , # [doc = \" Actor approval witness binding the exact V and host seal.\"] pub approval_binding : Vec < u8 > , # [doc = \" Declared authentication edition, not an admission of its cryptography.\"] pub authentication_edition : String , # [doc = \" Public verification material; never private keys or proposal secrets.\"] pub public_verification_material : Vec < u8 > , }"
+    },
+    {
+      "item": "authentication::MissingField",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [doc = \" The absent field of a malformed disclosure, not a cryptographic verdict.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum MissingField { # [doc = \" P is absent.\"] # [error (\"proposal pre-commitment is absent\")] ProposalPrecommitment , # [doc = \" The Actor proposal signature is absent.\"] # [error (\"Actor proposal signature is absent\")] ActorProposalSignature , # [doc = \" The content edition is absent.\"] # [error (\"content edition is absent\")] ContentEdition , # [doc = \" The dependency edition is absent.\"] # [error (\"dependency edition is absent\")] DependencyEdition , # [doc = \" V is absent.\"] # [error (\"verified header is absent\")] VerifiedHeader , # [doc = \" The host seal is absent.\"] # [error (\"host seal is absent\")] HostSeal , # [doc = \" The approval witness is absent.\"] # [error (\"approval binding is absent\")] ApprovalBinding , # [doc = \" The authentication edition is absent.\"] # [error (\"authentication edition is absent\")] AuthenticationEdition , # [doc = \" The public verification material is absent.\"] # [error (\"public verification material is absent\")] PublicVerificationMaterial , }"
+    },
+    {
+      "item": "authentication::AuthenticationDisclosure",
+      "package": "pn-records",
+      "path": "packages/records/src/authentication.rs",
+      "syntax": "# [doc = \" Presence-checked disclosure. This is not authenticated evidence or an act\"] # [doc = \" eligibility verdict; all disclosed bindings remain untrusted.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationDisclosure (AuthenticationFields) ;"
+    },
+    {
       "item": "ActId",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
@@ -22843,7 +22941,7 @@
       "item": "CandidateAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Retained public commitment residues, absent only for uncommitted internal inputs.\"] pub commitments : Option < commitments :: ActCommitments > , # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < CandidateLeg > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , # [doc = \" Host-attached logical time, retained unchanged and never authored identity.\"] pub logical_time : u64 , }"
+      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Retained public commitment residues, absent only for uncommitted internal inputs.\"] pub commitments : Option < commitments :: ActCommitments > , # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < CandidateLeg > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : authentication :: AuthenticationFields , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , # [doc = \" Host-attached logical time, retained unchanged and never authored identity.\"] pub logical_time : u64 , }"
     },
     {
       "item": "RemovableProjections",
@@ -22873,7 +22971,7 @@
       "item": "ValidatedAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Opaque residues survive independent projection removal without interpretation.\"] commitments : Option < commitments :: ActCommitments > , # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , # [doc = \" One retained time shared by all projections of this act.\"] logical_time : u64 , }"
+      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Opaque residues survive independent projection removal without interpretation.\"] commitments : Option < commitments :: ActCommitments > , # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : authentication :: AuthenticationFields , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , # [doc = \" One retained time shared by all projections of this act.\"] logical_time : u64 , }"
     },
     {
       "item": "ValidatedHistory",
