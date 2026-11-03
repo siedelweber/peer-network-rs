@@ -2,11 +2,18 @@
 //! (´rule:admission:semantic-carrier´)
 
 use crate::{ParameterInput, admission, closure, compiler, package, schedules, solve};
-use pn_graph::{numeric::ridge, registration::RegistrationVerifier};
+use pn_graph::numeric::ridge;
 use pn_records::{ActId, CandidateAct, Declaration, PublicReference, burn, constants, numerics};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub mod disclosures;
+
+/// Opening kind required by the publication consumer's removal verifier.
+/// (´rule:admission:publication-disclosures´)
+pub use pn_graph::registration::OpeningKind;
+/// Approval and removal contract implementable through the epoch consumer surface.
+/// (´rule:admission:publication-disclosures´)
+pub use pn_graph::registration::RegistrationVerifier;
 
 /// External profile checks remain explicit; no digest or restored trust bit supplies them.
 /// (´rule:admission:semantic-carrier´)
