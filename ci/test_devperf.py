@@ -520,6 +520,18 @@ wait
                 **(ridge | dict(compile_wall_growth=30)), comparable_cases=not added), 'rebuild')
         self.assertEqual(overrun_class(True, None, None, .0349, 531.9, 111.2,
             ['packages/records/src/ridge.rs'], policy, **ridge, comparable_cases=False), 'unclassified')
+        from build_graph import case_intersection
+        own, old, comparable, evidence = case_intersection(
+            ['common', 'new'], ['common', 'retained'], {'new': 80}, {'retained': 20}, 180, 120)
+        self.assertEqual((own, old, comparable), (100, 100, True))
+        self.assertEqual(evidence, dict(added=['new'], removed=['retained'], own_removed_s=80, baseline_removed_s=20))
+        self.assertEqual(overrun_class(True, own, old, .01, 40, 40, [], policy,
+            **ridge, comparable_cases=comparable, comparable_wall=False), 'plain')
+        for unprinted in ({}, {'new':None}, {'new':float('nan')}, {'new':-1}):
+            own, old, comparable, _ = case_intersection(['common', 'new'], ['common'], unprinted, {}, 180, 100)
+            self.assertFalse(comparable)
+            self.assertEqual(overrun_class(True, own, old, .01, 40, 40, [], policy,
+                **ridge, comparable_cases=comparable, comparable_wall=False), 'unclassified')
 
 
     def test_baseline_lineage(self):
