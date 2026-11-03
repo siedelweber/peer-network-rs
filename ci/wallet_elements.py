@@ -103,7 +103,7 @@ ADMIN_METHODS = frozenset(('createwallet', 'importprivkey'))
 PRODUCER_KEYPOOL = 16
 
 
-def rpc(config, method, params=None, credential=None, refusal=False, detail=False):
+def rpc(config, method, params=None, credential=None, refusal=False, detail=False, wallet=None):
     administrative = method in ADMIN_METHODS
     timeout = RPC_ADMIN_TIMEOUT if administrative else RPC_TIMEOUT
     connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=timeout)
@@ -111,7 +111,7 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
     started = time.monotonic()
     outcome = 'error'
     try:
-        connection.request('POST', '/', json.dumps(dict(jsonrpc='2.0', id=1, method=method, params=params or [])), {
+        connection.request('POST', '/wallet/'+wallet if wallet else '/', json.dumps(dict(jsonrpc='2.0', id=1, method=method, params=params or [])), {
             'Authorization': 'Basic ' + base64.b64encode(credential.encode()).decode(),
             'Connection': 'close', 'Content-Type': 'application/json'})
         response = connection.getresponse()
@@ -427,11 +427,30 @@ def study_start(root):
     """Prepare independent confirmed inputs before disabling broadcast for the study."""
     signed(root)
     config, _ = producer(root)
+    write_private(root/'study-endpoint.json', dict(port=config['port']))
     sign_block(root, False)
     for _ in range(5):
         address = rpc(config, "getaddressinfo", [rpc(config, "getnewaddress", ["study-reserve", "bech32"])])["unconfidential"]
         rpc(config, "sendtoaddress", dict(address=address, amount="0.01", fee_rate=1))
     sign_block(root, False)
+
+
+def descriptor_start(root):
+    """Fund a dedicated descriptor signer; its private keys never leave the daemon."""
+    study_start(root)
+    config, _ = producer(root)
+    rpc(config, 'createwallet', dict(wallet_name='descriptor-study', descriptors=True, load_on_startup=True))
+    evidence = json.loads((root/'signed.json').read_text())
+    addresses = []
+    for _ in range(8):
+        address = rpc(config, 'getnewaddress', ['descriptor-study', 'bech32'], wallet='descriptor-study')
+        addresses.append(address)
+        for asset in (evidence['asset'], evidence['fee_asset']):
+            rpc(config, 'sendtoaddress', dict(address=address, amount='0.01', assetlabel=asset, fee_rate=1), wallet='producer')
+    sign_block(root, False)
+    (root/'descriptor-public.json').write_text(json.dumps(dict(addresses=addresses, asset=evidence['asset'], fee_asset=evidence['fee_asset'])))
+    with (root/'elements.conf').open('a') as configuration:
+        configuration.write('persistmempool=0\n')
 
 
 EXPLICIT = '0' * 64
@@ -488,7 +507,7 @@ def sign_block(root, exclude):
     number = int(counter.read_text()) + 1 if counter.exists() else 1
     counter.write_text(str(number))
     proposed = rpc(config, 'getnewblockhex', [86400 if exclude else 0, None, number.to_bytes(4, 'big').hex()])
-    signatures = rpc(config, 'signblock', [proposed, challenge])
+    signatures = rpc(config, 'signblock', [proposed, challenge], wallet='producer')
     combined = rpc(config, 'combineblocksigs', [proposed, signatures, challenge])
     if not combined['complete'] or rpc(config, 'submitblock', [combined['hex']]) is not None:
         raise RuntimeError('Elements settlement block refused')
@@ -566,7 +585,7 @@ def report_rpc(root):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart', 'report-rpc', 'stop-report', 'study-auth', 'study-start'])
+    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart', 'report-rpc', 'stop-report', 'study-auth', 'study-start', 'descriptor-start'])
     parser.add_argument('--root', required=True, type=Path)
     parser.add_argument('--units', type=int, default=0)
     parser.add_argument('--blocks', type=int, default=0)
@@ -589,6 +608,8 @@ def main():
     try:
         if args.action == 'study-start':
             study_start(root)
+        elif args.action == 'descriptor-start':
+            descriptor_start(root)
         elif args.action == 'study-auth':
             study_auth(root, args.study_methods, args.study_intersection)
         elif args.action == 'stop-all':
@@ -613,7 +634,7 @@ def main():
         if root.is_dir():
             with (root/'harness-error.log').open('w') as log:
                 traceback.print_exc(file=log)
-        if args.action in ('start','signed','settlement','restart','study-start'):
+        if args.action in ('start','signed','settlement','restart','study-start','descriptor-start'):
             stop(root)
         raise
 

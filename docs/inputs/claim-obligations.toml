@@ -2707,3 +2707,18 @@ owner = "Epoch publication implementer"
 missing = "Outside scope: byte codec, settlement authenticity, persistence and offline cryptographic validation."
 closing_condition = "Disclosure roundtrip and section refusals pass under the declared fixture verifiers."
 closing_step = "Bite 8 semantic restoration boundary."
+
+[[rows]]
+name = "ROOT::verif:harness:descriptor-recovery"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "scoped-supported"
+claims = ["WALLET::claim:wallet:descriptor-attempts-retain-common-input-conflict"]
+realizers = []
+hold = ""
+owner = "Wallet implementer and recovery-contract reviewer"
+missing = "Outside scope: production spending, crash-durable input notes, arbitrary descriptor expansion and incomplete chain scans."
+closing_condition = "Real descriptor PSET conflict, common-intersection, abandonment, recovery, concurrency and shallow-reorg controls pass."
+closing_step = "Bite eight descriptor recovery witnesses; production integration follows separately."
+premises = "Finite known descriptor scripts, complete fixture chain and pool, explicit destruction outputs and a dedicated signing wallet."
+evidence_paragraph = "WALLET::amend:wallet:descriptor-recovery-evidence"

@@ -1221,6 +1221,7 @@
     "pn-wallet::rpc::provisioning_refusals": "",
     "pn-wallet::rpc::reader_limit_hold": "",
     "pn-wallet::rpc::recovery::daemon_capabilities": "",
+    "pn-wallet::rpc::recovery::replay_safe::descriptor_conflicts": "",
     "pn-wallet::rpc::rotation": "",
     "pn-wallet::rpc::settlement_forks": "",
     "pn-wallet::rpc::signed_reads": "",

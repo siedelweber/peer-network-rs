@@ -1,4 +1,6 @@
 //! Test-only daemon capability study; no production RPC vocabulary is extended.
+#[path = "recovery/replay_safe.rs"]
+mod replay_safe;
 use secrecy::{SecretBox, SecretString};
 use serde_json::{Value, json};
 use std::fmt::Write as _;
@@ -41,26 +43,27 @@ fn identity() -> Identity {
     Identity(SecretString::from(text))
 }
 
-// Caveat: The private producer bootstrap is acquired directly into protected bytes until read returns; its descriptor API requires a mutable buffer.
+// Caveat: The port-only study endpoint is acquired directly into protected bytes until read returns; its descriptor API requires a mutable buffer and the file contains no producer credential.
 // (´[ROOT-cav:observe:secret-study-bootstrap-read]´)
-// Caveat: Bootstrap bytes are borrowed only to extract the fixture port into its secret carrier; temporary JSON fields are confined to this acquisition boundary and never observed.
+// Caveat: Port-only endpoint bytes are borrowed to extract the fixture port into its secret carrier; unknown fields refuse and no producer credential is acquired.
 // (´[ROOT-cav:observe:secret-study-bootstrap-parse]´)
 // Fixture-only secret boundary: This helper reaches only the isolated regtest study, never deployment credentials.
 // Justified: Only the selected test node's private bootstrap is accepted, with no deployment configuration route.
 #[allow(clippy::disallowed_methods)]
-fn node() -> Node {
+fn node(action: &str) -> Node {
     use secrecy::{ExposeSecret as _, ExposeSecretMut as _};
     #[derive(serde::Deserialize)]
+    #[serde(deny_unknown_fields)]
     struct Bootstrap {
         port: u16,
     }
     let root = super::root()
         .parent()
         .unwrap()
-        .join(format!("wallet-signed-capability-{}", std::process::id()));
-    super::require(super::harness("study-start", &root), "capability fixture production");
+        .join(format!("wallet-signed-{action}-capability-{}", std::process::id()));
+    super::require(super::harness(action, &root), "capability fixture production");
     let mut bytes = SecretBox::new(vec![0; 4096].into_boxed_slice());
-    let count = std::fs::File::open(root.join("producer.json"))
+    let count = std::fs::File::open(root.join("study-endpoint.json"))
         .unwrap()
         .read(bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-study-bootstrap-read]´) */))
         .unwrap();
@@ -77,13 +80,13 @@ fn node() -> Node {
 // Fixture-only secret boundary: This helper reaches only the isolated regtest study, never deployment credentials.
 // Justified: The existing external producer owns daemon configuration; this test-only exit avoids a second cryptographic implementation or a codec-confinement exception.
 #[allow(clippy::disallowed_methods)]
-fn configure(node: &Node, identity: &Identity, intersection: bool) {
+fn configure(node: &Node, identity: &Identity, intersection: bool, methods: &str) {
     use secrecy::ExposeSecret as _;
     let mut command = std::process::Command::new("python3");
     command
         .args(["-B", "ci/wallet_elements.py", "study-auth", "--root"])
         .arg(&node.root)
-        .args(["--study-methods", METHODS])
+        .args(["--study-methods", methods])
         .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
@@ -221,14 +224,14 @@ fn raw_signing(node: &Node, identity: &Identity, address: &Value) -> Value {
 /// ´test:integration:daemon-capabilities´
 #[test]
 fn daemon_capabilities() {
-    let node = node();
+    let node = node("study-start");
     let first = identity();
-    configure(&node, &first, true);
+    configure(&node, &first, true, METHODS);
     assert!(call(&node, &first, "getblockcount", json!([])).as_u64().is_some());
     for method in ["help", "stop", "sendrawtransaction"] {
         assert_eq!(rpc(&node, &first, "producer", method, json!([])).0, 403);
     }
-    configure(&node, &first, false);
+    configure(&node, &first, false, METHODS);
     let help = call(&node, &first, "help", json!(["sendtoaddress"]));
     assert!(help.as_str().unwrap().contains("comment"));
     assert_eq!(rpc(&node, &first, "producer", "stop", json!([])).0, 403);
@@ -259,7 +262,7 @@ fn daemon_capabilities() {
         -5
     );
     let rotated = identity();
-    configure(&node, &rotated, false);
+    configure(&node, &rotated, false, METHODS);
     assert_eq!(rpc(&node, &first, "producer", "getwalletinfo", json!([])).0, 401);
     let after = lookup(&node, &rotated, &stored);
     assert_eq!(after["hex"], before["hex"]);

@@ -4805,6 +4805,14 @@
       "review": "Assertions compare real daemon responses before and after credential rotation and wallet restart, and require distinct durable transactions for repeated comments. This demonstrates the observed primitive boundaries and missing request uniqueness, not production spending, crash atomicity or complete history."
     },
     {
+      "operation": "pn-wallet::rpc::recovery::replay_safe::descriptor_conflicts",
+      "path": "packages/wallet/tests/rpc/recovery/replay_safe.rs",
+      "claim": "WALLET::claim:wallet:descriptor-attempts-retain-common-input-conflict",
+      "before": "",
+      "after": "Claim: On the real regtest descriptor wallet, PSET-signed request attempts with a nonempty common input set remain mutually exclusive across differing amounts, fees, lost replies, abandonment and a shallow reorg; the finite history recovers committed request ids from descriptor spends without wallet history, and serialized distinct requests reserve disjoint inputs.",
+      "review": "The finite daemon history checks all-attempt intersection before signer calls, conflicting signed alternatives, one current-chain confirmation through a shallow reorg, cancellation by a confirmed conflicting spend, recovery using public descriptor scripts and chain/pool data only, and disjoint serialized request inputs. It does not claim production crash durability, arbitrary descriptor discovery, incomplete-scan absence or decentralized finality. No paper statement is declared witnessed by these fixture assertions."
+    },
+    {
       "operation": "pn-wallet::rpc::rotation",
       "path": "packages/wallet/tests/rpc.rs",
       "claim": "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay",

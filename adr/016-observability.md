@@ -458,9 +458,9 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-study-entropy-format` In `packages/wallet/tests/rpc/recovery.rs`, function `identity`: Study entropy is borrowed solely to construct the secret-owned fixture credential; hexadecimal formatting requires ordinary bytes for that call. Source method: `expose_secret`. Fixture-only boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-read` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: The private producer bootstrap is acquired directly into protected bytes until read returns; its descriptor API requires a mutable buffer. Source method: `expose_secret_mut`. Fixture-only boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-read` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: The port-only study endpoint is acquired directly into protected bytes until read returns; its descriptor API requires a mutable buffer and the file contains no producer credential. Source method: `expose_secret_mut`. Fixture-only boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-parse` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: Bootstrap bytes are borrowed only to extract the fixture port into its secret carrier; temporary JSON fields are confined to this acquisition boundary and never observed. Source method: `expose_secret`. Fixture-only boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-study-bootstrap-parse` In `packages/wallet/tests/rpc/recovery.rs`, function `node`: Port-only endpoint bytes are borrowed to extract the fixture port into its secret carrier; unknown fields refuse and no producer credential is acquired. Source method: `expose_secret`. Fixture-only boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-study-config-producer` In `packages/wallet/tests/rpc/recovery.rs`, function `configure`: The protected study credential leaves its carrier only through the private stdin pipe to the external fixture configurator; that producer uses temporary ordinary bytes to derive rpcauth and writes only the verifier into the restricted daemon configuration, then exits. Source method: `expose_secret`. Fixture-only boundary.
 

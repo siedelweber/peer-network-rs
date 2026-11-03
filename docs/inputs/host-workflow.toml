@@ -184,14 +184,14 @@ status = "planned; not served"
 [[rows]]
 name = "preflight"
 category = "recovery"
-action = "Validate profile, run, immutable intent, target, authority and resource limits before effects."
+action = "Validate profile, run, request, this attempt's target and amount, authority and resource limits before effects."
 recovery = "Unsupported or refused performs no effect; a capability study must precede spending."
 
 [[rows]]
 name = "prepared"
 category = "recovery"
-action = "Recover or atomically retain the authenticated account binding and request; confirm wallet association capability."
-recovery = "Reuse the original request and prepared binding; a different intent refuses."
+action = "Recover or retain the authenticated account binding and request; verify descriptor signer authority."
+recovery = "Retain the request; any replacement must preserve the common spent-input intersection."
 
 [[rows]]
 name = "funding"
@@ -202,20 +202,20 @@ recovery = "Retain the reservation during uncertainty; no second grant request."
 [[rows]]
 name = "associated"
 category = "recovery"
-action = "The wallet atomically and durably associates intent, chosen inputs and exact signed transaction before any broadcast."
-recovery = "Only complete authoritative no-creation under serialized ownership permits first creation."
+action = "Durably retain this attempt's owned spent outputs before signing, after serialized all-attempt intersection admission."
+recovery = "No outcome is stored; absent pending-pool data never permits forgetting a signed attempt."
 
 [[rows]]
 name = "broadcast"
 category = "recovery"
-action = "Broadcast the retained signed bytes, or recover their existing transaction."
-recovery = "Lost response is unknown effect; only the identical transaction may be rebroadcast."
+action = "Broadcast an admitted signed attempt, or scan descriptor spends and request commitments."
+recovery = "Lost response is unknown effect; replacements retain the intersection of every recorded attempt."
 
 [[rows]]
 name = "settlement"
 category = "recovery"
 action = "Verify actual signed destruction, permanent target, amount and shared settled marker."
-recovery = "Pending, conflicted, abandoned, inaccessible and incomplete history remain distinct; none is admission."
+recovery = "Read the current chain at the required depth; a reorg may change the selected attempt, and incomplete scans remain unavailable."
 
 [[rows]]
 name = "submitted"
@@ -232,7 +232,7 @@ recovery = "Publication completes the act-publication workflow only; funding and
 [[rows]]
 name = "uncertain"
 category = "recovery"
-action = "Reconcile the original request through the authoritative store before any further effect."
+action = "Reconcile the request through chain and pool; admit no signing that loses its common input set."
 recovery = "Cancellation never proves rollback; unavailable or incomplete lookup cannot become no-creation."
 
 [[rows]]
@@ -280,7 +280,7 @@ name = "8-g"
 category = "hold"
 owner = "lane/design"
 scope = "daemon capability study"
-evidence = "real durable atomic intent/transaction association, complete lookup across pending/conflicted/abandoned history, all-writer serialization and least-authority spending identity; unsupported capability returns a contract decision"
+evidence = "descriptor PSET signing, common-input conflicts, lost replies, abandonment, chain/pool recovery, disjoint concurrent requests and shallow reorgs; dedicated least-authority signer custody"
 hold = "open:devnet:spending-rpc-identity"
 
 [[rows]]
@@ -288,7 +288,7 @@ name = "8-h"
 category = "hold"
 owner = "lane/design"
 scope = "wallet recovery and grants"
-evidence = "only after successful capability study: crash/cancel matrix around association/signing/broadcast, no duplicate payment, uncertain quota retention and immutable target"
+evidence = "after finite descriptor witnesses: durable spent-output admission and all-writer crash/cancel matrix around signing/broadcast, no duplicate confirmation, complete descriptor discovery and uncertain quota retention"
 hold = "open:design:harness-evidence"
 
 [[rows]]

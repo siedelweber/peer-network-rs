@@ -187,16 +187,16 @@
       "surface": "control"
     },
     {
-      "action": "Validate profile, run, immutable intent, target, authority and resource limits before effects.",
+      "action": "Validate profile, run, request, this attempt's target and amount, authority and resource limits before effects.",
       "category": "recovery",
       "name": "preflight",
       "recovery": "Unsupported or refused performs no effect; a capability study must precede spending."
     },
     {
-      "action": "Recover or atomically retain the authenticated account binding and request; confirm wallet association capability.",
+      "action": "Recover or retain the authenticated account binding and request; verify descriptor signer authority.",
       "category": "recovery",
       "name": "prepared",
-      "recovery": "Reuse the original request and prepared binding; a different intent refuses."
+      "recovery": "Retain the request; any replacement must preserve the common spent-input intersection."
     },
     {
       "action": "Reserve node quota and grant intent, then recover node and selected-wallet status for that request.",
@@ -205,22 +205,22 @@
       "recovery": "Retain the reservation during uncertainty; no second grant request."
     },
     {
-      "action": "The wallet atomically and durably associates intent, chosen inputs and exact signed transaction before any broadcast.",
+      "action": "Durably retain this attempt's owned spent outputs before signing, after serialized all-attempt intersection admission.",
       "category": "recovery",
       "name": "associated",
-      "recovery": "Only complete authoritative no-creation under serialized ownership permits first creation."
+      "recovery": "No outcome is stored; absent pending-pool data never permits forgetting a signed attempt."
     },
     {
-      "action": "Broadcast the retained signed bytes, or recover their existing transaction.",
+      "action": "Broadcast an admitted signed attempt, or scan descriptor spends and request commitments.",
       "category": "recovery",
       "name": "broadcast",
-      "recovery": "Lost response is unknown effect; only the identical transaction may be rebroadcast."
+      "recovery": "Lost response is unknown effect; replacements retain the intersection of every recorded attempt."
     },
     {
       "action": "Verify actual signed destruction, permanent target, amount and shared settled marker.",
       "category": "recovery",
       "name": "settlement",
-      "recovery": "Pending, conflicted, abandoned, inaccessible and incomplete history remain distinct; none is admission."
+      "recovery": "Read the current chain at the required depth; a reorg may change the selected attempt, and incomplete scans remain unavailable."
     },
     {
       "action": "Submit the same structural act or request and recover its recorded receipt.",
@@ -235,7 +235,7 @@
       "recovery": "Publication completes the act-publication workflow only; funding and burn workflows retain their own narrower terminal receipts."
     },
     {
-      "action": "Reconcile the original request through the authoritative store before any further effect.",
+      "action": "Reconcile the request through chain and pool; admit no signing that loses its common input set.",
       "category": "recovery",
       "name": "uncertain",
       "recovery": "Cancellation never proves rollback; unavailable or incomplete lookup cannot become no-creation."
@@ -282,7 +282,7 @@
     },
     {
       "category": "hold",
-      "evidence": "real durable atomic intent/transaction association, complete lookup across pending/conflicted/abandoned history, all-writer serialization and least-authority spending identity; unsupported capability returns a contract decision",
+      "evidence": "descriptor PSET signing, common-input conflicts, lost replies, abandonment, chain/pool recovery, disjoint concurrent requests and shallow reorgs; dedicated least-authority signer custody",
       "hold": "open:devnet:spending-rpc-identity",
       "name": "8-g",
       "owner": "lane/design",
@@ -290,7 +290,7 @@
     },
     {
       "category": "hold",
-      "evidence": "only after successful capability study: crash/cancel matrix around association/signing/broadcast, no duplicate payment, uncertain quota retention and immutable target",
+      "evidence": "after finite descriptor witnesses: durable spent-output admission and all-writer crash/cancel matrix around signing/broadcast, no duplicate confirmation, complete descriptor discovery and uncertain quota retention",
       "hold": "open:design:harness-evidence",
       "name": "8-h",
       "owner": "lane/design",
