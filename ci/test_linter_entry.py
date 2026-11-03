@@ -321,6 +321,10 @@ class Conformance(unittest.TestCase):
                 path = root/name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'unchanged')
+            registry_path = root/'docs/inputs/harness-registry.toml'
+            registry_path.parent.mkdir(parents=True, exist_ok=True)
+            registry_text = (Path(__file__).resolve().parent.parent/'docs/inputs/harness-registry.toml').read_text()
+            registry_path.write_text(registry_text)
             def commit(message):
                 for args in (['add', '.'], ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message]):
                     subprocess.run(['git', '-C', str(root), *args], check=True, capture_output=True)
@@ -340,6 +344,20 @@ class Conformance(unittest.TestCase):
                                       configuration=CONFIGURATION, selection_inputs=fresh['inputs']))
                 selection = service_selection(root)
                 self.assertFalse(selection['run'])
+                # An independent row and a sibling case (including its overrides)
+                # do not alter the selected witness's execution declaration.
+                unrelated = registry_text.replace('cases = ["'+SERVICE_CASE+'"', 'cases = ["unrelated-case", "'+SERVICE_CASE+'"')
+                unrelated = unrelated.replace('"'+SERVICE_CASE+'",', '"'+SERVICE_CASE+'", "unrelated-case",', 1)
+                unrelated += '\n[[rows]]\nkind = "suite"\nname = "unrelated-suite"\ncases = []\n'
+                registry_path.write_text(unrelated)
+                self.assertEqual(service_selection(root), selection)
+                registry_path.write_text(registry_text.replace('scenario_jobs = 4', 'scenario_jobs = 5'))
+                self.assertTrue(service_selection(root)['run'])
+                registry_path.write_text(registry_text.replace('"'+SERVICE_CASE+'" = "calibrated-linter-entry-service-ownership-case"',
+                                      '"'+SERVICE_CASE+'" = "changed-service-budget"'))
+                self.assertTrue(service_selection(root)['run'])
+                registry_path.write_text(registry_text)
+                self.assertEqual(service_selection(root), selection)
                 for tool in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN'):
                     with patch.dict(os.environ, {tool: 'different-configured-tool'}):
                         self.assertNotEqual(service_selection(root)['inputs'], selection['inputs'])

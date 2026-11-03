@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import time
+import tomllib
 import uuid
 
 from build_graph import SHELL_STEPS, identity, read_result, report_path, roster, selected, tracked
@@ -22,16 +23,41 @@ SERVICE_HOLD = 'ROOT::rule:buildgraph:service-selection'
 SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_graph.py', 'ci/gate.sh',
                   'ci/build_graph_runtime_witnesses.py', 'ci/build_graph_witnesses.py',
                   'ci/build_graph_evidence.py', 'ci/test_linter_entry.py',
-                  'packages/wallet/provisioning.json', 'docs/inputs/harness-registry.toml',
+                  'packages/wallet/provisioning.json', 'ci/harness.py',
                   'packages/host/postgresql-target.txt', 'packages/host/Cargo.toml',
                   'docs/inputs/numeric-dependencies.toml', 'Cargo.lock', 'docs/inputs/host-dependencies.toml')
+
+
+def service_registry(root):
+    """Project the selected witness and its declarations, excluding sibling cases."""
+    data = tomllib.loads((root/'docs/inputs/harness-registry.toml').read_text())
+    if data.get('namespace') != 'org.peer-network.harness.registry' or data.get('version') != [1, 0, 0]:
+        raise ValueError('service registry has an unsupported declaration')
+    rows = data['rows']
+    suites = [row for row in rows if row.get('kind') == 'suite' and SERVICE_CASE in row.get('cases', [])]
+    if len(suites) != 1 or suites[0]['cases'].count(SERVICE_CASE) != 1:
+        raise ValueError('service case requires one registry declaration')
+    suite = dict(suites[0])
+    suite['cases'] = [SERVICE_CASE]
+    for field in ('case_levels', 'case_budgets', 'case_budget_reasons'):
+        values = suite.pop(field, {})
+        if SERVICE_CASE in values:
+            suite[field] = {SERVICE_CASE: values[SERVICE_CASE]}
+    declarations = []
+    for kind in ('implementation', 'level', 'tier'):
+        name = suite.get('case_levels', {}).get(SERVICE_CASE, suite[kind]) if kind == 'level' else suite[kind]
+        matches = [row for row in rows if row.get('kind') == kind and row.get('name') == name]
+        if len(matches) != 1:
+            raise ValueError('service case requires one '+kind+' declaration')
+        declarations.extend(matches)
+    return dict(namespace=data['namespace'], version=data['version'], suite=suite, declarations=declarations)
 
 
 def service_selection(root, admission=False):
     """Execute unless the current inputs and configuration have a retained pass."""
     from harness import CONFIGURATION
     tools = {name: os.environ.get(name) for name in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN')}
-    fingerprint = identity(dict(files=[(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS], tools=tools))
+    fingerprint = identity(dict(files=[(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS], registry=service_registry(root), tools=tools))
     selection = dict(run=False, inputs=fingerprint, changed=[], hold=SERVICE_HOLD)
     retained = retained_service_source(selection, CONFIGURATION)
     selection.update(run=bool(admission or not retained),
