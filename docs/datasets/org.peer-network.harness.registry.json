@@ -2546,7 +2546,7 @@
     {
       "budget": "pure-suite",
       "case_budget_reasons": {
-        "ci::test_devperf.Performance.test_distinct_excess_ledger": "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection."
+        "ci::test_devperf.Performance.test_distinct_excess_ledger": "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases."
       },
       "case_budgets": {
         "ci::test_devperf.Performance.test_distinct_excess_ledger": "calibrated-devperf-distinct-excess-ledger-case"
@@ -4046,11 +4046,13 @@
     {
       "budget": "pure-suite",
       "case_budget_reasons": {
+        "pn-wallet::rpc::recovery::daemon_capabilities": "The real Elements study retains isolated fixture creation, whitelist intersection, credential rotation, restart, lookup and concurrent repeated-request controls, including its complete daemon lifecycle.",
         "pn-wallet::rpc::rotation": "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal.",
         "pn-wallet::rpc::settlement_forks": "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results.",
         "pn-wallet::rpc::signed_reads": "Real Elements setup and signed reads retain their complete public transaction and authentication checks."
       },
       "case_budgets": {
+        "pn-wallet::rpc::recovery::daemon_capabilities": "calibrated-wallet-daemon-capabilities-case",
         "pn-wallet::rpc::rotation": "calibrated-wallet-rpc-rotation-case",
         "pn-wallet::rpc::settlement_forks": "calibrated-wallet-rpc-settlement-forks-case",
         "pn-wallet::rpc::signed_reads": "calibrated-wallet-rpc-signed-reads-case"

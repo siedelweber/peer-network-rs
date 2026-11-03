@@ -156,6 +156,21 @@ numeric_refs = { record_margin_percent = { dataset = "org.peer-network.numbers.r
 numeric_text = ["reason"]
 
 [[rows.calibration_campaigns]]
+label = "campaign:devperf:design-public-warm"
+base_commit = "9d5c8f92764bd20e5959193ae6782e1cc2d86194"
+configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+warmup_wall_seconds = 17.701650142669678
+sample_walls_seconds = [16.90389394760132, 10.464247941970825, 9.922492980957031]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ commit = "9d5c8f92764bd20e5959193ae6782e1cc2d86194", patch_id = "eeb9029adfedb64fbe3805469de8f401829ed101" }]
+
+[[rows.calibration_campaigns]]
 label = "campaign:devperf:owned-cases-warm"
 base_commit = "37466cd6ec24cb974464c4dca736fe82e2ef0c79"
 configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
@@ -1186,15 +1201,15 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-harness-host-commit-isolation-case"
 category = "case"
-budget_ms = 1600
+budget_ms = 2350
 scope = "one ci::test_harness.Harness.test_host_commit_isolation case"
 reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [777.6503490749747, 764.0414841007441, 709.3237789813429]
+calibration_walls_ms = [1164.2658710479736, 895.3347206115723, 800.8098602294922]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "ci/test_harness.py", function = "test_host_commit_isolation", digest = "887ba918cee3c938b926ede66b30b62af306eeeb86ff4255a39e1f23aba104fc", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_source = { path = "ci/test_harness.py", function = "test_host_commit_isolation", digest = "f3e23ea5a5470afb43ed152f9092f91dcc6b664fdbb9b40b57f8d000985a9eed", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-public-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
 calibration_round_ms = 50
@@ -1204,15 +1219,15 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-harness-wallet-commit-isolation-case"
 category = "case"
-budget_ms = 1450
+budget_ms = 2950
 scope = "one ci::test_harness.Harness.test_wallet_commit_isolation case"
 reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [715.4435380361974, 717.1839601360261, 699.8531559947878]
+calibration_walls_ms = [1452.0001411437988, 872.3723888397217, 813.9297962188721]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_harness.py", function = "test_wallet_commit_isolation", digest = "aa820c73a382efbc9e526a64a6d81323b3319b8173230b987a9804e17b6b0b7e", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_harness.py", function = "test_wallet_commit_isolation", digest = "a700aacb30528925d64a574ad77c276f48de28d2add530ab7858cb8a6f5620fa", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-public-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
 calibration_round_ms = 50
@@ -1420,15 +1435,15 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-observe-runtime-title-suite-case"
 category = "case"
-budget_ms = 10250
+budget_ms = 13250
 scope = "one ci::test_observe_runtime.Processes.test_title_suite case"
 reason = "The complete title observation suite retains each real child mode, public outcome comparison and finalized trace evidence."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [3847.3394990433007, 5102.067029103637, 4445.377834839746]
+calibration_walls_ms = [6607.995986938477, 4444.458961486816, 4367.513179779053]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_observe_runtime.py", function = "test_title_suite", digest = "5e6ec7dfee6a9d313bd4e3fb1cd9c3790392c7af24bdde036101060c6e782abb", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_observe_runtime.py", function = "test_title_suite", digest = "603df4455709cf32e8c85ec4455be47eff83b4cfeff69943070f8ed49dcd32dd", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-public-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
 calibration_round_ms = 50
@@ -2032,15 +2047,15 @@ calibration_source = { "path" = "packages/graph/tests/numeric/controller.rs", "f
 [[rows]]
 name = "calibrated-devperf-distinct-excess-ledger-case"
 category = "case"
-budget_ms = 350
+budget_ms = 50
 scope = "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
-reason = "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection."
+reason = "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [155.0595599692315, 153.39159592986107, 145.67377907224]
-calibration_selected_sample = 1
+calibration_walls_ms = [1.9423961639404297, 1.2843608856201172, 1.1684894561767578]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_source = { path = "ci/test_devperf.py", function = "test_distinct_excess_ledger", digest = "f99ce78c1fbfcdc5472722f6797ce7fe37842533c157f709989923474bab0e3b", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_devperf.py", function = "test_distinct_excess_ledger", digest = "ab476cc5d6b23ffd8e8c09512afc307294781c9cbe720205f294d2f13d504b0a", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-public-warm"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
 calibration_multiplier = 2
 calibration_round_ms = 50
@@ -2641,3 +2656,21 @@ calibration_warm = true
 calibration_discarded_warmups = 1
 calibration_campaign = "campaign:devperf:publication-public-warm"
 calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge/publication.rs", "function" = "publication_prefix", "digest" = "f0c651ce98af247bbb80f1283f11b5b86398c9e908450f598cee96a16fe3420f", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-wallet-daemon-capabilities-case"
+category = "case"
+budget_ms = 15350
+scope = "one pn-wallet::rpc::recovery::daemon_capabilities case"
+reason = "The real Elements study retains isolated fixture creation, whitelist intersection, credential rotation, restart, lookup and concurrent repeated-request controls, including its complete daemon lifecycle."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [7669.763088226318, 4247.469663619995, 3935.810089111328]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_source = { path = "packages/wallet/tests/rpc/recovery.rs", function = "daemon_capabilities", digest = "33c32c7e06f2ff6dcff769fc2f33cafe7a458f54d4b825adfab089a193bb59b0", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-public-warm"
+calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1

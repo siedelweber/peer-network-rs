@@ -833,3 +833,15 @@ commit = "b2d117cf150543a7d5300cf54e9887e55eb8adef"
 patch_id = "9439b935be543c0e860308838790f697a3dec13d"
 definition = "The imported publication carrier is the measured source; its stable patch identity is independently recomputed."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "design-public-calibration-series"
+group = "warm case allowance calibration"
+measures = "Public measured source and its stable patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "9d5c8f92764bd20e5959193ae6782e1cc2d86194"
+patch_id = "eeb9029adfedb64fbe3805469de8f401829ed101"
+definition = "The public imported source is the measured tree; its stable patch identity is independently recomputed."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]

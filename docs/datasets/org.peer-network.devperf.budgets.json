@@ -393,6 +393,30 @@
       "budget_ms": 120000,
       "calibration_campaigns": [
         {
+          "base_commit": "9d5c8f92764bd20e5959193ae6782e1cc2d86194",
+          "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+          "discarded_warmups": 1,
+          "label": "campaign:devperf:design-public-warm",
+          "measured_series": [
+            {
+              "commit": "9d5c8f92764bd20e5959193ae6782e1cc2d86194",
+              "patch_id": "eeb9029adfedb64fbe3805469de8f401829ed101"
+            }
+          ],
+          "multiplier": 2,
+          "round_ms": 50,
+          "rounding": "upward",
+          "sample_choice": "maximum-of-three-warm-serial",
+          "sample_walls_seconds": [
+            16.90389394760132,
+            10.464247941970825,
+            9.922492980957031
+          ],
+          "warm": true,
+          "warm_samples": 3,
+          "warmup_wall_seconds": 17.701650142669678
+        },
+        {
           "base_commit": "37466cd6ec24cb974464c4dca736fe82e2ef0c79",
           "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
           "discarded_warmups": 1,
@@ -3870,8 +3894,8 @@
       "scope": "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
     },
     {
-      "budget_ms": 1600,
-      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "budget_ms": 2350,
+      "calibration_campaign": "campaign:devperf:design-public-warm",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
@@ -3879,25 +3903,25 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
       "calibration_source": {
-        "digest": "887ba918cee3c938b926ede66b30b62af306eeeb86ff4255a39e1f23aba104fc",
+        "digest": "f3e23ea5a5470afb43ed152f9092f91dcc6b664fdbb9b40b57f8d000985a9eed",
         "function": "test_host_commit_isolation",
         "owner": "lane/design",
         "path": "ci/test_harness.py"
       },
       "calibration_walls_ms": [
-        777.6503490749747,
-        764.0414841007441,
-        709.3237789813429
+        1164.2658710479736,
+        895.3347206115723,
+        800.8098602294922
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-host-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 600",
+          "exact": "2 350",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 600",
+          "num": "2 350",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3912,34 +3936,34 @@
       "scope": "one ci::test_harness.Harness.test_host_commit_isolation case"
     },
     {
-      "budget_ms": 1450,
-      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "budget_ms": 2950,
+      "calibration_campaign": "campaign:devperf:design-public-warm",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
       "calibration_source": {
-        "digest": "aa820c73a382efbc9e526a64a6d81323b3319b8173230b987a9804e17b6b0b7e",
+        "digest": "a700aacb30528925d64a574ad77c276f48de28d2add530ab7858cb8a6f5620fa",
         "function": "test_wallet_commit_isolation",
         "owner": "lane/design",
         "path": "ci/test_harness.py"
       },
       "calibration_walls_ms": [
-        715.4435380361974,
-        717.1839601360261,
-        699.8531559947878
+        1452.0001411437988,
+        872.3723888397217,
+        813.9297962188721
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-wallet-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "1 450",
+          "exact": "2 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 450",
+          "num": "2 950",
           "num_exact": true,
           "num_relation": "="
         }
@@ -4416,34 +4440,34 @@
       "scope": "one ci::test_observe_runtime.Processes.test_four_mode_results case"
     },
     {
-      "budget_ms": 10250,
-      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "budget_ms": 13250,
+      "calibration_campaign": "campaign:devperf:design-public-warm",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
+      "calibration_selected_sample": 1,
       "calibration_source": {
-        "digest": "5e6ec7dfee6a9d313bd4e3fb1cd9c3790392c7af24bdde036101060c6e782abb",
+        "digest": "603df4455709cf32e8c85ec4455be47eff83b4cfeff69943070f8ed49dcd32dd",
         "function": "test_title_suite",
         "owner": "lane/design",
         "path": "ci/test_observe_runtime.py"
       },
       "calibration_walls_ms": [
-        3847.3394990433007,
-        5102.067029103637,
-        4445.377834839746
+        6607.995986938477,
+        4444.458961486816,
+        4367.513179779053
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-observe-runtime-title-suite-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "10 250",
+          "exact": "13 250",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 250",
+          "num": "13 250",
           "num_exact": true,
           "num_relation": "="
         }
@@ -5988,8 +6012,8 @@
       "scope": "one pn-graph::numeric::controller::controller_ridge case"
     },
     {
-      "budget_ms": 350,
-      "calibration_campaign": "campaign:devperf:owned-cases-warm",
+      "budget_ms": 50,
+      "calibration_campaign": "campaign:devperf:design-public-warm",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
@@ -5997,25 +6021,25 @@
       "calibration_sample_choice": "maximum-of-three-warm-serial",
       "calibration_selected_sample": 1,
       "calibration_source": {
-        "digest": "f99ce78c1fbfcdc5472722f6797ce7fe37842533c157f709989923474bab0e3b",
+        "digest": "ab476cc5d6b23ffd8e8c09512afc307294781c9cbe720205f294d2f13d504b0a",
         "function": "test_distinct_excess_ledger",
         "owner": "lane/design",
         "path": "ci/test_devperf.py"
       },
       "calibration_walls_ms": [
-        155.0595599692315,
-        153.39159592986107,
-        145.67377907224
+        1.9423961639404297,
+        1.2843608856201172,
+        1.1684894561767578
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-devperf-distinct-excess-ledger-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "350",
+          "exact": "50",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "350",
+          "num": "50",
           "num_exact": true,
           "num_relation": "="
         }
@@ -6026,7 +6050,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The excess ledger retains disjoint counts, controlled tier summaries, cold-owner exclusions and actual Git histories for import-tree baseline selection.",
+      "reason": "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases.",
       "scope": "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
     },
     {
@@ -8074,6 +8098,48 @@
       },
       "reason": "The public boundary prefix retains original marker disclosure, empty-final-set standing evidence and independent complete-sequence restoration.",
       "scope": "one pn-epoch::solve::admission::ridge_charge::publication::publication_prefix execution"
+    },
+    {
+      "budget_ms": 15350,
+      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "33c32c7e06f2ff6dcff769fc2f33cafe7a458f54d4b825adfab089a193bb59b0",
+        "function": "daemon_capabilities",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/rpc/recovery.rs"
+      },
+      "calibration_walls_ms": [
+        7669.763088226318,
+        4247.469663619995,
+        3935.810089111328
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "name": "calibrated-wallet-daemon-capabilities-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 350",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 350",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The real Elements study retains isolated fixture creation, whitelist intersection, credential rotation, restart, lookup and concurrent repeated-request controls, including its complete daemon lifecycle.",
+      "scope": "one pn-wallet::rpc::recovery::daemon_capabilities case"
     }
   ]
 }
