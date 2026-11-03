@@ -393,6 +393,30 @@
       "budget_ms": 120000,
       "calibration_campaigns": [
         {
+          "base_commit": "716fdcb07e29177b94a55613803510eee4cbf9aa",
+          "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+          "discarded_warmups": 1,
+          "label": "campaign:devperf:design-public-refresh",
+          "measured_series": [
+            {
+              "commit": "716fdcb07e29177b94a55613803510eee4cbf9aa",
+              "patch_id": "49b0c9f7f1c49952240e58739eac9bc18b1f95d5"
+            }
+          ],
+          "multiplier": 2,
+          "round_ms": 50,
+          "rounding": "upward",
+          "sample_choice": "maximum-of-three-warm-serial",
+          "sample_walls_seconds": [
+            17.970491647720337,
+            18.61718463897705,
+            17.175682067871094
+          ],
+          "warm": true,
+          "warm_samples": 3,
+          "warmup_wall_seconds": 16.760315895080566
+        },
+        {
           "base_commit": "9d5c8f92764bd20e5959193ae6782e1cc2d86194",
           "configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
           "discarded_warmups": 1,
@@ -3918,14 +3942,19 @@
       "scope": "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
     },
     {
-      "budget_ms": 2350,
-      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "budget_ms": 1950,
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        671.0639999999994,
+        696.5280000000025,
+        716.0400000000049
+      ],
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
       "calibration_source": {
         "digest": "f3e23ea5a5470afb43ed152f9092f91dcc6b664fdbb9b40b57f8d000985a9eed",
         "function": "test_host_commit_isolation",
@@ -3933,19 +3962,19 @@
         "path": "ci/test_harness.py"
       },
       "calibration_walls_ms": [
-        1164.2658710479736,
-        895.3347206115723,
-        800.8098602294922
+        859.3840599060059,
+        898.5254764556885,
+        952.2626399993896
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-host-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 350",
+          "exact": "1 950",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 350",
+          "num": "1 950",
           "num_exact": true,
           "num_relation": "="
         }
@@ -3960,14 +3989,19 @@
       "scope": "one ci::test_harness.Harness.test_host_commit_isolation case"
     },
     {
-      "budget_ms": 2950,
-      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "budget_ms": 1900,
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        688.5210000000042,
+        692.6229999999975,
+        711.6150000000055
+      ],
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 3,
       "calibration_source": {
         "digest": "a700aacb30528925d64a574ad77c276f48de28d2add530ab7858cb8a6f5620fa",
         "function": "test_wallet_commit_isolation",
@@ -3975,19 +4009,19 @@
         "path": "ci/test_harness.py"
       },
       "calibration_walls_ms": [
-        1452.0001411437988,
-        872.3723888397217,
-        813.9297962188721
+        885.6410980224609,
+        885.9634399414062,
+        940.6018257141113
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-harness-wallet-commit-isolation-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "2 950",
+          "exact": "1 900",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 950",
+          "num": "1 900",
           "num_exact": true,
           "num_relation": "="
         }
@@ -4464,14 +4498,19 @@
       "scope": "one ci::test_observe_runtime.Processes.test_four_mode_results case"
     },
     {
-      "budget_ms": 13250,
-      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "budget_ms": 9150,
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        5314.377000000001,
+        5724.675999999999,
+        5492.418999999996
+      ],
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
       "calibration_source": {
         "digest": "603df4455709cf32e8c85ec4455be47eff83b4cfeff69943070f8ed49dcd32dd",
         "function": "test_title_suite",
@@ -4479,19 +4518,19 @@
         "path": "ci/test_observe_runtime.py"
       },
       "calibration_walls_ms": [
-        6607.995986938477,
-        4444.458961486816,
-        4367.513179779053
+        4269.3774700164795,
+        4554.956912994385,
+        4375.153541564941
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-observe-runtime-title-suite-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "13 250",
+          "exact": "9 150",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13 250",
+          "num": "9 150",
           "num_exact": true,
           "num_relation": "="
         }
@@ -6037,13 +6076,18 @@
     },
     {
       "budget_ms": 50,
-      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1.214000000003601,
+        1.2559999999979254,
+        1.1690000000008638
+      ],
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
       "calibration_source": {
         "digest": "ab476cc5d6b23ffd8e8c09512afc307294781c9cbe720205f294d2f13d504b0a",
         "function": "test_distinct_excess_ledger",
@@ -6051,9 +6095,9 @@
         "path": "ci/test_devperf.py"
       },
       "calibration_walls_ms": [
-        1.9423961639404297,
-        1.2843608856201172,
-        1.1684894561767578
+        1.2226104736328125,
+        1.2662410736083984,
+        1.1782646179199219
       ],
       "calibration_warm": true,
       "category": "case",
@@ -8124,34 +8168,39 @@
       "scope": "one pn-epoch::solve::admission::ridge_charge::publication::publication_prefix execution"
     },
     {
-      "budget_ms": 15350,
-      "calibration_campaign": "campaign:devperf:design-public-warm",
+      "budget_ms": 9400,
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
       "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        1727.3140000000017,
+        1833.123999999999,
+        1761.1390000000001
+      ],
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 1,
+      "calibration_selected_sample": 2,
       "calibration_source": {
-        "digest": "33c32c7e06f2ff6dcff769fc2f33cafe7a458f54d4b825adfab089a193bb59b0",
+        "digest": "0273dc9bb0b2187b3979e75e41beac1d00eac5b1fa7061ea59c97901097b8e0b",
         "function": "daemon_capabilities",
         "owner": "lane/design",
         "path": "packages/wallet/tests/rpc/recovery.rs"
       },
       "calibration_walls_ms": [
-        7669.763088226318,
-        4247.469663619995,
-        3935.810089111328
+        4297.460317611694,
+        4683.756351470947,
+        4019.2348957061768
       ],
       "calibration_warm": true,
       "category": "case",
       "name": "calibrated-wallet-daemon-capabilities-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "15 350",
+          "exact": "9 400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15 350",
+          "num": "9 400",
           "num_exact": true,
           "num_relation": "="
         }
@@ -8519,6 +8568,53 @@
       },
       "reason": "The complete section-refusal matrix independently restores every distinct mutation and compares its refusal class.",
       "scope": "one pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals execution"
+    },
+    {
+      "budget_ms": 15350,
+      "calibration_campaign": "campaign:devperf:design-public-refresh",
+      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2221.125999999999,
+        2221.6710000000016,
+        2181.936000000002
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "45b85f14fc93b1a89a4e2d332d2efa0cf789c222b0471fa78b02a91a09bdf4d8",
+        "function": "descriptor_conflicts",
+        "owner": "lane/design",
+        "path": "packages/wallet/tests/rpc/recovery/replay_safe.rs"
+      },
+      "calibration_walls_ms": [
+        7652.6594161987305,
+        7586.456775665283,
+        6880.591630935669
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "name": "calibrated-wallet-descriptor-recovery-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 350",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 350",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The real Elements descriptor history retains common-input conflict, pre-sign refusal, lost-reply recovery, abandonment, disjoint concurrent requests, complete fixture scan and shallow reorg controls, including its daemon lifecycle.",
+      "scope": "one pn-wallet::rpc::recovery::replay_safe::descriptor_conflicts case"
     }
   ]
 }
