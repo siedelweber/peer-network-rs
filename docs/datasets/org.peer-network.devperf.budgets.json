@@ -447,6 +447,30 @@
           "warm": true,
           "warm_samples": 3,
           "warmup_wall_seconds": 191.28991436958313
+        },
+        {
+          "base_commit": "ecd159ef671266690ceafadcb15b19149dcacba3",
+          "configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+          "discarded_warmups": 1,
+          "label": "campaign:devperf:graph-public-top-up",
+          "measured_series": [
+            {
+              "commit": "d9a6701971366b1d31c3e60f6028c3e6dfdb3213",
+              "patch_id": "1446ebd827588bee967143b90856f56a0edae3fe"
+            }
+          ],
+          "multiplier": 2,
+          "round_ms": 50,
+          "rounding": "upward",
+          "sample_choice": "maximum-of-three-warm-serial",
+          "sample_walls_seconds": [
+            204.11448287963867,
+            203.1949074268341,
+            213.83492374420166
+          ],
+          "warm": true,
+          "warm_samples": 3,
+          "warmup_wall_seconds": 216.12453961372375
         }
       ],
       "category": "aggregate",
@@ -6860,52 +6884,57 @@
       "scope": "one pn-epoch::solve::admission::admission_quarantine execution"
     },
     {
-      "budget_ms": 9450,
+      "budget_ms": 7550,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
       "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
       "calibration_discarded_warmups": 1,
       "calibration_multiplier": 2,
       "calibration_own_cpu_ms": [
-        4622.052000000035,
-        4493.367000000035,
-        4720.269000000098
+        3494.844000000061,
+        3674.3430000000963,
+        3495.149999999995
       ],
-      "calibration_pending_owner": "lane/graph",
-      "calibration_pending_reason": "The case closure changes in this step; public-main measurements describe the preceding body.",
       "calibration_round_ms": 50,
       "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 3,
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "10a58a900a4045a45c2d6a28cb6ef12630f7d60e16ffeb227ba72f56840887d6",
+        "function": "retained_policy",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/schedules.rs"
+      },
       "calibration_walls_ms": [
-        4666.190098039806,
-        4495.419340906665,
-        4723.191069904715
+        3699.3242679163814,
+        3753.082060953602,
+        3495.6501920241863
       ],
       "calibration_warm": true,
       "category": "case",
-      "measured_own_cpu_ms": 4720.269000000098,
-      "measured_wall_ms": 4723.191069904715,
+      "measured_own_cpu_ms": 3674.3430000000963,
+      "measured_wall_ms": 3753.082060953602,
       "name": "calibrated-retained-policy-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "9 450",
+          "exact": "7 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9 450",
+          "num": "7 550",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_own_cpu_ms": {
-          "exact": "4 720.269 000 000 098",
+          "exact": "3 674.343 000 000 096 3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 720.269 000 000 098",
+          "num": "3 674.343 000 000 096 3",
           "num_exact": true,
           "num_relation": "="
         },
         "measured_wall_ms": {
-          "exact": "4 723.191 069 904 715",
+          "exact": "3 753.082 060 953 602",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4 723.191 069 904 715",
+          "num": "3 753.082 060 953 602",
           "num_exact": true,
           "num_relation": "="
         }
@@ -6924,7 +6953,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The complete pn-epoch::solve::schedules::retained_policy mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
+      "reason": "The retained policy case checks the distinct rising-wall and migration-policy refusals after removal of the duplicate inverse-floor control; the public top-up measures this current body, with its fixtures, solve and independent replay.",
       "scope": "one pn-epoch::solve::schedules::retained_policy execution"
     },
     {
@@ -7291,6 +7320,444 @@
       },
       "reason": "The complete pn-epoch::solve::admission::admission_individual_straddle mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.",
       "scope": "one pn-epoch::solve::admission::admission_individual_straddle execution"
+    },
+    {
+      "budget_ms": 300,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2.2999999999981924,
+        2.6909999999986667,
+        3.432999999997577
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "23a03a341386ea8beac5fa5e6f47901c02281da8eb347b3dd70e08caf75e01fe",
+        "function": "whole_act_carrier",
+        "owner": "lane/graph",
+        "path": "packages/records/src/lib.rs"
+      },
+      "calibration_walls_ms": [
+        2.4009018670767546,
+        2.7531899977475405,
+        141.4317360613495
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 3.432999999997577,
+      "measured_wall_ms": 141.4317360613495,
+      "name": "calibrated-whole-act-carrier-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "300",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "3.432 999 999 997 577",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3.432 999 999 997 577",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "141.431 736 061 349 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "141.431 736 061 349 5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The generated complete-act carrier retains history validation, record validation, every co-leg and boundary assembly. The serial campaign maximum includes its observed off-CPU delay; the allowance follows the uniform warm-wall rule without claiming intrinsic work growth.",
+      "scope": "one pn-records::tests::whole_act_carrier execution"
+    },
+    {
+      "budget_ms": 1100,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        134.00500000001614,
+        122.14400000001646,
+        120.99000000001325
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 1,
+      "calibration_source": {
+        "digest": "ef030a2569757567474986cd6e6738277561c4b5635c5318e3ddddbc6f1042e7",
+        "function": "primitive_oracles",
+        "owner": "lane/graph",
+        "path": "packages/graph/tests/numeric.rs"
+      },
+      "calibration_walls_ms": [
+        541.2414041347802,
+        122.30297713540494,
+        121.15936493501067
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 134.00500000001614,
+      "measured_wall_ms": 541.2414041347802,
+      "name": "calibrated-primitive-oracles-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "134.005 000 000 016 14",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "134.005 000 000 016 14",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "541.241 404 134 780 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "541.241 404 134 780 2",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The primitive oracle case retains independent rational square-root, logarithm, exponential and sigmoid enclosure comparisons. Its largest warm wall includes observed off-CPU delay; the uniform rule retains that sample rather than selecting a faster rerun.",
+      "scope": "one pn-graph::numeric::primitive_oracles execution"
+    },
+    {
+      "budget_ms": 900,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        399.44700000002695,
+        431.52700000004177,
+        433.15500000005613
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 3,
+      "calibration_source": {
+        "digest": "3b2962198fb5a12d6bc3206e9402e218ea9ae63159b5c5010b6eea8854023552",
+        "function": "closure_maximum",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        399.6754689142108,
+        431.66793300770223,
+        441.0453389864415
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 433.15500000005613,
+      "measured_wall_ms": 441.0453389864415,
+      "name": "calibrated-closure-maximum-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "900",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "900",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "433.155 000 000 056 13",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "433.155 000 000 056 13",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "441.045 338 986 441 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "441.045 338 986 441 5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The closure mechanism retains target and maximum-duration refusals beyond the maximum, verifier attestations and exact-boundary passes over complete candidate histories.",
+      "scope": "one pn-epoch::solve::admission::closure_maximum execution"
+    },
+    {
+      "budget_ms": 4850,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2111.441000000024,
+        2351.5060000000003,
+        2312.302999999957
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "7c0ff5f9ac6c3ffa8ddefd2a00aa2e11e46635ff47d70d471ff433e291347143",
+        "function": "admission_work",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission.rs"
+      },
+      "calibration_walls_ms": [
+        2111.659948946908,
+        2411.1047990154475,
+        2312.604638049379
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 2351.5060000000003,
+      "measured_wall_ms": 2411.1047990154475,
+      "name": "calibrated-admission-work-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 850",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 351.506 000 000 000 3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 351.506 000 000 000 3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "2 411.104 799 015 447 5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 411.104 799 015 447 5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The two-attempt admission solve retains the exact production Work pin, success at that cap, the adjacent solve refusal and independent replay below that cap; each complete run remains inside the measured case.",
+      "scope": "one pn-epoch::solve::admission::admission_work execution"
+    },
+    {
+      "budget_ms": 2450,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        936.8859999999372,
+        964.8509999999462,
+        951.6330000000153
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "f388fadbd9a871389e72811ca4d7f197811cac932085671b5c1fe834089fe878",
+        "function": "ridge_charge_controls",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission/ridge_charge.rs"
+      },
+      "calibration_walls_ms": [
+        943.485904019326,
+        1202.0338950678706,
+        954.6132900286466
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 964.8509999999462,
+      "measured_wall_ms": 1202.0338950678706,
+      "name": "calibrated-ridge-charge-controls-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 450",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 450",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "964.850 999 999 946 2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "964.850 999 999 946 2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "1 202.033 895 067 870 6",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 202.033 895 067 870 6",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The defining-ridge charge controls retain the complete analytic cover, independent proof replay, unresolved-image withholding and altered-definition, image and query refusals.",
+      "scope": "one pn-epoch::solve::admission::ridge_charge::ridge_charge_controls execution"
+    },
+    {
+      "budget_ms": 4850,
+      "calibration_campaign": "campaign:devperf:graph-public-top-up",
+      "calibration_configuration": "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial",
+      "calibration_discarded_warmups": 1,
+      "calibration_multiplier": 2,
+      "calibration_own_cpu_ms": [
+        2177.2009999999896,
+        2264.939000000037,
+        2211.683000000029
+      ],
+      "calibration_round_ms": 50,
+      "calibration_sample_choice": "maximum-of-three-warm-serial",
+      "calibration_selected_sample": 2,
+      "calibration_source": {
+        "digest": "11093d20448f686a642e6525febd0b2b1e6391315f40b17921d61efb79967c85",
+        "function": "ridge_charge_admission",
+        "owner": "lane/graph",
+        "path": "packages/epoch/tests/solve/admission/ridge_charge.rs"
+      },
+      "calibration_walls_ms": [
+        2295.7556799519807,
+        2414.4817639607936,
+        2260.4108380619437
+      ],
+      "calibration_warm": true,
+      "category": "case",
+      "measured_own_cpu_ms": 2264.939000000037,
+      "measured_wall_ms": 2414.4817639607936,
+      "name": "calibrated-ridge-charge-admission-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 850",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 850",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_own_cpu_ms": {
+          "exact": "2 264.939 000 000 037",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 264.939 000 000 037",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_wall_ms": {
+          "exact": "2 414.481 763 960 793 6",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 414.481 763 960 793 6",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_own_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_wall_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Both chartered floors retain complete candidate compilation, independent defining-ridge replay where required, production admission and closure replay with exact final-stamp comparisons.",
+      "scope": "one pn-epoch::solve::admission::ridge_charge::ridge_charge_admission execution"
     }
   ]
 }

@@ -155,7 +155,6 @@ record_pressure_percent = 2
 numeric_refs = { record_margin_percent = { dataset = "org.peer-network.numbers.registry", row = "num:numbers:devperf-record-margin-percent", key = "id" } }
 numeric_text = ["reason"]
 
-
 [[rows.calibration_campaigns]]
 label = "campaign:devperf:owned-cases-warm"
 base_commit = "37466cd6ec24cb974464c4dca736fe82e2ef0c79"
@@ -175,7 +174,6 @@ measured_series = [
   { commit = "bfca44d02631f9a6f725566c1eb6f0052aee410c", patch_id = "c48c310374be9320bb9754a26916a598000394c6" },
 ]
 
-
 [[rows.calibration_campaigns]]
 label = "campaign:devperf:graph-public-main-warm"
 base_commit = "aab51e0df2855ad09365102ef1d80f30a7024192"
@@ -190,6 +188,21 @@ round_ms = 50
 rounding = "upward"
 warm = true
 measured_series = [{ "commit" = "ef17211afed7b79e0cc9c819cb8d0b4164eaa10d", "patch_id" = "23335fea82a655f6f6fa658bf6ae70c9684b74fc" }]
+
+[[rows.calibration_campaigns]]
+label = "campaign:devperf:graph-public-top-up"
+base_commit = "ecd159ef671266690ceafadcb15b19149dcacba3"
+configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+warmup_wall_seconds = 216.12453961372375
+sample_walls_seconds = [204.11448287963867, 203.1949074268341, 213.83492374420166]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ "commit" = "d9a6701971366b1d31c3e60f6028c3e6dfdb3213", "patch_id" = "1446ebd827588bee967143b90856f56a0edae3fe" }]
 
 [[rows]]
 name = "service-gate"
@@ -2280,23 +2293,23 @@ calibration_source = { "path" = "packages/epoch/tests/solve/admission.rs", "func
 [[rows]]
 name = "calibrated-retained-policy-case"
 category = "case"
-budget_ms = 9450
+budget_ms = 7550
 scope = "one pn-epoch::solve::schedules::retained_policy execution"
-reason = "The complete pn-epoch::solve::schedules::retained_policy mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload."
+reason = "The retained policy case checks the distinct rising-wall and migration-policy refusals after removal of the duplicate inverse-floor control; the public top-up measures this current body, with its fixtures, solve and independent replay."
 numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
-measured_wall_ms = 4723.191069904715
-measured_own_cpu_ms = 4720.269000000098
-calibration_walls_ms = [4666.190098039806, 4495.419340906665, 4723.191069904715]
-calibration_own_cpu_ms = [4622.052000000035, 4493.367000000035, 4720.269000000098]
-calibration_selected_sample = 3
+measured_wall_ms = 3753.082060953602
+measured_own_cpu_ms = 3674.3430000000963
+calibration_walls_ms = [3699.3242679163814, 3753.082060953602, 3495.6501920241863]
+calibration_own_cpu_ms = [3494.844000000061, 3674.3430000000963, 3495.149999999995]
+calibration_selected_sample = 2
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
 calibration_discarded_warmups = 1
-calibration_pending_owner = "lane/graph"
-calibration_pending_reason = "The case closure changes in this step; public-main measurements describe the preceding body."
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/epoch/tests/solve/schedules.rs", "function" = "retained_policy", "digest" = "10a58a900a4045a45c2d6a28cb6ef12630f7d60e16ffeb227ba72f56840887d6", "owner" = "lane/graph" }
 
 [[rows]]
 name = "calibrated-closure-membership-case"
@@ -2402,3 +2415,129 @@ calibration_warm = true
 calibration_discarded_warmups = 1
 calibration_campaign = "campaign:devperf:graph-public-main-warm"
 calibration_source = { "path" = "packages/epoch/tests/solve/admission.rs", "function" = "admission_individual_straddle", "digest" = "8d7a0f35db64f4c1ced5ccb5c0483057726fefda521cbb8920c631365547a2ab", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-whole-act-carrier-case"
+category = "case"
+budget_ms = 300
+scope = "one pn-records::tests::whole_act_carrier execution"
+reason = "The generated complete-act carrier retains history validation, record validation, every co-leg and boundary assembly. The serial campaign maximum includes its observed off-CPU delay; the allowance follows the uniform warm-wall rule without claiming intrinsic work growth."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 141.4317360613495
+measured_own_cpu_ms = 3.432999999997577
+calibration_walls_ms = [2.4009018670767546, 2.7531899977475405, 141.4317360613495]
+calibration_own_cpu_ms = [2.2999999999981924, 2.6909999999986667, 3.432999999997577]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/records/src/lib.rs", "function" = "whole_act_carrier", "digest" = "23a03a341386ea8beac5fa5e6f47901c02281da8eb347b3dd70e08caf75e01fe", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-primitive-oracles-case"
+category = "case"
+budget_ms = 1100
+scope = "one pn-graph::numeric::primitive_oracles execution"
+reason = "The primitive oracle case retains independent rational square-root, logarithm, exponential and sigmoid enclosure comparisons. Its largest warm wall includes observed off-CPU delay; the uniform rule retains that sample rather than selecting a faster rerun."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 541.2414041347802
+measured_own_cpu_ms = 134.00500000001614
+calibration_walls_ms = [541.2414041347802, 122.30297713540494, 121.15936493501067]
+calibration_own_cpu_ms = [134.00500000001614, 122.14400000001646, 120.99000000001325]
+calibration_selected_sample = 1
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/graph/tests/numeric.rs", "function" = "primitive_oracles", "digest" = "ef030a2569757567474986cd6e6738277561c4b5635c5318e3ddddbc6f1042e7", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-closure-maximum-case"
+category = "case"
+budget_ms = 900
+scope = "one pn-epoch::solve::admission::closure_maximum execution"
+reason = "The closure mechanism retains target and maximum-duration refusals beyond the maximum, verifier attestations and exact-boundary passes over complete candidate histories."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 441.0453389864415
+measured_own_cpu_ms = 433.15500000005613
+calibration_walls_ms = [399.6754689142108, 431.66793300770223, 441.0453389864415]
+calibration_own_cpu_ms = [399.44700000002695, 431.52700000004177, 433.15500000005613]
+calibration_selected_sample = 3
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission.rs", "function" = "closure_maximum", "digest" = "3b2962198fb5a12d6bc3206e9402e218ea9ae63159b5c5010b6eea8854023552", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-admission-work-case"
+category = "case"
+budget_ms = 4850
+scope = "one pn-epoch::solve::admission::admission_work execution"
+reason = "The two-attempt admission solve retains the exact production Work pin, success at that cap, the adjacent solve refusal and independent replay below that cap; each complete run remains inside the measured case."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 2411.1047990154475
+measured_own_cpu_ms = 2351.5060000000003
+calibration_walls_ms = [2111.659948946908, 2411.1047990154475, 2312.604638049379]
+calibration_own_cpu_ms = [2111.441000000024, 2351.5060000000003, 2312.302999999957]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission.rs", "function" = "admission_work", "digest" = "7c0ff5f9ac6c3ffa8ddefd2a00aa2e11e46635ff47d70d471ff433e291347143", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-ridge-charge-controls-case"
+category = "case"
+budget_ms = 2450
+scope = "one pn-epoch::solve::admission::ridge_charge::ridge_charge_controls execution"
+reason = "The defining-ridge charge controls retain the complete analytic cover, independent proof replay, unresolved-image withholding and altered-definition, image and query refusals."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 1202.0338950678706
+measured_own_cpu_ms = 964.8509999999462
+calibration_walls_ms = [943.485904019326, 1202.0338950678706, 954.6132900286466]
+calibration_own_cpu_ms = [936.8859999999372, 964.8509999999462, 951.6330000000153]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge.rs", "function" = "ridge_charge_controls", "digest" = "f388fadbd9a871389e72811ca4d7f197811cac932085671b5c1fe834089fe878", "owner" = "lane/graph" }
+
+[[rows]]
+name = "calibrated-ridge-charge-admission-case"
+category = "case"
+budget_ms = 4850
+scope = "one pn-epoch::solve::admission::ridge_charge::ridge_charge_admission execution"
+reason = "Both chartered floors retain complete candidate compilation, independent defining-ridge replay where required, production admission and closure replay with exact final-stamp comparisons."
+numeric_display = { "budget_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_wall_ms" = { "display" = "exact", "exact_digits" = 32 }, "measured_own_cpu_ms" = { "display" = "exact", "exact_digits" = 32 } }
+measured_wall_ms = 2414.4817639607936
+measured_own_cpu_ms = 2264.939000000037
+calibration_walls_ms = [2295.7556799519807, 2414.4817639607936, 2260.4108380619437]
+calibration_own_cpu_ms = [2177.2009999999896, 2264.939000000037, 2211.683000000029]
+calibration_selected_sample = 2
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_configuration = "gate/default-features+pn-records/test-support; owned nextest binaries; suites and cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+calibration_campaign = "campaign:devperf:graph-public-top-up"
+calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_charge.rs", "function" = "ridge_charge_admission", "digest" = "11093d20448f686a642e6525febd0b2b1e6391315f40b17921d61efb79967c85", "owner" = "lane/graph" }

@@ -12671,16 +12671,16 @@
     },
     {
       "display": "exact",
-      "exact": "400 000 000",
+      "exact": "200 418 307",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:admission-refinement-work-ceiling",
-      "num": "400 000 000",
+      "num": "200 418 307",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "400000000"
+      "value": "200418307"
     },
     {
       "display": "exact",

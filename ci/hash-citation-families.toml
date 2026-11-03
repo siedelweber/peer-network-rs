@@ -776,3 +776,26 @@ commit = "ef17211afed7b79e0cc9c819cb8d0b4164eaa10d"
 patch_id = "23335fea82a655f6f6fa658bf6ae70c9684b74fc"
 definition = "The imported public series head is the measured source, with its patch identity independently recomputed."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "graph-top-up-calibration-base"
+group = "warm case allowance calibration"
+measures = "Public parent beneath the measured imported series"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "ecd159ef671266690ceafadcb15b19149dcacba3"
+definition = "The public parent and the declared imported patch reconstruct the measured source."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "graph-top-up-calibration-series"
+group = "warm case allowance calibration"
+measures = "Public measured commit and its stable patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "d9a6701971366b1d31c3e60f6028c3e6dfdb3213"
+patch_id = "1446ebd827588bee967143b90856f56a0edae3fe"
+definition = "The imported public series head is the measured source, with its patch identity independently recomputed."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
