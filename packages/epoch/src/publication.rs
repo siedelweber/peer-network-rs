@@ -6,6 +6,8 @@ use pn_graph::{numeric::ridge, registration::RegistrationVerifier};
 use pn_records::{ActId, CandidateAct, Declaration, PublicReference, burn, constants, numerics};
 use std::collections::{BTreeMap, BTreeSet};
 
+pub mod disclosures;
+
 /// External profile checks remain explicit; no digest or restored trust bit supplies them.
 /// (´rule:admission:semantic-carrier´)
 pub trait Verifier:
@@ -131,6 +133,8 @@ pub struct AdmittedPackage {
 /// (´rule:admission:semantic-carrier´)
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("publication disclosure differs: {0:?}")]
+    Disclosure(disclosures::Section),
     #[error("publication structure: {0}")]
     Structure(&'static str),
     #[error("publication records: {0}")]
@@ -335,6 +339,10 @@ fn standing(state: &compiler::CompiledState, frame: &Frame, verifier: &impl Veri
     ret
 )]
 pub fn consume(carrier: Carrier, verifier: &impl Verifier) -> Result<AdmittedPackage, Error> {
+    consume_sections(carrier, verifier, false)
+}
+
+fn consume_sections(carrier: Carrier, verifier: &impl Verifier, sections: bool) -> Result<AdmittedPackage, Error> {
     if carrier.frames.iter().any(|frame| !frame.realization.complete()) {
         return Err(Error::Structure("missing realization disclosure"));
     }
@@ -409,7 +417,10 @@ pub fn consume(carrier: Carrier, verifier: &impl Verifier) -> Result<AdmittedPac
             frame.procedure.maximum_products,
         )
         .map_err(|error| Error::Compile(Box::new(error)))?;
-        if state.view() != &frame.compiled {
+        if let Some(section) = disclosures::compare(state.view(), &frame.compiled) {
+            if sections {
+                return Err(Error::Disclosure(section));
+            }
             return Err(Error::Structure("changed compiled section"));
         }
         standing(&state, frame, verifier)?;

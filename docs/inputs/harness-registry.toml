@@ -1949,3 +1949,27 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix", "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach", "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::publication-disclosures"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip", "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::publication-disclosure-matrix"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"]

@@ -5181,6 +5181,35 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip",
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::publication-disclosures",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::publication-disclosure-matrix",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     }
   ]
 }

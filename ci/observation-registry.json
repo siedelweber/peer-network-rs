@@ -8379,6 +8379,34 @@
       "shape": "shape-epoch",
       "mode": "instrumented",
       "operation": "live-respond"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "item": "publication::disclosures::super :: AdmittedPackage::disclosures",
+      "owner": "EPOCH",
+      "signature": "fn disclosures (& self) -> Disclosure",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Disclosure grants no authority and preserves independent replay inputs.",
+        "witness": "EPOCH::claim:admission:disclosures-rebuild-checked-package-authority",
+        "boundary": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore",
+        "class_decision": "publication-disclosures-public"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "item": "publication::disclosures::restore",
+      "owner": "EPOCH",
+      "signature": "fn restore (disclosure : Disclosure , verifier : & impl Verifier) -> Result < super :: AdmittedPackage , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -16051,7 +16079,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
-      "body": "{ if carrier . frames . iter () . any (| frame | ! frame . realization . complete ()) { return Err (Error :: Structure (\"missing realization disclosure\")) ; } if ! verifier . publication_profile (& carrier) { return Err (Error :: Structure (\"publication profile\")) ; } let empty = pn_records :: validate_history (& [] , & []) ? ; let declarations = pn_records :: validate_record (& [] , & empty , & carrier . causes . declarations) ? ; let constants = constants :: bind_constants (& declarations , carrier . causes . editions . clone ()) ? ; let length = u64 :: try_from (carrier . frames . len ()) . map_err (| _ | Error :: Structure (\"boundary count\")) ? ; if carrier . causes . acts . iter () . any (| a | a . finalization_epoch == 0 || a . finalization_epoch > length) { return Err (Error :: Structure (\"act outside boundary sequence\")) ; } let mut led = initial (& carrier) ? ; let mut prior = None ; let mut states = Vec :: new () ; let mut inputs = Vec :: new () ; let mut prices = Vec :: new () ; let mut bindings = Vec :: new () ; for (offset , frame) in carrier . frames . iter () . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | Error :: Structure (\"boundary count\")) ? + 1 ; if frame . parameters . boundary != boundary || frame . closure . schedule != * led . record () { return Err (Error :: Structure (\"mixed boundary or led schedule\")) ; } let RebuiltFrame { markers , input , price , history , binding , } = rebuild (& carrier , frame , offset , & declarations , & constants , verifier) ? ; bindings . push (binding) ; inputs . push (input) ; prices . push (price) ; let candidate = package :: verify_candidate (package :: CandidateInput { causes : package :: PackageInput { markers : markers . clone () , history , inputs : inputs . clone () , prices : prices . clone () , bindings : bindings . clone () , } , closure : frame . closure . statement . clone () , } , verifier , verifier ,) ? ; let closed = closure :: replay (& closure :: ClosureInput { candidate : & candidate , partition : & frame . closure . partition , schedule : & led , previous : prior . as_ref () , } , & frame . procedure , verifier , verifier , carrier . numeric . context () ? , & frame . closure ,) ? ; let state = compiler :: compile_admitted (closed . admitted () , verifier , & mut carrier . numeric . context () ? , frame . procedure . arithmetic . clone () , frame . procedure . maximum_products ,) . map_err (| error | Error :: Compile (Box :: new (error))) ? ; if state . view () != & frame . compiled { return Err (Error :: Structure (\"changed compiled section\")) ; } standing (& state , frame , verifier) ? ; states . push (state) ; led = next (& carrier , & states , verifier) ? ; prior = Some (closed) ; } Ok (AdmittedPackage { carrier , closed : prior . ok_or (Error :: Structure (\"empty boundary sequence\")) ? , }) }",
+      "body": "{ consume_sections (carrier , verifier , false) }",
       "class_decision": "semantic-publication-public",
       "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
       "assessments": {
@@ -16230,6 +16258,28 @@
       "body": "{ let old = self . closed . carrier () ; let old_policy = & old . frames . last () . ok_or (Error :: Response) ? . marker_policy ; let new_policy = & replacement . frames . first () . ok_or (Error :: Response) ? . marker_policy ; if ! self . halted || new_policy . edition == old_policy . edition || new_policy . published_at <= old_policy . published_at || new_policy . sequence == old_policy . sequence { return Err (Error :: Response) ; } let (continuity , publication) = match & response { Response :: Reanchor { continuity , publication } => { if new_policy . initial_marker == old_policy . initial_marker { return Err (Error :: Response) ; } (continuity , publication) } Response :: Follow { divergence , superseded , continuity , publication , } => { if * divergence >= old . frames . len () || * superseded != old . frames [* divergence ..] . iter () . map (| f | f . closure . clone ()) . collect :: < Vec < _ > > () { return Err (Error :: Response) ; } (continuity , publication) } } ; if continuity . is_empty () || publication . is_empty () || ! deployment . published_response (old , & replacement , & response) { return Err (Error :: Response) ; } let mut next = consume (replacement , verifier , live) ? ; next . response = Some (response) ; Ok (next) }",
       "class_decision": "live-publication-public",
       "item_premise": "Public complete old and replacement packages and response disclosures are recorded. Live verification precedes independent semantic restoration; immutable access retains the frozen state. The declared live and response verifiers supply external premises only. No credentials, chain-authenticity assertion or offline proof enters this local semantic boundary.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::super :: AdmittedPackage::disclosures",
+      "body": "{ Disclosure { causes : self . carrier . causes . clone () , numeric : self . carrier . numeric . clone () , frames : self . carrier . frames . iter () . map (disclose_frame) . collect () , } }",
+      "class_decision": "publication-disclosures-public",
+      "item_premise": "Public semantic assertions only; no private signing or authentication material. Independent replay selects the admitted charge verifier and compares every derived section. Plain metadata and immutable disclosure access grant no authority.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore",
+      "body": "{ let empty = pn_records :: validate_history (& [] , & []) ? ; let declarations = pn_records :: validate_record (& [] , & empty , & disclosure . causes . declarations) ? ; let constants = constants :: bind_constants (& declarations , disclosure . causes . editions . clone ()) ? ; let names : Vec < _ > = disclosure . causes . names . iter () . cloned () . collect () ; pn_records :: validate_history (& disclosure . causes . acts , & names) ? ; let frames = disclosure . frames . into_iter () . map (| frame | { let acts : Vec < _ > = disclosure . causes . acts . iter () . filter (| a | a . finalization_epoch <= frame . parameters . boundary) . cloned () . collect () ; let history = pn_records :: validate_history (& acts , & names) ? ; restore_frame (frame , & declarations , & constants , & history , & disclosure . numeric , verifier) }) . collect :: < Result < _ , _ > > () ? ; super :: consume_sections (super :: Carrier { causes : disclosure . causes , numeric : disclosure . numeric , frames , } , verifier , true ,) }",
+      "class_decision": "publication-disclosures-public",
+      "item_premise": "Public semantic assertions only; no private signing or authentication material. Independent replay selects the admitted charge verifier and compares every derived section. Plain metadata and immutable disclosure access grant no authority.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -20755,6 +20805,141 @@
       "syntax": "# [derive (Debug , thiserror :: Error)]",
       "class_decision": "live-publication-public",
       "expansion_review": "Structural cloning, equality and public diagnostics preserve complete semantic fields and grant no authority; independently checked constructors remain private."
+    },
+    {
+      "item": "publication::disclosures::Recognition",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Marker",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Inputs",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Binding",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Closure",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Debit",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Ledger",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Compiled",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Boundary",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Disclosure",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Section",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Metadata",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Settlement",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::TitleBoundary",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+    },
+    {
+      "item": "publication::disclosures::Title",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "publication-disclosures-public",
+      "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
     }
   ],
   "reviewed_types": [
@@ -23771,6 +23956,96 @@
       "syntax": "# [doc = \" Immutable admitted boundary constructed only after every final gate passes.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext, evidence: pn_epoch::admission::FinalEvidence) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate, evidence }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , evidence : crate :: admission :: FinalEvidence , }"
     },
     {
+      "item": "publication::disclosures::Metadata",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Untrusted placement and retained logical-time assertions, never validated metadata.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Metadata { pub position : pn_records :: Position , pub logical_time : u64 , }"
+    },
+    {
+      "item": "publication::disclosures::Settlement",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Complete settlement assertions, including plain metadata for every handshake leg.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Settlement { pub acts : [ActId ; 3] , pub references : [Option < pn_records :: SettlementReferences > ; 2] , pub targets_bind : bool , pub partners : PartnerEvidence , pub chain : [Option < Metadata > ; 3] , pub times : [Option < pn_records :: TimeEvidence > ; 3] , pub item : Option < pn_records :: PublicReference > , pub prior_owner : Option < String > , pub clauses : BTreeMap < RecognitionClause , bool > , pub withdrawals : Vec < ActId > , pub rescissions : Vec < ActId > , pub consumed : BTreeSet < ActId > , pub recognized : bool , }"
+    },
+    {
+      "item": "publication::disclosures::TitleBoundary",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" One title boundary's asserted premises, candidates and resulting certificate.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleBoundary { pub premises : RecognitionContext , pub candidates : Vec < Settlement > , pub certificate : BTreeMap < pn_records :: PublicReference , Option < String > > , pub consumed : BTreeSet < ActId > , }"
+    },
+    {
+      "item": "publication::disclosures::Title",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Full title replay assertions, constructible without any graph capability.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Title { pub epoch : u64 , pub certificate : BTreeMap < pn_records :: PublicReference , Option < String > > , pub consumed : BTreeSet < ActId > , pub boundaries : Vec < TitleBoundary > , pub events : Vec < TitleEvent > , }"
+    },
+    {
+      "item": "publication::disclosures::Recognition",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" An asserted recognition result, never an unchecked recognized-marker constructor.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Recognition { pub basis : burn :: RecognitionBasis , pub markers : Vec < Marker > , pub first_refusal : Option < burn :: CandidateRefusal > , }"
+    },
+    {
+      "item": "publication::disclosures::Marker",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" One marker's asserted complete accepted set and destruction representatives.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Marker { pub identity : burn :: Marker , pub accepted : BTreeSet < String > , pub destructions : BTreeMap < String , burn :: BurnRecord > , }"
+    },
+    {
+      "item": "publication::disclosures::Inputs",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Compiler input assertions retain both interpretation and complete effective edition.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub parameters : ParameterInput , pub constants : constants :: EditionInput , }"
+    },
+    {
+      "item": "publication::disclosures::Binding",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" A binding refers to complete causes by ordered act identity, not stored validated acts.\"] # [doc = \" Every charge, including historical bindings, is an untrusted price disclosure.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Binding { pub marker : burn :: Marker , pub predecessor : burn :: Marker , pub inputs : Inputs , pub price : numerics :: PriceInput , pub sequence : Vec < ActId > , }"
+    },
+    {
+      "item": "publication::disclosures::Closure",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Complete closure assertions with no recognized or admitted capability fields.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Closure { pub markers : Recognition , pub bindings : Vec < Binding > , pub statement : package :: ClosureStatement , pub partition : Vec < Vec < ActId > > , pub final_gates : admission :: FinalEvidence , pub schedule : schedules :: Record , }"
+    },
+    {
+      "item": "publication::disclosures::Debit",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" A writing vintage assertion. Its price is independently restored before consummation.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Debit { pub price : numerics :: PriceInput , pub boundary : u64 , pub charged : numerics :: BurnAmount , }"
+    },
+    {
+      "item": "publication::disclosures::Ledger",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Ledger assertions replace every sealed debit by its price and asserted result.\"] # [doc = \" Each ledger entry represents one complete act, hence one charged action.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Ledger { pub snapshots : Vec < ledger :: BurnSnapshot > , pub balances : BTreeMap < burn :: Address , numerics :: BurnAmount > , pub counts : BTreeMap < burn :: Address , numerics :: ActionCount > , pub debits : BTreeMap < ActId , Debit > , }"
+    },
+    {
+      "item": "publication::disclosures::Compiled",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Every compiled section remains an asserted value to compare with independent replay.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Compiled { pub title : Title , pub ledger : Ledger , pub cells : Vec < crate :: cells :: StandingCell > , pub coefficients : BTreeMap < crate :: cells :: CellIdentity , compiler :: CoefficientEvidence > , pub recipients : Vec < crate :: recipients :: ResolvedCell > , pub base : crate :: base :: BaseAllocation , pub support : crate :: support :: StandingSupport , }"
+    },
+    {
+      "item": "publication::disclosures::Boundary",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" One untrusted decoded boundary, with the same sequence/set distinctions as the carrier.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Boundary { pub realization : RealizationEvidence , pub burn : burn :: BurnInput , pub marker_policy : burn :: PolicyInput , pub marker_history : burn :: HistoryInput , pub parameters : ParameterInput , pub price : numerics :: PriceInput , pub sequence : Vec < ActId > , pub procedure : admission :: FinalProcedure , pub compiled : Compiled , pub closure : Closure , pub standing : pn_records :: conserved :: SolveRecord , pub next : schedules :: Record , }"
+    },
+    {
+      "item": "publication::disclosures::Disclosure",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" Constructible semantic disclosures; bytes, digests and verifier selectors are absent.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Disclosure { pub causes : Causes , pub numeric : NumericPolicy , pub frames : Vec < Boundary > , }"
+    },
+    {
+      "item": "publication::disclosures::Section",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/publication/disclosures.rs",
+      "syntax": "# [doc = \" The section whose asserted value differs from independent reconstruction.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Section { Recognition , Inputs , Sequence , Debit , Title , Ledger , Cells , Coefficients , Recipients , Base , Support , }"
+    },
+    {
       "item": "publication::Causes",
       "package": "pn-epoch",
       "path": "packages/epoch/src/publication.rs",
@@ -23816,7 +24091,7 @@
       "item": "publication::Error",
       "package": "pn-epoch",
       "path": "packages/epoch/src/publication.rs",
-      "syntax": "# [doc = \" Missing causes, changed evidence and operational failures remain distinguishable.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"publication structure: {0}\")] Structure (& 'static str) , # [error (\"publication records: {0}\")] Records (# [from] pn_records :: ValidationError) , # [error (\"publication marker disclosure: {0}\")] Burn (# [from] burn :: BurnError) , # [error (\"publication constants: {0}\")] Constants (# [from] constants :: ConstantsError) , # [error (\"publication inputs: {0}\")] Inputs (# [from] crate :: InputError) , # [error (\"publication charge: {0}\")] Numeric (# [from] numerics :: NumericError) , # [error (\"publication candidate: {0}\")] Candidate (# [from] package :: PackageError) , # [error (\"publication compilation: {0}\")] Compile (# [source] Box < compiler :: CompileError >) , # [error (\"publication procedure: {0}\")] Procedure (# [from] solve :: ProcedureError) , # [error (\"publication standing: {0}\")] Standing (# [source] Box < crate :: conserved :: Error >) , # [error (\"publication closure: {0}\")] Closure (# [from] closure :: ClosureError) , # [error (\"publication schedule: {0}\")] Schedule (# [from] schedules :: Error) , # [error (\"publication declaration: {0}\")] Declaration (# [from] admission :: DeclarationError) , # [error (\"publication ridge: {0}\")] Ridge (# [from] ridge :: Error) , }"
+      "syntax": "# [doc = \" Missing causes, changed evidence and operational failures remain distinguishable.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"publication disclosure differs: {0:?}\")] Disclosure (disclosures :: Section) , # [error (\"publication structure: {0}\")] Structure (& 'static str) , # [error (\"publication records: {0}\")] Records (# [from] pn_records :: ValidationError) , # [error (\"publication marker disclosure: {0}\")] Burn (# [from] burn :: BurnError) , # [error (\"publication constants: {0}\")] Constants (# [from] constants :: ConstantsError) , # [error (\"publication inputs: {0}\")] Inputs (# [from] crate :: InputError) , # [error (\"publication charge: {0}\")] Numeric (# [from] numerics :: NumericError) , # [error (\"publication candidate: {0}\")] Candidate (# [from] package :: PackageError) , # [error (\"publication compilation: {0}\")] Compile (# [source] Box < compiler :: CompileError >) , # [error (\"publication procedure: {0}\")] Procedure (# [from] solve :: ProcedureError) , # [error (\"publication standing: {0}\")] Standing (# [source] Box < crate :: conserved :: Error >) , # [error (\"publication closure: {0}\")] Closure (# [from] closure :: ClosureError) , # [error (\"publication schedule: {0}\")] Schedule (# [from] schedules :: Error) , # [error (\"publication declaration: {0}\")] Declaration (# [from] admission :: DeclarationError) , # [error (\"publication ridge: {0}\")] Ridge (# [from] ridge :: Error) , }"
     },
     {
       "item": "publication::RebuiltFrame",
@@ -24683,6 +24958,17 @@
           "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::refresh",
           "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::successor",
           "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::respond"
+        ]
+      }
+    },
+    {
+      "name": "publication-disclosures-public",
+      "status": "reviewer-confirmed",
+      "premises": "Only complete public publication assertions enter these operations. The decoder cannot select a verifier; checked authority is reconstructed by the consumer. Epoch-owned metadata disclosures confer no validated-act authority.",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::super :: AdmittedPackage::disclosures",
+          "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore"
         ]
       }
     }

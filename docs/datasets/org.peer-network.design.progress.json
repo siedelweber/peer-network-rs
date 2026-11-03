@@ -2736,6 +2736,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rule:admission:publication-disclosures",
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:design:test-publication-profile"
       ],
@@ -3030,6 +3031,7 @@
       ],
       "records": [
         "EPOCH::def:compiler:completed-package",
+        "EPOCH::rule:admission:publication-disclosures",
         "EPOCH::rule:admission:semantic-carrier",
         "EPOCH::verif:admission:semantic-package-restoration",
         "ROOT::amend:design:test-publication-profile",
@@ -3157,7 +3159,8 @@
       "record_routes": [],
       "records": [
         "EPOCH::rec:admission:semantic-package-sections",
-        "ROOT::amend:design:publication-field-inventory"
+        "ROOT::amend:design:publication-field-inventory",
+        "ROOT::rule:design:ridge-charge-contract"
       ],
       "routes": [],
       "status": "designed",
@@ -3176,7 +3179,8 @@
       "record_routes": [],
       "records": [
         "EPOCH::rec:admission:semantic-package-sections",
-        "ROOT::amend:design:publication-field-inventory"
+        "ROOT::amend:design:publication-field-inventory",
+        "ROOT::rule:design:ridge-charge-contract"
       ],
       "routes": [],
       "status": "designed",
@@ -26054,7 +26058,8 @@
         "CONSTANTS::result.ridge.interval_dps",
         "CONSTANTS::result.ridge.max_depth",
         "CONSTANTS::result.ridge.root_decimal_places",
-        "ROOT::rule:design:ridge-analytic-premises"
+        "ROOT::rule:design:ridge-analytic-premises",
+        "ROOT::rule:design:ridge-charge-contract"
       ],
       "routes": [],
       "status": "designed",
@@ -38358,22 +38363,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 18,
+      "exact_citing": 19,
       "name": "pn-epoch",
       "number_forms": {
         "exact_citing": {
-          "exact": "18",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "46",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "46",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38388,7 +38393,7 @@
           "exact_digits": 32
         }
       },
-      "total": 46
+      "total": 49
     },
     {
       "category": "record-coverage",

@@ -646,3 +646,6 @@ fn publication_prefix() {
 
 #[path = "publication/live.rs"]
 mod live;
+
+#[path = "publication/disclosures.rs"]
+mod disclosures;

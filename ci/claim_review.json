@@ -2051,6 +2051,30 @@
       "review": "The permissive verifier returns success for every transcript. Four independent mutations fail records envelope checks; a query-precision mutation passes those checks and forms a price, but ledger consumption refuses it through graph replay. The same complete reversed history supplies the ledger context."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs",
+      "claim": "EPOCH::claim:admission:disclosure-sections-refuse-substitution",
+      "before": "",
+      "after": "Claim: The finite disclosure matrix refuses mutated recognition, effective constants, sequence references, charges, debit results, compiled sections, final gates, standing, schedules, realization and omitted causes under its declared fixture verifier. It establishes no byte codec or settlement authenticity.",
+      "review": "Each distinct mutation is checked by its named refusal: recognition, constants, sequence, charge, debit, all compiled sections, final gates, standing, next schedule, realization and omitted causes."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs",
+      "claim": "EPOCH::claim:admission:later-ridge-frames-require-charge-replay",
+      "before": "",
+      "after": "Claim: The finite two-boundary ridge carrier independently restores its later price under `ChargeReplay`: a changed second-frame query refuses as Numeric while the unchanged initial schedule proof passes. Separate valid certificates for the same defining ridge are accepted; no transcript identity is a floor or charge.",
+      "review": "The two-boundary fixture retains distinct valid evidence per frame. Only the second price query is mutated, the initial frame is equal, and consumption must return Numeric from independent charge restoration."
+    },
+    {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures.rs",
+      "claim": "EPOCH::claim:admission:disclosures-rebuild-checked-package-authority",
+      "before": "",
+      "after": "Claim: The finite complete publication disclosures reconstruct an equal admitted package under declared fixture verifiers, retaining every asserted compilation and closure section. This is a semantic restoration witness, not byte decoding or settlement authenticity.",
+      "review": "The admitted fixture is disclosed through public untrusted types and independently restored; complete carriers, disclosures and final gate evidence compare equal."
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots",
       "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
       "claim": "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
