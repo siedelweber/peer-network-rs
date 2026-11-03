@@ -156,7 +156,7 @@ category = "setting"
 status = "pending"
 unit = "candidate trials"
 owner = "lane/graph"
-evidence = "8-j complete validation measurements"
+evidence = "Pending a declared candidate-search workload and fallback. The serial fixture sweep counts numerical trials, not competing candidate sets under dependencies, solvency failures or title conflicts; no trial maximum or multiplier is adopted."
 
 [[rows]]
 name = "validation-timeout"
@@ -164,7 +164,11 @@ category = "setting"
 status = "pending"
 unit = "seconds"
 owner = "lane/graph"
-evidence = "8-j measured solve and replay envelope"
+evidence = "Pending complete host validation and its declared workload and duration target. The measured in-memory assemble/consume paths exclude transport, storage and wallet verification; their doubled warm maximum is a scoped observation, not a protocol timeout."
+measured_validation_maximum_ns = 1325252275
+margin_multiple = 2
+measured_envelope_ns = 2650504550
+numeric_display = { measured_validation_maximum_ns = { display = "exact", exact_digits = 32 }, margin_multiple = { display = "exact", exact_digits = 32 }, measured_envelope_ns = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "solver-availability-target"
@@ -172,7 +176,7 @@ category = "setting"
 status = "pending"
 unit = "fraction"
 owner = "lane/graph"
-evidence = "8-j measured supported workload"
+evidence = "Pending a supported workload distribution and declared availability criterion. Successful finite fixtures and deliberately refused resource probes do not estimate deployment availability; no fraction or multiplier is adopted."
 
 [[rows]]
 name = "precision"
@@ -180,7 +184,7 @@ category = "setting"
 status = "pending"
 unit = "bits"
 owner = "lane/graph"
-evidence = "8-c and 8-j certify comparisons for both floor routes"
+evidence = "Pending the deployment residual/error criterion and workload envelope. The sweep measures image width and proposal offset separately; exact singleton publication samples cannot set an accuracy floor, and higher precision can hit a literal-byte limit. No fixture precision becomes a default."
 
 [[rows]]
 name = "refinement"
@@ -188,7 +192,7 @@ category = "setting"
 status = "pending"
 unit = "precision schedule"
 owner = "lane/graph"
-evidence = "8-j deterministic refinement and replay agreement"
+evidence = "Pending precision and resource declarations. The finite sequence and refinement-round controls preserve deterministic replay but provide no monotonic completion guarantee; no schedule is selected solely from successful samples."
 
 [[rows]]
 name = "stopping"
@@ -196,7 +200,20 @@ category = "setting"
 status = "pending"
 unit = "iterations and Work"
 owner = "lane/graph"
-evidence = "8-j finite failure and indecision witnesses"
+evidence = "Pending a residual target, endpoint grid and supported workload. The cap and finer-grid comparisons measure whether another proposal moves the candidate; a finite fixture maximum does not establish a live stopping contract."
+
+[[rows]]
+name = "maximum-replay-work"
+category = "setting"
+status = "pending"
+unit = "Work"
+owner = "lane/graph"
+evidence = "Pending a supported workload, precision, grid and refinement declaration. The fixture envelope doubles the measured production-path replay maximum; it does not include separately bounded fence/preflight work or promise completion outside the measured fixtures."
+measured_maximum = 218129542
+margin_multiple = 2
+measured_envelope = 436259084
+measurement_scope = "successful production-proposal solve replay over the serial reference, four-Actor and publication sweeps; counterfactual full-proposal precision excluded"
+numeric_display = { measured_maximum = { display = "exact", exact_digits = 32 }, margin_multiple = { display = "exact", exact_digits = 32 }, measured_envelope = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "comparison-resources"
@@ -204,7 +221,9 @@ category = "setting"
 status = "pending"
 unit = "Work and bytes"
 owner = "lane/graph"
-evidence = "8-j defining-ridge and rational-floor replay measurements"
+evidence = "Pending joint Work, literal-byte, store and operation ceilings over a declared workload. The sweep retains scope and literal-byte refusals; solve/replay counts exclude separately bounded fence, ridge and preflight operations."
+measured_solve_maximum = 409257260
+numeric_display = { measured_solve_maximum = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "platform"
@@ -249,7 +268,7 @@ evidence = "8-b and 8-i finite transport and resolver workload measurements"
 [[rows]]
 name = "equality"
 category = "procedure"
-value = "exact equality or certified comparison; a straddling enclosure refines or refuses, never rounds to a verdict"
+value = "checked exact defining equality or certified comparison; a straddling enclosure refines or withholds publication, never rounds to a verdict; no numerical tolerance or measured margin selects equality"
 owner = "lane/graph"
 
 [[rows]]

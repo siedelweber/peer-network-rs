@@ -14,7 +14,7 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 59 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 61 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
@@ -1739,13 +1739,13 @@
 | ``cond:deployment:certificate-monitoring`` | pn-host; policy | unassigned | | | | |  | | |
 | ``cond:deployment:emission-experience`` | pn-host; policy | unassigned | | | | |  | | |
 | ``cond:deployment:controller-performance`` | pn-host; policy | designed (attention only) | ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` | | | |  | | |
-| ``cond:deployment:standing-work`` | pn-verification; policy | unassigned | | | | |  | | |
+| ``cond:deployment:standing-work`` | pn-verification; policy | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::amend:design:host-operational-declaration``; fixture Work and validation walls, with deployment workload evidence pending<br>|
 | ``cond:deployment:cadence-maturity`` | none; policy | designed (attention only) | ``ROOT::open:inventory:deployment-terminal-evidence`` | | | |  | | |
 | ``subsec:deployment:calibration-evidence`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``post:deployment:calibration-evidence`` | pn-verification; fixture | designed | ``ROOT::amend:decomposition:deployment-evidence`` | | | |  | | |
 | ``cond:deployment:parameter-comparisons`` | pn-verification; fixture | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``cond:deployment:payload-cache-envelope`` | none; policy | designed (attention only) | ``ROOT::open:inventory:deployment-terminal-evidence`` | | | |  | | |
-| ``cond:deployment:boundary-search-evidence`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``cond:deployment:boundary-search-evidence`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::amend:design:host-operational-declaration``; finite validation comparisons, with candidate search and availability evidence pending<br>|
 | ``cond:deployment:terminal-regression`` | none; fixture | designed (attention only) | ``ROOT::open:inventory:deployment-terminal-evidence`` | | | |  | | |
 | ``cond:deployment:complete-act-conformance`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:deployment:sufficiency`` | pn-replay; invariant check | unassigned | | | | |  | | |

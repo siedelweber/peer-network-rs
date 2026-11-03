@@ -32215,11 +32215,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/implementation.md",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:standing-work",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "fixture Work and validation walls, with deployment workload evidence pending",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -32321,11 +32329,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/implementation.md",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:boundary-search-evidence",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "finite validation comparisons, with candidate search and availability evidence pending",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35042,10 +35058,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "59",
+          "exact": "61",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "59",
+          "num": "61",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35056,7 +35072,7 @@
           "exact_digits": 32
         }
       },
-      "total": 59
+      "total": 61
     },
     {
       "category": "total",
