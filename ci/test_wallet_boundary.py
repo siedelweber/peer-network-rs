@@ -233,18 +233,27 @@ class WalletBoundary(unittest.TestCase):
         self.assertTrue(wallet_crypto.check())
         import tempfile
         import hashlib
+        import io
+        import tarfile
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'vendor/example').mkdir(parents=True)
             file = root/'vendor/example/lib.rs'; file.write_bytes(b'public fixture')
             row = dict(name='example', version='1.0.0', path='vendor/example', content_manifest='contents.json')
-            reviewed = {('example','1.0.0'):'a'*64}
-            evidence = dict(name='example',version='1.0.0',archive_checksum='a'*64,
+            cache=root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            archive=cache/'example-1.0.0.crate'
+            with tarfile.open(archive,'w:gz') as output:
+                entry=tarfile.TarInfo('example-1.0.0/lib.rs'); entry.size=len(file.read_bytes())
+                output.addfile(entry,io.BytesIO(file.read_bytes()))
+            checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
+            self.enterContext(patch.dict(os.environ,CARGO_HOME=str(root/'cargo')))
+            reviewed = {('example','1.0.0'):checksum}
+            evidence = dict(name='example',version='1.0.0',archive_checksum=checksum,
                             files={'lib.rs':hashlib.sha256(file.read_bytes()).hexdigest()})
             manifest = root/'contents.json'; manifest.write_text(json.dumps(evidence))
             self.assertIsNone(wallet_crypto.check_vendor_contents(root,row,reviewed))
             from wallet_boundary import check_reviewed_archives
-            pin_rows=[dict(name='example', version='1.0.0', checksum='a'*64)]
+            pin_rows=[dict(name='example', version='1.0.0', checksum=checksum)]
             with patch('wallet_boundary.vendor_packages', return_value=[dict(row,mode='patch')]):
                 self.assertIsNone(check_reviewed_archives(root,[dict(name='example',version='1.0.0')],pin_rows))
                 with self.assertRaisesRegex(ValueError,'missing from lock'):
@@ -263,6 +272,11 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'review missing'): wallet_crypto.check_vendor_contents(root,row,{})
             file.write_bytes(b'changed')
             with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
+            # Even a self-consistent unpatched tree/manifest cannot differ from the archive.
+            manifest.write_text(json.dumps(dict(evidence,files={'lib.rs':hashlib.sha256(file.read_bytes()).hexdigest()})))
+            with self.assertRaisesRegex(ValueError,'complete archive members differ'):
+                wallet_crypto.check_vendor_contents(root,row,reviewed)
+            manifest.write_text(json.dumps(evidence))
             file.unlink()
             with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
             file.write_bytes(b'public fixture'); (file.parent/'extra').write_bytes(b'extra')
@@ -297,6 +311,21 @@ class WalletBoundary(unittest.TestCase):
                 wallet_crypto.check_vendor_contents(root,row,{('example','1.0.0'):checksum})
             with patch.dict(os.environ,CARGO_HOME=str(root/'cargo')):
                 self.assertIsNone(check(evidence))
+                archive_bytes=archive.read_bytes()
+                archive.unlink()
+                with self.assertRaisesRegex(ValueError,'archive unavailable'): check(evidence)
+                archive.write_bytes(b'wrong archive')
+                with self.assertRaisesRegex(ValueError,'archive unavailable'): check(evidence)
+                archive.write_bytes(archive_bytes)
+                # A real input reference cannot be hidden as documentation-only.
+                with tarfile.open(archive,'w:gz') as output:
+                    for name,data in dict(members, **{'build.rs':b'include_str!("CHANGELOG.md");'}).items():
+                        entry=tarfile.TarInfo('example-1.0.0/'+name);entry.size=len(data)
+                        output.addfile(entry,io.BytesIO(data))
+                old_checksum=checksum; checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
+                with self.assertRaisesRegex(ValueError,'referenced by a build or test input'):
+                    check(dict(evidence,archive_checksum=checksum))
+                archive.write_bytes(archive_bytes);checksum=old_checksum
                 for name in ('src/lib.rs','build.rs','LICENSE','NOTICE'):
                     changed=dict(evidence,files={key:value for key,value in evidence['files'].items() if key!=name},
                                  omitted=dict(evidence['omitted'],**{name:hashes[name]}))
@@ -329,6 +358,14 @@ class WalletBoundary(unittest.TestCase):
                                         members={'src/lib.rs':dict(upstream=hashes['src/lib.rs'],patched=patched_hash)}))
                 (source/'src/lib.rs').write_bytes(replacement)
                 self.assertIsNone(check(patched))
+                bad=patch_bytes.replace(b'-pub fn fixture() {}',b'-no matching source')
+                sidecar.write_bytes(bad)
+                with self.assertRaisesRegex(ValueError,'patch does not apply'):
+                    check(dict(patched,patch=dict(patched['patch'],sha256=hashlib.sha256(bad).hexdigest())))
+                sidecar.write_bytes(patch_bytes)
+                excess=dict(patched['patch']['members'], **{'build.rs':dict(upstream=hashes['build.rs'],patched=hashes['build.rs'])})
+                with self.assertRaisesRegex(ValueError,'patch member set differs'):
+                    check(dict(patched,patch=dict(patched['patch'],members=excess)))
                 sidecar.write_bytes(patch_bytes+b'changed')
                 with self.assertRaisesRegex(ValueError,'patch digest differs'): check(patched)
                 sidecar.write_bytes(patch_bytes)

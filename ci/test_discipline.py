@@ -518,6 +518,8 @@ class HashCitations(unittest.TestCase):
         """
         from hash_citations import establish, BoundVendorFiles
         import hashlib
+        import io, tarfile
+        from unittest.mock import patch
         # Patched members and their diff are not whole-file exemptions: only
         # the actual validated upstream literals and recomputed digests inherit accounting.
         source_value = 'abcd' + 'ef12' + '3456'
@@ -540,10 +542,18 @@ class HashCitations(unittest.TestCase):
             sample_value = 'abcd' + 'ef12' + '3456'
             other_value = 'abcd' + 'ef99' + '9999'
             sample = root/'vendor/sample/vector.txt'; sample.write_text(json.dumps(sample_value)+'\n')
-            review='[[rows]]\nname="sample"\nversion="1.0.0"\nchecksum="'+'a'*64+'"\n'
+            cache=root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            archive_file=cache/'sample-1.0.0.crate'
+            with tarfile.open(archive_file,'w:gz') as output:
+                for file in sorted(sample.parent.iterdir()):
+                    data=file.read_bytes();entry=tarfile.TarInfo('sample-1.0.0/'+file.name);entry.size=len(data)
+                    output.addfile(entry,io.BytesIO(data))
+            checksum=hashlib.sha256(archive_file.read_bytes()).hexdigest()
+            self.enterContext(patch.dict(os.environ,CARGO_HOME=str(root/'cargo')))
+            review='[[rows]]\nname="sample"\nversion="1.0.0"\nchecksum="'+checksum+'"\n'
             (root/'docs/inputs/wallet-dependencies.toml').write_text(review)
             (root/'docs/inputs/host-dependencies.toml').write_text('rows=[]\n')
-            evidence=dict(name='sample',version='1.0.0',archive_checksum='a'*64,
+            evidence=dict(name='sample',version='1.0.0',archive_checksum=checksum,
                 files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sample.parent.iterdir()})
             manifest=root/'contents.json'; manifest.write_text(json.dumps(evidence))
             rule=dict(reader='vendor-content', establishment='recomputable',source='contents.json',paths=['vendor/sample/**','contents.json'])
@@ -573,11 +583,11 @@ class HashCitations(unittest.TestCase):
             broken=copy.deepcopy(evidence)
             broken['files']['vector.txt']='b'*64
             manifest.write_text(json.dumps(broken))
-            with self.assertRaisesRegex(ValueError,'contents differ'):
+            with self.assertRaisesRegex(ValueError,'complete archive members differ'):
                 audit(root,['vendor/sample/vector.txt','contents.json'],table)
             manifest.write_text(json.dumps(evidence))
             archive=establish(root,dict(rule,reader='vendor-archive',paths=['record.md']))
-            self.assertTrue(archive('a'*64,''))
+            self.assertTrue(archive(checksum,''))
             self.assertFalse(archive(sample_value,''))
             self.assertFalse(archive('b'*64,''))
             with self.assertRaisesRegex(ValueError,'bound paths'): establish(root,dict(rule,paths=['**']))

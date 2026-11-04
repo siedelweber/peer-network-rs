@@ -48,56 +48,55 @@ def check_vendor_contents(root, declaration, reviewed):
         # deliberately not a suffix-based exemption for arbitrary source trees.
         if set(omitted) != {'CHANGELOG.md'} or set(files) & set(omitted):
             raise ValueError('vendor omission is not reviewed documentation-only')
-    if omitted or patch:
-        cache = Path(os.environ.get('CARGO_HOME', Path.home()/'.cargo'))/'registry/cache'
-        archives = sorted(cache.glob(f'*/{identity[0]}-{identity[1]}.crate'))
-        archives = [archive for archive in archives
-                    if hashlib.sha256(archive.read_bytes()).hexdigest() == reviewed[identity]]
-        if not archives:
-            raise ValueError('vendor omitted-member archive unavailable or checksum differs')
-        archive_files = {}
-        archive_bytes = {}
-        with tarfile.open(archives[0], 'r:gz') as archive:
-            prefix = f'{identity[0]}-{identity[1]}/'
-            for member in archive:
-                if member.isdir():
-                    continue
-                if not member.isfile() or not member.name.startswith(prefix):
-                    raise ValueError('vendor archive member is not a regular package file')
-                name = member.name[len(prefix):]
-                if not name or name.startswith('/') or name in archive_files or '..' in Path(name).parts:
-                    raise ValueError('vendor archive member path differs')
-                data = archive.extractfile(member).read()
-                archive_bytes[name] = data
-                archive_files[name] = hashlib.sha256(data).hexdigest()
-                if omitted and name != 'CHANGELOG.md' and not name.endswith('.md') and b'CHANGELOG.md' in data:
-                    raise ValueError('vendor omitted member is referenced by a build or test input')
-        upstream = dict(files, **omitted)
-        if patch:
-            for name, digests in changed.items():
-                if set(digests) != {'upstream', 'patched'} or digests['patched'] != files[name]:
-                    raise ValueError('vendor patched-member digests differ')
-                upstream[name] = digests['upstream']
-        if archive_files != upstream:
-            raise ValueError('vendor complete archive members differ')
-        if patch:
-            with tempfile.TemporaryDirectory() as directory:
-                temporary = Path(directory)
-                for name, data in archive_bytes.items():
-                    target = temporary / name
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_bytes(data)
-                result = subprocess.run(['git', 'apply', '--', str(patch_path.resolve())],
-                                        cwd=temporary, capture_output=True, check=False)
-                if result.returncode:
-                    raise ValueError('vendor patch does not apply')
-                patched = {file.relative_to(temporary).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest()
-                           for file in temporary.rglob('*') if file.is_file() and not file.is_symlink()}
-                if any(file.is_symlink() for file in temporary.rglob('*')) or patched != dict(files, **omitted):
-                    raise ValueError('vendor patch result differs')
-                actual_changes = {name for name in archive_files if archive_files[name] != patched[name]}
-                if actual_changes != set(changed):
-                    raise ValueError('vendor patch member set differs')
+    cache = Path(os.environ.get('CARGO_HOME', Path.home()/'.cargo'))/'registry/cache'
+    archives = sorted(cache.glob(f'*/{identity[0]}-{identity[1]}.crate'))
+    archives = [archive for archive in archives
+                if hashlib.sha256(archive.read_bytes()).hexdigest() == reviewed[identity]]
+    if not archives:
+        raise ValueError('vendor archive unavailable or checksum differs')
+    archive_files = {}
+    archive_bytes = {}
+    with tarfile.open(archives[0], 'r:gz') as archive:
+        prefix = f'{identity[0]}-{identity[1]}/'
+        for member in archive:
+            if member.isdir():
+                continue
+            if not member.isfile() or not member.name.startswith(prefix):
+                raise ValueError('vendor archive member is not a regular package file')
+            name = member.name[len(prefix):]
+            if not name or name.startswith('/') or name in archive_files or '..' in Path(name).parts:
+                raise ValueError('vendor archive member path differs')
+            data = archive.extractfile(member).read()
+            archive_bytes[name] = data
+            archive_files[name] = hashlib.sha256(data).hexdigest()
+            if omitted and name != 'CHANGELOG.md' and not name.endswith('.md') and b'CHANGELOG.md' in data:
+                raise ValueError('vendor omitted member is referenced by a build or test input')
+    upstream = dict(files, **omitted)
+    if patch:
+        for name, digests in changed.items():
+            if set(digests) != {'upstream', 'patched'} or digests['patched'] != files[name]:
+                raise ValueError('vendor patched-member digests differ')
+            upstream[name] = digests['upstream']
+    if archive_files != upstream:
+        raise ValueError('vendor complete archive members differ')
+    if patch:
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            for name, data in archive_bytes.items():
+                target = temporary / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+            result = subprocess.run(['git', 'apply', '--', str(patch_path.resolve())],
+                                    cwd=temporary, capture_output=True, check=False)
+            if result.returncode:
+                raise ValueError('vendor patch does not apply')
+            patched = {file.relative_to(temporary).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest()
+                       for file in temporary.rglob('*') if file.is_file() and not file.is_symlink()}
+            if any(file.is_symlink() for file in temporary.rglob('*')) or patched != dict(files, **omitted):
+                raise ValueError('vendor patch result differs')
+            actual_changes = {name for name in archive_files if archive_files[name] != patched[name]}
+            if actual_changes != set(changed):
+                raise ValueError('vendor patch member set differs')
     actual = {}
     for file in path.rglob('*'):
         if file.is_symlink():
