@@ -156,6 +156,21 @@ numeric_refs = { record_margin_percent = { dataset = "org.peer-network.numbers.r
 numeric_text = ["reason"]
 
 [[rows.calibration_campaigns]]
+label = "campaign:devperf:design-codec-public-warm"
+base_commit = "2d46bf652ed01fc5154180f0ed937de096231b98"
+configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+warmup_wall_seconds = 52.90251445770264
+sample_walls_seconds = [55.92563343048096, 54.052849531173706, 53.413681745529175]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ commit = "2d46bf652ed01fc5154180f0ed937de096231b98", patch_id = "031acd404c165e82d13c5015e7758d8f3f0139ed" }]
+
+[[rows.calibration_campaigns]]
 label = "campaign:devperf:design-public-refresh"
 base_commit = "716fdcb07e29177b94a55613803510eee4cbf9aa"
 configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
@@ -1106,16 +1121,18 @@ calibration_pending_reason = "The shared or suite allowance has multiple executi
 [[rows]]
 name = "calibrated-design-numeric-correspondence-case"
 category = "case"
-budget_ms = 17150
+budget_ms = 19250
 scope = "one ci::test_design.Correspondence.test_numeric_correspondence case"
 reason = "Every numeric projection mutation retains a fresh optimized whole-checker execution, exact rational operands, published-key controls and truncated-derived-value refusals."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [8132.409517886117, 8570.327793015167, 8219.834990799427]
+calibration_walls_ms = [9622.52426147461, 8701.863288879395, 8703.640937805176]
+calibration_own_cpu_ms = [9452.417999999985, 8686.211999999992, 8657.217999999993]
+calibration_load_start = [[30.18408203125, 36.74755859375, 41.0390625], [68.18603515625, 46.47314453125, 44.13037109375], [52.9345703125, 45.3955078125, 43.86962890625]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_numeric_correspondence", digest = "a6e274dca8fd2bdea55f163826ddbf6f49e5e494b0a126fef4bec9821b265326", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_numeric_correspondence", digest = "666737dba9a3693d4ee72ab699bb74d495b9da3d33033830c9c72d4a9bc9fc41", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1124,16 +1141,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-design-numeric-word-fragments-case"
 category = "case"
-budget_ms = 33150
+budget_ms = 38300
 scope = "one ci::test_design.Correspondence.test_numeric_word_fragments case"
 reason = "The complete malformed-word and template-separator matrix retains fresh optimized whole-checker executions for every refusal and accepted structural control."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [16117.438807850704, 16564.407753990963, 16172.777706058696]
+calibration_walls_ms = [19141.599655151367, 17750.40555000305, 17436.732292175293]
+calibration_own_cpu_ms = [18781.91999999999, 17707.153000000028, 17455.285999999996]
+calibration_load_start = [[39.65625, 38.56591796875, 41.58544921875], [62.21875, 45.92578125, 43.978515625], [50.49755859375, 45.09326171875, 43.7861328125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_numeric_word_fragments", digest = "1802a1c9bad52eedb4d56e47a17013615b6ddd29358893689b60259ba45e39c7", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_numeric_word_fragments", digest = "478e5068fed8c34b702ac3486a113105590c688d6cc8ad5b0294e3db6179619f", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1142,16 +1161,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-design-release-tags-case"
 category = "case"
-budget_ms = 8800
+budget_ms = 10650
 scope = "one ci::test_design.Correspondence.test_release_tags case"
 reason = "The complete release-tag matrix retains fresh optimized checks across tracked text kinds, deliberate source fixtures, case changes and binary boundaries."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [4249.551088782027, 4381.821953924373, 4297.4825808778405]
+calibration_walls_ms = [5312.12043762207, 4542.617559432983, 4618.6535358428955]
+calibration_own_cpu_ms = [4813.012000000002, 4523.313000000006, 4616.745000000002]
+calibration_load_start = [[56.62109375, 42.55078125, 42.8359375], [51.41455078125, 44.32958984375, 43.4873046875], [45.01025390625, 44.154296875, 43.5]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_release_tags", digest = "92afb0e942fe978aae2098d0ceef0ec86a659df24defbfc6d7dbb66a80eed12c", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_release_tags", digest = "dde0b2cca938ea262c7dd1ee49228e91d08d67b720bfd41bf4e72393c24075a7", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1160,16 +1181,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-design-rendered-continuations-case"
 category = "case"
-budget_ms = 9300
+budget_ms = 10050
 scope = "one ci::test_design.Correspondence.test_rendered_continuations case"
 reason = "Every accepted and refused Markdown block shape retains a fresh optimized whole-checker execution and its exact diagnostic assertions."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [4388.341172831133, 4632.0821810513735, 4351.612932980061]
+calibration_walls_ms = [5014.342308044434, 4789.635419845581, 4883.716583251953]
+calibration_own_cpu_ms = [4997.371999999995, 4783.83599999999, 4885.576]
+calibration_load_start = [[61.21630859375, 43.7373046875, 43.21826171875], [50.82080078125, 44.32373046875, 43.490234375], [47.65234375, 44.71630859375, 43.685546875]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_design.py", function = "test_rendered_continuations", digest = "399ab7fb0e4ca9b688a8c0cc76fb305b7272b0f9843968ccdcb9ba570a04ea86", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_rendered_continuations", digest = "c94f56c7ce11e1fd1ec872d1086255313cf3dca9027042c348e209e1c8deb982", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1178,16 +1201,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-design-rendered-spacing-case"
 category = "case"
-budget_ms = 6200
+budget_ms = 6900
 scope = "one ci::test_design.Correspondence.test_rendered_spacing case"
 reason = "Spacing controls retain optimized full checks, real import-base histories, per-file ceiling growth refusals and stale-exception retirement."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [3036.0379291232675, 2978.810225147754, 3090.6685509253293]
+calibration_walls_ms = [3440.3719902038574, 3205.310106277466, 3231.0757637023926]
+calibration_own_cpu_ms = [3421.7010000000114, 3182.500000000001, 3233.1840000000084]
+calibration_load_start = [[62.16015625, 44.22314453125, 43.37841796875], [50.1943359375, 44.30126953125, 43.4873046875], [50.4033203125, 45.33544921875, 43.8916015625]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 3
-calibration_source = { path = "ci/test_design.py", function = "test_rendered_spacing", digest = "89e7854bc21ce22c47f0e8c7746f593be9c45306a77494b10e4a31b860bdf5d9", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_rendered_spacing", digest = "fdaa2915d65ebf52f1f5d5cdfe1ab4ce256bbd2911b6f4ef4bb2120cc66c0643", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1196,16 +1221,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-design-tracked-prose-boundaries-case"
 category = "case"
-budget_ms = 4250
+budget_ms = 5300
 scope = "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
 reason = "Tracked document and template mutations retain fresh optimized whole-checker execution, bare-mint refusals and the vendored-source exclusion."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [2113.2188190240413, 2042.0358930714428, 2124.1963289212435]
+calibration_walls_ms = [2637.3910903930664, 2491.8839931488037, 2490.7634258270264]
+calibration_own_cpu_ms = [2629.376000000006, 2458.2230000000145, 2486.4129999999845]
+calibration_load_start = [[62.16015625, 44.22314453125, 43.37841796875], [50.0986328125, 44.37939453125, 43.51708984375], [48.28857421875, 44.98095703125, 43.78466796875]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 3
-calibration_source = { path = "ci/test_design.py", function = "test_tracked_prose_boundaries", digest = "e217bd0ac38178e26a2a1d328877cb91ac7d1b68e2d799f9a4db63658291a0c3", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_design.py", function = "test_tracked_prose_boundaries", digest = "4fba71ce03ec78943f9ff75e48ea8cb368f86ab5f76eebd6be9590fd64d961e4", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -1450,16 +1477,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-observe-runtime-four-mode-results-case"
 category = "case"
-budget_ms = 13550
+budget_ms = 14600
 scope = "one ci::test_observe_runtime.Processes.test_four_mode_results case"
 reason = "The complete observation-mode matrix retains real child results, trace payload and loss checks, and disabled-observation equivalence."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [5394.187753088772, 6768.912934930995, 6469.235412077978]
+calibration_walls_ms = [5446.720123291016, 7276.442766189575, 6804.139852523804]
+calibration_own_cpu_ms = [7586.498999999994, 11030.655999999983, 10319.43]
+calibration_load_start = [[63.9091796875, 44.8837890625, 43.5966796875], [50.0986328125, 44.37939453125, 43.51708984375], [48.28857421875, 44.98095703125, 43.78466796875]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "ci/test_observe_runtime.py", function = "test_four_mode_results", digest = "bbc64ab2fd77eae5c60313274e2b4aaece92db8ffebb926477a3e48d40235b65", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_source = { path = "ci/test_observe_runtime.py", function = "test_four_mode_results", digest = "b34dbf8205aa2a1fa654a4c0266128b053986f7a9609c86cb10da4a7aa9fff9a", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2830,6 +2859,106 @@ calibration_selected_sample = 1
 calibration_source = { path = "packages/wallet/tests/rpc/recovery/replay_safe.rs", function = "descriptor_conflicts", digest = "45b85f14fc93b1a89a4e2d332d2efa0cf789c222b0471fa78b02a91a09bdf4d8", owner = "lane/design" }
 calibration_campaign = "campaign:devperf:design-public-refresh"
 calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-host-publication-authentication-mutations-case"
+category = "case"
+budget_ms = 2000
+scope = "one pn-host::public::publication::mutations::publication_authentication_mutations case"
+reason = "Every named authentication field retains canonical byte preservation and an independent refused restoration after mutation."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [993.1058883666992, 974.9245643615723, 985.2054119110107]
+calibration_own_cpu_ms = [993.0449999999809, 974.9759999999803, 985.251999999992]
+calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_authentication_mutations", digest = "e9a30593debb8c8238810bdacbd2bb435f5bfbcd6d58869c8816ec4d2c395a26", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-host-publication-ridge-transcript-refusal-case"
+category = "case"
+budget_ms = 1600
+scope = "one pn-host::public::publication::mutations::publication_ridge_transcript_refusal case"
+reason = "The ridge transcript substitution retains canonical transport and independent charge replay refusal."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [792.5782203674316, 794.5315837860107, 781.0394763946533]
+calibration_own_cpu_ms = [792.4800000000065, 794.5990000000052, 781.1539999999936]
+calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 2
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_ridge_transcript_refusal", digest = "61d7dfc68ff3ca736fa974be9364b80080c3694e4356093ccd36cf88cb82a76a", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-host-publication-section-mutations-case"
+category = "case"
+budget_ms = 3100
+scope = "one pn-host::public::publication::mutations::publication_section_mutations case"
+reason = "Each complete publication section retains its own codec or restoration refusal after mutation."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1536.1742973327637, 1510.584831237793, 1513.6897563934326]
+calibration_own_cpu_ms = [1536.160999999975, 1510.6920000000023, 1513.6320000000119]
+calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_section_mutations", digest = "4ce74dcf22d2b3726413fe21160d599c03c5f091d2a68d872e0f85b65d3259f5", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-host-publication-codec-roundtrip-case"
+category = "case"
+budget_ms = 2050
+scope = "one pn-host::public::publication::publication_codec_roundtrip case"
+reason = "The complete admitted publication retains disclosure encoding, canonical decoding and independent restored equality."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [1014.0557289123535, 1002.7682781219482, 999.7007846832275]
+calibration_own_cpu_ms = [1013.9090000000231, 1002.6909999999987, 999.661999999983]
+calibration_load_start = [[68.18603515625, 46.47314453125, 44.13037109375], [52.9345703125, 45.3955078125, 43.86962890625], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_source = { path = "packages/host/tests/public/publication/mod.rs", function = "publication_codec_roundtrip", digest = "18bfd3bb9c9c8e94e38ec13fd5b86b7bde4cf37a6b05f2342dfcd18db988326d", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_multiplier = 2
+calibration_round_ms = 50
+calibration_warm = true
+calibration_discarded_warmups = 1
+
+[[rows]]
+name = "calibrated-host-publication-malformed-documents-case"
+category = "case"
+budget_ms = 1900
+scope = "one pn-host::public::publication::refusals::publication_malformed_documents case"
+reason = "The codec retains the complete malformed-field, variant, rational and canonical-byte refusal matrix."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+calibration_walls_ms = [936.4802837371826, 927.2074699401855, 923.0823516845703]
+calibration_own_cpu_ms = [936.5870000000172, 927.3179999999996, 923.0069999999948]
+calibration_load_start = [[68.18603515625, 46.47314453125, 44.13037109375], [52.9345703125, 45.3955078125, 43.86962890625], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_sample_choice = "maximum-of-three-warm-serial"
+calibration_selected_sample = 1
+calibration_source = { path = "packages/host/tests/public/publication/refusals.rs", function = "publication_malformed_documents", digest = "f0f70ea993641620cd3dcfb82e25aa832d82c26ccf5bc4f7954559948b1305e7", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-codec-public-warm"
+calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true

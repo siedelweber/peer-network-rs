@@ -3748,6 +3748,20 @@
     },
     {
       "budget": "pure-suite",
+      "case_budget_reasons": {
+        "pn-host::public::publication::mutations::publication_authentication_mutations": "Every named authentication field retains canonical byte preservation and an independent refused restoration after mutation.",
+        "pn-host::public::publication::mutations::publication_ridge_transcript_refusal": "The ridge transcript substitution retains canonical transport and independent charge replay refusal.",
+        "pn-host::public::publication::mutations::publication_section_mutations": "Each complete publication section retains its own codec or restoration refusal after mutation.",
+        "pn-host::public::publication::publication_codec_roundtrip": "The complete admitted publication retains disclosure encoding, canonical decoding and independent restored equality.",
+        "pn-host::public::publication::refusals::publication_malformed_documents": "The codec retains the complete malformed-field, variant, rational and canonical-byte refusal matrix."
+      },
+      "case_budgets": {
+        "pn-host::public::publication::mutations::publication_authentication_mutations": "calibrated-host-publication-authentication-mutations-case",
+        "pn-host::public::publication::mutations::publication_ridge_transcript_refusal": "calibrated-host-publication-ridge-transcript-refusal-case",
+        "pn-host::public::publication::mutations::publication_section_mutations": "calibrated-host-publication-section-mutations-case",
+        "pn-host::public::publication::publication_codec_roundtrip": "calibrated-host-publication-codec-roundtrip-case",
+        "pn-host::public::publication::refusals::publication_malformed_documents": "calibrated-host-publication-malformed-documents-case"
+      },
       "cases": [
         "pn-host::public::acquisition_bound_refusals",
         "pn-host::public::authentication_disconnect",
