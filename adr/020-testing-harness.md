@@ -51,7 +51,7 @@
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_testkit | active | unit | ci-python | fast | 9 |
-| ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 7 |
+| ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 8 |
 | cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |

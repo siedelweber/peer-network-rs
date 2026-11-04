@@ -530,6 +530,14 @@
       "review": "Read the controlled source and consumer comparisons and the substituted inner seed: validation rejects the incorrectly attributed observation."
     },
     {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_archive_provisioning",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:vendor-archives-require-explicit-provisioning",
+      "before": "",
+      "after": "Claim: The declared archive route refuses missing and wrong-checksum fixture bytes at fetch or offline read, ignores unrelated files, and cannot substitute Cargo's cache for its external input.",
+      "review": "A valid fixture in Cargo's cache cannot satisfy the missing declared input; the refusal names provisioning. A wrong response refuses before installation, a changed installed archive refuses at read despite the valid cached copy, unrelated files are ignored, and a successful offline read with network access forbidden and the Cargo copy removed still succeeds. The fixture also refuses an in-tree archive directory. These are local transport/read controls, not a registry availability claim."
+    },
+    {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_case_census",
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:wallet-census-refuses-missing-evidence",

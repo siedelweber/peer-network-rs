@@ -9,6 +9,7 @@ import os
 import tarfile
 import tempfile
 from discipline import vendor_packages
+from provision_vendor import checked_archive
 
 
 def check_vendor_contents(root, declaration, reviewed):
@@ -48,15 +49,10 @@ def check_vendor_contents(root, declaration, reviewed):
         # deliberately not a suffix-based exemption for arbitrary source trees.
         if set(omitted) != {'CHANGELOG.md'} or set(files) & set(omitted):
             raise ValueError('vendor omission is not reviewed documentation-only')
-    cache = Path(os.environ.get('CARGO_HOME', Path.home()/'.cargo'))/'registry/cache'
-    archives = sorted(cache.glob(f'*/{identity[0]}-{identity[1]}.crate'))
-    archives = [archive for archive in archives
-                if hashlib.sha256(archive.read_bytes()).hexdigest() == reviewed[identity]]
-    if not archives:
-        raise ValueError('vendor archive unavailable or checksum differs')
+    archive_path = checked_archive(root, *identity, reviewed[identity])
     archive_files = {}
     archive_bytes = {}
-    with tarfile.open(archives[0], 'r:gz') as archive:
+    with tarfile.open(archive_path, 'r:gz') as archive:
         prefix = f'{identity[0]}-{identity[1]}/'
         for member in archive:
             if member.isdir():

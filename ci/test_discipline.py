@@ -542,14 +542,14 @@ class HashCitations(unittest.TestCase):
             sample_value = 'abcd' + 'ef12' + '3456'
             other_value = 'abcd' + 'ef99' + '9999'
             sample = root/'vendor/sample/vector.txt'; sample.write_text(json.dumps(sample_value)+'\n')
-            cache=root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            cache = Path(self.enterContext(tempfile.TemporaryDirectory()))
             archive_file=cache/'sample-1.0.0.crate'
             with tarfile.open(archive_file,'w:gz') as output:
                 for file in sorted(sample.parent.iterdir()):
                     data=file.read_bytes();entry=tarfile.TarInfo('sample-1.0.0/'+file.name);entry.size=len(data)
                     output.addfile(entry,io.BytesIO(data))
             checksum=hashlib.sha256(archive_file.read_bytes()).hexdigest()
-            self.enterContext(patch.dict(os.environ,CARGO_HOME=str(root/'cargo')))
+            self.enterContext(patch.dict(os.environ,PN_VENDOR_ARCHIVES=str(cache)))
             review='[[rows]]\nname="sample"\nversion="1.0.0"\nchecksum="'+checksum+'"\n'
             (root/'docs/inputs/wallet-dependencies.toml').write_text(review)
             (root/'docs/inputs/host-dependencies.toml').write_text('rows=[]\n')

@@ -12,6 +12,56 @@ import os
 
 
 class WalletBoundary(unittest.TestCase):
+    def test_archive_provisioning(self):
+        """Claim: The declared archive route refuses missing and wrong-checksum fixture bytes at fetch or offline read, ignores unrelated files, and cannot substitute Cargo's cache for its external input.
+        ´claim:discipline:vendor-archives-require-explicit-provisioning´
+        ´test:integration:test-archive-provisioning´
+        """
+        import hashlib
+        import io
+        import tempfile
+        from unittest.mock import patch
+        from provision_vendor import COMMAND, checked_archive, fetch_archive
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            root = parent/'tree'; root.mkdir()
+            archives = parent/'archives'
+            cargo = parent/'cargo/registry/cache/fixture'; cargo.mkdir(parents=True)
+            data = b'public pinned archive fixture'
+            checksum = hashlib.sha256(data).hexdigest()
+            filename = 'example-1.0.0.crate'
+            (cargo/filename).write_bytes(data)
+            urls = []
+            def fetch(url):
+                urls.append(url)
+                return io.BytesIO(data)
+            with patch.dict(os.environ, PN_VENDOR_ARCHIVES=str(archives), CARGO_HOME=str(parent/'cargo')):
+                # A valid Cargo cache archive cannot rescue the missing declared input.
+                with self.assertRaisesRegex(ValueError, COMMAND.replace('.', r'\.')):
+                    checked_archive(root, 'example', '1.0.0', checksum)
+                with self.assertRaisesRegex(ValueError, 'fetch checksum differs'):
+                    fetch_archive(root, 'example', '1.0.0', checksum, lambda _: io.BytesIO(b'wrong'))
+                self.assertFalse((archives/filename).exists())
+                result = fetch_archive(root, 'example', '1.0.0', checksum, fetch)
+                self.assertEqual(urls, ['https://static.crates.io/crates/example/example-1.0.0.crate'])
+                self.assertEqual(result.read_bytes(), data)
+                (archives/'undeclared-1.0.0.crate').write_bytes(b'untrusted')
+                self.assertEqual(checked_archive(root, 'example', '1.0.0', checksum), result)
+                result.write_bytes(b'wrong')
+                with self.assertRaisesRegex(ValueError, 'archive checksum differs'):
+                    checked_archive(root, 'example', '1.0.0', checksum)
+                with self.assertRaisesRegex(ValueError, 'fetch checksum differs'):
+                    fetch_archive(root, 'example', '1.0.0', checksum, lambda _: io.BytesIO(b'wrong'))
+                self.assertEqual(result.read_bytes(), b'wrong')
+                # Offline consumption cannot call the network, even with no Cargo cache.
+                result.write_bytes(data)
+                (cargo/filename).unlink()
+                with patch('urllib.request.urlopen', side_effect=AssertionError('network read')):
+                    self.assertEqual(checked_archive(root, 'example', '1.0.0', checksum), result)
+            with patch.dict(os.environ, PN_VENDOR_ARCHIVES=str(root/'archives')):
+                with self.assertRaisesRegex(ValueError, 'outside the repository'):
+                    checked_archive(root, 'example', '1.0.0', checksum)
+
     def test_rpc_type_boundary(self):
         """Claim: The RPC bootstrap requires secret carriers and has no Display representation, and a caller cannot supply arbitrary method strings or wallet selections to the closed read interface.
         ´claim:discipline:wallet-rpc-types-confine-private-authority´
@@ -240,13 +290,13 @@ class WalletBoundary(unittest.TestCase):
             root = Path(directory); (root/'vendor/example').mkdir(parents=True)
             file = root/'vendor/example/lib.rs'; file.write_bytes(b'public fixture')
             row = dict(name='example', version='1.0.0', path='vendor/example', content_manifest='contents.json')
-            cache=root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            cache = Path(self.enterContext(tempfile.TemporaryDirectory()))
             archive=cache/'example-1.0.0.crate'
             with tarfile.open(archive,'w:gz') as output:
                 entry=tarfile.TarInfo('example-1.0.0/lib.rs'); entry.size=len(file.read_bytes())
                 output.addfile(entry,io.BytesIO(file.read_bytes()))
             checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
-            self.enterContext(patch.dict(os.environ,CARGO_HOME=str(root/'cargo')))
+            self.enterContext(patch.dict(os.environ,PN_VENDOR_ARCHIVES=str(cache)))
             reviewed = {('example','1.0.0'):checksum}
             evidence = dict(name='example',version='1.0.0',archive_checksum=checksum,
                             files={'lib.rs':hashlib.sha256(file.read_bytes()).hexdigest()})
@@ -287,7 +337,7 @@ class WalletBoundary(unittest.TestCase):
         import tarfile
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); source = root/'vendor/example'; source.mkdir(parents=True)
-            cache = root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            cache = Path(self.enterContext(tempfile.TemporaryDirectory()))
             members = {'src/lib.rs': b'pub fn fixture() {}', 'build.rs': b'fn main() {}',
                        'LICENSE': b'Fixture licence', 'NOTICE': b'Fixture notice',
                        'CHANGELOG.md': b'Upstream history'}
@@ -309,13 +359,13 @@ class WalletBoundary(unittest.TestCase):
             def check(value):
                 manifest.write_text(json.dumps(value))
                 wallet_crypto.check_vendor_contents(root,row,{('example','1.0.0'):checksum})
-            with patch.dict(os.environ,CARGO_HOME=str(root/'cargo')):
+            with patch.dict(os.environ,PN_VENDOR_ARCHIVES=str(cache)):
                 self.assertIsNone(check(evidence))
                 archive_bytes=archive.read_bytes()
                 archive.unlink()
                 with self.assertRaisesRegex(ValueError,'archive unavailable'): check(evidence)
                 archive.write_bytes(b'wrong archive')
-                with self.assertRaisesRegex(ValueError,'archive unavailable'): check(evidence)
+                with self.assertRaisesRegex(ValueError,'archive checksum differs'): check(evidence)
                 archive.write_bytes(archive_bytes)
                 # A real input reference cannot be hidden as documentation-only.
                 with tarfile.open(archive,'w:gz') as output:

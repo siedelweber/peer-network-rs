@@ -177,6 +177,7 @@
     "ci::test_testkit.SupportGuard.test_benchmark_terminal": "A benchmark command refuses terminal stdout before building, sampling or creating artifacts.",
     "ci::test_testkit.SupportGuard.test_property_seed": "Missing property seeds are structural; a passing predicate cannot invent replay evidence.",
     "ci::test_testkit.SupportGuard.test_support_edges": "Normal and build edges to renamed support cannot enter a production graph; dev edges remain allowed.",
+    "ci::test_wallet_boundary.WalletBoundary.test_archive_provisioning": "",
     "ci::test_wallet_boundary.WalletBoundary.test_case_census": "",
     "ci::test_wallet_boundary.WalletBoundary.test_codec_pins": "",
     "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance": "",
