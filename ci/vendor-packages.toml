@@ -5,6 +5,14 @@ path = "vendor/regexml"
 mode = "member"
 
 [[packages]]
+name = "bitcoin"
+version = "0.32.102"
+path = "vendor/bitcoin"
+mode = "patch"
+content_manifest = "ci/vendor-content/bitcoin.json"
+omitted_documentation = ["CHANGELOG.md"]
+
+[[packages]]
 name = "elements"
 version = "0.27.0"
 path = "vendor/elements"

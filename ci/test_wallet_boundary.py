@@ -318,6 +318,8 @@ class WalletBoundary(unittest.TestCase):
             wallet_crypto.check_checksums(dict(package=[dict(name='secp256k1',version='0.29.1')]),[],{('secp256k1','0.29.1')})
         with self.assertRaisesRegex(ValueError,'unbound'):
             wallet_crypto.check_checksums(dict(package=[dict(name='elements',version='0.27.0')]),[],{('elements','0.27.0')})
+        with self.assertRaisesRegex(ValueError,'unbound'):
+            wallet_crypto.check_checksums(dict(package=[dict(name='bitcoin',version='0.32.102')]),[],{('bitcoin','0.32.102')})
         for source in ['registry+https://example.invalid/index#secp256k1-sys@0.10.1',
                        'path+file:///fixture/vendor/secp256k1-sys#0.10.1']:
             self.assertEqual(wallet_crypto.artifact_package(dict(package_id=source)),('secp256k1-sys','0.10.1'))

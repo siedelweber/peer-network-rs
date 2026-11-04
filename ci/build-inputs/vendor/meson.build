@@ -8,6 +8,7 @@ foreach row : local_inputs
   graph_arguments += ['--input', row[0] + '\t' + row[1] + '\t' + row[2]]
 endforeach
 subdir('regexml')
+subdir('bitcoin')
 subdir('elements')
 subdir('secp256k1')
 subdir('secp256k1-sys')

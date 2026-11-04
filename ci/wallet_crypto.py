@@ -182,7 +182,7 @@ def check_checksums(lock, rows, tree, root=None):
     locked = {(p['name'], p['version']): p.get('checksum') for p in lock['package']}
     for key in sorted(tree):
         if locked.get(key) is None:
-            if key[0] in {'elements', 'secp256k1', 'secp256k1-zkp', *SNAPSHOTS} and key not in bound:
+            if key[0] in {'bitcoin', 'elements', 'secp256k1', 'secp256k1-zkp', *SNAPSHOTS} and key not in bound:
                 raise ValueError('vendored binding is unbound: ' + ' '.join(key))
             continue
         if reviewed.get(key) != locked[key]:

@@ -1,5 +1,6 @@
 # Explicit archived file inputs; content checks consume every file.
 local_inputs = [
+  ['ci/vendor-content/bitcoin.json', 'wallet-conformance,hash-citations,vendor-set', ''],
   ['ci/build-inputs/ci/vendor-content/meson.build', 'build-graph', ''],
   ['ci/vendor-content/elements.json', 'wallet-conformance,hash-citations,vendor-set', ''],
   ['ci/vendor-content/secp256k1-sys.json', 'wallet-conformance,hash-citations,vendor-set', ''],
