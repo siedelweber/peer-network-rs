@@ -353,6 +353,7 @@ def vendor_packages(root):
     patches = manifest.get('patch', {}).get('crates-io', {})
     paths = set()
     names = set()
+    sidecars = set()
     for row in rows:
         path, name = row['path'], row['name']
         if not path.startswith('vendor/') or any(p in ('', '.', '..') for p in path.split('/')):
@@ -373,6 +374,10 @@ def vendor_packages(root):
                 raise ValueError('vendor patch is not routed: ' + name)
         else:
             raise ValueError('unknown vendor mode')
+        if row.get('patch_file'):
+            if row['mode'] != 'patch' or row['patch_file'] != path + '.patch':
+                raise ValueError('vendor patch sidecar must be beside its package')
+            sidecars.add(root / row['patch_file'])
     for name, patch in patches.items():
         if isinstance(patch, dict) and patch.get('path', '').startswith('vendor/'):
             if not any(r['name'] == name and r['path'] == patch['path'] and r['mode'] == 'patch' for r in rows):
@@ -381,7 +386,7 @@ def vendor_packages(root):
         if path.startswith('vendor/') and path not in paths:
             raise ValueError('undeclared vendor member: ' + path)
     for path in (root / 'vendor').rglob('*'):
-        if path.is_symlink() or (path.is_file() and not any(path.is_relative_to(root / p) for p in paths)):
+        if path.is_symlink() or (path.is_file() and path not in sidecars and not any(path.is_relative_to(root / p) for p in paths)):
             raise ValueError('undeclared vendor file: ' + str(path))
     return rows
 
@@ -564,7 +569,9 @@ def main():
         return 0
     if mode == "vendor-set":
         vendors = sorted((row['path'], row['name']) for row in vendor_packages(pathlib.Path.cwd()))
-        expected = "( " + " / ".join(f'%s"{path}/" *VCHAR' for path, _ in vendors) + " )"
+        terms = [f'%s"{path}/" *VCHAR' for path, _ in vendors]
+        terms += [f'%s"{row["patch_file"]}"' for row in vendor_packages(pathlib.Path.cwd()) if row.get('patch_file')]
+        expected = "( " + " / ".join(terms) + " )"
         owners = tomllib.loads(pathlib.Path(".linter/owners.toml").read_text())
         declared = [row["pattern"] for row in owners["partitions"] if row["owner"] == "VENDOR"]
         if declared != [expected]:

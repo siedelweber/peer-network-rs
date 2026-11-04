@@ -314,6 +314,33 @@ class WalletBoundary(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'complete archive members differ'): check(changed)
                 (source/'src/lib.rs').write_bytes(b'changed')
                 with self.assertRaisesRegex(ValueError,'contents differ'): check(evidence)
+                # A declared patch must produce the carried bytes from the checked archive.
+                original = members['src/lib.rs']
+                replacement = b'pub fn owned() {}'
+                patch_bytes = (b'diff --git a/src/lib.rs b/src/lib.rs\n'
+                               b'--- a/src/lib.rs\n+++ b/src/lib.rs\n@@ -1 +1 @@\n'
+                               b'-pub fn fixture() {}\n\\ No newline at end of file\n'
+                               b'+pub fn owned() {}\n\\ No newline at end of file\n')
+                sidecar=root/'vendor/example.patch'; sidecar.write_bytes(patch_bytes)
+                row['patch_file']='vendor/example.patch'
+                patched_hash=hashlib.sha256(replacement).hexdigest()
+                patched=dict(evidence,files=dict(evidence['files'],**{'src/lib.rs':patched_hash}),
+                             patch=dict(path=row['patch_file'],sha256=hashlib.sha256(patch_bytes).hexdigest(),
+                                        members={'src/lib.rs':dict(upstream=hashes['src/lib.rs'],patched=patched_hash)}))
+                (source/'src/lib.rs').write_bytes(replacement)
+                self.assertIsNone(check(patched))
+                sidecar.write_bytes(patch_bytes+b'changed')
+                with self.assertRaisesRegex(ValueError,'patch digest differs'): check(patched)
+                sidecar.write_bytes(patch_bytes)
+                wrong_hash=hashlib.sha256(b'other result').hexdigest()
+                wrong=dict(patched,files=dict(patched['files'],**{'src/lib.rs':wrong_hash}),
+                           patch=dict(patched['patch'],members={'src/lib.rs':dict(upstream=hashes['src/lib.rs'],patched=wrong_hash)}))
+                (source/'src/lib.rs').write_bytes(b'other result')
+                with self.assertRaisesRegex(ValueError,'patch result differs'): check(wrong)
+                with self.assertRaisesRegex(ValueError,'contents differ'): check(patched)
+                row.pop('patch_file')
+                with self.assertRaisesRegex(ValueError,'contents differ'): check(evidence)
+                (source/'src/lib.rs').write_bytes(original)
         with self.assertRaisesRegex(ValueError,'unbound'):
             wallet_crypto.check_checksums(dict(package=[dict(name='secp256k1',version='0.29.1')]),[],{('secp256k1','0.29.1')})
         with self.assertRaisesRegex(ValueError,'unbound'):
