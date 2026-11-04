@@ -14,7 +14,7 @@
       "name": "deployment",
       "namespace": "org.peer-network.test.publication",
       "owner": "lane/design",
-      "status": "reserved; complete theory and independent vectors pending",
+      "status": "test publication theory assigned; act theory and live workflow remain unsupported",
       "theory": "publication"
     },
     {

@@ -38585,10 +38585,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "19",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38603,7 +38603,7 @@
           "exact_digits": 32
         }
       },
-      "total": 19
+      "total": 23
     },
     {
       "category": "record-coverage",

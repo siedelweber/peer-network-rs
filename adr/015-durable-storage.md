@@ -183,7 +183,7 @@
 | parking_lot_core 0.9.12 | MIT OR Apache-2.0 | none enabled | 1.71.0 | build script: build-script-build | 2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1 |
 | pbkdf2 0.13.0 | MIT OR Apache-2.0 | hmac | 1.85 | none | 112d82ceb8c5bf524d9af484d4e4970c9fd5a0cc15ba14ad93dccd28873b0629 |
 | percent-encoding 2.3.2 | MIT OR Apache-2.0 | alloc, default, std | 1.51 | none | 9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220 |
-| petgraph 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, stable_graph, std | 1.64 | none | 8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455 |
+| petgraph 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, serde, serde-1, serde_derive, stable_graph, std | 1.64 | none | 8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455 |
 | phf 0.13.1 | MIT | default, std | 1.66 | none | c1562dc717473dbaa4c1f85a36410e03c047b2e7df7f45ee938fbef64ae7fadf |
 | phf_shared 0.13.1 | MIT | std | 1.66 | none | e57fef6bc5981e38c2ce2d63bfa546861309f875b8a75f092d1d54ae2d64f266 |
 | pin-project-lite 0.2.17 | Apache-2.0 OR MIT | none enabled | 1.37 | none | a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd |
@@ -217,8 +217,8 @@
 | same-file 1.0.6 | Unlicense/MIT | not built for pn-host | not declared | none | 93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502 |
 | scopeguard 1.2.0 | MIT OR Apache-2.0 | none enabled | not declared | none | 94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49 |
 | secrecy 0.10.3 | Apache-2.0 OR MIT | none enabled | 1.60 | none | e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a |
-| serde 1.0.229 | MIT OR Apache-2.0 | default, derive, serde_derive, std | 1.56 | build script: build-script-build | 4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba |
-| serde_core 1.0.229 | MIT OR Apache-2.0 | result, std | 1.56 | build script: build-script-build | 67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48 |
+| serde 1.0.229 | MIT OR Apache-2.0 | alloc, default, derive, serde_derive, std | 1.56 | build script: build-script-build | 4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba |
+| serde_core 1.0.229 | MIT OR Apache-2.0 | alloc, result, std | 1.56 | build script: build-script-build | 67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48 |
 | serde_derive 1.0.229 | MIT OR Apache-2.0 | default | 1.71 | none; procedural macro serde_derive | e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348 |
 | serde_json 1.0.154 | MIT OR Apache-2.0 | default, raw_value, std | 1.71 | build script: build-script-build | e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6 |
 | sha2 0.11.1 | MIT OR Apache-2.0 | alloc, default, oid, zeroize | 1.88 | none | 47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19 |

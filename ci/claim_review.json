@@ -3251,6 +3251,54 @@
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
+      "operation": "pn-host::public::publication::golden::publication_independent_bytes",
+      "path": "packages/host/tests/public/publication/golden.rs",
+      "claim": "HOST::claim:publication:independent-structural-bytes",
+      "before": "Claim: Independently authored canonical CBOR for every section of two untrusted boundaries is read and written byte for byte, without treating the structural vector as admitted evidence.",
+      "after": "Claim: Independently authored canonical CBOR for every section of two untrusted boundaries is read and written byte for byte, without treating the structural vector as admitted evidence.",
+      "review": "The assertions check structural bytes and explicit restoration refusals under a synthetic verifier; they assert no cryptographic or production authority."
+    },
+    {
+      "operation": "pn-host::public::publication::mutations::publication_authentication_mutations",
+      "path": "packages/host/tests/public/publication/mutations.rs",
+      "claim": "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
+      "before": "Claim: Every named authentication disclosure survives the codec byte for byte; the fixture's retained-cause comparison refuses each substituted field without claiming cryptographic validation.",
+      "after": "Claim: Every named authentication disclosure survives the codec byte for byte; the fixture's retained-cause comparison refuses each substituted field without claiming cryptographic validation.",
+      "review": "Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
+    },
+    {
+      "operation": "pn-host::public::publication::mutations::publication_ridge_transcript_refusal",
+      "path": "packages/host/tests/public/publication/mutations.rs",
+      "claim": "HOST::claim:publication:ridge-transcript-reaches-fixed-replay",
+      "before": "Claim: A substituted primitive transcript carried as ridge charge evidence survives byte decoding but is refused by the consumer's fixed ChargeReplay verifier, rather than by the host fixture's cause attestation.",
+      "after": "Claim: A substituted primitive transcript carried as ridge charge evidence survives byte decoding but is refused by the consumer's fixed ridge replay verifier, rather than by the host fixture's cause attestation.",
+      "review": "The assertions check structural bytes and explicit restoration refusals under a synthetic verifier; they assert no cryptographic or production authority."
+    },
+    {
+      "operation": "pn-host::public::publication::mutations::publication_section_mutations",
+      "path": "packages/host/tests/public/publication/mutations.rs",
+      "claim": "HOST::claim:publication:section-mutations-reach-restoration",
+      "before": "Claim: Every package section is retained through canonical decoding, and a changed assertion, omitted cause or mixed cause is refused by the admitted consumer rather than accepted by a decoded flag.",
+      "after": "Claim: Every package section is retained through canonical decoding, and a changed assertion, omitted cause or mixed cause is refused by the admitted consumer rather than accepted by a decoded flag.",
+      "review": "Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
+    },
+    {
+      "operation": "pn-host::public::publication::publication_codec_roundtrip",
+      "path": "packages/host/tests/public/publication/mod.rs",
+      "claim": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "before": "Claim: Canonical publication bytes retain the complete two-boundary disclosure and restore the same admitted package under a declared host-side fixture verifier; byte decoding alone conveys no admission or cryptographic authority.",
+      "after": "Claim: Canonical publication bytes retain the complete two-boundary disclosure and restore the same admitted package under a declared host-side fixture verifier; byte decoding alone conveys no admission or cryptographic authority.",
+      "review": "Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
+    },
+    {
+      "operation": "pn-host::public::publication::refusals::publication_malformed_documents",
+      "path": "packages/host/tests/public/publication/refusals.rs",
+      "claim": "HOST::claim:publication:malformed-documents-never-become-disclosures",
+      "before": "Claim: The publication codec refuses unsupported coordinates, missing and extra sections, duplicate keys and noncanonical CBOR before restoration; declared decoding work is an input, not a default grant.",
+      "after": "Claim: The publication codec refuses unsupported coordinates, missing and extra sections, duplicate keys and noncanonical CBOR before restoration; declared decoding work is an input, not a default grant.",
+      "review": "Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
+    },
+    {
       "operation": "pn-host::public::scram_bound_refusals",
       "path": "packages/host/tests/public.rs",
       "claim": "HOST::claim:host:scram-bounds-precede-proof-disclosure",

@@ -79,7 +79,7 @@
 | pn-act-profile | 11 | 8 | 3 | 0 | 6 |
 | pn-epoch | 72 | 51 | 21 | 0 | 106 |
 | pn-graph | 50 | 42 | 8 | 0 | 62 |
-| pn-host | 40 | 22 | 18 | 0 | 13 |
+| pn-host | 196 | 24 | 172 | 0 | 146 |
 | pn-interchange | 156 | 120 | 35 | 1 | 93 |
 | pn-records | 118 | 46 | 72 | 0 | 156 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |

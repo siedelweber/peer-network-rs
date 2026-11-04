@@ -293,3 +293,6 @@ fn acquisition_bound_refusals() {
         Refusal::ConfigurationSyntax
     );
 }
+
+#[path = "public/publication/mod.rs"]
+mod publication;

@@ -386,3 +386,10 @@ area = "numerics"
 stake = "Inferring a fence from a price-scaling shortcut rather than the compiled contributing width can certify a different boundary question."
 register = "EPOCH::sec:numerics:area-numerics"
 contract = "EPOCH::amend:compiler:fence-evidence"
+
+[[rows]]
+owner = "HOST"
+area = "publication"
+stake = "A canonical publication codec that loses a field or grants authority while decoding can change the public replay question or hide an inconsistent assertion."
+register = "HOST::sec:publication:area-publication"
+contract = "HOST::rule:publication:codec"

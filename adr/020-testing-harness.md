@@ -123,7 +123,7 @@
 | pn-records-doctests | active | doctest | pn-records-rust | fast | 4 |
 | burn-records | active | integration | pn-records-rust | fast | 40 |
 | burn-verification | active | integration | pn-records-rust | fast | 40 |
-| pn-host::public | active | public-surface | pn-host-rust | fast | 8 |
+| pn-host::public | active | public-surface | pn-host-rust | fast | 14 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 9 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 3 |

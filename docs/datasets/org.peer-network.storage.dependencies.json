@@ -1835,6 +1835,9 @@
         "default",
         "graphmap",
         "matrix_graph",
+        "serde",
+        "serde-1",
+        "serde_derive",
         "stable_graph",
         "std"
       ],
@@ -2337,6 +2340,7 @@
       "checksum": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [
+        "alloc",
         "default",
         "derive",
         "serde_derive",
@@ -2355,6 +2359,7 @@
       "checksum": "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [
+        "alloc",
         "result",
         "std"
       ],

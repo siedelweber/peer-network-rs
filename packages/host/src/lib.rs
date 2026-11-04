@@ -2,6 +2,7 @@
 //! Persistence remains disabled pending independent integration review.
 
 mod config;
+pub mod publication;
 mod scram;
 mod secret;
 pub mod storage;

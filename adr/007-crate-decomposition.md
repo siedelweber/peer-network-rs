@@ -17,7 +17,7 @@
 | pn-replay | Reconstruct and compare the binding package from public inputs | ``subsec:deployment:conserved-standing-reproducibility`` ``post:deployment:public-object-replay`` |
 | pn-verification | Maintain labelled integrated fixtures and independent public-surface checks | ``rem:verification:certificate-reproducibility`` |
 
-**Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
+**Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The host directly depends on epoch to encode its untrusted publication disclosures and pass them to its consumer; the codec has no direct graph dependency. The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
 
 - pn-records
 - pn-act-profile

@@ -2766,3 +2766,18 @@ owner = "Records authentication implementer"
 missing = "Outside scope: cryptographic validity, header consistency, exact approval and deployment authentication."
 closing_condition = "Every named absent field refuses and complete disclosures retain their exact fields."
 closing_step = "Bite 8 authentication layout."
+
+[[rows]]
+name = "HOST::verif:publication:codec"
+witnessed_labels = []
+path = "packages/host/README.md"
+status = "scoped-supported"
+claims = ["HOST::claim:publication:authentication-fields-are-untrusted-bytes", "HOST::claim:publication:canonical-disclosure-roundtrip", "HOST::claim:publication:independent-structural-bytes", "HOST::claim:publication:malformed-documents-never-become-disclosures", "HOST::claim:publication:ridge-transcript-reaches-fixed-replay", "HOST::claim:publication:section-mutations-reach-restoration"]
+realizers = []
+premises = "Canonical bytes retain the complete untrusted disclosure; only the supplied admitted consumer and fixture verifier authorize the scoped replay. Authentication validity and a production profile are not established."
+evidence_paragraph = "HOST::verif:publication:codec"
+hold = ""
+owner = "Host publication implementer"
+missing = "Outside scope: production publication admission and cryptographic authentication."
+closing_condition = "Canonical representation, mutation and restoration controls pass."
+closing_step = "Bite 8 canonical publication codec."

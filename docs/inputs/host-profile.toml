@@ -9,7 +9,7 @@ major = 1
 minor = 0
 allocator = "repository maintainers for the centralized test deployment"
 theory = "publication"
-status = "reserved; complete theory and independent vectors pending"
+status = "test publication theory assigned; act theory and live workflow remain unsupported"
 owner = "lane/design"
 
 [[rows]]

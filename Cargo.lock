@@ -1716,6 +1716,7 @@ dependencies = [
  "hmac",
  "metrics",
  "pbkdf2",
+ "pn-epoch",
  "pn-interchange",
  "pn-records",
  "pn-wallet",

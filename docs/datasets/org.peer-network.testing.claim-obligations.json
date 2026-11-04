@@ -3686,6 +3686,28 @@
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
+        "HOST::claim:publication:canonical-disclosure-roundtrip",
+        "HOST::claim:publication:independent-structural-bytes",
+        "HOST::claim:publication:malformed-documents-never-become-disclosures",
+        "HOST::claim:publication:ridge-transcript-reaches-fixed-replay",
+        "HOST::claim:publication:section-mutations-reach-restoration"
+      ],
+      "closing_condition": "Canonical representation, mutation and restoration controls pass.",
+      "closing_step": "Bite 8 canonical publication codec.",
+      "evidence_paragraph": "HOST::verif:publication:codec",
+      "hold": "",
+      "missing": "Outside scope: production publication admission and cryptographic authentication.",
+      "name": "HOST::verif:publication:codec",
+      "owner": "Host publication implementer",
+      "path": "packages/host/README.md",
+      "premises": "Canonical bytes retain the complete untrusted disclosure; only the supplied admitted consumer and fixture verifier authorize the scoped replay. Authentication validity and a production profile are not established.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
     }
   ]
 }

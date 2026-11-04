@@ -1116,7 +1116,7 @@ level = "public-surface"
 implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-host::public::case_before_input", "pn-host::public::configuration_carrier", "pn-host::public::impostor_authentication", "pn-host::public::authentication_disconnect", "pn-host::public::stock_configuration_control", "pn-host::public::impostor_server_proof", "pn-host::public::scram_bound_refusals", "pn-host::public::acquisition_bound_refusals"]
+cases = ["pn-host::public::acquisition_bound_refusals", "pn-host::public::authentication_disconnect", "pn-host::public::case_before_input", "pn-host::public::configuration_carrier", "pn-host::public::impostor_authentication", "pn-host::public::impostor_server_proof", "pn-host::public::publication::golden::publication_independent_bytes", "pn-host::public::publication::mutations::publication_authentication_mutations", "pn-host::public::publication::mutations::publication_ridge_transcript_refusal", "pn-host::public::publication::mutations::publication_section_mutations", "pn-host::public::publication::publication_codec_roundtrip", "pn-host::public::publication::refusals::publication_malformed_documents", "pn-host::public::scram_bound_refusals", "pn-host::public::stock_configuration_control"]
 
 [[rows]]
 kind = "suite"
