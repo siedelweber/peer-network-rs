@@ -92,6 +92,11 @@ def check(test):
             fragments.read(root, 'claim-obligations')
         monolith.unlink()
         expected = fragments.read(root, 'claim-obligations')
+        # The batched transport uses the same reader and preserves each envelope.
+        batched = subprocess.run([sys.executable, '-B', str(Path(fragments.__file__)), str(root),
+                                  'claim-obligations', 'claim-obligations'],
+                                 check=True, capture_output=True, text=True)
+        test.assertEqual([json.loads(line) for line in batched.stdout.splitlines()], [expected, expected])
         declaration = dict(path=prefix+'/schema.toml', consumers=['census', 'claims'], producer='')
         expanded = fragments.expanded_inputs(root, [declaration])
         test.assertEqual([row['path'] for row in expanded], [prefix+'/a.toml', prefix+'/z.toml'])

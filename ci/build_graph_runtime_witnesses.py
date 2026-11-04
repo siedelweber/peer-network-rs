@@ -45,6 +45,9 @@ def graph_tree(case, root, commands, shell, checker, env, inputs, setup=True):
         build.mkdir()
     (build/'gate-graph.json').write_text(json.dumps(dict(steps=[dict(name=n,command=c) for n,c in commands],
         inputs=[dict(path=p,consumers=[n for n,_ in commands]) for p in inputs])))
+    if env.get('PN_BUILDGRAPH_RUN'):
+        result = invoke(root, ['python3','-B',str(checker),'bind-inputs'], env)
+        case.assertEqual(result.returncode, 0, result.stdout)
     return build
 
 
@@ -146,6 +149,10 @@ sys.exit(status)
                     if path.is_dir():shutil.rmtree(path)
                     else:path.unlink()
             history=root/'.lane/gate-steps.tsv';history.write_text('');records=[]
+            for argv in (['git','add','mode'], ['git','-c','user.name=Fixture','-c','user.email=fixture@example.invalid','-c','commit.gpgsign=false','commit','--allow-empty','-qm','Scenario input'],
+                         ['python3','-B',str(checker),'bind-inputs']):
+                result = invoke(root, argv, env)
+                case.assertEqual(result.returncode, 0, result.stdout)
             for name,command in commands:
                 if scenario=='graph-refusal' and name=='stop':
                     (build/'gate-graph.json').unlink()
@@ -375,6 +382,8 @@ print('FIXTURE '+action)
         observations=[];nonces=[]
         for run_id in ('fresh','reused'):
             env['PN_BUILDGRAPH_RUN']=run_id
+            result = invoke(root, ['python3','-B',str(checker),'bind-inputs'], env)
+            case.assertEqual(result.returncode, 0, result.stdout)
             history=root/'.lane/gate-steps.tsv';history.write_text('')
             (root/'.lane/executed').unlink(missing_ok=True)
             statuses=[];outputs=[]

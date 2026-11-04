@@ -198,22 +198,21 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         }
     }
     inputs.sort();
+    let requested: Vec<_> = families
+        .iter()
+        .copied()
+        .filter(|name| inputs.contains(&input_root.join(name).join("schema.toml")))
+        .collect();
+    let mut fragments = fragment_datasets(root, &requested)?;
     for path in inputs {
         if path.extension().is_none_or(|ext| ext != "toml") {
             return Err(format!("input carrier: expected TOML: {}", path.display()).into());
         }
         let family = families.iter().find(|name| path == input_root.join(name).join("schema.toml"));
         let mut dataset = if let Some(family) = family {
-            let output = std::process::Command::new("python3")
-                .arg("-B")
-                .arg(root.join("ci/registry_fragments.py"))
-                .arg(root)
-                .arg(family)
-                .output()?;
-            if !output.status.success() {
-                return Err(format!("fragment loader: {}", String::from_utf8_lossy(&output.stderr)).into());
-            }
-            envelope::json(std::str::from_utf8(&output.stdout)?)?
+            fragments
+                .remove(*family)
+                .ok_or("fragment loader omitted a requested family")?
         } else {
             envelope::input(&read(&path)?).map_err(|error| format!("{}: {error}", path.display()))?
         };
@@ -277,6 +276,41 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         }
     }
     Ok(findings)
+}
+
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "fragment_datasets"
+    ),
+    ret
+)]
+fn fragment_datasets(root: &Path, families: &[&str]) -> Result<BTreeMap<String, envelope::Dataset>> {
+    if families.is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    let output = std::process::Command::new("python3")
+        .arg("-B")
+        .arg(root.join("ci/registry_fragments.py"))
+        .arg(root)
+        .args(families)
+        .output()?;
+    if !output.status.success() {
+        return Err(format!("fragment loader: {}", String::from_utf8_lossy(&output.stderr)).into());
+    }
+    let text = std::str::from_utf8(&output.stdout)?;
+    let values: Vec<_> = text.lines().collect();
+    if values.len() != families.len() {
+        return Err("fragment loader returned a different envelope count".into());
+    }
+    families
+        .iter()
+        .zip(values)
+        .map(|(family, value)| Ok(((*family).to_owned(), envelope::json(value)?)))
+        .collect()
 }
 
 #[tracing::instrument(

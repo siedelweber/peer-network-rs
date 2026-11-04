@@ -82,7 +82,7 @@
       "exceptions": 6,
       "generators": 11,
       "helpers": 0,
-      "instrumented": 16,
+      "instrumented": 17,
       "name": "documents",
       "number_forms": {
         "exceptions": {
@@ -110,18 +110,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "16",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "22",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         }
@@ -148,7 +148,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 22
+      "operations": 23
     },
     {
       "exceptions": 4,

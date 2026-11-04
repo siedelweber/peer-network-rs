@@ -60,6 +60,7 @@ times > .lane/gate-cpu-start.raw
 : > .lane/gate-steps.tsv
 source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
+python3 -B ci/build_graph.py bind-inputs || exit 2
 if [ "${PN_IMPORT_BASE+x}" = x ]; then
     PN_IMPORT_BASE=$(python3 -B ci/isolation.py import-base) || exit 2
     export PN_IMPORT_BASE

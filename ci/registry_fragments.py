@@ -254,9 +254,10 @@ def expanded_inputs(root, declared):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('root', type=Path)
-    parser.add_argument('registry', choices=ROOTS)
+    parser.add_argument('registry', choices=ROOTS, nargs='+')
     args = parser.parse_args()
-    print(json.dumps(read(args.root, args.registry), ensure_ascii=False))
+    for name in args.registry:
+        print(json.dumps(read(args.root, name), ensure_ascii=False))
 
 
 if __name__ == '__main__':

@@ -229,7 +229,7 @@ def exercise(case):
 def delegation(case):
     """Compare isolated legacy/graph executions and reject stale result envelopes."""
     import time
-    from build_graph import context, execute, identity, read_result, resource_line
+    from build_graph import bind_inputs, context, execute, identity, read_result, resource_line
     checker = Path(__file__).resolve().with_name('build_graph.py')
     meson = os.environ['PN_MESON_BIN']
     commands = [('before', 'python3 fixture.py read'),
@@ -275,12 +275,36 @@ else:
                 result=run_at(base,['git','clone','-q',str(source),str(root)]);case.assertEqual(result.returncode,0,result.stdout)
                 build=root/'.lane/build-graph';build.parent.mkdir()
                 history=root/'.lane/gate-steps.tsv';history.write_text('')
-                graph=dict(steps=[dict(name=n,command=c) for n,c in commands],inputs=[dict(path='fixture.py',consumers=[n for n,_ in commands])])
+                graph=dict(steps=[dict(name=n,command=c) for n,c in commands],inputs=[
+                    dict(path='fixture.py',producer='',consumers=[n for n,_ in commands]),
+                    dict(path='rendered.txt',producer='write',consumers=[n for n,_ in commands])])
                 if route=='graph':
                     result=run_at(root,[meson,'setup',str(build),str(root)]);case.assertEqual(result.returncode,0,result.stdout)
                     (build/'gate-graph.json').write_text(json.dumps(graph))
                 results=[];walls=[]
                 with patch.dict(os.environ,PN_BUILDGRAPH_RUN='fixture-'+scenario):
+                    initial_binding = bind_inputs(root)
+                    if route == 'graph' and scenario == 'clean':
+                        # Tree identity changes only with committed tracked input.
+                        tracked_input = root/'fixture.py'
+                        saved_input = tracked_input.read_text()
+                        tracked_input.write_text(saved_input+'# changed tracked input\n')
+                        with case.assertRaisesRegex(ValueError, 'clean tracked tree'):
+                            bind_inputs(root)
+                        for argv in (['git','add','fixture.py'], ['git','-c','user.name=Fixture','-c','user.email=fixture@example.invalid','-c','commit.gpgsign=false','commit','-qm','Changed input']):
+                            result = run_at(root, argv)
+                            case.assertEqual(result.returncode, 0, result.stdout)
+                        changed_binding = bind_inputs(root)
+                        case.assertNotEqual(initial_binding['tree'], changed_binding['tree'])
+                        result = run_at(root, ['git','reset','--hard',initial_binding['source']])
+                        case.assertEqual(result.returncode, 0, result.stdout)
+                        bind_inputs(root)
+                        generated = root/'.lane/generated-input'
+                        generated.write_text('first')
+                        dynamic_graph = dict(graph, products=[dict(path='.lane/generated-input', consumers=['before'])])
+                        old = context(root, dynamic_graph, 'before')['inputs']
+                        generated.write_text('second')
+                        case.assertNotEqual(old, context(root, dynamic_graph, 'before')['inputs'])
                     for name,command in commands:
                         start=time.monotonic()
                         argv=['bash','-c',command] if route=='legacy' else ['python3','-B',str(checker),'delegate',name]
@@ -335,14 +359,14 @@ else:
                         reqpath=build/'probe.json';reqpath.write_text(json.dumps(req))
                         for fault in ('run','configuration','input','source'):
                             with patch.dict(os.environ,PN_BUILDGRAPH_REQUEST=str(reqpath)):
-                                saved=(root/'fixture.py').read_text()
+                                saved=(root/'rendered.txt').read_text()
                                 if fault=='run':os.environ['PN_BUILDGRAPH_RUN']='another'
                                 if fault=='configuration':os.environ['RUSTFLAGS']='--cfg changed'
-                                if fault=='input':(root/'fixture.py').write_text(saved+'# changed\n')
+                                if fault=='input':(root/'rendered.txt').write_text(saved+'changed generated input\n')
                                 if fault=='source':
                                     changed=copy.deepcopy(req);changed['context']['source']='different';reqpath.write_text(json.dumps(changed))
                                 with case.assertRaises(ValueError):execute(root,build/'gate-graph.json',build/'probe-result.json')
-                                (root/'fixture.py').write_text(saved);reqpath.write_text(json.dumps(req))
+                                (root/'rendered.txt').write_text(saved);reqpath.write_text(json.dumps(req))
                         history.write_text('wrong\t0\t1\t2\n')
                         with case.assertRaises(ValueError):context(root,graph,'before')
                         if scenario=='clean':
@@ -458,6 +482,8 @@ sys.exit(result.returncode)
                 result=invoke(root,[os.environ['PN_MESON_BIN'],'setup',str(build),str(root)],env);case.assertEqual(result.returncode,0,result.stdout)
                 graph=dict(steps=[dict(name=n,command=c) for n,c in commands],inputs=[dict(path=p,consumers=[n for n,_ in commands]) for p in ('fixture.py','Cargo.toml','Cargo.lock','src/lib.rs')])
                 (build/'gate-graph.json').write_text(json.dumps(graph))
+                result=invoke(root,['python3','-B',str(checker),'bind-inputs'],env)
+                case.assertEqual(result.returncode,0,result.stdout)
             records=[];started=time.monotonic()
             for name,command in commands:
                 result=invoke(root,['bash','-c',command] if route=='legacy' else ['python3','-B',str(checker),'delegate',name],env)

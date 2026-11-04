@@ -74,7 +74,7 @@
 | Package | Operations | Instrumented | Local exceptions | Reviewed helpers | Generators |
 |---|---:|---:|---:|---:|---:|
 | cli-common | 113 | 30 | 80 | 3 | 42 |
-| documents | 22 | 16 | 6 | 0 | 11 |
+| documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn-act-profile | 11 | 8 | 3 | 0 | 6 |
 | pn-epoch | 72 | 51 | 21 | 0 | 106 |

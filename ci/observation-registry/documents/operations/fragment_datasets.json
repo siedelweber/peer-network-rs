@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "item": "fragment_datasets",
+    "owner": "DOCUMENTS",
+    "signature": "fn fragment_datasets (root : & Path , families : & [& str]) -> Result < BTreeMap < String , envelope :: Dataset > >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/lib.rs::fragment_datasets",
+    "body": "{ if families . is_empty () { return Ok (BTreeMap :: new ()) ; } let output = std :: process :: Command :: new (\"python3\") . arg (\"-B\") . arg (root . join (\"ci/registry_fragments.py\")) . arg (root) . args (families) . output () ? ; if ! output . status . success () { return Err (format ! (\"fragment loader: {}\" , String :: from_utf8_lossy (& output . stderr)) . into ()) ; } let text = std :: str :: from_utf8 (& output . stdout) ? ; let values : Vec < _ > = text . lines () . collect () ; if values . len () != families . len () { return Err (\"fragment loader returned a different envelope count\" . into ()) ; } families . iter () . zip (values) . map (| (family , value) | Ok (((* family) . to_owned () , envelope :: json (value) ?))) . collect () }",
+    "class_decision": "public-documents",
+    "item_premise": "Only named public registry families and their complete public dataset envelopes cross this validating loader boundary. It batches process startup without altering family validation, envelope order or projection; failed loading publishes no partial dataset.",
+    "assessments": {
+      "full_recording": "review-170",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

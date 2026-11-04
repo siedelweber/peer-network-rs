@@ -424,6 +424,40 @@ def report_path(build, step):
     return build/'ci/build-inputs'/('gate-'+step+'.json')
 
 
+def bind_inputs(root):
+    """Bind tracked inputs once, before any gate command can run."""
+    path = root/'.lane/build-input-binding.json'
+    path.unlink(missing_ok=True)
+    dirty = subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=no'])
+    if dirty:
+        raise ValueError('input binding requires a clean tracked tree')
+    source, tree = subprocess.check_output(
+        ['git', '-C', str(root), 'rev-parse', 'HEAD', 'HEAD^{tree}'], text=True).splitlines()
+    run_id = os.environ.get('PN_BUILDGRAPH_RUN')
+    if not run_id:
+        raise ValueError('missing current gate run identity')
+    value = dict(run=run_id, source=source, tree=tree)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix('.tmp')
+    temporary.write_text(json.dumps(value)+'\n')
+    temporary.replace(path)
+    return value
+
+
+def input_binding(root, graph, step, source, run_id):
+    """Retain byte digests only for generated and current-run consumer inputs."""
+    bound = json.loads((root/'.lane/build-input-binding.json').read_text())
+    if (set(bound) != {'run', 'source', 'tree'} or bound['run'] != run_id or
+            bound['source'] != source):
+        raise ValueError('stale gate input binding')
+    paths = {row['path'] for row in graph['inputs']
+             if row.get('producer') and step in row['consumers']}
+    paths.update(row['path'] for row in graph.get('products', []) if step in row['consumers'])
+    inputs = [(path, hashlib.sha256((root/path).read_bytes()).hexdigest()
+               if (root/path).is_file() else None) for path in sorted(paths)]
+    return identity(dict(tree=bound['tree'], generated=inputs))
+
+
 def context(root, graph, step):
     """Bind a command to this invocation, configuration, inputs and completed dependency reports."""
     names = [name for name, _ in roster(root)]
@@ -439,17 +473,13 @@ def context(root, graph, step):
     if any(line.split('\t')[0] == step for line in history):
         raise ValueError('step already completed in this invocation: '+step)
     history = bound_history(root, step, history)
-    inputs = []
-    # The migrated Meson targets consume graph_files: a deliberately
-    # conservative tracked envelope including their runner and list helpers.
-    for row in graph['inputs']:
-        inputs.append((row['path'], hashlib.sha256((root/row['path']).read_bytes()).hexdigest()))
-    if not inputs:
+    if not graph['inputs']:
         raise ValueError('delegated step has no declared inputs')
     command = next(s['command'] for s in graph['steps'] if s['name'] == step)
     return dict(run=run_id, source=source, step=step, command=command,
                 configuration={name: os.environ.get(name) for name in PUBLIC_CONFIGURATION},
-                inputs=identity(sorted(inputs)), graph=identity(graph), history=identity(history))
+                inputs=input_binding(root, graph, step, source, run_id),
+                graph=identity(graph), history=identity(history))
 
 
 def read_result(path, request):
@@ -968,6 +998,7 @@ def main():
     audit.add_argument('--graph', required=True)
     audit.add_argument('--report', required=True)
     sub.add_parser('gate')
+    sub.add_parser('bind-inputs')
     sub.add_parser('plan')
     sub.add_parser('finish')
     sub.add_parser('schedule')
@@ -990,6 +1021,9 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'bind-inputs':
+        bind_inputs(Path.cwd())
+        return 0
     if args.action == 'plan':
         print(plan(Path.cwd()), end='')
         return 0
