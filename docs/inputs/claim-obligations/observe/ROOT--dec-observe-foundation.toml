@@ -1,0 +1,13 @@
+name = "ROOT::dec:observe:foundation"
+witnessed_labels = []
+path = "adr/016-observability.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:public-bodies-require-parsed-boundaries", "ROOT::claim:discipline:semantic-review-is-bound-to-source"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The source-bound production operation census and negative fixtures establish mechanical admission; body-bound class decisions remain semantic reviews. Current local execution and export witnesses do not admit a network service."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-observe-foundation"

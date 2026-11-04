@@ -1,0 +1,11 @@
+name = "ROOT::dec:compatibility:history"
+witnessed_labels = []
+path = "adr/014-forward-only-development.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Storage implementer and history reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:compatibility:history"
+closing_condition = "Execute atomic succession and prior-boundary verdict invariance against the durable store."
+closing_step = "Durable storage implementation slice before its first history consumer"

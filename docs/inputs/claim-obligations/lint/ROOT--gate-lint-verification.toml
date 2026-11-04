@@ -1,0 +1,13 @@
+name = "ROOT::gate:lint:verification"
+witnessed_labels = []
+path = "adr/005-lint-discipline.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:configuration-cannot-relax-lints"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Manifest inheritance, forbidden configuration relaxation and test-tree suppressions have negative fixtures; the current gate supplies formatting, required Clippy and the separate advisory pass. Vendor policy remains the documented exception."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-lint-verification"

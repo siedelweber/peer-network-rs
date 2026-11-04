@@ -1,0 +1,13 @@
+name = "EPOCH::verif:admission:publication-disclosures"
+witnessed_labels = []
+path = "packages/epoch/README.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:admission:disclosures-rebuild-checked-package-authority", "EPOCH::claim:admission:disclosure-sections-refuse-substitution", "EPOCH::claim:admission:later-ridge-frames-require-charge-replay"]
+realizers = []
+premises = "Finite complete admitted fixtures, selected semantic verifiers, existing numerical declarations and independent charge replay."
+evidence_paragraph = "EPOCH::rec:admission:publication-disclosure-controls"
+hold = ""
+owner = "Epoch publication implementer"
+missing = "Outside scope: byte codec, settlement authenticity, persistence and offline cryptographic validation."
+closing_condition = "Disclosure roundtrip and section refusals pass under the declared fixture verifiers."
+closing_step = "Bite 8 semantic restoration boundary."

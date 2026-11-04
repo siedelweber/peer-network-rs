@@ -1,0 +1,11 @@
+name = "ROOT::dec:intranet:signed-tokens"
+witnessed_labels = []
+path = "adr/022-host-intranet.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:secret-integrations"
+owner = "Telemetry and host-intranet integration implementers with independent review"
+missing = "Named receiver verification of ES256K and secret-owned token integration, or an evidenced per-link protocol exception."
+closing_condition = "Admit the concrete token recipe and demonstrate pinned algorithm, claim validation and credential custody before enabling the link."
+closing_step = "First token-authenticated service integration before enablement"

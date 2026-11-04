@@ -1,0 +1,16 @@
+name = "ROOT::gate:labels:implementation"
+witnessed_labels = []
+path = "adr/001-label-calculus.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:duplicate-fixtures-name-both-sites", "ROOT::claim:discipline:fixture-carriers-separate-text-from-evidence", "ROOT::claim:discipline:fixture-import-owner-must-be-registered", "ROOT::claim:discipline:fixture-import-requires-citation-parentheses", "ROOT::claim:discipline:fixture-imports-preserve-owner-boundaries", "ROOT::claim:discipline:fixture-index-cannot-supply-its-target", "ROOT::claim:discipline:fixture-inventory-follows-the-asset", "ROOT::claim:discipline:fixture-kind-warrants-cannot-overlap", "ROOT::claim:discipline:fixture-near-misses-are-not-occurrences", "ROOT::claim:discipline:fixture-no-form-span-is-text", "ROOT::claim:discipline:fixture-projection-is-scoped-to-its-inputs", "ROOT::claim:discipline:fixture-projection-reaches-a-fixed-point", "ROOT::claim:discipline:fixture-reserved-kinds-require-a-profile", "ROOT::claim:discipline:fixture-resolution-requires-a-mint", "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic", "ROOT::claim:discipline:fixture-traversal-order-does-not-select-meaning"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Linter integration reviewer"
+missing = "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them. The two inactive clauses are discharged, with a re-entry trigger, by (`amend:labels:entry-vacuous-clauses`)."
+closing_condition = "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them. The two inactive clauses are discharged, with a re-entry trigger, by (`amend:labels:entry-vacuous-clauses`)."
+closing_step = "Entry condition of gate:design:bite-1"
+entry_gate = "ROOT::gate:design:bite-1"
+admission = { "owner" = "Linter integration reviewer", "evidence_kind" = "Deployed-checker conformance fixtures over isolated trees for each witnessable clause, the current-corpus check for this record's clause, and the adoption-data discharge of the synthetic-citation and anchor-harvest clauses", "status" = "admitted", "evidence" = "ROOT::amend:labels:entry-admission" }
+premises = "Finite isolated deployed-checker fixtures for the itemized active clauses, current-corpus checking for this record, and adoption-data discharge with a re-entry trigger for the two inactive clauses. Admission is recorded independently of current execution support."
+evidence_paragraph = "ROOT::amend:labels:entry-executed-evidence"
+admission_basis = "executed"

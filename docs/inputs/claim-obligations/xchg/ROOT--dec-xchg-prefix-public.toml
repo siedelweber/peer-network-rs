@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:prefix-public"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:vectors:public-prefix-extent", "INTERCHANGE::claim:properties:generated-prefix-dispatch-preserves-envelope-routing"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "An external public consumer distinguishes consumed prefix extent from strict whole-input decoding; generated envelopes preserve routing within the declared prefix bound."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-prefix-public"

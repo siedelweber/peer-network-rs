@@ -1,0 +1,13 @@
+name = "ROOT::dec:output:policy"
+witnessed_labels = []
+path = "adr/004-command-line-output-contract.md"
+status = "scoped-supported"
+claims = ["DOCUMENTS::claim:cli:control-records", "DOCUMENTS::claim:cli:terminal-refusal", "DOCUMENTS::claim:cli:clean-result", "DOCUMENTS::claim:cli:finding-status", "DOCUMENTS::claim:cli:runtime-error", "DOCUMENTS::claim:cli:panic-proxy"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-output-policy"

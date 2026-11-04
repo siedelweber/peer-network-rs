@@ -1,0 +1,16 @@
+name = "ROOT::gate:xchg:implementation"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts", "INTERCHANGE::claim:vectors:a-canonical-vector-re-encodes-to-its-own-bytes", "INTERCHANGE::claim:vectors:a-refusal-vector-is-refused-where-it-stands"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Interchange implementer and contract reviewer"
+missing = "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`)."
+closing_condition = "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`)."
+closing_step = "Entry condition of gate:design:bite-1"
+entry_gate = "ROOT::gate:design:bite-1"
+admission = { "owner" = "Interchange implementer and contract reviewer", "evidence_kind" = "Amended entry condition with present artifact evidence: vectors whose files state their sources, with complete source-counted Appendix A coverage, locked dependency review, adoption decisions and current witnesses", "status" = "admitted", "evidence" = "ROOT::amend:xchg:implementation-entry-admission" }
+admission_basis = "executed"
+premises = "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order."
+evidence_paragraph = "EXECWRAP::amend:foundation:entry-interchange-execution"

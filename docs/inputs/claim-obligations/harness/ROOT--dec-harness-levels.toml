@@ -1,0 +1,13 @@
+name = "ROOT::dec:harness:levels"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:dropped-case-refused"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The complete current roster declares every case and level; controlled omissions refuse structurally. The public-surface layout amendment bounds the present package witnesses; future packages require their own levels."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-harness-levels"

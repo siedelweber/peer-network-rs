@@ -7,6 +7,164 @@
   ],
   "rows": [
     {
+      "claims": [
+        "EPOCH::claim:admission:live-publication-retains-marker-registration",
+        "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
+        "EPOCH::claim:admission:finality-loss-freezes-live-publication"
+      ],
+      "closing_condition": "Current-source finite restoration, snapshot and loss-response controls pass with matching review closure identities.",
+      "closing_step": "Bite 8 marker semantics; adapter 8-d2 and offline evidence bite 9.",
+      "evidence_paragraph": "EPOCH::rec:admission:live-publication-evidence",
+      "hold": "",
+      "missing": "Outside scope: real-chain settlement authenticity, persistence and offline cryptographic verification.",
+      "name": "EPOCH::verif:admission:live-publication",
+      "owner": "Epoch and live-adapter implementers",
+      "path": "packages/epoch/README.md",
+      "premises": "Finite complete histories, declared live and publication verifiers, sound destruction/opening predicates and existing admitted numerical procedures.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "cond:comparator:marker-epoch-registration",
+        "def:comparator:marker-burn-snapshot",
+        "rem:comparator:finality-breach-halts"
+      ]
+    },
+    {
+      "claims": [
+        "EPOCH::claim:admission:disclosures-rebuild-checked-package-authority",
+        "EPOCH::claim:admission:disclosure-sections-refuse-substitution",
+        "EPOCH::claim:admission:later-ridge-frames-require-charge-replay"
+      ],
+      "closing_condition": "Disclosure roundtrip and section refusals pass under the declared fixture verifiers.",
+      "closing_step": "Bite 8 semantic restoration boundary.",
+      "evidence_paragraph": "EPOCH::rec:admission:publication-disclosure-controls",
+      "hold": "",
+      "missing": "Outside scope: byte codec, settlement authenticity, persistence and offline cryptographic validation.",
+      "name": "EPOCH::verif:admission:publication-disclosures",
+      "owner": "Epoch publication implementer",
+      "path": "packages/epoch/README.md",
+      "premises": "Finite complete admitted fixtures, selected semantic verifiers, existing numerical declarations and independent charge replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+        "EPOCH::claim:admission:mixed-semantic-sections-are-refused",
+        "EPOCH::claim:admission:restored-ridge-prices-reselect-replay"
+      ],
+      "closing_condition": "Passing current-source finite semantic restoration and mutation controls under the declared verifier premises.",
+      "closing_step": "Bite 8 semantic carrier; encoding and persistence belong to their own cuts.",
+      "evidence_paragraph": "EPOCH::rec:admission:semantic-restoration-evidence",
+      "hold": "",
+      "missing": "Outside scope: canonical bytes, host persistence and authenticated deployment.",
+      "name": "EPOCH::verif:admission:semantic-package-restoration",
+      "owner": "Epoch implementer and publication reviewer",
+      "path": "packages/epoch/README.md",
+      "premises": "Complete self-supported finite fixture; explicit public destruction, registration, candidate, closure-attestation and numerical-profile verifiers. Both chartered floors retain rational charged values.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"
+      ],
+      "closing_condition": "The declared exact identity and refusal controls pass.",
+      "closing_step": "Bite 8 numerical measurement.",
+      "evidence_paragraph": "EPOCH::rec:numerics:replay-work-controls",
+      "hold": "",
+      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
+      "name": "EPOCH::verif:numerics:replay-work",
+      "owner": "Numerical implementer",
+      "path": "packages/epoch/README.md",
+      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "GRAPH::claim:numerics:singleton-image-residual-keeps-wall-uncertainty"
+      ],
+      "closing_condition": "The declared exact identity and refusal controls pass.",
+      "closing_step": "Bite 8 numerical measurement.",
+      "evidence_paragraph": "GRAPH::rec:numerics:singleton-residual-controls",
+      "hold": "",
+      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
+      "name": "GRAPH::verif:numerics:singleton-residual",
+      "owner": "Numerical implementer",
+      "path": "packages/graph/README.md",
+      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
+        "HOST::claim:publication:canonical-disclosure-roundtrip",
+        "HOST::claim:publication:independent-structural-bytes",
+        "HOST::claim:publication:malformed-documents-never-become-disclosures",
+        "HOST::claim:publication:ridge-transcript-reaches-fixed-replay",
+        "HOST::claim:publication:section-mutations-reach-restoration"
+      ],
+      "closing_condition": "Canonical representation, mutation and restoration controls pass.",
+      "closing_step": "Bite 8 canonical publication codec.",
+      "evidence_paragraph": "HOST::verif:publication:codec",
+      "hold": "",
+      "missing": "Outside scope: production publication admission and cryptographic authentication.",
+      "name": "HOST::verif:publication:codec",
+      "owner": "Host publication implementer",
+      "path": "packages/host/README.md",
+      "premises": "Canonical bytes retain the complete untrusted disclosure; only the supplied admitted consumer and fixture verifier authorize the scoped replay. Authentication validity and a production profile are not established.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures"
+      ],
+      "closing_condition": "Every named absent field refuses and complete disclosures retain their exact fields.",
+      "closing_step": "Bite 8 authentication layout.",
+      "evidence_paragraph": "RECORDS::rec:acts:authentication-disclosure-controls",
+      "hold": "",
+      "missing": "Outside scope: cryptographic validity, header consistency, exact approval and deployment authentication.",
+      "name": "RECORDS::verif:acts:authentication-disclosures",
+      "owner": "Records authentication implementer",
+      "path": "packages/records/README.md",
+      "premises": "Named untrusted disclosures, exact retention and finite absent-field mutations under local structural validation.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "RECORDS::claim:burn:live-markers-require-complete-lineage",
+        "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
+        "RECORDS::claim:burn:live-aliases-retain-first-acceptance"
+      ],
+      "closing_condition": "Current-source finite recognition and refusal controls pass with matching review closure identities.",
+      "closing_step": "Bite 8 marker semantics; real adapter in 8-d2 and offline evidence in bite 9.",
+      "evidence_paragraph": "RECORDS::rec:burn:live-marker-evidence",
+      "hold": "",
+      "missing": "Outside scope: real-chain settlement authenticity and offline cryptographic verification.",
+      "name": "RECORDS::verif:burn:live-marker-semantics",
+      "owner": "Records and live-adapter implementers",
+      "path": "packages/records/README.md",
+      "premises": "Finite declared live-verifier fixtures; complete disclosed histories and sound destruction, opening and settlement predicates.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "cond:comparator:marker-lineage-succession",
+        "cond:comparator:marker-causal-dependence",
+        "cond:comparator:marker-network-acceptance",
+        "cond:comparator:marker-single-count"
+      ]
+    },
+    {
       "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
@@ -46,6 +204,31 @@
       "witnessed_labels": []
     },
     {
+      "claims": [
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
+        "ROOT::claim:discipline:build-graph-delegation-preserves-results",
+        "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
+        "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
+        "ROOT::claim:discipline:service-delegation-preserves-ownership",
+        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
+        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
+        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
+        "ROOT::claim:discipline:build-graph-slices-cover-roster"
+      ],
+      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
+      "closing_step": "Build graph slices 1 to 5",
+      "evidence_paragraph": "ROOT::amend:buildgraph:implementation-admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "The composition migration is admitted by the cited evidence amendment. The standing service-selection rule keeps unexecuted service evidence held on unchanged-input gates; the admitted gate has no live dependency on that selected case.",
+      "name": "ROOT::dec:buildgraph:composition",
+      "owner": "Build-graph implementer and independent gate-contract reviewer",
+      "path": "adr/024-build-graph.md",
+      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
       "claims": [],
       "closing_condition": "Execute atomic succession and prior-boundary verdict invariance against the durable store.",
       "closing_step": "Durable storage implementation slice before its first history consumer",
@@ -54,6 +237,19 @@
       "name": "ROOT::dec:compatibility:history",
       "owner": "Storage implementer and history reviewer",
       "path": "adr/014-forward-only-development.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification.",
+      "closing_step": "First signing or verifying slice, before operation enablement",
+      "hold": "ROOT::open:crypto:dependency-admission",
+      "missing": "Exact dependency and C-source admission, required-operation vectors, secret ownership and entropy/nonce evidence; no signature recipe is admitted by the library choice.",
+      "name": "ROOT::dec:crypto:base-library",
+      "owner": "First signing or verifying slice implementer and independent cryptographic integration reviewer",
+      "path": "adr/023-cryptographic-base.md",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []
@@ -147,6 +343,26 @@
       "path": "adr/007-crate-decomposition.md",
       "realizers": [],
       "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
+        "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
+        "EPOCH::claim:compiler:projected-residual-replays-conserved-map"
+      ],
+      "closing_condition": "Retain the joined scoped schedule and independent map/residual witnesses when changing this policy.",
+      "closing_step": "Solve cost design and cut 6-f evidence integration",
+      "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
+      "hold": "ROOT::open:design:numeric-backend",
+      "missing": "The declared schedule now has scoped integrated map and residual evidence. Deployment-profile calibration and current reference certification remain under their own holds.",
+      "name": "ROOT::dec:design:activation-evaluation-policy",
+      "owner": "Numeric kernel implementer and numerical-evidence reviewer",
+      "path": "docs/design/implementation.md",
+      "premises": "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication.",
+      "realizers": [],
+      "status": "scoped-supported",
       "witnessed_labels": []
     },
     {
@@ -516,6 +732,32 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Each integration demonstrates inv:intranet:explicit-case and rule:intranet:secret-reachability with reviewed source-matched execution evidence before enabling its service path.",
+      "closing_step": "Bite 2 storage integration, wallet integration and telemetry service transport admission, each before use",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "Explicit-case acquisition refusals and secret-preserving service integrations under the host-secured non-claim; the guarded transport remains separately held.",
+      "name": "ROOT::dec:intranet:host-secured-first",
+      "owner": "Storage, wallet and telemetry integration implementers",
+      "path": "adr/022-host-intranet.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Admit the concrete token recipe and demonstrate pinned algorithm, claim validation and credential custody before enabling the link.",
+      "closing_step": "First token-authenticated service integration before enablement",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "Named receiver verification of ES256K and secret-owned token integration, or an evidenced per-link protocol exception.",
+      "name": "ROOT::dec:intranet:signed-tokens",
+      "owner": "Telemetry and host-intranet integration implementers with independent review",
+      "path": "adr/022-host-intranet.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "claims": [
         "DOCUMENTS::claim:render:paired-census",
         "DOCUMENTS::claim:render:declaration-authority"
@@ -659,6 +901,19 @@
       "missing": "Reviewed ordinary claim citations and scoped premises for dec:storage:postgresql",
       "name": "ROOT::dec:storage:postgresql",
       "owner": "Domain implementer and repository reviewer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence.",
+      "closing_step": "Bite 2 storage integration admission before persistence",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "The storage library is admitted under amend:storage:library-admission, including the closed statement and result surface, bounded SCRAM derivation and relay publication order. Before enabling persistence, the executable must pass the admitted-boundary check of open:host:admitted-epoch-result and supply its own first-commit evidence under rule:storage:first-commit-evidence; the reviewed statement and diagnostic surface must expand with storage shapes under amend:storage:transport-evidence-boundary, and the deployment must retain custody of both owner and runtime credentials under conv:storage:ownership. TLS counterparts remain in open:intranet:guarded-transport.",
+      "name": "ROOT::dec:storage:secret-shim",
+      "owner": "Storage implementer and independent integration reviewer",
       "path": "adr/015-durable-storage.md",
       "realizers": [],
       "status": "held",
@@ -1073,6 +1328,30 @@
       "path": "adr/018-public-api.md",
       "realizers": [],
       "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
+        "ROOT::claim:discipline:build-graph-delegation-preserves-results",
+        "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
+        "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
+        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
+        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
+        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
+        "ROOT::claim:discipline:build-graph-slices-cover-roster"
+      ],
+      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
+      "closing_step": "Build graph slices 1 to 5",
+      "evidence_paragraph": "ROOT::amend:buildgraph:implementation-admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "The composition migration is admitted by the cited evidence amendment. The standing service-selection rule keeps unexecuted service evidence held on unchanged-input gates; the admitted gate has no live dependency on that selected case.",
+      "name": "ROOT::gate:buildgraph:implementation",
+      "owner": "Build-graph implementer and independent gate-contract reviewer",
+      "path": "adr/024-build-graph.md",
+      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
+      "realizers": [],
+      "status": "scoped-supported",
       "witnessed_labels": []
     },
     {
@@ -1960,6 +2239,28 @@
     },
     {
       "claims": [
+        "DOCUMENTS::claim:render:directed-displays-enclose-exact-values",
+        "ROOT::claim:design:numeric-word-fragments-refuse",
+        "ROOT::claim:design:numeric-displays-match-rational-operands",
+        "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
+        "DOCUMENTS::claim:render:repository-fixed-point",
+        "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded registry premises.",
+      "closing_step": "Numeric registry and first implementation-document migration",
+      "evidence_paragraph": "DOCUMENTS::amend:render:numeric-registry-evidence",
+      "hold": "",
+      "missing": "Outside scope: truth of authored measurements and future numeric consumers.",
+      "name": "ROOT::gate:render:numeric-correspondence",
+      "owner": "Documents implementer and repository reviewer",
+      "path": "adr/003-templated-documentation.md",
+      "premises": "Finite nearest and directed exact-rational rounding, rendered number-word controls, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "DOCUMENTS::claim:render:repository-fixed-point",
         "DOCUMENTS::claim:render:dataset-mutation",
         "DOCUMENTS::claim:render:stale-rendering",
@@ -2806,6 +3107,27 @@
       ]
     },
     {
+      "claims": [
+        "ACTPROFILE::claim:profile:opened-replay-preserves-structure-and-title",
+        "ACTPROFILE::claim:profile:fixed-recipes-bind-exact-authored-inputs",
+        "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
+        "ACTPROFILE::claim:profile:proposal-vectors-cover-projection-branches",
+        "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse"
+      ],
+      "closing_condition": "Admit the byte recipe under record 006 and establish authentication, refusal and unavailable-time recovery witnesses.",
+      "closing_step": "Dependency-opening implementation after identity admission",
+      "evidence_paragraph": "ACTPROFILE::amend:profile:opening-evidence",
+      "hold": "ROOT::open:design:dependency-opening-recipe",
+      "missing": "Authentication of retained finalized anchors and inclusion; deterministic recipe matching, refusal and unavailable-time recovery have scoped witnesses without that authority claim",
+      "name": "ROOT::verif:design:dependency-opening-cases",
+      "owner": "Records and identity implementers",
+      "path": "docs/design/implementation.md",
+      "premises": "Fixed, supplied anchors and secret inputs establish deterministic equality, evidence refusal, protected computation and recurrence recovery with unchanged title. They establish no producer, approval, inclusion or finalized-anchor authority.",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
@@ -2846,6 +3168,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
+      "closing_step": "Bites 8, 9 and 11",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Halt at the last closed epoch after lineage loss, immutable closed results and separately witnessed published re-anchor and follow responses with ledger continuity.",
+      "name": "ROOT::verif:design:finality-breach-cases",
+      "owner": "Host implementer and deployment; offline replay reviewer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",
@@ -2870,6 +3205,39 @@
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "premises": "Finite declaration and candidate controls use exact rational input validation and declared fixture verifiers. Independent controller and schedule witnesses now establish finite delivered sequences; these declaration and candidate controls establish neither final safety, authenticated publication nor atomic admission.",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
+        "EPOCH::claim:compiler:invitation-netting-retains-every-charge"
+      ],
+      "closing_condition": "Establish the released Invitation netting and De-invite singleton witnesses without removing accepted acts from counts or debits.",
+      "closing_step": "Bite 5 Invitation netting implementation",
+      "evidence_paragraph": "EPOCH::amend:compiler:invitation-netting-evidence",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Geometry, allocation amounts and general irrational numeric evidence remain outside these scoped tables.",
+      "name": "ROOT::verif:design:invitation-netting-cases",
+      "owner": "Graph implementer",
+      "path": "docs/design/implementation.md",
+      "premises": "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "ver:membership:invitation-netting"
+      ]
+    },
+    {
+      "claims": [],
+      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
+      "closing_step": "Bites 2, 5, 7, 8, 9 and 11",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Complete marker-registration fixture including silent accumulators, pending markers, missing or repeated closures and realized lineage evidence beyond local prefix checks.",
+      "name": "ROOT::verif:design:marker-registration-cases",
+      "owner": "Records and epoch implementers; host and deployment for realized history",
+      "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []
@@ -2927,6 +3295,26 @@
       "witnessed_labels": []
     },
     {
+      "claims": [
+        "VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization"
+      ],
+      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
+      "closing_step": "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11",
+      "evidence_paragraph": "VERIFICATION::amend:verification:bite-four-evidence",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Recipient compilation and integrated deployment replay remain with bites 5 and 11.",
+      "name": "ROOT::verif:design:settlement-party-cases",
+      "owner": "Graph implementer and verification reviewer",
+      "path": "docs/design/implementation.md",
+      "premises": "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": [
+        "rem:graph:settlement-party-mismatch",
+        "ver:settlement:wrong-party"
+      ]
+    },
+    {
       "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
@@ -2947,6 +3335,19 @@
       "missing": "Reviewed ordinary claim citations and scoped premises for verif:design:storage-history",
       "name": "ROOT::verif:design:storage-history",
       "owner": "Domain implementer and repository reviewer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
+      "closing_step": "Bites 4, 5, 8, 9 and 11",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Published/recomputed title comparison, retained authenticated fault inputs, tentative/final agreement and per-boundary monitoring with unchanged finalized history.",
+      "name": "ROOT::verif:design:title-certificate-cases",
+      "owner": "Records and verification implementers; host and deployment for publication",
       "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held",
@@ -2996,100 +3397,31 @@
       "witnessed_labels": []
     },
     {
-      "claims": [
-        "INTERCHANGE::claim:regexp:the-namespace-pattern-recognizes-labels"
+      "case_census": [
+        "declared same UID owner and exact permitted file modes",
+        "parent ownership, write permissions, ACL and symlink refusals",
+        "regular file, single hard link and descriptor substitution checks",
+        "exact username, separator, hexadecimal password and optional single LF",
+        "oversized, partial, changed, malformed or missing cookie refused",
+        "restart rotation with fresh read; authentication refusal has no replay or fallback"
       ],
-      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
-      "closing_step": "Foundation close, current declared configuration",
-      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-verif-xchg-label-pattern-crosscheck",
+      "claims": [
+        "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
+        "WALLET::claim:wallet:rpc-cookie-descriptors-confine-acquisition",
+        "WALLET::claim:wallet:rpc-cookie-grammar-is-exact",
+        "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay"
+      ],
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: declared same UID owner and exact permitted file modes; parent ownership, write permissions, ACL and symlink refusals; regular file, single hard link and descriptor substitution checks; exact username, separator, hexadecimal password and optional single LF; oversized, partial, changed, malformed or missing cookie refused; restart rotation with fresh read; authentication refusal has no replay or fallback.",
+      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
+      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
       "hold": "",
-      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
-      "name": "ROOT::verif:xchg:label-pattern-crosscheck",
-      "owner": "Foundation implementer and repository reviewer",
-      "path": "adr/010-interchange-design.md",
-      "premises": "The declared namespace pattern is compared with the hand-written label recognizer over the committed near-miss and generated subject corpus; the premise is the current declared pattern set.",
+      "missing": "Outside scope: signed fixtures are now measured separately; recognition, settlement and spending remain held.",
+      "name": "ROOT::verif:devnet:wallet-cookie",
+      "owner": "Bite 2 wallet implementer with independent integration review",
+      "path": "adr/019-development-network.md",
+      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
       "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "DOCUMENTS::claim:render:paired-census",
-        "DOCUMENTS::claim:render:registry-relation",
-        "DOCUMENTS::claim:render:repository-fixed-point",
-        "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
-        "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved",
-        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
-        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
-        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts",
-        "ROOT::claim:devperf:result-accounting-is-explicit",
-        "ROOT::claim:devperf:timing-preserves-predicates",
-        "ROOT::claim:discipline:members-inherit-workspace-lints",
-        "ROOT::claim:harness:interchange-structure-is-declared"
-      ],
-      "closing_condition": "Passing current-source requirement witnesses.",
-      "closing_step": "Foundation close, current declared configuration",
-      "evidence_paragraph": "EXECWRAP::amend:foundation:requirement-admissions",
-      "hold": "",
-      "missing": "Outside scope: new consumers and changed premises.",
-      "name": "ROOT::verif:testing:foundation-admissions",
-      "owner": "Foundation implementer and repository reviewer",
-      "path": "adr/017-claim-based-testing.md",
-      "premises": "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence.",
-      "closing_step": "Bite 2 storage integration admission before persistence",
-      "hold": "ROOT::open:design:secret-integrations",
-      "missing": "The storage library is admitted under amend:storage:library-admission, including the closed statement and result surface, bounded SCRAM derivation and relay publication order. Before enabling persistence, the executable must pass the admitted-boundary check of open:host:admitted-epoch-result and supply its own first-commit evidence under rule:storage:first-commit-evidence; the reviewed statement and diagnostic surface must expand with storage shapes under amend:storage:transport-evidence-boundary, and the deployment must retain custody of both owner and runtime credentials under conv:storage:ownership. TLS counterparts remain in open:intranet:guarded-transport.",
-      "name": "ROOT::dec:storage:secret-shim",
-      "owner": "Storage implementer and independent integration reviewer",
-      "path": "adr/015-durable-storage.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Each integration demonstrates inv:intranet:explicit-case and rule:intranet:secret-reachability with reviewed source-matched execution evidence before enabling its service path.",
-      "closing_step": "Bite 2 storage integration, wallet integration and telemetry service transport admission, each before use",
-      "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Explicit-case acquisition refusals and secret-preserving service integrations under the host-secured non-claim; the guarded transport remains separately held.",
-      "name": "ROOT::dec:intranet:host-secured-first",
-      "owner": "Storage, wallet and telemetry integration implementers",
-      "path": "adr/022-host-intranet.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification.",
-      "closing_step": "First signing or verifying slice, before operation enablement",
-      "hold": "ROOT::open:crypto:dependency-admission",
-      "missing": "Exact dependency and C-source admission, required-operation vectors, secret ownership and entropy/nonce evidence; no signature recipe is admitted by the library choice.",
-      "name": "ROOT::dec:crypto:base-library",
-      "owner": "First signing or verifying slice implementer and independent cryptographic integration reviewer",
-      "path": "adr/023-cryptographic-base.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Admit the concrete token recipe and demonstrate pinned algorithm, claim validation and credential custody before enabling the link.",
-      "closing_step": "First token-authenticated service integration before enablement",
-      "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Named receiver verification of ES256K and secret-owned token integration, or an evidenced per-link protocol exception.",
-      "name": "ROOT::dec:intranet:signed-tokens",
-      "owner": "Telemetry and host-intranet integration implementers with independent review",
-      "path": "adr/022-host-intranet.md",
-      "realizers": [],
-      "status": "held",
       "witnessed_labels": []
     },
     {
@@ -3107,79 +3439,6 @@
       "hold": "ROOT::open:design:devnet-evidence",
       "missing": "Versions, checksums, unified features and C modules, the pinned toolchain and both C provenance records, curve and proof encodings and confinement have scoped claims; entropy-failure execution and the fork review keep the global-context case and the group held.",
       "name": "ROOT::verif:devnet:wallet-crypto",
-      "owner": "Bite 2 wallet implementer with independent integration review",
-      "path": "adr/019-development-network.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "case_census": [
-        "full layout and inclusion with confidential non-evidence transactions",
-        "issuance and peg-in non-evidence layouts and witnesses",
-        "explicit evidence assets and integer amounts; wrong asset or opaque evidence refused",
-        "malformed prefixes, truncated and trailing bytes",
-        "independent decoder and raw vector agreement",
-        "hostile count prefixes and nested allocation measured by counting allocator",
-        "permanent target and run/request binding; missing or altered commitments refused"
-      ],
-      "claims": [
-        "WALLET::claim:wallet:decoder-reservations-have-measured-bounds",
-        "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request",
-        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
-        "WALLET::claim:wallet:hostile-prefixes-refuse-before-codec-allocation"
-      ],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: full layout and inclusion with confidential non-evidence transactions; issuance and peg-in non-evidence layouts and witnesses; explicit evidence assets and integer amounts; wrong asset or opaque evidence refused; malformed prefixes, truncated and trailing bytes; independent decoder and raw vector agreement; hostile count prefixes and nested allocation measured by counting allocator; permanent target and run/request binding; missing or altered commitments refused.",
-      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "evidence_paragraph": "WALLET::amend:wallet:layout-evidence",
-      "hold": "",
-      "missing": "Outside scope: real-chain inclusion, relay policy and service evidence remain held with the wallet integration implementer.",
-      "name": "ROOT::verif:devnet:wallet-layout",
-      "owner": "Bite 2 wallet implementer with independent integration review",
-      "path": "adr/019-development-network.md",
-      "premises": "The seven layout cases run through the public adapter, byte-only independent oracle and per-vector heap profiler; the fixture target selector is not a real-chain relay-policy admission.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "case_census": [
-        "missing service, wrong binary, run, genesis or mode refused",
-        "nontrivial declared challenge and invalid block signature refused by real node",
-        "genesis asset outputs, ownership and fixed stock independently reconciled",
-        "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
-        "all supported funding paths and pre-opening transfers audited for distribution bypass",
-        "transfers, fees and grants give zero burn; destruction gives exact amount",
-        "harness producer credential isolated from read-only adapter"
-      ],
-      "claims": [],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter.",
-      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter.",
-      "name": "ROOT::verif:devnet:wallet-profile",
-      "owner": "Bite 2 wallet implementer with independent integration review",
-      "path": "adr/019-development-network.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "case_census": [
-        "depth immediately below and at the declared threshold",
-        "shallow replacement and pinned-floor fault",
-        "duplicate outpoints and aliases cannot double count",
-        "wrong policy edition and lineage refused",
-        "missing or ambiguous opening and unavailable evidence refused",
-        "non-development adapter refusal",
-        "old evidence reads unchanged; epoch snapshot derivation remains bite 5"
-      ],
-      "claims": [],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: depth immediately below and at the declared threshold; shallow replacement and pinned-floor fault; duplicate outpoints and aliases cannot double count; wrong policy edition and lineage refused; missing or ambiguous opening and unavailable evidence refused; non-development adapter refusal; old evidence reads unchanged. The registered bite-5 snapshot case refers to the remaining real-chain integration under open:design:devnet-evidence and verif:design:devnet-conformance, not a missing compiler or a bite-5 persistence carrier.",
-      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "Depth, replacement and pinned-floor fault, duplicate outpoints and aliases, and unchanged old reads have scoped claims; wrong policy edition and lineage and missing or ambiguous openings need the marker policy carriers of pn-records and host recognition, and the non-development adapter refusal needs the pn-host guard, so the group stays held. Compiled snapshot derivation has scoped bite-5 support. Its pinned real-chain burn samples, first-accepted increments and ledger-vintage integration remain held under open:design:devnet-evidence and verif:design:devnet-conformance, owned by the epoch, adapter and API implementers with the devnet operator. The admitted ledger/result carrier and its PostgreSQL evidence belong to bite 8 under open:host:admitted-epoch-result, owned by the epoch and host implementers.",
-      "name": "ROOT::verif:devnet:wallet-settlement",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
       "realizers": [],
@@ -3247,30 +3506,53 @@
     },
     {
       "case_census": [
-        "declared same UID owner and exact permitted file modes",
-        "parent ownership, write permissions, ACL and symlink refusals",
-        "regular file, single hard link and descriptor substitution checks",
-        "exact username, separator, hexadecimal password and optional single LF",
-        "oversized, partial, changed, malformed or missing cookie refused",
-        "restart rotation with fresh read; authentication refusal has no replay or fallback"
+        "full layout and inclusion with confidential non-evidence transactions",
+        "issuance and peg-in non-evidence layouts and witnesses",
+        "explicit evidence assets and integer amounts; wrong asset or opaque evidence refused",
+        "malformed prefixes, truncated and trailing bytes",
+        "independent decoder and raw vector agreement",
+        "hostile count prefixes and nested allocation measured by counting allocator",
+        "permanent target and run/request binding; missing or altered commitments refused"
       ],
       "claims": [
-        "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
-        "WALLET::claim:wallet:rpc-cookie-descriptors-confine-acquisition",
-        "WALLET::claim:wallet:rpc-cookie-grammar-is-exact",
-        "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay"
+        "WALLET::claim:wallet:decoder-reservations-have-measured-bounds",
+        "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request",
+        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
+        "WALLET::claim:wallet:hostile-prefixes-refuse-before-codec-allocation"
       ],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: declared same UID owner and exact permitted file modes; parent ownership, write permissions, ACL and symlink refusals; regular file, single hard link and descriptor substitution checks; exact username, separator, hexadecimal password and optional single LF; oversized, partial, changed, malformed or missing cookie refused; restart rotation with fresh read; authentication refusal has no replay or fallback.",
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: full layout and inclusion with confidential non-evidence transactions; issuance and peg-in non-evidence layouts and witnesses; explicit evidence assets and integer amounts; wrong asset or opaque evidence refused; malformed prefixes, truncated and trailing bytes; independent decoder and raw vector agreement; hostile count prefixes and nested allocation measured by counting allocator; permanent target and run/request binding; missing or altered commitments refused.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
+      "evidence_paragraph": "WALLET::amend:wallet:layout-evidence",
       "hold": "",
-      "missing": "Outside scope: signed fixtures are now measured separately; recognition, settlement and spending remain held.",
-      "name": "ROOT::verif:devnet:wallet-cookie",
+      "missing": "Outside scope: real-chain inclusion, relay policy and service evidence remain held with the wallet integration implementer.",
+      "name": "ROOT::verif:devnet:wallet-layout",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
-      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
+      "premises": "The seven layout cases run through the public adapter, byte-only independent oracle and per-vector heap profiler; the fixture target selector is not a real-chain relay-policy admission.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "case_census": [
+        "missing service, wrong binary, run, genesis or mode refused",
+        "nontrivial declared challenge and invalid block signature refused by real node",
+        "genesis asset outputs, ownership and fixed stock independently reconciled",
+        "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
+        "all supported funding paths and pre-opening transfers audited for distribution bypass",
+        "transfers, fees and grants give zero burn; destruction gives exact amount",
+        "harness producer credential isolated from read-only adapter"
+      ],
+      "claims": [],
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter.",
+      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
+      "hold": "ROOT::open:design:devnet-evidence",
+      "missing": "No executed claim for this case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter.",
+      "name": "ROOT::verif:devnet:wallet-profile",
+      "owner": "Bite 2 wallet implementer with independent integration review",
+      "path": "adr/019-development-network.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {
@@ -3307,211 +3589,85 @@
       "witnessed_labels": []
     },
     {
-      "claims": [
-        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
-        "ROOT::claim:discipline:build-graph-delegation-preserves-results",
-        "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
-        "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
-        "ROOT::claim:discipline:service-delegation-preserves-ownership",
-        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
-        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
-        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
-        "ROOT::claim:discipline:build-graph-slices-cover-roster"
+      "case_census": [
+        "depth immediately below and at the declared threshold",
+        "shallow replacement and pinned-floor fault",
+        "duplicate outpoints and aliases cannot double count",
+        "wrong policy edition and lineage refused",
+        "missing or ambiguous opening and unavailable evidence refused",
+        "non-development adapter refusal",
+        "old evidence reads unchanged; epoch snapshot derivation remains bite 5"
       ],
-      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
-      "closing_step": "Build graph slices 1 to 5",
-      "evidence_paragraph": "ROOT::amend:buildgraph:implementation-admission",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "The composition migration is admitted by the cited evidence amendment. The standing service-selection rule keeps unexecuted service evidence held on unchanged-input gates; the admitted gate has no live dependency on that selected case.",
-      "name": "ROOT::dec:buildgraph:composition",
-      "owner": "Build-graph implementer and independent gate-contract reviewer",
-      "path": "adr/024-build-graph.md",
-      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
-        "ROOT::claim:discipline:build-graph-delegation-preserves-results",
-        "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
-        "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
-        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
-        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
-        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
-        "ROOT::claim:discipline:build-graph-slices-cover-roster"
-      ],
-      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
-      "closing_step": "Build graph slices 1 to 5",
-      "evidence_paragraph": "ROOT::amend:buildgraph:implementation-admission",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "The composition migration is admitted by the cited evidence amendment. The standing service-selection rule keeps unexecuted service evidence held on unchanged-input gates; the admitted gate has no live dependency on that selected case.",
-      "name": "ROOT::gate:buildgraph:implementation",
-      "owner": "Build-graph implementer and independent gate-contract reviewer",
-      "path": "adr/024-build-graph.md",
-      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "ACTPROFILE::claim:profile:opened-replay-preserves-structure-and-title",
-        "ACTPROFILE::claim:profile:fixed-recipes-bind-exact-authored-inputs",
-        "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
-        "ACTPROFILE::claim:profile:proposal-vectors-cover-projection-branches",
-        "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse"
-      ],
-      "closing_condition": "Admit the byte recipe under record 006 and establish authentication, refusal and unavailable-time recovery witnesses.",
-      "closing_step": "Dependency-opening implementation after identity admission",
-      "evidence_paragraph": "ACTPROFILE::amend:profile:opening-evidence",
-      "hold": "ROOT::open:design:dependency-opening-recipe",
-      "missing": "Authentication of retained finalized anchors and inclusion; deterministic recipe matching, refusal and unavailable-time recovery have scoped witnesses without that authority claim",
-      "name": "ROOT::verif:design:dependency-opening-cases",
-      "owner": "Records and identity implementers",
-      "path": "docs/design/implementation.md",
-      "premises": "Fixed, supplied anchors and secret inputs establish deterministic equality, evidence refusal, protected computation and recurrence recovery with unchanged title. They establish no producer, approval, inclusion or finalized-anchor authority.",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
-        "EPOCH::claim:compiler:invitation-netting-retains-every-charge"
-      ],
-      "closing_condition": "Establish the released Invitation netting and De-invite singleton witnesses without removing accepted acts from counts or debits.",
-      "closing_step": "Bite 5 Invitation netting implementation",
-      "evidence_paragraph": "EPOCH::amend:compiler:invitation-netting-evidence",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Geometry, allocation amounts and general irrational numeric evidence remain outside these scoped tables.",
-      "name": "ROOT::verif:design:invitation-netting-cases",
-      "owner": "Graph implementer",
-      "path": "docs/design/implementation.md",
-      "premises": "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": [
-        "ver:membership:invitation-netting"
-      ]
-    },
-    {
-      "claims": [
-        "VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization"
-      ],
-      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
-      "closing_step": "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11",
-      "evidence_paragraph": "VERIFICATION::amend:verification:bite-four-evidence",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Recipient compilation and integrated deployment replay remain with bites 5 and 11.",
-      "name": "ROOT::verif:design:settlement-party-cases",
-      "owner": "Graph implementer and verification reviewer",
-      "path": "docs/design/implementation.md",
-      "premises": "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": [
-        "rem:graph:settlement-party-mismatch",
-        "ver:settlement:wrong-party"
-      ]
-    },
-    {
       "claims": [],
-      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
-      "closing_step": "Bites 4, 5, 8, 9 and 11",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Published/recomputed title comparison, retained authenticated fault inputs, tentative/final agreement and per-boundary monitoring with unchanged finalized history.",
-      "name": "ROOT::verif:design:title-certificate-cases",
-      "owner": "Records and verification implementers; host and deployment for publication",
-      "path": "docs/design/implementation.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
-      "closing_step": "Bites 2, 5, 7, 8, 9 and 11",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Complete marker-registration fixture including silent accumulators, pending markers, missing or repeated closures and realized lineage evidence beyond local prefix checks.",
-      "name": "ROOT::verif:design:marker-registration-cases",
-      "owner": "Records and epoch implementers; host and deployment for realized history",
-      "path": "docs/design/implementation.md",
-      "realizers": [],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
-      "closing_step": "Bites 8, 9 and 11",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Halt at the last closed epoch after lineage loss, immutable closed results and separately witnessed published re-anchor and follow responses with ledger continuity.",
-      "name": "ROOT::verif:design:finality-breach-cases",
-      "owner": "Host implementer and deployment; offline replay reviewer",
-      "path": "docs/design/implementation.md",
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: depth immediately below and at the declared threshold; shallow replacement and pinned-floor fault; duplicate outpoints and aliases cannot double count; wrong policy edition and lineage refused; missing or ambiguous opening and unavailable evidence refused; non-development adapter refusal; old evidence reads unchanged. The registered bite-5 snapshot case refers to the remaining real-chain integration under open:design:devnet-evidence and verif:design:devnet-conformance, not a missing compiler or a bite-5 persistence carrier.",
+      "closing_step": "Bite 2 wallet integration, before enabling the adapter",
+      "hold": "ROOT::open:design:devnet-evidence",
+      "missing": "Depth, replacement and pinned-floor fault, duplicate outpoints and aliases, and unchanged old reads have scoped claims; wrong policy edition and lineage and missing or ambiguous openings need the marker policy carriers of pn-records and host recognition, and the non-development adapter refusal needs the pn-host guard, so the group stays held. Compiled snapshot derivation has scoped bite-5 support. Its pinned real-chain burn samples, first-accepted increments and ledger-vintage integration remain held under open:design:devnet-evidence and verif:design:devnet-conformance, owned by the epoch, adapter and API implementers with the devnet operator. The admitted ledger/result carrier and its PostgreSQL evidence belong to bite 8 under open:host:admitted-epoch-result, owned by the epoch and host implementers.",
+      "name": "ROOT::verif:devnet:wallet-settlement",
+      "owner": "Bite 2 wallet implementer with independent integration review",
+      "path": "adr/019-development-network.md",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []
     },
     {
       "claims": [
-        "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
-        "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
-        "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
-        "EPOCH::claim:compiler:projected-residual-replays-conserved-map"
+        "WALLET::claim:wallet:descriptor-attempts-retain-common-input-conflict"
       ],
-      "closing_condition": "Retain the joined scoped schedule and independent map/residual witnesses when changing this policy.",
-      "closing_step": "Solve cost design and cut 6-f evidence integration",
-      "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
-      "hold": "ROOT::open:design:numeric-backend",
-      "missing": "The declared schedule now has scoped integrated map and residual evidence. Deployment-profile calibration and current reference certification remain under their own holds.",
-      "name": "ROOT::dec:design:activation-evaluation-policy",
-      "owner": "Numeric kernel implementer and numerical-evidence reviewer",
-      "path": "docs/design/implementation.md",
-      "premises": "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication.",
+      "closing_condition": "Real descriptor PSET conflict, common-intersection, abandonment, recovery, concurrency and shallow-reorg controls pass.",
+      "closing_step": "Bite eight descriptor recovery witnesses; production integration follows separately.",
+      "evidence_paragraph": "WALLET::amend:wallet:descriptor-recovery-evidence",
+      "hold": "",
+      "missing": "Outside scope: production spending, crash-durable input notes, arbitrary descriptor expansion and incomplete chain scans.",
+      "name": "ROOT::verif:harness:descriptor-recovery",
+      "owner": "Wallet implementer and recovery-contract reviewer",
+      "path": "adr/020-testing-harness.md",
+      "premises": "Finite known descriptor scripts, complete fixture chain and pool, explicit destruction outputs and a dedicated signing wallet.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
     },
     {
       "claims": [
-        "DOCUMENTS::claim:render:directed-displays-enclose-exact-values",
-        "ROOT::claim:design:numeric-word-fragments-refuse",
-        "ROOT::claim:design:numeric-displays-match-rational-operands",
-        "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
+        "WALLET::claim:wallet:daemon-recovery-study-retains-capability-boundaries"
+      ],
+      "closing_condition": "Passing real-daemon primitive controls and the repeated-request counterexample under the declared fixture configuration.",
+      "closing_step": "Bite 8 wallet capability study; spending remains unsupported.",
+      "evidence_paragraph": "WALLET::amend:wallet:recovery-capability-evidence",
+      "hold": "",
+      "missing": "Outside scope: production spending, authoritative complete conflicted history, crash atomicity and in-flight cancellation.",
+      "name": "ROOT::verif:harness:wallet-capability-study",
+      "owner": "Wallet implementer and recovery-contract reviewer",
+      "path": "adr/020-testing-harness.md",
+      "premises": "BDB regtest fixture, producer-funded independent confirmed inputs, disabled study broadcasting and separately provisioned method-whitelisted identity.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:registry-relation",
         "DOCUMENTS::claim:render:repository-fixed-point",
-        "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local"
+        "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
+        "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved",
+        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
+        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
+        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts",
+        "ROOT::claim:devperf:result-accounting-is-explicit",
+        "ROOT::claim:devperf:timing-preserves-predicates",
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:harness:interchange-structure-is-declared"
       ],
-      "closing_condition": "Passing current-source evidence under the recorded registry premises.",
-      "closing_step": "Numeric registry and first implementation-document migration",
-      "evidence_paragraph": "DOCUMENTS::amend:render:numeric-registry-evidence",
+      "closing_condition": "Passing current-source requirement witnesses.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:requirement-admissions",
       "hold": "",
-      "missing": "Outside scope: truth of authored measurements and future numeric consumers.",
-      "name": "ROOT::gate:render:numeric-correspondence",
-      "owner": "Documents implementer and repository reviewer",
-      "path": "adr/003-templated-documentation.md",
-      "premises": "Finite nearest and directed exact-rational rounding, rendered number-word controls, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "EPOCH::claim:admission:restored-packages-retain-complete-admission",
-        "EPOCH::claim:admission:mixed-semantic-sections-are-refused",
-        "EPOCH::claim:admission:restored-ridge-prices-reselect-replay"
-      ],
-      "closing_condition": "Passing current-source finite semantic restoration and mutation controls under the declared verifier premises.",
-      "closing_step": "Bite 8 semantic carrier; encoding and persistence belong to their own cuts.",
-      "evidence_paragraph": "EPOCH::rec:admission:semantic-restoration-evidence",
-      "hold": "",
-      "missing": "Outside scope: canonical bytes, host persistence and authenticated deployment.",
-      "name": "EPOCH::verif:admission:semantic-package-restoration",
-      "owner": "Epoch implementer and publication reviewer",
-      "path": "packages/epoch/README.md",
-      "premises": "Complete self-supported finite fixture; explicit public destruction, registration, candidate, closure-attestation and numerical-profile verifiers. Both chartered floors retain rational charged values.",
+      "missing": "Outside scope: new consumers and changed premises.",
+      "name": "ROOT::verif:testing:foundation-admissions",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/017-claim-based-testing.md",
+      "premises": "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -3538,173 +3694,17 @@
     },
     {
       "claims": [
-        "WALLET::claim:wallet:daemon-recovery-study-retains-capability-boundaries"
+        "INTERCHANGE::claim:regexp:the-namespace-pattern-recognizes-labels"
       ],
-      "closing_condition": "Passing real-daemon primitive controls and the repeated-request counterexample under the declared fixture configuration.",
-      "closing_step": "Bite 8 wallet capability study; spending remains unsupported.",
-      "evidence_paragraph": "WALLET::amend:wallet:recovery-capability-evidence",
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-verif-xchg-label-pattern-crosscheck",
       "hold": "",
-      "missing": "Outside scope: production spending, authoritative complete conflicted history, crash atomicity and in-flight cancellation.",
-      "name": "ROOT::verif:harness:wallet-capability-study",
-      "owner": "Wallet implementer and recovery-contract reviewer",
-      "path": "adr/020-testing-harness.md",
-      "premises": "BDB regtest fixture, producer-funded independent confirmed inputs, disabled study broadcasting and separately provisioned method-whitelisted identity.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "RECORDS::claim:burn:live-markers-require-complete-lineage",
-        "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
-        "RECORDS::claim:burn:live-aliases-retain-first-acceptance"
-      ],
-      "closing_condition": "Current-source finite recognition and refusal controls pass with matching review closure identities.",
-      "closing_step": "Bite 8 marker semantics; real adapter in 8-d2 and offline evidence in bite 9.",
-      "evidence_paragraph": "RECORDS::rec:burn:live-marker-evidence",
-      "hold": "",
-      "missing": "Outside scope: real-chain settlement authenticity and offline cryptographic verification.",
-      "name": "RECORDS::verif:burn:live-marker-semantics",
-      "owner": "Records and live-adapter implementers",
-      "path": "packages/records/README.md",
-      "premises": "Finite declared live-verifier fixtures; complete disclosed histories and sound destruction, opening and settlement predicates.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": [
-        "cond:comparator:marker-lineage-succession",
-        "cond:comparator:marker-causal-dependence",
-        "cond:comparator:marker-network-acceptance",
-        "cond:comparator:marker-single-count"
-      ]
-    },
-    {
-      "claims": [
-        "EPOCH::claim:admission:live-publication-retains-marker-registration",
-        "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
-        "EPOCH::claim:admission:finality-loss-freezes-live-publication"
-      ],
-      "closing_condition": "Current-source finite restoration, snapshot and loss-response controls pass with matching review closure identities.",
-      "closing_step": "Bite 8 marker semantics; adapter 8-d2 and offline evidence bite 9.",
-      "evidence_paragraph": "EPOCH::rec:admission:live-publication-evidence",
-      "hold": "",
-      "missing": "Outside scope: real-chain settlement authenticity, persistence and offline cryptographic verification.",
-      "name": "EPOCH::verif:admission:live-publication",
-      "owner": "Epoch and live-adapter implementers",
-      "path": "packages/epoch/README.md",
-      "premises": "Finite complete histories, declared live and publication verifiers, sound destruction/opening predicates and existing admitted numerical procedures.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": [
-        "cond:comparator:marker-epoch-registration",
-        "def:comparator:marker-burn-snapshot",
-        "rem:comparator:finality-breach-halts"
-      ]
-    },
-    {
-      "claims": [
-        "EPOCH::claim:admission:disclosures-rebuild-checked-package-authority",
-        "EPOCH::claim:admission:disclosure-sections-refuse-substitution",
-        "EPOCH::claim:admission:later-ridge-frames-require-charge-replay"
-      ],
-      "closing_condition": "Disclosure roundtrip and section refusals pass under the declared fixture verifiers.",
-      "closing_step": "Bite 8 semantic restoration boundary.",
-      "evidence_paragraph": "EPOCH::rec:admission:publication-disclosure-controls",
-      "hold": "",
-      "missing": "Outside scope: byte codec, settlement authenticity, persistence and offline cryptographic validation.",
-      "name": "EPOCH::verif:admission:publication-disclosures",
-      "owner": "Epoch publication implementer",
-      "path": "packages/epoch/README.md",
-      "premises": "Finite complete admitted fixtures, selected semantic verifiers, existing numerical declarations and independent charge replay.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "WALLET::claim:wallet:descriptor-attempts-retain-common-input-conflict"
-      ],
-      "closing_condition": "Real descriptor PSET conflict, common-intersection, abandonment, recovery, concurrency and shallow-reorg controls pass.",
-      "closing_step": "Bite eight descriptor recovery witnesses; production integration follows separately.",
-      "evidence_paragraph": "WALLET::amend:wallet:descriptor-recovery-evidence",
-      "hold": "",
-      "missing": "Outside scope: production spending, crash-durable input notes, arbitrary descriptor expansion and incomplete chain scans.",
-      "name": "ROOT::verif:harness:descriptor-recovery",
-      "owner": "Wallet implementer and recovery-contract reviewer",
-      "path": "adr/020-testing-harness.md",
-      "premises": "Finite known descriptor scripts, complete fixture chain and pool, explicit destruction outputs and a dedicated signing wallet.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"
-      ],
-      "closing_condition": "The declared exact identity and refusal controls pass.",
-      "closing_step": "Bite 8 numerical measurement.",
-      "evidence_paragraph": "EPOCH::rec:numerics:replay-work-controls",
-      "hold": "",
-      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
-      "name": "EPOCH::verif:numerics:replay-work",
-      "owner": "Numerical implementer",
-      "path": "packages/epoch/README.md",
-      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "GRAPH::claim:numerics:singleton-image-residual-keeps-wall-uncertainty"
-      ],
-      "closing_condition": "The declared exact identity and refusal controls pass.",
-      "closing_step": "Bite 8 numerical measurement.",
-      "evidence_paragraph": "GRAPH::rec:numerics:singleton-residual-controls",
-      "hold": "",
-      "missing": "Outside scope: deployment-wide precision, availability and resource guarantees.",
-      "name": "GRAPH::verif:numerics:singleton-residual",
-      "owner": "Numerical implementer",
-      "path": "packages/graph/README.md",
-      "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures"
-      ],
-      "closing_condition": "Every named absent field refuses and complete disclosures retain their exact fields.",
-      "closing_step": "Bite 8 authentication layout.",
-      "evidence_paragraph": "RECORDS::rec:acts:authentication-disclosure-controls",
-      "hold": "",
-      "missing": "Outside scope: cryptographic validity, header consistency, exact approval and deployment authentication.",
-      "name": "RECORDS::verif:acts:authentication-disclosures",
-      "owner": "Records authentication implementer",
-      "path": "packages/records/README.md",
-      "premises": "Named untrusted disclosures, exact retention and finite absent-field mutations under local structural validation.",
-      "realizers": [],
-      "status": "scoped-supported",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [
-        "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
-        "HOST::claim:publication:canonical-disclosure-roundtrip",
-        "HOST::claim:publication:independent-structural-bytes",
-        "HOST::claim:publication:malformed-documents-never-become-disclosures",
-        "HOST::claim:publication:ridge-transcript-reaches-fixed-replay",
-        "HOST::claim:publication:section-mutations-reach-restoration"
-      ],
-      "closing_condition": "Canonical representation, mutation and restoration controls pass.",
-      "closing_step": "Bite 8 canonical publication codec.",
-      "evidence_paragraph": "HOST::verif:publication:codec",
-      "hold": "",
-      "missing": "Outside scope: production publication admission and cryptographic authentication.",
-      "name": "HOST::verif:publication:codec",
-      "owner": "Host publication implementer",
-      "path": "packages/host/README.md",
-      "premises": "Canonical bytes retain the complete untrusted disclosure; only the supplied admitted consumer and fixture verifier authorize the scoped replay. Authentication validity and a production profile are not established.",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::verif:xchg:label-pattern-crosscheck",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/010-interchange-design.md",
+      "premises": "The declared namespace pattern is compared with the hand-written label recognizer over the committed near-miss and generated subject corpus; the premise is the current declared pattern set.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []

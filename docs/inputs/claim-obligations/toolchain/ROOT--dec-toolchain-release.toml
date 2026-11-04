@@ -1,0 +1,13 @@
+name = "ROOT::dec:toolchain:release"
+witnessed_labels = []
+path = "adr/013-toolchain-and-build-profile.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:toolchain-family-is-consistent", "ROOT::claim:devperf:gate-profile-guards"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-toolchain-release"

@@ -1,0 +1,11 @@
+name = "ROOT::dec:intranet:host-secured-first"
+witnessed_labels = []
+path = "adr/022-host-intranet.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:secret-integrations"
+owner = "Storage, wallet and telemetry integration implementers"
+missing = "Explicit-case acquisition refusals and secret-preserving service integrations under the host-secured non-claim; the guarded transport remains separately held."
+closing_condition = "Each integration demonstrates inv:intranet:explicit-case and rule:intranet:secret-reachability with reviewed source-matched execution evidence before enabling its service path."
+closing_step = "Bite 2 storage integration, wallet integration and telemetry service transport admission, each before use"

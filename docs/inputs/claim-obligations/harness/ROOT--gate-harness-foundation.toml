@@ -1,0 +1,13 @@
+name = "ROOT::gate:harness:foundation"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "scoped-supported"
+claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Current package tracing co-closure is supported by amend:observe:foundation-evidence; real services, assigned domain suites and client harnesses remain held with their implementing owners and corresponding provisioning, domain and client slices. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
+closing_condition = "Preserve current scoped support and obtain reviewed service, domain and client executions as those implementations land."
+closing_step = "Service provisioning, assigned domain bites and client slices"
+premises = "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred."
+evidence_paragraph = "TESTKIT::amend:testkit:harness-foundation-evidence"

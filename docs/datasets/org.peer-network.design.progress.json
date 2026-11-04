@@ -34219,6 +34219,48 @@
     },
     {
       "category": "obligation-support",
+      "claim_count": 3,
+      "name": "EPOCH::verif:admission:live-publication",
+      "number_forms": {
+        "claim_count": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      }
+    },
+    {
+      "category": "obligation-support",
+      "claim_count": 3,
+      "name": "RECORDS::verif:burn:live-marker-semantics",
+      "number_forms": {
+        "claim_count": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "claim_count": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      }
+    },
+    {
+      "category": "obligation-support",
       "claim_count": 26,
       "name": "ROOT::dec:design:final-state",
       "number_forms": {
@@ -34311,48 +34353,6 @@
           "exact_exact": true,
           "exact_relation": "=",
           "num": "1",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "claim_count": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      }
-    },
-    {
-      "category": "obligation-support",
-      "claim_count": 3,
-      "name": "RECORDS::verif:burn:live-marker-semantics",
-      "number_forms": {
-        "claim_count": {
-          "exact": "3",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "3",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "claim_count": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      }
-    },
-    {
-      "category": "obligation-support",
-      "claim_count": 3,
-      "name": "EPOCH::verif:admission:live-publication",
-      "number_forms": {
-        "claim_count": {
-          "exact": "3",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "3",
           "num_exact": true,
           "num_relation": "="
         }

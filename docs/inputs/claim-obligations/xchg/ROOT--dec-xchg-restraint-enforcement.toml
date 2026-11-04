@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:restraint-enforcement"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:registry:an-implicit-reach-is-refused", "INTERCHANGE::claim:registry:leniency-relaxes-the-reach-alone"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Acquisition refuses undeclared restrained reaches; the explicit lenient option changes that check alone in the fixture."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-restraint-enforcement"

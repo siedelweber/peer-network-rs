@@ -1,0 +1,11 @@
+name = "ROOT::verif:design:finality-breach-cases"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Host implementer and deployment; offline replay reviewer"
+missing = "Halt at the last closed epoch after lineage loss, immutable closed results and separately witnessed published re-anchor and follow responses with ledger continuity."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 8, 9 and 11"

@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:registry-loading"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:registry:acquire-all-stops-at-the-first-refusal", "INTERCHANGE::claim:registry:acquire-all-takes-a-whole-ascending-chain"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The public sequence acquisition witnesses retain an ascending chain and stop at the first named refusal, without inventing a different loading service."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-registry-loading"

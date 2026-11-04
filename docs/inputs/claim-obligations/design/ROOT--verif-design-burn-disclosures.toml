@@ -1,0 +1,11 @@
+name = "ROOT::verif:design:burn-disclosures"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:burn-disclosures"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"

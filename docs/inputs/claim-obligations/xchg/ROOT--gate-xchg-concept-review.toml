@@ -1,0 +1,14 @@
+name = "ROOT::gate:xchg:concept-review"
+witnessed_labels = []
+path = "adr/009-interchange-concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Interchange contract reviewer"
+missing = "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review."
+closing_condition = "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review."
+closing_step = "Entry condition of gate:design:bite-1"
+entry_gate = "ROOT::gate:design:bite-1"
+admission = { "owner" = "Interchange contract reviewer", "evidence_kind" = "Independent itemized concept review against records 008, 009 and 010 and the current code", "status" = "admitted", "evidence" = "ROOT::amend:xchg:concept-entry-admission" }
+admission_basis = "review"

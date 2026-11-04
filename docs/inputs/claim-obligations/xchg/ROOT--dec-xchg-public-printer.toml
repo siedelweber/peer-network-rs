@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:public-printer"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The externally exercised printer normalizes layout while the type-identity witness distinguishes spelling from structural identity; the current public surface remains callable by consumers."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-public-printer"

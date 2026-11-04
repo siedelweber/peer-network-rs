@@ -1,0 +1,11 @@
+name = "ROOT::verif:design:title-certificate-cases"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Records and verification implementers; host and deployment for publication"
+missing = "Published/recomputed title comparison, retained authenticated fault inputs, tentative/final agreement and per-boundary monitoring with unchanged finalized history."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 4, 5, 8, 9 and 11"

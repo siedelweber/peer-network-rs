@@ -1,0 +1,13 @@
+name = "ROOT::verif:xchg:bounded-transport"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:encoding:transport-variants-preserve-values", "INTERCHANGE::claim:encoding:transport-refusals-retain-valid-controls", "INTERCHANGE::claim:encoding:transport-limits-precede-reservations", "INTERCHANGE::claim:encoding:strict-entry-selects-strict-policy"]
+realizers = []
+hold = ""
+owner = "Interchange implementer and repository reviewer"
+missing = "Outside scope: production API ceilings, schema coercion, network services and document admission."
+closing_condition = "Passing transport variant, refusal, reservation-boundary and strict-policy controls with the unchanged canonical corpus."
+closing_step = "Bite 8 bounded transport reader"
+premises = "Caller-declared finite ceilings and the API text-keyed value vocabulary; decoder-owned buffer reservations are counted separately from allocator metadata, tracing and consumer operations."
+evidence_paragraph = "INTERCHANGE::amend:interchange:transport-evidence"

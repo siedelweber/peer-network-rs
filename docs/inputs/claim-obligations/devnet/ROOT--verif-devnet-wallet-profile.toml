@@ -1,0 +1,12 @@
+name = "ROOT::verif:devnet:wallet-profile"
+witnessed_labels = []
+case_census = ["missing service, wrong binary, run, genesis or mode refused", "nontrivial declared challenge and invalid block signature refused by real node", "genesis asset outputs, ownership and fixed stock independently reconciled", "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed", "all supported funding paths and pre-opening transfers audited for distribution bypass", "transfers, fees and grants give zero burn; destruction gives exact amount", "harness producer credential isolated from read-only adapter"]
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:devnet-evidence"
+owner = "Bite 2 wallet implementer with independent integration review"
+missing = "No executed claim for this case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter."
+closing_condition = "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: missing service, wrong binary, run, genesis or mode refused; nontrivial declared challenge and invalid block signature refused by real node; genesis asset outputs, ownership and fixed stock independently reconciled; reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed; all supported funding paths and pre-opening transfers audited for distribution bypass; transfers, fees and grants give zero burn; destruction gives exact amount; harness producer credential isolated from read-only adapter."
+closing_step = "Bite 2 wallet integration, before enabling the adapter"

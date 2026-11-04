@@ -1,0 +1,13 @@
+name = "ROOT::req:xchg:timing"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:result-accounting-is-explicit"]
+realizers = ["ROOT::verif:testing:foundation-admissions"]
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The joined result stream retains every current case duration, suite and implementation, separating property and vector suites and reporting excesses without changing predicates."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-timing"

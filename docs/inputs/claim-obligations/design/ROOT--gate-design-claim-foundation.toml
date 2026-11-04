@@ -1,0 +1,13 @@
+name = "ROOT::gate:design:claim-foundation"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:evidence-exhibits-cannot-claim-support", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Current package tracing co-closure is supported by amend:observe:foundation-evidence; real services, assigned domain suites and client harnesses remain held with their implementing owners and corresponding provisioning, domain and client slices. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
+closing_condition = "Preserve current scoped support and obtain reviewed service, domain and client executions as those implementations land."
+closing_step = "Service provisioning, assigned domain bites and client slices"
+premises = "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator."
+evidence_paragraph = "ROOT::amend:testing:claims-foundation-evidence"

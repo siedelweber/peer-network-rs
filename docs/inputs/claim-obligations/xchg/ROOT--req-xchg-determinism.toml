@@ -1,0 +1,13 @@
+name = "ROOT::req:xchg:determinism"
+witnessed_labels = []
+path = "adr/009-interchange-concept.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names", "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved"]
+realizers = ["ROOT::verif:testing:foundation-admissions"]
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Bounded generated values round-trip uniquely and sampled byte strings are refused or retained byte for byte; the independent canonical vector corpus supplements those recorded property cases."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-determinism"

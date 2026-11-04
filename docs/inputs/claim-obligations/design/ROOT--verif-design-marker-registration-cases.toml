@@ -1,0 +1,11 @@
+name = "ROOT::verif:design:marker-registration-cases"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Records and epoch implementers; host and deployment for realized history"
+missing = "Complete marker-registration fixture including silent accumulators, pending markers, missing or repeated closures and realized lineage evidence beyond local prefix checks."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 2, 5, 7, 8, 9 and 11"

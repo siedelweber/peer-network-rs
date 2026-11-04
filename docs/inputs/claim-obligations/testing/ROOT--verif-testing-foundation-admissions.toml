@@ -1,0 +1,13 @@
+name = "ROOT::verif:testing:foundation-admissions"
+witnessed_labels = []
+path = "adr/017-claim-based-testing.md"
+status = "scoped-supported"
+claims = ["DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:registry-relation", "DOCUMENTS::claim:render:repository-fixed-point", "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names", "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved", "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:harness:interchange-structure-is-declared"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: new consumers and changed premises."
+closing_step = "Foundation close, current declared configuration"
+closing_condition = "Passing current-source requirement witnesses."
+premises = "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises."
+evidence_paragraph = "EXECWRAP::amend:foundation:requirement-admissions"

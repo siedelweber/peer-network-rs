@@ -1,0 +1,11 @@
+name = "ROOT::dec:crypto:base-library"
+witnessed_labels = []
+path = "adr/023-cryptographic-base.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:crypto:dependency-admission"
+owner = "First signing or verifying slice implementer and independent cryptographic integration reviewer"
+missing = "Exact dependency and C-source admission, required-operation vectors, secret ownership and entropy/nonce evidence; no signature recipe is admitted by the library choice."
+closing_condition = "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification."
+closing_step = "First signing or verifying slice, before operation enablement"

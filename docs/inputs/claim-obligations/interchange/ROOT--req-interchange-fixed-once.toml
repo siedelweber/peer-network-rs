@@ -1,0 +1,14 @@
+name = "ROOT::req:interchange:fixed-once"
+witnessed_labels = []
+path = "adr/008-interchange-conventions.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Bite 1 implementer and interchange contract reviewer"
+missing = "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer."
+closing_condition = "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer."
+closing_step = "Entry condition of gate:design:bite-1"
+entry_gate = "ROOT::gate:design:bite-1"
+admission = { "owner" = "Bite 1 implementer and interchange contract reviewer", "evidence_kind" = "Design-level producer and reader map to the one canonical contract, with rejected local alternatives, admitted before the first domain consumer", "status" = "admitted", "evidence" = "ROOT::amend:interchange:entry-admission" }
+admission_basis = "review"

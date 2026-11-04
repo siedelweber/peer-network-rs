@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:utf8-policy"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:encoding:a-text-string-must-be-valid-utf8"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The canonical decoder refuses invalid UTF-8 at the named byte while valid text remains in the single string representation."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-utf8-policy"

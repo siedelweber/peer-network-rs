@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:type-identity"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question", "INTERCHANGE::claim:inclusion:an-identity-is-the-expression-and-the-rules-it-reaches"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Expression printing and reached rule identities determine the checked type identity; equivalent layout alone cannot alter it."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-type-identity"

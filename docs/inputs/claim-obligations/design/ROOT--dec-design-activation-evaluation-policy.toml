@@ -1,0 +1,13 @@
+name = "ROOT::dec:design:activation-evaluation-policy"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "scoped-supported"
+claims = ["GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises", "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries", "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes", "EPOCH::claim:compiler:projected-residual-replays-conserved-map"]
+realizers = []
+hold = "ROOT::open:design:numeric-backend"
+owner = "Numeric kernel implementer and numerical-evidence reviewer"
+missing = "The declared schedule now has scoped integrated map and residual evidence. Deployment-profile calibration and current reference certification remain under their own holds."
+premises = "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication."
+closing_condition = "Retain the joined scoped schedule and independent map/residual witnesses when changing this policy."
+closing_step = "Solve cost design and cut 6-f evidence integration"
+evidence_paragraph = "EPOCH::amend:compiler:solve-record-evidence"

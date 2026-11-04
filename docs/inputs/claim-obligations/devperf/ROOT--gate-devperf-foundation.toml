@@ -1,0 +1,13 @@
+name = "ROOT::gate:devperf:foundation"
+witnessed_labels = []
+path = "adr/021-development-performance.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Current package tracing co-closure is supported by amend:observe:foundation-evidence; real services, assigned domain suites and client harnesses remain held with their implementing owners and corresponding provisioning, domain and client slices. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure. Profile choices, runner and licence review, linker/cache disposition and withdrawal of the initial expensive candidate are recorded in amend:toolchain:measured-gate-profile, amend:devperf:measured-choices, amend:devperf:measured-runner, amend:devperf:measured-license, amend:devperf:measured-linker, amend:devperf:measured-cache and reg:devperf:expensive; no new benchmark baseline is claimed."
+closing_condition = "Preserve current scoped support and obtain reviewed service, domain and client executions as those implementations land."
+closing_step = "Service provisioning, assigned domain bites and client slices"
+premises = "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order."
+evidence_paragraph = "ROOT::amend:testing:performance-foundation-evidence"

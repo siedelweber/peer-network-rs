@@ -1,0 +1,13 @@
+name = "ROOT::verif:xchg:label-pattern-crosscheck"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:regexp:the-namespace-pattern-recognizes-labels"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The declared namespace pattern is compared with the hand-written label recognizer over the committed near-miss and generated subject corpus; the premise is the current declared pattern set."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-verif-xchg-label-pattern-crosscheck"

@@ -1,0 +1,11 @@
+name = "ROOT::req:vision:rung-verdicts"
+witnessed_labels = []
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:rung-verdicts", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-6"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:rung-verdicts"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"

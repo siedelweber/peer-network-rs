@@ -456,7 +456,8 @@ class Conformance(unittest.TestCase):
         from build_graph_evidence import SERVICE_HOLD
         self.assertEqual(SERVICE_HOLD, 'ROOT::rule:buildgraph:service-selection')
         names = ('ROOT::dec:buildgraph:composition', 'ROOT::gate:buildgraph:implementation')
-        rows = [row for row in tomllib.loads(Path('docs/inputs/claim-obligations.toml').read_text())['rows'] if row['name'] in names]
+        from registry_fragments import read
+        rows = [row for row in read(Path('.'), 'claim-obligations')['rows'] if row['name'] in names]
         self.assertEqual(len(rows), 2)
         self.assertTrue(all(row['status'] == 'scoped-supported' for row in rows))
         self.assertTrue(all(row['hold'] == 'ROOT::open:testing:obligation-evidence' for row in rows))

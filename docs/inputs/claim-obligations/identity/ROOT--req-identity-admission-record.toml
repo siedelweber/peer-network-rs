@@ -1,0 +1,11 @@
+name = "ROOT::req:identity:admission-record"
+witnessed_labels = []
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Identity-class implementer and adjudication reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:identity:admission-record"
+closing_condition = "Publish the exact recipe, consumer decision, stale conditions and no-identity outcomes with the admitted class and its witnesses."
+closing_step = "First identity-class admission slice"

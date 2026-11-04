@@ -1,0 +1,13 @@
+name = "EPOCH::verif:numerics:replay-work"
+witnessed_labels = []
+path = "packages/epoch/README.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"]
+realizers = []
+premises = "Declared finite fixture, exact arithmetic, admitted backend and independent replay."
+evidence_paragraph = "EPOCH::rec:numerics:replay-work-controls"
+hold = ""
+owner = "Numerical implementer"
+missing = "Outside scope: deployment-wide precision, availability and resource guarantees."
+closing_condition = "The declared exact identity and refusal controls pass."
+closing_step = "Bite 8 numerical measurement."

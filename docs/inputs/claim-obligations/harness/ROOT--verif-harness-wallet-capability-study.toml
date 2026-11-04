@@ -1,0 +1,13 @@
+name = "ROOT::verif:harness:wallet-capability-study"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "scoped-supported"
+claims = ["WALLET::claim:wallet:daemon-recovery-study-retains-capability-boundaries"]
+realizers = []
+hold = ""
+owner = "Wallet implementer and recovery-contract reviewer"
+missing = "Outside scope: production spending, authoritative complete conflicted history, crash atomicity and in-flight cancellation."
+closing_condition = "Passing real-daemon primitive controls and the repeated-request counterexample under the declared fixture configuration."
+closing_step = "Bite 8 wallet capability study; spending remains unsupported."
+premises = "BDB regtest fixture, producer-funded independent confirmed inputs, disabled study broadcasting and separately provisioned method-whitelisted identity."
+evidence_paragraph = "WALLET::amend:wallet:recovery-capability-evidence"

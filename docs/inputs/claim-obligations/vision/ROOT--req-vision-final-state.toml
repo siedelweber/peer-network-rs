@@ -1,0 +1,11 @@
+name = "ROOT::req:vision:final-state"
+witnessed_labels = []
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:final-state", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-5"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:final-state"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"

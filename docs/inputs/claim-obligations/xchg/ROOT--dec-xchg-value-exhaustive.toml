@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:value-exhaustive"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:harness:interchange-structure-is-declared"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-value-exhaustive"

@@ -326,6 +326,9 @@ def check(root, graph_path, report_path):
                          row['path'] not in {prefix+'/schema.toml', prefix+'/schema.json'}
                          for prefix in ROOTS.values())]
     graph['inputs'] = static + expanded_inputs(root, static)
+    refreshed = json.dumps(graph, indent=2)+'\n'
+    if graph_path.read_text() != refreshed:
+        graph_path.write_text(refreshed)
     findings, count = incidence(root, graph)
     print(f'GRAPH-INCIDENCE tracked={count} declared={len(graph["inputs"])} excluded={len(graph["excluded"])} steps={len(graph["steps"])} findings={len(findings)}', flush=True)
     for finding in findings:

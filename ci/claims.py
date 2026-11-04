@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 import tomllib
+from registry_fragments import read as read_fragments
 
 from devperf import StructuralError, case_identity
 from harness import CONFIGURATION, load as load_registry, source_id
@@ -627,7 +628,8 @@ def tracker_witnesses(root, sites=None):
 def tracker_structure(root, sites=None, paragraphs=None):
     """Refuse changed records and bite membership before requiring executions."""
     root = Path(root)
-    read = lambda name: tomllib.loads((root/'docs/inputs'/name).read_text())['rows']
+    read = lambda name: (read_fragments(root, 'claim-obligations') if name == 'claim-obligations.toml'
+                         else tomllib.loads((root/'docs/inputs'/name).read_text()))['rows']
     rows = tracker_rows(read('design-inventory.toml'), paragraphs if paragraphs is not None else prose(root)[0],
                         dict(claims=[], obligations=read('claim-obligations.toml'), sites=tracker_selection_sites(root)),
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
@@ -877,7 +879,7 @@ def registration_check(root, registers, registry, sites, *, structure=True):
     root = Path(root)
     paragraphs, obligations = prose(root)
     areas = tomllib.loads((root/'docs/inputs/claim-areas.toml').read_text())['rows']
-    declared = tomllib.loads((root/'docs/inputs/claim-obligations.toml').read_text())['rows']
+    declared = read_fragments(root, 'claim-obligations')['rows']
     from discipline import vendor_packages
     vendor_implementations = {row['name'] + '-rust' for row in vendor_packages(root)}
     expected = {n for n, case in registry.cases.items() if case['runner'] == 'ci'

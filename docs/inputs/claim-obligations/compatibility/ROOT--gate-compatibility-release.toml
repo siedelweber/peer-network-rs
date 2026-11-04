@@ -1,0 +1,11 @@
+name = "ROOT::gate:compatibility:release"
+witnessed_labels = []
+path = "adr/014-forward-only-development.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Release implementer and reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:compatibility:release"
+closing_condition = "Run the current-contract and public-history reconstruction checks at release; before 1.0 also execute running-system upgrades and publish the support policy."
+closing_step = "Release qualification; stable upgrade qualification before 1.0"

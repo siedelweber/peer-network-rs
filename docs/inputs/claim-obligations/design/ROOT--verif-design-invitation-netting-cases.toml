@@ -1,0 +1,13 @@
+name = "ROOT::verif:design:invitation-netting-cases"
+witnessed_labels = ["ver:membership:invitation-netting"]
+path = "docs/design/implementation.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free", "EPOCH::claim:compiler:invitation-netting-retains-every-charge"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Graph implementer"
+missing = "Geometry, allocation amounts and general irrational numeric evidence remain outside these scoped tables."
+closing_condition = "Establish the released Invitation netting and De-invite singleton witnesses without removing accepted acts from counts or debits."
+closing_step = "Bite 5 Invitation netting implementation"
+premises = "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem."
+evidence_paragraph = "EPOCH::amend:compiler:invitation-netting-evidence"

@@ -1,0 +1,13 @@
+name = "ROOT::gate:labels:verification"
+witnessed_labels = []
+path = "adr/001-label-calculus.md"
+status = "scoped-supported"
+claims = ["DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:declaration-authority"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The current adoption inputs and rendered owner declarations are one checked fixed point, and the deployed linter checks the actual current corpus without warnings. This is adoption and corpus resolution evidence, not a proof of all linter algorithms."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-labels-verification"

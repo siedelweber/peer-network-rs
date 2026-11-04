@@ -1,0 +1,13 @@
+name = "ROOT::req:xchg:workspace-discipline"
+witnessed_labels = []
+path = "adr/009-interchange-concept.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:harness:interchange-structure-is-declared"]
+realizers = ["ROOT::verif:testing:foundation-admissions"]
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Current manifest inheritance, selected production dependencies and the complete gate establish repository discipline for the shared library; no alternate domain codec is admitted here."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-xchg-workspace-discipline"

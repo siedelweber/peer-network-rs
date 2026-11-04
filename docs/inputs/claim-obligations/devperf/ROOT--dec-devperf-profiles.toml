@@ -1,0 +1,13 @@
+name = "ROOT::dec:devperf:profiles"
+witnessed_labels = []
+path = "adr/021-development-performance.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:devperf:gate-profile-guards"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The current workspace profile retains assertions and overflow checks and the guard refuses drift. The accepted cold/warm comparison samples and profile decision remain recorded in records 013 and 021; this witness checks continued configuration, not a new measurement campaign."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-devperf-profiles"

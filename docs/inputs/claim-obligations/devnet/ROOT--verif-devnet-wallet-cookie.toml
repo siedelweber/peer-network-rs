@@ -1,0 +1,14 @@
+name = "ROOT::verif:devnet:wallet-cookie"
+witnessed_labels = []
+case_census = ["declared same UID owner and exact permitted file modes", "parent ownership, write permissions, ACL and symlink refusals", "regular file, single hard link and descriptor substitution checks", "exact username, separator, hexadecimal password and optional single LF", "oversized, partial, changed, malformed or missing cookie refused", "restart rotation with fresh read; authentication refusal has no replay or fallback"]
+path = "adr/019-development-network.md"
+status = "scoped-supported"
+claims = ["WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe", "WALLET::claim:wallet:rpc-cookie-descriptors-confine-acquisition", "WALLET::claim:wallet:rpc-cookie-grammar-is-exact", "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay"]
+realizers = []
+hold = ""
+owner = "Bite 2 wallet implementer with independent integration review"
+missing = "Outside scope: signed fixtures are now measured separately; recognition, settlement and spending remain held."
+closing_condition = "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: declared same UID owner and exact permitted file modes; parent ownership, write permissions, ACL and symlink refusals; regular file, single hard link and descriptor substitution checks; exact username, separator, hexadecimal password and optional single LF; oversized, partial, changed, malformed or missing cookie refused; restart rotation with fresh read; authentication refusal has no replay or fallback."
+closing_step = "Bite 2 wallet integration, before enabling the adapter"
+premises = "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred."
+evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"

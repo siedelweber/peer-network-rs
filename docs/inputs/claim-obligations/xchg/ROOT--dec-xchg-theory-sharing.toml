@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:theory-sharing"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:registry:a-held-theory-is-immutable", "INTERCHANGE::claim:registry:re-acquiring-the-held-theory-changes-nothing"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Registry reacquisition preserves the held theory and refuses a changed same identity. This witnesses immutable sharing at the current public registry boundary."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-theory-sharing"

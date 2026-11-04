@@ -1,0 +1,13 @@
+name = "ROOT::dec:observe:sinks"
+witnessed_labels = []
+path = "adr/016-observability.md"
+status = "scoped-supported"
+claims = ["CLICOMMON::claim:cli:observation-loss-is-nonbinding", "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion", "CLICOMMON::claim:cli:summary-capacity-survives-ordinary-saturation"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Current executable-owned JSON delivery, queue saturation and recursive-entry fixtures preserve binding results and reserve summary capacity. Real service export and service configuration are outside this scope."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-observe-sinks"

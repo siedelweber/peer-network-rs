@@ -1,0 +1,13 @@
+name = "ROOT::verif:design:closure-partition-cases"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = ["GRAPH::claim:membership:dependency-closures-partition-the-final-act-set", "GRAPH::claim:membership:small-dags-preserve-partition-and-indices", "GRAPH::claim:membership:partition-publication-requires-exact-cover", "GRAPH::claim:membership:invalid-records-never-reach-partition", "GRAPH::claim:membership:generated-partitions-match-set-oracle", "GRAPH::claim:membership:shared-partitions-retain-complete-results", "EPOCH::claim:admission:closure-consumes-whole-dependent-blocks", "EPOCH::claim:admission:closure-registers-consecutive-recognized-markers", "EPOCH::claim:admission:closure-requires-attested-cause-and-duration", "EPOCH::claim:admission:closure-replay-binds-one-common-context"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Local closure and common-context evidence now joins the existing exact-cover partition; the reference history discrepancy under open:design:reference-registration-base, public-source calibration and independent bite-close review remain. Finite shared admission conformance is registered as epoch-admission-1. Host halt/recovery, policy realization and unrestricted offline histories retain bites eight, nine and eleven."
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+premises = "Validated records and fixed history supply whole acts and principal closures. Exhaustive finite DAGs, generated word vectors and six shared cases witness the records-level partition and deterministic temporary indices. The finite complete candidates separately join attested closure, consecutive markers, common context and independently replayed final gates; no deployment or host-recovery claim follows."
+evidence_paragraph = "EPOCH::rec:admission:closure-witnesses"

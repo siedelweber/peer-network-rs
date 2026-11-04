@@ -1,0 +1,11 @@
+name = "ROOT::dec:harness:client-schema"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Client implementer and schema reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:client-schema"
+closing_condition = "Execute the wallet/client package-boundary and schema-subset contracts with the implemented client workflows."
+closing_step = "Client harness slice"

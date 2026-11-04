@@ -1,0 +1,13 @@
+name = "ROOT::dec:devperf:feedback"
+witnessed_labels = []
+path = "adr/021-development-performance.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:category-controls-classification"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Controlled passing and failing executions retain their outcomes under excess durations; budget categories distinguish performance evidence from structural configuration. This supports the current reporter, not a latency promise."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-devperf-feedback"

@@ -1,0 +1,13 @@
+name = "ROOT::verif:design:settlement-party-cases"
+witnessed_labels = ["rem:graph:settlement-party-mismatch", "ver:settlement:wrong-party"]
+path = "docs/design/implementation.md"
+status = "scoped-supported"
+claims = ["VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization"]
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Graph implementer and verification reviewer"
+missing = "Recipient compilation and integrated deployment replay remain with bites 5 and 11."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11"
+premises = "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization."
+evidence_paragraph = "VERIFICATION::amend:verification:bite-four-evidence"

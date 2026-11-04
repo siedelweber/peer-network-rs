@@ -1,0 +1,14 @@
+name = "ROOT::dec:xchg:slice-sequencing"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Interchange contract reviewer"
+missing = "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`)."
+closing_condition = "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`)."
+closing_step = "Entry condition of gate:design:bite-1"
+entry_gate = "ROOT::gate:design:bite-1"
+admission = { "owner" = "Interchange contract reviewer", "evidence_kind" = "Explicit amendment of the historical ordering condition, judged on its merits, with the present four-module separation", "status" = "admitted", "evidence" = "ROOT::amend:xchg:sequence-entry-admission" }
+admission_basis = "review"

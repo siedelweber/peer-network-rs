@@ -1,0 +1,3 @@
+namespace = "org.peer-network.testing.claim-obligations"
+version = [1, 0, 0]
+fields = { "row" = ["admission", "admission_basis", "case_census", "claims", "closing_condition", "closing_step", "combined_claim", "entry_gate", "evidence_paragraph", "hold", "missing", "name", "owner", "path", "premises", "realizers", "status", "witnessed_labels"] }

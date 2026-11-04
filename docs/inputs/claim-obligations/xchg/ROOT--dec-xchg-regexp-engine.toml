@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:regexp-engine"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject", "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk", "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-regexp-engine"

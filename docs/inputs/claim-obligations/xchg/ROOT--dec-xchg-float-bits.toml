@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:float-bits"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form", "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Canonical float fixtures pin accepted widths and NaN refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-float-bits"

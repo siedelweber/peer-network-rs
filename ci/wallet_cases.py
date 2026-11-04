@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import tomllib
+from registry_fragments import read as read_fragments
 
 
 def check(groups, rows, obligations, sites, results=None):
@@ -39,7 +40,7 @@ def check(groups, rows, obligations, sites, results=None):
 
 def repository_check(sites, results=None):
     groups = tomllib.loads(Path('docs/inputs/devnet-profile.toml').read_text())['rows'][0]['wallet_case_groups']
-    obligations = tomllib.loads(Path('docs/inputs/claim-obligations.toml').read_text())['rows']
+    obligations = read_fragments(Path('.'), 'claim-obligations')['rows']
     rows = json.loads(Path('ci/wallet-cases.json').read_text())['cases']
     count = check(groups, rows, obligations, sites, results)
     print(f'WALLET-CASE-CENSUS cases={count} scoped={sum(r["status"] == "scoped" for r in rows)} held={sum(r["status"] == "held" for r in rows)}')

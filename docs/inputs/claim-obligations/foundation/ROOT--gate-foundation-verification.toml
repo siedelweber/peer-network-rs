@@ -1,0 +1,13 @@
+name = "ROOT::gate:foundation:verification"
+witnessed_labels = []
+path = "README.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:members-inherit-workspace-lints", "ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:discipline:public-bodies-require-parsed-boundaries"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The current source commit must finish every gate step with status zero; structural policy, evidence and observation checks are independently exercised. Duration warnings remain nonverdict outputs. Services and later domain evidence are not inferred."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-foundation-verification"

@@ -1,0 +1,13 @@
+name = "ROOT::dec:xchg:evaluable-subset"
+witnessed_labels = []
+path = "adr/010-interchange-design.md"
+status = "scoped-supported"
+claims = ["INTERCHANGE::claim:cddl:every-operator-of-the-subset-is-admitted", "INTERCHANGE::claim:cddl:an-unevaluable-operator-is-refused-wherever-it-stands"]
+realizers = []
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "Each supported operator is admitted and the unsupported operators are refused at their actual sites; no unsupported operator is approximated."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-dec-xchg-evaluable-subset"

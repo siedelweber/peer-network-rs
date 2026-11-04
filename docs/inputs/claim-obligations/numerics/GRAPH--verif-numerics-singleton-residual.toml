@@ -1,0 +1,13 @@
+name = "GRAPH::verif:numerics:singleton-residual"
+witnessed_labels = []
+path = "packages/graph/README.md"
+status = "scoped-supported"
+claims = ["GRAPH::claim:numerics:singleton-image-residual-keeps-wall-uncertainty"]
+realizers = []
+premises = "Declared finite fixture, exact arithmetic, admitted backend and independent replay."
+evidence_paragraph = "GRAPH::rec:numerics:singleton-residual-controls"
+hold = ""
+owner = "Numerical implementer"
+missing = "Outside scope: deployment-wide precision, availability and resource guarantees."
+closing_condition = "The declared exact identity and refusal controls pass."
+closing_step = "Bite 8 numerical measurement."

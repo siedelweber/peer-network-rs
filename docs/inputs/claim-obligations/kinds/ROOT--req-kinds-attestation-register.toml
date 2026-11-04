@@ -1,0 +1,13 @@
+name = "ROOT::req:kinds:attestation-register"
+witnessed_labels = []
+path = "adr/002-environment-kinds.md"
+status = "scoped-supported"
+claims = ["DOCUMENTS::claim:render:registry-relation", "DOCUMENTS::claim:render:paired-census", "DOCUMENTS::claim:render:repository-fixed-point"]
+realizers = ["ROOT::verif:testing:foundation-admissions"]
+hold = ""
+owner = "Foundation implementer and repository reviewer"
+missing = "Outside scope: future consumers, services and changes to the reviewed premises."
+closing_condition = "Passing current-source evidence under the recorded premises; renew on a contract or configuration change."
+closing_step = "Foundation close, current declared configuration"
+premises = "The accepted adoption data, relation/status fixtures and actual rendered register establish the current ordered register and its derived counts and homonyms. Evidence/status judgments are accepted input facts; the renderer does not invent them."
+evidence_paragraph = "EXECWRAP::amend:foundation:evidence-req-kinds-attestation-register"

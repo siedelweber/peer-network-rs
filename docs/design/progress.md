@@ -95,13 +95,13 @@
 
 | Scoped-passed obligation used by a route | Passed claims |
 | --- | ---: |
+| ``EPOCH::verif:admission:live-publication`` | 3 |
+| ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
 | ``ROOT::dec:design:final-state`` | 26 |
 | ``ROOT::dec:design:ledger-vintages`` | 3 |
 | ``ROOT::verif:design:core-standing-properties`` | 25 |
 | ``ROOT::verif:design:invitation-netting-cases`` | 2 |
 | ``ROOT::verif:design:settlement-party-cases`` | 1 |
-| ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
-| ``EPOCH::verif:admission:live-publication`` | 3 |
 
 ## Record-granular support · `sec:progress:record-support`
 
