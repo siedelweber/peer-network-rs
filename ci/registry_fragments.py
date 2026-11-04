@@ -19,15 +19,17 @@ ROOTS = {
 }
 
 
-def indexed(root):
-    result = subprocess.run(['git', '-C', str(root), 'ls-files', '--stage', '-z'],
+def indexed(root, family=None):
+    prefixes = [ROOTS[family]] if family is not None else list(ROOTS.values())
+    result = subprocess.run(['git', '-C', str(root), 'ls-files', '--stage', '-z', '--', *prefixes],
                             capture_output=True, check=True)
     found = {}
+    parents = set()
     for entry in result.stdout.decode().split('\0'):
         if not entry:
             continue
         metadata, path = entry.split('\t', 1)
-        if not any(path.startswith(prefix+'/') for prefix in ROOTS.values()):
+        if not any(path.startswith(prefix+'/') for prefix in prefixes):
             continue
         mode, _, stage = metadata.split()
         if stage != '0' or mode not in {'100644', '100755'} or path in found:
@@ -36,10 +38,11 @@ def indexed(root):
         if not stat.S_ISREG(full.lstat().st_mode):
             raise ValueError('fragment is not a regular file: '+path)
         for parent in full.parents:
-            if parent == root:
+            if parent == root or parent in parents:
                 break
             if parent.is_symlink():
                 raise ValueError('fragment symlink ancestor: '+path)
+            parents.add(parent)
         expected = '.json' if path.startswith(ROOTS['observation-registry']+'/') else '.toml'
         if full.suffix != expected:
             raise ValueError('unknown fragment suffix: '+path)
@@ -207,7 +210,7 @@ def read(root, name):
         return json.loads(text) if suffix == '.json' else tomllib.loads(text)
     if (root/(prefix+suffix)).exists():
         raise ValueError('dual registry authoring: '+prefix+' and '+prefix+suffix)
-    paths = {path: full for path, full in indexed(root).items() if path.startswith(prefix+'/')}
+    paths = {path: full for path, full in indexed(root, name).items() if path.startswith(prefix+'/')}
     if name == 'observation-registry':
         return observation(paths, prefix)
     if name == 'linter-owners':

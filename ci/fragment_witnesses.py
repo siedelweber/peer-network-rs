@@ -99,6 +99,15 @@ def check(test):
         with test.assertRaisesRegex(ValueError, 'lacks declared incidence'):
             fragments.expanded_inputs(root, [])
         test.assertEqual([row['name'] for row in expected['rows']], ['a', 'z'])
+        # A family read does not traverse another family's files; the full
+        # census still validates every root. Every call re-reads its own bytes.
+        test.assertEqual(fragments.indexed(root, 'claim-obligations'), fragments.indexed(root))
+        with patch.object(fragments, 'indexed', wraps=fragments.indexed) as index:
+            test.assertEqual(fragments.read(root, 'claim-obligations'), expected)
+            index.assert_called_once_with(root, 'claim-obligations')
+        expected['rows'][0]['claims'].append('caller-mutation')
+        test.assertEqual(fragments.read(root, 'claim-obligations')['rows'][0]['claims'], [])
+        expected = fragments.read(root, 'claim-obligations')
         paths = list(fragments.indexed(root).items())
         rng = random.Random(7)
         for _ in range(12):

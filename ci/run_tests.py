@@ -8,6 +8,7 @@ The reporter reads normalized events; it cannot control the execution roster.
 import datetime
 import json
 import os
+import shlex
 from pathlib import Path
 import subprocess
 import sys
@@ -38,6 +39,46 @@ def milliseconds(value):
     if not number(value):
         raise StructuralError('malformed exec_time; expected finite nonnegative seconds')
     return value * 1000
+
+
+def case_cpu_environment(env, directory):
+    """Use a distinct meter for this invocation without replacing calibration."""
+    if 'PN_CALIBRATION_CASE_CPU' in env:
+        return None
+    directory = directory.resolve()
+    directory.mkdir(exist_ok=True)
+    for path in directory.glob('*.cpu'): path.unlink()
+    runner_key = 'CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER'
+    if env.get(runner_key):
+        raise StructuralError('case CPU cannot replace an existing target runner')
+    env['PN_GATE_CASE_CPU'] = str(directory)
+    env[runner_key] = shlex.join(['bash', str(Path(__file__).with_name('case_cpu.sh').resolve())])
+    return directory
+
+
+def join_case_cpu(cases, directory, source):
+    """Require an exact case/commit/outcome join to each child's own timing."""
+    measured = {}
+    for path in directory.glob('*.cpu'):
+        fields = path.read_text().split('\0')
+        if len(fields) != 7 or fields[-1] != '':
+            raise StructuralError('nextest case CPU record is malformed')
+        operation, commit, status, wall, user, system, _ = fields
+        if operation in measured:
+            raise StructuralError('duplicate nextest case CPU record')
+        values = [float(value) for value in (wall, user, system)]
+        if not all(number(value) for value in values):
+            raise StructuralError('nextest case CPU is not finite and nonnegative')
+        measured[operation] = (commit, int(status), values)
+    if set(measured) != {case['operation'] for case in cases}:
+        raise StructuralError('nextest case CPU union differs')
+    for case in cases:
+        commit, status, (wall, user, system) = measured[case['operation']]
+        if commit != source or (status == 0) != (case['outcome'] == 'passed'):
+            raise StructuralError('nextest case CPU identity or outcome differs')
+        case.update(own_user_s=user, own_sys_s=system, child_wall_s=wall,
+                    cpu_scope='case-process-and-reaped-descendants; bash-time-millisecond-resolution')
+        print('CASE-CPU '+json.dumps({key:case[key] for key in ('operation', 'own_user_s', 'own_sys_s', 'cpu_scope')}, sort_keys=True), flush=True)
 
 
 def nextest_events(text, inventory, metadata, source, configuration, registry=None, selected=None):
@@ -335,12 +376,16 @@ def split_main(action):
            **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON':'1',
            'PN_CONTRACT_RESULTS':str((run/'contracts').resolve()), 'PN_HARNESS_SOURCE':source,
            'PN_HARNESS_CONFIGURATION':CONFIGURATION, 'PN_HARNESS_UTC':instant()}
+    cpu_directory = case_cpu_environment(env, run/(action+'.case-cpu'))
     budget = {'fast':'test-command', 'service':'service-gate', 'reference-certificate':'reference-gate', 'extended':'extended-gate'}[action]
     status = execute(action, ['cargo', 'nextest', 'run', '--config-file', str(config_path), '--user-config-file', 'none',
         '--profile', 'default', '--retries', '0', '--no-fail-fast', '--ignore-default-filter', '--run-ignored', 'default',
         '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',
         '--binaries-metadata', str(run/'build.stdout'), '-E', ' | '.join(expressions)], budget, env)
-    records += nextest_events((run/(action+'.stdout')).read_text(), inventory, {}, source, CONFIGURATION, registry, selected)
+    cases = nextest_events((run/(action+'.stdout')).read_text(), inventory, {}, source, CONFIGURATION, registry, selected)
+    if cpu_directory is not None:
+        join_case_cpu(cases, cpu_directory, source)
+    records += cases
     records += suite_events(json.loads((run/(action+'.observations.json')).read_text()), inventory, registry, source, 'nextest', selected)
     if action == 'fast':
         status |= execute('doctests', ['cargo', 'test', '--workspace', '--doc', '--locked', '--offline', '--profile', 'gate',
@@ -404,19 +449,23 @@ def main(action=None):
     if not status:
         config = policy_path.read_text().replace('dir = ".lane/nextest"', 'dir = ' + json.dumps(str(run.resolve() / 'nextest')))
         (run / 'nextest.toml').write_text(config)
+        env = {**{key: value for key, value in os.environ.items() if not key.startswith('PROPTEST_')},
+                          **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
+                          'PN_CONTRACT_RESULTS': str(contracts), 'PN_HARNESS_SOURCE': source,
+                          'PN_HARNESS_CONFIGURATION': configuration, 'PN_HARNESS_UTC': instant()}
+        cpu_directory = case_cpu_environment(env, run/'case-cpu')
         status = execute('nextest', ['cargo', 'nextest', 'run', '--config-file', str(run / 'nextest.toml'),
                                    '--user-config-file', 'none', '--profile', 'default', '--retries', '0',
                                    '--no-fail-fast', '--ignore-default-filter', '--run-ignored', 'default',
                                    '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',
                                    '--binaries-metadata', str(run / 'build.stdout')], 'test-command',
-                         {**{key: value for key, value in os.environ.items() if not key.startswith('PROPTEST_')},
-                          **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
-                          'PN_CONTRACT_RESULTS': str(contracts), 'PN_HARNESS_SOURCE': source,
-                          'PN_HARNESS_CONFIGURATION': configuration, 'PN_HARNESS_UTC': instant()})
+                         env)
         try:
             inventory = json.loads((run / 'inventory.stdout').read_text())
             metadata = json.loads((run / 'metadata.stdout').read_text())
             results = nextest_events((run / 'nextest.stdout').read_text(), inventory, metadata, source, configuration, registry)
+            if cpu_directory is not None:
+                join_case_cpu(results, cpu_directory, source)
             records.extend(results)
             records.extend(contract_events(contracts, registry, source, results))
             records.extend(suite_events(json.loads((run / 'nextest.observations.json').read_text()), inventory, registry, source, 'nextest'))

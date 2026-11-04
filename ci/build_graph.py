@@ -571,7 +571,7 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
             and compile_wall_growth is not None and excess is not None
             and compile_wall_growth > 0
             and (compile_wall_growth >= excess or
-                 (noncompile and remaining <= old_remaining*margin))):
+                 (comparable_wall and noncompile and remaining <= old_remaining*margin))):
         return 'rebuild'
     if not comparable_cases or own is None or baseline is None: return 'unclassified'
     # Pressure can inflate CPU as well as wall. Without a quiet measurement,

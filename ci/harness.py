@@ -120,8 +120,16 @@ class Registry:
             if self.tiers.get('extended', {}).get('status') != 'active':
                 raise StructuralError('allowance placement requires an active extended tier')
             for name, suite in self.cases.items():
-                if suite['runner'] == 'nextest' and suite['tier'] == 'fast' and 'case_budget' in suite and declared[self.case_budget(name)]['budget_ms'] > threshold:
-                    raise StructuralError('calibrated case exceeds fast placement threshold: '+name)
+                reasons = suite.get('composition_reasons', {})
+                if (not isinstance(reasons, dict) or not set(reasons) <= set(suite['cases'])
+                        or any(not isinstance(reason, str) or not reason.strip() for reason in reasons.values())):
+                    raise StructuralError('composition reason lacks a named case and reason')
+                if suite['runner'] == 'nextest':
+                    budget = declared[self.case_budget(name)]['budget_ms']
+                    if suite['tier'] == 'fast' and 'case_budget' in suite and budget > threshold:
+                        raise StructuralError('calibrated case exceeds fast placement threshold: '+name)
+                    if suite['tier'] == 'extended' and budget <= threshold and name not in reasons:
+                        raise StructuralError('extended case below placement threshold lacks composition reason: '+name)
         for suite in self.suites.values():
             if suite.get('runner') == 'contract' and (suite.get('parent_case') not in self.cases or not suite.get('contract_edition') or not suite.get('claim')):
                 raise StructuralError('contract case mapping lacks parent, edition or establishing claim')

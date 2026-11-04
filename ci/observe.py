@@ -237,7 +237,7 @@ def main():
             from source_sites import census as sites
             labels,_=prose('.')
             claims={site_claim(site)['claim'] for site in sites(Path('.'))}
-            registry=expand_registry(read_fragments(Path.cwd(), 'observation-registry'),data)
+            registry=expand_registry(raw_registry,data)
             result=validate(data,registry,set(labels)|claims,claims)
             Path('.lane/observation-registry-expanded.json').write_text(json.dumps(registry,indent=2,ensure_ascii=False)+'\n')
             summary=[]

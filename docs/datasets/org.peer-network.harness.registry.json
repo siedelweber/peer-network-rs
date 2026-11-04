@@ -1882,6 +1882,9 @@
       "cases": [
         "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"
       ],
+      "composition_reasons": {
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals": "Whole-publication refusal composition restores a complete admitted package for every independent section mutation; it stays beside the other publication restore matrices in the required extended invocation."
+      },
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",

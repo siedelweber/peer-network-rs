@@ -10,3 +10,4 @@ budget = "pure-suite"
 cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"]
 case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "calibrated-disclosure-refusals-case" }
 case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "The complete section-refusal matrix independently restores every distinct mutation and compares its refusal class." }
+composition_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "Whole-publication refusal composition restores a complete admitted package for every independent section mutation; it stays beside the other publication restore matrices in the required extended invocation." }

@@ -527,6 +527,15 @@ wait
         self.assertEqual(evidence, dict(added=['new'], removed=['retained'], own_removed_s=80, baseline_removed_s=20))
         self.assertEqual(overrun_class(True, own, old, .01, 40, 40, [], policy,
             **ridge, comparable_cases=comparable, comparable_wall=False), 'plain')
+        # An added slow sleeper has printed CPU, but its wall is not compile
+        # work. Removing that CPU cannot make aggregate walls comparable.
+        own, old, comparable, _ = case_intersection(
+            ['common', 'sleeper'], ['common'], {'sleeper': 1}, {}, 151, 100)
+        for growth, expected in ((1, 'plain'), (30, 'rebuild')):
+            self.assertEqual(overrun_class(True, own, old, .01, 90, 40,
+                ['packages/example/src/lib.rs'], policy,
+                **(ridge | dict(compile_wall_growth=growth)),
+                comparable_cases=comparable, comparable_wall=False), expected)
         for unprinted in ({}, {'new':None}, {'new':float('nan')}, {'new':-1}):
             own, old, comparable, _ = case_intersection(['common', 'new'], ['common'], unprinted, {}, 180, 100)
             self.assertFalse(comparable)
@@ -829,6 +838,9 @@ wait
                         elif argv[1:3] == ['nextest', 'list']:
                             stdout.write(json.dumps(inventory))
                         elif argv[1:3] == ['nextest', 'run']:
+                            (Path(env['PN_GATE_CASE_CPU'])/'fixture.cpu').write_text(
+                                '\0'.join(['example::case', 'fixture', str(outcome),
+                                           str(duration), '0.001', '0.002', '']))
                             stdout.write(json.dumps({'type': 'test', 'event': 'failed' if outcome else 'ok',
                                                      'name': 'example::example$case', 'exec_time': duration,
                                                      'stdout': 'synthetic captured text'}))

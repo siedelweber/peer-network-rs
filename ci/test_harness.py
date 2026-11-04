@@ -32,7 +32,59 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def nextest_cpu(self):
+        import os
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+        from run_tests import join_case_cpu, case_cpu_environment
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = Path(__file__).with_name('case_cpu.sh')
+            env = {}
+            self.assertEqual(case_cpu_environment(env, root/'gate'), root/'gate')
+            self.assertEqual(env['PN_GATE_CASE_CPU'], str(root/'gate'))
+            with self.assertRaisesRegex(StructuralError, 'existing target runner'):
+                case_cpu_environment(env, root/'gate')
+            calibrated = dict(PN_CALIBRATION_CASE_CPU='calibration')
+            self.assertIsNone(case_cpu_environment(calibrated, root/'unused'))
+            self.assertEqual(calibrated, dict(PN_CALIBRATION_CASE_CPU='calibration'))
+            for status in (0, 7, 143):
+                env = dict(os.environ, PN_GATE_CASE_CPU=directory, PN_HARNESS_SOURCE='current',
+                           NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
+                program = ('import os, signal; os.kill(os.getpid(), signal.SIGTERM)' if status == 143
+                           else f'raise SystemExit({status})')
+                result = subprocess.run(['bash', str(script), sys.executable, '-c', program], env=env, capture_output=True)
+                self.assertEqual(result.returncode, status)
+                if status == 143:
+                    self.assertIn(b'Terminated', result.stderr)
+                case = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=123)
+                join_case_cpu([case], root, 'current')
+                self.assertEqual(case['duration_ms'], 123)
+                self.assertGreaterEqual(case['own_user_s'], 0)
+                self.assertGreaterEqual(case['own_sys_s'], 0)
+                self.assertGreaterEqual(case['child_wall_s'], 0)
+                with self.assertRaisesRegex(StructuralError, 'identity or outcome'):
+                    join_case_cpu([case], root, 'other')
+                path, = root.glob('*.cpu')
+                original = path.read_text()
+                duplicate = root/'duplicate.cpu'
+                duplicate.write_text(original)
+                with self.assertRaisesRegex(StructuralError, 'duplicate'):
+                    join_case_cpu([case], root, 'current')
+                duplicate.unlink()
+                fields = original.split('\0')
+                fields[4] = 'nan'
+                path.write_text('\0'.join(fields))
+                with self.assertRaisesRegex(StructuralError, 'finite'):
+                    join_case_cpu([case], root, 'current')
+                path.unlink()
+                with self.assertRaisesRegex(StructuralError, 'union'):
+                    join_case_cpu([case], root, 'current')
+
     def calibration_cpu(self):
+        self.nextest_cpu()
         import json
         import os
         from pathlib import Path
@@ -441,7 +493,17 @@ assert (root/'payload').read_text() == 'committed'
         self.assertEqual(Registry(placement, declarations()).cases['example::calibrated']['tier'], 'fast')
         fast['extended_case_threshold_ms'] = 1999
         placement[-1]['tier'] = 'extended'
+        placement[-1]['composition_reasons'] = {'example::fast':'The fixture keeps this short control beside its calibrated sibling.'}
         moved = Registry(placement, declarations())
+        fast['extended_case_threshold_ms'] = 2000
+        with self.assertRaisesRegex(StructuralError, 'lacks composition reason'):
+            Registry(placement, declarations())
+        placement[-1]['composition_reasons']['example::calibrated'] = 'Whole-checker composition retains the complete refusal matrix.'
+        Registry(placement, declarations())
+        for reasons in ({'unknown':'Wrong case'}, {'example::calibrated':''}):
+            placement[-1]['composition_reasons'] = reasons
+            with self.assertRaisesRegex(StructuralError, 'composition reason'):
+                Registry(placement, declarations())
         self.assertEqual(moved.case_budget('example::calibrated'), 'integration')
         self.assertEqual(moved.cases['example::calibrated']['tier'], 'extended')
         with self.assertRaisesRegex(StructuralError, 'budget'):
