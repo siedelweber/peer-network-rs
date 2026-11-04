@@ -536,8 +536,34 @@ class HashCitations(unittest.TestCase):
             manifest=root/'contents.json'; manifest.write_text(json.dumps(evidence))
             rule=dict(reader='vendor-content', establishment='recomputable',source='contents.json',paths=['vendor/sample/**','contents.json'])
             reader=establish(root,rule)
-            self.assertTrue(reader(sample_value,''))
+            self.assertEqual(reader.files, {'vendor/sample/Cargo.toml', 'vendor/sample/vector.txt'})
+            self.assertTrue(reader(evidence['files']['vector.txt'],''))
+            self.assertFalse(reader(sample_value,''))
             self.assertFalse(reader(other_value,''))
+            table=self.table()
+            table['rows']=[dict(table['rows'][0], **rule)]
+            self.assertEqual(audit(root,['vendor/sample/vector.txt'],table), ([],0))
+            self.assertEqual(audit(root,['contents.json'],table), ([],3))
+            # Whole-file accounting cannot spill into first-party or member-fork files.
+            (root/'vendor/regexml').mkdir()
+            (root/'vendor/regexml/Cargo.toml').write_text('[package]\nname="regexml"\nversion="1.0.0"\n')
+            workspace=root/'Cargo.toml'
+            workspace.write_text(workspace.read_text().replace('members=[]','members=["vendor/regexml"]'))
+            declaration=root/'ci/vendor-packages.toml'
+            declaration.write_text(declaration.read_text()+'\n[[packages]]\nname="regexml"\nversion="1.0.0"\npath="vendor/regexml"\nmode="member"\n')
+            for path in ['first.rs','vendor/regexml/fork.rs']:
+                file=root/path; file.parent.mkdir(parents=True,exist_ok=True)
+                for size in [40,64]:
+                    file.write_text('b'*size+'\n')
+                    findings,count=audit(root,['vendor/sample/vector.txt',path],table)
+                    self.assertEqual(count,1)
+                    self.assertTrue(any(path+':1: unaccounted' in finding for finding in findings))
+            broken=copy.deepcopy(evidence)
+            broken['files']['vector.txt']='b'*64
+            manifest.write_text(json.dumps(broken))
+            with self.assertRaisesRegex(ValueError,'contents differ'):
+                audit(root,['vendor/sample/vector.txt','contents.json'],table)
+            manifest.write_text(json.dumps(evidence))
             archive=establish(root,dict(rule,reader='vendor-archive',paths=['record.md']))
             self.assertTrue(archive('a'*64,''))
             self.assertFalse(archive(sample_value,''))
@@ -551,11 +577,11 @@ class HashCitations(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'review missing'): establish(root,rule)
             (root/'docs/inputs/wallet-dependencies.toml').write_text(review)
             sample.write_text('changed')
-            with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
+            with self.assertRaisesRegex(ValueError,'contents differ'): audit(root,['vendor/sample/vector.txt'],table)
             sample.unlink()
             with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
             sample.write_text(json.dumps(sample_value)+'\n'); (sample.parent/'extra').write_text('extra')
-            with self.assertRaisesRegex(ValueError,'contents differ'): establish(root,rule)
+            with self.assertRaisesRegex(ValueError,'contents differ'): audit(root,['vendor/sample/extra'],table)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = root / "sample.rs"

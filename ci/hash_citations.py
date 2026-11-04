@@ -232,6 +232,17 @@ def act_profile_vectors(path):
     return checked
 
 
+class BoundVendorFiles:
+    """A validated archive accounts whole files; its manifest digests stay values."""
+
+    def __init__(self, directory, evidence):
+        self.files = frozenset(directory + '/' + name for name in evidence['files'])
+        self.values = frozenset([evidence['archive_checksum'], *evidence['files'].values()])
+
+    def __call__(self, value, _line):
+        return value in self.values
+
+
 def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
@@ -256,10 +267,7 @@ def establish(root, rule):
         evidence = json.loads(manifest.read_text())
         if kind == 'vendor-archive':
             return lambda value, _line: value == evidence['archive_checksum']
-        files = [manifest, *(root / row['path'] / name for name in evidence['files'])]
-        values = {match.group() for file in files for line in file.read_bytes().decode('utf-8', errors='replace').splitlines()
-                  for match in occurrences(line)}
-        return lambda value, _line: value in values
+        return BoundVendorFiles(row['path'], evidence)
     if kind == 'assertion-reviews' and standing == 'recomputable':
         from claims import read_register, witness_currency
         if rule.get('source') != 'ci/claim_review.json' or rule.get('paths') != ['ci/claim_review.json']:
@@ -525,6 +533,11 @@ def audit(root, paths, table):
     count = 0
     for path in paths:
         full = relative_file(root, path)
+        bound = [rule['family'] for rule, check in compiled
+                 if isinstance(check, BoundVendorFiles) and path in check.files]
+        if bound:
+            used.update(bound)
+            continue
         # Decode one byte to one character, so binary tracked content is scanned too.
         for number, line in enumerate(full.read_bytes().decode("latin1").splitlines(), 1):
             numeric = [(rule, check.get(path, {}).get(number)) for rule, check in compiled
