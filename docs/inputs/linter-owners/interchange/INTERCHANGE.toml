@@ -1,0 +1,4 @@
+"name" = "INTERCHANGE"
+"position" = 2
+"partitions" = [{ "position" = 8, "value" = { "name" = "interchange", "owner" = "INTERCHANGE", "pattern" = "%s\"packages/interchange/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 26, "value" = { "owner" = "INTERCHANGE", "target" = "VENDOR" } }, { "position" = 27, "value" = { "owner" = "INTERCHANGE", "target" = "ROOT" } }, { "position" = 40, "value" = { "owner" = "INTERCHANGE", "target" = "TESTKIT" } }, { "position" = 41, "value" = { "owner" = "INTERCHANGE", "target" = "CLICOMMON" } }]

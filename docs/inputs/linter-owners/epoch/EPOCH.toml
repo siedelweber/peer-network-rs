@@ -1,0 +1,4 @@
+"name" = "EPOCH"
+"position" = 11
+"partitions" = [{ "position" = 0, "value" = { "name" = "epoch-package", "owner" = "EPOCH", "pattern" = "%s\"packages/epoch/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 0, "value" = { "owner" = "EPOCH", "target" = "GRAPH" } }, { "position" = 1, "value" = { "owner" = "EPOCH", "target" = "ROOT" } }, { "position" = 2, "value" = { "owner" = "EPOCH", "target" = "RECORDS" } }, { "position" = 3, "value" = { "owner" = "EPOCH", "target" = "TESTKIT" } }, { "position" = 4, "value" = { "owner" = "EPOCH", "target" = "CLICOMMON" } }]

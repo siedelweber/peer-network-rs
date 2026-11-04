@@ -1,0 +1,4 @@
+"name" = "DOCUMENTS"
+"position" = 1
+"partitions" = [{ "position" = 9, "value" = { "name" = "documents", "owner" = "DOCUMENTS", "pattern" = "%s\"packages/documents/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 29, "value" = { "owner" = "DOCUMENTS", "target" = "ROOT" } }, { "position" = 31, "value" = { "owner" = "DOCUMENTS", "target" = "CLICOMMON" } }]

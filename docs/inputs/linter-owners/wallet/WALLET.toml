@@ -1,0 +1,4 @@
+"name" = "WALLET"
+"position" = 9
+"partitions" = [{ "position" = 2, "value" = { "name" = "wallet-package", "owner" = "WALLET", "pattern" = "%s\"packages/wallet/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 10, "value" = { "owner" = "WALLET", "target" = "ROOT" } }, { "position" = 11, "value" = { "owner" = "WALLET", "target" = "CLICOMMON" } }, { "position" = 12, "value" = { "owner" = "WALLET", "target" = "TESTKIT" } }]

@@ -1,0 +1,4 @@
+"name" = "ACTPROFILE"
+"position" = 13
+"partitions" = [{ "position" = 17, "value" = { "name" = "act-profile-package", "owner" = "ACTPROFILE", "pattern" = "%s\"packages/act-profile/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 42, "value" = { "owner" = "ACTPROFILE", "target" = "ROOT" } }, { "position" = 43, "value" = { "owner" = "ACTPROFILE", "target" = "RECORDS" } }, { "position" = 44, "value" = { "owner" = "ACTPROFILE", "target" = "INTERCHANGE" } }, { "position" = 45, "value" = { "owner" = "ACTPROFILE", "target" = "CLICOMMON" } }, { "position" = 46, "value" = { "owner" = "ACTPROFILE", "target" = "GRAPH" } }]

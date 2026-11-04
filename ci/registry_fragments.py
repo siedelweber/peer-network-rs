@@ -148,6 +148,55 @@ def observation(paths, prefix):
     return result
 
 
+def owners(paths, prefix):
+    schema_path = prefix+'/schema.toml'
+    if schema_path not in paths:
+        raise ValueError('missing central fragment schema: '+schema_path)
+    schema = tomllib.loads(paths[schema_path].read_text())
+    if set(schema) != {'namespace', 'version', 'declaration', 'fields'}:
+        raise ValueError('unknown owner schema key')
+    declaration = schema['declaration']
+    if set(declaration) != {'name', 'root_owner', 'imports'}:
+        raise ValueError('unknown owner declaration key')
+    entries = []
+    for path, full in paths.items():
+        if path == schema_path:
+            continue
+        row = tomllib.loads(full.read_text())
+        if set(row) != set(schema['fields']) or not isinstance(row.get('name'), str):
+            raise ValueError('unknown or missing owner fragment key: '+path)
+        entries.append((row['name'], path, row))
+    merged = distinct(entries)
+    def ordered(rows):
+        if any(type(row.get('position')) is not int for row in rows):
+            raise ValueError('owner order is not integral')
+        rows = sorted(rows, key=lambda row: row['position'])
+        if [row['position'] for row in rows] != list(range(len(rows))):
+            raise ValueError('owner order is not complete and unique')
+        return rows
+    rows = ordered([value for _, value in merged.values()])
+    names = [row['name'] for row in rows]
+    if declaration['root_owner'] not in names:
+        raise ValueError('unresolved root owner')
+    partitions, edges = [], []
+    for row in rows:
+        for section, target, expected in [('partitions', partitions, {'name', 'owner', 'pattern'}),
+                                           ('may_cite', edges, {'owner', 'target'})]:
+            for entry in row[section]:
+                if set(entry) != {'position', 'value'} or set(entry['value']) != expected:
+                    raise ValueError('unknown owner edge key')
+                value = entry['value']
+                if value['owner'] != row['name'] or value.get('target', row['name']) not in names:
+                    raise ValueError('unresolved owner edge')
+                target.append(entry)
+    partitions = [row['value'] for row in ordered(partitions)]
+    edges = [row['value'] for row in ordered(edges)]
+    if len({row['name'] for row in partitions}) != len(partitions) or len({(row['owner'], row['target']) for row in edges}) != len(edges):
+        raise ValueError('duplicate owner edge')
+    return dict(namespace=schema['namespace'], version=schema['version'],
+                rows=[dict(declaration, owners=names, partitions=partitions, may_cite=edges)])
+
+
 def read(root, name):
     """Read an admitted fragment family, or its not-yet-migrated monolith."""
     root = Path(root).resolve()
@@ -161,6 +210,8 @@ def read(root, name):
     paths = {path: full for path, full in indexed(root).items() if path.startswith(prefix+'/')}
     if name == 'observation-registry':
         return observation(paths, prefix)
+    if name == 'linter-owners':
+        return owners(paths, prefix)
     schema_path = prefix+'/schema.toml'
     if schema_path not in paths:
         raise ValueError('missing central fragment schema: '+schema_path)

@@ -1,0 +1,4 @@
+"name" = "VERIFICATION"
+"position" = 7
+"partitions" = [{ "position" = 4, "value" = { "name" = "verification-package", "owner" = "VERIFICATION", "pattern" = "%s\"packages/verification/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 9, "value" = { "owner" = "VERIFICATION", "target" = "GRAPH" } }, { "position" = 19, "value" = { "owner" = "VERIFICATION", "target" = "TESTKIT" } }, { "position" = 20, "value" = { "owner" = "VERIFICATION", "target" = "ROOT" } }, { "position" = 21, "value" = { "owner" = "VERIFICATION", "target" = "RECORDS" } }]

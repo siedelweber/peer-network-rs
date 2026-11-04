@@ -1,0 +1,4 @@
+"name" = "TESTKIT"
+"position" = 5
+"partitions" = [{ "position" = 16, "value" = { "name" = "testkit", "owner" = "TESTKIT", "pattern" = "%s\"packages/testkit/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 39, "value" = { "owner" = "TESTKIT", "target" = "ROOT" } }]

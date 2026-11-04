@@ -1,0 +1,4 @@
+"namespace" = "org.peer-network.linter.owners"
+"version" = [1, 0, 0]
+"declaration" = { "name" = "declaration", "root_owner" = "ROOT", "imports" = [] }
+"fields" = ["name", "position", "partitions", "may_cite"]

@@ -1,0 +1,4 @@
+"name" = "EXECWRAP"
+"position" = 4
+"partitions" = [{ "position" = 15, "value" = { "name" = "execwrap", "owner" = "EXECWRAP", "pattern" = "%s\"packages/execwrap/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 32, "value" = { "owner" = "EXECWRAP", "target" = "CLICOMMON" } }, { "position" = 33, "value" = { "owner" = "EXECWRAP", "target" = "INTERCHANGE" } }, { "position" = 34, "value" = { "owner" = "EXECWRAP", "target" = "DOCUMENTS" } }, { "position" = 36, "value" = { "owner" = "EXECWRAP", "target" = "ROOT" } }]

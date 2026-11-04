@@ -617,18 +617,24 @@ fn declaration_authority() -> Result<()> {
     let directory = fixture()?;
     let root = directory.path();
     let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    for input in [
-        "records",
-        "kinds-registry",
-        "linter-reserved",
-        "linter-owners",
-        "linter-policies",
-    ] {
+    for input in ["records", "kinds-registry", "linter-reserved", "linter-policies"] {
         fs::copy(
             repository.join(format!("docs/inputs/{input}.toml")),
             root.join(format!("docs/inputs/{input}.toml")),
         )?;
     }
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(&repository)
+        .args(["ls-files", "-z", "docs/inputs/linter-owners", "ci/registry_fragments.py"])
+        .output()?;
+    assert!(output.status.success());
+    for path in String::from_utf8(output.stdout)?.split('\0').filter(|path| !path.is_empty()) {
+        let target = root.join(path);
+        fs::create_dir_all(target.parent().ok_or("fragment parent")?)?;
+        fs::copy(repository.join(path), target)?;
+    }
+    git(root, &["add", "docs/inputs/linter-owners", "ci/registry_fragments.py"])?;
     fs::create_dir_all(root.join("docs/templates/.linter"))?;
     fs::create_dir_all(root.join("docs/templates/adr"))?;
     fs::create_dir_all(root.join("docs/fragments"))?;

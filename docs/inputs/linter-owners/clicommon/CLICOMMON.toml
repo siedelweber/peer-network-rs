@@ -1,0 +1,4 @@
+"name" = "CLICOMMON"
+"position" = 3
+"partitions" = [{ "position" = 14, "value" = { "name" = "cli-common", "owner" = "CLICOMMON", "pattern" = "%s\"packages/cli-common/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 35, "value" = { "owner" = "CLICOMMON", "target" = "ROOT" } }]

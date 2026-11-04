@@ -1,0 +1,4 @@
+"name" = "RECORDS"
+"position" = 6
+"partitions" = [{ "position" = 5, "value" = { "name" = "records-package", "owner" = "RECORDS", "pattern" = "%s\"packages/records/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 22, "value" = { "owner" = "RECORDS", "target" = "TESTKIT" } }, { "position" = 24, "value" = { "owner" = "RECORDS", "target" = "ROOT" } }, { "position" = 25, "value" = { "owner" = "RECORDS", "target" = "CLICOMMON" } }]

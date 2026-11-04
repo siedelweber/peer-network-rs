@@ -98,7 +98,7 @@ producer = "None; authored input"
 establishment = "defined"
 reader = "byte"
 definition = "ASCII NUL, SOH, ESC and US have assigned control values; UTF-8 excludes its two highest byte values; the euro sign fixes its three UTF-8 code units. The byte reader accepts these assignments and the pack payload pattern only."
-paths = ["ci/discipline.py", "ci/test_discipline.py", "packages/documents/tests/integration.rs"]
+paths = ["ci/discipline.py", "ci/test_discipline.py", "ci/fragment_witnesses.py", "packages/documents/tests/integration.rs"]
 
 [[rows]]
 family = "cbor-integer-headers"

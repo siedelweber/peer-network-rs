@@ -1,0 +1,4 @@
+"name" = "GRAPH"
+"position" = 10
+"partitions" = [{ "position" = 1, "value" = { "name" = "graph-package", "owner" = "GRAPH", "pattern" = "%s\"packages/graph/\" *VCHAR" } }]
+"may_cite" = [{ "position" = 5, "value" = { "owner" = "GRAPH", "target" = "ROOT" } }, { "position" = 6, "value" = { "owner" = "GRAPH", "target" = "CLICOMMON" } }, { "position" = 7, "value" = { "owner" = "GRAPH", "target" = "RECORDS" } }, { "position" = 8, "value" = { "owner" = "GRAPH", "target" = "TESTKIT" } }]
