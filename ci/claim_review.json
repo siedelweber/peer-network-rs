@@ -2427,6 +2427,14 @@
       "review": "The publication verifier sees the whole reference input. A changed door refuses publication, an unsupported lower endpoint refuses at the kernel binding check, and zero-width evaluation and replay leave the immutable rational charged price identical."
     },
     {
+      "operation": "pn-epoch::solve::replay_work::fence_faults",
+      "path": "packages/epoch/tests/solve/replay_work.rs",
+      "claim": "EPOCH::claim:numerics:conserved-fence-binds-fault-assertions",
+      "before": "",
+      "after": "Claim: The conserved solve refuses invented faults and changed outcomes on attachment-bearing fence primitives, while the original fence remains replayable.",
+      "review": "An independently accepted fence has an attachment and no fault. Invented assertions with separate kind, operation and logical-id substitutions refuse Scope in conserved solve; a changed outcome also refuses. No claim says a producer diagnostic proves a mathematical verdict."
+    },
+    {
       "operation": "pn-epoch::solve::replay_work::solve_replay_work",
       "path": "packages/epoch/tests/solve/replay_work.rs",
       "claim": "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work",
@@ -3019,6 +3027,14 @@
       "review": "Read the closed formula, analytic concavity majorant and independently rebuilt query joins. The finite fixture checks checked premises, exact image/order, refusal or replay as named; it does not infer uniqueness from sampled values, adopt a decimal floor or certify production admission."
     },
     {
+      "operation": "pn-graph::numeric::ridge::ridge_faults",
+      "path": "packages/graph/tests/numeric/ridge.rs",
+      "claim": "GRAPH::claim:numerics:ridge-replay-binds-fault-assertions",
+      "before": "",
+      "after": "Claim: Ridge replay refuses invented retained numerical fault assertions and altered outcomes while retaining its independently checked defining record.",
+      "review": "The independently checked defining record includes an attachment-bearing indecisive primitive with no fault. Invented assertions with separate kind, operation and logical-id substitutions, and a changed outcome, refuse Record at that query."
+    },
+    {
       "operation": "pn-graph::numeric::ridge::ridge_replay",
       "path": "packages/graph/tests/numeric/ridge.rs",
       "claim": "GRAPH::claim:numerics:ridge-replay-refuses-defining-and-query-substitution",
@@ -3057,6 +3073,14 @@
       "before": "",
       "after": "Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. An unnormalized depth mass, changed asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.",
       "review": "The mutated mass is unnormalized and refuses; normalized alternate declarations are not covered. Changed asserted image, preconditioner and box refuse independently, and an exactly touching inflation retains generalized slopes without inclusion."
+    },
+    {
+      "operation": "pn-graph::numeric::wall_faults",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:wall-replay-binds-fault-assertions",
+      "before": "",
+      "after": "Claim: Wall replay refuses invented retained numerical faults and altered outcomes on its attachment-bearing comparison record.",
+      "review": "At the minimum-supported precision the original indecisive wall record replays, with an attachment and absent fault. Invented assertions with separate kind, operation and logical-id substitutions, and a changed outcome, each refuse Record. This is an evidence-integrity scope control, not an accuracy floor."
     },
     {
       "operation": "pn-graph::properties::generated_partitions",

@@ -154,7 +154,11 @@ impl<'a> Run<'a> {
                 fault: evidence.resource_fault,
             });
         }
-        if supplied.is_some_and(|r| r.evidence.bounds != evidence.bounds || r.evidence.outcome != evidence.outcome) {
+        if supplied.is_some_and(|r| {
+            r.evidence.bounds != evidence.bounds
+                || r.evidence.outcome != evidence.outcome
+                || r.evidence.resource_fault != evidence.resource_fault
+        }) {
             return Err(Error::Record);
         }
         let bounds = if evidence.outcome == Outcome::DomainBoundary {

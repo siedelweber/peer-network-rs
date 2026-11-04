@@ -27,6 +27,46 @@ fn wall_floor_rational() -> String {
     design_constants::DesignConstantId::EpochWallFloorRational.value().to_owned()
 }
 
+fn fault_assertion(field: usize) -> pn_records::primitive::FaultAssertion {
+    let mut fault = pn_records::primitive::FaultAssertion {
+        kind: nrz_cas::FaultKind::Invalid(nrz_cas::InvalidCode::UnsupportedCertificate),
+        operation: "invented".into(),
+        logical_id: None,
+    };
+    match field {
+        0 => fault.operation.push_str(" changed"),
+        1 => fault.logical_id = Some(1),
+        _ => fault.kind = nrz_cas::FaultKind::Invalid(nrz_cas::InvalidCode::DecisionOptionMismatch),
+    }
+    fault
+}
+
+/// Claim: Wall replay refuses invented retained numerical faults and altered outcomes on its attachment-bearing comparison record.
+/// ´claim:numerics:wall-replay-binds-fault-assertions´
+/// ´test:integration:wall-faults´
+#[test]
+fn wall_faults() {
+    use pn_graph::numeric::wall;
+    let mut p = wall_policy();
+    // The minimum supported precision is a scope control, not an accuracy claim.
+    p.precision = Precision::AbsoluteWidthBits(vec![2]);
+    p.enclosure.as_mut().unwrap().refinement.precision = 2;
+    let input = wall_input();
+    let r = wall::evaluate(&p, &input).unwrap();
+    wall::replay(&p, &input, &r).unwrap();
+    assert!(r.indecisive);
+    assert!(r.steps[0].primitive.evidence.attachment.is_some());
+    assert!(r.steps[0].primitive.evidence.resource_fault.is_none());
+    for field in 0..3 {
+        let mut changed = r.clone();
+        changed.steps[0].primitive.evidence.resource_fault = Some(fault_assertion(field));
+        assert!(matches!(wall::replay(&p, &input, &changed), Err(wall::Error::Record)));
+    }
+    let mut changed = r;
+    changed.steps[0].primitive.evidence.outcome = Outcome::Fail;
+    assert!(matches!(wall::replay(&p, &input, &changed), Err(wall::Error::Record)));
+}
+
 fn procedure() -> Procedure {
     let limits = Limits {
         work: 20_000_000,

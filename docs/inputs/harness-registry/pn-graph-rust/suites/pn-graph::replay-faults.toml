@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-graph::replay-faults"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::numeric::ridge::ridge_faults", "pn-graph::numeric::wall_faults"]

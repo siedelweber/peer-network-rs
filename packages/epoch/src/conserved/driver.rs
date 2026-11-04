@@ -46,7 +46,10 @@ fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<
             }
             if record.evidence.attachment.is_some() {
                 let checked = crate::fence::replay(bound, &attempt.rung, record)?;
-                if checked.bounds != record.evidence.bounds {
+                if checked.bounds != record.evidence.bounds
+                    || checked.outcome != record.evidence.outcome
+                    || checked.resource_fault != record.evidence.resource_fault
+                {
                     return Err(Error::Scope);
                 }
             } else if attempt.stop != AttemptStop::WorkLimit {

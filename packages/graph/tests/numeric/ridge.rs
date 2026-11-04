@@ -308,3 +308,26 @@ fn ridge_replay() {
     assert!(prefix.image.is_none());
     assert!(kernel::replay(&p, &short, &prefix).unwrap().image().is_none());
 }
+
+/// Claim: Ridge replay refuses invented retained numerical fault assertions and altered outcomes while retaining its independently checked defining record.
+/// ´claim:numerics:ridge-replay-binds-fault-assertions´
+/// ´test:integration:ridge-faults´
+#[test]
+fn ridge_faults() {
+    let (p, i, r, _) = certified(NumberId::NumbersRidgeCertificatePrecision);
+    let index = r
+        .queries
+        .iter()
+        .position(|q| matches!(q.evidence.outcome, Outcome::Indecisive(_)))
+        .unwrap();
+    assert!(r.queries[index].evidence.attachment.is_some());
+    assert!(r.queries[index].evidence.resource_fault.is_none());
+    for field in 0..3 {
+        let mut changed = r.clone();
+        changed.queries[index].evidence.resource_fault = Some(super::fault_assertion(field));
+        assert!(matches!(kernel::replay(&p, &i, &changed), Err(kernel::Error::Record)));
+    }
+    let mut changed = r;
+    changed.queries[index].evidence.outcome = Outcome::Fail;
+    assert!(matches!(kernel::replay(&p, &i, &changed), Err(kernel::Error::Record)));
+}

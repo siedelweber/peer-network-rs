@@ -157,7 +157,12 @@ impl Run<'_> {
             } else {
                 Sign::Indecisive
             };
-            if supplied.is_some_and(|s| s.sign != sign || s.primitive.evidence.bounds != evidence.bounds) {
+            if supplied.is_some_and(|s| {
+                s.sign != sign
+                    || s.primitive.evidence.bounds != evidence.bounds
+                    || s.primitive.evidence.outcome != evidence.outcome
+                    || s.primitive.evidence.resource_fault != evidence.resource_fault
+            }) {
                 return Err(Error::Record);
             }
             self.result.steps.push(Step {
