@@ -1,6 +1,7 @@
 """Rust syntax census and explicit observation admission for the current build."""
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -184,6 +185,12 @@ def command(argv, **kwargs):
 
 
 def syntax_census(binary=None):
+    from precheck import check_prepared, prepare_checker
+    target = Path(os.environ.get('CARGO_TARGET_DIR', 'target')).resolve()
+    if binary is None:
+        binary = prepare_checker(Path.cwd(), target, 'observations')
+    elif Path(binary).resolve() != check_prepared(Path.cwd(), target, 'observations').resolve():
+        raise StructuralError('prepared observation reader path differs')
     metadata=json.loads(command(['cargo','metadata','--offline','--locked','--no-deps','--format-version','1']))
     roots=[]
     for package in metadata['packages']:
@@ -195,7 +202,7 @@ def syntax_census(binary=None):
             roots.append(dict(package=package['name'],owner=OWNERS[path.name],path=str(Path(target['src_path']).relative_to(Path.cwd()))))
     cfg=command(['rustc','--print','cfg']).splitlines()
     request=dict(roots=roots,cfg=cfg)
-    argv = [str(binary)] if binary else ['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census']
+    argv = [str(binary)]
     output=command(argv,input=json.dumps(request))
     result=json.loads(output)
     result['source']=source_id()

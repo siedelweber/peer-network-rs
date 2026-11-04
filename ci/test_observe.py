@@ -2,6 +2,7 @@
 import copy
 import io
 import json
+from pathlib import Path
 import unittest
 
 from devperf import StructuralError
@@ -170,11 +171,13 @@ class Admission(unittest.TestCase):
         requests = []
         refusals = []
         for binary in (None, '/prepared/observe_census'):
-            with patch('observe.command', side_effect=(json.dumps(dict(packages=[], workspace_members=[])), '', json.dumps(args[0]))) as reader, patch('observe.source_id', return_value='fixture'):
+            with patch('observe.command', side_effect=(json.dumps(dict(packages=[], workspace_members=[])), '', json.dumps(args[0]))) as reader, patch('observe.source_id', return_value='fixture'), patch('precheck.prepare_checker', return_value=Path('/prepared/observe_census')) as prepare, patch('precheck.check_prepared', return_value=Path('/prepared/observe_census')) as prepared:
                 parsed = syntax_census(binary)
                 requests.append(reader.call_args.kwargs['input'])
                 invoked = reader.call_args.args[0]
-                self.assertEqual(invoked[0], 'cargo' if binary is None else binary)
+                self.assertEqual(invoked[0], '/prepared/observe_census')
+                self.assertEqual(prepare.call_count, int(binary is None))
+                self.assertEqual(prepared.call_count, int(binary is not None))
                 if binary is not None:
                     self.assertNotIn('run', invoked)
                 with self.assertRaises(StructuralError) as refusal:

@@ -265,6 +265,12 @@ def registrations(sites, expected_sites, areas, obligations, declared, paragraph
     """Check declared edges independently of execution; the evaluator calls this too."""
     if len({s['operation'] for s in sites}) != len(sites) or {s['operation'] for s in sites} != set(expected_sites):
         raise StructuralError('undeclared or omitted source site')
+    for site in sites:
+        if site.get('path', '').endswith('/tests/public.rs') and (
+                not isinstance(expected_sites, dict)
+                or expected_sites[site['operation']]['level'] != 'public-surface'
+                or not site.get('test_label', '').startswith('test:integration:')):
+            raise StructuralError('public carrier mapping differs')
     if len({a['owner']+'::'+a['area'] for a in areas}) != len(areas): raise StructuralError('duplicate area register')
     actual_areas = {(s['owner'], s['area']) for s in sites}
     if actual_areas != {(a['owner'], a['area']) for a in areas}: raise StructuralError('missing or stale claim area')
@@ -882,7 +888,7 @@ def registration_check(root, registers, registry, sites, *, structure=True):
     declared = read_fragments(root, 'claim-obligations')['rows']
     from discipline import vendor_packages
     vendor_implementations = {row['name'] + '-rust' for row in vendor_packages(root)}
-    expected = {n for n, case in registry.cases.items() if case['runner'] == 'ci'
+    expected = {n: case for n, case in registry.cases.items() if case['runner'] == 'ci'
                 or (case['runner'] == 'nextest' and case['implementation'] not in vendor_implementations)}
     registrations(sites, expected, areas, obligations, declared, paragraphs)
     reviewed_sites(sites, registers['sites'], registers['glosses'])
@@ -939,10 +945,6 @@ def main(argv=None):
         records = [json.loads(line) for path in paths for line in path.read_text().splitlines()]
         source = source_id()
         registry.matrix(records, source)
-        for site in sites:
-            case = registry.cases.get(site['operation'])
-            if case and site['path'].endswith('/tests/public.rs') and (case['level']!='public-surface' or not site['test_label'].startswith('test:integration:')):
-                raise StructuralError('public carrier mapping differs')
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
         from wallet_cases import repository_check

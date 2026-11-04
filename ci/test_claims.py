@@ -525,6 +525,17 @@ class Evidence(unittest.TestCase):
         self.assertEqual(stages['linter'], ['/deployed/linter', 'check', '--root', '.'])
         self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', '--check'])
         self.assertEqual(stages['documents'], ['/prepared/gate/documents', 'check'])
+        self.prepared_checker_control()
+        for level, label in (('unit', 'test:integration:fixture'), ('public-surface', 'test:unit:fixture')):
+            control = fixture()
+            control['sites'][0].update(path='packages/example/tests/public.rs', test_label=label)
+            control['expected_sites'] = {name:dict(level=level) for name in control['expected_sites']}
+            arguments = {key:control[key] for key in ('sites', 'expected_sites', 'areas', 'obligations', 'declared', 'paragraphs')}
+            with self.assertRaisesRegex(StructuralError, 'public carrier mapping differs') as early:
+                registrations(**arguments)
+            with self.assertRaises(StructuralError) as full:
+                evaluate(**control)
+            self.assertEqual(str(early.exception), str(full.exception))
         for mutation in ('citation', 'site', 'area', 'obligation', 'edge'):
             control = fixture()
             if mutation == 'citation':
@@ -547,6 +558,42 @@ class Evidence(unittest.TestCase):
         with self.assertRaisesRegex(StructuralError,'uncited evidence'): evaluate(**data)
         data=fixture(); data['declared'][0].update(status='held',claims=[])
         with self.assertRaisesRegex(StructuralError,'hold lacks owner'): evaluate(**data)
+
+    def prepared_checker_control(self):
+        import subprocess
+        import precheck
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root/'target'
+            binary = target/'gate/documents'
+            binary.parent.mkdir(parents=True)
+            source = root/'checker.rs'
+            source.write_text('checked source')
+            binary.write_text('prepared executable')
+            binary.with_suffix('.d').write_text(str(binary)+': '+str(source)+'\n')
+            subprocess.run(['git', 'init', '-q', str(root)], check=True, capture_output=True)
+            subprocess.run(['git', '-C', str(root), 'add', 'checker.rs'], check=True, capture_output=True)
+            original = precheck.prepared_state(root, target, 'documents')
+            binding = binary.with_suffix('.prepared.json')
+            binding.write_text(json.dumps(original))
+            self.assertEqual(precheck.check_prepared(root, target, 'documents'), binary)
+            for path, value in ((source, 'changed checker source'), (binary, 'different executable')):
+                before = path.read_text()
+                path.write_text(value)
+                diagnostics = []
+                for args in (['--only', 'datasets'], ['--run-checker', 'documents', '--', 'generate', '--check']):
+                    output = io.StringIO()
+                    with patch('sys.argv', ['ci/precheck.py', *args]), patch('precheck.Path.cwd', return_value=root), patch.dict(os.environ, CARGO_TARGET_DIR=str(target), LINTER_BIN='/fixture/linter'), patch('precheck.prepare_checker', return_value=binary), patch('precheck.subprocess.run', wraps=subprocess.run) as run, redirect_stderr(output), redirect_stdout(io.StringIO()):
+                        self.assertEqual(precheck.main(), 2)
+                    self.assertFalse(any(call.args[0][0] == str(binary) for call in run.call_args_list))
+                    diagnostics.append(next(line for line in output.getvalue().splitlines() if line.startswith('CHECKER-STRUCTURAL-ERROR')))
+                self.assertEqual(diagnostics[0], diagnostics[1])
+                self.assertIn('sources or executable differ', diagnostics[0])
+                path.write_text(before)
+            self.assertEqual(precheck.check_prepared(root, target, 'documents'), binary)
+            binding.unlink()
+            with redirect_stderr(io.StringIO()), self.assertRaises(ValueError):
+                precheck.check_prepared(root, target, 'documents')
 
     def test_requirement_edges(self):
         """A requirement retains every source-cited realizer and inherits a failing realizer's verdict.
