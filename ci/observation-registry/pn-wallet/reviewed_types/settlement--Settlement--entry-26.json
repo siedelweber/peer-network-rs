@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::Settlement",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
+  }
+}

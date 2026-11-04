@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "canonical-controller-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public frozen epoch inputs, closed controller edition and independently reconstructed inverse, floor, branch and delivery evidence. No secret or schedule-admission authority is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::evaluate",
+        "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay",
+        "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
+        "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+        "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cells::CellError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/cells.rs",
+    "syntax": "# [doc = \" Whole-result coordinate, formation or bounded exact-arithmetic refusal.\"] # [doc = \" (´def:compiler:standing-cells´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CellError { # [error (\"missing or malformed mandatory coordinate\")] Representation , # [error (\"formation: {0}\")] Formation (# [from] RegistrationError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary zero is not a compiling epoch\")] Boundary , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::ScheduleInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Supplied schedule declaration; validation is not schedule publication or admission.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ScheduleInput { pub controller : String , pub announced_at : u64 , pub initialization : InitializationInput , pub numeraire : Numeraire , pub delivery : Delivery , pub refinement : Refinement , }"
+  }
+}

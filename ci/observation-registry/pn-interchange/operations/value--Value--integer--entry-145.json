@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Value::integer",
+    "owner": "INTERCHANGE",
+    "signature": "fn integer (v : i128) -> Result < Value , ValueError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Value::integer",
+    "body": "{ if v >= 0 { u64 :: try_from (v) . map (Value :: Unsigned) . map_err (| _ | ValueError :: IntegerOutOfRange { value : v }) } else { Negative :: from_i128 (v) . map (Value :: Negative) } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Value::integer.",
+    "assessments": {
+      "full_recording": "review-095",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::Evaluation",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation.rs",
+    "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
+  }
+}

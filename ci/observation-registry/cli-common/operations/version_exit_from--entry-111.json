@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "version_exit_from",
+    "owner": "CLICOMMON",
+    "signature": "fn version_exit_from < I , A > (args : I , command : & str , package : & str , version : & str , commit : Option < & str >) -> Option < CliExit > where I : IntoIterator < Item = A > , A : AsRef < OsStr > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::version_exit_from",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"version_exit_from\" , & (command , package , version , commit , \"lazy argument iterator; only consumed arguments are observed\" ,) ,) ; let result = (| | { let mut args = args . into_iter () . inspect (| argument | tracing :: info ! (argument =? argument . as_ref ())) ; if args . next () ? . as_ref () != OsStr :: new (\"--version\") || args . next () . is_some () { return None ; } let version = commit . map_or_else (| | format ! (\"{package} {version}\") , | commit | format ! (\"{package} {version} (commit {commit})\") ,) ; Some (CliExit :: new (ControlPlaneRecord :: version (command , & version) , CommandExit :: Success ,)) }) () ; scope . finish (& result) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for version_exit_from.",
+    "assessments": {
+      "full_recording": "review-262",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

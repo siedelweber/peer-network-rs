@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::Literal::exact",
+    "owner": "RECORDS",
+    "signature": "fn exact (& self) -> & str",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+      "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+      "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+      "class_decision": "public-records"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::Literal::exact",
+    "class_decision": "public-records",
+    "body": "{ & self . exact . canonical }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+  }
+}

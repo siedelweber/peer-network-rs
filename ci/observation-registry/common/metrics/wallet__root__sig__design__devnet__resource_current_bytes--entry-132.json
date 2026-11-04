@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "wallet__root__sig__design__devnet__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

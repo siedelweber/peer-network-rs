@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ChannelMessage",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "enum ChannelMessage { Data { stream : Stream , data : Vec < u8 > } , Eof { stream : Stream } , Error { stream : Stream , error : io :: Error } , }"
+  }
+}

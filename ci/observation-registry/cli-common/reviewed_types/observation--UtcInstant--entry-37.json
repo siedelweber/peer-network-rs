@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::UtcInstant",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" A validated explicit-UTC instant; no local-zone inference is performed.\"] # [derive (Clone , Debug , Serialize)] pub struct UtcInstant (String) ;"
+  }
+}

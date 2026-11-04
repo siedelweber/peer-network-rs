@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registration::GroundedNode",
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "syntax": "# [doc = \" Grounded identifiers; Registration anchors this existing pair and mints nothing.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum GroundedNode { # [doc = \" The primitive address atom interpreted as its Actor.\"] Actor (String) , # [doc = \" The same address atom interpreted as its Profile.\"] Profile (String) , }"
+  }
+}

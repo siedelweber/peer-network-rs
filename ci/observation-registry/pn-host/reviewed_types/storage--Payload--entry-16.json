@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Payload",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" Canonical public bytes produced only from this slice's validated carriers.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Payload { family : Family , bytes : Vec < u8 > , digest : [u8 ; 32] , disclosure : Option < [u8 ; 32] > , }"
+  }
+}

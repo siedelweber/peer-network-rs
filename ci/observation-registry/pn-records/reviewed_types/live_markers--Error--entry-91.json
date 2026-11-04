@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_markers::Error",
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "syntax": "# [doc = \" Missing proof never authorizes a smaller accepted set.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"marker recognition: {0}\")] Recognition (# [from] burn :: BurnError) , # [error (\"missing live settlement evidence\")] MissingEvidence , # [error (\"live settlement or placement is not established\")] Pending , # [error (\"the bound final lineage is lost\")] Lost , }"
+  }
+}

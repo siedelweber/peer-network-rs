@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Bounds",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Rational endpoints supplied as evidence; each use validates their ordering.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Bounds { pub lower : String , pub upper : String , }"
+  }
+}

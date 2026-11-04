@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numbers::Entry",
+    "kind": "derive",
+    "package": "documents",
+    "path": "packages/documents/src/numbers.rs",
+    "syntax": "# [derive (Debug , Deserialize)]",
+    "class_decision": "public-documents",
+    "expansion_review": "Debug and Deserialize cover public numeric declarations only; no private carriers or external effects."
+  }
+}

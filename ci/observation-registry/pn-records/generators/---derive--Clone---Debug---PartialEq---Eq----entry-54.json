@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "authentication::AuthenticationDisclosure",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/authentication.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Clone, Debug, equality and error formatting retain named untrusted public fields and absent-field refusals. These derive no encoding, cryptographic verdict or authenticity authority."
+  }
+}

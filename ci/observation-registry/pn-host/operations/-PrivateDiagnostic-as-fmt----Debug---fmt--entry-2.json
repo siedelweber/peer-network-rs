@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "<PrivateDiagnostic as fmt :: Debug>::fmt",
+    "owner": "HOST",
+    "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+      "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+      "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+      "class_decision": "host-transport"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::<PrivateDiagnostic as fmt :: Debug>::fmt",
+    "class_decision": "host-transport",
+    "body": "{ f . debug_tuple (\"PrivateDiagnostic\") . field (& self . 0) . finish () }",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+  }
+}

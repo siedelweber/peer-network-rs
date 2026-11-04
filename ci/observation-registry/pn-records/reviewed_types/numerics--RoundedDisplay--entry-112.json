@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::RoundedDisplay",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Nonbinding rounded text and the explicit arithmetic revision used to obtain it.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RoundedDisplay { text : String , fractional_digits : u8 , arithmetic_revision : u32 , }"
+  }
+}

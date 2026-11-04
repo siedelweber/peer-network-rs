@@ -1,0 +1,15 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "effective-schedule-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public frozen completed epochs and explicit led announcements, exact policy and charge pairs and independently replayed sequence evidence. No secret, demand input or final-admission authority is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/schedules.rs::schedules::evaluate",
+        "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+        "pn-epoch::packages/epoch/src/schedules.rs::schedules::CheckedSchedule::record"
+      ]
+    }
+  }
+}

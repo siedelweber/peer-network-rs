@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "real_base::Evaluation",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/real_base.rs",
+    "syntax": "# [doc = \" Exact entries remain exact; held entries retain their complete source and checked evidence.\"] # [doc = \" (´def:compiler:real-base´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub original : BaseEntry , pub primitive : Option < PrimitiveRecord > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Inputs",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [doc = \" Declared finite inverse search and controller constants; no admission statistics.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub width : String , pub empty_live_domain : bool , pub accepted_rung : String , pub cumulative_tilt : String , pub bleed_squared : String , pub previous : String , pub floor : Floor , pub absolute_cap : String , pub relative_cap : String , pub deadband : String , pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , pub maximum_work : u64 , pub maximum_replay_work : u64 , pub delivery : Delivery , }"
+  }
+}

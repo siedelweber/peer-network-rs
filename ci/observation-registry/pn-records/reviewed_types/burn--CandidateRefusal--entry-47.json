@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::CandidateRefusal",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" First rejected candidate in index order, with ties in disclosed history order.\"] # [doc = \" An empty history has no candidate. A later valid competitor may still extend the prefix.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateRefusal { pub candidate : Option < Marker > , pub cause : BurnError , # [doc = \" All refused competitors in disclosed position order; empty for a single-candidate refusal.\"] pub competitors : Vec < Marker > , }"
+  }
+}

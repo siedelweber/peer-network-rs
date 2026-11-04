@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::PublicationResult",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" Publication outcome for one asset, in input order.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PublicationResult { pub role : String , pub path : PathBuf , # [doc = \" Empty when the destination already carried the expected bytes\"] # [doc = \" and mode and was deliberately left untouched.\"] pub change : PublicationChange , }"
+  }
+}

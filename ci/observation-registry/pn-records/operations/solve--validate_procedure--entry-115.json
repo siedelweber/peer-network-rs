@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "item": "solve::validate_procedure",
+    "owner": "RECORDS",
+    "signature": "fn validate_procedure (input : & Procedure , limits : Limits) -> Result < () , RecordError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "solve-procedure"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/solve.rs::solve::validate_procedure",
+    "body": "{ let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; if input . boundary == 0 || input . name . is_empty () || input . backend . is_empty () || input . primitives . is_empty () || input . maximum_work == 0 || input . maximum_solve_work == 0 || input . maximum_replay_work == 0 || input . maximum_iterations == 0 || ! nonnegative (& input . margin , & mut budget) ? . compare (& one , & mut budget) ? . is_gt () || nonnegative (& input . endpoint_grid , & mut budget) ? . is_zero () { return Err (RecordError :: Procedure) ; } if let Precision :: BinaryBits (bits) | Precision :: AbsoluteWidthBits (bits) = & input . precision && (bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1])) { return Err (RecordError :: Procedure) ; } let mut previous : Option < Rational > = None ; for rung in & input . grid { let value = nonnegative (rung , & mut budget) ? ; if previous . as_ref () . map (| old | old . compare (& value , & mut budget)) . transpose () ? . is_some_and (| order | ! order . is_gt ()) { return Err (RecordError :: Grid) ; } previous = Some (value) ; } if ! previous . is_some_and (| last | last . is_zero ()) { return Err (RecordError :: Grid) ; } Ok (()) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

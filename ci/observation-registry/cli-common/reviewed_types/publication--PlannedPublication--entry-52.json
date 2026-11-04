@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::PlannedPublication",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" What phase 2 decided to do with one destination.\"] enum PlannedPublication { # [doc = \" Bytes and mode already current: touch nothing.\"] Current , # [doc = \" Bytes current, mode wrong: repair the mode in place.\"] ModeOnly , # [doc = \" Republish these staged bytes over the destination.\"] Stage (tempfile :: NamedTempFile) , }"
+  }
+}

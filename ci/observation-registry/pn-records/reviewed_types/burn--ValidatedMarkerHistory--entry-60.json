@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::ValidatedMarkerHistory",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Local evidence checks retained for pure recognition; fields cannot be forged by consumers.\"] # [doc = \" (´def:burn:verification-boundary´)\"] # [derive (Clone , Debug)] pub struct ValidatedMarkerHistory { input : HistoryInput , policy : ValidatedPolicy , verified : BTreeSet < String > , openings : Vec < Result < BTreeSet < String > , BurnError > > , }"
+  }
+}

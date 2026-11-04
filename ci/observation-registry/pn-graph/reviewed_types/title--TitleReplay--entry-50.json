@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::TitleReplay",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" Pure full replay; public evidence is not a token authorizing publication.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleReplay { # [doc = \" Requested final boundary.\"] pub epoch : u64 , # [doc = \" Final certificate, including void entries for unresolved Item terms.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" Distinct records permanently excluded from later recognition.\"] pub consumed : BTreeSet < ActId > , # [doc = \" Boundary-by-boundary recognition premises and fold evidence.\"] pub boundaries : Vec < TitleBoundary > , # [doc = \" Persistent recognized-event evidence, independent of the final owner.\"] pub events : Vec < TitleEvent > , }"
+  }
+}

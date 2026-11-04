@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<AccountingLayer as Layer < S >>::on_record",
+    "owner": "CLICOMMON",
+    "signature": "fn on_record (& self , id : & Id , values : & Record < '_ > , context : Context < '_ , S >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_record",
+    "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () && self . 0 . full_trace { values . record (& mut account . fields) ; } }",
+    "class_decision": "delivery",
+    "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
+    "assessments": {
+      "full_recording": "review-205",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

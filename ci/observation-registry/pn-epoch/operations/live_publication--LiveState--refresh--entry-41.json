@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/live_publication.rs",
+    "item": "live_publication::LiveState::refresh",
+    "owner": "EPOCH",
+    "signature": "fn refresh (& mut self , live : & impl live_markers :: LiveVerifier) -> Result < () , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented",
+    "operation": "live-refresh"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::refresh",
+    "body": "{ if self . halted { return Err (Error :: Halted) ; } match assess (self . closed . carrier () , live) { Err (Error :: Live (live_markers :: Error :: Lost)) => { self . halted = true ; Err (Error :: Halted) } other => other , } }",
+    "class_decision": "live-publication-public",
+    "item_premise": "Public complete old and replacement packages and response disclosures are recorded. Live verification precedes independent semantic restoration; immutable access retains the frozen state. The declared live and response verifiers supply external premises only. No credentials, chain-authenticity assertion or offline proof enters this local semantic boundary.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

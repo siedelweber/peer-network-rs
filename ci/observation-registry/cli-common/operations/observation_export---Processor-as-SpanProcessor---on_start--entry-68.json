@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "item": "observation_export::<Processor as SpanProcessor>::on_start",
+    "owner": "CLICOMMON",
+    "signature": "fn on_start (& self , _ : & mut Span , _ : & opentelemetry :: Context)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Processor as SpanProcessor>::on_start",
+    "body": "{ }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_start. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-219",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

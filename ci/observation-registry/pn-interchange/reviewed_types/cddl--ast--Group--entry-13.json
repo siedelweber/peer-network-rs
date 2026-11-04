@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Group",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `group = grpchoice *(S \\\"//\\\" S grpchoice)`.\"] # [derive (Clone , Debug)] pub (crate) struct Group { # [doc = \" The choices, in order. Never empty — a group with no `//` has one\"] # [doc = \" choice, which may itself have no entries.\"] pub (crate) choices : Vec < GroupChoice > , # [doc = \" The whole group.\"] pub (crate) span : Span , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ledger::BurnSnapshot",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/ledger.rs",
+    "syntax": "# [doc = \" One marker's cumulative snapshot and first-accepted increments by original address.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnSnapshot { pub boundary : u64 , pub gross : BTreeMap < Address , BurnAmount > , pub increment : BTreeMap < Address , BurnAmount > , }"
+  }
+}

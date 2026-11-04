@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "Session::last_refusal",
+    "owner": "HOST",
+    "signature": "fn last_refusal (& self) -> Option < Refusal >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::Session::last_refusal",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"Session::last_refusal\" , & self) ; let result = * self . last_refusal . lock () . unwrap_or_else (std :: sync :: PoisonError :: into_inner) ; operation . finish (& result) ; result }",
+    "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+  }
+}

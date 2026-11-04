@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "SettlementReferences",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Structural clone, equality and Debug retain public settlement act identities. No serialization, digest, authentication or graph formation verdict is generated."
+  }
+}

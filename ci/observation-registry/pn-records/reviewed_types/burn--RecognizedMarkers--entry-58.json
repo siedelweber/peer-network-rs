@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::RecognizedMarkers",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" Recognition is not finality: settlement requires the host's evidence at the published depth.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { basis : RecognitionBasis , markers : Vec < RecognizedMarker > , first_refusal : Option < CandidateRefusal > , }"
+  }
+}

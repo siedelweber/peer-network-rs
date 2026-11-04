@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::computed",
+    "owner": "RECORDS",
+    "signature": "fn computed (& mut self , literal : & Literal) -> Result < Computed , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-computed"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::computed",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { literal . exact . value . check (& self . budget , nrz_cas :: Location :: new (\"records computed admission\")) ? ; Ok (Computed { exact : literal . exact . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

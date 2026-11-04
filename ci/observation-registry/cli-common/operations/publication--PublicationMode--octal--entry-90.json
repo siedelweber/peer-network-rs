@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "item": "publication::PublicationMode::octal",
+    "owner": "CLICOMMON",
+    "signature": "const fn octal (self) -> u32",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/publication.rs::publication::PublicationMode::octal",
+    "body": "{ match self { Self :: Public => 0o644 , Self :: Executable => 0o755 , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for publication::PublicationMode::octal.",
+    "assessments": {
+      "full_recording": "review-235",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

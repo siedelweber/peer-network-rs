@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "ValidatedHistory::parent_faults",
+    "owner": "RECORDS",
+    "signature": "fn parent_faults (& self) -> & [ParentPlacementFault]",
+    "claim": "ROOT::sig:design:records",
+    "mode": "exception",
+    "shape": "shape-records",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable evidence access inherits the validating records operation.",
+      "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+      "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+      "class_decision": "public-records"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::ValidatedHistory::parent_faults",
+    "body": "{ & self . parent_faults }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Immutable public evidence access preserves parent-placement faults or unavailable dependency identities without influencing any records outcome. No private input, codec or cryptographic verdict is introduced."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/writer.rs",
+    "item": "writer::<Writer as std :: fmt :: Debug>::fmt",
+    "owner": "EXECWRAP",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "execwrap::packages/execwrap/src/bin/execwrap.rs::execute",
+      "class_decision": "public-execwrap"
+    },
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/writer.rs::writer::<Writer as std :: fmt :: Debug>::fmt",
+    "body": "{ f . debug_struct (\"Writer\") . field (\"file_type\" , & self . file_type) . field (\"file\" , & \"unavailable: Write has no Debug contract\") . field (\"add_prefix\" , & self . add_prefix) . field (\"wrap_length\" , & self . wrap_length) . field (\"props\" , & self . props) . field (\"debug\" , & self . debug) . field (\"stdout_buffer\" , & self . stdout_buffer) . field (\"stderr_buffer\" , & self . stderr_buffer) . finish () }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for writer::<Writer as std :: fmt :: Debug>::fmt.",
+    "assessments": {
+      "full_recording": "review-286",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::Theory::open_companion",
+    "owner": "INTERCHANGE",
+    "signature": "fn open_companion (& self) -> OpenTheory",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::Theory::open_companion",
+    "body": "{ companion :: derive (self) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::Theory::open_companion.",
+    "assessments": {
+      "full_recording": "review-039",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

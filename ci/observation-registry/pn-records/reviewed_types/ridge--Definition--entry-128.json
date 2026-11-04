@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::Definition",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Closed formula identity, checked before any numerical evaluation.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Definition { pub schema : String , pub inverse_temperature : String , pub bleed_squared : String , pub core_power : String , }"
+  }
+}

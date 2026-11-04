@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/companion.rs",
+    "item": "cddl::companion::OpenTheory::label",
+    "owner": "INTERCHANGE",
+    "signature": "fn label (& self) -> & NamespaceLabel",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/companion.rs::cddl::companion::OpenTheory::label",
+    "body": "{ & self . label }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::companion::OpenTheory::label.",
+    "assessments": {
+      "full_recording": "review-008",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

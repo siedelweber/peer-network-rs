@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "TracingFilterSource",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Source used to choose the JSON tracing filter directive.\"] # [derive (Debug , Clone , Copy , Serialize , Deserialize , PartialEq , Eq)] # [serde (rename_all = \"snake_case\")] pub enum TracingFilterSource { # [doc = \" The `RUST_LOG` environment variable supplied the directive.\"] RustLog , # [doc = \" The shared `--debug` flag selected debug logging.\"] DebugFlag , # [doc = \" The caller-supplied default level was used.\"] DefaultLevel , }"
+  }
+}

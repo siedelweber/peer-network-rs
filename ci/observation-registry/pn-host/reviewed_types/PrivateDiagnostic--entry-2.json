@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "PrivateDiagnostic",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" A whole, secret-typed server diagnostic; no string or serialization accessor.\"] # [doc = \" (´def:host:private-server-diagnostic´)\"] pub struct PrivateDiagnostic (Buffer) ;"
+  }
+}

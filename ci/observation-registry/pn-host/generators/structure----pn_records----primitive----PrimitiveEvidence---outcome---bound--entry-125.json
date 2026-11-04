@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::records_primitive::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_primitive.rs",
+    "syntax": "structure ! (pn_records :: primitive :: PrimitiveEvidence { outcome , bounds , attachment , work , usage , evaluation_work , precision_met , completed_rounds , resource_fault }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::fragment::Slot",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/fragment.rs",
+    "syntax": "# [doc = \" One enumerated content key.\"] # [derive (Copy , Clone , Debug)] pub (crate) struct Slot { key : ContentKey , required : bool , type_span : Span , }"
+  }
+}

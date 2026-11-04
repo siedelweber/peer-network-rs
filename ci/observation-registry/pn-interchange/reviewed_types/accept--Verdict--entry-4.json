@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "accept::Verdict",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "syntax": "# [doc = \" The disposition of a document at a reader.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{NamespaceLabel, Rejection, Registry, Verdict};\"] # [doc = \"\"] # [doc = \" let verdict = Verdict::AcceptedStrictly { minor: 2 };\"] # [doc = \" assert!(verdict.is_accepted());\"] # [doc = \" assert!(!Verdict::Rejected(Rejection::UnheldMajor { major: 1 }).is_accepted());\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub enum Verdict { # [doc = \" The document satisfies the theory held at its stamp.\"] AcceptedStrictly { # [doc = \" The stamped minor, which the reader holds.\"] minor : u64 , } , # [doc = \" The stamp outruns the reader, and the document satisfies the\"] # [doc = \" companion of the reader's floor.\"] AcceptedTolerantly { # [doc = \" The reader's floor: its ceiling of that major.\"] floor : u64 , } , # [doc = \" The document is rejected, and here is why.\"] Rejected (Rejection) , }"
+  }
+}

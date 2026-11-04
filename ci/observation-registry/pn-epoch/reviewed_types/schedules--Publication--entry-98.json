@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::Publication",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Candidate publication retains its completed marker and independently replayable proposal.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Publication { pub marker : Marker , pub announced_at : u64 , pub effective : Effective , pub proposal : Evidence , }"
+  }
+}

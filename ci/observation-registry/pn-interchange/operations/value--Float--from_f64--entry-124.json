@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Float::from_f64",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_f64 (v : f64) -> Result < Float , ValueError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Float::from_f64",
+    "body": "{ let bits = v . to_bits () ; if v . is_nan () { return if bits == CANONICAL_NAN_F64 { Ok (Float :: CANONICAL_NAN) } else { Err (ValueError :: NonCanonicalFloat) } ; } let single = v as f32 ; if f64 :: from (single) . to_bits () != bits { return Ok (Float { width : FloatWidth :: Double , bits , }) ; } match half_from_single (single . to_bits ()) { Some (half) => Ok (Float { width : FloatWidth :: Half , bits : u64 :: from (half) , }) , None => Ok (Float { width : FloatWidth :: Single , bits : u64 :: from (single . to_bits ()) , }) , } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Float::from_f64.",
+    "assessments": {
+      "full_recording": "review-143",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

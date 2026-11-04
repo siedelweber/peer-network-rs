@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "conserved::Error",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved.rs",
+    "syntax": "# [derive (Debug , thiserror :: Error)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+  }
+}

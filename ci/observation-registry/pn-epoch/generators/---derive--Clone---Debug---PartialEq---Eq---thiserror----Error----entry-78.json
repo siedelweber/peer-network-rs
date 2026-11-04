@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "recipients::RecipientError",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/recipients.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "epoch-recipients",
+    "expansion_review": "Clone, Debug, equality and Error retain public cells, Actor destinations and typed validation or arithmetic refusals. No secret or private opening enters these carriers."
+  }
+}

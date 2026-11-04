@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::",
+    "kind": "item-macro",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] pub struct RatifyProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Asserted exact Accept target; recognition checks same-Bid binding.\"] pub accepts : AcceptIdentity , } } }",
+    "class_decision": "graph-affinity",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

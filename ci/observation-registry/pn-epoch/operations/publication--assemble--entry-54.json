@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "item": "publication::assemble",
+    "owner": "EPOCH",
+    "signature": "fn assemble (closed : & closure :: ClosedBoundary , carrier : Carrier , verifier : & impl Verifier) -> Result < AdmittedPackage , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::assemble",
+    "body": "{ if carrier . frames . last () . map (| frame | & frame . closure) != Some (closed . record ()) { return Err (Error :: Structure (\"mixed admitted close\")) ; } let result = consume (carrier , verifier) ? ; if result . closed . record () != closed . record () { return Err (Error :: Structure (\"mixed admitted close\")) ; } Ok (result) }",
+    "class_decision": "semantic-publication-public",
+    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

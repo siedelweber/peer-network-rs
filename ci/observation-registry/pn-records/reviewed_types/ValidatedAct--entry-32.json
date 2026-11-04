@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ValidatedAct",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Opaque residues survive independent projection removal without interpretation.\"] commitments : Option < commitments :: ActCommitments > , # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : authentication :: AuthenticationFields , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , # [doc = \" One retained time shared by all projections of this act.\"] logical_time : u64 , }"
+  }
+}

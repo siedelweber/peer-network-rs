@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "try_init_json_tracing",
+    "owner": "CLICOMMON",
+    "signature": "fn try_init_json_tracing (level : tracing :: Level) -> Result < observation :: BootstrapGuard , observation :: BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::try_init_json_tracing",
+    "body": "{ observation :: bootstrap (true , false , level) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for try_init_json_tracing.",
+    "assessments": {
+      "full_recording": "review-272",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Limits",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Positive resource bounds applied before maintained-codec allocation.\"] # [doc = \" (´def:wallet:decoder-limits´)\"] # [derive (Clone , Copy , Debug)] pub struct Limits { # [doc = \" Maximum encoded input bytes.\"] pub bytes : usize , # [doc = \" Aggregate collection entries, including nested witnesses.\"] pub items : usize , # [doc = \" Maximum bytes in one script.\"] pub script : usize , # [doc = \" Maximum bytes in one witness or proof.\"] pub witness : usize , # [doc = \" Conservative requested-allocation ceiling, excluding observation and allocator metadata.\"] pub allocation : usize , }"
+  }
+}

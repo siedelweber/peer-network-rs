@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "TimeVerdict",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Local comparison of retained time with the complete available recurrence inputs.\"] # [doc = \" This never replaces the attached time or certifies family formation.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum TimeVerdict { # [doc = \" Published stamp equals the recurrence over recomputed predecessor times.\"] Matches , # [doc = \" The exact recomputed result differs from the published stamp.\"] Mismatch { # [doc = \" Retained host-attached value.\"] attached : u64 , # [doc = \" Exact locally expected value, never written back.\"] expected : u128 , } , # [doc = \" This replay has not established a recurrence verdict without an opening.\"] # [doc = \" It does not attempt interval proofs, including out-of-interval stamp faults.\"] UnavailableOpening , }"
+  }
+}

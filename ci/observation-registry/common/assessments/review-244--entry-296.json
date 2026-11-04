@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Protected carriers and export credentials expose only role and marker. No production ExposeSecret consumer is admitted. Adding a field, consumer or transport invalidates this body/type-bound admission. This body inherits the secret-carriers decision for secrets::PrivateBytes::new.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-244"
+}

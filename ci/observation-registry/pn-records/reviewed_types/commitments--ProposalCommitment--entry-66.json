@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "commitments::ProposalCommitment",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [doc = \" Actor proposal residue; exact recipe identity travels with its bytes.\"] # [doc = \" (´def:acts:commitment-residues´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ProposalCommitment { # [doc = \" Immutable recipe identifier, interpreted only by its profile.\"] pub recipe : String , # [doc = \" Opaque public residue, not evidence of its producer.\"] pub bytes : [u8 ; 32] , }"
+  }
+}

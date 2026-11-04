@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Marker",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" One marker's asserted complete accepted set and destruction representatives.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Marker { pub identity : burn :: Marker , pub accepted : BTreeSet < String > , pub destructions : BTreeMap < String , burn :: BurnRecord > , }"
+  }
+}

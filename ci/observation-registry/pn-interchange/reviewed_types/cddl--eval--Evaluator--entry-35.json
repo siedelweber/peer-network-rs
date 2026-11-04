@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::Evaluator",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" A match in progress: the resolved theory, the compiled patterns, and the\"] # [doc = \" two pieces of state a match carries.\"] pub (crate) struct Evaluator < 'a > { table : & 'a RuleTable , patterns : & 'a BTreeMap < usize , XsdPattern > , # [doc = \" The first budget exhaustion since it was last taken, if any.\"] exhausted : Option < Exhaustion > , # [doc = \" The rule names entered since the last descent into a value: the\"] # [doc = \" guard against a rule that references itself without consuming\"] # [doc = \" anything.\"] visiting : Vec < & 'a str > , # [doc = \" Generic parameter bindings, innermost last.\"] scopes : Vec < Vec < (& 'a str , & 'a Type1) > > , # [doc = \" How many values deep the match currently is: the guard against a\"] # [doc = \" rule that references itself *through* a value against a document\"] # [doc = \" nested deeply enough to overflow the call stack.\"] depth : usize , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Inputs",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Public inputs in reduced units; no charged price or rounded target is admitted here.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub width : String , pub cumulative_tilt : String , pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , pub maximum_work : u64 , pub maximum_replay_work : u64 , pub floor : Floor , pub previous : Previous , pub door : String , pub absolute_cap : String , pub relative_cap : String , pub deadband : String , }"
+  }
+}

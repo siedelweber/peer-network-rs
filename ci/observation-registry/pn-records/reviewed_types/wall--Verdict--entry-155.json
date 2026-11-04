@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Verdict",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Outward branch certification distinguishes an unresolved comparison from a false one.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Verdict { Pass , Fail , Indecisive , }"
+  }
+}

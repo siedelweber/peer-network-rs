@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "item": "cddl::restraint::RestraintReport::is_restrained",
+    "owner": "INTERCHANGE",
+    "signature": "fn is_restrained (& self) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::is_restrained",
+    "body": "{ self . implicit_reaches . is_empty () }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::restraint::RestraintReport::is_restrained.",
+    "assessments": {
+      "full_recording": "review-022",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

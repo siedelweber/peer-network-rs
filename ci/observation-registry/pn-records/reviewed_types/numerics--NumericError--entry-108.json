@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::NumericError",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" The ridge defining object or analytic-premise edition is not admitted.\"] # [error (\"unsupported ridge charge definition\")] RidgeDefinition , # [doc = \" Defining evidence failed its structural or independent replay checks.\"] # [error (\"ridge charge evidence refused\")] RidgeEvidence , # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" An operational refusal projected from retained numerical evidence.\"] # [error (\"retained exact backend: {0:?}\")] RetainedFault (crate :: primitive :: FaultAssertion) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
+  }
+}

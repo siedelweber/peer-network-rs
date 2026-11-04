@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved.rs",
+    "item": "conserved::evaluate_map",
+    "owner": "EPOCH",
+    "signature": "fn evaluate_map (bound : & BoundProcedure < '_ > , rung : & str , point : & BTreeMap < String , String > , precision : u32 ,) -> Result < MapRecord , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::evaluate_map",
+    "body": "{ bound . preflight () ? ; map :: run (bound , rung , point , precision , bound . inputs () . 1 . maximum_solve_work , None) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

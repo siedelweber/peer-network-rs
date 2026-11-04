@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numeric::activation::sharing::Session",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/sharing.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "activation-base-public",
+    "expansion_review": "Debug records public rational requests, checked constant premises, retained certificates and explicit resource ledgers only; no secret material or publication encoding."
+  }
+}

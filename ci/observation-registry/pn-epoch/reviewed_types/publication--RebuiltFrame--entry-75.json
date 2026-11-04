@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::RebuiltFrame",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "struct RebuiltFrame { markers : burn :: RecognizedMarkers , input : crate :: CompilerInputs , price : numerics :: ChargedPrice , history : pn_records :: ValidatedHistory , binding : package :: EpochBinding , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::acquire_all",
+    "owner": "INTERCHANGE",
+    "signature": "fn acquire_all (& mut self , theories : impl IntoIterator < Item = (Coordinate , Theory) >) -> Result < () , AcquireError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::acquire_all",
+    "body": "{ let observation = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"registry::Registry::acquire_all\" , & (self as & Self , \"lazy input; theories recorded as consumed\" , std :: any :: type_name_of_val (& theories) ,) ,) ; let result = (| | { for (coord , theory) in theories . into_iter () . inspect (| theory | tracing :: info ! (argument_theory =? theory)) { self . acquire (coord , theory) ? ; } Ok (()) }) () ; observation . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::acquire_all.",
+    "assessments": {
+      "full_recording": "review-085",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

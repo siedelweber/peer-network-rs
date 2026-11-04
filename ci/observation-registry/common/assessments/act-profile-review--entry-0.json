@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Read every protected leaf and borrow, fixed-width public residues, body fields and content-free refusal. SecretBox/SecretSlice redact private arguments; DependencyIds has a constant redacting Debug even outside its container. Zeroize erases dependency fields. Only the explicit matching adapter publishes a dependency list. Fixed traced computations witness outputs, not trace absence; representation-aware leakage controls remain held after v1.",
+    "negative_probe": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments"
+  },
+  "name": "act-profile-review"
+}

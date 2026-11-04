@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::HeldCoefficient",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [doc = \" A positive irrational term retained without an approximate base entry.\"] # [doc = \" (´def:compiler:base-allocation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HeldCoefficient { pub cell : CellIdentity , pub radicand : String , pub domain_factor : String , }"
+  }
+}

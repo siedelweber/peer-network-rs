@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::Theory::label",
+    "owner": "INTERCHANGE",
+    "signature": "fn label (& self) -> & NamespaceLabel",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::Theory::label",
+    "body": "{ self . fragment . label () }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::Theory::label.",
+    "assessments": {
+      "full_recording": "review-034",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

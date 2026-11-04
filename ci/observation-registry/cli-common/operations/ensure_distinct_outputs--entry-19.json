@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ensure_distinct_outputs",
+    "owner": "CLICOMMON",
+    "signature": "fn ensure_distinct_outputs (roles : & [(& str , & std :: path :: Path)]) -> Result < () , AliasedOutputs >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ensure_distinct_outputs",
+    "body": "{ let identities = roles . iter () . map (| (_ , path) | destination_identity (path)) . collect :: < Vec < _ > > () ; for (index , (first , _)) in roles . iter () . enumerate () { for (offset , (second , _)) in roles . iter () . enumerate () . skip (index + 1) { if identities [index] == identities [offset] { return Err (AliasedOutputs { first : (* first) . to_owned () , second : (* second) . to_owned () , }) ; } } } Ok (()) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ensure_distinct_outputs.",
+    "assessments": {
+      "full_recording": "review-284",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

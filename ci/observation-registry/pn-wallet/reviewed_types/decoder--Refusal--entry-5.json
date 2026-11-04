@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Refusal",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Bounded public refusal with no upstream error or input fragment.\"] # [doc = \" (´def:wallet:decoder-refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Refusal { # [doc = \" Invalid resource declaration.\"] Limits , # [doc = \" Encoded input exceeds its byte bound.\"] Bytes , # [doc = \" Collection count exceeds the aggregate budget.\"] Items , # [doc = \" The conservative total reservation envelope exceeds the caller's budget.\"] Allocation , # [doc = \" Script length exceeds its bound.\"] Script , # [doc = \" Witness length exceeds its bound.\"] Witness , # [doc = \" A field is truncated.\"] Truncated , # [doc = \" Bytes remain after the object.\"] Trailing , # [doc = \" A count uses a nonminimal encoding.\"] Count , # [doc = \" Invalid flag or discriminant.\"] Flag , # [doc = \" The maintained decoder refuses the framed object.\"] Codec , # [doc = \" Issuance and peg-in transactions are not evidence transactions.\"] EvidenceInput , # [doc = \" The output is missing, confidential or in a different asset.\"] EvidenceOutput , # [doc = \" The permanent destruction target has a different run/request binding.\"] Target , }"
+  }
+}

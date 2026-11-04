@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::Accuracy",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Accuracy applies to each resource independently.\"] # [derive (Clone , Copy , Debug , Serialize)] # [serde (rename_all = \"snake_case\")] pub enum Accuracy { # [doc = \" Independently counted within the operation.\"] Exact , # [doc = \" Estimated by the caller, with that limitation retained.\"] Estimated , # [doc = \" No measurement exists.\"] Unavailable , }"
+  }
+}

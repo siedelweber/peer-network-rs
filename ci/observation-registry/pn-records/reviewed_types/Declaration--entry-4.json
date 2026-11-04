@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Declaration",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Announcement and effective boundaries for an opaque declaration identity.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Declaration { # [doc = \" Immutable edition identity; content is keyed by declaration family.\"] pub id : DeclarationId , # [doc = \" Boundary at which this edition was publicly announced.\"] pub announced_at : u64 , # [doc = \" First boundary where the edition is in force, not before announcement.\"] pub effective_at : u64 , # [doc = \" Structural deployment or policy content, otherwise an opaque family.\"] pub content : DeclarationContent , }"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "PartitionError",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "graph-partition",
+    "expansion_review": "Fieldless refusal variants derive copy, equality, complete Debug and fixed Display/Error messages. Generated methods carry no hidden content and inherit the enclosing partition operation."
+  }
+}

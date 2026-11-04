@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Primitive",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Required operations are declarations, never evidence of backend support.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Primitive { Rational , Root , Exponential , Logarithm , Power , Sigmoid , Tanh , SmoothDerivative , ClampGeneralized , Matrix , Krawczyk , InverseGain , }"
+  }
+}

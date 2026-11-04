@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::help",
+    "owner": "CLICOMMON",
+    "signature": "fn help (command : & str , text : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::help",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Help , \"help requested\" , Some (ControlPlaneFields :: Help { text : text . to_string () }) ,) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::help.",
+    "assessments": {
+      "full_recording": "review-251",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

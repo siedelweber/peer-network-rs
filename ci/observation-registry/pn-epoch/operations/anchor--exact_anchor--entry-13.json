@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "item": "anchor::exact_anchor",
+    "owner": "EPOCH",
+    "signature": "fn exact_anchor (state : & CompiledState , limits : Limits , maximum_cells : usize) -> Result < AnchorOutcome , KernelError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::exact_anchor",
+    "body": "{ let view = state . view () ; let inputs = state . package () . input () . inputs . last () . ok_or (KernelError :: Input) ? ; let actors : Vec < _ > = view . base . rows . keys () . cloned () . collect () ; let mut held = BTreeMap :: new () ; for (source , row) in & view . base . rows { for (target , entry) in row { if matches ! (& entry . score , BaseScore :: Held { .. }) { held . insert ((source . clone () , target . clone ()) , entry . score . clone ()) ; } } } if ! held . is_empty () { return Ok (AnchorOutcome :: Held { entries : held }) ; } let depth = inputs . parameters () . depth_mass . len () ; if actors . len () . checked_mul (actors . len ()) . and_then (| n | n . checked_mul (depth . saturating_add (3))) . is_none_or (| n | n > maximum_cells) { return Err (KernelError :: Limit) ; } let mut budget = Budget :: new (limits) . map_err (arithmetic) ? ; let zero = Rational :: parse (\"0\" , & mut budget) . map_err (arithmetic) ? ; let one = Rational :: parse (\"1\" , & mut budget) . map_err (arithmetic) ? ; let indices : BTreeMap < _ , _ > = actors . iter () . enumerate () . map (| (i , actor) | (actor , i)) . collect () ; let mut base = Vec :: new () ; for row in view . base . rows . values () { let mut values = BTreeMap :: new () ; for (target , entry) in row { let BaseScore :: Exact (value) = & entry . score else { return Err (KernelError :: Input) ; } ; values . insert (* indices . get (target) . ok_or (KernelError :: Input) ? , Rational :: parse (value , & mut budget) . map_err (arithmetic) ? ,) ; } base . push (values) ; } let mut depth_mass = Vec :: new () ; for name in & inputs . parameters () . depth_mass { depth_mass . push (crate :: constant (inputs . constants () , name , & mut budget) . map_err (| e | KernelError :: Arithmetic (e . to_string ())) ?) ; } let mut counts = Vec :: new () ; let mut rates = Vec :: new () ; let mut emission = Vec :: new () ; for actor in & actors { let address = Address (actor . clone ()) ; let count = view . ledger . counts . get (& address) . ok_or (KernelError :: Input) ? . 0 ; let source = view . support . sources . get (actor) . ok_or (KernelError :: Input) ? ; counts . push (Rational :: parse (& count . to_string () , & mut budget) . map_err (arithmetic) ?) ; rates . push (Rational :: parse (& source . reduced_rate , & mut budget) . map_err (arithmetic) ?) ; emission . push (Rational :: parse (& source . emission , & mut budget) . map_err (arithmetic) ?) ; } let input = TransportInput { hops : vec ! [base ; depth] , depth_mass , counts , rates , emission , } ; let mut a = Arithmetic { budget , zero , one } ; let result = exact_transport (& input , & mut a , maximum_cells) ? ; let mut hull = BTreeMap :: new () ; for (actor , (lower , upper)) in actors . iter () . zip (& result . hull) { hull . insert (actor . clone () , Bounds { lower : lower . exact_string (& mut a . budget) . map_err (arithmetic) ? , upper : upper . exact_string (& mut a . budget) . map_err (arithmetic) ? , } ,) ; } Ok (AnchorOutcome :: Exact (Box :: new (ExactAnchor { boundary : view . base . boundary , edition : view . base . edition . clone () , normalized : matrix (result . normalized . first () . ok_or (KernelError :: Input) ? , & actors , & mut a . budget) ? , raw : matrix (& result . raw , & actors , & mut a . budget) ? , emitted : matrix (& result . emitted , & actors , & mut a . budget) ? , numerator : vector (& result . numerator , & actors , & mut a . budget) ? , denominator : vector (& result . denominator , & actors , & mut a . budget) ? , standing : vector (& result . standing , & actors , & mut a . budget) ? , hull , }))) }",
+    "class_decision": "exact-transport-public",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "exact-transport-public",
+      "secret_flow": "exact-transport-public",
+      "exposure_consumers": "exact-transport-public"
+    }
+  }
+}

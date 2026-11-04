@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ParentCause",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Canonical asserted-parent or causal placement refusal.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ParentCause { # [doc = \" The provisional count bound is exceeded.\"] # [error (\"too many asserted parents\")] TooMany , # [doc = \" Parent identifiers are not strictly increasing.\"] # [error (\"asserted parents are not canonical\")] NonCanonical , # [doc = \" An act asserts itself as parent.\"] # [error (\"self asserted parent\")] SelfParent , # [doc = \" The parent is absent from history and proposals.\"] # [error (\"unresolved asserted parent\")] Missing , # [doc = \" The parent is not strictly before the child.\"] # [error (\"asserted parent is not earlier\")] NotEarlier , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "RecomputedTime",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Observer evidence for the time defined by finalized incidence replay.\"] # [doc = \" Unavailable means not established by this replay, not unestablishable.\"] # [doc = \" It conservatively records traversed tombstones without interval or dominance proofs.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum RecomputedTime { # [doc = \" Exact finite time; never copied into the published stamp.\"] Available (u128) , # [doc = \" Tombstones traversed by this replay, including propagated frontier inputs.\"] # [doc = \" The retained data may still determine the value through bounds not computed here.\"] Unavailable (BTreeSet < ActId >) , }"
+  }
+}

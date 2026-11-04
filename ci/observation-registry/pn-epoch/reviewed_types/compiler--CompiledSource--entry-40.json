@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "compiler::CompiledSource",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [doc = \" Retain the authority under which causes were checked; compilation never promotes a candidate.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub enum CompiledSource { Published (VerifiedPackage) , Candidate (CandidateContext) , # [doc = \" Locally admitted causes, without an assertion of external publication.\"] Admitted (Box < crate :: package :: AdmittedBoundary >) , }"
+  }
+}

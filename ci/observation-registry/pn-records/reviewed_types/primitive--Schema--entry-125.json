@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::Schema",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" Names and semantic versions travel with evidence; names grant no checker authority.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Schema { pub name : String , pub version : u32 , }"
+  }
+}

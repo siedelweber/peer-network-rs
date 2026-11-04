@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "metadata::ActMetadata",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/metadata.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

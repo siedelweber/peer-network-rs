@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::TransactionFields",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Public transaction fields; encoded subfields retain their complete layout.\"] # [doc = \" (´def:wallet:transaction-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct TransactionFields { # [doc = \" Transaction version.\"] pub version : u32 , # [doc = \" Complete inputs, including issuance and peg-in carriage.\"] pub inputs : Vec < Input > , # [doc = \" Complete outputs, including confidential non-evidence outputs.\"] pub outputs : Vec < Output > , # [doc = \" Consensus lock time.\"] pub lock_time : u32 , }"
+  }
+}

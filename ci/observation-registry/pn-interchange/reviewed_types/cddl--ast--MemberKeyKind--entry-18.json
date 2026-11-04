@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::MemberKeyKind",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The three forms of `memberkey`.\"] # [doc = \"\"] # [doc = \" All three are distinct in the tree even where two would describe the\"] # [doc = \" same key, because they do not mean the same thing: `a: 1` keys on the\"] # [doc = \" *text string* \\\"a\\\", while `a => 1` keys on whatever the type `a`\"] # [doc = \" denotes.\"] # [derive (Clone , Debug)] pub (crate) enum MemberKeyKind { # [doc = \" `type1 S [\\\"^\\\" S] \\\"=>\\\"`: a key given as a type.\"] Type { # [doc = \" The key type.\"] # [doc = \"\"] # [doc = \" Boxed: a `type1` is the deepest node of the grammar, and the\"] # [doc = \" other two key forms are a name and a literal.\"] key : Box < Type1 > , # [doc = \" Whether the cut marker `^` was written.\"] # [doc = \"\"] # [doc = \" A cut makes a failure to match the member's *value* a failure\"] # [doc = \" of the whole map, rather than a reason to try the next entry.\"] cut : bool , } , # [doc = \" `bareword S \\\":\\\"`: a key given as a name, denoting that text string.\"] # [doc = \"\"] # [doc = \" The colon form carries an implicit cut, which is why it is not the\"] # [doc = \" same node as a `Type` key that happens to hold a text literal.\"] Bareword (Name) , # [doc = \" `value S \\\":\\\"`: a key given as a literal.\"] Value (Value) , }"
+  }
+}

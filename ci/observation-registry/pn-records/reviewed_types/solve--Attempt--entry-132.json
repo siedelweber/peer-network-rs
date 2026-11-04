@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Attempt",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" A completed comparison or an interrupted attempt; the fence is already margined.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub rung : String , pub margined_fence : Bounds , pub work : u64 , pub completion : Completion , pub stop : AttemptStop , pub primitives : Vec < usize > , }"
+  }
+}

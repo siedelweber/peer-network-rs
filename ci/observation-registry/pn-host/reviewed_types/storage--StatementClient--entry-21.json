@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::StatementClient",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Debug)] pub (crate) struct StatementClient { raw : tokio_postgres :: Client , }"
+  }
+}

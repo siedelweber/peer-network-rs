@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "support::SourceEmission",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "epoch-support",
+    "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+  }
+}

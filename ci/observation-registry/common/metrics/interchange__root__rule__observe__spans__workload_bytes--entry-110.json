@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "interchange__root__rule__observe__spans__workload_bytes",
+    "kind": "histogram",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

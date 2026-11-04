@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Document::from_canonical_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_canonical_bytes (bytes : & [u8]) -> Result < Document , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Document::from_canonical_bytes",
+    "body": "{ let value = Value :: from_canonical_bytes (bytes) . map_err (EnvelopeError :: NotCanonical) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) ? ; Document :: try_from_value (& value) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for envelope::Document::from_canonical_bytes.",
+    "assessments": {
+      "full_recording": "review-066",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

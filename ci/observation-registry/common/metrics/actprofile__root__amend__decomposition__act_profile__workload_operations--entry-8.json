@@ -1,0 +1,11 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "actprofile__root__amend__decomposition__act_profile__workload_operations",
+    "kind": "histogram",
+    "unit": "operations",
+    "attributes": {},
+    "owner": "ACTPROFILE",
+    "claim": "ROOT::amend:decomposition:act-profile"
+  }
+}

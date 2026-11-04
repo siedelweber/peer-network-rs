@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Gate",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Mathematically failed final gates, never aliases for resource exhaustion.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Gate { OwnSolvency , IndividualSafety , EpochPolicy , }"
+  }
+}

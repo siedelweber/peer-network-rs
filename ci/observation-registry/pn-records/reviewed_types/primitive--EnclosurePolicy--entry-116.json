@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::EnclosurePolicy",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" A public procedure supplies every effective limit; the adapter selects no defaults.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EnclosurePolicy { pub store : Limits , pub operation : Limits , pub refinement : RefinementPolicy , }"
+  }
+}

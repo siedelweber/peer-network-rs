@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "item": "Stream::label",
+    "owner": "EXECWRAP",
+    "signature": "const fn label (self) -> & 'static str",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "execwrap::packages/execwrap/src/bin/execwrap.rs::execute",
+      "class_decision": "public-execwrap"
+    },
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/lib.rs::Stream::label",
+    "body": "{ match self { Self :: Stdout => \"STDOUT\" , Self :: Stderr => \"STDERR\" , } }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for Stream::label.",
+    "assessments": {
+      "full_recording": "review-290",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::",
+    "kind": "item-macro",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Tag tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:tag´)\"] pub struct TagProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : TagRole , } after { # [doc = \" Signed relevance, directional on A and intensity on T.\"] pub relevance : Coordinate , # [doc = \" Nonnegative confidence, intensity on A and directional on T.\"] pub confidence : Coordinate , } } }",
+    "class_decision": "graph-affinity",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "primitive::PrimitiveRecord",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "certified-primitives-public",
+    "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+  }
+}

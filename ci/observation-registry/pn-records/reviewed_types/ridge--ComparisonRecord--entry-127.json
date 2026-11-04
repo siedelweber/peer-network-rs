@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::ComparisonRecord",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Untrusted floor comparison, retaining every attempted precision and attachment.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ComparisonRecord { pub wall : Wall , pub floor : Floor , pub queries : Vec < PrimitiveRecord > , pub verdict : FloorComparison , pub work : u64 , }"
+  }
+}

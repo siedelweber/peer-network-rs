@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Envelope::label",
+    "owner": "INTERCHANGE",
+    "signature": "fn label (& self) -> & NamespaceLabel",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Envelope::label",
+    "body": "{ & self . label }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Envelope::label.",
+    "assessments": {
+      "full_recording": "review-062",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

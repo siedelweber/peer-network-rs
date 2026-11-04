@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::Bridge",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "pub (super) struct Bridge { pub (super) meter_provider : SdkMeterProvider , tracer_provider : SdkTracerProvider , sender : mpsc :: SyncSender < Message > , pub (super) lost : Arc < AtomicU64 > , pub (super) failures : Arc < Mutex < Vec < String > > > , # [cfg (test)] reader : Reader , # [cfg (test)] pub (super) exported : Arc < Mutex < Vec < ResourceMetrics > > > , }"
+  }
+}

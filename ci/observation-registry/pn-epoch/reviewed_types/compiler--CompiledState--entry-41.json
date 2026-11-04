@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "compiler::CompiledState",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [doc = \" Frozen joined output, not an admitted epoch or a persistence capability.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug)] pub struct CompiledState { source : CompiledSource , view : CompiledView , }"
+  }
+}

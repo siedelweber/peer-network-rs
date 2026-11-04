@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::InitializationInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Untrusted initialization has explicit absence, never an inferred floor or wall.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct InitializationInput { pub floor : Option < Floor > , pub wall : Option < String > , pub parameters : Option < ControllerParameters > , pub policy_floor : Option < String > , pub effective_boundary : Option < u64 > , }"
+  }
+}

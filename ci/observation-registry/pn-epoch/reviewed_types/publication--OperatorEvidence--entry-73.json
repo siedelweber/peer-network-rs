@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::OperatorEvidence",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" An operator bound and proof, or an explicit absence statement with its explanation.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum OperatorEvidence { Bound { bound : Vec < u8 > , proof : Vec < u8 > } , Absent { statement : Vec < u8 > , explanation : Vec < u8 > } , }"
+  }
+}

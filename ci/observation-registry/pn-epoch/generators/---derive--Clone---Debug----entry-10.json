@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "compiler::CompiledSource",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "class_decision": "atomic-admission-public",
+    "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+  }
+}

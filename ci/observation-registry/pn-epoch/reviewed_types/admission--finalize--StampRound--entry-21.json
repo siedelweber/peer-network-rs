@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::finalize::StampRound",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "syntax": "# [doc = \" Boundary-frozen action stamps, act-weighted mean and output-only headroom.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StampRound { pub precision : u32 , pub stamps : BTreeMap < ActId , Bounds > , pub epoch : Bounds , pub headroom : Bounds , }"
+  }
+}

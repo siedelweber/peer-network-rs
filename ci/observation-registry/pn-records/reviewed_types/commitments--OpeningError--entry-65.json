@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "commitments::OpeningError",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [doc = \" Refusal of supplied opening evidence, never a refusal of retained history.\"] # [doc = \" (´def:acts:opening-evidence´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum OpeningError { # [doc = \" The evidence target is absent, repeated or not tombstoned.\"] # [error (\"opening target is not a unique retained tombstone\")] Target , # [doc = \" No supported recorded anchor was supplied.\"] # [error (\"opening has no supported retained anchor\")] Anchor , # [doc = \" The opening's shape or bounds are invalid.\"] # [error (\"opening representation is invalid\")] Representation , # [doc = \" The supplied bytes do not match the supplied recorded anchor.\"] # [error (\"opening does not match the supplied commitment\")] Mismatch , # [doc = \" The opened representation is refused independently of placement faults.\"] # [error (\"opened history representation is invalid\")] History , }"
+  }
+}

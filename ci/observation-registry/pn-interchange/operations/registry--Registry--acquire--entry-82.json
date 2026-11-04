@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::acquire",
+    "owner": "INTERCHANGE",
+    "signature": "fn acquire (& mut self , coord : Coordinate , theory : Theory) -> Result < () , AcquireError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::acquire",
+    "body": "{ let (major , minor) = theory . coordinate () ; if theory . label () != coord . label () || major != coord . major () || minor != coord . minor () { return Err (AcquireError :: PinMismatch { found : format ! (\"{} {major}.{minor}\" , theory . label ()) , }) ; } extends_base (& theory) ? ; if ! self . lenient { let reaches : Vec < ImplicitReach > = theory . restraint () . implicit_reaches () . cloned () . collect () ; if ! reaches . is_empty () { return Err (AcquireError :: ImplicitReach { reaches }) ; } } let Some (line) = self . lines . get_mut (coord . label ()) . and_then (| majors | majors . get_mut (& major)) else { let companion = theory . open_companion () ; self . lines . entry (coord . label () . clone ()) . or_default () . insert (major , MajorLine { entries : vec ! [(minor , theory)] , companion , } ,) ; return Ok (()) ; } ; if let Ok (index) = line . entries . binary_search_by_key (& minor , | (held , _) | * held) { return match line . entries . get (index) { Some ((_ , held)) if held . to_cddl () == theory . to_cddl () => Ok (()) , _ => Err (AcquireError :: Immutable) , } ; } if let Some ((ceiling , below)) = line . entries . last () { let ceiling = * ceiling ; if minor <= ceiling { return Err (AcquireError :: OutOfOrder { minor , ceiling }) ; } if let Inclusion :: Violated (breaches) = compare (below , & theory) { return Err (AcquireError :: InclusionViolated { against : ceiling , breaches , }) ; } } line . entries . push ((minor , theory)) ; line . remember_companion () ; Ok (()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::acquire.",
+    "assessments": {
+      "full_recording": "review-084",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

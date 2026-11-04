@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observe::Scope",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/observe.rs",
+    "syntax": "pub (crate) struct Scope (tracing :: span :: EnteredSpan) ;"
+  }
+}

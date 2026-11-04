@@ -1,0 +1,14 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "publication-disclosures-public",
+    "status": "reviewer-confirmed",
+    "premises": "Only complete public publication assertions enter these operations. The decoder cannot select a verifier; checked authority is reconstructed by the consumer. Epoch-owned metadata disclosures confer no validated-act authority.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::super :: AdmittedPackage::disclosures",
+        "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore"
+      ]
+    }
+  }
+}

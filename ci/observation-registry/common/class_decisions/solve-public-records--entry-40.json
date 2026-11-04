@@ -1,0 +1,20 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "solve-public-records",
+    "status": "reviewer-confirmed",
+    "premises": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-records::packages/records/src/solve.rs::solve::validate_procedure",
+        "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
+        "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
+        "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::inputs",
+        "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight",
+        "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
+        "pn-epoch::packages/epoch/src/fence.rs::fence::search",
+        "pn-epoch::packages/epoch/src/fence.rs::fence::replay"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::Restrained",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" A kind of value the restraint invariant governs.\"] # [doc = \"\"] # [doc = \" The three the conventions name, and no fourth: everything else the data\"] # [doc = \" language carries is admitted freely.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Restrained, Theory};\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [0, 0, uint], 2 => float64}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let report = theory.restraint();\"] # [doc = \" let kinds: Vec<Restrained> = report.provisions().map(|p| p.kind()).collect();\"] # [doc = \" assert_eq!(kinds, [Restrained::Float]);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash)] # [non_exhaustive] pub enum Restrained { # [doc = \" A floating-point value.\"] Float , # [doc = \" A tagged item.\"] Tag , # [doc = \" A simple value other than `false`, `true`, and `null`.\"] Simple , }"
+  }
+}

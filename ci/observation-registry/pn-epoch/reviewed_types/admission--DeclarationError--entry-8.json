@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::DeclarationError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Declaration defects are distinct from an evaluated gate or incomplete comparison.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DeclarationError { # [error (\"unsupported controller edition\")] Controller , # [error (\"missing initialization field: {0:?}\")] Missing (InitializationField) , # [error (\"declaration lacks one-boundary lead\")] Late , # [error (\"invalid controller parameters\")] Parameters , # [error (\"invalid initial wall or policy floor\")] InitialWall , # [error (\"invalid rational delivery declaration\")] Delivery , # [error (\"invalid finite refinement declaration\")] Refinement , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

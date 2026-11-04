@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::MapRecord",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" A map's original point, ordered scalar premises and exact endpoint composition.\"] # [doc = \" Work is the producer's consumption; replay measures its own independent consumption.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MapRecord { pub edition : crate :: DeclarationId , pub boundary : u64 , pub point : BTreeMap < String , String > , pub rung : String , pub precision : u32 , pub wall_enclosure : Option < crate :: primitive :: Range > , pub primitives : Vec < PrimitiveRecord > , pub image : BTreeMap < String , Bounds > , pub transport_input : crate :: transport :: TransportInput < nrz_cas :: enclosure :: Interval > , pub transport : crate :: transport :: TransportOutput < nrz_cas :: enclosure :: Interval > , pub work : u64 , pub composition_work : u64 , }"
+  }
+}

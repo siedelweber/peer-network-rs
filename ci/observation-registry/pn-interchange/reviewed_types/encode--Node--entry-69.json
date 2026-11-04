@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::Node",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" Work items borrow either public values or protected leaves.\"] enum Node < 'a > { Public (& 'a Value) , Private (& 'a SecretValue) , }"
+  }
+}

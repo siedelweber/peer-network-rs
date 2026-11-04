@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::stamp",
+    "owner": "INTERCHANGE",
+    "signature": "fn stamp (& self , label : & NamespaceLabel , major : u64 , content : & Content) -> Option < u64 >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::stamp",
+    "body": "{ let entries = self . lines . get (label) ? . get (& major) ? . entries . as_slice () ; let index = entries . partition_point (| (_ , theory) | ! models (theory , content)) ; entries . get (index) . map (| (minor , _) | * minor) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::stamp.",
+    "assessments": {
+      "full_recording": "review-093",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

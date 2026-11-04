@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/monotone.rs",
+    "item": "numeric::activation::monotone::evaluate",
+    "owner": "GRAPH",
+    "signature": "fn evaluate (procedure : & Procedure , input : & Request) -> Result < Envelope , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+    "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let (lower , upper , includes_zero) = endpoints (input , & mut budget) ? ; let gain = matches ! (input . quantity , Quantity :: ResponsiveLogGain | Quantity :: GeneralizedLogGain) ; if ! matches ! (input . quantity , Quantity :: Responsive | Quantity :: Clamped | Quantity :: ResponsiveLogGain | Quantity :: GeneralizedLogGain) { return Err (Error :: Unsupported) ; } let mut result = Envelope { input : input . clone () , bounds : None , records : Vec :: new () , source : None , work : 0 , } ; if gain && includes_zero && Rational :: parse (& input . standing . upper , & mut budget) ? . compare (& lower , & mut budget) ? . is_lt () { result . bounds = Some (Range { lower : \"0\" . into () , upper : \"0\" . into () , }) ; result . work = budget . usage () . work ; return Ok (result) ; } let quantity = if gain { Quantity :: ResponsiveLogGain } else { Quantity :: Responsive } ; let first = point (procedure , input , & lower , quantity . clone () , & mut budget) ? ; result . records . push (first) ; if lower != upper && ! (gain && includes_zero) { result . records . push (point (procedure , input , & upper , quantity , & mut budget) ?) ; } result . bounds = assemble (input , & result . records , includes_zero , gain , & mut budget) ? ; result . work = budget . usage () . work ; Ok (result) }",
+    "class_decision": "activation-base-public",
+    "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

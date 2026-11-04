@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "item": "envelope::<DatasetVisitor as Visitor < 'de >>::expecting",
+    "owner": "DOCUMENTS",
+    "signature": "fn expecting (& self , formatter : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This private serde adapter inherits the dataset input boundary, which records the complete source and parsed result without adding Debug bounds to the deserializer.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "documents::packages/documents/src/census.rs::census::record",
+      "class_decision": "public-documents"
+    },
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/envelope.rs::envelope::<DatasetVisitor as Visitor < 'de >>::expecting",
+    "body": "{ formatter . write_str (\"namespace then version then rows\") }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for envelope::<DatasetVisitor as Visitor < 'de >>::expecting.",
+    "assessments": {
+      "full_recording": "review-158",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

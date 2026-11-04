@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "item": "package::verify_candidate",
+    "owner": "EPOCH",
+    "signature": "fn verify_candidate (input : CandidateInput , causes : & impl CandidateVerifier , closure : & impl ClosureVerifier ,) -> Result < CandidateContext , PackageError >",
+    "claim": "ROOT::alg:design:admission",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+    "body": "{ verify_causes (& input . causes) ? ; check_closure (& input) ? ; if ! causes . candidate_causes (& input) { return Err (PackageError :: CandidateBinding) ; } if ! closure . host_determination (& input) { return Err (PackageError :: Closure) ; } Ok (CandidateContext { input }) }",
+    "class_decision": "epoch-package",
+    "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+    "assessments": {
+      "full_recording": "epoch-package-full_recording",
+      "secret_flow": "epoch-package-secret_flow",
+      "exposure_consumers": "epoch-package-exposure_consumers"
+    }
+  }
+}

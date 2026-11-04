@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::BaseTheory",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "syntax": "# [doc = \" The base theory: a theory of the description language that is not in the\"] # [doc = \" assignable fragment and never could be.\"] # [doc = \"\"] # [doc = \" It is a distinct type from [`Theory`] for that reason. Its wildcard is\"] # [doc = \" what an assigned theory replaces by enumeration, and its key 0 is a type\"] # [doc = \" rather than a pin, so every clause of fragment membership it fails, it\"] # [doc = \" fails by design.\"] # [derive (Debug)] pub struct BaseTheory { prepared : Option < Prepared > , }"
+  }
+}

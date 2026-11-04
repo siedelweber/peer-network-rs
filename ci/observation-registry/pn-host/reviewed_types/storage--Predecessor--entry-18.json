@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Predecessor",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" The predecessor and its proposed exclusive closing boundary.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Predecessor { pub edition : String , pub closes_at : u64 , }"
+  }
+}

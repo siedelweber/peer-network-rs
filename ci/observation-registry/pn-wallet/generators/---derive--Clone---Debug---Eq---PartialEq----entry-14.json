@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "decoder::Block",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::ContentKey",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "syntax": "# [doc = \" A content key: an unsigned integer strictly greater than 1.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{ContentKey, EnvelopeError};\"] # [doc = \"\"] # [doc = \" assert_eq!(ContentKey::new(2).expect(\\\"above the envelope\\\").get(), 2);\"] # [doc = \"\"] # [doc = \" let err = ContentKey::new(1).expect_err(\\\"key 1 is the version's\\\");\"] # [doc = \" assert!(matches!(err, EnvelopeError::ReservedContentKey { key: 1 }));\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Hash)] pub struct ContentKey (u64) ;"
+  }
+}

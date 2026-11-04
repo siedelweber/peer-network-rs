@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::Span",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" Where a token or a syntax tree node sits in the source.\"] # [doc = \"\"] # [doc = \" Byte offsets slice the source; the line and column locate the *start*\"] # [doc = \" for a human, both 1-based, the column counted in characters rather than\"] # [doc = \" bytes so that a multi-byte name does not push the reported column past\"] # [doc = \" what the reader sees.\"] # [derive (Copy , Clone , Debug , PartialEq , Eq)] pub (crate) struct Span { # [doc = \" Byte offset of the first byte.\"] pub (crate) start : usize , # [doc = \" Byte offset one past the last byte.\"] pub (crate) end : usize , # [doc = \" 1-based line of [`Span::start`].\"] pub (crate) line : u32 , # [doc = \" 1-based character column of [`Span::start`].\"] pub (crate) column : u32 , }"
+  }
+}

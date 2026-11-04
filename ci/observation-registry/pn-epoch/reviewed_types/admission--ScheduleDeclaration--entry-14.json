@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::ScheduleDeclaration",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Immutable structurally valid declaration. Ridge evidence and execution remain separate.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ScheduleDeclaration { input : ScheduleInput , controller : ControllerEdition , }"
+  }
+}

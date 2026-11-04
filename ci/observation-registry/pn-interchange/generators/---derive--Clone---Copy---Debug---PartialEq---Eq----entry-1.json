@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "encode::SecretEncodingLimit",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "protected-interchange",
+    "expansion_review": "Debug delegates protected leaves to secrecy redaction; the empty refusal has no content. Clone, Copy and equality on the refusal contain no private value."
+  }
+}

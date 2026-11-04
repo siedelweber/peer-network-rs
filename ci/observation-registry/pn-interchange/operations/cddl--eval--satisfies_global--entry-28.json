@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "item": "cddl::eval::satisfies_global",
+    "owner": "INTERCHANGE",
+    "signature": "fn satisfies_global (d : & Document) -> Satisfaction",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/eval.rs::cddl::eval::satisfies_global",
+    "body": "{ match super :: global () . prepared . as_ref () { Some (prepared) => judge (d , & prepared . cddl , & prepared . table , & prepared . patterns) , None => Satisfaction :: Fails (vec ! [Mismatch :: whole (\"the base theory of the conventions\" . to_owned () , \"a base theory this build could not parse\" . to_owned () ,)]) , } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::eval::satisfies_global.",
+    "assessments": {
+      "full_recording": "review-018",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::ControllerEdition",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" The closed set of controller editions admitted by this interface.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ControllerEdition { CanonicalInterim , }"
+  }
+}

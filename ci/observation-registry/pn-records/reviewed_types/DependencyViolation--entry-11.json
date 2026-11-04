@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyViolation",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" A committed-dependency violation retained without rewriting finalized history.\"] # [doc = \" This is local evidence, not cryptographic verification of an opening.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DependencyViolation { # [doc = \" Finalized act whose declared dependency fails compliance.\"] pub act : ActId , # [doc = \" Exact dependency identity retained in the opening.\"] pub dependency : ActId , # [doc = \" Missing, non-earlier or self dependency; representation errors still refuse.\"] pub cause : DependencyCause , }"
+  }
+}

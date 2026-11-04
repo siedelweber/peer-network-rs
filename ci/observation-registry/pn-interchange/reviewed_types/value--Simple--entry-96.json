@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Simple",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A simple value other than `false`, `true`, and `null` — restrained.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Simple;\"] # [doc = \"\"] # [doc = \" assert_eq!(Simple::UNDEFINED.get(), 23);\"] # [doc = \" assert_eq!(Simple::new(255).expect(\\\"in range\\\").get(), 255);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash , PartialOrd , Ord)] pub struct Simple (u8) ;"
+  }
+}

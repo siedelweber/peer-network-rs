@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::RecognitionBasis",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Inputs identifying an unsettled recognition, not host finality evidence.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognitionBasis { pub history : String , pub policy_identity : String , pub policy_edition : String , pub verifier_profile : String , pub burn_publication_edition : String , pub sample_convention : String , }"
+  }
+}

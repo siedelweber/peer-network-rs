@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Text as TryFrom < Vec < u8 > >>::try_from",
+    "owner": "INTERCHANGE",
+    "signature": "fn try_from (bytes : Vec < u8 >) -> Result < Text , ValueError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Text as TryFrom < Vec < u8 > >>::try_from",
+    "body": "{ match String :: from_utf8 (bytes) { Ok (s) => Ok (Text :: from (s)) , Err (e) => Err (ValueError :: InvalidUtf8 { offset : e . utf8_error () . valid_up_to () , }) , } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::<Text as TryFrom < Vec < u8 > >>::try_from.",
+    "assessments": {
+      "full_recording": "review-112",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

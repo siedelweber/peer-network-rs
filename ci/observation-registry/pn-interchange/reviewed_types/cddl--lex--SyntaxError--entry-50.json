@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::SyntaxError",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" A refusal to read the source, located at the character that caused it.\"] # [doc = \"\"] # [doc = \" Crate-internal on purpose: the public failure is `TheoryError::Syntax`,\"] # [doc = \" which this becomes when the theory surface wraps it (`adr/010-interchange-design.md`, the\"] # [doc = \" error taxonomy). Keeping the two apart lets the parser carry a detail\"] # [doc = \" string that is free to name ABNF productions.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub (crate) struct SyntaxError { # [doc = \" 1-based line.\"] pub (crate) line : u32 , # [doc = \" 1-based character column.\"] pub (crate) column : u32 , # [doc = \" What was wrong, in a sentence.\"] pub (crate) detail : String , }"
+  }
+}

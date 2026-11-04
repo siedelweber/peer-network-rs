@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "item": "formation::reconstruct",
+    "owner": "GRAPH",
+    "signature": "fn reconstruct (history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < FormationGraph , RegistrationError >",
+    "claim": "ROOT::alg:design:formation",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
+    "body": "{ let acts = formation_context (history) ; let result = registration :: reconstruct_with (history , verifier , | act | checked_project (act , & acts , verifier , false)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and the immutable bounded genesis-only attribution/provenance pair; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment without license qualifiers or protocol references, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples. Send retains complete Chat-to-Message A/T tuples with one signed importance coordinate and shared public act metadata; it carries no license pair or protocol references. Bid retains complete Item-to-Offer A/T tuples with signed generosity, nonnegative urgency and a fresh self-minted Offer and shared public act metadata; it carries no license pair or protocol references. Opinion retains both signed coordinates and public act metadata over all passive constructors through the same whole-result checks. Join Request retains signed urgency and formality over typed Chat incidence without creating membership or changing Chat state. Tag retains matched A/T incidence over seven Taggable constructors and a Type terminal, excluding Offer, with complete relevance/confidence tuples and whole-result checks. Leave retains unconditional author Actor to Chat control incidence with no authored parameters through the same whole-result reconstruction, approval, removal and typed revalidation path. Registration and Affinity also reject protocol-reference fields their family blocks do not define, preserving the existing refusal accounting. Reference retains the Actor-to-Artifact-to-passive-Target pair and both signed coordinates through shared whole-result reconstruction, approval, removal and typed revalidation. Invitation retains its complete typed family incidence and parameters through shared whole-result reconstruction, approval, removal and typed revalidation. Deinvite retains its complete typed family incidence and parameters through shared whole-result reconstruction, approval, removal and typed revalidation. Withdraw retains its complete typed family incidence and parameters through shared whole-result reconstruction, approval, removal and typed revalidation. Rescind retains its complete typed family incidence and parameters through shared whole-result reconstruction, approval, removal and typed revalidation. Settlement projection receives the exact validated history and forms and authorizes each referenced act through the same private checks without a reference-binding verdict. Public context and typed metadata remain fully observable; the twenty successful and two refusing graph operations have equal results across modes. One ordered act-identity index is built per public operation; its entries borrow the supplied history and change no act identity or accounting unit.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

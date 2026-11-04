@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/wall.rs",
+    "item": "wall::bind",
+    "owner": "EPOCH",
+    "signature": "fn bind < 'a > (bound : & 'a BoundProcedure < '_ > , input : Inputs , verifier : & impl ReferenceVerifier ,) -> Result < BoundReference < 'a > , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::bind",
+    "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; pn_graph :: numeric :: wall :: check_declaration (procedure , & input) ? ; if ! verifier . published_reference (procedure , & input) { return Err (Error :: Publication) ; } Ok (BoundReference { procedure , input }) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

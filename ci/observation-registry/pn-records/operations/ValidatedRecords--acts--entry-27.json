@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "ValidatedRecords::acts",
+    "owner": "RECORDS",
+    "signature": "fn acts (& self) -> & [ValidatedAct]",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "complete-act-access"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+    "body": "{ & self . acts }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Borrows owned validated acts, never candidate legs, preserving complete act accounting and act-derived dependency status."
+  }
+}

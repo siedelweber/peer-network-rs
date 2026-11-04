@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "delivery",
+    "status": "reviewer-confirmed",
+    "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. Full content is a capability selected by PN_OBSERVE_LEVEL=trace. Default span visits retain only command identity and outcome and never call payload Debug; command completion, WARN/ERROR, summaries and status remain emitted. Successful writes and whole-record loss are separately counted.",
+    "membership": {
+      "explicit": [
+        "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
+      ]
+    }
+  }
+}

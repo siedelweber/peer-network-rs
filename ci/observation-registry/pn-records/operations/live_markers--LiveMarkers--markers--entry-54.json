@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "item": "live_markers::LiveMarkers::markers",
+    "owner": "RECORDS",
+    "signature": "fn markers (& self) -> & RecognizedMarkers",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits the live verification operation.",
+      "witness": "RECORDS::claim:burn:live-markers-require-complete-lineage",
+      "boundary": "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+      "class_decision": "live-marker-public"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/live_markers.rs::live_markers::LiveMarkers::markers",
+    "body": "{ & self . markers }",
+    "class_decision": "live-marker-public",
+    "item_premise": "Complete public marker, burn and policy disclosures are checked locally and by an explicitly selected trusted live verifier. Immutable getters disclose the checked recognition without adding authority. No private credentials or real-chain assertion enter this semantic boundary.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

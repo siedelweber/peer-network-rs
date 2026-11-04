@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::VerificationInput",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" Separately declared full-emission verification map; all lists retain their input order.\"] # [doc = \" The wall is a checked defining enclosure supplied by the owning composition.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationInput { pub sources : Vec < VerificationSource > , pub edges : Vec < VerificationEdge > , pub wall : crate :: primitive :: Range , pub shape : Vec < String > , pub depth_mass : Vec < String > , pub retention : String , pub strength : String , pub endpoint_bits : u32 , }"
+  }
+}

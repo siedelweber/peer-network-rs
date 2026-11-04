@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<AccountingLayer as Layer < S >>::on_event",
+    "owner": "CLICOMMON",
+    "signature": "fn on_event (& self , event : & tracing :: Event < '_ > , context : Context < '_ , S >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_event",
+    "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } if ! account . explicit_outcome { account . outcome = fields . 3 . or (account . outcome) ; } let explicit = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , Some (\"unwinding\") => Some (\"unwinding\") , _ => None , } ; if let Some (outcome) = explicit { account . outcome = Some (outcome) ; account . explicit_outcome = true ; } if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , if account . fields . 2 { 3 } else { 4 }) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
+    "class_decision": "delivery",
+    "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
+    "assessments": {
+      "full_recording": "review-206",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

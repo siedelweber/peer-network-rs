@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::Carrier",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "semantic-publication-public",
+    "expansion_review": "Structural cloning, equality and public diagnostics preserve complete semantic fields and grant no authority; independently checked constructors remain private."
+  }
+}

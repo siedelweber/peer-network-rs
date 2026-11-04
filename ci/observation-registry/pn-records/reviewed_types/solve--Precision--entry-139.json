@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Precision",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Precision requests do not select or install a backend.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Precision { ExactRational , BinaryBits (Vec < u32 >) , AbsoluteWidthBits (Vec < u32 >) , }"
+  }
+}

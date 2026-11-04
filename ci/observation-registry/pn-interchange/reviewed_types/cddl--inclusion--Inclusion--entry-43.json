@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::inclusion::Inclusion",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/inclusion.rs",
+    "syntax": "# [doc = \" The outcome of the additive-minor check between two assigned theories.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Inclusion, Theory, check_inclusion};\"] # [doc = \"\"] # [doc = \" let earlier = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 0, uint], 2 => tstr}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let later = Theory::parse(\"] # [doc = \"     r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 1, uint], 2 => tstr, ? 3 => uint}\\\"#,\"] # [doc = \" )\"] # [doc = \" .expect(\\\"an assignable theory\\\");\"] # [doc = \" assert_eq!(\"] # [doc = \"     check_inclusion(&earlier, &later).expect(\\\"comparable\\\"),\"] # [doc = \"     Inclusion::Holds\"] # [doc = \" );\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Inclusion { # [doc = \" The later theory extends the earlier one additively.\"] Holds , # [doc = \" It does not, in these ways, in ascending key order.\"] Violated (Vec < InclusionBreach >) , }"
+  }
+}

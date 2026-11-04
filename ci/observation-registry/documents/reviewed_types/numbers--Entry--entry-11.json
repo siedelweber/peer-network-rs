@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numbers::Entry",
+    "package": "documents",
+    "path": "packages/documents/src/numbers.rs",
+    "syntax": "# [derive (Debug , Deserialize)] # [serde (deny_unknown_fields)] struct Entry { id : String , value : String , unit : String , display : String , magnitude : Option < i32 > , exact_digits : usize , paper_key : Option < String > , paper_tag : Option < String > , }"
+  }
+}

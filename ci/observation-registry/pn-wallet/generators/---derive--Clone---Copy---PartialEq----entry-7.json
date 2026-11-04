@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "rpc_http::Phase",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [derive (Clone , Copy , PartialEq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "The derive copies and compares the exchange phase marker only; it carries no payload, connection detail or credential."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::BaseError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [doc = \" Structural refusals are distinct from an entry's retained irrational hold.\"] # [doc = \" (´def:compiler:base-allocation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BaseError { # [error (\"recipient derivation: {0}\")] Recipients (# [from] RecipientError) , # [error (\"coefficient: {0}\")] Coefficient (# [from] CoefficientError) , # [error (\"bound parameters: {0}\")] Input (# [from] InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"cell source or recipient is outside the anchored Actor index\")] ActorIndex , }"
+  }
+}

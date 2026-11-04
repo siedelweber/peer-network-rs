@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Record",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" A completed enclosure or a retained indecisive prefix, independently checked on replay.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub target : Option < Range > , pub steps : Vec < Step > , pub bisections : u64 , pub bisection_work : Vec < u64 > , pub branches : Option < Branches > , pub indecisive : bool , pub work : u64 , }"
+  }
+}

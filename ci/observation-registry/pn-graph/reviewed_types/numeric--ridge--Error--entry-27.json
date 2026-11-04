@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::ridge::Error",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "syntax": "# [doc = \" Refusals preserve the first failed defining, query, attachment or arithmetic check.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"unsupported clean ridge defining object\")] Definition , # [error (\"invalid ridge declaration\")] Declaration , # [error (\"certified wrong ridge endpoint sign\")] Bracket , # [error (\"ridge query or precision differs from its reconstruction\")] Query , # [error (\"ridge attachment absent or invalid\")] Attachment , # [error (\"ridge record differs from independently checked evidence\")] Record , # [error (\"ridge query {query} stopped without mathematical evidence: {outcome:?}, {fault:?}\")] Operational { query : usize , outcome : Outcome , fault : Option < pn_records :: primitive :: FaultAssertion > , } , # [error (\"ridge numerical kernel: {0}\")] Numeric (# [from] super :: Error) , # [error (\"ridge exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

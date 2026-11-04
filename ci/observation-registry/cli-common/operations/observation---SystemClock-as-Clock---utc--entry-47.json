@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<SystemClock as Clock>::utc",
+    "owner": "CLICOMMON",
+    "signature": "fn utc (& self) -> Option < UtcInstant >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SystemClock as Clock>::utc",
+    "body": "{ let mut text = String :: new () ; tracing_subscriber :: fmt :: time :: SystemTime . format_time (& mut tracing_subscriber :: fmt :: format :: Writer :: new (& mut text)) . ok () ? ; UtcInstant :: parse (& text) . ok () }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::<SystemClock as Clock>::utc. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-181",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

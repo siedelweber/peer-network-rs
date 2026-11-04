@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "item": "publication::disclosures::super :: AdmittedPackage::disclosures",
+    "owner": "EPOCH",
+    "signature": "fn disclosures (& self) -> Disclosure",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Disclosure grants no authority and preserves independent replay inputs.",
+      "witness": "EPOCH::claim:admission:disclosures-rebuild-checked-package-authority",
+      "boundary": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore",
+      "class_decision": "publication-disclosures-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::super :: AdmittedPackage::disclosures",
+    "body": "{ Disclosure { causes : self . carrier . causes . clone () , numeric : self . carrier . numeric . clone () , frames : self . carrier . frames . iter () . map (disclose_frame) . collect () , } }",
+    "class_decision": "publication-disclosures-public",
+    "item_premise": "Public semantic assertions only; no private signing or authentication material. Independent replay selects the admitted charge verifier and compares every derived section. Plain metadata and immutable disclosure access grant no authority.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

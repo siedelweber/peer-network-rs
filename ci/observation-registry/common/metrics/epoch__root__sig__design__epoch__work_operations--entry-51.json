@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "epoch__root__sig__design__epoch__work_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

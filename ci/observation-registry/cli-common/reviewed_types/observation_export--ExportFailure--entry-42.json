@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::ExportFailure",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "# [doc = \" Transport failures have no unprotected credential-bearing field.\"] # [derive (Clone , Copy , Debug , thiserror :: Error)] pub enum ExportFailure { # [doc = \" Controlled connection failure.\"] # [error (\"telemetry transport unavailable\")] Unavailable , # [doc = \" Controlled authentication refusal.\"] # [error (\"telemetry authentication refused\")] Refused , }"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "burn::Address",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+    "class_decision": "public-records",
+    "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+  }
+}

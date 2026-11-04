@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "parse_args_from",
+    "owner": "CLICOMMON",
+    "signature": "fn parse_args_from < T , I , A > (args : I) -> Result < T , CliExit > where T : Parser , I : IntoIterator < Item = A > , A : Into < OsString > + Clone ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::parse_args_from",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"parse_args_from\" , & (\"argument iterator\" , std :: any :: type_name :: < T > ()) ,) ; let result = { let arguments : Vec < OsString > = args . into_iter () . map (Into :: into) . collect () ; tracing :: info ! (arguments =? arguments) ; T :: try_parse_from (& arguments) . map_err (| clap_error | { let mut exit = cli_exit_from_clap_error :: < T > (& clap_error) ; if exit . exit == CommandExit :: Usage { exit . record . arguments = Some (arguments . iter () . map (| argument | argument . as_encoded_bytes () . to_vec ()) . collect () ,) ; } exit }) } ; scope . finish (& result . as_ref () . map (| _ | \"parsed value has a Parser-only representation contract\") ,) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for parse_args_from.",
+    "assessments": {
+      "full_recording": "review-264",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

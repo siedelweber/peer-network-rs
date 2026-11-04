@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "item": "storage::Payload::rule",
+    "owner": "HOST",
+    "signature": "fn rule (value : & Value) -> Result < Self , StorageError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::rule",
+    "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::rule\" , value) ; let result = Self :: encoded (Family :: Rule , value . clone () , None) ; span . finish (& result) ; result }",
+    "class_decision": "host-storage",
+    "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::diagnostic",
+    "owner": "CLICOMMON",
+    "signature": "fn diagnostic (command : & str , message : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::diagnostic",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Diagnostic , message , None) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::diagnostic.",
+    "assessments": {
+      "full_recording": "review-257",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "item": "live_markers::verify",
+    "owner": "RECORDS",
+    "signature": "fn verify (input : HistoryInput , policy : & ValidatedPolicy , evidence : & [u8] , verifier : & impl LiveVerifier ,) -> Result < LiveMarkers , Error >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "verify-live-markers"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+    "body": "{ if evidence . is_empty () { return Err (Error :: MissingEvidence) ; } let history = burn :: validate_marker_history (input , policy , verifier) ? ; let markers = burn :: recognize_markers (& history) ; if let Some (refusal) = markers . first_refusal () { return Err (refusal . cause . clone () . into ()) ; } let (input , policy , burn) = history . disclosure () ; match verifier . settlement (input , policy , burn , evidence) { Status :: Final => Ok (LiveMarkers { markers }) , Status :: Pending => Err (Error :: Pending) , Status :: Lost => Err (Error :: Lost) , } }",
+    "class_decision": "live-marker-public",
+    "item_premise": "Complete public marker, burn and policy disclosures are checked locally and by an explicitly selected trusted live verifier. Immutable getters disclose the checked recognition without adding authority. No private credentials or real-chain assertion enter this semantic boundary.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::BootstrapError",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Executable startup distinguishes invalid configuration from nonbinding observer availability.\"] # [derive (Debug , Clone , PartialEq , Eq , thiserror :: Error)] pub enum BootstrapError { # [doc = \" The command must refuse invalid observation configuration before executing work.\"] # [error (transparent)] Configuration (# [from] EmissionConfigurationError) , # [doc = \" Observation cannot be installed; command computation may continue unchanged.\"] # [error (transparent)] Unavailable (# [from] ObserverUnavailable) , }"
+  }
+}

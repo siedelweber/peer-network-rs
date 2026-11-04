@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Layout",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Projection completeness declared by the structural body.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Layout { # [doc = \" Exactly the Binary role.\"] Binary , # [doc = \" Exactly both A and T roles, owned by one act.\"] Paired , }"
+  }
+}

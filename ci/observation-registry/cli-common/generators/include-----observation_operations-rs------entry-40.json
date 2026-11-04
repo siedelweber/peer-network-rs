@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation_metrics::",
+    "kind": "item-macro",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_metrics.rs",
+    "syntax": "include ! (\"observation_operations.rs\") ;",
+    "class_decision": "delivery",
+    "expansion_review": "The included generated file contains only the finite string constant for the records operation vocabulary. The gate compares it byte-for-byte with registry derivation; it expands no function or secret access."
+  }
+}

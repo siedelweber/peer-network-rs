@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<SummaryFields as Visit>::record_str",
+    "owner": "CLICOMMON",
+    "signature": "fn record_str (& mut self , field : & Field , value : & str)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: The delivery visitor selects accounting identity without recursively observing itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SummaryFields as Visit>::record_str",
+    "body": "{ if matches ! (field . name () , \"execution_owner\" | \"source_item\" | \"operation\" | \"outcome\") { self . 0 . record_str (field , value) ; } }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. RECORDS registration uses its named contract stem, retains the bounded operation identity at default level, and declares seven owner-specific instruments without widening other owners or payload capture.",
+    "assessments": {
+      "full_recording": "review-203",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

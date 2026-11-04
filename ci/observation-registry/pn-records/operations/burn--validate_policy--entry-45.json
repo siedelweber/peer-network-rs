@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "item": "burn::validate_policy",
+    "owner": "RECORDS",
+    "signature": "fn validate_policy (input : PolicyInput , burn : & ValidatedBurn) -> Result < ValidatedPolicy , BurnError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "validate-marker-policy"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
+    "class_decision": "public-records",
+    "body": "{ validate_policy_placement (input , burn , true) }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition."
+  }
+}

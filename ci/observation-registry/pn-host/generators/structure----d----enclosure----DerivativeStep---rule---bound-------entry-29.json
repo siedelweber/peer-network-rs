@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::backend_enclosure_derivative::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_enclosure_derivative.rs",
+    "syntax": "structure ! (d :: enclosure :: DerivativeStep { rule , bound }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

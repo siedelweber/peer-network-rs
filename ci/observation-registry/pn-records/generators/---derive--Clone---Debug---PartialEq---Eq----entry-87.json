@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "RecomputedTime",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Clone, Debug and equality preserve only public identities, exact recomputed values, unavailable-opening sets and local fault causes. No cryptographic verdict, encoding or rewrite is introduced."
+  }
+}

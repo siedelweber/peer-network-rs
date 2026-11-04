@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Family",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" The closed set of families this storage slice can carry.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Family { Constants , Rule , MarkerPolicy , Lineage , BurnPublication , UnsettledRecognition , }"
+  }
+}

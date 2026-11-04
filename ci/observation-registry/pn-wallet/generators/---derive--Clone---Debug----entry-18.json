@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "rpc::ReadResult",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+  }
+}

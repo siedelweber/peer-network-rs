@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "item": "cddl::restraint::RestraintReport::implicit_reaches",
+    "owner": "INTERCHANGE",
+    "signature": "fn implicit_reaches (& self) -> impl Iterator < Item = & ImplicitReach > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::implicit_reaches",
+    "body": "{ self . implicit_reaches . iter () }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::restraint::RestraintReport::implicit_reaches.",
+    "assessments": {
+      "full_recording": "review-024",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

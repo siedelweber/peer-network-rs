@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::price_input::PriceInput",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/price_input.rs",
+    "syntax": "# [doc = \" Complete rational charge assertion and defining evidence; no stored trust bit.\"] # [doc = \" (´rule:numerics:restored-charge´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PriceInput { pub wall : String , pub numeraire : Numeraire , pub price : String , pub floor : Floor , pub ridge : Option < Box < crate :: ridge :: ChargeEvidence > > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::EffectiveRow",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" A resolved version with its appended closure fact, never a mutable stored end field.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EffectiveRow { pub version : Version , pub closes_at : Option < u64 > , }"
+  }
+}

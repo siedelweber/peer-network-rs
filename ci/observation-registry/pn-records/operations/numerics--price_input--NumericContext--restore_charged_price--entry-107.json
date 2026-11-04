@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/price_input.rs",
+    "item": "numerics::price_input::NumericContext::restore_charged_price",
+    "owner": "RECORDS",
+    "signature": "fn restore_charged_price (& mut self , input : & PriceInput , verifier : & impl crate :: ridge :: ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-replay-charged-price"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+    "body": "{ let literal = self . literal (& input . wall) ? ; let wall = self . computed (& literal) ? ; let price = match (input . floor , input . ridge . as_deref ()) { (Floor :: RidgeImage , Some (evidence)) => self . charged_price_with_ridge (& wall , & input . numeraire , evidence , verifier) ? , (Floor :: RationalThreeThirtySevenths , None) => self . charged_price (& wall , & input . numeraire , input . floor) ? , _ => return Err (NumericError :: RidgeEvidence) , } ; if price . price () . exact () != input . price { return Err (NumericError :: RidgeEvidence) ; } Ok (price) }",
+    "class_decision": "semantic-publication-public",
+    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

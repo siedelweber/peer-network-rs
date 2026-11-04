@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "LockedStderrWriter",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "struct LockedStderrWriter { _guard : MutexGuard < 'static , () > , stderr : io :: Stderr , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ValidatedLeg",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Validated structural leg; no candidate removal field exists here.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedLeg { # [doc = \" Parent-and-role identity.\"] id : EdgeId , # [doc = \" Immutable source reference.\"] source : PublicReference , # [doc = \" Immutable target reference.\"] target : PublicReference , }"
+  }
+}

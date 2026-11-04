@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::numeraire",
+    "owner": "RECORDS",
+    "signature": "fn numeraire (& mut self , identity : & str , amount : & BurnPerAction) -> Result < Numeraire , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-numeraire"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::numeraire",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { nonempty (identity) ? ; sign (& amount . exact , true) ? ; Ok (Numeraire { identity : identity . into () , amount : amount . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

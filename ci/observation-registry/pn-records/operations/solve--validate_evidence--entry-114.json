@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "item": "solve::validate_evidence",
+    "owner": "RECORDS",
+    "signature": "fn validate_evidence (procedure : & Procedure , input : & Evidence , limits : Limits) -> Result < () , RecordError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "solve-evidence"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
+    "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || ! declared_stop (procedure , attempt , & input . primitives) || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

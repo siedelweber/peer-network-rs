@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::NumericContext",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Caller-supplied exact arithmetic limits and cumulative comparison attempts.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Debug)] pub struct NumericContext { budget : Budget , comparisons : nrz_accuracy :: WorkBudget , }"
+  }
+}

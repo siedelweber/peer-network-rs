@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ledger::LedgerError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/ledger.rs",
+    "syntax": "# [doc = \" No partial ledger escapes a failed derivation.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum LedgerError { # [error (\"incomplete or unauthorized act: {0}\")] Formation (# [from] RegistrationError) , # [error (\"numeric carrier: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary inputs, price vintages and marker sequence do not cover the same prefix\")] Boundary , # [error (\"burn units differ\")] Units , # [error (\"price differs from the boundary's declared numeraire or floor\")] Price , # [error (\"actor has insufficient own balance at the completed boundary\")] InsufficientBalance { address : Address , boundary : u64 } , # [error (\"action count exceeds the carrier\")] Count , }"
+  }
+}

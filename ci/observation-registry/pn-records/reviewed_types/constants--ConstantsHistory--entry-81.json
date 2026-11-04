@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "constants::ConstantsHistory",
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "syntax": "# [doc = \" Payload history attached to one immutable validated declaration snapshot.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Debug)] pub struct ConstantsHistory < 'a > { records : & 'a ValidatedRecords , editions : Vec < ConstantsEdition > , }"
+  }
+}

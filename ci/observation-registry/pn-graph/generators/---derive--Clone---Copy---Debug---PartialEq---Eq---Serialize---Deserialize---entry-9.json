@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::LicenseQualifiers",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural derives retain the exact public attribution/provenance numerator and denominator pairs without normalization or interpretation. Records validates genesis placement and each bound; graph serde is diagnostic and requires typed revalidation."
+  }
+}

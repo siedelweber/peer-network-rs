@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "item": "title::replay_title",
+    "owner": "GRAPH",
+    "signature": "fn replay_title (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , epoch : u64 ,) -> Result < TitleReplay , crate :: recognition :: RecognitionError >",
+    "claim": "ROOT::alg:design:title",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/title.rs::title::replay_title",
+    "body": "{ let result = reconstruct_replay (history , verifier) . and_then (| expected | crate :: registration :: compare_graph (graph , & expected)) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| () | fold_title (graph , history , verifier , & indexed_inputs (history) , epoch)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Complete public graph and history undergo finalized reconstruction and typed comparison before boundary replay. Trace retains derived owner and consumed-record premises, clause evidence, certificates and events, including unavailable times and stamp faults without suppressing the result. Parent placement faults remain public history evidence. No secret, publication side effect or title authentication is introduced; nested operations retain inclusive accounting.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

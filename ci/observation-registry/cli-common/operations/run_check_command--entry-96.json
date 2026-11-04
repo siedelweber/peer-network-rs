@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "run_check_command",
+    "owner": "CLICOMMON",
+    "signature": "fn run_check_command < Report , CommandError , Run > (command_name : & str , debug : bool , default_level : tracing :: Level , output : & CheckOutputArgs , run : Run ,) -> ExitCode where Report : serde :: Serialize , CommandError : std :: fmt :: Display , Run : FnOnce () -> Result < CheckOutcome < Report > , CommandError > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::run_check_command",
+    "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_check_command\" , & (command_name , debug , default_level , output , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if output . report . is_none () && output . stamp . is_none () && let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let outcome = match run () { Ok (outcome) => outcome , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let published = if outcome . clean { finish_check_command (command_name , output , & outcome . report) } else { match (& output . report , & output . stamp) { (None , None) => finish_check_command (command_name , output , & outcome . report) , (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) . map_err (CheckResultError :: from) . and_then (| () | { write_json_report_if_changed (report_path , & outcome . report) . map (| _change | ()) . map_err (CheckResultError :: from) }) } _ => Err (CheckResultError :: InvalidMode) , } } ; match published { Ok (()) if outcome . clean => CommandExit :: Success . exit_code () , Ok (()) => ExitCode :: from (3) , Err (CheckResultError :: TtyRefusal) => CommandExit :: Usage . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to publish the check result\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for run_check_command.",
+    "assessments": {
+      "full_recording": "review-279",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

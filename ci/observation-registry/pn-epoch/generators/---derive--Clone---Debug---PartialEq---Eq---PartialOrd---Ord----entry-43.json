@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "cells::CellIdentity",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/cells.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+    "class_decision": "epoch-cells",
+    "expansion_review": "Structural Clone, Debug, order, equality and Error preserve public identities, rational spellings and typed refusals; no secret enters these carriers."
+  }
+}

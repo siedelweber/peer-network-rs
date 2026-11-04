@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::ValidatedPolicy",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Policy checked against the disclosed settlement depth before any recognition.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedPolicy { input : PolicyInput , burn : ValidatedBurn , }"
+  }
+}

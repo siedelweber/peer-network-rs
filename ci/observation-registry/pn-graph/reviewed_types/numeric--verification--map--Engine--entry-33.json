@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::verification::map::Engine",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/map.rs",
+    "syntax": "pub (super) struct Engine < 'arithmetic > { pub arithmetic : Arithmetic , pub policy : & 'arithmetic Procedure , pub supplied : Option < & 'arithmetic [PrimitiveRecord] > , pub records : Vec < PrimitiveRecord > , }"
+  }
+}

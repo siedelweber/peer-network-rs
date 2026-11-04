@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wire::Socket",
+    "package": "pn-host",
+    "path": "packages/host/src/wire.rs",
+    "syntax": "pub (crate) struct Socket (Transport) ;"
+  }
+}

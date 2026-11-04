@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::ReadResult",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" Typed public read result with complete decoded layouts.\"] # [doc = \" (´def:wallet:rpc-result´)\"] # [derive (Clone , Debug)] pub enum ReadResult { # [doc = \" Exact chain height.\"] Count (u64) , # [doc = \" Display-order locator bytes.\"] Hash ([u8 ; 32]) , # [doc = \" Complete validated header encoding, without a signature verdict.\"] Header (Vec < u8 >) , # [doc = \" Complete block layout.\"] Block (crate :: Block) , # [doc = \" Complete transaction layout.\"] Transaction (crate :: Transaction) , }"
+  }
+}

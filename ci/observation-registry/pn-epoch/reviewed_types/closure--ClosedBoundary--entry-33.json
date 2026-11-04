@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosedBoundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "syntax": "# [doc = \" A registered local close, constructed only after membership and final admission pass.\"] # [doc = \" It does not persist or authenticate a deployment publication.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug)] pub struct ClosedBoundary { admitted : package :: AdmittedBoundary , record : ClosureRecord , }"
+  }
+}

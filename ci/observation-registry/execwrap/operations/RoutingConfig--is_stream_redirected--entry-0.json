@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "item": "RoutingConfig::is_stream_redirected",
+    "owner": "EXECWRAP",
+    "signature": "const fn is_stream_redirected (& self , stream : Stream) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "execwrap::packages/execwrap/src/bin/execwrap.rs::execute",
+      "class_decision": "public-execwrap"
+    },
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/lib.rs::RoutingConfig::is_stream_redirected",
+    "body": "{ if self . redirect . is_some () || self . redirect_prefixed . is_some () { return true ; } match stream { Stream :: Stdout => self . redirect_output . is_some () , Stream :: Stderr => self . redirect_error . is_some () , } }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for RoutingConfig::is_stream_redirected.",
+    "assessments": {
+      "full_recording": "review-291",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

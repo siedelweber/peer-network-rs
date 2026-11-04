@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::compare_floor",
+    "owner": "RECORDS",
+    "signature": "fn compare_floor (& mut self , wall : & Computed , floor : Floor) -> Result < FloorComparison , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-compare-floor"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::compare_floor",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { if self . comparisons . reserve_attempt (1) . is_err () { return Ok (FloorComparison :: Indecisive) ; } if floor == Floor :: RidgeImage { return Ok (FloorComparison :: Indecisive) ; } let compared = (| | { let rational = Rational :: parse (\"3/37\" , & mut self . budget) ? ; wall . exact . value . compare (& rational , & mut self . budget) }) () ; Ok (match compared { Ok (Ordering :: Less) => FloorComparison :: Below , Ok (Ordering :: Equal) => FloorComparison :: Equal , Ok (Ordering :: Greater) => FloorComparison :: Above , Err (_) => FloorComparison :: Indecisive , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "item": "cddl::eval::Mismatch::at",
+    "owner": "INTERCHANGE",
+    "signature": "fn at (& self) -> & str",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/eval.rs::cddl::eval::Mismatch::at",
+    "body": "{ & self . at }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::eval::Mismatch::at.",
+    "assessments": {
+      "full_recording": "review-012",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "records__root__sig__design__records__resolved_references",
+    "kind": "counter",
+    "unit": "count",
+    "attributes": {}
+  }
+}

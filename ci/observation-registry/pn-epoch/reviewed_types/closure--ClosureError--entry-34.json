@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "syntax": "# [doc = \" Closure, evidence and operational failures are not unresolved numeric comparisons.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug , thiserror :: Error)] pub enum ClosureError { # [error (\"closure requires the next recognized marker, without skipping or repeating\")] MarkerOrder , # [error (\"closure components do not retain one common predecessor context\")] Context , # [error (\"the supplied partition omits, repeats or separates a dependent block\")] Membership , # [error (\"candidate dependency formation: {0}\")] Records (# [source] Box < pn_records :: ValidationError >) , # [error (\"dependent-set partition: {0}\")] Partition (# [from] pn_graph :: PartitionError) , # [error (\"final admission: {0}\")] Admission (# [source] Box < admission :: FinalRefusal >) , # [error (\"closure replay evidence differs\")] Evidence , }"
+  }
+}

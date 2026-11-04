@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+    "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+  },
+  "name": "epoch-base-exposure_consumers"
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Session",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" A secret-terminating connection owned by the closed storage vocabulary.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Only the storage module may select statements; no public method yields a raw client.\"] # [doc = \" ```compile_fail\"] # [doc = \" fn raw(session: &pn_host::Session) { let _ = session.client(); }\"] # [doc = \" ```\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : storage :: StatementClient , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , last_refusal : Arc < Mutex < Option < Refusal > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
+  }
+}

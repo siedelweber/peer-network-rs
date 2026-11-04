@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "item": "anchor::<Arithmetic as ExactArithmetic>::zero",
+    "owner": "EPOCH",
+    "signature": "fn zero (& self) -> Rational",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::zero",
+    "body": "{ self . zero . clone () }",
+    "class_decision": "exact-transport-public",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "exact-transport-public",
+      "secret_flow": "exact-transport-public",
+      "exposure_consumers": "exact-transport-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CompilerInputs",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/lib.rs",
+    "syntax": "# [doc = \" Immutable checked parameters; callers cannot replace an edition or profile after validation.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CompilerInputs { parameters : ParameterInput , constants : ConstantsEdition , }"
+  }
+}

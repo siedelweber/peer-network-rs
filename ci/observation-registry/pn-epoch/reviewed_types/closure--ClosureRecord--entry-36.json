@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureRecord",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "syntax": "# [doc = \" Replayable public closure evidence; a standalone record grants no admission authority.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosureRecord { pub markers : RecognizedMarkers , pub bindings : Vec < package :: EpochBinding > , pub statement : package :: ClosureStatement , pub partition : DependencyBlocks , pub final_gates : admission :: FinalEvidence , pub schedule : schedules :: Record , }"
+  }
+}

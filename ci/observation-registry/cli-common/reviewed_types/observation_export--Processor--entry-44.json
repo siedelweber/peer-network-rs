@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::Processor",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "# [derive (Debug)] struct Processor { sender : mpsc :: SyncSender < Message > , lost : Arc < AtomicU64 > , }"
+  }
+}

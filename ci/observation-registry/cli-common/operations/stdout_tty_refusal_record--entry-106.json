@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "stdout_tty_refusal_record",
+    "owner": "CLICOMMON",
+    "signature": "fn stdout_tty_refusal_record (command_name : & str) -> Option < ControlPlaneRecord >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::stdout_tty_refusal_record",
+    "body": "{ if io :: stdout () . is_terminal () { Some (ControlPlaneRecord :: tty_refusal (command_name)) } else { None } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for stdout_tty_refusal_record.",
+    "assessments": {
+      "full_recording": "review-269",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

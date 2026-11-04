@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/version.rs",
+    "item": "version::Version::from_value",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_value (v : & Value) -> Result < Version , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/version.rs::version::Version::from_value",
+    "body": "{ let Value :: Array (array) = v else { return Err (EnvelopeError :: BadVersion) ; } ; match array . as_slice () { [Value :: Unsigned (major) , Value :: Unsigned (minor) , Value :: Unsigned (patch)] => Ok (Version :: new (* major , * minor , * patch)) , _ => Err (EnvelopeError :: BadVersion) , } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for version::Version::from_value.",
+    "assessments": {
+      "full_recording": "review-151",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

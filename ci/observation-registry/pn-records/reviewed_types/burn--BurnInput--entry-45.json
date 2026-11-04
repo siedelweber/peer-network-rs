@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::BurnInput",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Publication candidate; missing disclosures remain distinguishable from explicit empty costs.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnInput { pub address_space : String , pub edition : String , pub sample_convention : String , pub boundary : u64 , pub read_addresses : BTreeSet < Address > , pub amounts : BTreeMap < Address , BurnAmount > , pub bootstrap : Option < Bootstrap > , pub unit_cost : Option < UnitCost > , pub evidence : BurnEvidence , }"
+  }
+}

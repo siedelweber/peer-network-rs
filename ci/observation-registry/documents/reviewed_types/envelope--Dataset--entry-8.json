@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::Dataset",
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "syntax": "# [derive (Clone , Debug , Serialize)] pub struct Dataset { pub namespace : String , pub version : [u64 ; 3] , pub rows : Vec < BTreeMap < String , Value > > , }"
+  }
+}

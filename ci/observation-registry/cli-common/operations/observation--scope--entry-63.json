@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::scope",
+    "owner": "CLICOMMON",
+    "signature": "fn scope (owner : & 'static str , label : & 'static str , item : & 'static str , arguments : & dyn fmt :: Debug) -> Scope",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "reviewed-helper",
+    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = owner , claim_owner = \"ROOT\" , claim_label = label , source_item = item , arguments =? arguments) . entered ()) }",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::scope",
+    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = owner , claim_owner = \"ROOT\" , claim_label = label , source_item = item , arguments =? arguments) . entered ()) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::scope. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-176",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

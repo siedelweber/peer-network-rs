@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_http::Wire",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [doc = \" The connected stream as hyper sees it: head bytes pass only through the watch.\"] struct Wire { stream : tokio :: net :: TcpStream , watch : Rc < RefCell < Watch > > , }"
+  }
+}

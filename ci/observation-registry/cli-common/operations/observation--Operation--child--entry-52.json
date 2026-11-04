@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::Operation::child",
+    "owner": "CLICOMMON",
+    "signature": "fn child (& self , kind : OperationKind , arguments : Value) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::child",
+    "body": "{ self . observation . operation_with_parent (kind , arguments , Some (self . id)) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::Operation::child. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-189",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

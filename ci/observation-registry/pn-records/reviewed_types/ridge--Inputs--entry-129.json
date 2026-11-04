@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::Inputs",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Declared bracket, complete-cover subdivision ceiling and independent Work limits.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub definition : Definition , pub bracket : Range , pub maximum_depth : u32 , pub maximum_work : u64 , pub maximum_replay_work : u64 , }"
+  }
+}

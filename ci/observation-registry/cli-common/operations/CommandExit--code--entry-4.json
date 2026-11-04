@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "CommandExit::code",
+    "owner": "CLICOMMON",
+    "signature": "const fn code (self) -> u8",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::CommandExit::code",
+    "body": "{ match self { Self :: Success => 0 , Self :: Failure => 1 , Self :: Usage => 2 , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for CommandExit::code.",
+    "assessments": {
+      "full_recording": "review-247",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

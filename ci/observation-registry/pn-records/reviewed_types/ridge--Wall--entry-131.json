@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::Wall",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Either an exact rational wall or identity with the checked defining ridge.\"] # [doc = \" The defining alternative is not a rational charge representation.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Wall { Rational (String) , DefiningRidge (Definition) , }"
+  }
+}

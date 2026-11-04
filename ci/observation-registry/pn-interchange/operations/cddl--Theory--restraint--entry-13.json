@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::Theory::restraint",
+    "owner": "INTERCHANGE",
+    "signature": "fn restraint (& self) -> RestraintReport",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::Theory::restraint",
+    "body": "{ restraint :: report (self) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::Theory::restraint.",
+    "assessments": {
+      "full_recording": "review-040",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

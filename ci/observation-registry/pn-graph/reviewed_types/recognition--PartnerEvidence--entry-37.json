@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recognition::PartnerEvidence",
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "syntax": "# [doc = \" Record-derived party correspondence under authorization clause (iii).\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PartnerEvidence { # [doc = \" The Ratify author is the Bid author.\"] pub ratify_author_is_buyer : bool , # [doc = \" The Accept targets the Bid author.\"] pub accept_target_is_buyer : bool , # [doc = \" The Ratify targets the certified or fresh-thread genesis owner.\"] pub ratify_target_is_seller : bool , }"
+  }
+}

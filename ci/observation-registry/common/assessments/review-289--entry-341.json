@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Child arguments, configuration, outcomes and I/O are public. Tagged UTF-8/base64 preserves original bytes; relays write their original buffers. Read, Write and notification capabilities are not invoked for observation. This body inherits the public-execwrap decision for writer::Writer::finalize.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-289"
+}

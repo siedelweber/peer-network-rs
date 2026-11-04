@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::Walk",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" One content key's walk.\"] struct Walk < 't > { table : & 't RuleTable , key : ContentKey , path : Vec < String > , entered : BTreeSet < String > , report : & 't mut RestraintReport , }"
+  }
+}

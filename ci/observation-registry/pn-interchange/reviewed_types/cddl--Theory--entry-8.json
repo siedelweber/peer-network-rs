@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::Theory",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "syntax": "# [doc = \" An assigned theory: a sentence of the assignable fragment, parsed,\"] # [doc = \" resolved, and evaluable. Immutable.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(\"] # [doc = \"     r#\\\"example = {0 => \\\"com.company.example\\\", 1 => [1, 2, uint], 2 => tstr}\\\"#,\"] # [doc = \" )\"] # [doc = \" .expect(\\\"an assignable theory\\\");\"] # [doc = \" assert_eq!(theory.label().as_str(), \\\"com.company.example\\\");\"] # [doc = \" assert_eq!(theory.coordinate(), (1, 2));\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct Theory { source : Box < str > , cddl : Cddl , table : RuleTable , fragment : Fragment , patterns : BTreeMap < usize , XsdPattern > , }"
+  }
+}

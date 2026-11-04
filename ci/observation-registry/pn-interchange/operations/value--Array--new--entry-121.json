@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Array::new",
+    "owner": "INTERCHANGE",
+    "signature": "fn new (items : impl IntoIterator < Item = Value >) -> Array",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Array::new",
+    "body": "{ let observation = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"value::Array::new\" , & (\"lazy input; values recorded as consumed\" , std :: any :: type_name_of_val (& items)) ,) ; let result = Array (items . into_iter () . inspect (| item | tracing :: info ! (argument_item =? item)) . collect () ,) ; observation . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Array::new.",
+    "assessments": {
+      "full_recording": "review-116",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

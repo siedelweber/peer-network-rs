@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::HistoryInput",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" One complete disclosed history, never a union of competing histories.\"] # [doc = \" (´def:burn:lineage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HistoryInput { pub identity : String , pub records : Vec < BurnRecord > , pub markers : Vec < Marker > , }"
+  }
+}

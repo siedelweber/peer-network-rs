@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "LicenseDegree",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Exact rational degree, checked in the nonnegative unit interval at validation.\"] # [doc = \" Structural equality preserves the authored pair without normalization.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct LicenseDegree { # [doc = \" Authored nonnegative numerator.\"] pub numerator : i64 , # [doc = \" Authored strictly positive denominator.\"] pub denominator : i64 , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "config::Configuration",
+    "package": "pn-host",
+    "path": "packages/host/src/config.rs",
+    "syntax": "# [doc = \" A store configuration acquired under the public host-secured link case.\"] # [doc = \" (´def:host:connection-configuration´)\"] # [doc = \" The private fields have neither Display nor serialization. Parsing failures\"] # [doc = \" contain only bounded causes, never a parser's copy of the input.\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn display(config: pn_host::Configuration) { let _ = format!(\\\"{config}\\\"); }\"] # [doc = \" ```\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn serialize(config: pn_host::Configuration) { let _ = serde_json::to_vec(&config); }\"] # [doc = \" ```\"] pub struct Configuration { data : Buffer , fields : [Range < usize > ; 6] , }"
+  }
+}

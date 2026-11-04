@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "host__root__sig__design__storage__query_elapsed_seconds",
+    "kind": "histogram",
+    "unit": "seconds",
+    "attributes": {}
+  }
+}

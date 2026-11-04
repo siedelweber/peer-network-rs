@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Comparison",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Binding comparisons whose unresolved result withholds admission or publication.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Comparison { Floor , InverseGain , Deadband , StepCap , DeliveryError , IndividualSafety , EpochPolicy , }"
+  }
+}

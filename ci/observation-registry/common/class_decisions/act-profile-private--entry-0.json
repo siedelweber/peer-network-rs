@@ -1,0 +1,23 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "act-profile-private",
+    "status": "reviewer-confirmed",
+    "premises": "Typed public projections and secret-container private inputs enter the shared encoder; only final residues or explicitly matched public openings leave. No entropy, authentication or subscriber installation occurs.",
+    "membership": {
+      "explicit": [
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as Zeroize>::zeroize",
+        "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::content_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::dependency_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::content_matches_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::dependencies_match_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::proposal_matches_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
+        "pn-act-profile::packages/act-profile/src/lib.rs::render_payload",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as std :: fmt :: Debug>::fmt"
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numeric::ridge::Error",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "binding-ridge-public",
+    "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion preserve the defining inputs and evidence. No default, encoding, charge or admission constructor is generated."
+  }
+}

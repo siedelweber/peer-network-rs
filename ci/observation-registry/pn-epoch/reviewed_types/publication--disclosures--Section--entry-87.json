@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Section",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" The section whose asserted value differs from independent reconstruction.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Section { Recognition , Inputs , Sequence , Debit , Title , Ledger , Cells , Coefficients , Recipients , Base , Support , }"
+  }
+}

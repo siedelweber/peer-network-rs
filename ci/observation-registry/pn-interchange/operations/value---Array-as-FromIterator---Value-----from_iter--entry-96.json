@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Array as FromIterator < Value >>::from_iter",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_iter < I : IntoIterator < Item = Value > > (iter : I) -> Array",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Array as FromIterator < Value >>::from_iter",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"value::<Array as FromIterator < Value >>::from_iter\" , & \"lazy iterator; consumed values recorded by Array::new\" ,) ; let result = { Array :: new (iter) } ; scope . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::<Array as FromIterator < Value >>::from_iter.",
+    "assessments": {
+      "full_recording": "review-121",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

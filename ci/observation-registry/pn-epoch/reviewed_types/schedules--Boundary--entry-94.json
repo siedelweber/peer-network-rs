@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::Boundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Public announcement beside a completed epoch; no demand or admission statistics.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [doc = \" Admission statistics are not a schedule or controller input:\"] # [doc = \" ```compile_fail\"] # [doc = \" use pn_epoch::schedules::Boundary;\"] # [doc = \" fn inject(boundary: &mut Boundary<'_, '_>) {\"] # [doc = \"     boundary.admission_statistics = Some(());\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Debug)] pub struct Boundary < 'a , 'b > { pub completed : & 'a BoundProcedure < 'b > , pub search : & 'a InverseSearch , pub announced_at : u64 , pub effective_at : u64 , # [doc = \" Absence retains the preceding effective policy floor.\"] pub policy_floor : Option < String > , }"
+  }
+}

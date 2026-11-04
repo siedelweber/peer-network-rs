@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "TracingFilter::new",
+    "owner": "CLICOMMON",
+    "signature": "fn new (directive : impl Into < String > , source : TracingFilterSource) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::TracingFilter::new",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"TracingFilter::new\" , & (\"Into<String> capability\" , source) ,) ; let result = { Self { directive : directive . into () , source , } } ; scope . finish (& result) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for TracingFilter::new.",
+    "assessments": {
+      "full_recording": "review-260",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::finalize::FinalEvidence",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "syntax": "# [doc = \" Public final-gate record; only attachment to the privately constructed\"] # [doc = \" admitted boundary carries admission authority. A standalone record is untrusted.\"] # [doc = \" Empty epochs retain no stamp, mean or diagnostic invented from a zero denominator.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FinalEvidence { pub effective : schedules :: Effective , pub solvency : Vec < Solvency > , pub standing : Option < pn_records :: conserved :: SolveRecord > , pub rounds : Vec < StampRound > , }"
+  }
+}

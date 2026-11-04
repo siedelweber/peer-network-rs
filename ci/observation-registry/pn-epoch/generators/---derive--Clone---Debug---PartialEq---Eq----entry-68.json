@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::disclosures::Closure",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "publication-disclosures-public",
+    "expansion_review": "Structural equality, cloning and public diagnostics preserve every assertion; no checked marker, price or admitted constructor is generated."
+  }
+}

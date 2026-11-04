@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Branches",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Ordered controller decisions and both enclosures; these are not ledger publication values.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Branches { pub floor_binding : bool , pub deadband_hold : bool , pub step_capped : bool , pub above_floor : Verdict , pub policy_valid : Verdict , pub participation : Participation , pub proposal : Range , pub delivered : Range , }"
+  }
+}

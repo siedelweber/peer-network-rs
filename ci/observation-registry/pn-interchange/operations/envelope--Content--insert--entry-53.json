@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Content::insert",
+    "owner": "INTERCHANGE",
+    "signature": "fn insert (& mut self , key : ContentKey , value : Value) -> Option < Value >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Content::insert",
+    "body": "{ self . 0 . insert (key . get () , value) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Content::insert.",
+    "assessments": {
+      "full_recording": "review-055",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

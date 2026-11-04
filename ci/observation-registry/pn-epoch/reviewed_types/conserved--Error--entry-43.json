@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved.rs",
+    "syntax": "# [doc = \" A refusal never constitutes a standing or convergence verdict.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"conserved solve declaration or frozen scope refused\")] Scope , # [error (\"mandatory replay Work differs from the independently measured count\")] ReplayWork , # [error (\"map evidence or endpoint composition refused\")] Map , # [error (\"residual bound refused\")] Residual , # [error (\"residual radius refused\")] Radius , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"primitive: {0}\")] Primitive (# [from] pn_graph :: numeric :: Error) , # [error (\"transport: {0}\")] Transport (# [from] pn_records :: transport :: KernelError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"frozen constants: {0}\")] Input (# [from] crate :: InputError) , # [error (\"accepted fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"records: {0}\")] Records (# [from] pn_records :: solve :: RecordError) , }"
+  }
+}

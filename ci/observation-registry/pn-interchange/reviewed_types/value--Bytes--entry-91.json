@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Bytes",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A byte string.\"] # [doc = \"\"] # [doc = \" Its `Ord` is the ordinary bytewise order of the payload, which is *not*\"] # [doc = \" the canonical order of the corresponding [`Value`]: canonical order\"] # [doc = \" compares the head first, so a shorter byte string always sorts before a\"] # [doc = \" longer one. Sort `Value`s when canonical order is what is wanted.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Bytes;\"] # [doc = \"\"] # [doc = \" let b = Bytes::from(vec![1, 2, 3]);\"] # [doc = \" assert_eq!(b.as_slice(), [1, 2, 3]);\"] # [doc = \" assert_eq!(b.into_vec(), vec![1, 2, 3]);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Hash , PartialOrd , Ord , Default)] pub struct Bytes (Box < [u8] >) ;"
+  }
+}

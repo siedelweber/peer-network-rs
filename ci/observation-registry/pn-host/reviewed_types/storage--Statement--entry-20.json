@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Statement",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Copy)] enum Statement { BootstrapLock , HasTables , HasIdentity , Create , SetIdentity , GetIdentity , EnsureIndexes , VerifyIndexes , LockHistory , ReadHistory , ReadKey , ReadBoundary , Close , Insert , }"
+  }
+}

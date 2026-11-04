@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::AttemptStop",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Declared reason an attempt stops; this assertion is not numerical evidence.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AttemptStop { ComparisonSeparated , PrecisionSequenceExhausted , WorkLimit , Interrupted , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::Coordinate",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" An exact bounded carrier for a signed unit-interval coordinate.\"] # [doc = \" Construction and deserialization do not establish validity; formation checks\"] # [doc = \" a positive denominator and absolute numerator no greater than denominator.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct Coordinate { # [doc = \" Authored integer numerator, retained without rounding.\"] pub numerator : i64 , # [doc = \" Authored positive integer denominator, retained without normalization.\"] pub denominator : i64 , }"
+  }
+}

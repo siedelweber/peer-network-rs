@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/live_publication.rs",
+    "item": "live_publication::LiveState::closed",
+    "owner": "EPOCH",
+    "signature": "fn closed (& self) -> & AdmittedPackage",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits live publication verification.",
+      "witness": "EPOCH::claim:admission:live-publication-retains-marker-registration",
+      "boundary": "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::consume",
+      "class_decision": "live-publication-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::closed",
+    "body": "{ & self . closed }",
+    "class_decision": "live-publication-public",
+    "item_premise": "Public complete old and replacement packages and response disclosures are recorded. Live verification precedes independent semantic restoration; immutable access retains the frozen state. The declared live and response verifiers supply external premises only. No credentials, chain-authenticity assertion or offline proof enters this local semantic boundary.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

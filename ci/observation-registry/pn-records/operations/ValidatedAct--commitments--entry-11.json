@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "ValidatedAct::commitments",
+    "owner": "RECORDS",
+    "signature": "fn commitments (& self) -> Option < & commitments :: ActCommitments >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "exception",
+    "shape": "shape-records",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable carrier access inherits its enclosing records operation.",
+      "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
+      "boundary": "pn-records::packages/records/src/lib.rs::replay_openings",
+      "class_decision": "act-profile-records"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::commitments",
+    "body": "{ self . commitments . as_ref () }",
+    "class_decision": "act-profile-records",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

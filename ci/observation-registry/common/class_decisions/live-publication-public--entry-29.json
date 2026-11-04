@@ -1,0 +1,19 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "live-publication-public",
+    "status": "reviewer-confirmed",
+    "premises": "Complete public old and replacement packages, original marker and policy disclosures, live assessments and published response evidence. Independent semantic replay is separate from the explicit trusted live-service and response-verifier premises. No private credentials, real-chain authenticity or offline cryptographic validation are admitted.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::consume",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::closed",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::halted",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::response",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::refresh",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::successor",
+        "pn-epoch::packages/epoch/src/live_publication.rs::live_publication::LiveState::respond"
+      ]
+    }
+  }
+}

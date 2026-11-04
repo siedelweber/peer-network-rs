@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::ActionCount",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Count in actions, not in burn units; no multiplication by a unit cost exists.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ActionCount (pub u64) ;"
+  }
+}

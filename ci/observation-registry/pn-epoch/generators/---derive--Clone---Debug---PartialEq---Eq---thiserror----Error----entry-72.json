@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "compiler::CompileError",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "epoch-compiler",
+    "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
+  }
+}

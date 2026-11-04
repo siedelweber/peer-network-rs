@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "constants::ConstantsError",
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "syntax": "# [doc = \" Exhaustive unpublished declaration-content refusals.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ConstantsError { # [doc = \" Selection still follows the original validated announcement/effective contract.\"] # [error (\"declaration selection: {0}\")] Selection (# [from] ValidationError) , # [doc = \" Every validated numeric/constants identity has exactly one payload and no foreign payload.\"] # [error (\"missing, duplicate or foreign edition payload\")] EditionSet , # [doc = \" Required public identities and source definitions cannot be empty or duplicated.\"] # [error (\"empty or duplicate constant definition or profile\")] Definition , # [doc = \" The floor is a structural change, never a permitted epoch override.\"] # [error (\"invalid override permission\")] Override , }"
+  }
+}

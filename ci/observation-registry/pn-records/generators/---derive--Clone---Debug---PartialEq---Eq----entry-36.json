@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "conserved::SolveRecord",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "Typed public map and residual transcripts retain rational coordinates, scalar attachments and Work totals. Their derives expose no private material and define no publication bytes."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "IdentifierClass",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Cloning, Debug and equality expose only the public node constructor class; no resolution, byte encoding, secret data or accounting is introduced."
+  }
+}

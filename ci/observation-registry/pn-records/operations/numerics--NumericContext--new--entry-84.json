@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::new",
+    "owner": "RECORDS",
+    "signature": "fn new (limits : Limits , comparisons : nrz_accuracy :: Limits) -> Result < Self , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-new"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::new",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { Ok (Self { budget : Budget :: new (limits) ? , comparisons : comparisons . start () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

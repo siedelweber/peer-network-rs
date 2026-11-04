@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CheckOutputArgs",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Output arguments for the checker modes in (´sec:clicommon:output-roles-and-stamps´).\"] # [doc = \"\"] # [doc = \" A checker runs in one of two modes:\"] # [doc = \"\"] # [doc = \" - **direct** — no `--report`/`--stamp`: the JSON result goes to\"] # [doc = \"   stdout (refused on a terminal) and no stamp is touched;\"] # [doc = \" - **build** — both `--report` and `--stamp`: the result is published\"] # [doc = \"   as an explicit report asset (compare-if-changed), the stamp is\"] # [doc = \"   touched only after a successful report write, and stdout stays\"] # [doc = \"   empty.\"] # [doc = \"\"] # [doc = \" `clap` enforces the reciprocal requirement, so a lone `--report` or\"] # [doc = \" `--stamp` is a usage error before the command runs.\"] # [derive (clap :: Args , Debug)] pub struct CheckOutputArgs { # [doc = \" Build mode: write the JSON result to this explicit report file.\"] # [arg (long , value_name = \"FILE\" , requires = \"stamp\")] pub report : Option < std :: path :: PathBuf > , # [doc = \" Build mode: touch this success stamp after publishing the report.\"] # [arg (long , value_name = \"FILE\" , requires = \"report\")] pub stamp : Option < std :: path :: PathBuf > , }"
+  }
+}

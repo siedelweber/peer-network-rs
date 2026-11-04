@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "registration::GroundedNode",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)]",
+    "class_decision": "graph-registration",
+    "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+  }
+}

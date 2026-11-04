@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Rendering",
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "syntax": "# [doc = \" One template's rendered output and observed dataset dependencies.\"] # [derive (Debug , Serialize)] pub struct Rendering { # [doc = \" Repository-relative template path.\"] pub template : String , # [doc = \" Repository-relative document path.\"] pub document : String , # [doc = \" Namespaces read during rendering, in sorted order.\"] pub datasets : Vec < String > , }"
+  }
+}

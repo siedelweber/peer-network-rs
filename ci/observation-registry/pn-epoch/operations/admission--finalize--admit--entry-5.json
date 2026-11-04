@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "item": "admission::finalize::admit",
+    "owner": "EPOCH",
+    "signature": "fn admit (candidate : & package :: CandidateContext , schedule : & schedules :: CheckedSchedule , procedure : & FinalProcedure , registration : & impl RegistrationVerifier , published : & impl solve :: ProcedureVerifier , mut numeric : NumericContext ,) -> Result < package :: AdmittedBoundary , FinalRefusal >",
+    "claim": "ROOT::alg:design:admission",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+    "body": "{ let effective = effective (candidate , schedule) ? ; let binding = candidate . input () . causes . bindings . last () . ok_or (AdmissionRefusal :: Evidence) ? ; let state = match compiler :: compile_candidate (candidate , registration , & mut numeric , procedure . arithmetic . clone () , procedure . maximum_products ,) { Err (compiler :: CompileError :: Ledger (crate :: ledger :: LedgerError :: InsufficientBalance { boundary , .. })) if boundary == binding . marker . index => { return Err (AdmissionRefusal :: Failed (Gate :: OwnSolvency) . into ()) ; } other => other . map_err (| error | FinalRefusal :: Compile (Box :: new (error))) ? , } ; let mut b = Budget :: new (procedure . arithmetic . clone ()) ? ; let solvency = solvency (& state , & mut b) ? ; let mut evidence = FinalEvidence { effective , solvency , standing : None , rounds : Vec :: new () , } ; if binding . sequence . is_empty () { return Ok (package :: AdmittedBoundary :: checked (candidate . clone () , evidence)) ; } let bound = solve :: bind_procedure (& state , procedure . solve . clone () , published , procedure . arithmetic . clone ()) ? ; let fence = fence :: search (& bound , None) ? ; let solved = conserved :: solve (& bound , & fence) . map_err (| error | FinalRefusal :: Solve (Box :: new (error))) ? ; let mut unresolved = Comparison :: IndividualSafety ; for round in & solved . rounds { let stamps = stamps (& state , round , & evidence . effective , & mut b) ? ; let result = verdict (& stamps , & evidence . effective , & mut b) ? ; evidence . rounds . push (stamps) ; if let Some (comparison) = result { unresolved = comparison ; } else { evidence . standing = Some (solved) ; return Ok (package :: AdmittedBoundary :: checked (candidate . clone () , evidence)) ; } } Err (AdmissionRefusal :: Indecisive (unresolved) . into ()) }",
+    "class_decision": "atomic-admission-public",
+    "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows. Capacity is checked while constructing the candidate, before admission can consume it.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

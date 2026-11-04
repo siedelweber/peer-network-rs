@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::Provision",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" An explicit provision: a position naming a restrained kind, and whether\"] # [doc = \" it fixes the canonical form of what it admits.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [0, 0, uint], 2 => float64}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let report = theory.restraint();\"] # [doc = \" let provision = report.provisions().next().expect(\\\"one provision\\\");\"] # [doc = \" assert_eq!(provision.named(), \\\"float64\\\");\"] # [doc = \" assert!(provision.fixes_canonical_form());\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct Provision { key : ContentKey , kind : Restrained , named : String , fixes_canonical_form : bool , }"
+  }
+}

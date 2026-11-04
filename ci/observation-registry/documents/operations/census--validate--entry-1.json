@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/census.rs",
+    "item": "census::validate",
+    "owner": "DOCUMENTS",
+    "signature": "fn validate (root : & Path , templates : & [Rendering] , datasets : & BTreeMap < String , Dataset >) -> Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/census.rs::census::validate",
+    "body": "{ let documents : BTreeSet < _ > = templates . iter () . map (| item | item . document . clone ()) . collect () ; let authored = markdown (root) ? ; if let Some (path) = authored . difference (& documents) . next () { return Err (format ! (\"{path}: first-party Markdown has no template\") . into ()) ; } let records : BTreeSet < _ > = documents . iter () . filter (| path | record (path)) . cloned () . collect () ; let mut indexed = BTreeSet :: new () ; if let Some (dataset) = datasets . get (\"org.peer-network.records.index\") { for row in & dataset . rows { let path = row . get (\"path\") . and_then (serde_json :: Value :: as_str) . ok_or (\"records index: missing path\") ? ; if ! indexed . insert (path . to_owned ()) { return Err (format ! (\"{path}: duplicate record index row\") . into ()) ; } } } if let Some (path) = records . difference (& indexed) . next () { return Err (format ! (\"{path}: record template has no index row\") . into ()) ; } if let Some (path) = indexed . difference (& records) . next () { return Err (format ! (\"{path}: index row has no record template\") . into ()) ; } for template in templates . iter () . filter (| template | record (& template . document)) { if ! template . datasets . iter () . any (| name | name == \"org.peer-network.records.index\") { return Err (format ! (\"{}: record rendering did not read its own index row\" , template . document) . into ()) ; } } Ok (()) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for census::validate.",
+    "assessments": {
+      "full_recording": "review-157",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

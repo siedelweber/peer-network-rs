@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "item": "accept::dispatch",
+    "owner": "INTERCHANGE",
+    "signature": "fn dispatch < 'r > (reg : & 'r Registry , env : & Envelope) -> Instrument < 'r >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::dispatch",
+    "body": "{ let version = env . version () ; let (major , minor) = (version . major () , version . minor ()) ; let Some (holding) = reg . holding (env . label () , major) else { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; return Instrument :: Refused (RejectionCause :: UnheldMajor) ; } ; if let Some (theory) = holding . theory (minor) { return Instrument :: Strict { minor , theory } ; } if minor <= holding . ceiling { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; return Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling : holding . ceiling , }) ; } Instrument :: Tolerant { floor : holding . ceiling , companion : holding . companion , } }",
+    "class_decision": "public-interchange",
+    "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::dispatch.",
+    "assessments": {
+      "full_recording": "review-001",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

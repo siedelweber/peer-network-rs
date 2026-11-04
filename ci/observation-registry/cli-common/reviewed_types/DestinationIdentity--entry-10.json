@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DestinationIdentity",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Identity of one output destination for role-uniqueness validation.\"] # [doc = \"\"] # [doc = \" One lexically normalized absolute path\"] # [doc = \" `(´guide:clicommon:cli-common´)`. Deliberately *not* filesystem\"] # [doc = \" canonicalization, symlink resolution, device/inode comparison,\"] # [doc = \" hard-link detection, or mount identity: those establish no boundary\"] # [doc = \" the repository can hold, because the host may replace or remount a\"] # [doc = \" path at any time.\"] # [doc = \"\"] # [doc = \" This is a correctness guard against configuration mistakes — two\"] # [doc = \" roles spelled differently for one destination. Callers must not\"] # [doc = \" alias distinct output roles through symlinks, hard links, mounts,\"] # [doc = \" or namespaces; a hard link is not semantic identity, and\"] # [doc = \" first-party outputs are identified by role, path, schema, and\"] # [doc = \" bytes.\"] # [derive (Debug , Clone , PartialEq , Eq)] pub struct DestinationIdentity (std :: path :: PathBuf) ;"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "StructuralBody",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required on Accept and Ratify only; retained across projection removal.\"] pub settlement : Option < SettlementReferences > , # [doc = \" Required only on self-minting Publish; retained across payload removal.\"] pub license : Option < LicenseQualifiers > , # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
+  }
+}

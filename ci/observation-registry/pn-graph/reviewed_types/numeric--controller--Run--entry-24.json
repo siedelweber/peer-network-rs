@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::controller::Run",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/controller.rs",
+    "syntax": "struct Run < 'a > { p : & 'a Procedure , input : & 'a Inputs , ridge : Option < & 'a CheckedRidge > , b : Budget , spent : u64 , ceiling : u64 , }"
+  }
+}

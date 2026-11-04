@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "assemble_boundary_inputs",
+    "owner": "RECORDS",
+    "signature": "fn assemble_boundary_inputs (records : & ValidatedRecords , boundary : Position) -> Result < BoundaryInputs < '_ > , ValidationError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "assemble-boundary-inputs"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::assemble_boundary_inputs",
+    "body": "{ let result = assemble (records , boundary) ; match & result { Ok (inputs) => metrics :: histogram ! (\"records__root__sig__design__records__records_per_boundary\") . record (carrier_count (inputs . acts . len ())) , Err (_) => refused () , } result }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Memoizes causal ancestors over the proposed set in strict placement order, excluding fixed history. Dependency tombstones have no closure role. Work increments are mirrored into records metering; private validation ensures resolved earlier parents. Returns proposals and their overlapping closures without partitioning."
+  }
+}

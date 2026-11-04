@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "closure::ClosureRecord",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "closure-admission-public",
+    "expansion_review": "Structural cloning, equality and typed public errors preserve causes and evidence without promoting candidates or allowing construction of an admitted result."
+  }
+}

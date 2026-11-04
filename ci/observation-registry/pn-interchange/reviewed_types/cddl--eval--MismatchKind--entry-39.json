@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::MismatchKind",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" Which kind of failure a [`Mismatch`] reports.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::MismatchKind;\"] # [doc = \"\"] # [doc = \" assert_eq!(MismatchKind::Unsatisfied, MismatchKind::Unsatisfied);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash)] # [non_exhaustive] pub enum MismatchKind { # [doc = \" The document does not answer to the theory at this position: a value\"] # [doc = \" outside its type, a required key absent, a key the theory does not\"] # [doc = \" enumerate.\"] Unsatisfied , # [doc = \" A `.regexp` match ran out of the seam's operation budget, so what\"] # [doc = \" the pattern would have answered is unknown.\"] # [doc = \"\"] # [doc = \" The budget counts matching operations and never time, so this\"] # [doc = \" outcome is the same on every machine (´[ROOT-dec:xchg:regexp-engine]´).\"] BudgetExhausted { # [doc = \" The budget that was in force.\"] budget : usize , } , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Type2",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" One alternative of `type2`.\"] # [derive (Clone , Debug)] pub (crate) struct Type2 { # [doc = \" Which alternative.\"] pub (crate) kind : Type2Kind , # [doc = \" Where it was written.\"] pub (crate) span : Span , }"
+  }
+}

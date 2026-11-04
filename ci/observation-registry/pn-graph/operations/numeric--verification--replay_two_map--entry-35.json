@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification.rs",
+    "item": "numeric::verification::replay_two_map",
+    "owner": "GRAPH",
+    "signature": "fn replay_two_map (p : & Procedure , input : & VerificationInput , candidate : & [Range] , record : & TwoMapRecord ,) -> Result < TwoMapRecord , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_two_map",
+    "body": "{ let first = replay_box (p , input , candidate , & record . first) ? ; let second = replay_box (p , input , & first . image , & record . second) ? ; let result = assemble (p , first , second) ? ; if result . radius != record . radius || result . one_map_radius != record . one_map_radius || result . enclosure != record . enclosure { return Err (Error :: Declaration) ; } Ok (result) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

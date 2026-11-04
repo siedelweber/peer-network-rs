@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "wallet__root__sig__design__devnet__elapsed_seconds",
+    "kind": "histogram",
+    "unit": "seconds",
+    "attributes": {}
+  }
+}

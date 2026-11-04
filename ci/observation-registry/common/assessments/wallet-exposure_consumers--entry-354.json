@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, connection details and cookie bytes are secret-owned, and the Basic field leaves its carrier only under its caveat; received heads and bodies are public service data held as ordinary bytes; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+    "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
+  },
+  "name": "wallet-exposure_consumers"
+}

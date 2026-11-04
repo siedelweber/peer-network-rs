@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "error::ValueError",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/error.rs",
+    "syntax": "# [doc = \" A `Value` invariant refused at construction.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Simple, ValueError};\"] # [doc = \"\"] # [doc = \" let err = Simple::new(21).expect_err(\\\"21 is `true`, which has its own variant\\\");\"] # [doc = \" assert!(matches!(err, ValueError::ReservedSimpleValue { value: 21 }));\"] # [doc = \" ```\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum ValueError { # [doc = \" Two entries of a map carry the same key.\"] # [doc = \"\"] # [doc = \" `index` is the position, in canonical key order, of the second of\"] # [doc = \" the two equal keys.\"] # [error (\"duplicate map key at entry {index}\")] DuplicateMapKey { # [doc = \" Position in canonical key order of the second equal key.\"] index : usize , } , # [doc = \" A byte sequence offered as text is not valid UTF-8.\"] # [error (\"byte string is not valid UTF-8 at byte {offset}\")] InvalidUtf8 { # [doc = \" The first byte not part of a valid UTF-8 sequence.\"] offset : usize , } , # [doc = \" An integer outside `[-2^64, 2^64)`, which no CBOR integer denotes.\"] # [error (\"integer {value} lies outside the CBOR integer range\")] IntegerOutOfRange { # [doc = \" The integer offered.\"] value : i128 , } , # [doc = \" A simple value that has its own variant, or that no well-formed\"] # [doc = \" encoding produces.\"] # [error (\"simple value {value} is not constructible here\")] ReservedSimpleValue { # [doc = \" The simple value offered.\"] value : u8 , } , # [doc = \" A floating-point value outside the admitted canonical forms — a NaN\"] # [doc = \" other than the one the data language names.\"] # [error (\"floating-point value is not in the admitted canonical form\")] NonCanonicalFloat , }"
+  }
+}

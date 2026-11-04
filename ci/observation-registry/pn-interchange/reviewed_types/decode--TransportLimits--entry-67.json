@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::TransportLimits",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" Mandatory caller declarations for one transient API message.\"] # [doc = \"\"] # [doc = \" There is no production default. Bytes count received input and cumulative\"] # [doc = \" allocation requests separately; items include string chunks. Depth counts\"] # [doc = \" value and chunk heads from one at the root; nesting counts active containers and chunked\"] # [doc = \" strings. Work counts inspected/copied bytes, heads and map insertion work.\"] # [derive (Clone , Copy , Debug)] pub struct TransportLimits { # [doc = \" Maximum received bytes, checked before parsing.\"] pub input_bytes : usize , # [doc = \" Maximum cumulative bytes requested by decoder buffer reservations.\"] pub allocation_bytes : usize , # [doc = \" Maximum value and chunk heads.\"] pub items : usize , # [doc = \" Maximum value or chunk-head depth, with the root at one.\"] pub depth : usize , # [doc = \" Maximum simultaneously open containers, including chunked strings.\"] pub nesting : usize , # [doc = \" Maximum deterministic decoding work units.\"] pub work : usize , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::Value::canonical_len",
+    "owner": "INTERCHANGE",
+    "signature": "fn canonical_len (& self) -> usize",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::Value::canonical_len",
+    "body": "{ let mut total = 0usize ; let mut work : Vec < & Value > = vec ! [self] ; while let Some (value) = work . pop () { total += match value { Value :: Unsigned (n) => head_len (* n) , Value :: Negative (n) => head_len (n . argument ()) , Value :: Bytes (b) => { let len = b . as_slice () . len () ; head_len (len as u64) + len } Value :: Text (t) => { let len = t . as_str () . len () ; head_len (len as u64) + len } Value :: Array (a) => { work . extend (a . as_slice ()) ; head_len (a . len () as u64) } Value :: Map (m) => { for (key , item) in m . iter () { work . push (key) ; work . push (item) ; } head_len (m . len () as u64) } Value :: Tag (t) => { work . push (t . item ()) ; head_len (t . number ()) } Value :: Bool (_) | Value :: Null => 1 , Value :: Simple (s) => { if s . get () < 24 { 1 } else { 2 } } Value :: Float (f) => 1 + f . width () . argument_len () , } ; } total }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for encode::Value::canonical_len.",
+    "assessments": {
+      "full_recording": "review-051",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "FileSpec",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [derive (Debug)] struct FileSpec { path : PathBuf , kind : RouteKind , identity : FileIdentity , }"
+  }
+}

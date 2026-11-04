@@ -1,0 +1,11 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "public-cli",
+    "status": "reviewer-confirmed",
+    "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable.",
+    "membership": {
+      "labelled_package": "cli-common"
+    }
+  }
+}

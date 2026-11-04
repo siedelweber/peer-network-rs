@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::RpcConfig",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" Secret bootstrap values with role-only Debug and no Display implementation.\"] # [doc = \" (´def:wallet:rpc-config´)\"] pub struct RpcConfig { link : RpcLink , endpoint : SecretString , port : SecretBox < u16 > , cookie : SecretString , uid : SecretBox < u32 > , root : std :: fs :: File , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Sign",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Strict signs only; an unresolved enclosure cannot select a half bracket.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Sign { Positive , Negative , Indecisive , }"
+  }
+}

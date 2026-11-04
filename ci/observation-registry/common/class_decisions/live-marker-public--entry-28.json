@@ -1,0 +1,14 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "live-marker-public",
+    "status": "reviewer-confirmed",
+    "premises": "Complete public marker histories, policies and live-verifier evidence. Local recognition and the declared trusted live service are separate checks. No private credentials, chain adapter or offline cryptographic authority enter this contract.",
+    "membership": {
+      "explicit": [
+        "pn-records::packages/records/src/live_markers.rs::live_markers::verify",
+        "pn-records::packages/records/src/live_markers.rs::live_markers::LiveMarkers::markers"
+      ]
+    }
+  }
+}

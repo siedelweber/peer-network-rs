@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "metadata::ActMetadata",
+    "package": "pn-graph",
+    "path": "packages/graph/src/metadata.rs",
+    "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" Projection metadata retains the published stamp; observer-specific recomputation\"] # [doc = \" and stamp evidence are joined here from the owning immutable history snapshot.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
+  }
+}

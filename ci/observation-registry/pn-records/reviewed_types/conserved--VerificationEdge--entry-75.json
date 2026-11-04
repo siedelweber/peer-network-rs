@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::VerificationEdge",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" A positive off-diagonal base score is the square root of this exact radicand.\"] # [doc = \" (´[ROOT-alg:design:transport]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationEdge { pub source : String , pub target : String , pub radicand : String , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::ridge::Run",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "syntax": "struct Run < 'a > { procedure : & 'a Procedure , supplied : Option < & 'a [PrimitiveRecord] > , budget : Budget , queries : Vec < PrimitiveRecord > , }"
+  }
+}

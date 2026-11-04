@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Document::to_value",
+    "owner": "INTERCHANGE",
+    "signature": "fn to_value (& self) -> Value",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Document::to_value",
+    "body": "{ let mut entries = Vec :: with_capacity (2 + self . content . len ()) ; entries . push ((Value :: Unsigned (0) , Value :: Text (Text :: from (self . envelope . label . as_str () . to_owned ())) ,)) ; entries . push ((Value :: Unsigned (1) , self . envelope . version . to_value ())) ; for (key , value) in self . content . iter () { entries . push ((Value :: Unsigned (key) , value . clone ())) ; } Value :: Map (Map :: from_sorted (entries)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Document::to_value.",
+    "assessments": {
+      "full_recording": "review-070",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

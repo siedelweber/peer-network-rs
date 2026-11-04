@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "item": "recognition::recognize_settlements",
+    "owner": "GRAPH",
+    "signature": "fn recognize_settlements (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , context : & RecognitionContext ,) -> Result < Vec < SettlementEvidence > , RecognitionError >",
+    "claim": "ROOT::alg:design:recognition",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/recognition.rs::recognition::recognize_settlements",
+    "body": "{ let result = reconstruct_replay (history , verifier) . and_then (| expected | crate :: registration :: compare_graph (graph , & expected)) . map_err (RecognitionError :: Formation) . and_then (| () | recognize (& indexed_inputs (history) , history , context)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Complete public history, graph, public verifier and caller-supplied preceding owner and consumed maps are revalidated before six-clause recognition. Trace retains complete clause and time evidence, including unavailable summaries, without making time a premise. Inputs contain no secret material; no title fold or publication executes. Nested finalized reconstruction and recognition retain inclusive accounting.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

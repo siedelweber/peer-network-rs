@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::FloatWidth",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" The width of a floating-point name.\"] # [doc = \"\"] # [doc = \" The declaration order is the order of the heads `0xf9`, `0xfa`, `0xfb`,\"] # [doc = \" which is what makes the derived order on [`Float`] the canonical one.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::FloatWidth;\"] # [doc = \"\"] # [doc = \" assert!(FloatWidth::Half < FloatWidth::Single);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash , PartialOrd , Ord)] pub enum FloatWidth { # [doc = \" binary16, head `0xf9`.\"] Half , # [doc = \" binary32, head `0xfa`.\"] Single , # [doc = \" binary64, head `0xfb`.\"] Double , }"
+  }
+}

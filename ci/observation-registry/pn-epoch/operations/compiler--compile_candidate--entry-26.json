@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "item": "compiler::compile_candidate",
+    "owner": "EPOCH",
+    "signature": "fn compile_candidate (candidate : & CandidateContext , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_candidate",
+    "body": "{ compile_source (CompiledSource :: Candidate (candidate . clone ()) , verifier , numeric , limits , maximum_products ,) }",
+    "class_decision": "atomic-admission-public",
+    "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

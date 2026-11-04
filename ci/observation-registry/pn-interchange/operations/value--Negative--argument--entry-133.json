@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Negative::argument",
+    "owner": "INTERCHANGE",
+    "signature": "const fn argument (self) -> u64",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+      "class_decision": "public-interchange"
+    },
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Negative::argument",
+    "body": "{ self . 0 }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Negative::argument.",
+    "assessments": {
+      "full_recording": "review-103",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

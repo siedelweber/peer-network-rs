@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CheckOutcome",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" A completed checker verdict and its report.\"] pub struct CheckOutcome < Report > { pub report : Report , pub clean : bool , }"
+  }
+}

@@ -11,6 +11,7 @@ from collections import Counter
 
 from devperf import StructuralError
 from harness import source_id
+from registry_fragments import read as read_fragments
 
 OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
 HELPERS={
@@ -65,7 +66,7 @@ def validate(census, registry, labels, claims):
     """Check syntax and declared review bindings; never infer semantic approval."""
     if census.get('schema')!=1 or registry.get('schema')!=1:
         raise StructuralError('observation schema differs')
-    if census.get('types',[])!=registry.get('reviewed_types',[]):
+    if sorted(json.dumps(row,sort_keys=True) for row in census.get('types',[]))!=sorted(json.dumps(row,sort_keys=True) for row in registry.get('reviewed_types',[])):
         raise StructuralError('type declarations changed since full-content and secret-flow review')
     functions={identity(row):row for row in census['functions']}
     if len(functions)!=len(census['functions']):raise StructuralError('duplicate source operation')
@@ -212,7 +213,7 @@ def operation_vocabulary(registry):
 
 def operation_source(registry):
     values=operation_vocabulary(registry)
-    return '// Generated from ci/observation-registry.json by ci/observe.py --write-operation-vocabulary.\n'+'pub(super) const RECORDS_OPERATIONS: [&str; '+str(len(values))+'] = [\n'+''.join('    '+json.dumps(value)+',\n' for value in values)+'];\n'
+    return '// Generated from ci/observation-registry by ci/observe.py --write-operation-vocabulary.\n'+'pub(super) const RECORDS_OPERATIONS: [&str; '+str(len(values))+'] = [\n'+''.join('    '+json.dumps(value)+',\n' for value in values)+'];\n'
 
 
 def main():
@@ -221,7 +222,7 @@ def main():
     parser.add_argument('--census-only',action='store_true')
     parser.add_argument('--write-operation-vocabulary',action='store_true')
     args=parser.parse_args()
-    raw_registry=json.loads(Path('ci/observation-registry.json').read_text())
+    raw_registry=read_fragments(Path.cwd(), 'observation-registry')
     vocabulary_path=Path('packages/cli-common/src/observation_operations.rs')
     if args.write_operation_vocabulary:
         vocabulary_path.write_text(operation_source(raw_registry))
@@ -236,7 +237,7 @@ def main():
             from source_sites import census as sites
             labels,_=prose('.')
             claims={site_claim(site)['claim'] for site in sites(Path('.'))}
-            registry=expand_registry(json.loads(Path('ci/observation-registry.json').read_text()),data)
+            registry=expand_registry(read_fragments(Path.cwd(), 'observation-registry'),data)
             result=validate(data,registry,set(labels)|claims,claims)
             Path('.lane/observation-registry-expanded.json').write_text(json.dumps(registry,indent=2,ensure_ascii=False)+'\n')
             summary=[]

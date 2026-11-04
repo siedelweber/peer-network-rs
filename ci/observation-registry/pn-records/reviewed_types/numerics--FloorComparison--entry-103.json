@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::FloorComparison",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Exact wall-minus-floor evidence, or an honest lack of a decision.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FloorComparison { Below , Equal , Above , Indecisive , }"
+  }
+}

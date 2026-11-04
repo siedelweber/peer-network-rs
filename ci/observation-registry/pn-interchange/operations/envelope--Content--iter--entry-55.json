@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Content::iter",
+    "owner": "INTERCHANGE",
+    "signature": "fn iter (& self) -> impl Iterator < Item = (u64 , & Value) > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Content::iter",
+    "body": "{ self . 0 . iter () . map (| (key , value) | (* key , value)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Content::iter.",
+    "assessments": {
+      "full_recording": "review-058",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

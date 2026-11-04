@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::Carrier",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Untrusted complete immutable-field theory before verification; encoding is not defined.\"] # [doc = \" Frames retain boundary order and complete prefixes; no previous-standing input exists.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Carrier { pub causes : Causes , pub numeric : NumericPolicy , pub frames : Vec < Frame > , }"
+  }
+}

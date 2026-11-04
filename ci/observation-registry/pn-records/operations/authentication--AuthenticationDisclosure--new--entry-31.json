@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/authentication.rs",
+    "item": "authentication::AuthenticationDisclosure::new",
+    "owner": "RECORDS",
+    "signature": "fn new (fields : AuthenticationFields) -> Result < Self , MissingField >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "authentication-disclosure"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/authentication.rs::authentication::AuthenticationDisclosure::new",
+    "class_decision": "public-records",
+    "body": "{ let result = check (& fields) . map (| () | Self (fields)) ; if result . is_err () { crate :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Only named public, untrusted authentication disclosures enter. Presence checks retain bytes and edition strings without interpreting them, admitting a cryptographic edition, or authenticating a signature, header, seal or approval. Trace may retain these public disclosures; no key generation, secret custody, codec or publication effect enters this body."
+  }
+}

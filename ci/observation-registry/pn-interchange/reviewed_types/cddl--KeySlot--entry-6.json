@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::KeySlot",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "syntax": "# [doc = \" One enumerated content key of an assigned theory.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(\"] # [doc = \"     r#\\\"e = {0 => \\\"com.example\\\", 1 => [0, 0, uint], ? 2 => tstr .size 3}\\\"#,\"] # [doc = \" )\"] # [doc = \" .expect(\\\"an assignable theory\\\");\"] # [doc = \" let slot = theory.slot(2).expect(\\\"key 2 is enumerated\\\");\"] # [doc = \" assert_eq!(slot.key().get(), 2);\"] # [doc = \" assert!(!slot.required());\"] # [doc = \" assert_eq!(slot.type_source(), \\\"tstr .size 3\\\");\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug)] pub struct KeySlot < 'a > { key : ContentKey , required : bool , type_source : & 'a str , }"
+  }
+}

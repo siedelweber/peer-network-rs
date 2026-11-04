@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::Statement",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The private statement discriminant derives only Copy and Clone. The private client wrapper derives Debug only over an authenticated placeholder driver; it retains no private configuration and is not emitted as public content."
+  }
+}

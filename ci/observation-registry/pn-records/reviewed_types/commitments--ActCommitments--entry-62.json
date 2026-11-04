@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "commitments::ActCommitments",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [doc = \" Three distinct public residues kept outside the removable projections.\"] # [doc = \" Absence on an internal candidate does not manufacture an anchor.\"] # [doc = \" (´def:acts:commitment-residues´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ActCommitments { # [doc = \" Actor-owned proposal commitment.\"] pub proposal : ProposalCommitment , # [doc = \" Host-owned content commitment.\"] pub content : ContentCommitment , # [doc = \" Host-owned dependency commitment.\"] pub dependency : DependencyCommitment , }"
+  }
+}

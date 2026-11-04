@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Operator",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `rangeop = \\\"...\\\" / \\\"..\\\"` and `ctlop = \\\".\\\" id`.\"] # [derive (Clone , Debug)] pub (crate) enum Operator { # [doc = \" `..`, a range including its upper bound.\"] RangeInclusive , # [doc = \" `...`, a range excluding its upper bound.\"] RangeExclusive , # [doc = \" `.name`, a control operator.\"] # [doc = \"\"] # [doc = \" The name is kept as a name and nothing more. Which names this crate\"] # [doc = \" evaluates, and which it refuses, is settled at a later stage\"] # [doc = \" (´[ROOT-dec:xchg:evaluable-subset]´); the parser admits every\"] # [doc = \" name the grammar admits, including names no implementation defines.\"] Control (Name) , }"
+  }
+}

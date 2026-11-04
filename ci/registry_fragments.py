@@ -56,17 +56,111 @@ def distinct(pairs):
     return result
 
 
+
+def json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('duplicate JSON object member: '+key)
+        result[key] = value
+    return result
+
+
+def observation_key(section, row):
+    if section in {'operations', 'reviewed_types', 'generators'}:
+        key = (row['package'], row['path'], row['item'])
+        return key + (row['kind'], row['syntax']) if section == 'generators' else key
+    if section == 'named_operations':
+        if not isinstance(row, str):
+            raise ValueError('named operation must be text')
+        return (row,)
+    return (row['name'],)
+
+
+def observation(paths, prefix):
+    schema_path = prefix+'/schema.json'
+    if schema_path not in paths:
+        raise ValueError('missing central fragment schema: '+schema_path)
+    parse = lambda path: json.loads(paths[path].read_text(), object_pairs_hook=json_object)
+    schema = parse(schema_path)
+    sections = ('named_operations', 'operations', 'metrics', 'reviews', 'generators',
+                'reviewed_types', 'class_decisions', 'shapes', 'assessments')
+    if set(schema) != {'schema', 'configuration', 'fields'} or schema['schema'] != 2:
+        raise ValueError('unknown observation fragment schema key or edition')
+    fields = schema['fields']
+    if set(fields) != set(sections)-{'named_operations'}:
+        raise ValueError('observation fragment field declarations differ')
+    entries = {section: [] for section in sections}
+    for path in paths:
+        if path == schema_path:
+            continue
+        fragment = parse(path)
+        section = fragment.get('section')
+        if section not in entries or section == 'reviews':
+            raise ValueError('unknown fragment section: '+path)
+        extra = {'name'} if section in {'shapes', 'assessments'} else ({'review'} if section == 'operations' else set())
+        if set(fragment) != {'section', 'value'} | extra:
+            raise ValueError('unknown or missing fragment key: '+path)
+        value = fragment['value']
+        if section != 'named_operations' and (not isinstance(value, dict) or set(value)-set(fields[section])):
+            raise ValueError('unknown fragment value key: '+path)
+        if section in {'shapes', 'assessments'}:
+            key = (fragment['name'],)
+        else:
+            key = observation_key(section, value)
+        entries[section].append((key, path, value))
+        if section == 'operations':
+            review = fragment['review']
+            if (not isinstance(review, dict) or set(review)-set(fields['reviews']) or
+                    review.get('operation') != '::'.join(key)):
+                raise ValueError('operation and review identity differ: '+path)
+            entries['reviews'].append((key, path, review))
+    result = dict(schema=schema['schema'], configuration=schema['configuration'])
+    for section, pairs in entries.items():
+        merged = distinct(pairs)
+        keys = sorted(merged)
+        result[section] = ({key[0]: merged[key][1] for key in keys} if section in {'shapes', 'assessments'}
+                           else [merged[key][1] for key in keys])
+    operations = {'::'.join(observation_key('operations', row)) for row in result['operations']}
+    classes = {row['name'] for row in result['class_decisions']}
+    metrics = {row['name'] for row in result['metrics']}
+    if not set(result['named_operations']) <= operations:
+        raise ValueError('unresolved named observation operation')
+    for row in result['operations']:
+        if row.get('shape') not in result['shapes']:
+            raise ValueError('unresolved observation shape')
+        exception = row.get('exception')
+        if exception and (exception.get('class_decision') not in classes or exception.get('boundary') not in operations):
+            raise ValueError('unresolved observation exception')
+    for row in result['reviews']:
+        if (row.get('class_decision') not in classes or
+                not set(row.get('assessments', {}).values()) <= set(result['assessments'])):
+            raise ValueError('unresolved observation review')
+    for row in result['generators']:
+        if row.get('class_decision') not in classes:
+            raise ValueError('unresolved generator class')
+    for row in result['shapes'].values():
+        if not set(row.get('metrics', [])) <= metrics:
+            raise ValueError('unresolved observation metric')
+    for row in result['class_decisions']:
+        if not set(row.get('membership', {}).get('explicit', [])) <= operations:
+            raise ValueError('unresolved observation membership')
+    return result
+
+
 def read(root, name):
     """Read an admitted fragment family, or its not-yet-migrated monolith."""
     root = Path(root).resolve()
     prefix = ROOTS[name]
+    suffix = '.json' if name == 'observation-registry' else '.toml'
     if not (root/prefix).exists():
-        suffix = '.json' if name == 'observation-registry' else '.toml'
         text = (root/(prefix+suffix)).read_text()
         return json.loads(text) if suffix == '.json' else tomllib.loads(text)
+    if (root/(prefix+suffix)).exists():
+        raise ValueError('dual registry authoring: '+prefix+' and '+prefix+suffix)
     paths = {path: full for path, full in indexed(root).items() if path.startswith(prefix+'/')}
     if name == 'observation-registry':
-        raise ValueError('observation fragment schema has not been admitted')
+        return observation(paths, prefix)
     schema_path = prefix+'/schema.toml'
     if schema_path not in paths:
         raise ValueError('missing central fragment schema: '+schema_path)

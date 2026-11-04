@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "syntax": "# [doc = \" One candidate, its declared whole-act partition, led schedule and preceding close.\"] # [doc = \" No demand set or timestamp-derived claim of earliest determination is supplied.\"] # [doc = \" (´[ROOT-alg:design:closure-registration]´)\"] # [derive (Debug)] pub struct ClosureInput < 'a > { pub candidate : & 'a package :: CandidateContext , pub partition : & 'a DependencyBlocks , pub schedule : & 'a schedules :: CheckedSchedule , pub previous : Option < & 'a ClosedBoundary > , }"
+  }
+}

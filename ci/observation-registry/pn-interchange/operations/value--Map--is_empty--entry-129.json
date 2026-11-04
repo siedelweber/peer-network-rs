@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Map::is_empty",
+    "owner": "INTERCHANGE",
+    "signature": "fn is_empty (& self) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Map::is_empty",
+    "body": "{ self . 0 . is_empty () }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Map::is_empty.",
+    "assessments": {
+      "full_recording": "review-131",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "item": "constants::bind_marker_policy",
+    "owner": "RECORDS",
+    "signature": "fn bind_marker_policy (records : & ValidatedRecords , input : crate :: burn :: PolicyInput , burn : & crate :: burn :: ValidatedBurn ,) -> Result < crate :: burn :: ValidatedPolicy , crate :: burn :: BurnError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "bind-marker-policy"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/constants.rs::constants::bind_marker_policy",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , input . genesis_at) ? ; let host = matches ! (& declaration . content , DeclarationContent :: MarkerPolicy { recipe , .. } if recipe == HOST_MARKER_POLICY_RECIPE) ; let validated = if host { crate :: burn :: validate_policy_placement (input . clone () , burn , false) ? } else { crate :: burn :: validate_policy (input . clone () , burn) ? } ; let mut deployments = records . declarations . iter () . filter (| d | d . id . namespace == \"deployment\" && d . id . name == \"genesis\") ; let deployment = deployments . next () . ok_or (crate :: burn :: BurnError :: DeploymentBinding) ? ; let DeclarationContent :: Deployment { genesis_at } = deployment . content else { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } ; if deployments . next () . is_some () || deployment . announced_at > genesis_at || deployment . effective_at > genesis_at || input . genesis_at != genesis_at { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } if let DeclarationContent :: MarkerPolicy { recipe , .. } = & declaration . content && recipe != MARKER_POLICY_RECIPE && recipe != HOST_MARKER_POLICY_RECIPE { return Err (crate :: burn :: BurnError :: UnsupportedPolicyRecipe) ; } if declaration . content != (DeclarationContent :: MarkerPolicy { recipe : if host { HOST_MARKER_POLICY_RECIPE } else { MARKER_POLICY_RECIPE } . into () , digest : marker_policy_digest (& input) , }) { return Err (crate :: burn :: BurnError :: PolicyDigest) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body binds public policy to the unique validated deployment genesis and the effective marker declaration, including its complete content digest. Trace records arguments and the typed refusal or validated policy. No private credential enters the body. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing. The one recipe constant supplies the framed domain and binder comparison; unsupported recipes refuse separately before content comparison. The raw digest helper remains recomputation rather than publication. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition. The explicitly declared placement recipe selects open or host-only markers; live settlement remains separate from public recognition."
+  }
+}

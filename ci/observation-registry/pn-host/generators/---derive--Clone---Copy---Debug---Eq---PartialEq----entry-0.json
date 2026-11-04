@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Refusal",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+    "class_decision": "host-transport",
+    "expansion_review": "Refusal derives inspect only bounded fieldless variants; tracing attributes use role-only private carrier Debug and Instrument future lifetimes, with explicit bounded outcome events."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/companion.rs",
+    "item": "cddl::companion::OpenTheory::floor",
+    "owner": "INTERCHANGE",
+    "signature": "fn floor (& self) -> (u64 , u64)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/companion.rs::cddl::companion::OpenTheory::floor",
+    "body": "{ self . floor }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::companion::OpenTheory::floor.",
+    "assessments": {
+      "full_recording": "review-007",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

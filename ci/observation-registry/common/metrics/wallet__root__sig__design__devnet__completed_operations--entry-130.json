@@ -1,0 +1,18 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "wallet__root__sig__design__devnet__completed_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {
+      "outcome": [
+        "success",
+        "refusal",
+        "error",
+        "cancelled",
+        "unwinding",
+        "incomplete"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "item": "registration::reconstruct_registrations",
+    "owner": "GRAPH",
+    "signature": "fn reconstruct_registrations (history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < RegistrationGraph , RegistrationError >",
+    "claim": "ROOT::alg:design:formation",
+    "shape": "shape-graph-registration",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/registration.rs::registration::reconstruct_registrations",
+    "body": "{ let result = reconstruct (history , verifier) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-registration",
+    "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Registration and Affinity also reject protocol-reference fields their family blocks do not define, preserving the existing refusal accounting.",
+    "assessments": {
+      "full_recording": "graph-registration-full_recording",
+      "secret_flow": "graph-registration-secret_flow",
+      "exposure_consumers": "graph-registration-exposure_consumers"
+    }
+  }
+}

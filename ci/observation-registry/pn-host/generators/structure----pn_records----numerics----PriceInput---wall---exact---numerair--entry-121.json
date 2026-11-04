@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::records_numerics_price_input::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_numerics_price_input.rs",
+    "syntax": "structure ! (pn_records :: numerics :: PriceInput { wall : exact , numeraire , price : exact , floor , ridge }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

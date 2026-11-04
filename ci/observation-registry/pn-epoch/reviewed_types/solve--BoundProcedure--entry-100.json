@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::BoundProcedure",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve.rs",
+    "syntax": "# [doc = \" A procedure bound to this immutable compiled state; composition remains separate.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Debug)] pub struct BoundProcedure < 'a > { state : & 'a CompiledState , procedure : Procedure , enclosed_wall : Option < pn_records :: primitive :: Range > , }"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "select_effective_declaration",
+    "owner": "RECORDS",
+    "signature": "fn select_effective_declaration < 'a > (records : & 'a ValidatedRecords , namespace : & str , name : & str , boundary : u64 ,) -> Result < & 'a Declaration , ValidationError >",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "claim": "ROOT::sig:design:records",
+    "operation": "select-effective-declaration"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::select_effective_declaration",
+    "body": "{ if let Some (cause) = invalid_key (namespace , name) { refused () ; return Err (ValidationError :: InvalidSelectionKey (cause)) ; } let selected = records . declarations . iter () . filter (| d | d . id . namespace == namespace && d . id . name == name && d . announced_at <= boundary && d . effective_at <= boundary) . max_by_key (| d | d . effective_at) ; selected . ok_or_else (| | { refused () ; ValidationError :: MissingDeclaration { namespace : namespace . into () , name : name . into () , boundary , } }) }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Rejects malformed keys and selects a validated opaque edition by its effective boundary. Late announcements refused during validation cannot rewrite historical answers."
+  }
+}

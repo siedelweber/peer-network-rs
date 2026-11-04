@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Tag",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A tagged item — restrained.\"] # [doc = \"\"] # [doc = \" `Clone`, `PartialEq`, and `Hash` are hand-written for the same reason as\"] # [doc = \" [`Value`]'s — a derived walk recurses down a chain of tags — and each\"] # [doc = \" delegates to the shared worklist helpers.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Tag, Value};\"] # [doc = \"\"] # [doc = \" let t = Tag::new(1, Value::Unsigned(1_363_896_240));\"] # [doc = \" assert_eq!(t.number(), 1);\"] # [doc = \" assert_eq!(t.item(), &Value::Unsigned(1_363_896_240));\"] # [doc = \" ```\"] # [derive (Debug , Eq)] pub struct Tag { number : u64 , item : Box < Value > , }"
+  }
+}

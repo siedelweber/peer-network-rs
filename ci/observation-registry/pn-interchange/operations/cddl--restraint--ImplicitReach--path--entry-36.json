@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "item": "cddl::restraint::ImplicitReach::path",
+    "owner": "INTERCHANGE",
+    "signature": "fn path (& self) -> impl Iterator < Item = & str > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::ImplicitReach::path",
+    "body": "{ self . path . iter () . map (String :: as_str) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::restraint::ImplicitReach::path.",
+    "assessments": {
+      "full_recording": "review-031",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "item": "read",
+    "owner": "DOCUMENTS",
+    "signature": "fn read (path : & Path) -> Result < String >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/lib.rs::read",
+    "body": "{ at (path , fs :: read_to_string (path)) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for read.",
+    "assessments": {
+      "full_recording": "review-168",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

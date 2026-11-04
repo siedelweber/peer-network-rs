@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Content::new",
+    "owner": "INTERCHANGE",
+    "signature": "fn new () -> Content",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Content::new",
+    "body": "{ Content (BTreeMap :: new ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Content::new.",
+    "assessments": {
+      "full_recording": "review-054",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

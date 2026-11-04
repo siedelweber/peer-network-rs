@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "commitments::DependencyCommitment",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [doc = \" Independently removable dependency set's retained residue.\"] # [doc = \" (´def:acts:commitment-residues´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DependencyCommitment { # [doc = \" Immutable recipe identifier.\"] pub recipe : String , # [doc = \" Opaque public residue, retained after dependency tombstoning.\"] pub bytes : [u8 ; 32] , }"
+  }
+}

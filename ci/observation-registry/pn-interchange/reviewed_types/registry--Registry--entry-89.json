@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registry::Registry",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "syntax": "# [doc = \" A reader's registry state: assigned coordinates with their immutable\"] # [doc = \" theory objects, holding downward-closed within each major.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Coordinate, NamespaceLabel, Registry, Theory};\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example\\\").expect(\\\"a label\\\");\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 0, uint], 2 => tstr}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \"\"] # [doc = \" let mut registry = Registry::new();\"] # [doc = \" registry\"] # [doc = \"     .acquire(Coordinate::new(label.clone(), 1, 0), theory)\"] # [doc = \"     .expect(\\\"the first minor of a major\\\");\"] # [doc = \"\"] # [doc = \" assert_eq!(registry.ceiling(&label, 1), Some(0));\"] # [doc = \" assert!(registry.holds_major(&label, 1));\"] # [doc = \" ```\"] # [doc = \"\"] # [doc = \" # Cloning, and threads\"] # [doc = \"\"] # [doc = \" The registry owns its theories and hands out `&Theory`. A consumer\"] # [doc = \" wanting a registry on another thread clones the registry; nothing here\"] # [doc = \" is shared behind a handle.\"] # [derive (Clone , Debug , Default)] pub struct Registry { # [doc = \" Label to major to that major's line. Nested so that a lookup by\"] # [doc = \" label borrows rather than clones, and so that the greatest major of\"] # [doc = \" a label is the last entry of the inner map.\"] lines : BTreeMap < NamespaceLabel , BTreeMap < u64 , MajorLine > > , # [doc = \" Whether an implicit reach to a restrained value is admitted.\"] lenient : bool , }"
+  }
+}

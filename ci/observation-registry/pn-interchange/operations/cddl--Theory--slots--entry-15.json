@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::Theory::slots",
+    "owner": "INTERCHANGE",
+    "signature": "fn slots (& self) -> impl Iterator < Item = KeySlot < '_ > > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::Theory::slots",
+    "body": "{ self . fragment . slots () . iter () . map (| slot | KeySlot { key : slot . key () , required : slot . required () , type_source : self . slice (slot . type_span ()) , }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::Theory::slots.",
+    "assessments": {
+      "full_recording": "review-036",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

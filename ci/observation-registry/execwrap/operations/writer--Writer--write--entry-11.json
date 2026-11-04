@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/writer.rs",
+    "item": "writer::Writer::write",
+    "owner": "EXECWRAP",
+    "signature": "fn write (& mut self , stream : Stream , raw : & [u8]) -> io :: Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/writer.rs::writer::Writer::write",
+    "body": "{ if self . add_prefix { self . write_calligraphic (stream , raw) } else { if self . debug { tracing :: debug ! (bytes = raw . len () , \"writer typesetter\") ; } self . file . write_all (raw) } }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for writer::Writer::write.",
+    "assessments": {
+      "full_recording": "review-288",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Rule",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" One rule: `rule = typename [genericparm] S assignt S type`\"] # [doc = \" or `groupname [genericparm] S assigng S grpent`.\"] # [derive (Clone , Debug)] pub (crate) struct Rule { # [doc = \" The type name or group name being defined.\"] pub (crate) name : Name , # [doc = \" `genericparm`, when the rule is generic.\"] pub (crate) params : Option < GenericParams > , # [doc = \" Which assignment operator was written.\"] pub (crate) assign : Assign , # [doc = \" What the rule assigns.\"] pub (crate) body : RuleBody , # [doc = \" The whole rule.\"] pub (crate) span : Span , }"
+  }
+}

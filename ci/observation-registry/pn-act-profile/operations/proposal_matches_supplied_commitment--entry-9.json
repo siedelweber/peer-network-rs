@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "proposal_matches_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn proposal_matches_supplied_commitment (body : & ProposalBody , recorded : & ProposalCommitment , nonce : & SecretSlice < u8 > , payload : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < () , ProfileError >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_matches_supplied_commitment",
+    "body": "{ if recorded . recipe != PROPOSAL_RECIPE { return Err (ProfileError :: Recipe) ; } if proposal_commitment (body , nonce , payload , list) ? != * recorded { return Err (ProfileError :: Mismatch) ; } Ok (()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

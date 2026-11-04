@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::Exact",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)] struct Exact { canonical : String , value : Rational , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::Value::write_canonical",
+    "owner": "INTERCHANGE",
+    "signature": "fn write_canonical (& self , out : & mut Vec < u8 >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::Value::write_canonical",
+    "body": "{ write_nodes (Node :: Public (self) , out) ; }",
+    "class_decision": "public-interchange",
+    "item_premise": "The public wrapper feeds the shared canonical traversal; its public argument, nested public accessors and return remain observed without changing bytes.",
+    "assessments": {
+      "full_recording": "review-050",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

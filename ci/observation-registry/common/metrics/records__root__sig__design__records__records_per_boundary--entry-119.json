@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "records__root__sig__design__records__records_per_boundary",
+    "kind": "histogram",
+    "unit": "count",
+    "attributes": {}
+  }
+}

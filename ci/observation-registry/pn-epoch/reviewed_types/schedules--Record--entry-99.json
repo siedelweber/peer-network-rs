@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::Record",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Untrusted sequence evidence. Only replay constructs a checked schedule.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub declaration : crate :: admission :: ScheduleInput , pub initial : Effective , pub publications : Vec < Publication > , }"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "exact-transport-public",
+    "status": "reviewer-confirmed",
+    "premises": "Only public exact operator entries, frozen compiled inputs and bounded exact arithmetic enter these operations. Errors retain public domain or resource classes. No secret or subscriber is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/transport.rs::transport::exact_transport",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::zero",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::one",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::add",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::sub",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::mul",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::div",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::compare",
+        "pn-epoch::packages/epoch/src/anchor.rs::anchor::exact_anchor"
+      ]
+    }
+  }
+}

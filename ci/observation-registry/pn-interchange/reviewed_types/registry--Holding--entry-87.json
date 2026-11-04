@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registry::Holding",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "syntax": "# [doc = \" What a reader holds of one major: the ceiling, the companion memoized\"] # [doc = \" at it, and the held theories.\"] # [doc = \"\"] # [doc = \" Crate-internal, and the one lookup dispatch performs: it exists so that\"] # [doc = \" choosing an instrument costs one descent and no allocation\"] # [doc = \" (´[ROOT-alg:xchg:companion]´).\"] # [derive (Debug)] pub (crate) struct Holding < 'r > { pub (crate) ceiling : u64 , pub (crate) companion : & 'r OpenTheory , entries : & 'r [(u64 , Theory)] , }"
+  }
+}

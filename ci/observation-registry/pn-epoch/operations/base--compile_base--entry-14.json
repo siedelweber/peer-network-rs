@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "item": "base::compile_base",
+    "owner": "EPOCH",
+    "signature": "fn compile_base (inputs : & CompilerInputs , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , limits : Limits ,) -> Result < BaseAllocation , BaseError >",
+    "claim": "ROOT::alg:design:base",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/base.rs::base::compile_base",
+    "body": "{ let boundary = inputs . parameters () . boundary ; let resolved = resolve_recipients (history , boundary , verifier , limits . clone ()) ? ; let anchors : BTreeSet < _ > = history . acts () . iter () . filter (| act | act . position () . 0 <= boundary && act . id () . family == \"Registration\") . map (| act | act . id () . author . clone ()) . collect () ; let mut budget = Budget :: new (limits . clone ()) ? ; let self_base = crate :: constant (inputs . constants () , & inputs . parameters () . self_base , & mut budget) ? . exact_string (& mut budget) ? ; let mut rows : BTreeMap < _ , _ > = anchors . iter () . map (| actor | { (actor . clone () , BTreeMap :: from ([(actor . clone () , BaseEntry { score : BaseScore :: Exact (self_base . clone ()) , cells : BTreeSet :: new () , } ,)]) ,) }) . collect () ; for resolved in resolved { let identity = resolved . cell . identity . clone () ; if ! anchors . contains (& identity . author) || ! anchors . contains (& resolved . recipient) { return Err (BaseError :: ActorIndex) ; } let profile = inputs . parameters () . profiles . iter () . find (| profile | profile . family == identity . family) . ok_or (InputError :: MissingProfile) ? ; let mut factor = Rational :: parse (\"0\" , & mut budget) ? ; for (domain , name) in & profile . weights { let weight = crate :: constant (inputs . constants () , name , & mut budget) ? ; if weight . is_zero () { continue ; } let domain_name = inputs . parameters () . domain_weights . get (domain) . ok_or (InputError :: UnknownDomain) ? ; let domain_weight = crate :: constant (inputs . constants () , domain_name , & mut budget) ? ; factor = factor . add (& weight . mul (& domain_weight , & mut budget) ? , & mut budget) ? ; } let row = rows . get_mut (& identity . author) . ok_or (BaseError :: ActorIndex) ? ; let entry = row . entry (resolved . recipient) . or_insert (BaseEntry { score : BaseScore :: Exact (\"0\" . into ()) , cells : BTreeSet :: new () , }) ; entry . cells . insert (identity . clone ()) ; if factor . is_zero () { continue ; } match coefficient (& resolved . cell , limits . clone ()) { Ok (value) => { let value = Rational :: parse (& value , & mut budget) ? . mul (& factor , & mut budget) ? ; let exact = match & mut entry . score { BaseScore :: Exact (value) | BaseScore :: Held { exact_part : value , .. } => value , } ; * exact = Rational :: parse (exact , & mut budget) ? . add (& value , & mut budget) ? . exact_string (& mut budget) ? ; } Err (CoefficientError :: Irrational { radicand }) => { let term = HeldCoefficient { cell : identity , radicand , domain_factor : factor . exact_string (& mut budget) ? , } ; match & mut entry . score { BaseScore :: Exact (value) => { entry . score = BaseScore :: Held { exact_part : value . clone () , terms : vec ! [term] , } } BaseScore :: Held { terms , .. } => terms . push (term) , } } Err (error) => return Err (error . into ()) , } } Ok (BaseAllocation { boundary , edition : inputs . parameters () . edition . clone () , rows , }) }",
+    "class_decision": "epoch-base",
+    "item_premise": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+    "assessments": {
+      "full_recording": "epoch-base-full_recording",
+      "secret_flow": "epoch-base-secret_flow",
+      "exposure_consumers": "epoch-base-exposure_consumers"
+    }
+  }
+}

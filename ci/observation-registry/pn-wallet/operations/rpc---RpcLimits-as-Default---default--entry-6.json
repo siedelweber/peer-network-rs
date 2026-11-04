@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "item": "rpc::<RpcLimits as Default>::default",
+    "owner": "WALLET",
+    "signature": "fn default () -> Self",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Returning the declared finite constants is pure setup inherited by the RPC operation, which records its configured limits.",
+      "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+      "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+      "class_decision": "wallet-decoder"
+    }
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcLimits as Default>::default",
+    "class_decision": "wallet-decoder",
+    "body": "{ Self { request_bytes : 4096 , header_bytes : 8192 , header_count : 64 , response_bytes : 8_001_024 , json_depth : 16 , json_items : 4096 , chain_bytes : 4_000_000 , deadline : Duration :: from_secs (10) , } }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+  }
+}

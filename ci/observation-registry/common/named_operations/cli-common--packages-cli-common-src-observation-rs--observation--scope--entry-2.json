@@ -1,0 +1,4 @@
+{
+  "section": "named_operations",
+  "value": "cli-common::packages/cli-common/src/observation.rs::observation::scope"
+}

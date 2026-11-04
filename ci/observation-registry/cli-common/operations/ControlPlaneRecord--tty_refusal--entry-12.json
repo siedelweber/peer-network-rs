@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::tty_refusal",
+    "owner": "CLICOMMON",
+    "signature": "fn tty_refusal (command : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::tty_refusal",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: TtyRefusal , \"stdout is a terminal; pipe to a file or another process\" , Some (ControlPlaneFields :: TtyRefusal { exit_code : CommandExit :: Usage . code () , stream : StandardStream :: Stdout , }) ,) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::tty_refusal.",
+    "assessments": {
+      "full_recording": "review-254",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyIds",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Dependency material intended to live inside `SecretBox` on commitment paths.\"] # [doc = \" Its list is opened publicly only after a successful explicit opening check.\"] # [doc = \" (´def:profile:private-inputs´)\"] pub struct DependencyIds (pub Vec < ActId >) ;"
+  }
+}

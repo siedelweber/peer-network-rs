@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "primitive::FaultAssertion",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "certified-primitives-public",
+    "expansion_review": "Owned diagnostic kind, operation text and optional logical id preserve evaluator output exactly. Derivations clone and compare public numerical assertions; no secret or checked authority is introduced."
+  }
+}

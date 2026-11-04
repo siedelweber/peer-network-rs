@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "LicenseQualifiers",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Attribution and provenance degrees fixed on a Content genesis record.\"] # [doc = \" These structural values are neither references nor removable payload.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a.\"] pub attribution : LicenseDegree , # [doc = \" Provenance degree o.\"] pub provenance : LicenseDegree , }"
+  }
+}

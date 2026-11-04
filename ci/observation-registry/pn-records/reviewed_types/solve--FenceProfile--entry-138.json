@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::FenceProfile",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Public names in the frozen constants edition, with the wall taken from its charged price.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FenceProfile { pub bleed_squared : String , pub shape : Vec < String > , pub inverse_wall : bool , }"
+  }
+}

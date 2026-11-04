@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "item": "cddl::restraint::Provision::key",
+    "owner": "INTERCHANGE",
+    "signature": "fn key (& self) -> ContentKey",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::Provision::key",
+    "body": "{ self . key }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::restraint::Provision::key.",
+    "assessments": {
+      "full_recording": "review-025",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

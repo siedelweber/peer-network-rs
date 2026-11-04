@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "commitments::OpeningError",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "act-profile-records",
+    "expansion_review": "Debug on secret-bearing wrappers delegates to secrecy redaction; public residues, enums and content-free errors carry no private input. Equality and Clone preserve exact public structural fields; no derived codec or serializer is admitted."
+  }
+}

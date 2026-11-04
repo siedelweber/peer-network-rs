@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "item": "title::evaluate_candidate_title",
+    "owner": "GRAPH",
+    "signature": "fn evaluate_candidate_title (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , epoch : u64 , decision : FinalSetDecision ,) -> Result < Option < TitleReplay > , crate :: recognition :: RecognitionError >",
+    "claim": "ROOT::alg:design:title",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/title.rs::title::evaluate_candidate_title",
+    "body": "{ let result = title_inputs (graph , history , verifier) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| inputs | fold_title (graph , history , verifier , & inputs , epoch)) . map (| replay | match decision { FinalSetDecision :: Selected => Some (replay) , FinalSetDecision :: Rejected => None , }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Public proposed graph and history undergo strict candidate formation before the same boundary fold. Rejected sets discard certificates and events without publication. Time evidence does not gate title. Complete diagnostic results and structural refusals remain observable, contain no private data and introduce no authentication verdict.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

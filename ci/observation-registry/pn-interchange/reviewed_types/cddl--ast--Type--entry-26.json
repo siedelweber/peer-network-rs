@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Type",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `type = type1 *(S \\\"/\\\" S type1)`: a type choice.\"] # [derive (Clone , Debug)] pub (crate) struct Type { # [doc = \" The alternatives, in order. Never empty.\"] pub (crate) choices : Vec < Type1 > , # [doc = \" The whole choice.\"] pub (crate) span : Span , }"
+  }
+}

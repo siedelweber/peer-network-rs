@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "item": "admission::ScheduleDeclaration::input",
+    "owner": "EPOCH",
+    "signature": "fn input (& self) -> & ScheduleInput",
+    "claim": "ROOT::amend:design:admission-declarations",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable field access retains validation and performs no decision.",
+      "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+      "boundary": "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+      "class_decision": "epoch-admission-declarations"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::input",
+    "body": "{ & self . input }",
+    "class_decision": "epoch-admission-declarations",
+    "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+    "assessments": {
+      "full_recording": "epoch-admission-declarations-full_recording",
+      "secret_flow": "epoch-admission-declarations-secret_flow",
+      "exposure_consumers": "epoch-admission-declarations-exposure_consumers"
+    }
+  }
+}

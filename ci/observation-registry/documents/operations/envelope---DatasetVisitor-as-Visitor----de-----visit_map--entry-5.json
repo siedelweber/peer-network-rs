@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "item": "envelope::<DatasetVisitor as Visitor < 'de >>::visit_map",
+    "owner": "DOCUMENTS",
+    "signature": "fn visit_map < M : MapAccess < 'de > > (self , mut map : M) -> std :: result :: Result < Dataset , M :: Error >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This private serde adapter inherits the dataset input boundary, which records the complete source and parsed result without adding Debug bounds to the deserializer.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "documents::packages/documents/src/census.rs::census::record",
+      "class_decision": "public-documents"
+    },
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/envelope.rs::envelope::<DatasetVisitor as Visitor < 'de >>::visit_map",
+    "body": "{ if map . next_key :: < String > () ? . as_deref () != Some (\"namespace\") { return Err (de :: Error :: custom (\"namespace: missing, misspelled or misordered first key\")) ; } let namespace = map . next_value :: < String > () ? ; require_namespace (& namespace) . map_err (de :: Error :: custom) ? ; if map . next_key :: < String > () ? . as_deref () != Some (\"version\") { return Err (de :: Error :: custom (\"version: missing, misspelled or misordered second key\")) ; } let raw = map . next_value :: < Box < serde_json :: value :: RawValue > > () ? ; let version = version_from_text (raw . get ()) . map_err (de :: Error :: custom) ? ; if map . next_key :: < String > () ? . as_deref () != Some (\"rows\") { return Err (de :: Error :: custom (\"rows: expected payload array\")) ; } let rows = map . next_value () ? ; if let Some (key) = map . next_key :: < String > () ? { return Err (de :: Error :: custom (format ! (\"unexpected or duplicate key: {key}\"))) ; } Ok (Dataset { namespace , version , rows , }) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for envelope::<DatasetVisitor as Visitor < 'de >>::visit_map.",
+    "assessments": {
+      "full_recording": "review-159",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

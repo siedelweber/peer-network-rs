@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/version.rs",
+    "item": "version::Coordinate::new",
+    "owner": "INTERCHANGE",
+    "signature": "fn new (label : NamespaceLabel , major : u64 , minor : u64) -> Coordinate",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/version.rs::version::Coordinate::new",
+    "body": "{ Coordinate { label , major , minor } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for version::Coordinate::new.",
+    "assessments": {
+      "full_recording": "review-152",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

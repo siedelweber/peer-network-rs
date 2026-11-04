@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/wall.rs",
+    "item": "wall::BoundReference < '_ >::evaluate",
+    "owner": "EPOCH",
+    "signature": "fn evaluate (& self) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
+    "body": "{ Ok (pn_graph :: numeric :: wall :: evaluate (self . procedure , & self . input) ?) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

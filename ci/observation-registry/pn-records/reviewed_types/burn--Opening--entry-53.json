@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::Opening",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Complete public opening, including its proof bytes; private choices are not accepted.\"] # [doc = \" (´def:burn:accepted-set´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Opening { pub members : BTreeSet < String > , pub proof : Vec < u8 > , }"
+  }
+}

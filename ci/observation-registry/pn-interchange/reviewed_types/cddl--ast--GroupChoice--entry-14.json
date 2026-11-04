@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::GroupChoice",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `grpchoice = *(grpent optcom)`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct GroupChoice { # [doc = \" The entries, in order. May be empty: `{}` and `[]` are groups with\"] # [doc = \" one empty choice.\"] pub (crate) entries : Vec < GroupEntry > , # [doc = \" The whole choice.\"] pub (crate) span : Span , }"
+  }
+}

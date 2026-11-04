@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "FamilyProfile",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/lib.rs",
+    "syntax": "# [doc = \" One family's explicitly published profile weights, bound to a constants edition.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FamilyProfile { # [doc = \" Exact family name from the authored census.\"] pub family : String , # [doc = \" Declared profile name; no inferred equal split.\"] pub name : String , # [doc = \" Edition publishing this interpretation.\"] pub edition : DeclarationId , # [doc = \" Literal constant names by domain; omitted domains have weight zero.\"] pub weights : BTreeMap < String , String > , }"
+  }
+}

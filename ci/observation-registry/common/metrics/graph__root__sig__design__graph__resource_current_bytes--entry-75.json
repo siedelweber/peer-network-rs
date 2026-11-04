@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "graph__root__sig__design__graph__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

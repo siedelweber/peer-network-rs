@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Recognition",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" An asserted recognition result, never an unchecked recognized-marker constructor.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Recognition { pub basis : burn :: RecognitionBasis , pub markers : Vec < Marker > , pub first_refusal : Option < burn :: CandidateRefusal > , }"
+  }
+}

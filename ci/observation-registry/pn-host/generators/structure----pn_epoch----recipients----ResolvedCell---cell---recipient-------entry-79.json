@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::epoch_recipients::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/epoch_recipients.rs",
+    "syntax": "structure ! (pn_epoch :: recipients :: ResolvedCell { cell , recipient }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

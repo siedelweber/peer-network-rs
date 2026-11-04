@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::target",
+    "owner": "INTERCHANGE",
+    "signature": "fn target (& self , label : & NamespaceLabel) -> Option < Coordinate >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::target",
+    "body": "{ let (major , line) = self . lines . get (label) ? . iter () . next_back () ? ; let (minor , _) = line . entries . last () ? ; Some (Coordinate :: new (label . clone () , * major , * minor)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::target.",
+    "assessments": {
+      "full_recording": "review-092",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

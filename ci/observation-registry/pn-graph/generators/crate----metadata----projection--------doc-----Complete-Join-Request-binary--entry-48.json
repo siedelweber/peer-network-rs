@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::",
+    "kind": "item-macro",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Join Request binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:join-request´)\"] pub struct JoinRequestProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Urgency occupies the directional role `p_d`.\"] pub urgency : Coordinate , # [doc = \" Formality occupies the intensity role `p_i`.\"] pub formality : Coordinate , } } }",
+    "class_decision": "graph-affinity",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

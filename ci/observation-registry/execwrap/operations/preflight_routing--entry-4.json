@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "item": "preflight_routing",
+    "owner": "EXECWRAP",
+    "signature": "fn preflight_routing (cfg : & RoutingConfig) -> Result < () , ExecError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/lib.rs::preflight_routing",
+    "body": "{ collect_file_specs (cfg) . map (| _specs | ()) }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for preflight_routing.",
+    "assessments": {
+      "full_recording": "review-292",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

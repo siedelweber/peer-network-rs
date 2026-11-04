@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recognition::RecognitionContext",
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "syntax": "# [doc = \" Supplied preceding-boundary certificate and consumption premises.\"] # [doc = \" Deriving these premises by the title fold remains a separate operation.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognitionContext { # [doc = \" Boundary whose Ratify records are considered.\"] pub epoch : u64 , # [doc = \" Boundary of the supplied owner map; must immediately precede epoch.\"] pub prior_epoch : u64 , # [doc = \" Certified owners, including genesis owners for fresh threads.\"] pub owners : BTreeMap < PublicReference , String > , # [doc = \" Records consumed at earlier boundaries, whatever their fold outcome.\"] pub consumed : BTreeSet < ActId > , }"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_lib.rs",
+    "item": "publication::records_lib::<pn_records :: ValidationError as Wire>::read",
+    "owner": "HOST",
+    "signature": "fn read (v : & Value , c : & mut Context < '_ >) -> Result < Self , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::decode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_lib.rs::publication::records_lib::<pn_records :: ValidationError as Wire>::read",
+    "body": "{ let mut fields = array_fields (v) ? ; let Some (Value :: Unsigned (tag)) = fields . next () else { return Err (Error :: Shape) ; } ; let result = match tag { 0 => Self :: Parent { act : take (& mut fields , c) ? , parent : take (& mut fields , c) ? , cause : take (& mut fields , c) ? , } , 1 => Self :: DuplicateAct (take (& mut fields , c) ?) , 2 => Self :: DuplicateEdge (take (& mut fields , c) ?) , 3 => Self :: UnresolvedReference (take (& mut fields , c) ?) , 4 => Self :: MissingCoLeg { act : take (& mut fields , c) ? , role : take (& mut fields , c) ? , } , 5 => Self :: InvalidRepresentation { act : take (& mut fields , c) ? , cause : take (& mut fields , c) ? , } , 6 => Self :: InvalidReference (take (& mut fields , c) ?) , 7 => Self :: InvalidDeclaration { id : take (& mut fields , c) ? , cause : take (& mut fields , c) ? , } , 8 => Self :: InvalidSelectionKey (take (& mut fields , c) ?) , 9 => Self :: Dependency { act : take (& mut fields , c) ? , dependency : take (& mut fields , c) ? , cause : take (& mut fields , c) ? , } , 10 => Self :: DuplicateDeclaration (take (& mut fields , c) ?) , 11 => Self :: AmbiguousDeclaration (take (& mut fields , c) ?) , 12 => Self :: MissingDeclaration { namespace : take (& mut fields , c) ? , name : take (& mut fields , c) ? , boundary : take (& mut fields , c) ? , } , _ => return Err (Error :: Shape) , } ; finish (fields) ? ; Ok (result) }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

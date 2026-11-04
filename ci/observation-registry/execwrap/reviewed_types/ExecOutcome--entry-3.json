@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ExecOutcome",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [doc = \" Outcome of running the wrapped command.\"] # [derive (Debug , Clone)] pub struct ExecOutcome { # [doc = \" Numeric exit code. Signal terminations are reported as `128 + signal`.\"] pub exit_code : i32 , # [doc = \" True when captured output may be incomplete: a log-file write,\"] # [doc = \" a child-stream read, or a writer finalization failed. Callers\"] # [doc = \" must treat a run with data loss as failed even when the child\"] # [doc = \" exited 0 — silently succeeding after losing logs is data loss,\"] # [doc = \" not success.\"] pub data_loss : bool , }"
+  }
+}

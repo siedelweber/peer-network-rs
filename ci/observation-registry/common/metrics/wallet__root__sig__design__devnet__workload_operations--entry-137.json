@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "wallet__root__sig__design__devnet__workload_operations",
+    "kind": "histogram",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

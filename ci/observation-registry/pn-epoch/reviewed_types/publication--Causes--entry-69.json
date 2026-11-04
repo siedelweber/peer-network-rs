@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::Causes",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Complete public causes. Act presentation is a set; each frame's sequence is ordered.\"] # [doc = \" Declaration payloads and marker disclosures are retained, not replaced by identities.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Causes { pub acts : Vec < CandidateAct > , pub names : BTreeSet < PublicReference > , pub declarations : Vec < Declaration > , pub editions : Vec < constants :: EditionInput > , }"
+  }
+}

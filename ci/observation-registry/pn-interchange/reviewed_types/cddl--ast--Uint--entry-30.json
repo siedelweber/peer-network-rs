@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Uint",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" An unsigned integer literal used as a number rather than as a value:\"] # [doc = \" a tag number, an additional information, or an occurrence bound.\"] # [doc = \"\"] # [doc = \" Kept as written, so that `#6.0x18` prints back as `#6.0x18`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct Uint { # [doc = \" The digits, byte for byte, in whatever base they were written.\"] pub (crate) text : String , # [doc = \" Where they were written.\"] pub (crate) span : Span , }"
+  }
+}

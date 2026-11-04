@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Type1",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `type1 = type2 [S (rangeop / ctlop) S type2]`.\"] # [doc = \"\"] # [doc = \" One operation at most: ranges and control operators do not chain, so\"] # [doc = \" `1 .. 2 .. 3` is not CDDL.\"] # [derive (Clone , Debug)] pub (crate) struct Type1 { # [doc = \" The left-hand type.\"] pub (crate) target : Type2 , # [doc = \" The operator and its right-hand type, when one was written.\"] pub (crate) operation : Option < Operation > , # [doc = \" The whole `type1`.\"] pub (crate) span : Span , }"
+  }
+}

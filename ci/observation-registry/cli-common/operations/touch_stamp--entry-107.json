@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "touch_stamp",
+    "owner": "CLICOMMON",
+    "signature": "fn touch_stamp (path : & std :: path :: Path) -> io :: Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::touch_stamp",
+    "body": "{ match std :: fs :: OpenOptions :: new () . write (true) . create_new (true) . open (path) { Ok (_created) => Ok (()) , Err (error) if error . kind () == io :: ErrorKind :: AlreadyExists => { let file = std :: fs :: File :: options () . write (true) . open (path) ? ; let length = file . metadata () ? . len () ; if length > 0 { return Err (io :: Error :: new (io :: ErrorKind :: InvalidData , format ! (\"stamp {} holds {length} byte(s); a stamp is empty by contract, \\\n                         refusing to re-date foreign bytes\" , path . display () ,) ,)) ; } let now = std :: time :: SystemTime :: now () ; file . set_times (std :: fs :: FileTimes :: new () . set_accessed (now) . set_modified (now)) } Err (error) => Err (error) , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for touch_stamp.",
+    "assessments": {
+      "full_recording": "review-282",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

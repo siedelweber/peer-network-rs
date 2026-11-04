@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::ClosureStatement",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Public assertion, whose earliest-host-determination premise needs a verifier.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosureStatement { pub policy : ClosurePolicy , pub opened_at : u64 , pub determined_at : u64 , pub cause : ClosureCause , pub attestation : String , }"
+  }
+}

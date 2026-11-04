@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "graph__root__sig__design__graph__started_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

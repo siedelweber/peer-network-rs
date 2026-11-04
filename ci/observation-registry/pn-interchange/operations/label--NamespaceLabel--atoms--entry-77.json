@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/label.rs",
+    "item": "label::NamespaceLabel::atoms",
+    "owner": "INTERCHANGE",
+    "signature": "fn atoms (& self) -> impl Iterator < Item = & str > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/label.rs::label::NamespaceLabel::atoms",
+    "body": "{ self . 0 . split ('.') }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for label::NamespaceLabel::atoms.",
+    "assessments": {
+      "full_recording": "review-074",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

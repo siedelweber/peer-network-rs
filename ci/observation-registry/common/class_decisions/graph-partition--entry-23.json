@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "graph-partition",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/lib.rs::partition_dependencies"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, one least shared identity per intersection edge and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed."
+  }
+}

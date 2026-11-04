@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "constants::EditionInput",
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "syntax": "# [doc = \" Public content for the numeric/constants declaration family; binding validates that family's complete edition set.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EditionInput { # [doc = \" The previously validated announcement/effective edition identity.\"] pub id : DeclarationId , # [doc = \" Explicit floor selection; no default or epoch override.\"] pub floor : Floor , # [doc = \" Explicit structural coordinate system.\"] pub numeraire : Numeraire , # [doc = \" Public formula edition identifier.\"] pub formula_edition : String , # [doc = \" Public controller edition identifier; evaluation belongs to the schedules bite.\"] pub controller_edition : String , # [doc = \" Original constant definitions; names are unique within this edition.\"] pub constants : Vec < ConstantDefinition > , # [doc = \" Names of explicitly permitted future overrides; the structural floor is excluded.\"] pub permitted_overrides : Vec < String > , # [doc = \" Public domain profiles.\"] pub domain_profiles : Vec < String > , # [doc = \" Declared exact comparison/refinement procedure identity.\"] pub numerical_procedure : String , # [doc = \" Public authentication realization, not secret credentials.\"] pub authentication_realization : String , # [doc = \" Public publication profile identity.\"] pub publication_profile : String , }"
+  }
+}

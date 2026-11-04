@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "accept::Under",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "syntax": "# [doc = \" Which instrument a judgment ran under.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Under;\"] # [doc = \"\"] # [doc = \" assert_ne!(Under::Strict { minor: 1 }, Under::Tolerant { floor: 1 });\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq)] pub enum Under { # [doc = \" The theory held at the document's stamp.\"] Strict { # [doc = \" The stamped minor.\"] minor : u64 , } , # [doc = \" The open companion of the reader's floor.\"] Tolerant { # [doc = \" The floor whose companion judged.\"] floor : u64 , } , }"
+  }
+}

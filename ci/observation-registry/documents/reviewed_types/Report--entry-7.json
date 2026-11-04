@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Report",
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "syntax": "# [doc = \" A complete machine-readable verdict.\"] # [derive (Debug , Default , Serialize)] pub struct Report { # [doc = \" Files that differed, including files refreshed by this operation.\"] pub findings : Vec < Finding > , # [doc = \" Templates with the documents and datasets they render.\"] # [serde (skip_serializing_if = \"Vec::is_empty\")] pub templates : Vec < Rendering > , # [doc = \" Dataset namespaces and their repository-relative paths.\"] # [serde (skip_serializing_if = \"BTreeMap::is_empty\")] pub datasets : BTreeMap < String , String > , # [doc = \" Templates that cannot map to a text output.\"] # [serde (skip_serializing_if = \"Vec::is_empty\")] pub unrendered_templates : Vec < String > , # [doc = \" Dataset paths not read by any executed template.\"] # [serde (skip_serializing_if = \"Vec::is_empty\")] pub unread_datasets : Vec < String > , }"
+  }
+}

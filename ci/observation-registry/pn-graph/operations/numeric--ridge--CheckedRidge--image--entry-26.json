@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "item": "numeric::ridge::CheckedRidge::image",
+    "owner": "GRAPH",
+    "signature": "fn image (& self) -> Option < & Range >",
+    "claim": "ROOT::alg:design:binding-ridge",
+    "shape": "shape-graph",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits the replay operation and supplies no new verdict.",
+      "witness": "GRAPH::claim:numerics:ridge-replay-refuses-defining-and-query-substitution",
+      "boundary": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+      "class_decision": "binding-ridge-public"
+    }
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::CheckedRidge::image",
+    "body": "{ self . image . as_ref () }",
+    "class_decision": "binding-ridge-public",
+    "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::Mark",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" A saved scanner position, for the productions that need a second look.\"] # [derive (Copy , Clone)] struct Mark { pos : usize , line : u32 , column : u32 , }"
+  }
+}

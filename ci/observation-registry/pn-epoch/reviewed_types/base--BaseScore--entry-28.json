@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::BaseScore",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [doc = \" Exact magnitude or an explicitly incomplete magnitude with its missing evidence.\"] # [doc = \" (´def:compiler:base-allocation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum BaseScore { Exact (String) , Held { exact_part : String , terms : Vec < HeldCoefficient > , } , }"
+  }
+}

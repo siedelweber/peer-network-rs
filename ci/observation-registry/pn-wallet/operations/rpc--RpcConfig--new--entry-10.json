@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "item": "rpc::RpcConfig::new",
+    "owner": "WALLET",
+    "signature": "fn new (link : RpcLink , endpoint : SecretString , port : SecretBox < u16 > , root : std :: fs :: File , cookie : SecretString , uid : SecretBox < u32 > ,) -> Self",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Secret carrier ownership transfer has no public payload to record.",
+      "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+      "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+      "class_decision": "wallet-decoder"
+    }
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcConfig::new",
+    "class_decision": "wallet-decoder",
+    "body": "{ Self { link , endpoint , port , cookie , uid , root , } }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+  }
+}

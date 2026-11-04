@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "anchor::AnchorOutcome",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "syntax": "# [doc = \" The exact subset never supplies a partial answer for an irrational base.\"] # [doc = \" (´def:compiler:exact-anchor´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AnchorOutcome { Exact (Box < ExactAnchor >) , Held { entries : BTreeMap < (String , String) , BaseScore > } , }"
+  }
+}

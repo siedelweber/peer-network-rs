@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Ledger",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Ledger assertions replace every sealed debit by its price and asserted result.\"] # [doc = \" Each ledger entry represents one complete act, hence one charged action.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Ledger { pub snapshots : Vec < ledger :: BurnSnapshot > , pub balances : BTreeMap < burn :: Address , numerics :: BurnAmount > , pub counts : BTreeMap < burn :: Address , numerics :: ActionCount > , pub debits : BTreeMap < ActId , Debit > , }"
+  }
+}

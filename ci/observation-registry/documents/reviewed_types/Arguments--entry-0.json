@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Arguments",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Parser)] # [command (version , about = \"Generate and verify committed documentation\")] struct Arguments { # [command (flatten)] base : BaseArgs , # [doc = \" Repository to inspect or update.\"] # [arg (long , default_value = \".\" , global = true)] root : PathBuf , # [command (subcommand)] command : Command , }"
+  }
+}

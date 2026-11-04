@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_markers::LiveMarkers",
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "syntax": "# [doc = \" Complete recognized prefix rechecked under one explicitly selected live verifier.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LiveMarkers { markers : RecognizedMarkers , }"
+  }
+}

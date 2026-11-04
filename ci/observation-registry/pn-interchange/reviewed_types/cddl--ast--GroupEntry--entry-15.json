@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::GroupEntry",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" One `grpent`.\"] # [derive (Clone , Debug)] pub (crate) struct GroupEntry { # [doc = \" `[occur S]`.\"] pub (crate) occur : Option < Occur > , # [doc = \" Which `grpent` alternative.\"] pub (crate) kind : GroupEntryKind , # [doc = \" The whole entry, occurrence indicator included.\"] pub (crate) span : Span , }"
+  }
+}

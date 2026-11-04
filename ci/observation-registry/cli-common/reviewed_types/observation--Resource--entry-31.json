@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::Resource",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Clone , Copy , Serialize)] struct Resource { value : Option < u64 > , accuracy : Accuracy , unit : & 'static str , }"
+  }
+}

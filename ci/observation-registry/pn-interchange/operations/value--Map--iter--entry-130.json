@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Map::iter",
+    "owner": "INTERCHANGE",
+    "signature": "fn iter (& self) -> impl Iterator < Item = (& Value , & Value) > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Map::iter",
+    "body": "{ self . 0 . iter () . map (| (k , v) | (k , v)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Map::iter.",
+    "assessments": {
+      "full_recording": "review-128",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

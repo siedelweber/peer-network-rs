@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::ObserverUnavailable",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Nonbinding failures of the observer's process-global installation or delivery worker.\"] # [derive (Debug , Clone , PartialEq , Eq , thiserror :: Error)] pub enum ObserverUnavailable { # [doc = \" The local SDK or export worker could not be initialized.\"] # [error (\"{0}\")] Exporter (String) , # [doc = \" The disabled-status writer could not start.\"] # [error (\"observation status writer unavailable\")] StatusWriter , # [doc = \" The observation writer could not start.\"] # [error (\"observation writer unavailable\")] Writer , # [doc = \" The process already owns an observation installation.\"] # [error (\"observation already initialized\")] ObservationAlreadyInitialized , # [doc = \" A subscriber already owns the process.\"] # [error (\"subscriber already initialized\")] SubscriberAlreadyInitialized , # [doc = \" A recorder already owns the process.\"] # [error (\"metrics recorder already initialized\")] MetricsAlreadyInitialized , }"
+  }
+}

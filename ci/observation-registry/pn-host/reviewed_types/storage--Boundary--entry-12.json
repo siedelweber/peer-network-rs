@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Boundary",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" A single consistent boundary input retaining the selected identities and bytes.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Boundary { pub at : u64 , pub rows : Vec < EffectiveRow > , }"
+  }
+}

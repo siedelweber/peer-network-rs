@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::Bootstrap",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Public bootstrap disclosure; the bound applies only to this acquisition interval.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Bootstrap { pub bound : BurnAmount , pub empty_interval : bool , pub explanation : String , }"
+  }
+}

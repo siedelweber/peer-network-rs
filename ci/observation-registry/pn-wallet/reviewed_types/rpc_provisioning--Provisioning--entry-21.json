@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_provisioning::Provisioning",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_provisioning.rs",
+    "syntax": "# [doc = \" Public run declaration checked against the supported launch profile and raw genesis.\"] # [doc = \" (´def:wallet:rpc-provisioning´)\"] # [derive (Clone , Debug , serde :: Deserialize , PartialEq , Eq)] # [serde (deny_unknown_fields)] pub struct Provisioning { # [doc = \" Exact binary version, checked by the provisioning harness at launch.\"] pub binary : String , # [doc = \" Exact Elements chain name, checked by the provisioning harness.\"] pub chain : String , # [doc = \" Operator-declared run, compared with the caller's expected run.\"] pub run : String , # [doc = \" Complete supported public configuration overrides, excluding credentials and reachability.\"] pub parameters : BTreeMap < String , String > , # [doc = \" Nontrivial P2PK signing script; no local signature verification is implied.\"] pub challenge : Vec < u8 > , # [doc = \" Expected display-order genesis locator.\"] pub genesis : [u8 ; 32] , # [doc = \" Expected complete genesis header bytes.\"] pub header : Vec < u8 > , }"
+  }
+}

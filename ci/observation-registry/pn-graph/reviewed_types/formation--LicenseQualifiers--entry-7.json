@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::LicenseQualifiers",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Exact Content genesis pair, retained structurally for typed revalidation.\"] # [doc = \" No license interpretation participates in formation or geometry.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a in the nonnegative unit interval.\"] pub attribution : Coordinate , # [doc = \" Provenance degree o in the nonnegative unit interval.\"] pub provenance : Coordinate , }"
+  }
+}

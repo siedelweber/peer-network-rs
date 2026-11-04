@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric.rs",
+    "item": "numeric::replay",
+    "owner": "GRAPH",
+    "signature": "fn replay (procedure : & Procedure , expected : & Query , evidence : & Attachment , interrupt_at : Option < u64 > ,) -> Result < PrimitiveEvidence , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric.rs::numeric::replay",
+    "body": "{ run (procedure , expected , Some (evidence) , interrupt_at) }",
+    "class_decision": "certified-primitives-public",
+    "item_premise": "The complete public original request, declared policy, typed evidence and precise refusal or checked outcome are recorded.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

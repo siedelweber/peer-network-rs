@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::LocalDeclaration",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" Inflation and a separate measured allowance for a corroborating local check.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalDeclaration { pub inflation : String , pub padding : String , pub maximum_work : u64 , }"
+  }
+}

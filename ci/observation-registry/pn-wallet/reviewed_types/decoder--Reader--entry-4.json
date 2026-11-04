@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Reader",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "struct Reader < 'a > { bytes : & 'a [u8] , pos : usize , remaining : usize , limits : Limits , }"
+  }
+}

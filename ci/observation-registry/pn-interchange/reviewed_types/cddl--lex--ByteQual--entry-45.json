@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::ByteQual",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" The qualifier in front of a byte-string literal (`bsqual`).\"] # [derive (Copy , Clone , Debug , PartialEq , Eq)] pub (crate) enum ByteQual { # [doc = \" No qualifier: `'...'`, the characters' own bytes.\"] None , # [doc = \" `h'...'`: base 16.\"] Hex , # [doc = \" `b64'...'`: base 64.\"] Base64 , }"
+  }
+}

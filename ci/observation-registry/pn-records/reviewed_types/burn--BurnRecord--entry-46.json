@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::BurnRecord",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" One referring record; aliases retain a single destruction identity, amount and attribution.\"] # [doc = \" (´def:burn:lineage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnRecord { pub identity : String , pub destruction : String , pub address : Address , pub amount : BurnAmount , pub evidence : Vec < u8 > , }"
+  }
+}

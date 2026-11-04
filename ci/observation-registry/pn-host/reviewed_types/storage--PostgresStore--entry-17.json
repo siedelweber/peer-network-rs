@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::PostgresStore",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" PostgreSQL adapter; the raw session and statement vocabulary stay private.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Debug)] pub struct PostgresStore { session : Session , }"
+  }
+}

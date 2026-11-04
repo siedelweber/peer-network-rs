@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::ridge::formula::Formula",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge/formula.rs",
+    "syntax": "struct Formula { nodes : Vec < Node > , }"
+  }
+}

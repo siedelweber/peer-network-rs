@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/lib.rs",
+    "item": "partition_dependencies",
+    "owner": "GRAPH",
+    "signature": "fn partition_dependencies (input : & BoundaryInputs < '_ >) -> Result < (IntersectionGraph , DependencyBlocks) , PartitionError >",
+    "claim": "ROOT::alg:design:dependency-partition",
+    "shape": "shape-graph",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/lib.rs::partition_dependencies",
+    "body": "{ let expected : BTreeSet < _ > = input . acts () . iter () . map (| act | act . id () . clone ()) . collect () ; let mut graph = IntersectionGraph :: new_undirected () ; let mut closures = Vec :: new () ; for act in input . acts () { let closure = input . closures () . iter () . find (| closure | closure . root () == act . id ()) . ok_or (PartitionError :: Coverage) ? ; let members : BTreeSet < _ > = closure . members () . iter () . cloned () . collect () ; if ! members . contains (act . id ()) || ! members . is_subset (& expected) { return Err (PartitionError :: Coverage) ; } let node = graph . try_add_node (act . id () . clone ()) . map_err (| _ | PartitionError :: Capacity) ? ; closures . push ((node , members)) ; } for (offset , (left , members)) in closures . iter () . enumerate () { for (right , other) in closures . iter () . skip (offset + 1) { if let Some (shared) = members . intersection (other) . next () { graph . try_add_edge (* left , * right , shared . clone ()) . map_err (| _ | PartitionError :: Capacity) ? ; } } } let mut blocks = Vec :: new () ; for component in petgraph :: algo :: kosaraju_scc (& graph) { let mut members = BTreeSet :: new () ; for node in component { members . extend (closures [node . index ()] . 1 . iter () . cloned ()) ; } let block = input . acts () . iter () . filter (| act | members . contains (act . id ())) . map (| act | act . id () . clone ()) . collect () ; blocks . push (block) ; } if ! covers_once (& expected , & blocks) { return Err (PartitionError :: Coverage) ; } blocks . sort_by_key (| block | input . acts () . iter () . position (| act | block . first () == Some (act . id ()))) ; Ok ((graph , blocks)) }",
+    "class_decision": "graph-partition",
+    "item_premise": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, one least shared identity per intersection edge and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
+    "assessments": {
+      "full_recording": "graph-full_recording",
+      "secret_flow": "graph-secret_flow",
+      "exposure_consumers": "graph-exposure_consumers"
+    }
+  }
+}

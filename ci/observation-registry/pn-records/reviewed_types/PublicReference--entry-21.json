@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "PublicReference",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Immutable protocol target; no removal or storage-position field exists here.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum PublicReference { # [doc = \" An act's structural identity.\"] Act (ActId) , # [doc = \" An edge's structural identity.\"] Edge (EdgeId) , # [doc = \" An exact external structural name; resolution is supplied by the caller.\"] Named { # [doc = \" Exact namespace, nonempty.\"] namespace : String , # [doc = \" Exact name, nonempty.\"] name : String , } , # [doc = \" A node minted by the identified genesis act, distinct from that act.\"] Minted (ActId) , }"
+  }
+}

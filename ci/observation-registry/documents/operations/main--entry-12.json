@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/bin/documents-panic-probe.rs",
+    "item": "main",
+    "owner": "DOCUMENTS",
+    "signature": "fn main () -> ExitCode",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "documents::packages/documents/src/census.rs::census::record",
+      "class_decision": "public-documents"
+    },
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/bin/documents-panic-probe.rs::main",
+    "body": "{ documents :: install_panic_hook () ; let _arguments = cli_common :: parse_args_or_exit :: < Arguments > () ; panic ! (\"contract probe\") ; }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for main.",
+    "assessments": {
+      "full_recording": "review-172",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

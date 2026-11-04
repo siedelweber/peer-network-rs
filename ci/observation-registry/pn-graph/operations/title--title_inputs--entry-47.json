@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "item": "title::title_inputs",
+    "owner": "GRAPH",
+    "signature": "fn title_inputs (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < TitleInputs , RegistrationError >",
+    "claim": "ROOT::alg:design:formation",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/title.rs::title::title_inputs",
+    "body": "{ let result = validate_formation (graph , history , verifier) . map (| () | indexed_inputs (history)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Complete public graph and history are revalidated before structural title indexes are derived. Trace retains inputs, verifier and complete results or typed refusal. Nested formation and indexing each retain their own inclusive accounting. Observation changes no result and supplies no title or time-compliance verdict.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

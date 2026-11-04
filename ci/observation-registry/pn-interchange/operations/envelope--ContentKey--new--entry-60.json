@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::ContentKey::new",
+    "owner": "INTERCHANGE",
+    "signature": "fn new (key : u64) -> Result < ContentKey , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::ContentKey::new",
+    "body": "{ Self :: new_checked (key) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::ContentKey::new. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
+    "assessments": {
+      "full_recording": "review-052",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

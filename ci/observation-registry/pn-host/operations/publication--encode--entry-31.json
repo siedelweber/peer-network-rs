@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication.rs",
+    "item": "publication::encode",
+    "owner": "HOST",
+    "signature": "fn encode (disclosure : & d :: Disclosure , numeric : & mut NumericContext , limits : d :: Limits) -> Result < Vec < u8 > , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication.rs::publication::encode",
+    "body": "{ let mut context = Context { numeric , arithmetic : d :: limits :: Budget :: new (limits) . map_err (Error :: Arithmetic) ? , } ; let mut payload = Content :: new () ; for (key , value) in (2 ..= 8) . zip (sections (disclosure , & mut context) ?) { payload . insert (ContentKey :: new (key) . map_err (| _ | Error :: Shape) ? , value) ; } let label = NamespaceLabel :: parse (\"org.peer-network.test.publication\") . map_err (| _ | Error :: Edition) ? ; Ok (Document :: new (Envelope :: new (label , Version :: new (1 , 0 , 0)) , payload) . to_canonical_bytes ()) }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

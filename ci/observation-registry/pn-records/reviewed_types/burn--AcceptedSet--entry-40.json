@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::AcceptedSet",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Fixed interpretation data read only under the matching declared policy encoding.\"] # [doc = \" (´def:burn:accepted-set´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AcceptedSet { CompleteList (BTreeSet < String >) , Commitment { commitment : Vec < u8 > , openings : Vec < Opening > } , WholePrefix , }"
+  }
+}

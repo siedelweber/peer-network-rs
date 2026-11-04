@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::BurnAmount",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" A nonnegative amount in the named burn unit.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnAmount { exact : Exact , unit : String , }"
+  }
+}

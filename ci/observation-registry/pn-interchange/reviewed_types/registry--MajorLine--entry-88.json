@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registry::MajorLine",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "syntax": "# [doc = \" One major line: its held minors in ascending order, and the open\"] # [doc = \" companion of the theory at its ceiling.\"] # [doc = \"\"] # [doc = \" A line is created holding one coordinate and removed when its last\"] # [doc = \" coordinate goes, so a line that exists is never empty.\"] # [derive (Clone , Debug)] struct MajorLine { # [doc = \" Strictly increasing by minor, complete below the ceiling.\"] entries : Vec < (u64 , Theory) > , # [doc = \" The companion of the ceiling's theory: derived once per\"] # [doc = \" acquisition, and re-derived whenever the ceiling moves.\"] companion : OpenTheory , }"
+  }
+}

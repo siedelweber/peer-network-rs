@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::Input",
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct Input { namespace : String , version : [u64 ; 3] , rows : Vec < BTreeMap < String , toml :: Value > > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::TitleEvent",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" Event-persistent input for a later epoch compiler, never a standing value.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleEvent { # [doc = \" Boundary that consumed the candidate.\"] pub epoch : u64 , # [doc = \" Item whose title was considered.\"] pub item : PublicReference , # [doc = \" Exact Bid, Accept and Ratify identities.\"] pub acts : [ActId ; 3] , # [doc = \" Candidate's buyer, including in a conflicting event.\"] pub buyer : String , # [doc = \" Candidate's seller, authorized by the preceding boundary.\"] pub seller : String , # [doc = \" Whether recognition actually transferred title.\"] pub outcome : TitleOutcome , }"
+  }
+}

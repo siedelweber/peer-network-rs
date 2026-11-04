@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "compiler::CompiledView",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [doc = \" Public immutable compilation view; no independently supplied intermediate results.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CompiledView { pub title : pn_graph :: title :: TitleReplay , pub ledger : FinalLedger , pub cells : Vec < StandingCell > , pub coefficients : BTreeMap < CellIdentity , CoefficientEvidence > , pub recipients : Vec < ResolvedCell > , pub base : BaseAllocation , pub support : StandingSupport , }"
+  }
+}

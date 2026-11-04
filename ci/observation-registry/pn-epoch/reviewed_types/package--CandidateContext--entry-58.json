@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::CandidateContext",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Checked candidate context, neither a published package nor an admitted result.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn publish(candidate: pn_epoch::package::CandidateContext, verifier: &impl pn_epoch::package::PackageVerifier) {\"] # [doc = \"     pn_epoch::package::verify_package(candidate, verifier);\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct CandidateContext { input : CandidateInput , }"
+  }
+}

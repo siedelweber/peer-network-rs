@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "destination_identity",
+    "owner": "CLICOMMON",
+    "signature": "fn destination_identity (path : & std :: path :: Path) -> DestinationIdentity",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::destination_identity",
+    "body": "{ let absolute = if path . is_absolute () { path . to_path_buf () } else { std :: env :: current_dir () . unwrap_or_default () . join (path) } ; let mut normalized = std :: path :: PathBuf :: new () ; for component in absolute . components () { match component { std :: path :: Component :: CurDir => { } std :: path :: Component :: ParentDir => { normalized . pop () ; } other => normalized . push (other) , } } DestinationIdentity (normalized) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for destination_identity.",
+    "assessments": {
+      "full_recording": "review-283",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

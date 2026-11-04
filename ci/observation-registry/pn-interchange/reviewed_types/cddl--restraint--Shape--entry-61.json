@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::Shape",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" What a type admits at its own top level: the restrained kinds, each with\"] # [doc = \" its named form, and whether anything unrestrained is admitted beside\"] # [doc = \" them.\"] # [derive (Copy , Clone , Debug , Default , PartialEq , Eq)] struct Shape { plain : bool , float : Pin , tag : Pin , simple : Pin , }"
+  }
+}

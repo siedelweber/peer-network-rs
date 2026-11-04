@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::PrimitiveRecord",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" One original primitive request, its declared policy and its untrusted evidence.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveRecord { pub query : Query , pub precision : u32 , pub evidence : PrimitiveEvidence , }"
+  }
+}

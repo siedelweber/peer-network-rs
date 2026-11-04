@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "item": "publication::publish_batch",
+    "owner": "CLICOMMON",
+    "signature": "fn publish_batch (assets : & [PublicationAsset < '_ >]) -> Result < Vec < PublicationResult > , BatchPublicationError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/publication.rs::publication::publish_batch",
+    "body": "{ let roles = assets . iter () . map (| asset | (asset . role , asset . path)) . collect :: < Vec < _ > > () ; crate :: ensure_distinct_outputs (& roles) ? ; let stage_error = | role : & str , source : io :: Error | BatchPublicationError :: Stage { role : role . to_owned () , source , } ; for asset in assets { let directory = asset . path . parent () . unwrap_or_else (| | Path :: new (\".\")) ; std :: fs :: create_dir_all (directory) . map_err (| error | stage_error (asset . role , error)) ? ; } let mut staged = Vec :: new () ; for asset in assets { match inspect_destination (asset . path , asset . bytes , ASSET_MODE) { DestinationState :: Current => { staged . push (PlannedPublication :: Current) ; continue ; } DestinationState :: ModeOnly => { staged . push (PlannedPublication :: ModeOnly) ; continue ; } DestinationState :: StaleBytes => { } } let directory = asset . path . parent () . unwrap_or_else (| | Path :: new (\".\")) ; let mut temporary = tempfile :: Builder :: new () . prefix (\".publication-staged-\") . tempfile_in (directory) . map_err (| error | stage_error (asset . role , error)) ? ; temporary . write_all (asset . bytes) . and_then (| () | temporary . flush ()) . and_then (| () | temporary . as_file () . sync_all ()) . and_then (| () | set_publication_mode (temporary . as_file () , ASSET_MODE)) . map_err (| error | stage_error (asset . role , error)) ? ; staged . push (PlannedPublication :: Stage (temporary)) ; } let mut results = Vec :: new () ; for (asset , planned) in assets . iter () . zip (staged) { let publish_error = | error : io :: Error | BatchPublicationError :: Publish { role : asset . role . to_owned () , source : error , } ; let change = match planned { PlannedPublication :: Current => PublicationChange :: default () , PlannedPublication :: ModeOnly => { repair_publication_mode (asset . path , ASSET_MODE) . map_err (publish_error) ? ; PublicationChange { bytes_changed : false , mode_changed : true , } } PlannedPublication :: Stage (temporary) => { temporary . persist (asset . path) . map_err (| error | publish_error (error . error)) ? ; PublicationChange { bytes_changed : true , mode_changed : false , } } } ; results . push (PublicationResult { role : asset . role . to_owned () , path : asset . path . to_path_buf () , change , }) ; } Ok (results) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for publication::publish_batch.",
+    "assessments": {
+      "full_recording": "review-240",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

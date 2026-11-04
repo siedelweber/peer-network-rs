@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "item": "package::AdmittedBoundary::evidence",
+    "owner": "EPOCH",
+    "signature": "fn evidence (& self) -> & crate :: admission :: FinalEvidence",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable field access inherits the complete admission operation.",
+      "witness": "EPOCH::claim:admission:final-gates-retain-debits-and-frozen-stamps",
+      "boundary": "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+      "class_decision": "atomic-admission-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::evidence",
+    "body": "{ & self . evidence }",
+    "class_decision": "atomic-admission-public",
+    "item_premise": "Only public proposed causes, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "EdgeId",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Edge identity is exactly its parent act and declared role.\"] # [doc = \" (´def:acts:identity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct EdgeId { # [doc = \" Parent structural identity.\"] pub act : ActId , # [doc = \" Declared projection role.\"] pub role : Role , }"
+  }
+}

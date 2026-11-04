@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_metrics::SdkInstrument",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_metrics.rs",
+    "syntax": "enum SdkInstrument { Gauge (opentelemetry :: metrics :: Gauge < f64 >) , Histogram (opentelemetry :: metrics :: Histogram < f64 >) , }"
+  }
+}

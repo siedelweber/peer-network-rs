@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::",
+    "kind": "item-macro",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] pub struct ParticipantProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , } after { # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , } } }",
+    "class_decision": "graph-affinity",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

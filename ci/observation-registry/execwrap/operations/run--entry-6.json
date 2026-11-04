@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "item": "run",
+    "owner": "EXECWRAP",
+    "signature": "fn run (command : & [OsString] , cfg : & RoutingConfig , mut notify : impl FnMut (& Notification)) -> Result < ExecOutcome , ExecError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/lib.rs::run",
+    "body": "{ let scope = cli_common :: observation :: scope (\"EXECWRAP\" , \"rule:observe:spans\" , \"run\" , & (command , cfg , \"notification callback: opaque capability\") ,) ; let observation = cli_common :: observation :: Observation :: current () ; let mut operation = observation . as_ref () . map (| o | { o . operation (cli_common :: observation :: OperationKind :: Child , o . capture (| | serde_json :: json ! ({ \"command\" : command . iter () . map (| arg | cli_common :: observation :: public_bytes (arg . as_encoded_bytes ())) . collect ::< Vec < _ >> () , \"configuration\" : { \"redirect\" : cfg . redirect . as_ref () . map (| p | cli_common :: observation :: public_bytes (p . as_os_str () . as_encoded_bytes ())) , \"redirect_output\" : cfg . redirect_output . as_ref () . map (| p | cli_common :: observation :: public_bytes (p . as_os_str () . as_encoded_bytes ())) , \"redirect_error\" : cfg . redirect_error . as_ref () . map (| p | cli_common :: observation :: public_bytes (p . as_os_str () . as_encoded_bytes ())) , \"redirect_prefixed\" : cfg . redirect_prefixed . as_ref () . map (| p | cli_common :: observation :: public_bytes (p . as_os_str () . as_encoded_bytes ())) , \"notify_on_write\" : cfg . notify_on_write , \"debug\" : cfg . debug } }))) }) ; let result = run_observed (command , cfg , & mut notify , & mut operation) ; if let Some (operation) = operation { let content = observation . as_ref () . map_or (serde_json :: Value :: Null , | o | { o . capture (| | match & result { Ok (outcome) => serde_json :: json ! ({ \"exit_code\" : outcome . exit_code , \"data_loss\" : outcome . data_loss }) , Err (error) => serde_json :: json ! ({ \"error\" : error . to_string () , \"structured_result\" : \"enclosing run span return\" }) , }) }) ; operation . finish (if result . is_ok () { cli_common :: observation :: Outcome :: Success } else { cli_common :: observation :: Outcome :: Error } , content ,) ; } scope . finish (& result) ; result }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for run. Reviewed this change: return classification retains only the bounded constructor prefix, public child-byte construction remains within trace guards, and level selection is unchanged. Reviewed entry correction: the development-only counter is at public_bytes itself; caller guards still prevent default payload construction, and child bytes, results and secret handling are unchanged.",
+    "assessments": {
+      "full_recording": "review-294",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

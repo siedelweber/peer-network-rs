@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "item": "package::verify_package",
+    "owner": "EPOCH",
+    "signature": "fn verify_package (input : PackageInput , verifier : & impl PackageVerifier) -> Result < VerifiedPackage , PackageError >",
+    "claim": "ROOT::dec:design:final-state",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+    "body": "{ verify_causes (& input) ? ; if ! verifier . published_package (& input) { return Err (PackageError :: Binding) ; } Ok (VerifiedPackage { input }) }",
+    "class_decision": "epoch-package",
+    "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise. The unchanged structural checks are factored into verify_causes, which candidate verification also calls; the publication verifier still executes separately after all structural checks.",
+    "assessments": {
+      "full_recording": "epoch-package-full_recording",
+      "secret_flow": "epoch-package-secret_flow",
+      "exposure_consumers": "epoch-package-exposure_consumers"
+    }
+  }
+}

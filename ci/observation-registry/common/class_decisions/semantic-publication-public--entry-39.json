@@ -1,0 +1,19 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "semantic-publication-public",
+    "status": "reviewer-confirmed",
+    "premises": "Complete public semantic causes, per-boundary marker disclosures, declarations and replay attachments. Restored assertions are not checked authority; only independent replay and final admission construct it. No private verifier credentials, codecs, storage or deployment authentication enter this contract.",
+    "membership": {
+      "explicit": [
+        "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::ChargedPrice::disclosure",
+        "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+        "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+        "pn-epoch::packages/epoch/src/publication.rs::publication::assemble",
+        "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::boundary",
+        "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
+        "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted"
+      ]
+    }
+  }
+}

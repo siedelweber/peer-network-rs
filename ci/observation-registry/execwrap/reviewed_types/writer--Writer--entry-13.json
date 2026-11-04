@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "writer::Writer",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/writer.rs",
+    "syntax": "# [doc = \" Two-mode buffered writer.\"] pub struct Writer { file : Box < dyn Write + Send > , file_type : & 'static str , add_prefix : bool , wrap_length : usize , props : StreamProps , debug : bool , stdout_buffer : Vec < u8 > , stderr_buffer : Vec < u8 > , }"
+  }
+}

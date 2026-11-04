@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::BootstrapGuard",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Executable-owned lifetime for a bounded final metric snapshot and drain.\"] pub struct BootstrapGuard (Option < Observation >) ;"
+  }
+}

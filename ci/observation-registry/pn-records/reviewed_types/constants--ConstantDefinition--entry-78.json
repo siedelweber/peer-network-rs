@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "constants::ConstantDefinition",
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "syntax": "# [doc = \" A retained source definition, distinct from computed values and rounded displays.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ConstantDefinition { # [doc = \" Original exact literal; the source spelling is retained.\"] Literal { name : String , value : Literal } , # [doc = \" Exact symbolic definition and its public source label; no approximate evaluation is asserted.\"] Expression { name : String , expression : String , source_label : String , } , }"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "item": "storage::<QueueMeter as Drop>::drop",
+    "owner": "HOST",
+    "signature": "fn drop (& mut self)",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Queue accounting inherits the pending storage lock operation, including cancellation.",
+      "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+      "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage.rs::storage::<QueueMeter as Drop>::drop",
+    "body": "{ metrics :: gauge ! (\"host__root__sig__design__storage__queue_depth\") . decrement (1.0) ; }",
+    "class_decision": "host-storage",
+    "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

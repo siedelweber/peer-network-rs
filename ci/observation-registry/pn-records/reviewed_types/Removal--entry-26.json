@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Removal",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" A dependency projection's versioned removal fact, distinct from identity.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Removal { # [doc = \" Present in this accepted snapshot.\"] Live , # [doc = \" Removed at the given authoritative position; the identity remains.\"] Tombstoned (Position) , }"
+  }
+}

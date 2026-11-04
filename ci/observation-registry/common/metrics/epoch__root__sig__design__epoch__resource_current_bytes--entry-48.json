@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "epoch__root__sig__design__epoch__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

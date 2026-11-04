@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "ProfileError",
+    "kind": "derive",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "act-profile-private",
+    "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+  }
+}

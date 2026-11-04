@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_budget.rs",
+    "item": "publication::backend_budget::<d :: limits :: BudgetKind as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , _c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/backend_budget.rs::publication::backend_budget::<d :: limits :: BudgetKind as Wire>::write",
+    "body": "{ match self { Self :: SourceBytes => Ok (array ([Value :: Unsigned (0)])) , Self :: NameBytes => Ok (array ([Value :: Unsigned (1)])) , Self :: OriginalOccurrences => Ok (array ([Value :: Unsigned (2)])) , Self :: Depth => Ok (array ([Value :: Unsigned (3)])) , Self :: Vertices => Ok (array ([Value :: Unsigned (4)])) , Self :: Edges => Ok (array ([Value :: Unsigned (5)])) , Self :: StagedVertices => Ok (array ([Value :: Unsigned (6)])) , Self :: StagedEdges => Ok (array ([Value :: Unsigned (7)])) , Self :: PayloadBytes => Ok (array ([Value :: Unsigned (8)])) , Self :: StagedPayloadBytes => Ok (array ([Value :: Unsigned (9)])) , Self :: Work => Ok (array ([Value :: Unsigned (10)])) , Self :: ArithmeticSteps => Ok (array ([Value :: Unsigned (11)])) , Self :: ComponentBits => Ok (array ([Value :: Unsigned (12)])) , Self :: IntermediateBits => Ok (array ([Value :: Unsigned (13)])) , Self :: LiteralBytes => Ok (array ([Value :: Unsigned (14)])) , Self :: DecimalExponent => Ok (array ([Value :: Unsigned (15)])) , Self :: IntegerExponent => Ok (array ([Value :: Unsigned (16)])) , Self :: PolynomialDegree => Ok (array ([Value :: Unsigned (17)])) , Self :: PolynomialVariables => Ok (array ([Value :: Unsigned (18)])) , Self :: PolynomialTerms => Ok (array ([Value :: Unsigned (19)])) , Self :: MatrixEntries => Ok (array ([Value :: Unsigned (20)])) , Self :: ConditionAtoms => Ok (array ([Value :: Unsigned (21)])) , Self :: ConditionSteps => Ok (array ([Value :: Unsigned (22)])) , Self :: MatchAttempts => Ok (array ([Value :: Unsigned (23)])) , Self :: MatchBatch => Ok (array ([Value :: Unsigned (24)])) , Self :: FrontierLabels => Ok (array ([Value :: Unsigned (25)])) , Self :: QueueEntries => Ok (array ([Value :: Unsigned (26)])) , Self :: Transitions => Ok (array ([Value :: Unsigned (27)])) , Self :: ExpansionCredits => Ok (array ([Value :: Unsigned (28)])) , Self :: PeakExpressionSize => Ok (array ([Value :: Unsigned (29)])) , Self :: ProofNodes => Ok (array ([Value :: Unsigned (30)])) , Self :: WitnessBytes => Ok (array ([Value :: Unsigned (31)])) , Self :: OutputBytes => Ok (array ([Value :: Unsigned (32)])) , Self :: DiagnosticRecords => Ok (array ([Value :: Unsigned (33)])) , Self :: ReplayWork => Ok (array ([Value :: Unsigned (34)])) , Self :: CostQuota => Ok (array ([Value :: Unsigned (35)])) , Self :: ProgressQuota => Ok (array ([Value :: Unsigned (36)])) , Self :: CaseArms => Ok (array ([Value :: Unsigned (37)])) , Self :: RegionNodes => Ok (array ([Value :: Unsigned (38)])) , Self :: RegionCells => Ok (array ([Value :: Unsigned (39)])) , Self :: RefinementPairs => Ok (array ([Value :: Unsigned (40)])) , Self :: LocalContexts => Ok (array ([Value :: Unsigned (41)])) , Self :: HypothesisDepth => Ok (array ([Value :: Unsigned (42)])) , Self :: BoundaryNodes => Ok (array ([Value :: Unsigned (43)])) , Self :: JetOrder => Ok (array ([Value :: Unsigned (44)])) , Self :: JetEntries => Ok (array ([Value :: Unsigned (45)])) , Self :: DeltaOrder => Ok (array ([Value :: Unsigned (46)])) , Self :: TestNodes => Ok (array ([Value :: Unsigned (47)])) , Self :: PairingSteps => Ok (array ([Value :: Unsigned (48)])) , Self :: PullbackZeros => Ok (array ([Value :: Unsigned (49)])) , Self :: CoefficientOps => Ok (array ([Value :: Unsigned (50)])) , Self :: DenominatorFactors => Ok (array ([Value :: Unsigned (51)])) , Self :: CoefficientMaps => Ok (array ([Value :: Unsigned (52)])) , Self :: TowerLevels => Ok (array ([Value :: Unsigned (53)])) , Self :: TowerDegree => Ok (array ([Value :: Unsigned (54)])) , Self :: TowerReductions => Ok (array ([Value :: Unsigned (55)])) , Self :: GcdSteps => Ok (array ([Value :: Unsigned (56)])) , Self :: ComponentSplits => Ok (array ([Value :: Unsigned (57)])) , Self :: OrbitPermutations => Ok (array ([Value :: Unsigned (58)])) , Self :: OrbitMembers => Ok (array ([Value :: Unsigned (59)])) , Self :: OrbitTerms => Ok (array ([Value :: Unsigned (60)])) , Self :: SymmetricSteps => Ok (array ([Value :: Unsigned (61)])) , Self :: ResolventDepth => Ok (array ([Value :: Unsigned (62)])) , Self :: ResolventDegree => Ok (array ([Value :: Unsigned (63)])) , Self :: SelectionSlots => Ok (array ([Value :: Unsigned (64)])) , Self :: SolutionBranches => Ok (array ([Value :: Unsigned (65)])) , Self :: FamilyParameters => Ok (array ([Value :: Unsigned (66)])) , Self :: SolveIdentities => Ok (array ([Value :: Unsigned (67)])) , Self :: LinearPivots => Ok (array ([Value :: Unsigned (68)])) , Self :: IsolationSteps => Ok (array ([Value :: Unsigned (69)])) , Self :: LocalBranches => Ok (array ([Value :: Unsigned (70)])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::View",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" Result of an admitted observation.\"] # [doc = \" (´def:wallet:settlement-view´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct View { # [doc = \" Every pinned evidence output, once per outpoint, in outpoint order.\"] pub pinned : Vec < Evidence > , # [doc = \" Evidence below the pinning depth, once per outpoint; recomputed on every observation.\"] pub pending : Vec < Pending > , # [doc = \" Sum of pinned amounts.\"] pub pinned_total : u64 , # [doc = \" Highest pinned height and its block hash, which every later chain must retain.\"] pub floor : Option < (u64 , [u8 ; 32]) > , }"
+  }
+}

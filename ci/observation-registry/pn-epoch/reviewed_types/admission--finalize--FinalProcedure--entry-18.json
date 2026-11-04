@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::finalize::FinalProcedure",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "syntax": "# [doc = \" Declared solve and exact assembly limits; no demand or rejected-submission input.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [doc = \"\"] # [doc = \" ```compile_fail,E0609\"] # [doc = \" use pn_epoch::admission::FinalProcedure;\"] # [doc = \" fn rejected_demand(p: &mut FinalProcedure) {\"] # [doc = \"     p.rejected_submissions = 1;\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FinalProcedure { pub solve : pn_records :: solve :: Procedure , pub arithmetic : Limits , pub maximum_products : u64 , }"
+  }
+}

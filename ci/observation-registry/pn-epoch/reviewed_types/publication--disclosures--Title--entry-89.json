@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Title",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Full title replay assertions, constructible without any graph capability.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Title { pub epoch : u64 , pub certificate : BTreeMap < pn_records :: PublicReference , Option < String > > , pub consumed : BTreeSet < ActId > , pub boundaries : Vec < TitleBoundary > , pub events : Vec < TitleEvent > , }"
+  }
+}

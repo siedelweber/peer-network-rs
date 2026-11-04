@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::finalize::Solvency",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "syntax": "# [doc = \" Own balance immediately before and after one complete act's single debit.\"] # [doc = \" (´[ROOT-alg:design:admission]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Solvency { pub act : ActId , pub before : String , pub debit : String , pub after : String , }"
+  }
+}

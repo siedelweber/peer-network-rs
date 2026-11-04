@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_metrics::Totals",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_metrics.rs",
+    "syntax": "# [derive (Clone , Default)] struct Totals { observed : bool , counter : u64 , gauge : f64 , count : u64 , sum : f64 , buckets : [u64 ; 5] , }"
+  }
+}

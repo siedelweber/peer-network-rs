@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::ChargedPrice",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" One coupled wall and numeraire; its burn-per-action image cannot be set separately.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedPrice { wall : Computed , numeraire : Numeraire , price : BurnPerAction , floor : Floor , ridge : Option < Box < crate :: ridge :: ChargeEvidence > > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyCause",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Dependency and boundary refusals preserve missing information as missing.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DependencyCause { # [doc = \" Full-empty has its own explicit representation.\"] # [error (\"empty full list; use full-empty\")] EmptyFull , # [doc = \" Input exceeds the declared local bound.\"] # [error (\"dependency list exceeds bound\")] TooMany , # [doc = \" The list must increase strictly by structural act identity.\"] # [error (\"dependency list is not canonical\")] NonCanonical , # [doc = \" An act cannot depend on itself.\"] # [error (\"self dependency\")] SelfDependency , # [doc = \" A dependency is absent from both fixed accepted history and the proposed batch.\"] # [error (\"missing dependency\")] Missing , # [doc = \" Each dependency must strictly precede its dependent act.\"] # [error (\"dependency does not precede act\")] NotEarlier , # [doc = \" Fixed history must precede the boundary, and proposals must not precede it.\"] # [error (\"act on wrong side of boundary\")] BoundaryPlacement , }"
+  }
+}

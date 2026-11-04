@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::refuse",
+    "owner": "INTERCHANGE",
+    "signature": "fn refuse (& mut self , label : & NamespaceLabel , major : u64 , from_minor : u64)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::refuse",
+    "body": "{ let Some (majors) = self . lines . get_mut (label) else { return ; } ; let Some (line) = majors . get_mut (& major) else { return ; } ; line . entries . retain (| (minor , _) | * minor < from_minor) ; if line . entries . is_empty () { majors . remove (& major) ; if majors . is_empty () { self . lines . remove (label) ; } } else { line . remember_companion () ; } }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::refuse.",
+    "assessments": {
+      "full_recording": "review-086",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

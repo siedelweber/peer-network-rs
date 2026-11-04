@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::ParticipantRole",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Constructor role of a Participant edge, derived from one complete act.\"] # [doc = \" (´def:formation:participant´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum ParticipantRole { # [doc = \" Initiating Actor to origin Chat.\"] A , # [doc = \" Origin Chat to destination Chat.\"] T , }"
+  }
+}

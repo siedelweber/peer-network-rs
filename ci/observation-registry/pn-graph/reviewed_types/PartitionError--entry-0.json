@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "PartitionError",
+    "package": "pn-graph",
+    "path": "packages/graph/src/lib.rs",
+    "syntax": "# [doc = \" Refusal to publish an incomplete or inconsistent partition.\"] # [doc = \" (´def:membership:partition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PartitionError { # [doc = \" The temporary backend cannot represent another vertex or edge.\"] # [error (\"intersection graph capacity exhausted\")] Capacity , # [doc = \" The closure union or block multiplicity differs from the proposed set.\"] # [error (\"partition does not cover the proposed act set exactly once\")] Coverage , }"
+  }
+}

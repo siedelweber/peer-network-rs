@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "conserved::LocalVerdict",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "The local verification declarations, intervals and verdicts contain only public numerical evidence. Derives introduce no authenticated publication encoding or secret carrier."
+  }
+}

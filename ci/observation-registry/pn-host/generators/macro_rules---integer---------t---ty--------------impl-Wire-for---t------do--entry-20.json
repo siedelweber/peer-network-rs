@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::wire::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/wire.rs",
+    "syntax": "macro_rules ! integer { ($ ($ t : ty) ,*) => { $ (impl Wire for $ t { # [doc = \" Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.\"] fn write (& self , c : & mut Context <'_ >) -> Result < Value , Error > { self . to_string () . write (c) } # [doc = \" Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.\"] fn read (v : & Value , c : & mut Context <'_ >) -> Result < Self , Error > { let text = String :: read (v , c) ?; let value : Self = text . parse () . map_err (| _ | Error :: Range) ?; if value . to_string () != text { return Err (Error :: CanonicalNumber) ; } Ok (value) } }) * } ; }",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

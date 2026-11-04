@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::PolicyInput",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , # [doc = \" Asserted copy only; binding requires the deployment structural declaration to agree.\"] pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub candidate_rule : CandidateRule , pub verification_profile : String , pub stability_buffer : u64 , }"
+  }
+}

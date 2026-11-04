@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::Numeraire",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" A positive burn-per-action numeraire; action and action-credit are the same unit.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Numeraire { identity : String , amount : BurnPerAction , }"
+  }
+}

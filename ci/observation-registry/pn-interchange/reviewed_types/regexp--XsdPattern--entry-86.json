@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "regexp::XsdPattern",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/regexp.rs",
+    "syntax": "# [doc = \" A compiled XSD regular expression, as `.regexp` means it.\"] # [doc = \"\"] # [doc = \" Held behind an [`Arc`] because the engine's `Regex` is not [`Clone`] and\"] # [doc = \" a `Theory` is: a theory carries every pattern it compiled, and cloning\"] # [doc = \" one must not recompile them.\"] # [derive (Clone , Debug)] pub (crate) struct XsdPattern { source : Box < str > , regex : Arc < Regex > , }"
+  }
+}

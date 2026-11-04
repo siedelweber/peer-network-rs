@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::Prepared",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "syntax": "# [doc = \" A parsed, resolved theory with its patterns compiled — the part\"] # [doc = \" [`Theory`] and [`BaseTheory`] share.\"] # [derive (Clone , Debug)] struct Prepared { cddl : Cddl , table : RuleTable , patterns : BTreeMap < usize , XsdPattern > , }"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "public case and role-only private carrier markers",
+      "full admitted public protocol frames at trace",
+      "bounded outcome",
+      "inclusive duration_seconds",
+      "declared invocation work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "host__root__sig__design__storage__active_operations",
+      "host__root__sig__design__storage__active_transactions",
+      "host__root__sig__design__storage__commits",
+      "host__root__sig__design__storage__completed_operations",
+      "host__root__sig__design__storage__decoded_bytes",
+      "host__root__sig__design__storage__elapsed_seconds",
+      "host__root__sig__design__storage__encoded_bytes",
+      "host__root__sig__design__storage__package_bytes",
+      "host__root__sig__design__storage__queries",
+      "host__root__sig__design__storage__query_elapsed_seconds",
+      "host__root__sig__design__storage__queue_depth",
+      "host__root__sig__design__storage__refusals",
+      "host__root__sig__design__storage__resource_current_bytes",
+      "host__root__sig__design__storage__retries",
+      "host__root__sig__design__storage__rollbacks",
+      "host__root__sig__design__storage__started_operations",
+      "host__root__sig__design__storage__successor_attempts",
+      "host__root__sig__design__storage__transaction_elapsed_seconds",
+      "host__root__sig__design__storage__work_bytes",
+      "host__root__sig__design__storage__work_operations",
+      "host__root__sig__design__storage__workload_bytes",
+      "host__root__sig__design__storage__workload_operations"
+    ]
+  },
+  "name": "shape-host"
+}

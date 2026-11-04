@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::wall::Error",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/wall.rs",
+    "syntax": "# [doc = \" Refusals identify the first failed admission or evidence check.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"invalid reference wall declaration\")] Declaration , # [error (\"lower bracket endpoint is outside the declared reduction range\")] Binding , # [error (\"initial bracket has a certified wrong endpoint sign\")] Bracket , # [error (\"supplied wall query or precision differs from the rebuilt query\")] Query , # [error (\"supplied wall attachment is absent or invalid\")] Attachment , # [error (\"supplied wall result differs from independently replayed evidence\")] Record , # [error (\"wall scalar evaluation stopped: {outcome:?}; resource fault: {resource_fault:?}\")] Operational { outcome : Outcome , resource_fault : Option < pn_records :: primitive :: FaultAssertion > , } , # [error (\"wall iteration allowance exhausted\")] Iterations , # [error (\"binding ridge floor requires its exact defining object\")] Ridge , # [error (\"wall numeric request: {0}\")] Numeric (# [from] super :: Error) , # [error (\"wall exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

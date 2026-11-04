@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::OperatorEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Required operator evidence; absence is explained rather than represented as a zero proof.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum OperatorEvidence { # [doc = \" Public bound and proof, whose external validity remains a realization obligation.\"] Bound { amount : BurnAmount , proof : String } , # [doc = \" Why no operational role accrues burn.\"] Absent { explanation : String } , }"
+  }
+}

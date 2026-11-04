@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::ReadPolicy",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" Strict is selected explicitly by both canonical entry points. Transport\"] # [doc = \" cannot change that selection or supply limits to the canonical language.\"] enum ReadPolicy < 'a > { Strict , Transport { limits : TransportLimits , usage : & 'a mut TransportUsage , } , }"
+  }
+}

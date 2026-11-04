@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::Token",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" One token of CDDL source.\"] # [derive (Clone , Debug)] pub (crate) struct Token { # [doc = \" What the token is.\"] pub (crate) kind : TokenKind , # [doc = \" Where it sits.\"] pub (crate) span : Span , }"
+  }
+}

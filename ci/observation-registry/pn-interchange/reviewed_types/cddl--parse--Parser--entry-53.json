@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::parse::Parser",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/parse.rs",
+    "syntax": "struct Parser { # [cfg (test)] type1_visits : usize , # [cfg (test)] resumed_type1_visits : usize , tokens : Vec < Token > , pos : usize , # [doc = \" How many `type2` productions are open on the call stack: the guard\"] # [doc = \" against a theory nested deeply enough to overflow the recursive\"] # [doc = \" descent.\"] depth : usize , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Map",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A map whose entries stand in the bytewise-lexicographic order of their\"] # [doc = \" encoded keys, keys pairwise distinct.\"] # [doc = \"\"] # [doc = \" `Clone`, `PartialEq`, and `Hash` are hand-written for the same reason as\"] # [doc = \" [`Value`]'s — a derived walk recurses to the nesting depth — and each\"] # [doc = \" delegates to the shared worklist helpers.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Map, Value, ValueError};\"] # [doc = \"\"] # [doc = \" let m = Map::new([\"] # [doc = \"     (Value::Unsigned(3), Value::Unsigned(4)),\"] # [doc = \"     (Value::Unsigned(1), Value::Unsigned(2)),\"] # [doc = \" ])\"] # [doc = \" .expect(\\\"distinct keys\\\");\"] # [doc = \" assert_eq!(m.get(&Value::Unsigned(1)), Some(&Value::Unsigned(2)));\"] # [doc = \"\"] # [doc = \" let err = Map::new([\"] # [doc = \"     (Value::Null, Value::Unsigned(1)),\"] # [doc = \"     (Value::Null, Value::Unsigned(2)),\"] # [doc = \" ])\"] # [doc = \" .expect_err(\\\"the key repeats\\\");\"] # [doc = \" assert!(matches!(err, ValueError::DuplicateMapKey { index: 1 }));\"] # [doc = \" ```\"] # [derive (Debug , Eq , Default)] pub struct Map (Vec < (Value , Value) >) ;"
+  }
+}

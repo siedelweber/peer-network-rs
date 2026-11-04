@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::epoch_package::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/epoch_package.rs",
+    "syntax": "structure ! (pn_epoch :: package :: ClosurePolicy { target , minimum_ticks , maximum_ticks , clock }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

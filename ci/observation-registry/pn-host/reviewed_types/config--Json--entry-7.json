@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "config::Json",
+    "package": "pn-host",
+    "path": "packages/host/src/config.rs",
+    "syntax": "struct Json < 'a > { bytes : & 'a [u8] , at : usize , }"
+  }
+}

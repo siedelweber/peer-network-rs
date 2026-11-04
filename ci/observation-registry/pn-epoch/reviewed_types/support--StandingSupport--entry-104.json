@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "support::StandingSupport",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support.rs",
+    "syntax": "# [doc = \" Supported hop products before emission, and the emitted contributing relation.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StandingSupport { pub boundary : u64 , pub sources : BTreeMap < String , SourceEmission > , pub by_depth : BTreeMap < usize , SupportRows > , pub emitted : SupportRows , pub contributors : SupportRows , pub ranges : BTreeMap < String , ContributingRange > , pub products : u64 , }"
+  }
+}

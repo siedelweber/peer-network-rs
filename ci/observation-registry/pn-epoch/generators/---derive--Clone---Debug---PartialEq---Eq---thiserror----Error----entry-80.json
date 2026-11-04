@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "coefficients::CoefficientError",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/coefficients.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "epoch-coefficients",
+    "expansion_review": "Clone, Debug, equality and Error preserve the public exact radicand, edition hold and typed arithmetic evidence; no secret enters this carrier."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Previous",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Identity with this target is stronger than equality of two interval displays.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Previous { Target , Rational (String) , }"
+  }
+}

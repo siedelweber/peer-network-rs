@@ -1,0 +1,16 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "atomic-admission-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public complete candidate causes, checked effective schedules and bounded exact gate evidence; no secrets, rejected-submission counter or demand statistics enter. Persistent publication and deployment remain unsupported.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/admission/finalize.rs::admission::finalize::admit",
+        "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::evidence",
+        "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledSource::input",
+        "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_candidate"
+      ]
+    }
+  }
+}

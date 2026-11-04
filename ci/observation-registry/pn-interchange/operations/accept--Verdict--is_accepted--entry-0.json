@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "item": "accept::Verdict::is_accepted",
+    "owner": "INTERCHANGE",
+    "signature": "fn is_accepted (& self) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+    "body": "{ matches ! (self , Verdict :: AcceptedStrictly { .. } | Verdict :: AcceptedTolerantly { .. }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for accept::Verdict::is_accepted.",
+    "assessments": {
+      "full_recording": "review-005",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

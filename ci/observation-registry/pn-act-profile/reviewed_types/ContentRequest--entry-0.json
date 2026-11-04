@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ContentRequest",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Original authored carriage request, never inferred from later removal.\"] # [doc = \" (´def:profile:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ContentRequest { FullEmpty , Full , Reduced , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Envelope::peek",
+    "owner": "INTERCHANGE",
+    "signature": "fn peek (prefix : & [u8]) -> Result < (Envelope , usize) , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Envelope::peek",
+    "body": "{ Self :: peek_checked (prefix) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Envelope::peek. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
+    "assessments": {
+      "full_recording": "review-064",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Boundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" One untrusted decoded boundary, with the same sequence/set distinctions as the carrier.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Boundary { pub realization : RealizationEvidence , pub burn : burn :: BurnInput , pub marker_policy : burn :: PolicyInput , pub marker_history : burn :: HistoryInput , pub parameters : ParameterInput , pub price : numerics :: PriceInput , pub sequence : Vec < ActId > , pub procedure : admission :: FinalProcedure , pub compiled : Compiled , pub closure : Closure , pub standing : pn_records :: conserved :: SolveRecord , pub next : schedules :: Record , }"
+  }
+}

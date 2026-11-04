@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::PackageError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Structural coherence refusals precede public binding verification.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PackageError { # [error (\"package components belong to different marker histories\")] History , # [error (\"package mixes marker policy identities or editions\")] Policy , # [error (\"package drops or substitutes the preceding marker or epoch\")] Predecessor , # [error (\"package constants differ from the bound effective inputs\")] Constants , # [error (\"package write sequence differs from the validated history\")] Sequence , # [error (\"package epochs and markers are not aligned one to one\")] Alignment , # [error (\"package substitutes the writing epoch's debit vintage\")] Vintage , # [error (\"public verification does not establish the package binding\")] Binding , # [error (\"candidate verification does not establish the proposed causes\")] CandidateBinding , # [error (\"closure declaration or attestation is invalid\")] Closure , }"
+  }
+}

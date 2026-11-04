@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::Document",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "syntax": "# [doc = \" A document of the data language.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Content, ContentKey, Document, Envelope, NamespaceLabel, Value, Version};\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example.thing\\\").expect(\\\"a label\\\");\"] # [doc = \" let mut content = Content::new();\"] # [doc = \" content.insert(ContentKey::new(2).expect(\\\"a content key\\\"), Value::Unsigned(42));\"] # [doc = \"\"] # [doc = \" let document = Document::new(Envelope::new(label, Version::new(1, 0, 0)), content);\"] # [doc = \" let bytes = document.to_canonical_bytes();\"] # [doc = \" assert_eq!(Document::from_canonical_bytes(&bytes).expect(\\\"a document\\\"), document);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Hash)] pub struct Document { envelope : Envelope , content : Content , }"
+  }
+}

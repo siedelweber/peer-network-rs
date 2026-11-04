@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "content_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn content_commitment (id : & ActId , p : & ProposalCommitment , salt : & SecretSlice < u8 > , payload : & SecretSlice < u8 > ,) -> Result < ContentCommitment , ProfileError >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::content_commitment",
+    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } salt_format (salt) ? ; payload_length (payload) ? ; let digest = hash (CONTENT_RECIPE , \"PN-content-v1\" , vec ! [public (identifier (id)) , proposal_anchor (p) ?, SecretValue :: Bytes (salt . clone ()) , SecretValue :: Bytes (payload . clone ()) ,] ,) ? ; Ok (ContentCommitment { recipe : CONTENT_RECIPE . into () , bytes : publish (& digest) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

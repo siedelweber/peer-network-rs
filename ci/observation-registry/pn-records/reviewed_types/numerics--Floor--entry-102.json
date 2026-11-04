@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::Floor",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Explicit floor alternatives; neither implements Default.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Floor { # [doc = \" Exactly three divided by thirty-seven.\"] RationalThreeThirtySevenths , # [doc = \" The defining ridge real mapped by p/(1-p), never an enclosure endpoint.\"] RidgeImage , }"
+  }
+}

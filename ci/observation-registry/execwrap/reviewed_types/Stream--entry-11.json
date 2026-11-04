@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Stream",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [doc = \" One of the two captured streams.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq , Hash)] pub enum Stream { # [doc = \" Standard output of the wrapped child process.\"] Stdout , # [doc = \" Standard error of the wrapped child process.\"] Stderr , }"
+  }
+}

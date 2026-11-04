@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "item": "envelope::input",
+    "owner": "DOCUMENTS",
+    "signature": "fn input (text : & str) -> Result < Dataset >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/envelope.rs::envelope::input",
+    "body": "{ let mut lines = text . lines () . filter (| line | ! line . trim () . is_empty () && ! line . trim_start () . starts_with ('#')) ; let first = lines . next () . ok_or (\"namespace: missing first key\") ? ; let header : toml :: Table = toml :: from_str (first) . map_err (| error | format ! (\"namespace: {error}\")) ? ; let namespace = header . get (\"namespace\") . and_then (toml :: Value :: as_str) . ok_or (\"namespace: missing, misspelled or misordered first key\") ? . to_owned () ; if header . len () != 1 { return Err (\"namespace: expected exactly one first key\" . into ()) ; } require_namespace (& namespace) ? ; let second = lines . next () . ok_or (\"version: missing second key\") ? ; let (key , raw) = second . split_once ('=') . ok_or (\"version: missing second key\") ? ; if key . trim () != \"version\" { return Err (\"version: missing, misspelled or misordered second key\" . into ()) ; } let raw = raw . split ('#') . next () . unwrap_or_default () ; let version = version_from_text (raw) ? ; let payload : Input = toml :: from_str (text) ? ; if payload . namespace != namespace || payload . version != version { return Err (\"envelope: duplicate or inconsistent declaration\" . into ()) ; } Ok (Dataset { namespace , version , rows : payload . rows . into_iter () . enumerate () . map (| (index , row) | { row . into_iter () . map (| (name , value) | Ok ((name . clone () , json_value (value , & format ! (\"rows[{index}].{name}\")) ?))) . collect () }) . collect :: < Result < _ > > () ? , }) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for envelope::input.",
+    "assessments": {
+      "full_recording": "review-161",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

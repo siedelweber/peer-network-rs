@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Bytes as AsRef < [u8] >>::as_ref",
+    "owner": "INTERCHANGE",
+    "signature": "fn as_ref (& self) -> & [u8]",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Bytes as AsRef < [u8] >>::as_ref",
+    "body": "{ & self . 0 }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::<Bytes as AsRef < [u8] >>::as_ref.",
+    "assessments": {
+      "full_recording": "review-108",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

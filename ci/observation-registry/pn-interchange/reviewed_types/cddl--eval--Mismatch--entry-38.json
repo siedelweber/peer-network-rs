@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::Mismatch",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" One way a document failed a theory, located by content key where the\"] # [doc = \" failure has one.\"] # [doc = \"\"] # [doc = \" Keys 0 and 1 belong to the envelope and are no content keys, so\"] # [doc = \" [`Mismatch::key`] is `None` for a failure at either; [`Mismatch::at`]\"] # [doc = \" names the position in every case.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{\"] # [doc = \"     satisfies, Content, ContentKey, Document, Envelope, NamespaceLabel, Satisfaction, Theory,\"] # [doc = \"     Value, Version,\"] # [doc = \" };\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 0, uint], 2 => tstr}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example\\\").expect(\\\"a label\\\");\"] # [doc = \" let mut content = Content::new();\"] # [doc = \" content.insert(ContentKey::new(2).expect(\\\"a content key\\\"), Value::Unsigned(7));\"] # [doc = \" let document = Document::new(Envelope::new(label, Version::new(1, 0, 0)), content);\"] # [doc = \"\"] # [doc = \" let Satisfaction::Fails(mismatches) = satisfies(&document, &theory) else {\"] # [doc = \"     panic!(\\\"a uint is no tstr\\\")\"] # [doc = \" };\"] # [doc = \" assert_eq!(mismatches[0].key().map(|key| key.get()), Some(2));\"] # [doc = \" assert_eq!(mismatches[0].expected(), \\\"tstr\\\");\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct Mismatch { key : Option < ContentKey > , at : Box < str > , expected : Box < str > , found : Box < str > , kind : MismatchKind , }"
+  }
+}

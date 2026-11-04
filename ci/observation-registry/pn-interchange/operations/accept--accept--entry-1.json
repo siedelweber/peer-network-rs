@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "item": "accept::accept",
+    "owner": "INTERCHANGE",
+    "signature": "fn accept (reg : & Registry , d : & Document) -> Verdict",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::accept",
+    "body": "{ let verdict = match dispatch (reg , d . envelope ()) { Instrument :: Strict { minor , theory } => settle (satisfies (d , theory) , Under :: Strict { minor } , | | { Verdict :: AcceptedStrictly { minor } }) , Instrument :: Tolerant { floor , companion } => settle (satisfies_open (d , companion) , Under :: Tolerant { floor } , | | { Verdict :: AcceptedTolerantly { floor } }) , Instrument :: Refused (RejectionCause :: UnheldMajor) => Verdict :: Rejected (Rejection :: UnheldMajor { major : d . envelope () . version () . major () , }) , Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling }) => Verdict :: Rejected (Rejection :: UnassignedStamp { minor : d . envelope () . version () . minor () , ceiling , }) , } ; if matches ! (verdict , Verdict :: Rejected (_)) { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } verdict }",
+    "class_decision": "public-interchange",
+    "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::accept.",
+    "assessments": {
+      "full_recording": "review-006",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

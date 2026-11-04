@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "item": "numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
+    "owner": "GRAPH",
+    "signature": "fn replay (& self , evidence : & pn_records :: ridge :: ChargeEvidence) -> Result < () , pn_records :: numerics :: NumericError >",
+    "claim": "ROOT::sig:design:graph",
+    "shape": "shape-graph",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
+    "body": "{ use pn_records :: numerics :: NumericError ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } replay (& evidence . procedure , & evidence . input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { Error :: Definition => NumericError :: RidgeDefinition , Error :: Numeric (super :: Error :: Backend (fault)) | Error :: Arithmetic (fault) => NumericError :: Backend (fault) , Error :: Operational { fault : Some (fault) , .. } => NumericError :: RetainedFault (fault) , _ => NumericError :: RidgeEvidence , }) }",
+    "class_decision": "binding-ridge-public",
+    "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

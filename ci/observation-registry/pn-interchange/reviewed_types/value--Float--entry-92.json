@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Float",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A floating-point value in the canonical form §4.2 fixes for it —\"] # [doc = \" restrained.\"] # [doc = \"\"] # [doc = \" The width and bit pattern of the shortest form are what is stored, so\"] # [doc = \" two floats are equal exactly when their names are equal, the canonical\"] # [doc = \" reduction happens once at construction, and the derived order is\"] # [doc = \" already the bytewise order of names.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Float, FloatWidth};\"] # [doc = \"\"] # [doc = \" let f = Float::from_f64(1.5).expect(\\\"canonical\\\");\"] # [doc = \" assert_eq!(f.width(), FloatWidth::Half);\"] # [doc = \" assert_eq!(f.to_f64(), 1.5);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash , PartialOrd , Ord)] pub struct Float { width : FloatWidth , bits : u64 , }"
+  }
+}

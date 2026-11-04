@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "AliasedOutputs",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Two output roles named one destination.\"] # [derive (Debug , thiserror :: Error)] # [error (\"output roles --{first} and --{second} name the same destination\")] pub struct AliasedOutputs { pub first : String , pub second : String , }"
+  }
+}

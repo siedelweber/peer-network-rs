@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/closure.rs",
+    "item": "closure::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (input : & ClosureInput < '_ > , procedure : & admission :: FinalProcedure , registration : & impl RegistrationVerifier , published : & impl solve :: ProcedureVerifier , numeric : pn_records :: numerics :: NumericContext , supplied : & ClosureRecord ,) -> Result < ClosedBoundary , ClosureError >",
+    "claim": "ROOT::alg:design:admission",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/closure.rs::closure::replay",
+    "body": "{ let source = & input . candidate . input () . causes ; if supplied . schedule != * input . schedule . record () || supplied . markers != source . markers || supplied . bindings != source . bindings || supplied . statement != input . candidate . input () . closure { return Err (ClosureError :: Context) ; } let result = close (input , procedure , registration , published , numeric) ? ; if result . record != * supplied { return Err (ClosureError :: Evidence) ; } Ok (result) }",
+    "class_decision": "closure-admission-public",
+    "item_premise": "Only public proposed causes, the exact dependency cover, attested determination, recognized marker prefix, checked schedule and explicit numeric limits enter. Candidate compilation retains its authority discriminator. Final gate evidence carries exact debits, certified stamps and output-only headroom; refusal mutates no caller state. No authentication or persistent write follows.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

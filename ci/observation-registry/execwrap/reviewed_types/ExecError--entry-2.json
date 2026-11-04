@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ExecError",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [doc = \" Errors returned from [`run`].\"] # [derive (Debug , Error)] pub enum ExecError { # [doc = \" An I/O error happened while preparing pipes, writers, or files.\"] # [error (\"io error: {0}\")] Io (# [from] io :: Error) , # [doc = \" The child process could not be spawned.\"] # [doc = \"\"] # [doc = \" The failing program path remains in the enclosing operation's full public\"] # [doc = \" arguments under (´[ROOT-rec:output:decision]´); this variant carries the\"] # [doc = \" underlying error, without duplicating those arguments.\"] # [error (\"failed to spawn child process: {source}\")] Spawn { # [doc = \" Underlying I/O error.\"] # [source] source : io :: Error , } , # [doc = \" The command vector was empty (no program to run).\"] # [error (\"empty command\")] EmptyCommand , # [doc = \" The user requested ambiguous routing for the same file.\"] # [error (\"ambiguous redirection for {path}: configured for multiple routing kinds\")] AmbiguousRedirection { # [doc = \" Conflicting output path.\"] path : PathBuf , } , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/wall.rs",
+    "syntax": "# [doc = \" Publication and scalar refusals retain distinct categories.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"reference wall differs from the frozen composition or has unresolved branches\")] Scope , # [error (\"reference composition: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"reference binding arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"reference definition publication refused\")] Publication , # [error (\"bound procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"reference wall: {0}\")] Wall (# [from] pn_graph :: numeric :: wall :: Error) , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "IdentifierClass",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" The outer constructor class of a recognized structural node identifier.\"] # [doc = \" Act and edge references, and other external namespaces, are not node terms.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum IdentifierClass { # [doc = \" Actor or Profile over one external address atom.\"] Grounded , # [doc = \" Type over an exact public string.\"] Named , # [doc = \" A node over its genesis act identifier.\"] Minted , }"
+  }
+}

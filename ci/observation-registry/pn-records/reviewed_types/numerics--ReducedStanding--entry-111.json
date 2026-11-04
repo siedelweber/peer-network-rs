@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::ReducedStanding",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Full standing divided by the retained, explicitly named numeraire.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ReducedStanding { exact : Exact , numeraire : Numeraire , }"
+  }
+}

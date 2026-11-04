@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::CheckedSchedule",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Immutable replayed sequence; it does not admit a write or authenticate deployment publication.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug)] pub struct CheckedSchedule { record : Record , sources : Vec < crate :: package :: PackageInput > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "StandardStream",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Standard streams referenced by control-plane records.\"] # [derive (Debug , Clone , Copy , Serialize , Deserialize , PartialEq , Eq)] # [serde (rename_all = \"snake_case\")] pub enum StandardStream { # [doc = \" Standard output.\"] Stdout , # [doc = \" Standard error.\"] Stderr , }"
+  }
+}

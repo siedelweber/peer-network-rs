@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/ridge_charge.rs",
+    "item": "numerics::ridge_charge::NumericContext::replay_charged_price",
+    "owner": "RECORDS",
+    "signature": "fn replay_charged_price (& mut self , price : & ChargedPrice , numeraire : & Numeraire , floor : Floor , verifier : & impl ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-replay-charged-price"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics/ridge_charge.rs::numerics::ridge_charge::NumericContext::replay_charged_price",
+    "body": "{ if floor == Floor :: RidgeImage { self . charged_price_with_ridge (price . wall () , numeraire , price . ridge . as_deref () . ok_or (NumericError :: RidgeEvidence) ? , verifier ,) } else { self . charged_price (price . wall () , numeraire , floor) } }",
+    "class_decision": "public-records",
+    "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

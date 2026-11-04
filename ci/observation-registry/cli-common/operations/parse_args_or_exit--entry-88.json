@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "parse_args_or_exit",
+    "owner": "CLICOMMON",
+    "signature": "fn parse_args_or_exit < T > () -> T where T : Parser ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::parse_args_or_exit",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"parse_args_or_exit\" , & std :: any :: type_name :: < T > () ,) ; let result = { match parse_args_from :: < T , _ , _ > (std :: env :: args_os ()) { Ok (args) => args , Err (exit) => { let _ignored = emit_control_plane_record (& exit . record) ; exit_with (exit . exit) ; } } } ; scope . finish (& \"parsed value has a Parser-only representation contract\") ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for parse_args_or_exit.",
+    "assessments": {
+      "full_recording": "review-265",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

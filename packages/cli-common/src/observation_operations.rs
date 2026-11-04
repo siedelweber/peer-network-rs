@@ -1,4 +1,4 @@
-// Generated from ci/observation-registry.json by ci/observe.py --write-operation-vocabulary.
+// Generated from ci/observation-registry by ci/observe.py --write-operation-vocabulary.
 pub(super) const RECORDS_OPERATIONS: [&str; 44] = [
     "assemble-boundary-inputs",
     "authentication-disclosure",

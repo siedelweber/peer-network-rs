@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_publication::Response",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/live_publication.rs",
+    "syntax": "# [doc = \" Explicit published response to a lost final lineage, never an automatic repair.\"] # [doc = \" (´rule:admission:live-publication´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Response { Reanchor { continuity : Vec < u8 > , publication : Vec < u8 > , } , Follow { divergence : usize , superseded : Vec < crate :: closure :: ClosureRecord > , continuity : Vec < u8 > , publication : Vec < u8 > , } , }"
+  }
+}

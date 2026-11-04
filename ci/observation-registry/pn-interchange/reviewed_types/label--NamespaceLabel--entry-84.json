@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "label::NamespaceLabel",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/label.rs",
+    "syntax": "# [doc = \" A namespace label: two or more dot-separated atoms over `a`–`z` and\"] # [doc = \" `0`–`9`, hyphens interior only, at most 255 bytes.\"] # [doc = \"\"] # [doc = \" Reading atoms left to right descends a rooted tree, and authority over\"] # [doc = \" a prefix confers authority over its subtree — which is why\"] # [doc = \" [`is_prefix_of`](NamespaceLabel::is_prefix_of) compares atoms rather\"] # [doc = \" than bytes.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::NamespaceLabel;\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example.thing\\\").expect(\\\"a label\\\");\"] # [doc = \" assert_eq!(label.as_str(), \\\"com.example.thing\\\");\"] # [doc = \" assert_eq!(label.atoms().collect::<Vec<_>>(), [\\\"com\\\", \\\"example\\\", \\\"thing\\\"]);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Hash)] pub struct NamespaceLabel (Box < str >) ;"
+  }
+}

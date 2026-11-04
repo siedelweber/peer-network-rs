@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "item": "package::VerifiedPackage::input",
+    "owner": "EPOCH",
+    "signature": "fn input (& self) -> & PackageInput",
+    "claim": "ROOT::dec:design:final-state",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access preserves the enclosing verification result.",
+      "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+      "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+      "class_decision": "epoch-package"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input",
+    "body": "{ & self . input }",
+    "class_decision": "epoch-package",
+    "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+    "assessments": {
+      "full_recording": "epoch-package-full_recording",
+      "secret_flow": "epoch-package-secret_flow",
+      "exposure_consumers": "epoch-package-exposure_consumers"
+    }
+  }
+}

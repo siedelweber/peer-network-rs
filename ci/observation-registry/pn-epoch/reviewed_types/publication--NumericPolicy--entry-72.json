@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::NumericPolicy",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Explicit bounded numeric context, retained separately from displayed values.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct NumericPolicy { pub arithmetic : nrz_cas :: limits :: Limits , pub comparison_attempts : u32 , pub comparison_work : u64 , }"
+  }
+}

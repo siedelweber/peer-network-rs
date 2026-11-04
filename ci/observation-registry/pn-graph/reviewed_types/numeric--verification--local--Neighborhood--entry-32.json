@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::verification::local::Neighborhood",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/local.rs",
+    "syntax": "struct Neighborhood { active : Vec < usize > , center : Vec < Range > , domain : Vec < Range > , radius : Rational , above_wall : bool , inside_hull : bool , }"
+  }
+}

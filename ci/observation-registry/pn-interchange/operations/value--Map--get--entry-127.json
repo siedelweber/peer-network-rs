@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Map::get",
+    "owner": "INTERCHANGE",
+    "signature": "fn get (& self , key : & Value) -> Option < & Value >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Map::get",
+    "body": "{ self . 0 . binary_search_by (| (k , _) | k . cmp (key)) . ok () . map (| index | & self . 0 [index] . 1) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Map::get.",
+    "assessments": {
+      "full_recording": "review-127",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

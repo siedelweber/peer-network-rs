@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "recognition::RecognitionClause",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural Clone, Debug, equality, ordering and error formatting expose public caller premises and complete clause or hold evidence. These derives supply no serialization, authentication or title fold."
+  }
+}

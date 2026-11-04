@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Evidence",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Untrusted transcript; structural validation does not certify its numerical premises.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evidence { pub hull : BTreeMap < String , Bounds > , pub attempts : Vec < Attempt > , pub residual : Option < Residual > , pub primitives : Vec < crate :: primitive :: PrimitiveRecord > , }"
+  }
+}

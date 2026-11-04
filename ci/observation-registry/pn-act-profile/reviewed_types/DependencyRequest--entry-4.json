@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyRequest",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Original authored dependency request.\"] # [doc = \" (´def:profile:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DependencyRequest { FullEmpty , Full , Tombstoned , }"
+  }
+}

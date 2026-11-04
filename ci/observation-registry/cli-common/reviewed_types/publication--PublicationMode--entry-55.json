@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::PublicationMode",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" Intended final permission class of a published file.\"] # [doc = \"\"] # [doc = \" Publication stages into an owner-only temporary, so the class is\"] # [doc = \" applied explicitly rather than inherited from the umask.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum PublicationMode { # [doc = \" Public data: reports, generated text and data.\"] Public , # [doc = \" A published executable.\"] Executable , }"
+  }
+}

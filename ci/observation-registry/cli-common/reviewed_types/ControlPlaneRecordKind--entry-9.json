@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ControlPlaneRecordKind",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" JSON control-plane record kinds emitted on stderr.\"] # [derive (Debug , Clone , Copy , Serialize , Deserialize , PartialEq , Eq)] # [serde (rename_all = \"snake_case\")] pub enum ControlPlaneRecordKind { # [doc = \" Help text requested by the caller.\"] Help , # [doc = \" Version information requested by the caller.\"] Version , # [doc = \" Command-line usage or argv parsing failure.\"] UsageError , # [doc = \" Refusal to write stdout result data directly to a terminal.\"] TtyRefusal , # [doc = \" Panic diagnostic emitted by the shared panic hook.\"] Panic , # [doc = \" Non-error status update.\"] Status , # [doc = \" Runtime diagnostic or error.\"] Diagnostic , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "accept::Rejection",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "syntax": "# [doc = \" Why a document was rejected.\"] # [doc = \"\"] # [doc = \" The first two arms are facts about the reader's state rather than about\"] # [doc = \" the document: a state that grows over what the owner assigned turns\"] # [doc = \" them toward acceptance. The third is a fact about the document, under\"] # [doc = \" the instrument named.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Rejection, Under};\"] # [doc = \"\"] # [doc = \" let rejection = Rejection::UnassignedStamp { minor: 3, ceiling: 5 };\"] # [doc = \" assert!(matches!(rejection, Rejection::UnassignedStamp { minor: 3, .. }));\"] # [doc = \" assert_eq!(Under::Strict { minor: 1 }, Under::Strict { minor: 1 });\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub enum Rejection { # [doc = \" The reader holds no minor of this major.\"] UnheldMajor { # [doc = \" The major the document stamps.\"] major : u64 , } , # [doc = \" The stamp lies at or below the ceiling and was never assigned.\"] UnassignedStamp { # [doc = \" The minor the document stamps.\"] minor : u64 , # [doc = \" The reader's ceiling of that major, which the stamp does not\"] # [doc = \" outrun.\"] ceiling : u64 , } , # [doc = \" The instrument governed, and the document did not satisfy it.\"] Unsatisfied { # [doc = \" Which instrument judged.\"] under : Under , # [doc = \" Every way the document failed it, in ascending key order.\"] mismatches : Vec < Mismatch > , } , }"
+  }
+}

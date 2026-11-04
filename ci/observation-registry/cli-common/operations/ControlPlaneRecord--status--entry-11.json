@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::status",
+    "owner": "CLICOMMON",
+    "signature": "fn status (command : & str , message : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::status",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Status , message , None) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::status.",
+    "assessments": {
+      "full_recording": "review-256",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

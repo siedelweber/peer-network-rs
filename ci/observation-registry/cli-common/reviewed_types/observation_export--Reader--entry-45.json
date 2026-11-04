@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::Reader",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "# [derive (Clone , Debug)] struct Reader (Arc < ManualReader >) ;"
+  }
+}

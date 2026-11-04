@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "item": "publication::disclosures::restore",
+    "owner": "EPOCH",
+    "signature": "fn restore (disclosure : Disclosure , verifier : & impl Verifier) -> Result < super :: AdmittedPackage , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/publication/disclosures.rs::publication::disclosures::restore",
+    "body": "{ let empty = pn_records :: validate_history (& [] , & []) ? ; let declarations = pn_records :: validate_record (& [] , & empty , & disclosure . causes . declarations) ? ; let constants = constants :: bind_constants (& declarations , disclosure . causes . editions . clone ()) ? ; let names : Vec < _ > = disclosure . causes . names . iter () . cloned () . collect () ; pn_records :: validate_history (& disclosure . causes . acts , & names) ? ; let frames = disclosure . frames . into_iter () . map (| frame | { let acts : Vec < _ > = disclosure . causes . acts . iter () . filter (| a | a . finalization_epoch <= frame . parameters . boundary) . cloned () . collect () ; let history = pn_records :: validate_history (& acts , & names) ? ; restore_frame (frame , & declarations , & constants , & history , & disclosure . numeric , verifier) }) . collect :: < Result < _ , _ > > () ? ; super :: consume_sections (super :: Carrier { causes : disclosure . causes , numeric : disclosure . numeric , frames , } , verifier , true ,) }",
+    "class_decision": "publication-disclosures-public",
+    "item_premise": "Public semantic assertions only; no private signing or authentication material. Independent replay selects the admitted charge verifier and compares every derived section. Plain metadata and immutable disclosure access grant no authority.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

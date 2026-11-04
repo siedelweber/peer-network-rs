@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::TitleOutcome",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" Outcome of a recognized, unchallenged candidate at its Ratify boundary.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum TitleOutcome { # [doc = \" The sole candidate transferred title at that boundary.\"] Transferred , # [doc = \" Two or more candidates consumed their records without a transfer.\"] Conflict , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Cddl",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" A whole CDDL source: `cddl = S 1*(rule S)`.\"] # [doc = \"\"] # [doc = \" At least one rule, because the ABNF says `1*`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct Cddl { # [doc = \" The rules, in the order they were written. The first is the root.\"] pub (crate) rules : Vec < Rule > , # [doc = \" The whole source.\"] pub (crate) span : Span , }"
+  }
+}

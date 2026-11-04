@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "coefficients::CoefficientError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/coefficients.rs",
+    "syntax": "# [doc = \" Exact-only evidence boundary; no approximate coefficient can escape a hold.\"] # [doc = \" (´def:compiler:cell-coefficients´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CoefficientError { # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"unknown family, wrong mandatory coordinates or out-of-range value\")] Representation , # [error (\"irrational coefficient needs numeric evidence: square root of {radicand}\")] Irrational { radicand : String } , }"
+  }
+}

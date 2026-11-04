@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::Version",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" One immutable public version. Absence is an explicit withdrawal payload.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Version { pub family : Family , pub key : String , pub edition : String , pub announced_at : u64 , pub opens_at : u64 , pub payload : Option < Payload > , }"
+  }
+}

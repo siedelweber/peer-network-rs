@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "item": "publication::AdmittedPackage::carrier",
+    "owner": "EPOCH",
+    "signature": "fn carrier (& self) -> & Carrier",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access creates no new authority.",
+      "witness": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+      "boundary": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
+      "class_decision": "semantic-publication-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
+    "body": "{ & self . carrier }",
+    "class_decision": "semantic-publication-public",
+    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::charged_price",
+    "owner": "RECORDS",
+    "signature": "fn charged_price (& mut self , wall : & Computed , numeraire : & Numeraire , floor : Floor) -> Result < ChargedPrice , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-charged-price"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::charged_price",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { match self . compare_floor (wall , floor) ? { FloorComparison :: Below => return Err (NumericError :: BelowFloor) , FloorComparison :: Indecisive => return Err (NumericError :: Indecisive) , FloorComparison :: Equal | FloorComparison :: Above => { } } let price = self . per_action (wall , numeraire) ? ; Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , floor , price , ridge : None , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body. Ridge charges retain public defining evidence and are reconstructed through the admitted independent replay contract; the rational path remains exact."
+  }
+}

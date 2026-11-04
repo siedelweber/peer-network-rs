@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::Address",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" A name in a declared opaque address space, with no identity or ownership inference.\"] # [doc = \" (´def:burn:carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Address (pub String) ;"
+  }
+}

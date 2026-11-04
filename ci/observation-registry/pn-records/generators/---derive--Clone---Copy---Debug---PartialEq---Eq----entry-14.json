@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numerics::FloorComparison",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+  }
+}

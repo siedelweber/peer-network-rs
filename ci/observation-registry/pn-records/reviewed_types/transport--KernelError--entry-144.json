@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::KernelError",
+    "package": "pn-records",
+    "path": "packages/records/src/transport.rs",
+    "syntax": "# [doc = \" Refusals carry no mathematical FAIL verdict.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum KernelError { # [error (\"inconsistent exact operator input\")] Input , # [error (\"exact operator cell limit exceeded\")] Limit , # [error (\"exact arithmetic: {0}\")] Arithmetic (String) , }"
+  }
+}

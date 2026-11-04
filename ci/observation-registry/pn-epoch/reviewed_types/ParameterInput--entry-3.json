@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ParameterInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/lib.rs",
+    "syntax": "# [doc = \" Untrusted structural parameter interpretation, not a canonical document.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ParameterInput { pub boundary : u64 , pub edition : DeclarationId , pub numeraire : Numeraire , pub profiles : Vec < FamilyProfile > , # [doc = \" Published domain weights: literal constant names for every projection domain.\"] pub domain_weights : BTreeMap < String , String > , # [doc = \" Name of the positive integer `L_hop` literal in the effective edition.\"] pub hop_limit : String , # [doc = \" Name of the positive self-retention literal in the effective edition.\"] pub self_base : String , # [doc = \" Literal constant names for depths one through the vector length.\"] pub depth_mass : Vec < String > , }"
+  }
+}

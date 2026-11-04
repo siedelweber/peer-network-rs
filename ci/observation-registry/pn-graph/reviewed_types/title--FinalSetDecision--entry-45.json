@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::FinalSetDecision",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" Caller-supplied final-set decision; graph establishes no admission verdict.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FinalSetDecision { # [doc = \" Caller selected this final set; return its pure fold evidence.\"] Selected , # [doc = \" Caller rejected this final set; discard its computed certificate and events.\"] Rejected , }"
+  }
+}

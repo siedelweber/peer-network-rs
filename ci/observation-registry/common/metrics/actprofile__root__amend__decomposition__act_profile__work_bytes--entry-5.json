@@ -1,0 +1,11 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "actprofile__root__amend__decomposition__act_profile__work_bytes",
+    "kind": "counter",
+    "unit": "bytes",
+    "attributes": {},
+    "owner": "ACTPROFILE",
+    "claim": "ROOT::amend:decomposition:act-profile"
+  }
+}

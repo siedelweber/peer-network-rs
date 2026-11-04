@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::RealizationEvidence",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Public realization audit disclosures, retained without becoming standing inputs.\"] # [doc = \" The declared publication verifier checks their edition and substantive evidence.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RealizationEvidence { pub edition : String , pub provenance : Vec < u8 > , pub capacity_bound : Vec < u8 > , pub dimensioned_unit_cost : Vec < u8 > , pub recording_event_costs : Vec < u8 > , pub settlement_and_finality : Vec < u8 > , pub operator : OperatorEvidence , }"
+  }
+}

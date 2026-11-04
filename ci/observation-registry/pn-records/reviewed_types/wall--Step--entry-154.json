@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Step",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" Every attempted precision remains in execution order, including indecisive attempts.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Step { pub primitive : PrimitiveRecord , pub sign : Sign , pub work : u64 , }"
+  }
+}

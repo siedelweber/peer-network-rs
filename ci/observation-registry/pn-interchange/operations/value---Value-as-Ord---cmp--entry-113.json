@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Value as Ord>::cmp",
+    "owner": "INTERCHANGE",
+    "signature": "fn cmp (& self , other : & Value) -> Ordering",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+      "class_decision": "value-traits"
+    },
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Value as Ord>::cmp",
+    "body": "{ let mut work : Vec < (& Value , & Value) > = vec ! [(self , other)] ; while let Some ((a , b)) = work . pop () { match a . canonical_head () . cmp (& b . canonical_head ()) { Ordering :: Equal => { } unequal => return unequal , } match (a , b) { (Value :: Bytes (x) , Value :: Bytes (y)) => match x . as_slice () . cmp (y . as_slice ()) { Ordering :: Equal => { } unequal => return unequal , } , (Value :: Text (x) , Value :: Text (y)) => match x . as_str () . cmp (y . as_str ()) { Ordering :: Equal => { } unequal => return unequal , } , (Value :: Array (x) , Value :: Array (y)) => { work . extend (x . as_slice () . iter () . zip (y . as_slice ()) . rev ()) ; } (Value :: Map (x) , Value :: Map (y)) => { for ((xk , xv) , (yk , yv)) in x . 0 . iter () . zip (y . 0 . iter ()) . rev () { work . push ((xv , yv)) ; work . push ((xk , yk)) ; } } (Value :: Tag (x) , Value :: Tag (y)) => work . push ((x . item () , y . item ())) , _ => { } } } Ordering :: Equal }",
+    "class_decision": "value-traits",
+    "item_premise": "This body inherits the value-traits decision for value::<Value as Ord>::cmp.",
+    "assessments": {
+      "full_recording": "review-096",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

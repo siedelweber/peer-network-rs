@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "item": "controller::evaluate",
+    "owner": "EPOCH",
+    "signature": "fn evaluate (bound : & BoundProcedure < '_ > , d : & ScheduleDeclaration , search : & InverseSearch , ridge : Option < & CheckedRidge > ,) -> Result < Evidence , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
+    "body": "{ let fence = crate :: fence :: search (bound , None) ? ; let (p , input) = inputs (bound , d , search , & fence) ? ; let controller = pn_graph :: numeric :: controller :: evaluate (& p , & input , ridge) ? ; let burn_image = image (& p , d , & controller) ? ; Ok (Evidence { declaration : d . input () . clone () , search : search . clone () , fence , controller , burn_image , }) }",
+    "class_decision": "canonical-controller-public",
+    "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

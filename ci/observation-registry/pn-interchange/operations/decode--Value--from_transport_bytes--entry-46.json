@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "item": "decode::Value::from_transport_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_transport_bytes (bytes : & [u8] , limits : TransportLimits , usage : & mut TransportUsage) -> Result < Value , DecodeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_transport_bytes",
+    "body": "{ * usage = TransportUsage :: default () ; let result = (| | { ReadPolicy :: limit (bytes . len () , limits . input_bytes , \"input bytes\" , 0) ? ; let mut policy = ReadPolicy :: Transport { limits , usage } ; let (value , consumed) = decode_one (bytes , & mut policy) ? ; if consumed != bytes . len () { return Err (DecodeError :: TrailingBytes { offset : consumed , count : bytes . len () - consumed , }) ; } Ok (value) }) () ; tracing :: event ! (tracing :: Level :: TRACE , transport_usage = ? usage) ; result . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "The bounded transport boundary records public transient bytes, caller declarations and the typed result or refusal. Counter state is reset per invocation. It does not acquire secret keys or establish document membership; decoder reservation counters exclude observation subscribers.",
+    "assessments": {
+      "full_recording": "review-047",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

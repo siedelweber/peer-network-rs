@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "item": "primitive::<FaultAssertion as From < nrz_cas :: Fault >>::from",
+    "owner": "RECORDS",
+    "signature": "fn from (fault : nrz_cas :: Fault) -> Self",
+    "claim": "RECORDS::def:numerics:primitive-records",
+    "shape": "shape-records",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Pure field projection inherits the enclosing numerical operation.",
+      "witness": "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome",
+      "boundary": "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
+      "class_decision": "certified-primitives-public"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/primitive.rs::primitive::<FaultAssertion as From < nrz_cas :: Fault >>::from",
+    "body": "{ Self { kind : fault . kind , operation : fault . location . operation . into () , logical_id : fault . location . logical_id , } }",
+    "class_decision": "certified-primitives-public",
+    "item_premise": "Every backend fault field is projected without interpretation into owned public diagnostic evidence; the numeric producer already observes its result. No secret, authority or operation vocabulary is introduced.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

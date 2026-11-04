@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::StorageError",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" Bounded storage failure, never a mathematical verdict or a driver diagnostic.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum StorageError { Representation , SchemaIdentity , IndexDefinition , Transport , CorruptHistory , EditionConflict , Predecessor , Gap , Overlap , Retroactive , MissingRequired , Injected , CommitUnknown , EpochResultHeld , }"
+  }
+}

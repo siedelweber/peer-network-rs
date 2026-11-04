@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::RestraintReport",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" Where an assigned theory reaches a floating-point value, a tag, or a\"] # [doc = \" simple value other than `false`, `true`, and `null`.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(\"] # [doc = \"     r#\\\"e = {0 => \\\"com.example\\\", 1 => [0, 0, uint], 2 => uint, ? 3 => tstr}\\\"#,\"] # [doc = \" )\"] # [doc = \" .expect(\\\"an assignable theory\\\");\"] # [doc = \" let report = theory.restraint();\"] # [doc = \" assert!(report.is_restrained());\"] # [doc = \" assert_eq!(report.provisions().count(), 0);\"] # [doc = \" assert_eq!(report.implicit_reaches().count(), 0);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Default)] pub struct RestraintReport { provisions : Vec < Provision > , implicit_reaches : Vec < ImplicitReach > , }"
+  }
+}

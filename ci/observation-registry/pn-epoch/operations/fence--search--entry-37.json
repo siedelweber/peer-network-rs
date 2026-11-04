@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/fence.rs",
+    "item": "fence::search",
+    "owner": "EPOCH",
+    "signature": "fn search (bound : & BoundProcedure < '_ > , interrupt_at : Option < u64 >) -> Result < Search , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::search",
+    "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; let (prepared , hull) = prepare (bound) ? ; let mut result = Search { evidence : Evidence { hull , attempts : Vec :: new () , residual : None , primitives : Vec :: new () , } , selected : None , operational_stop : None , } ; for rung in & procedure . grid { let stop = attempts :: run (procedure , sequence , & prepared , rung , interrupt_at , & mut result . evidence , bound . enclosed_wall () . is_some () ,) ? ; if let Some (stop) = stop { result . operational_stop = Some (stop) ; break ; } if result . evidence . attempts . last () . is_some_and (| a | a . completion == pn_records :: solve :: Completion :: Pass) { result . selected = Some (rung . clone ()) ; break ; } } Ok (result) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete public input and configured limits at trace",
+      "complete public decoded fields and result at trace",
+      "role-only private carriers",
+      "method, status, elapsed nanoseconds and public result bytes at trace",
+      "typed refusal diagnostics at default and trace",
+      "bounded outcome",
+      "inclusive duration_seconds",
+      "declared invocation work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "wallet__root__sig__design__devnet__started_operations",
+      "wallet__root__sig__design__devnet__completed_operations",
+      "wallet__root__sig__design__devnet__work_bytes",
+      "wallet__root__sig__design__devnet__work_operations",
+      "wallet__root__sig__design__devnet__active_operations",
+      "wallet__root__sig__design__devnet__resource_current_bytes",
+      "wallet__root__sig__design__devnet__elapsed_seconds",
+      "wallet__root__sig__design__devnet__workload_bytes",
+      "wallet__root__sig__design__devnet__workload_operations"
+    ]
+  },
+  "name": "shape-wallet"
+}

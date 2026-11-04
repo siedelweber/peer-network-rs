@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::Observation::operation",
+    "owner": "CLICOMMON",
+    "signature": "fn operation (& self , kind : OperationKind , arguments : Value) -> Operation",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "reviewed-helper",
+    "body": "{ self . operation_with_parent (kind , arguments , None) }",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+    "body": "{ self . operation_with_parent (kind , arguments , None) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::Observation::operation. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-186",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

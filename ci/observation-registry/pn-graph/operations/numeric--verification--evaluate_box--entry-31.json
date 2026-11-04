@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification.rs",
+    "item": "numeric::verification::evaluate_box",
+    "owner": "GRAPH",
+    "signature": "fn evaluate_box (p : & Procedure , input : & VerificationInput , coordinates : & [Range]) -> Result < BoxMapRecord , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::evaluate_box",
+    "body": "{ map :: run (p , input , coordinates , None) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::map::Checks",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/map.rs",
+    "syntax": "struct Checks < 'a > { policy : Procedure , supplied : Option < & 'a [PrimitiveRecord] > , records : Vec < PrimitiveRecord > , memo : Vec < (Query , PrimitiveRecord) > , budget : Budget , }"
+  }
+}

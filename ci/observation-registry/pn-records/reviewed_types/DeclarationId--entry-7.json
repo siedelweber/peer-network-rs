@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DeclarationId",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Typed edition identity without a declaration payload or byte encoding.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct DeclarationId { # [doc = \" Nonempty structural namespace.\"] pub namespace : String , # [doc = \" Nonempty declaration key within that namespace.\"] pub name : String , # [doc = \" Structural edition identity, not a sort priority.\"] pub edition : u64 , }"
+  }
+}

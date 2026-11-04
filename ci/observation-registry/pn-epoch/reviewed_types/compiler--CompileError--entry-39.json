@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "compiler::CompileError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [doc = \" Whole-result refusal; no partial compiled state escapes.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CompileError { # [error (\"verified package has no completed boundary\")] Boundary , # [error (\"ledger: {0}\")] Ledger (# [from] LedgerError) , # [error (\"recipients: {0}\")] Recipients (# [from] RecipientError) , # [error (\"title: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"coefficient: {0}\")] Coefficient (# [from] CoefficientError) , # [error (\"base: {0}\")] Base (# [from] BaseError) , # [error (\"support: {0}\")] Support (# [from] SupportError) , }"
+  }
+}

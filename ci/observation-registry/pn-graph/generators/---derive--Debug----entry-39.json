@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numeric::ridge::ChargeReplay",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "binding-ridge-public",
+    "expansion_review": "Structural cloning, equality and diagnostics retain untrusted defining evidence or the stateless replay adapter. No unchecked charge constructor, default or encoding is generated."
+  }
+}

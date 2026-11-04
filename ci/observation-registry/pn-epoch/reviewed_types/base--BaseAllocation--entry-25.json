@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::BaseAllocation",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [doc = \" Sparse, unnormalized rows; only anchored Actors own rows and columns.\"] # [doc = \" (´def:compiler:base-allocation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BaseAllocation { pub boundary : u64 , pub edition : DeclarationId , pub rows : BTreeMap < String , BTreeMap < String , BaseEntry > > , }"
+  }
+}

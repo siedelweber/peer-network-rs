@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::Read",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" Closed public read vocabulary; no arbitrary method, URL or wallet selector.\"] # [doc = \" (´def:wallet:rpc-read´)\"] # [derive (Clone , Debug)] pub enum Read { # [doc = \" Current chain height.\"] BlockCount , # [doc = \" Locator at the given height.\"] BlockHash (u64) , # [doc = \" Full raw header at the public locator.\"] BlockHeader ([u8 ; 32]) , # [doc = \" Full raw block at the public locator.\"] Block ([u8 ; 32]) , # [doc = \" Full raw transaction, located in a declared block.\"] Transaction { # [doc = \" Public transaction locator.\"] transaction : [u8 ; 32] , # [doc = \" Public inclusion block locator.\"] block : [u8 ; 32] , } , }"
+  }
+}

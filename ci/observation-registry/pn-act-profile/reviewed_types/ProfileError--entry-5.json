@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ProfileError",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Content-free representation or binding refusal.\"] # [doc = \" (´def:profile:scope´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProfileError { # [error (\"unsupported act-profile representation\")] Representation , # [error (\"act-profile bound exceeded\")] Bound , # [error (\"unsupported commitment recipe\")] Recipe , # [error (\"supplied opening differs from supplied recorded commitment\")] Mismatch , }"
+  }
+}

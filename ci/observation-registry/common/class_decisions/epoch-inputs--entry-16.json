@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "epoch-inputs",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/lib.rs::bind_inputs"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
+    "owner": "ACTPROFILE",
+    "signature": "fn targets (& self) -> Vec < ActId >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "exception",
+    "shape": "shape-act-profile",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This target roster is public opening metadata and inherits the enclosing replay operation.",
+      "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
+      "boundary": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
+      "class_decision": "act-profile-private"
+    }
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
+    "body": "{ self . 0 . iter () . map (| opening | opening . act . clone ()) . collect () }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Value as std :: fmt :: Debug>::fmt",
+    "owner": "INTERCHANGE",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+      "class_decision": "public-interchange"
+    },
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Value as std :: fmt :: Debug>::fmt",
+    "body": "{ enum Part < 'a > { Value (& 'a Value) , Text (& 'static str) , Array (& 'a [Value] , bool) , Map (& 'a [(Value , Value)] , bool) , } let mut work = vec ! [Part :: Value (self)] ; while let Some (part) = work . pop () { let value = match part { Part :: Value (value) => value , Part :: Text (text) => { f . write_str (text) ? ; continue ; } Part :: Array (items , first) => { if let Some ((item , rest)) = items . split_first () { if ! first { f . write_str (\", \") ? ; } work . push (Part :: Array (rest , false)) ; work . push (Part :: Value (item)) ; } continue ; } Part :: Map (items , first) => { if let Some (((key , item) , rest)) = items . split_first () { if ! first { f . write_str (\", \") ? ; } f . write_str (\"(\") ? ; work . push (Part :: Map (rest , false)) ; work . push (Part :: Text (\")\")) ; work . push (Part :: Value (item)) ; work . push (Part :: Text (\", \")) ; work . push (Part :: Value (key)) ; } continue ; } } ; match value { Self :: Array (array) => { f . write_str (\"Array(Array([\") ? ; work . push (Part :: Text (\"]))\")) ; work . push (Part :: Array (& array . 0 , true)) ; } Self :: Map (map) => { f . write_str (\"Map(Map([\") ? ; work . push (Part :: Text (\"]))\")) ; work . push (Part :: Map (& map . 0 , true)) ; } Self :: Tag (tag) => { write ! (f , \"Tag(Tag {{ number: {}, item: \" , tag . number) ? ; work . push (Part :: Text (\" })\")) ; work . push (Part :: Value (& tag . item)) ; } Self :: Unsigned (value) => write ! (f , \"Unsigned({value:?})\") ? , Self :: Negative (value) => write ! (f , \"Negative({value:?})\") ? , Self :: Bytes (value) => write ! (f , \"Bytes({value:?})\") ? , Self :: Text (value) => write ! (f , \"Text({value:?})\") ? , Self :: Bool (value) => write ! (f , \"Bool({value:?})\") ? , Self :: Null => f . write_str (\"Null\") ? , Self :: Simple (value) => write ! (f , \"Simple({value:?})\") ? , Self :: Float (value) => write ! (f , \"Float({value:?})\") ? , } } Ok (()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::<Value as std :: fmt :: Debug>::fmt.",
+    "assessments": {
+      "full_recording": "review-094",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

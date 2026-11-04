@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::reprice_standing",
+    "owner": "RECORDS",
+    "signature": "fn reprice_standing (& mut self , amount : & FullStanding , market_factor : & Literal) -> Result < FullStanding , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-reprice-standing"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::reprice_standing",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { sign (& market_factor . exact , true) ? ; let value = amount . exact . value . div (& market_factor . exact . value , & mut self . budget) ? ; Ok (FullStanding { exact : Exact :: new (value , & mut self . budget) ? , unit : amount . unit . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

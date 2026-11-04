@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::companion::OpenTheory",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/companion.rs",
+    "syntax": "# [doc = \" The open companion of an assigned theory: the minor position freed to\"] # [doc = \" `uint`, the closure replaced by the base theory's wildcard, each\"] # [doc = \" enumerated content key cut, nothing else moved.\"] # [doc = \"\"] # [doc = \" Derived, never assigned. That this is a type distinct from\"] # [doc = \" [`Theory`] is how the crate carries \\\"Open(S) is derived, never assigned\"] # [doc = \" — it enters no registry\\\": the clause is a signature that does not\"] # [doc = \" typecheck rather than a runtime check that could be forgotten.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 4, uint], 2 => tstr}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let open = theory.open_companion();\"] # [doc = \" assert_eq!(open.floor(), (1, 4));\"] # [doc = \" assert!(open.to_cddl().contains(\\\"* (uint .gt 1) => any\\\"));\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct OpenTheory { cddl : Cddl , table : RuleTable , patterns : BTreeMap < usize , XsdPattern > , label : NamespaceLabel , floor : (u64 , u64) , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::SpanAccount",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "struct SpanAccount { fields : Fields , started : Duration , operation : Option < Operation > , result : Option < Value > , outcome : Option < & 'static str > , explicit_outcome : bool , }"
+  }
+}

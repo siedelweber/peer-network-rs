@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::ExternalCost",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" External cost of a burn quantity under the retained terms.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ExternalCost { exact : Exact , denomination : String , terms : String , }"
+  }
+}

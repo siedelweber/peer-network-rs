@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::finalize::FinalRefusal",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission/finalize.rs",
+    "syntax": "# [doc = \" Invalid causes and operational kernel errors never assert a failed mathematical gate.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Debug , thiserror :: Error)] pub enum FinalRefusal { # [error (\"final admission: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"candidate compilation: {0}\")] Compile (# [source] Box < compiler :: CompileError >) , # [error (\"procedure binding: {0}\")] Procedure (# [from] solve :: ProcedureError) , # [error (\"fence: {0}\")] Fence (# [from] fence :: Error) , # [error (\"standing: {0}\")] Solve (# [source] Box < conserved :: Error >) , # [error (\"bounded exact gate arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

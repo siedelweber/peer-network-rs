@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::Operation",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Inclusive elapsed accounting that never supplies values to binding computation.\"] pub struct Operation { observation : Observation , kind : OperationKind , id : u64 , parent : Option < u64 > , metric_label : String , started : Duration , work : u64 , work_observed : bool , work_overflow : bool , current : Resource , high_water : Resource , cumulative : Resource , finished : bool , }"
+  }
+}

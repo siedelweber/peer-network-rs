@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::Value::to_canonical_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn to_canonical_bytes (& self) -> Vec < u8 >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::Value::to_canonical_bytes",
+    "body": "{ let mut out = Vec :: with_capacity (self . canonical_len ()) ; self . write_canonical (& mut out) ; out }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for encode::Value::to_canonical_bytes.",
+    "assessments": {
+      "full_recording": "review-049",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

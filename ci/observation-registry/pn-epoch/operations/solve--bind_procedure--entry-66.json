@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve.rs",
+    "item": "solve::bind_procedure",
+    "owner": "EPOCH",
+    "signature": "fn bind_procedure < 'a > (state : & 'a CompiledState , procedure : Procedure , verifier : & impl ProcedureVerifier , limits : Limits ,) -> Result < BoundProcedure < 'a > , ProcedureError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
+    "body": "{ let inputs = state . package () . input () . inputs . last () . ok_or (ProcedureError :: Binding) ? ; if procedure . boundary != inputs . parameters () . boundary || procedure . edition != inputs . parameters () . edition || procedure . name != inputs . constants () . content () . numerical_procedure { return Err (ProcedureError :: Binding) ; } validate_procedure (& procedure , limits . clone ()) ? ; wall_range (state , & procedure , limits) ? ; if ! verifier . published_procedure (& procedure) { return Err (ProcedureError :: Publication) ; } Ok (BoundProcedure { state , procedure , enclosed_wall : None , }) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

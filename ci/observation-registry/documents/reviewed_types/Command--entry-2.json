@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Command",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Subcommand)] enum Command { # [doc = \" Project TOML inputs into deterministic JSON datasets.\"] Generate { # [doc = \" Compare without writing files.\"] # [arg (long)] check : bool , } , # [doc = \" Compare datasets and rendered documents without writing.\"] Check , # [doc = \" Refresh documents, reporting changed files as findings.\"] Write , # [doc = \" List templates, datasets and rendered documents.\"] Census , }"
+  }
+}

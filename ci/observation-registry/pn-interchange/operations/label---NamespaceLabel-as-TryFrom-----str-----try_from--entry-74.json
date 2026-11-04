@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/label.rs",
+    "item": "label::<NamespaceLabel as TryFrom < & str >>::try_from",
+    "owner": "INTERCHANGE",
+    "signature": "fn try_from (s : & str) -> Result < NamespaceLabel , LabelError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/label.rs::label::<NamespaceLabel as TryFrom < & str >>::try_from",
+    "body": "{ NamespaceLabel :: parse (s) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for label::<NamespaceLabel as TryFrom < & str >>::try_from.",
+    "assessments": {
+      "full_recording": "review-080",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

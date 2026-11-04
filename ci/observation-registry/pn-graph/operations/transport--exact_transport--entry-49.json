@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport.rs",
+    "item": "transport::exact_transport",
+    "owner": "GRAPH",
+    "signature": "fn exact_transport < A : ExactArithmetic > (input : & TransportInput < A :: Number > , a : & mut A , maximum_cells : usize ,) -> Result < TransportOutput < A :: Number > , KernelError >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/transport.rs::transport::exact_transport",
+    "body": "{ validate (input , a , maximum_cells) ? ; let n = input . counts . len () ; let zero = a . zero () ; let one = a . one () ; let mut normalized = Vec :: new () ; for hop in & input . hops { normalized . push (normalize (hop , a) ?) ; } let mut product : Matrix < _ > = (0 .. n) . map (| i | std :: collections :: BTreeMap :: from ([(i , one . clone ())])) . collect () ; let mut raw : Matrix < _ > = vec ! [std :: collections :: BTreeMap :: new () ; n] ; for (hop , weight) in normalized . iter () . zip (& input . depth_mass) { let mut next : Matrix < _ > = vec ! [std :: collections :: BTreeMap :: new () ; n] ; for (source , row) in product . iter () . enumerate () { for (relay , left) in row { for (target , right) in & hop [* relay] { let value = a . mul (left , right) ? ; add_entry (& mut next [source] , * target , & value , a) ? ; } } } product = next ; for (source , row) in product . iter () . enumerate () { for (target , value) in row { let value = a . mul (weight , value) ? ; add_entry (& mut raw [source] , * target , & value , a) ? ; } } } let mut emitted = raw . clone () ; for (source , row) in emitted . iter_mut () . enumerate () { for value in row . values_mut () { * value = a . mul (& input . emission [source] , value) ? ; } let retained = a . sub (& one , & input . emission [source]) ? ; add_entry (row , source , & retained , a) ? ; } let mut numerator = vec ! [zero . clone () ; n] ; let mut denominator = vec ! [zero . clone () ; n] ; let mut ranges : Vec < Option < (A :: Number , A :: Number) > > = vec ! [None ; n] ; for (source , row) in emitted . iter () . enumerate () { for (target , weight) in row { if a . compare (weight , & zero) ? . is_eq () { continue ; } let count = a . mul (weight , & input . counts [source]) ? ; let amount = a . mul (& count , & input . rates [source]) ? ; denominator [* target] = a . add (& denominator [* target] , & count) ? ; numerator [* target] = a . add (& numerator [* target] , & amount) ? ; match & mut ranges [* target] { None => ranges [* target] = Some ((input . rates [source] . clone () , input . rates [source] . clone ())) , Some ((low , high)) => { if a . compare (& input . rates [source] , low) ? . is_lt () { * low = input . rates [source] . clone () ; } if a . compare (& input . rates [source] , high) ? . is_gt () { * high = input . rates [source] . clone () ; } } } } } let mut standing = Vec :: new () ; let mut hull = Vec :: new () ; for ((numerator , denominator) , range) in numerator . iter () . zip (& denominator) . zip (ranges) { if ! a . compare (denominator , & zero) ? . is_gt () { return Err (KernelError :: Input) ; } let value = a . div (numerator , denominator) ? ; let (low , high) = range . ok_or (KernelError :: Input) ? ; if a . compare (& value , & low) ? . is_lt () || a . compare (& value , & high) ? . is_gt () { return Err (KernelError :: Input) ; } standing . push (value) ; hull . push ((low , high)) ; } Ok (TransportOutput { normalized , raw , emitted , numerator , denominator , standing , hull , }) }",
+    "class_decision": "exact-transport-public",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "exact-transport-public",
+      "secret_flow": "exact-transport-public",
+      "exposure_consumers": "exact-transport-public"
+    }
+  }
+}

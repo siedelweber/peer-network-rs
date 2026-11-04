@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Floor",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" The ridge declaration is supported only when its certified upper bound is nonbinding.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Floor { Rational , Ridge , }"
+  }
+}

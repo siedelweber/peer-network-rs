@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::RpcLimits",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" Positive finite resource ceilings declared before acquisition or connection.\"] # [doc = \" (´def:wallet:rpc-limits´)\"] # [derive (Clone , Copy , Debug)] pub struct RpcLimits { # [doc = \" Complete outbound request, including authorization.\"] pub request_bytes : usize , # [doc = \" Complete response headers.\"] pub header_bytes : usize , # [doc = \" Response header fields.\"] pub header_count : usize , # [doc = \" Encoded JSON response bytes.\"] pub response_bytes : usize , # [doc = \" JSON nesting depth, counting the envelope.\"] pub json_depth : usize , # [doc = \" Aggregate JSON values and object keys.\"] pub json_items : usize , # [doc = \" Public decoded chain bytes.\"] pub chain_bytes : usize , # [doc = \" One monotonic budget from cookie acquisition through typed decoding.\"] pub deadline : Duration , }"
+  }
+}

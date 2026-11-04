@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::Satisfaction",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" The outcome of `d ⊨ S`. Structural only: it inspects the shape and the\"] # [doc = \" values of `d` against `S` and nothing else.\"] # [doc = \"\"] # [doc = \" A negative outcome is a verdict and not an error — the document was\"] # [doc = \" exactly the kind of thing the judgment takes, and the answer is no\"] # [doc = \" (´[ROOT-crit:xchg:error-or-verdict]´).\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{satisfies_global, Content, Document, Envelope, NamespaceLabel, Version};\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example\\\").expect(\\\"a label\\\");\"] # [doc = \" let document = Document::new(Envelope::new(label, Version::new(1, 0, 0)), Content::new());\"] # [doc = \" assert!(satisfies_global(&document).holds());\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Satisfaction { # [doc = \" The document satisfies the theory.\"] Holds , # [doc = \" It does not, and here is every way it failed, in ascending key\"] # [doc = \" order.\"] Fails (Vec < Mismatch >) , }"
+  }
+}

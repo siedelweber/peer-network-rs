@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "item": "publication::inspect_destination",
+    "owner": "CLICOMMON",
+    "signature": "fn inspect_destination (path : & Path , bytes : & [u8] , mode : PublicationMode) -> DestinationState",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/publication.rs::publication::inspect_destination",
+    "body": "{ if ! std :: fs :: read (path) . is_ok_and (| current | current == bytes) { return DestinationState :: StaleBytes ; } if destination_mode_matches (path , mode) { DestinationState :: Current } else { DestinationState :: ModeOnly } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for publication::inspect_destination.",
+    "assessments": {
+      "full_recording": "review-237",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "dependency_status",
+    "owner": "RECORDS",
+    "signature": "fn dependency_status (records : & ValidatedRecords , edge : & EdgeId) -> Result < DependencyStatus , ValidationError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "dependency-status"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::dependency_status",
+    "body": "{ let reference = PublicReference :: Edge (edge . clone ()) ; let result = if ! valid_id (& edge . act) { Err (ValidationError :: InvalidReference (reference)) } else if let Some (act) = records . acts . iter () . chain (records . history . acts . iter ()) . find (| act | act . legs . iter () . any (| leg | & leg . id == edge)) { Ok (match & act . projections . dependency { DependencyProjection :: FullEmpty => DependencyStatus :: FullEmpty , DependencyProjection :: Full (_) => DependencyStatus :: Full , DependencyProjection :: Tombstoned (position) => DependencyStatus :: Tombstoned (* position) , }) } else { Err (ValidationError :: UnresolvedReference (reference)) } ; if result . is_err () { refused () ; } result }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Derives an existing structural leg status from the owning whole act in the private validated snapshot. No leg stores its own removal or status field; malformed and missing identities refuse explicitly."
+  }
+}

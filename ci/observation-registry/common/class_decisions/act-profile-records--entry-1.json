@@ -1,0 +1,14 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "act-profile-records",
+    "status": "reviewer-confirmed",
+    "premises": "Retained opaque public residues and an explicitly supplied opening checker add recurrence evidence without changing structural carriage or title premises.",
+    "membership": {
+      "explicit": [
+        "pn-records::packages/records/src/lib.rs::replay_openings",
+        "pn-records::packages/records/src/lib.rs::ValidatedAct::commitments"
+      ]
+    }
+  }
+}

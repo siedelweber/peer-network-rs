@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::Request",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation.rs",
+    "syntax": "# [doc = \" Public standing box and bleed, with either a rational or independent enclosed wall.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Request { pub standing : Range , pub bleed_squared : String , pub wall : Option < String > , pub wall_enclosure : Option < Range > , pub quantity : Quantity , }"
+  }
+}

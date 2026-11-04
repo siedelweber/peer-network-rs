@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::Error",
+    "package": "pn-host",
+    "path": "packages/host/src/publication.rs",
+    "syntax": "# [doc = \" Structural refusal of a publication disclosure; none denotes failed admission.\"] # [doc = \" (´[ROOT-amend:design:nested-publication-fields]´)\"] # [derive (Debug)] pub enum Error { # [doc = \" Invalid canonical CBOR or envelope.\"] Encoding , # [doc = \" Unknown namespace or version.\"] Edition , # [doc = \" Missing, extra or wrongly typed field or unknown variant.\"] Shape , # [doc = \" A declared integer range was exceeded.\"] Range , # [doc = \" A numeric spelling or reduced pair is not canonical.\"] CanonicalNumber , # [doc = \" A set or map repeats a semantic value or is not structurally ordered.\"] Order , # [doc = \" The caller's explicit exact-arithmetic context refused reconstruction.\"] Arithmetic (d :: Fault) , # [doc = \" A public dimensioned value cannot be reconstructed.\"] Numeric (pn_records :: numerics :: NumericError) , }"
+  }
+}

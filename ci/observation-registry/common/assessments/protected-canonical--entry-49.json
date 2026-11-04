@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Read SecretValue Debug, iterative destruction, allocation bound and all eight labelled exits. Public leaves retain ordinary tracing; protected leaves reach the shared framing core without ordinary observed accessors. Fixed-vector comparison and a full-recording subscriber cover protected and public routes; entropy and custody are not established.",
+    "negative_probe": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree"
+  },
+  "name": "protected-canonical"
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "registration::",
+    "kind": "item-macro",
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "syntax": "crate :: metadata :: projection ! { # [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (´def:formation:registration´)\"] pub struct RegistrationProjection { before { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , } after { } } }",
+    "class_decision": "graph-registration",
+    "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+  }
+}

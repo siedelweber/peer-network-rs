@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "epoch-recipients",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/recipients.rs::recipients::resolve_recipients"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient."
+  }
+}

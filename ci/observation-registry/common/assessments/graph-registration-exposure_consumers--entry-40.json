@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+    "negative_probe": "ROOT::claim:discipline:registration-formation-retains-observed-results"
+  },
+  "name": "graph-registration-exposure_consumers"
+}

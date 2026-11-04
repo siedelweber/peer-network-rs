@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::unit_cost",
+    "owner": "RECORDS",
+    "signature": "fn unit_cost (& mut self , literal : & Literal , denomination : & str , burn_unit : & str , terms : & str ,) -> Result < UnitCost , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-unit-cost"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::unit_cost",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { sign (& literal . exact , true) ? ; nonempty (denomination) ? ; nonempty (burn_unit) ? ; nonempty (terms) ? ; Ok (UnitCost { exact : literal . exact . clone () , denomination : denomination . into () , burn_unit : burn_unit . into () , terms : terms . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

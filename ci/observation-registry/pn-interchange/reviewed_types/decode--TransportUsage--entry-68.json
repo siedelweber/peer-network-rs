@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::TransportUsage",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" Decoder-owned reservation counters, retained on success and refusal.\"] # [doc = \"\"] # [doc = \" These count actual calls at the decoder's buffer reservation boundary, not\"] # [doc = \" allocator metadata, tracing subscribers or subsequent consumer operations.\"] # [derive (Default , Debug)] pub struct TransportUsage { # [doc = \" Number of buffer reservation calls actually made.\"] pub allocation_calls : usize , # [doc = \" Cumulative requested buffer bytes, including replacement buffers.\"] pub allocation_bytes : usize , # [doc = \" Value and chunk heads charged.\"] pub items : usize , # [doc = \" Work units charged.\"] pub work : usize , }"
+  }
+}

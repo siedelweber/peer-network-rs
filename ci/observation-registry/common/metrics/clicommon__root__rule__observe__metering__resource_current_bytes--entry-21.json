@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__rule__observe__metering__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

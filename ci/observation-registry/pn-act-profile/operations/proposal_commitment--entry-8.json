@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "proposal_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn proposal_commitment (body : & ProposalBody , nonce : & SecretSlice < u8 > , payload : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < ProposalCommitment , ProfileError >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
+    "body": "{ let projected = body_projection (body) ? ; nonce_format (& body . id , nonce) ? ; let ylen = payload_length (payload) ? ; let (d , dlen) = dependencies (list , Some (& body . id)) ? ; if matches ! (body . content , ContentRequest :: FullEmpty) && ylen != 0 || matches ! (body . content , ContentRequest :: Full) && ylen == 0 || matches ! (body . dependency , DependencyRequest :: FullEmpty) && dlen != 0 || matches ! (body . dependency , DependencyRequest :: Full) && dlen == 0 { return Err (ProfileError :: Representation) ; } let content = hash (PROPOSAL_RECIPE , \"PN-content-pre-v1\" , vec ! [public (identifier (& body . id)) , SecretValue :: Bytes (nonce . clone ()) , SecretValue :: Bytes (payload . clone ()) ,] ,) ? ; let dependency = hash (PROPOSAL_RECIPE , \"PN-dependency-pre-v1\" , vec ! [public (identifier (& body . id)) , SecretValue :: Bytes (nonce . clone ()) , d] ,) ? ; let result = hash (PROPOSAL_RECIPE , \"PN-act-proposal-v1\" , vec ! [public (projected) , SecretValue :: Bytes (content) , SecretValue :: Bytes (dependency)] ,) ? ; Ok (ProposalCommitment { recipe : PROPOSAL_RECIPE . into () , bytes : publish (& result) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

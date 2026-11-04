@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Evidence",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "syntax": "# [doc = \" Candidate publication retains the epoch certificate and exact rational burn image.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evidence { pub declaration : ScheduleInput , pub search : InverseSearch , pub fence : Search , pub controller : Record , pub burn_image : Option < String > , }"
+  }
+}

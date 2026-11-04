@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::door_amount",
+    "owner": "RECORDS",
+    "signature": "fn door_amount (& mut self , actions : ActionCount , theta : & BurnPerAction , rho : & Computed , numeraire : & Numeraire ,) -> Result < BurnAmount , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-door-amount"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::door_amount",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { let additional = self . per_action (rho , numeraire) ? ; units (& theta . unit , & additional . unit) ? ; let sum = theta . exact . value . add (& additional . exact . value , & mut self . budget) ? ; let count = Rational :: parse (& actions . 0 . to_string () , & mut self . budget) ? ; let value = sum . mul (& count , & mut self . budget) ? ; Ok (BurnAmount { exact : Exact :: new (value , & mut self . budget) ? , unit : theta . unit . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

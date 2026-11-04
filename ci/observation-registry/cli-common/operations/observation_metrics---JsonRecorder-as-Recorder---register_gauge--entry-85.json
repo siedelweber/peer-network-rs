@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_metrics.rs",
+    "item": "observation_metrics::<JsonRecorder as Recorder>::register_gauge",
+    "owner": "CLICOMMON",
+    "signature": "fn register_gauge (& self , key : & Key , _metadata : & Metadata < '_ >) -> Gauge",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::register_gauge",
+    "body": "{ self . instrument (key , \"gauge\") . map_or_else (Gauge :: noop , Gauge :: from_arc) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_gauge. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-233",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

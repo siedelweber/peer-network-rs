@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "version_or_exit",
+    "owner": "CLICOMMON",
+    "signature": "fn version_or_exit (command : & str , package : & str , version : & str , commit : Option < & str >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::version_or_exit",
+    "body": "{ if let Some (exit) = version_exit_from (std :: env :: args_os () . skip (1) , command , package , version , commit) { let status = if emit_control_plane_record (& exit . record) . is_ok () { exit . exit } else { CommandExit :: Failure } ; exit_with (status) ; } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for version_or_exit.",
+    "assessments": {
+      "full_recording": "review-263",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

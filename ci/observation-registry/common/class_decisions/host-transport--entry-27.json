@@ -1,0 +1,20 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "host-transport",
+    "status": "reviewer-confirmed",
+    "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+    "membership": {
+      "explicit": [
+        "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
+        "pn-host::packages/host/src/lib.rs::Session::connect",
+        "pn-host::packages/host/src/lib.rs::Session::cancel",
+        "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+        "pn-host::packages/host/src/lib.rs::Session::last_refusal",
+        "pn-host::packages/host/src/lib.rs::relay",
+        "pn-host::packages/host/src/lib.rs::relay_outbound",
+        "pn-host::packages/host/src/lib.rs::observe_public_frame"
+      ]
+    }
+  }
+}

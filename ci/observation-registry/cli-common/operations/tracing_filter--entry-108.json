@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "tracing_filter",
+    "owner": "CLICOMMON",
+    "signature": "fn tracing_filter (debug_enabled : bool , default_level : tracing :: Level) -> TracingFilter",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::tracing_filter",
+    "body": "{ tracing_filter_from_rust_log (std :: env :: var_os (\"RUST_LOG\") . as_deref () , debug_enabled , default_level) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for tracing_filter.",
+    "assessments": {
+      "full_recording": "review-261",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

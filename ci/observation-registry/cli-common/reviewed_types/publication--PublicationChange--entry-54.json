@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::PublicationChange",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" What a compare-if-changed publication actually altered.\"] # [doc = \"\"] # [doc = \" The two components are reported separately so a mode repair is\"] # [doc = \" never read as new content.\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] pub struct PublicationChange { # [doc = \" The destination received new bytes, staged with the required\"] # [doc = \" mode already applied.\"] pub bytes_changed : bool , # [doc = \" A byte-current destination's mode was repaired in place; its\"] # [doc = \" bytes and their modification time were not touched.\"] pub mode_changed : bool , }"
+  }
+}

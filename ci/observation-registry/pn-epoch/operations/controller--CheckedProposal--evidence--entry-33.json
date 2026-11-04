@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "item": "controller::CheckedProposal::evidence",
+    "owner": "EPOCH",
+    "signature": "fn evidence (& self) -> & Evidence",
+    "claim": "ROOT::alg:design:production-wall-controller",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits independent controller replay and supplies no authority.",
+      "witness": "EPOCH::claim:admission:controller-publication-retains-frozen-epoch-inputs",
+      "boundary": "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+      "class_decision": "canonical-controller-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence",
+    "body": "{ & self . evidence }",
+    "class_decision": "canonical-controller-public",
+    "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

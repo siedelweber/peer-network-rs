@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "BaseArgs",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Common `--debug` flag for all helpers. Flatten into each\"] # [doc = \" binary's `Args` struct via `#[command(flatten)]`.\"] # [derive (clap :: Args)] pub struct BaseArgs { # [doc = \" Retained output-contract flag; does not select observation level. Use `PN_OBSERVE_LEVEL`.\"] # [arg (long)] pub debug : bool , }"
+  }
+}

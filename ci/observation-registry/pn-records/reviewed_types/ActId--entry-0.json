@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ActId",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Authored identity before finalization or host ordering.\"] # [doc = \" (´def:acts:identity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct ActId { # [doc = \" Exact public author identifier, nonempty.\"] pub author : String , # [doc = \" Author-local sequence, not a host position.\"] pub sequence : u64 , # [doc = \" Exact family name, nonempty; family semantics belong to the graph bite.\"] pub family : String , }"
+  }
+}

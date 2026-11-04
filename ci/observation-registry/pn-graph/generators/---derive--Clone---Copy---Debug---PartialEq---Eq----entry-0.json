@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "title::FinalSetDecision",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural Clone, Debug and equality expose public settlement events and the caller supplied final-set decision. No serialization, authentication or publication is generated."
+  }
+}

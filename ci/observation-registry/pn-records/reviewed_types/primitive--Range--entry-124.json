@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::Range",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" A signed rational box bound; standing hull nonnegativity is a separate contract.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Range { pub lower : String , pub upper : String , }"
+  }
+}

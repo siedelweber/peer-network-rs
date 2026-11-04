@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::scalars::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/scalars.rs",
+    "syntax": "macro_rules ! amount { ($ t : ty ,$ method : ident) => { impl Wire for $ t { # [doc = \" Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.\"] fn write (& self , c : & mut Context <'_ >) -> Result < Value , Error > { Ok (array ([rational_value (self . exact () , c) ?, self . unit () . to_owned () . write (c) ?,])) } # [doc = \" Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.\"] fn read (v : & Value , c : & mut Context <'_ >) -> Result < Self , Error > { let mut f = array_fields (v) ?; let exact = rational_text (f . next () . ok_or (Error :: Shape) ?, c) ?; let unit : String = take (& mut f , c) ?; finish (f) ?; let literal = c . numeric . literal (& exact) . map_err (Error :: Numeric) ?; c . numeric .$ method (& literal , & unit) . map_err (Error :: Numeric) } } } ; }",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

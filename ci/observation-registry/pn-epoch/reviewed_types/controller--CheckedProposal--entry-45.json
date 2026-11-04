@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::CheckedProposal",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "syntax": "# [doc = \" Only independent replay creates this immutable controller result, not admission evidence.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug)] pub struct CheckedProposal { evidence : Evidence , }"
+  }
+}

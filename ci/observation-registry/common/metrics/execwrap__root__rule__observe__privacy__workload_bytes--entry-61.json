@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "execwrap__root__rule__observe__privacy__workload_bytes",
+    "kind": "histogram",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ControlPlaneFields",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Structured fields attached to a control-plane record.\"] # [derive (Debug , Clone , Serialize , Deserialize , PartialEq , Eq)] # [serde (tag = \"type\" , rename_all = \"snake_case\")] pub enum ControlPlaneFields { # [doc = \" Help text returned by clap or a command-specific renderer.\"] Help { text : String } , # [doc = \" Version string returned by clap or the command.\"] Version { version : String } , # [doc = \" Details for an argv parsing or usage error.\"] UsageError { exit_code : u8 , clap_error_kind : String } , # [doc = \" Details for stdout TTY refusal.\"] TtyRefusal { exit_code : u8 , stream : StandardStream } , # [doc = \" Details for a panic diagnostic, including every available public string payload.\"] Panic { exit_code : u8 , thread : Option < String > , location : Option < String > , # [serde (skip_serializing_if = \"Option::is_none\")] payload : Option < String > , } , }"
+  }
+}

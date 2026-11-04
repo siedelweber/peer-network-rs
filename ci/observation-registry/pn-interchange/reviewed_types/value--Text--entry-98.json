@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Text",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A text string, valid UTF-8 by construction.\"] # [doc = \"\"] # [doc = \" Its `Ord` is the ordinary bytewise order of the payload, which is *not*\"] # [doc = \" the canonical order of the corresponding [`Value`]: canonical order\"] # [doc = \" compares the head first, so a shorter text string always sorts before a\"] # [doc = \" longer one.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Text, ValueError};\"] # [doc = \"\"] # [doc = \" assert_eq!(Text::from(\\\"IETF\\\".to_owned()).as_str(), \\\"IETF\\\");\"] # [doc = \"\"] # [doc = \" let err = Text::try_from(vec![0x61, 0xff]).expect_err(\\\"0xff starts no sequence\\\");\"] # [doc = \" assert!(matches!(err, ValueError::InvalidUtf8 { offset: 1 }));\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Hash , PartialOrd , Ord , Default)] pub struct Text (Box < str >) ;"
+  }
+}

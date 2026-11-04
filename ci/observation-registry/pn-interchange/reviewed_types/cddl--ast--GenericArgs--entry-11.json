@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::GenericArgs",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `genericarg = \\\"<\\\" S type1 S *(\\\",\\\" S type1 S ) \\\">\\\"`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct GenericArgs { # [doc = \" The arguments, in order. Never empty: the ABNF requires one.\"] # [doc = \"\"] # [doc = \" The elements are `type1` and not `type`, so an argument cannot be a\"] # [doc = \" bare type choice; `<a / b>` is not generic-argument syntax.\"] pub (crate) args : Vec < Type1 > , # [doc = \" From `<` to `>`.\"] pub (crate) span : Span , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::Exhaustion",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" A `.regexp` match that ran out of budget: what it was matching against,\"] # [doc = \" and how much it was given.\"] # [derive (Clone , Debug)] pub (crate) struct Exhaustion { pattern : String , budget : usize , }"
+  }
+}

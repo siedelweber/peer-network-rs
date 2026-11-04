@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "conserved-public-evaluation",
+    "status": "reviewer-confirmed",
+    "premises": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/transport/enclosed.rs::transport::enclosed::evaluate",
+        "pn-epoch::packages/epoch/src/conserved.rs::conserved::evaluate_map",
+        "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
+        "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
+        "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay"
+      ]
+    }
+  }
+}

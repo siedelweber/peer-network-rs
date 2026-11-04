@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::FullStanding",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Nonnegative full standing in the named burn unit.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FullStanding { exact : Exact , unit : String , }"
+  }
+}

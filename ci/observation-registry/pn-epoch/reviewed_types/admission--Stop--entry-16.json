@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Stop",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Operational stops publish no mathematical verdict.\"] # [doc = \" (´[ROOT-amend:design:admission-refusals]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Stop { Work , ReplayWork , Storage , Interrupted , }"
+  }
+}

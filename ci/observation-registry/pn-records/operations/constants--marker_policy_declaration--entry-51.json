@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "item": "constants::marker_policy_declaration",
+    "owner": "RECORDS",
+    "signature": "fn marker_policy_declaration (input : & crate :: burn :: PolicyInput , burn : & crate :: burn :: ValidatedBurn ,) -> Result < DeclarationContent , crate :: burn :: BurnError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "digest-marker-policy"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/constants.rs::constants::marker_policy_declaration",
+    "class_decision": "public-records",
+    "body": "{ let result = crate :: burn :: validate_policy (input . clone () , burn) . map (| _ | DeclarationContent :: MarkerPolicy { recipe : MARKER_POLICY_RECIPE . into () , digest : marker_policy_digest (input) , }) ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "The publication producer validates public policy content against validated burn before returning its recipe and digest together; refusal preserves the typed cause and records refusal without constructing a publication."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "fence::Search",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/fence.rs",
+    "syntax": "# [doc = \" A successful choice or an operational stop, with every executed request retained.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Search { pub evidence : Evidence , pub selected : Option < String > , pub operational_stop : Option < Outcome > , }"
+  }
+}

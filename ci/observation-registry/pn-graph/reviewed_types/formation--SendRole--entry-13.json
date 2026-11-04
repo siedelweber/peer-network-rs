@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::SendRole",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Constructor role of a Send edge, derived from one complete act.\"] # [doc = \" (´def:formation:send´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum SendRole { # [doc = \" Initiating Actor to Chat.\"] A , # [doc = \" Chat to Message.\"] T , }"
+  }
+}

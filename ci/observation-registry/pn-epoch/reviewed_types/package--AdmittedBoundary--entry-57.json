@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::AdmittedBoundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Immutable admitted boundary constructed only after every final gate passes.\"] # [doc = \" (´[ROOT-inv:design:atomic-admission]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn admit(candidate: pn_epoch::package::CandidateContext, evidence: pn_epoch::admission::FinalEvidence) -> pn_epoch::package::AdmittedBoundary {\"] # [doc = \"     pn_epoch::package::AdmittedBoundary { candidate, evidence }\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Debug)] pub struct AdmittedBoundary { candidate : CandidateContext , evidence : crate :: admission :: FinalEvidence , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::verification::map::Prepared",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/map.rs",
+    "syntax": "pub (super) struct Prepared { pub rates : Vec < Interval > , pub counts : Vec < Interval > , pub base : Vec < Vec < Interval > > , pub support : Vec < BTreeSet < usize > > , pub hull : Vec < Range > , pub inner_hull : Vec < Range > , pub fence : Range , pub contraction : String , }"
+  }
+}

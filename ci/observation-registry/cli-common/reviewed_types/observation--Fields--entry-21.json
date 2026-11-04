@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::Fields",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Default)] struct Fields (Map < String , Value > , usize , bool , Option < & 'static str >) ;"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "live_markers::Error",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "live-marker-public",
+    "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+  }
+}

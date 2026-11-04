@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "host__root__sig__design__storage__successor_attempts",
+    "kind": "counter",
+    "unit": "count",
+    "attributes": {}
+  }
+}

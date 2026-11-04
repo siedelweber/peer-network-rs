@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "accept::Instrument",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "syntax": "# [doc = \" The instrument governing a document, chosen from its envelope and the\"] # [doc = \" held state alone.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{\"] # [doc = \"     dispatch, Coordinate, Envelope, Instrument, NamespaceLabel, Registry, Theory, Version,\"] # [doc = \" };\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example\\\").expect(\\\"a label\\\");\"] # [doc = \" let theory = Theory::parse(r#\\\"e = {0 => \\\"com.example\\\", 1 => [1, 0, uint], 2 => tstr}\\\"#)\"] # [doc = \"     .expect(\\\"an assignable theory\\\");\"] # [doc = \" let mut registry = Registry::new();\"] # [doc = \" registry\"] # [doc = \"     .acquire(Coordinate::new(label.clone(), 1, 0), theory)\"] # [doc = \"     .expect(\\\"the first minor\\\");\"] # [doc = \"\"] # [doc = \" let envelope = Envelope::new(label, Version::new(1, 0, 3));\"] # [doc = \" assert!(matches!(\"] # [doc = \"     dispatch(&registry, &envelope),\"] # [doc = \"     Instrument::Strict { minor: 0, .. }\"] # [doc = \" ));\"] # [doc = \" ```\"] # [derive (Debug)] pub enum Instrument < 'r > { # [doc = \" The stamp is held: the strict verdict is `d ⊨ R(ℓ, M, m)`.\"] Strict { # [doc = \" The stamped minor, which is the held minor governing.\"] minor : u64 , # [doc = \" The theory held there.\"] theory : & 'r Theory , } , # [doc = \" The stamp outruns the ceiling: the tolerant verdict is\"] # [doc = \" `d ⊨ Open(R(ℓ, M, m₁))`.\"] Tolerant { # [doc = \" The reader's floor: the ceiling of that major.\"] floor : u64 , # [doc = \" The companion of the theory held at the floor.\"] companion : & 'r OpenTheory , } , # [doc = \" No instrument: the document is rejected whole.\"] Refused (RejectionCause) , }"
+  }
+}

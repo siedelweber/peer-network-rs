@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::Frame",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" A container whose head has been read and whose items have not.\"] # [doc = \"\"] # [doc = \" `start` is where the container's own head began, which becomes the\"] # [doc = \" start of the finished value — the byte range a map needs to compare its\"] # [doc = \" keys by.\"] # [derive (Debug)] enum Frame { Array { items : Vec < Value > , remaining : usize , indefinite : bool , start : usize , } , Map { entries : Vec < (Value , Value) > , remaining : usize , indefinite : bool , pending_key : Option < Value > , previous_key : Option < (usize , usize) > , start : usize , } , Tag { number : u64 , start : usize , } , }"
+  }
+}

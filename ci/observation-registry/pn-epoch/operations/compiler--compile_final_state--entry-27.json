@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "item": "compiler::compile_final_state",
+    "owner": "EPOCH",
+    "signature": "fn compile_final_state (package : & VerifiedPackage , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+    "body": "{ compile_source (CompiledSource :: Published (package . clone ()) , verifier , numeric , limits , maximum_products ,) }",
+    "class_decision": "epoch-compiler",
+    "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+    "assessments": {
+      "full_recording": "epoch-compiler-full_recording",
+      "secret_flow": "epoch-compiler-secret_flow",
+      "exposure_consumers": "epoch-compiler-exposure_consumers"
+    }
+  }
+}

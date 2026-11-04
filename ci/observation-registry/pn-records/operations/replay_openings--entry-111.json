@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "replay_openings",
+    "owner": "RECORDS",
+    "signature": "fn replay_openings (history : & ValidatedHistory , opener : & impl commitments :: DependencyOpener ,) -> Result < ValidatedHistory , commitments :: OpeningError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "replay-openings"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::replay_openings",
+    "body": "{ use commitments :: OpeningError ; let mut acts : Vec < _ > = history . acts . iter () . map (| act | CandidateAct { commitments : act . commitments . clone () , id : act . id . clone () , body : act . body . clone () , legs : act . legs . iter () . map (| leg | CandidateLeg { id : leg . id . clone () , source : leg . source . clone () , target : leg . target . clone () , removal : None , }) . collect () , projections : act . projections . clone () , protocol_references : act . protocol_references . clone () , authentication_evidence : act . authentication_evidence . clone () , finalization_epoch : act . finalization_epoch , authoritative_position : act . authoritative_position , logical_time : act . logical_time , }) . collect () ; let mut seen = BTreeSet :: new () ; for target in opener . targets () { if ! seen . insert (target . clone ()) { return Err (OpeningError :: Target) ; } let index = acts . iter () . position (| act | act . id == target) . ok_or (OpeningError :: Target) ? ; if ! matches ! (acts [index] . projections . dependency , DependencyProjection :: Tombstoned (_)) { return Err (OpeningError :: Target) ; } let dependencies = opener . open (& history . acts [index]) ? ; acts [index] . projections . dependency = if dependencies . is_empty () { DependencyProjection :: FullEmpty } else { DependencyProjection :: Full (dependencies) } ; } let names : Vec < _ > = history . references . iter () . filter (| name | matches ! (name , PublicReference :: Named { .. })) . cloned () . collect () ; let mut result = history_snapshot (& acts , & names) . map_err (| _ | OpeningError :: History) ? ; result . acts = Arc :: clone (& history . acts) ; result . references = Arc :: clone (& history . references) ; Ok (result) }",
+    "class_decision": "act-profile-records",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

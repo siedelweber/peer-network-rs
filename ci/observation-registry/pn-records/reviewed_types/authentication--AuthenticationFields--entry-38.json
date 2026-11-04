@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AuthenticationFields",
+    "package": "pn-records",
+    "path": "packages/records/src/authentication.rs",
+    "syntax": "# [doc = \" Untrusted public handshake fields. Bytes are retained exactly; their encoding,\"] # [doc = \" bindings and signatures belong to the declared authentication verifier.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationFields { # [doc = \" Actor's proposal pre-commitment P, separate from its signature.\"] pub proposal_precommitment : Vec < u8 > , # [doc = \" Actor signature over P.\"] pub actor_proposal_signature : Vec < u8 > , # [doc = \" Content commitment edition, separate from its recipe identifier.\"] pub content_edition : String , # [doc = \" Dependency commitment edition, separate from its recipe identifier.\"] pub dependency_edition : String , # [doc = \" Exact disclosed representation of V; no decoding or hash is performed here.\"] pub verified_header : Vec < u8 > , # [doc = \" Host seal over V, not an inclusion promise.\"] pub host_seal : Vec < u8 > , # [doc = \" Actor approval witness binding the exact V and host seal.\"] pub approval_binding : Vec < u8 > , # [doc = \" Declared authentication edition, not an admission of its cryptography.\"] pub authentication_edition : String , # [doc = \" Public verification material; never private keys or proposal secrets.\"] pub public_verification_material : Vec < u8 > , }"
+  }
+}

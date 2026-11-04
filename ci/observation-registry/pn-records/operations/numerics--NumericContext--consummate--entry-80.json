@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::consummate",
+    "owner": "RECORDS",
+    "signature": "fn consummate (& mut self , price : & ChargedPrice , actions : ActionCount , boundary : u64 ,) -> Result < ChargedVintage , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-consummate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::consummate",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { let count = Rational :: parse (& actions . 0 . to_string () , & mut self . budget) ? ; let value = price . price . exact . value . mul (& count , & mut self . budget) ? ; Ok (ChargedVintage { price : price . clone () , actions , boundary , charged : BurnAmount { exact : Exact :: new (value , & mut self . budget) ? , unit : price . price . unit . clone () , } , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

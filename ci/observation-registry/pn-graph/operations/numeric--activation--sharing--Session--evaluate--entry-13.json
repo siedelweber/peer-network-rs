@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/sharing.rs",
+    "item": "numeric::activation::sharing::Session::evaluate",
+    "owner": "GRAPH",
+    "signature": "fn evaluate (& mut self , input : & Request) -> Result < usize , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
+    "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if ! self . production || input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } super :: wall_binding (& self . procedure , input , & mut self . budget) ? ; self . budget . work (key_work (input) ? , Location :: new (\"evaluation memo key\")) ? ; for (index , entry) in self . retained . iter () . enumerate () { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == * input { self . active = true ; return Ok (index) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , None , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . clone () , primitive : record , }) ; self . active = true ; Ok (self . retained . len () - 1) }",
+    "class_decision": "activation-base-public",
+    "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

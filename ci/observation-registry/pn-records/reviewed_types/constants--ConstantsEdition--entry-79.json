@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "constants::ConstantsEdition",
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "syntax": "# [doc = \" Checked payload, retaining the declaration's definitions rather than a current-price lookup.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ConstantsEdition { input : EditionInput , floor_source : ConstantDefinition , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::monotone::Envelope",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/monotone.rs",
+    "syntax": "# [doc = \" Locally constructed endpoint evidence; no caller-supplied bound can construct this value.\"] # [doc = \" (´def:numerics:activation-endpoints´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Envelope { input : Request , bounds : Option < Range > , records : Vec < PrimitiveRecord > , source : Option < Box < Envelope > > , work : u64 , }"
+  }
+}

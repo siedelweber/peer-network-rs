@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::MemberKey",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `memberkey`.\"] # [derive (Clone , Debug)] pub (crate) struct MemberKey { # [doc = \" Which form.\"] pub (crate) kind : MemberKeyKind , # [doc = \" From the start of the key through its `=>` or `:`.\"] pub (crate) span : Span , }"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::backend_budget::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_budget.rs",
+    "syntax": "structure ! (d :: limits :: BudgetUsage { work , arithmetic_steps , condition_steps , case_arms , region_nodes , region_cells , refinement_pairs , local_contexts , hypothesis_depth , boundary_nodes , jet_order , jet_entries , delta_order , test_nodes , pairing_steps , pullback_zeros , coefficient_ops , denominator_factors , coefficient_maps , tower_levels , tower_degree , tower_reductions , gcd_steps , component_splits , orbit_permutations , orbit_members , orbit_terms , symmetric_steps , resolvent_depth , resolvent_degree , selection_slots , solution_branches , family_parameters , solve_identities , linear_pivots , isolation_steps , local_branches }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

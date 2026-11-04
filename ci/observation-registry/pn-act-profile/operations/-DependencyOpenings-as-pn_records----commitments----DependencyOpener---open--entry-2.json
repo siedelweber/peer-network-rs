@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
+    "owner": "ACTPROFILE",
+    "signature": "fn open (& self , act : & pn_records :: ValidatedAct) -> Result < Vec < ActId > , pn_records :: commitments :: OpeningError >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
+    "body": "{ use pn_records :: commitments :: OpeningError as E ; let anchor = act . commitments () . ok_or (E :: Anchor) ? ; let supplied = self . 0 . iter () . find (| opening | & opening . act == act . id ()) . ok_or (E :: Target) ? ; dependencies_match_supplied_commitment (act . id () , & anchor . proposal , & anchor . dependency , & supplied . salt , & supplied . dependencies ,) . map_err (| e | match e { ProfileError :: Mismatch => E :: Mismatch , ProfileError :: Recipe => E :: Anchor , _ => E :: Representation , }) ? ; Ok (publish_opened_dependencies (& supplied . dependencies)) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

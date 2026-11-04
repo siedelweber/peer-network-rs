@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::content::Parser",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation/content.rs",
+    "syntax": "struct Parser < 'a > { text : & 'a str , position : usize , }"
+  }
+}

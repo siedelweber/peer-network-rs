@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "base::BaseError",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "epoch-base",
+    "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+  }
+}

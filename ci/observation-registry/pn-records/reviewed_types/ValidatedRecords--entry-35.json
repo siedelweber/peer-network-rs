@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ValidatedRecords",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords { acts : Vec < ValidatedAct > , history : ValidatedHistory , declarations : Vec < Declaration > , }"
+  }
+}

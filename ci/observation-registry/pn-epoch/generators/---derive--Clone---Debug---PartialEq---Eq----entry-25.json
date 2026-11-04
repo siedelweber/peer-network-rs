@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "ledger::BurnSnapshot",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/ledger.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "epoch-ledger",
+    "expansion_review": "Structural Clone, Debug, equality and Error preserve complete public snapshot, numeric and refusal values. No secrets enter these carriers."
+  }
+}

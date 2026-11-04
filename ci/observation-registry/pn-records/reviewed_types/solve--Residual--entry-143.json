@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Residual",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Supplied residual premises and claimed radius, not a checked map evaluation.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Residual { pub candidate : BTreeMap < String , String > , pub residual_upper : String , pub contraction_upper : String , pub radius : String , }"
+  }
+}

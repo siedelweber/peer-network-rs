@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "item": "schedules::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (d : & ScheduleDeclaration , frames : & [Boundary < '_ , '_ >] , ridge : Option < & CheckedRidge > , limits : Limits , record : & Record ,) -> Result < CheckedSchedule , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+    "body": "{ Ok (CheckedSchedule { record : run (d , frames , ridge , limits , Some (record)) ? , sources : frames . iter () . map (| frame | frame . completed . inputs () . 0 . package () . input () . clone ()) . collect () , }) }",
+    "class_decision": "effective-schedule-public",
+    "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::Envelope",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "syntax": "# [doc = \" The envelope: the namespace label at key 0 and the version at key 1.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Envelope, NamespaceLabel, Version};\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example.thing\\\").expect(\\\"a label\\\");\"] # [doc = \" let envelope = Envelope::new(label, Version::new(1, 0, 0));\"] # [doc = \" assert_eq!(envelope.label().as_str(), \\\"com.example.thing\\\");\"] # [doc = \" assert_eq!(envelope.version(), Version::new(1, 0, 0));\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Hash)] pub struct Envelope { label : NamespaceLabel , version : Version , }"
+  }
+}

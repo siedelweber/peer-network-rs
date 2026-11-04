@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "compiler::CoefficientEvidence",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "syntax": "# [doc = \" Exact cell magnitude or its retained numeric-evidence hold.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum CoefficientEvidence { Exact (String) , Irrational { radicand : String } , }"
+  }
+}

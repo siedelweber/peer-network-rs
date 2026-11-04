@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::QueueMeter",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "struct QueueMeter ;"
+  }
+}

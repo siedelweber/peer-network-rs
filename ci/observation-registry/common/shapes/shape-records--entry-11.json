@@ -1,0 +1,34 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete available argument representation",
+      "result or explicit unavailable capability representation",
+      "terminal outcome",
+      "inclusive duration_seconds",
+      "declared own work",
+      "qualified resource totals",
+      "bounded operation identity"
+    ],
+    "metrics": [
+      "records__root__sig__design__records__started_operations",
+      "records__root__sig__design__records__completed_operations",
+      "records__root__sig__design__records__work_bytes",
+      "records__root__sig__design__records__work_operations",
+      "records__root__sig__design__records__active_operations",
+      "records__root__sig__design__records__resource_current_bytes",
+      "records__root__sig__design__records__elapsed_seconds",
+      "records__root__sig__design__records__workload_bytes",
+      "records__root__sig__design__records__workload_operations",
+      "records__root__sig__design__records__validated_records",
+      "records__root__sig__design__records__resolved_references",
+      "records__root__sig__design__records__refusals",
+      "records__root__sig__design__records__active_validation",
+      "records__root__sig__design__records__live_carrier_bytes",
+      "records__root__sig__design__records__records_per_boundary",
+      "records__root__sig__design__records__input_bytes",
+      "records__root__sig__design__records__assembly_steps"
+    ]
+  },
+  "name": "shape-records"
+}

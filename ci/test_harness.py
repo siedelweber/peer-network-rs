@@ -602,7 +602,8 @@ assert (root/'payload').read_text() == 'committed'
         self.assertEqual(set(manifest['dependencies']),{'regexml','thiserror','tracing','secrecy'})
         self.assertTrue(manifest['lints']['workspace'])
         self.assertNotIn('rust-version',manifest['package'])
-        register=json.loads((root/'ci/observation-registry.json').read_text())
+        from registry_fragments import read as read_fragments
+        register=read_fragments(root, 'observation-registry')
         declaration,=[row for row in register['reviewed_types'] if row['package']=='pn-interchange' and row['item']=='value::Value']
         self.assertIn('pub enum Value',declaration['syntax'])
         self.assertNotIn('non_exhaustive',declaration['syntax'])

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::SettlementRefusal",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" Public settlement refusal; a fault is retained for the run.\"] # [doc = \" (´def:wallet:settlement-refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum SettlementRefusal { # [doc = \" A chain position the decision needs was not read; nothing is guessed.\"] Unavailable { # [doc = \" Height whose active-chain hash is absent.\"] height : u64 , } , # [doc = \" Evidence is not on the observed chain at its claimed height.\"] Stale { # [doc = \" Display-order transaction identifier.\"] transaction : [u8 ; 32] , # [doc = \" Output index.\"] output : u32 , } , # [doc = \" One outpoint was reported with different locators or amounts.\"] Alias { # [doc = \" Display-order transaction identifier.\"] transaction : [u8 ; 32] , # [doc = \" Output index.\"] output : u32 , } , # [doc = \" The pinned total does not fit the amount type.\"] Overflow , # [doc = \" The observed chain no longer holds the pinned floor: a realization fault for the run.\"] # [doc = \" Pinned amounts are retained unchanged and every later observation returns this fault.\"] Fault { # [doc = \" Pinned floor height the observed chain conflicts with.\"] height : u64 , # [doc = \" Retained pinned total, never edited downward.\"] retained : u64 , } , }"
+  }
+}

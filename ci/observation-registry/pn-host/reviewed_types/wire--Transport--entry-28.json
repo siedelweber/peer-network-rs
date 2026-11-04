@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wire::Transport",
+    "package": "pn-host",
+    "path": "packages/host/src/wire.rs",
+    "syntax": "enum Transport { Unix (UnixStream) , Tcp (TcpStream) , }"
+  }
+}

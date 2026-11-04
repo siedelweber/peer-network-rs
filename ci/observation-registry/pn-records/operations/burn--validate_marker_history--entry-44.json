@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "item": "burn::validate_marker_history",
+    "owner": "RECORDS",
+    "signature": "fn validate_marker_history (input : HistoryInput , policy : & ValidatedPolicy , verifier : & impl PublicVerifier ,) -> Result < ValidatedMarkerHistory , BurnError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "validate-marker-history"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/burn.rs::burn::validate_marker_history",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { if verifier . profile () != policy . input . verification_profile { return Err (BurnError :: Verifier) ; } if input . identity . is_empty () { return Err (BurnError :: HistoryPolicy) ; } let mut positions = BTreeSet :: new () ; if input . markers . iter () . any (| marker | ! positions . insert (marker . history_position)) { return Err (BurnError :: HistoryPosition) ; } let mut names = BTreeSet :: new () ; let mut proofs = BTreeSet :: new () ; for record in & input . records { if record . identity . is_empty () || ! names . insert (record . identity . clone ()) { return Err (BurnError :: RecordIdentity) ; } if ! record . destruction . is_empty () && ! record . address . 0 . is_empty () && ! record . evidence . is_empty () && verifier . destruction (record) { proofs . insert (record . identity . clone ()) ; } } let openings = input . markers . iter () . map (| marker | recover (marker , & policy . input , verifier)) . collect () ; Ok (ValidatedMarkerHistory { input , policy : policy . clone () , verified : proofs , openings , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body checks public history identity, unique disclosed positions, record identities and verifier profile, retaining verification results and per-candidate openings. Trace records complete public input and typed refusal. The profile is a trusted external boundary; the fixture supplies no chain evidence."
+  }
+}

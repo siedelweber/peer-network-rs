@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "item": "run",
+    "owner": "DOCUMENTS",
+    "signature": "fn run (root : & Path , operation : Operation) -> Result < Report >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/lib.rs::run",
+    "body": "{ let template_root = root . join (\"docs/templates\") ; let template_paths = files (& template_root) ? ; if ! template_paths . iter () . any (| path | path . extension () . is_some_and (| extension | extension == \"j2\")) { return Err (format ! (\"{}: no text template\" , template_root . display ()) . into ()) ; } validate_templates (root , & template_root , & template_paths) ? ; let mut report = Report :: default () ; if let Operation :: Generate { check } = operation { report . findings = generate (root , ! check) ? ; return Ok (report) ; } if matches ! (operation , Operation :: Check) { report . findings = generate (root , false) ? ; } let mut datasets = BTreeMap :: new () ; for path in files (& root . join (\"docs/datasets\")) ? { let dataset = envelope :: json (& read (& path) ?) . map_err (| error | format ! (\"{}: {error}\" , path . display ())) ? ; let namespace = dataset . namespace . clone () ; if datasets . insert (namespace . clone () , dataset) . is_some () { return Err (format ! (\"duplicate dataset: {namespace}\") . into ()) ; } report . datasets . insert (namespace , relative (root , & path) ?) ; } let fragment_root = root . join (\"docs/fragments\") ; let mut fragments = BTreeMap :: new () ; for path in files (& fragment_root) ? { let name = format ! (\"fragments/{}\" , relative (& fragment_root , & path) ?) ; fragments . insert (name , read (& path) ?) ; } let mut prepared = Vec :: new () ; for path in template_paths { let name = relative (& template_root , & path) ? ; let Some (document) = name . strip_suffix (\".j2\") . filter (| stem | ! stem . is_empty ()) . map (str :: to_owned) else { report . unrendered_templates . push (relative (root , & path) ?) ; continue ; } ; let source = read (& path) ? ; let (bytes , used) = rendering :: render (& source , & fragments , & datasets , & document) . map_err (| error | format ! (\"{}: {error}\" , path . display ())) ? ; report . templates . push (Rendering { template : relative (root , & path) ? , document : document . clone () , datasets : used , }) ; prepared . push ((root . join (document) , bytes)) ; } let used : BTreeSet < _ > = report . templates . iter () . flat_map (| item | item . datasets . iter ()) . collect () ; report . unread_datasets = report . datasets . iter () . filter (| (name , _) | ! used . contains (name)) . map (| (_ , path) | path . clone ()) . collect () ; if matches ! (operation , Operation :: Check) { census :: validate (root , & report . templates , & datasets) ? ; } if ! matches ! (operation , Operation :: Census) { for (path , bytes) in prepared { if compare (& path , bytes . as_bytes () , matches ! (operation , Operation :: Write)) ? { report . findings . push (Finding { kind : FindingKind :: StaleDocument , path : relative (root , & path) ? , }) ; } } report . findings . extend (report . unrendered_templates . iter () . map (| path | Finding { kind : FindingKind :: UnrenderedTemplate , path : path . clone () , })) ; } Ok (report) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for run.",
+    "assessments": {
+      "full_recording": "review-171",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

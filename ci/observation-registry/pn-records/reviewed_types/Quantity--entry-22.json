@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Quantity",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" An exact integer with its declared unit and consummated vintage.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Quantity { # [doc = \" Exact integer; no floating conversion or valuation occurs here.\"] pub value : i64 , # [doc = \" Nonempty unit name, retained without conversion.\"] pub unit : String , # [doc = \" Declared epoch, never replaced with finalization time.\"] pub vintage : u64 , }"
+  }
+}

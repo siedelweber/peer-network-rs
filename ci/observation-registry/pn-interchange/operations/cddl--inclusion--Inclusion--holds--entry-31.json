@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/inclusion.rs",
+    "item": "cddl::inclusion::Inclusion::holds",
+    "owner": "INTERCHANGE",
+    "signature": "fn holds (& self) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/inclusion.rs::cddl::inclusion::Inclusion::holds",
+    "body": "{ matches ! (self , Inclusion :: Holds) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::inclusion::Inclusion::holds.",
+    "assessments": {
+      "full_recording": "review-019",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

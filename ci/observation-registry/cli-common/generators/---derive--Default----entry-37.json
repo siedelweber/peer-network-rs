@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::SummaryFields",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Default)]",
+    "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+    "class_decision": "public-cli"
+  }
+}

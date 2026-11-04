@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "admission::ControllerEdition",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "epoch-admission-declarations",
+    "expansion_review": "Structural cloning, public diagnostic formatting, equality and distinct error conversion preserve the complete declared inputs. There is no serialization, default initialization, publication conversion or admitted-result constructor."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "item": "settlement::Settlement::observe",
+    "owner": "WALLET",
+    "signature": "fn observe (& mut self , observation : & Observation) -> Result < View , SettlementRefusal >",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/settlement.rs::settlement::Settlement::observe",
+    "class_decision": "wallet-decoder",
+    "body": "{ if let Some (fault) = self . fault { return Err (fault) ; } let hash = | height : u64 | { observation . hashes . get (& height) . copied () . ok_or (SettlementRefusal :: Unavailable { height }) } ; if let Some ((height , block)) = floor (& self . pinned) && (observation . tip < height || hash (height) ? != block) { let retained = self . pinned . values () . fold (0u64 , | total , evidence | total . saturating_add (evidence . amount)) ; let fault = SettlementRefusal :: Fault { height , retained } ; self . fault = Some (fault) ; return Err (fault) ; } let mut located = BTreeMap :: new () ; for evidence in & observation . evidence { let key = (evidence . transaction , evidence . output) ; let alias = SettlementRefusal :: Alias { transaction : evidence . transaction , output : evidence . output , } ; if evidence . height > observation . tip || hash (evidence . height) ? != evidence . block { return Err (SettlementRefusal :: Stale { transaction : evidence . transaction , output : evidence . output , }) ; } if located . insert (key , * evidence) . is_some_and (| earlier | earlier != * evidence) || self . pinned . get (& key) . is_some_and (| pinned | pinned != evidence) { return Err (alias) ; } } let mut pinned = self . pinned . clone () ; let mut pending = Vec :: new () ; for (key , evidence) in located { let successors = observation . tip - evidence . height ; if successors >= PINNING_SUCCESSORS { pinned . entry (key) . or_insert (evidence) ; } else { pending . push (Pending { evidence , successors }) ; } } let pinned_total = pinned . values () . try_fold (0u64 , | total , evidence | total . checked_add (evidence . amount)) . ok_or (SettlementRefusal :: Overflow) ? ; self . pinned = pinned ; Ok (View { pinned : self . pinned . values () . copied () . collect () , pending , pinned_total , floor : floor (& self . pinned) , }) }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "This body performs the declared public settlement observation over caller-read public chain positions, with complete public argument and return recording and no secret input."
+  }
+}

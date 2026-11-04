@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "support::ContributingRange",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support.rs",
+    "syntax": "# [doc = \" Exact extrema of source rates reaching a target, not a standing solution.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ContributingRange { pub minimum : String , pub maximum : String , pub width : String , }"
+  }
+}

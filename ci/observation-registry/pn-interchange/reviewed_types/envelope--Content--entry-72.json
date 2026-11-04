@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::Content",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "syntax": "# [doc = \" The content of a document: its restriction to the keys above 1.\"] # [doc = \"\"] # [doc = \" Content is keyed by [`ContentKey`] on the way in and by [`u64`] on the\"] # [doc = \" way out: the invariant is enforced where values enter, and lookups by a\"] # [doc = \" literal are ergonomic.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Content, ContentKey, Value};\"] # [doc = \"\"] # [doc = \" let mut content = Content::new();\"] # [doc = \" content.insert(ContentKey::new(2).expect(\\\"a content key\\\"), Value::Unsigned(7));\"] # [doc = \" assert_eq!(content.get(2), Some(&Value::Unsigned(7)));\"] # [doc = \" assert_eq!(content.get(3), None);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , Hash , Default)] pub struct Content (BTreeMap < u64 , Value >) ;"
+  }
+}

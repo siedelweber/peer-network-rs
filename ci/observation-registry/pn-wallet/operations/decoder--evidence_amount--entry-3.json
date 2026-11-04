@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "item": "decoder::evidence_amount",
+    "owner": "WALLET",
+    "signature": "fn evidence_amount (tx : & Transaction , index : usize , asset : & [u8 ; 32] , run : & [u8 ; 32] , target : & [u8 ; 32] , request : & [u8 ; 32] ,) -> Result < u64 , Refusal >",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::evidence_amount",
+    "class_decision": "wallet-decoder",
+    "body": "{ let result = (| | { let tx = & tx . 0 ; if tx . inputs . iter () . any (| input | input . pegin || input . has_issuance) { return Err (Refusal :: EvidenceInput) ; } let output = tx . outputs . get (index) . ok_or (Refusal :: EvidenceOutput) ? ; if output . asset . first () != Some (& 1) || output . asset . get (1 ..) != Some (asset . as_slice ()) || output . value . len () != 9 || output . value [0] != 1 || output . nonce != [0] { return Err (Refusal :: EvidenceOutput) ; } let script = & output . script ; if script . len () != 100 || script [.. 2] != [0x6a , 0x20] || script [34] != 0x20 || script [67] != 0x20 || script [2 .. 34] != * run || script [35 .. 67] != * target || script [68 ..] != * request { return Err (Refusal :: Target) ; } let amount = u64 :: from_be_bytes (output . value [1 ..] . try_into () . map_err (| _ | Refusal :: EvidenceOutput) ?) ; if amount == 0 { return Err (Refusal :: EvidenceOutput) ; } Ok (amount) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "The selector checks explicit asset and positive integer amount, excludes issuance and peg-in inputs, and binds run, target and request without rewriting the transaction."
+  }
+}

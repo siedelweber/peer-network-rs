@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::RecognizedMarker",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" A complete accepted record set and one representative per destruction.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarker { identity : Marker , accepted : BTreeSet < String > , destructions : BTreeMap < String , BurnRecord > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::Literal",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Original exact literal and its reduced rational value, never a rounded display.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Literal { source : String , exact : Exact , }"
+  }
+}

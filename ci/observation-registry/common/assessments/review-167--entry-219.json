@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Dataset input, template sources, projected values and rendered reports are public. The consuming document boundaries preserve available value structure; serde capability adapters inherit those boundaries without adding bounds or invoking deserializers twice. This body inherits the public-documents decision for install_panic_hook.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-167"
+}

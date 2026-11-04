@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::InverseSearch",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "syntax": "# [doc = \" Finite inverse-search declarations, separate from measured epoch inputs.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct InverseSearch { pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , }"
+  }
+}

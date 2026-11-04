@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/price_input.rs",
+    "item": "numerics::price_input::ChargedPrice::disclosure",
+    "owner": "RECORDS",
+    "signature": "fn disclosure (& self) -> PriceInput",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable disclosure carries no new charge authority.",
+      "witness": "EPOCH::claim:admission:restored-packages-retain-complete-admission",
+      "boundary": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::NumericContext::restore_charged_price",
+      "class_decision": "semantic-publication-public"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics/price_input.rs::numerics::price_input::ChargedPrice::disclosure",
+    "body": "{ PriceInput { wall : self . wall () . exact () . into () , numeraire : self . numeraire () . clone () , price : self . price () . exact () . into () , floor : self . floor , ridge : self . ridge . clone () , } }",
+    "class_decision": "semantic-publication-public",
+    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

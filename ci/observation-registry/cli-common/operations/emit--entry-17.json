@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "emit",
+    "owner": "CLICOMMON",
+    "signature": "fn emit < T : serde :: Serialize > (value : & T) -> io :: Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::emit",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"emit\" , & std :: any :: type_name :: < T > ()) ; let result = { let stdout = io :: stdout () ; let mut out = stdout . lock () ; write_json_line (& mut out , value) } ; scope . finish (& result) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for emit.",
+    "assessments": {
+      "full_recording": "review-275",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

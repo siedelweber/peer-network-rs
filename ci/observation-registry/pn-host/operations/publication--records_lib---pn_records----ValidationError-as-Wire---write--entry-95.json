@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_lib.rs",
+    "item": "publication::records_lib::<pn_records :: ValidationError as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_lib.rs::publication::records_lib::<pn_records :: ValidationError as Wire>::write",
+    "body": "{ match self { Self :: Parent { act , parent , cause } => { Ok (array ([Value :: Unsigned (0) , act . write (c) ? , parent . write (c) ? , cause . write (c) ?])) } Self :: DuplicateAct (v0) => Ok (array ([Value :: Unsigned (1) , v0 . write (c) ?])) , Self :: DuplicateEdge (v0) => Ok (array ([Value :: Unsigned (2) , v0 . write (c) ?])) , Self :: UnresolvedReference (v0) => Ok (array ([Value :: Unsigned (3) , v0 . write (c) ?])) , Self :: MissingCoLeg { act , role } => Ok (array ([Value :: Unsigned (4) , act . write (c) ? , role . write (c) ?])) , Self :: InvalidRepresentation { act , cause } => Ok (array ([Value :: Unsigned (5) , act . write (c) ? , cause . write (c) ?])) , Self :: InvalidReference (v0) => Ok (array ([Value :: Unsigned (6) , v0 . write (c) ?])) , Self :: InvalidDeclaration { id , cause } => Ok (array ([Value :: Unsigned (7) , id . write (c) ? , cause . write (c) ?])) , Self :: InvalidSelectionKey (v0) => Ok (array ([Value :: Unsigned (8) , v0 . write (c) ?])) , Self :: Dependency { act , dependency , cause } => Ok (array ([Value :: Unsigned (9) , act . write (c) ? , dependency . write (c) ? , cause . write (c) ? ,])) , Self :: DuplicateDeclaration (v0) => Ok (array ([Value :: Unsigned (10) , v0 . write (c) ?])) , Self :: AmbiguousDeclaration (v0) => Ok (array ([Value :: Unsigned (11) , v0 . write (c) ?])) , Self :: MissingDeclaration { namespace , name , boundary , } => Ok (array ([Value :: Unsigned (12) , namespace . write (c) ? , name . write (c) ? , boundary . write (c) ? ,])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

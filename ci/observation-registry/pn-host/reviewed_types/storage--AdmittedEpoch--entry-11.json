@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::AdmittedEpoch",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [doc = \" No epoch result is admitted by bite 2; bite 5 supplies the ledger/result carrier.\"] # [doc = \" The eventual transaction exposes input references, debit evidence and result\"] # [doc = \" together or none, with structural-event idempotence before retrying debits.\"] # [doc = \" (´open:host:admitted-epoch-result´)\"] # [derive (Debug)] pub enum AdmittedEpoch { }"
+  }
+}

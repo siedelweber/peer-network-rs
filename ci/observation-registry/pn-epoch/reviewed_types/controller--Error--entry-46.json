@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "syntax": "# [doc = \" Typed controller refusals precede the later effective-schedule and admission joins.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"controller refusal: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"frozen fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"controller evidence: {0}\")] Kernel (# [from] pn_graph :: numeric :: controller :: Error) , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

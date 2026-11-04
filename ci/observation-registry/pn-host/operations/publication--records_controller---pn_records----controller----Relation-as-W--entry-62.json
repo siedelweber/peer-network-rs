@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_controller.rs",
+    "item": "publication::records_controller::<pn_records :: controller :: Relation as Wire>::read",
+    "owner": "HOST",
+    "signature": "fn read (v : & Value , _c : & mut Context < '_ >) -> Result < Self , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::decode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_controller.rs::publication::records_controller::<pn_records :: controller :: Relation as Wire>::read",
+    "body": "{ let mut fields = array_fields (v) ? ; let Some (Value :: Unsigned (tag)) = fields . next () else { return Err (Error :: Shape) ; } ; let result = match tag { 0 => Self :: Below , 1 => Self :: Equal , 2 => Self :: Above , 3 => Self :: Indecisive , _ => return Err (Error :: Shape) , } ; finish (fields) ? ; Ok (result) }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

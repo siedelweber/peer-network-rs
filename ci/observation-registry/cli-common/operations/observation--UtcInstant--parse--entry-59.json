@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::UtcInstant::parse",
+    "owner": "CLICOMMON",
+    "signature": "fn parse (value : & str) -> Result < Self , & 'static str >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::UtcInstant::parse",
+    "body": "{ if ! value . ends_with ('Z') { return Err (if value . get (19 ..) . is_some_and (| s | s . contains ('+') || s . contains ('-')) { \"offset instant refused\" } else { \"naive instant refused\" }) ; } let b = value . as_bytes () ; if b . len () < 20 || b [4] != b'-' || b [7] != b'-' || b [10] != b'T' || b [13] != b':' || b [16] != b':' { return Err (\"malformed UTC instant\") ; } let number = | start , end | { value . get (start .. end) . filter (| s | s . bytes () . all (| b | b . is_ascii_digit ())) . and_then (| s | s . parse :: < u32 > () . ok ()) . ok_or (\"malformed UTC instant\") } ; let year = number (0 , 4) ? ; let month = number (5 , 7) ? ; let day = number (8 , 10) ? ; let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ; let days = match month { 1 | 3 | 5 | 7 | 8 | 10 | 12 => 31 , 4 | 6 | 9 | 11 => 30 , 2 => { if leap { 29 } else { 28 } } _ => 0 , } ; if day == 0 || day > days || number (11 , 13) ? > 23 || number (14 , 16) ? > 59 || number (17 , 19) ? > 59 { return Err (\"malformed UTC instant\") ; } if b . len () != 20 && (b [19] != b'.' || b . len () < 22 || ! b [20 .. b . len () - 1] . iter () . all (u8 :: is_ascii_digit)) { return Err (\"malformed UTC instant\") ; } Ok (Self (value . into ())) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::UtcInstant::parse. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-179",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::Pending",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" Evidence that has not yet reached the pinning depth.\"] # [doc = \" (´def:wallet:pending-evidence´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub struct Pending { # [doc = \" The located evidence.\"] pub evidence : Evidence , # [doc = \" Successor blocks observed above its block.\"] pub successors : u64 , }"
+  }
+}

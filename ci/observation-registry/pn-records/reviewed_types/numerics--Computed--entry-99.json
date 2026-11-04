@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::Computed",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" An exact computed rational, with no implicit conversion from display text.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Computed { exact : Exact , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "RemovableProjections",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Act-level content and dependency projections, independent of structural legs.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RemovableProjections { # [doc = \" Content removal does not erase structural identity or public references.\"] pub content : Removal , # [doc = \" Every dependency edge derives this single act-owned removal fact.\"] pub dependency : DependencyProjection , }"
+  }
+}

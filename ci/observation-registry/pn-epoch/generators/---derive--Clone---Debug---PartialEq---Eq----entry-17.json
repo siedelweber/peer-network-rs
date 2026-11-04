@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "ParameterInput",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/lib.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "epoch-inputs",
+    "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "section": "named_operations",
+  "value": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async"
+}

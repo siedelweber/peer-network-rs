@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::ChargeEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Untrusted defining evidence for a rational charge, never a graph authority carrier.\"] # [doc = \" (´[ROOT-rule:design:ridge-charge-contract]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargeEvidence { pub analytic_premises : String , pub procedure : crate :: solve :: Procedure , pub input : Inputs , pub record : Record , }"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "resolve_public_reference",
+    "owner": "RECORDS",
+    "signature": "fn resolve_public_reference (records : & ValidatedRecords , reference : & PublicReference ,) -> Result < ReferenceOrigin , ValidationError >",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "claim": "ROOT::sig:design:records",
+    "operation": "resolve-public-reference"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::resolve_public_reference",
+    "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . references . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , PublicReference :: Minted (id) => { id == & act . id && act . legs . iter () . any (| leg | mints (& act . id , act . body . layout , leg . id . role , & leg . target)) } }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Resolves act and leg identities derived from whole validated history or the batch; full query and typed origin or refusal are public. Minted node queries resolve only a complete self-minting genesis anchor; the public constructor is distinct from act and external-name references."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::records_controller::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_controller.rs",
+    "syntax": "structure ! (pn_records :: controller :: Inputs { width : exact , empty_live_domain , accepted_rung : exact , cumulative_tilt : exact , bleed_squared : exact , previous : exact , floor , absolute_cap : exact , relative_cap : exact , deadband : exact , bracket , stopping_width : exact , maximum_steps , maximum_work , maximum_replay_work , delivery }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

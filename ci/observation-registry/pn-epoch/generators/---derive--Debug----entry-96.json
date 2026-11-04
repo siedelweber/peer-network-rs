@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "anchor::Arithmetic",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "exact-transport-public",
+    "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+  }
+}

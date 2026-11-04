@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::backend_enclosure_log::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_enclosure_log.rs",
+    "syntax": "structure ! (d :: enclosure :: LogEndpoint { exponent , mantissa , argument , reduced , two }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

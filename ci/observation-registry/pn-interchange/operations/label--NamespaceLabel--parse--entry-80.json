@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/label.rs",
+    "item": "label::NamespaceLabel::parse",
+    "owner": "INTERCHANGE",
+    "signature": "fn parse (s : & str) -> Result < NamespaceLabel , LabelError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/label.rs::label::NamespaceLabel::parse",
+    "body": "{ scan (s) ? ; Ok (NamespaceLabel (Box :: from (s))) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for label::NamespaceLabel::parse.",
+    "assessments": {
+      "full_recording": "review-072",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

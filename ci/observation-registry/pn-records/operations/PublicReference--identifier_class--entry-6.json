@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "PublicReference::identifier_class",
+    "owner": "RECORDS",
+    "signature": "fn identifier_class (& self) -> Option < IdentifierClass >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "exception",
+    "shape": "shape-records",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Pure constructor classification inherits its enclosing records or formation operation; it does not validate, resolve, authenticate or count an act.",
+      "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+      "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+      "class_decision": "public-records"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::PublicReference::identifier_class",
+    "body": "{ match self { Self :: Named { namespace , .. } if namespace == \"addr\" || namespace == \"prof\" => Some (IdentifierClass :: Grounded) , Self :: Named { namespace , .. } if namespace == \"name\" => Some (IdentifierClass :: Named) , Self :: Minted (_) => Some (IdentifierClass :: Minted) , _ => None , } }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Pure matching of public constructors and the existing addr/prof/name namespaces returns only a class, never a validation or anchoring verdict. It has no mutation, secret input or accounting effect."
+  }
+}

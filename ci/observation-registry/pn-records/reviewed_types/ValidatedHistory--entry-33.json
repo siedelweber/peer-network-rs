@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ValidatedHistory",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , non_compliance : Arc < Vec < DependencyViolation > > , time_evidence : Arc < Vec < TimeEvidence > > , parent_faults : Arc < Vec < ParentPlacementFault > > , unavailable_dependencies : Arc < BTreeSet < ActId > > , }"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "item": "constants::ConstantsHistory < '_ >::resolve",
+    "owner": "RECORDS",
+    "signature": "fn resolve (& self , namespace : & str , name : & str , boundary : u64) -> Result < & ConstantsEdition , ConstantsError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "resolve-constants"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsHistory < '_ >::resolve",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { if namespace != \"numeric\" || name != \"constants\" { return Err (ConstantsError :: EditionSet) ; } let declaration = select_effective_declaration (self . records , namespace , name , boundary) ? ; self . editions . iter () . find (| e | e . input . id == declaration . id) . ok_or (ConstantsError :: EditionSet) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

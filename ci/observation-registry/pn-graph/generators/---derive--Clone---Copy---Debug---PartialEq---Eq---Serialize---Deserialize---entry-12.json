@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::ReviewRole",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Clone, full Debug and structural equality retain public Review coordinates, role and shared act metadata. Typed passive constructors retain the public genesis act identity. Serde is diagnostic and requires complete typed revalidation before binding use; no canonical graph bytes are defined."
+  }
+}

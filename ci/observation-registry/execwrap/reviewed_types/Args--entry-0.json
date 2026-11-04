@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Args",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/bin/execwrap.rs",
+    "syntax": "# [derive (Debug , Parser)] # [command (name = \"execwrap\" , version , about = \"Spawn a command and route its stdout/stderr to log files\" , trailing_var_arg = false)] struct Args { # [doc = \" Redirect both STDOUT and STDERR to this file (raw, merged).\"] # [arg (long = \"redirect\" , value_name = \"FILE\")] redirect : Option < PathBuf > , # [doc = \" Redirect STDOUT to this file.\"] # [arg (long = \"redirect-output\" , value_name = \"FILE\")] redirect_output : Option < PathBuf > , # [doc = \" Redirect STDERR to this file.\"] # [arg (long = \"redirect-error\" , value_name = \"FILE\")] redirect_error : Option < PathBuf > , # [doc = \" Redirect both streams to this file with per-stream prefixes.\"] # [arg (long = \"redirect-prefixed\" , value_name = \"FILE\")] redirect_prefixed : Option < PathBuf > , # [doc = \" Emit notifications when log files are written.\"] # [arg (long = \"notify-on-write\")] notify_on_write : bool , # [doc = \" Change to this directory before executing the command.\"] # [arg (long = \"change-directory\" , short = 'C' , value_name = \"DIR\")] change_directory : Option < PathBuf > , # [doc = \" Add Writer write/line events at trace; does not select observation level. Use `PN_OBSERVE_LEVEL`.\"] # [arg (long , short = 'd')] debug : bool , # [doc = \" Observation delivery mode, independent of command results.\"] # [arg (long , value_enum , default_value_t = ObservationMode :: Enabled)] observation : ObservationMode , # [doc = \" Command and its arguments (after `--`).\"] # [arg (last = true , required = true , num_args = 1 .., value_name = \"COMMAND\")] command : Vec < OsString > , }"
+  }
+}

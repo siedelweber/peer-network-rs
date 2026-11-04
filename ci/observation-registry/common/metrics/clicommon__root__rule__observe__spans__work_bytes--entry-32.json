@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__rule__observe__spans__work_bytes",
+    "kind": "counter",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

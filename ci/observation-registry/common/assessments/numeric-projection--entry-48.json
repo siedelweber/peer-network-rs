@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Exact numeric input values, display declarations, generated forms and source spans are public documentation data; instrumented projection and generation record complete inputs and results.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "numeric-projection"
+}

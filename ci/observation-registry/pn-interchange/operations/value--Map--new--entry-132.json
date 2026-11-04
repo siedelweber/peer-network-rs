@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Map::new",
+    "owner": "INTERCHANGE",
+    "signature": "fn new (entries : impl IntoIterator < Item = (Value , Value) >) -> Result < Map , ValueError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Map::new",
+    "body": "{ let observation = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"value::Map::new\" , & (\"lazy input; entries recorded as consumed\" , std :: any :: type_name_of_val (& entries) ,) ,) ; let result = (| | { let mut entries : Vec < (Value , Value) > = entries . into_iter () . inspect (| entry | tracing :: info ! (argument_entry =? entry)) . collect () ; entries . sort_by (| a , b | a . 0 . cmp (& b . 0)) ; for index in 1 .. entries . len () { if entries [index - 1] . 0 . cmp (& entries [index] . 0) . is_eq () { return Err (ValueError :: DuplicateMapKey { index }) ; } } Ok (Map (entries)) }) () ; observation . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Map::new.",
+    "assessments": {
+      "full_recording": "review-126",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

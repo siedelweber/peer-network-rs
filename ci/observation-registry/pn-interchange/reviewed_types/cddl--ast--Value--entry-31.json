@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Value",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `value = number / text / bytes`.\"] # [derive (Clone , Debug)] pub (crate) struct Value { # [doc = \" Which kind of literal.\"] pub (crate) kind : ValueKind , # [doc = \" Where it was written.\"] pub (crate) span : Span , }"
+  }
+}

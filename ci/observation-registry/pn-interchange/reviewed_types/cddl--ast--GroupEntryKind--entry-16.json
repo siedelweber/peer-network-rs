@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::GroupEntryKind",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The alternatives of `grpent`.\"] # [doc = \"\"] # [doc = \" The ABNF lists three. The second, `[occur S] groupname [genericarg]`,\"] # [doc = \" carries the RFC's own comment \\\"preempted by above\\\": a bare group name\"] # [doc = \" is already `[occur S] [memberkey S] type` with no member key and a type\"] # [doc = \" that is a `typename`. It is therefore not a separate variant here —\"] # [doc = \" representing it separately would give one piece of source two trees.\"] # [derive (Clone , Debug)] pub (crate) enum GroupEntryKind { # [doc = \" `[occur S] [memberkey S] type`.\"] Member { # [doc = \" The member key, absent in an array or a bare group reference.\"] key : Option < MemberKey > , # [doc = \" The type of the member.\"] value : Type , } , # [doc = \" `[occur S] \\\"(\\\" S group S \\\")\\\"`: a parenthesized inline group.\"] Inline (Group) , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::RpcLink",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" The only admitted RPC path case; authentication of the peer belongs to deployment.\"] # [doc = \" (´def:wallet:rpc-link´)\"] # [derive (Clone , Copy , Debug)] pub enum RpcLink { # [doc = \" Same-host, operator-secured path to the trusted Elements service.\"] HostSecured , }"
+  }
+}

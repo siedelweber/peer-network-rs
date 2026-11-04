@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::LocalVerdict",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" A local inclusion never replaces the global residual certificate.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum LocalVerdict { Included , Unresolved , }"
+  }
+}

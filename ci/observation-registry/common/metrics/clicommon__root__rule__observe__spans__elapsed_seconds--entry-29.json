@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__rule__observe__spans__elapsed_seconds",
+    "kind": "histogram",
+    "unit": "seconds",
+    "attributes": {}
+  }
+}

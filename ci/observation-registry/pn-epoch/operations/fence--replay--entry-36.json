@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/fence.rs",
+    "item": "fence::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (bound : & BoundProcedure < '_ > , rung : & str , record : & PrimitiveRecord) -> Result < PrimitiveEvidence , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::replay",
+    "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; if ! procedure . grid . iter () . any (| value | value == rung) || ! sequence . contains (& record . precision) { return Err (Error :: Profile) ; } let (prepared , _) = prepare (bound) ? ; if procedure . fence . as_ref () . is_some_and (| profile | profile . inverse_wall) && bound . enclosed_wall () . is_none () { return Err (Error :: ReferenceWall) ; } let expected = question (procedure , & prepared , rung) ? ; if expected != record . query { return Err (Error :: Profile) ; } let mut policy = procedure . clone () ; policy . enclosure . as_mut () . ok_or (Error :: Profile) ? . refinement . precision = record . precision ; Ok (pn_graph :: numeric :: replay (& policy , & expected , record . evidence . attachment . as_ref () . ok_or (Error :: Profile) ? , None ,) ?) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

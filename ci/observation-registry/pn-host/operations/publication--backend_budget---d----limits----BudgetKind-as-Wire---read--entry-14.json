@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_budget.rs",
+    "item": "publication::backend_budget::<d :: limits :: BudgetKind as Wire>::read",
+    "owner": "HOST",
+    "signature": "fn read (v : & Value , _c : & mut Context < '_ >) -> Result < Self , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::decode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/backend_budget.rs::publication::backend_budget::<d :: limits :: BudgetKind as Wire>::read",
+    "body": "{ let mut fields = array_fields (v) ? ; let Some (Value :: Unsigned (tag)) = fields . next () else { return Err (Error :: Shape) ; } ; let result = match tag { 0 => Self :: SourceBytes , 1 => Self :: NameBytes , 2 => Self :: OriginalOccurrences , 3 => Self :: Depth , 4 => Self :: Vertices , 5 => Self :: Edges , 6 => Self :: StagedVertices , 7 => Self :: StagedEdges , 8 => Self :: PayloadBytes , 9 => Self :: StagedPayloadBytes , 10 => Self :: Work , 11 => Self :: ArithmeticSteps , 12 => Self :: ComponentBits , 13 => Self :: IntermediateBits , 14 => Self :: LiteralBytes , 15 => Self :: DecimalExponent , 16 => Self :: IntegerExponent , 17 => Self :: PolynomialDegree , 18 => Self :: PolynomialVariables , 19 => Self :: PolynomialTerms , 20 => Self :: MatrixEntries , 21 => Self :: ConditionAtoms , 22 => Self :: ConditionSteps , 23 => Self :: MatchAttempts , 24 => Self :: MatchBatch , 25 => Self :: FrontierLabels , 26 => Self :: QueueEntries , 27 => Self :: Transitions , 28 => Self :: ExpansionCredits , 29 => Self :: PeakExpressionSize , 30 => Self :: ProofNodes , 31 => Self :: WitnessBytes , 32 => Self :: OutputBytes , 33 => Self :: DiagnosticRecords , 34 => Self :: ReplayWork , 35 => Self :: CostQuota , 36 => Self :: ProgressQuota , 37 => Self :: CaseArms , 38 => Self :: RegionNodes , 39 => Self :: RegionCells , 40 => Self :: RefinementPairs , 41 => Self :: LocalContexts , 42 => Self :: HypothesisDepth , 43 => Self :: BoundaryNodes , 44 => Self :: JetOrder , 45 => Self :: JetEntries , 46 => Self :: DeltaOrder , 47 => Self :: TestNodes , 48 => Self :: PairingSteps , 49 => Self :: PullbackZeros , 50 => Self :: CoefficientOps , 51 => Self :: DenominatorFactors , 52 => Self :: CoefficientMaps , 53 => Self :: TowerLevels , 54 => Self :: TowerDegree , 55 => Self :: TowerReductions , 56 => Self :: GcdSteps , 57 => Self :: ComponentSplits , 58 => Self :: OrbitPermutations , 59 => Self :: OrbitMembers , 60 => Self :: OrbitTerms , 61 => Self :: SymmetricSteps , 62 => Self :: ResolventDepth , 63 => Self :: ResolventDegree , 64 => Self :: SelectionSlots , 65 => Self :: SolutionBranches , 66 => Self :: FamilyParameters , 67 => Self :: SolveIdentities , 68 => Self :: LinearPivots , 69 => Self :: IsolationSteps , 70 => Self :: LocalBranches , _ => return Err (Error :: Shape) , } ; finish (fields) ? ; Ok (result) }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

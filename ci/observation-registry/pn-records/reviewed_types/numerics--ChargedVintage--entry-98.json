@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::ChargedVintage",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "syntax": "# [doc = \" Immutable consummated charge with its own price, action count and boundary.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedVintage { price : ChargedPrice , actions : ActionCount , charged : BurnAmount , boundary : u64 , }"
+  }
+}

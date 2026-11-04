@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Disclosure",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Constructible semantic disclosures; bytes, digests and verifier selectors are absent.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Disclosure { pub causes : Causes , pub numeric : NumericPolicy , pub frames : Vec < Boundary > , }"
+  }
+}

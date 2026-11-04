@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cells::CellIdentity",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/cells.rs",
+    "syntax": "# [doc = \" Full semantic incidence; no act identity is replaced by an edge identity.\"] # [doc = \" (´def:compiler:standing-cells´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct CellIdentity { pub author : String , pub family : String , pub incidence : Vec < (Role , PublicReference , PublicReference) > , # [doc = \" Excluded families retain one cell for each authored identity.\"] pub singleton : Option < ActId > , }"
+  }
+}

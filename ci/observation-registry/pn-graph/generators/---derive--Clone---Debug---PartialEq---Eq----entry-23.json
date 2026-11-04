@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numeric::activation::monotone::Envelope",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/monotone.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "activation-base-public",
+    "expansion_review": "Clone, Debug and equality retain public numeric requests, checked endpoint records and the explicit source envelope only. No secret or publication encoding is introduced."
+  }
+}

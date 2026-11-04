@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::AdmittedPackage",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Inhabited only after independent restoration has passed closure and final admission.\"] # [doc = \" No mutable field escapes, and this carrier does not perform persistence or publication.\"] # [doc = \" (´rule:admission:semantic-carrier´)\"] # [derive (Debug)] pub struct AdmittedPackage { carrier : Carrier , closed : closure :: ClosedBoundary , }"
+  }
+}

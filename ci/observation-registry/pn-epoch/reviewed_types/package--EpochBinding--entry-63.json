@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::EpochBinding",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" One epoch's explicit package binding, separate from the marker's burn acceptance.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EpochBinding { pub marker : Marker , pub predecessor : Marker , pub inputs : CompilerInputs , pub price : ChargedPrice , # [doc = \" Full immutable acts in asserted position order; publication is verified separately.\"] pub sequence : Vec < ValidatedAct > , }"
+  }
+}

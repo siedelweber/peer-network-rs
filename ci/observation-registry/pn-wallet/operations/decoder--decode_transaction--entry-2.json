@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "item": "decoder::decode_transaction",
+    "owner": "WALLET",
+    "signature": "fn decode_transaction (bytes : & [u8] , limits : Limits) -> Result < Transaction , Refusal >",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::decode_transaction",
+    "class_decision": "wallet-decoder",
+    "body": "{ let result = (| | { let mut reader = Reader :: new (bytes , limits) ? ; reader . transaction () ? ; if reader . pos != bytes . len () { return Err (Refusal :: Trailing) ; } let tx : elements :: Transaction = elements :: encoding :: decode_from_slice (bytes) . map_err (| _ | Refusal :: Codec) ? ; Ok (project (tx)) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "An allocation-free framing pass precedes the maintained codec. Complete consumption is required, and every error publishes refusal."
+  }
+}

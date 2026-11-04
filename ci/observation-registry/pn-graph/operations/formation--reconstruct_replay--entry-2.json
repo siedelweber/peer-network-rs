@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "item": "formation::reconstruct_replay",
+    "owner": "GRAPH",
+    "signature": "fn reconstruct_replay (history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < FormationGraph , RegistrationError >",
+    "claim": "ROOT::alg:design:formation",
+    "shape": "shape-graph-affinity",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/formation.rs::formation::reconstruct_replay",
+    "body": "{ let acts = formation_context (history) ; let result = registration :: reconstruct_with (history , verifier , | act | checked_project (act , & acts , verifier , true)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+    "class_decision": "graph-affinity",
+    "item_premise": "Finalized reconstruction checks complete public family structure, author approval and removal authority while retaining missing or misplaced public-parent targets. Inputs, output and typed refusals contain public evidence only. Observation supplies accounting, never a replay decision; no codec, digest or private carrier is introduced.",
+    "assessments": {
+      "full_recording": "graph-affinity-full_recording",
+      "secret_flow": "graph-affinity-secret_flow",
+      "exposure_consumers": "graph-affinity-exposure_consumers"
+    }
+  }
+}

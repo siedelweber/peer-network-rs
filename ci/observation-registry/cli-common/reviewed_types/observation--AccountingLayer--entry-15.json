@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::AccountingLayer",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "struct AccountingLayer (Observation , Option < tracing_subscriber :: EnvFilter >) ;"
+  }
+}

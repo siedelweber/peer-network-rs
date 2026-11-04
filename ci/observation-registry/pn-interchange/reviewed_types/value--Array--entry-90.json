@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Array",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A sequence.\"] # [doc = \"\"] # [doc = \" The newtype exists for the teardown duty rather than for an invariant\"] # [doc = \" of its own: dropping a deeply nested sequence dismantles it with an\"] # [doc = \" explicit worklist, where the compiler's derived drop glue would recurse\"] # [doc = \" to the nesting depth and overflow the stack. `Clone`, `PartialEq`, and\"] # [doc = \" `Hash` are hand-written for that same reason, each delegating to the\"] # [doc = \" shared worklist helpers.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Array, Value};\"] # [doc = \"\"] # [doc = \" let a = Array::new([Value::Unsigned(1), Value::Unsigned(2)]);\"] # [doc = \" assert_eq!(a.len(), 2);\"] # [doc = \" assert_eq!(a.as_slice()[0], Value::Unsigned(1));\"] # [doc = \" ```\"] # [derive (Debug , Eq , Default)] pub struct Array (Vec < Value >) ;"
+  }
+}

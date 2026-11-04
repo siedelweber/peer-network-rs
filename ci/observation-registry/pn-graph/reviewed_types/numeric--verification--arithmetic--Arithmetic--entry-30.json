@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::verification::arithmetic::Arithmetic",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/arithmetic.rs",
+    "syntax": "pub (super) struct Arithmetic { pub budget : Budget , pub bits : u32 , }"
+  }
+}

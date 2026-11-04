@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::controller::Error",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/controller.rs",
+    "syntax": "# [doc = \" Invalid declarations and evidence do not acquire mathematical verdicts.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"invalid canonical controller declaration\")] Declaration , # [error (\"controller Work allowance exhausted\")] Work , # [error (\"controller replay input or evidence mismatch\")] Evidence , # [error (\"controller exact arithmetic stopped: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"inverse evidence: {0}\")] Inverse (# [from] super :: wall :: Error) , # [error (\"ridge evidence: {0}\")] Ridge (# [from] super :: ridge :: Error) , # [error (\"controller primitive declaration: {0}\")] Numeric (# [from] super :: Error) , }"
+  }
+}

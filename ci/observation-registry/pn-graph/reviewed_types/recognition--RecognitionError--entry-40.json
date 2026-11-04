@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recognition::RecognitionError",
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "syntax": "# [doc = \" A structural refusal or an explicit absence of a scoped recognition verdict.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecognitionError { # [doc = \" Whole-history formation failed before any candidate evidence was emitted.\"] # [error (\"title input formation refused: {0}\")] Formation (RegistrationError) , # [doc = \" The supplied owner map names a different preceding boundary.\"] # [error (\"recognition requires the immediately preceding certificate\")] Boundary , }"
+  }
+}

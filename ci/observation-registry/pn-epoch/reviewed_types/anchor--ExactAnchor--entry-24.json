@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "anchor::ExactAnchor",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "syntax": "# [doc = \" Exact reduced transported amounts and action counts; the ledger is unchanged.\"] # [doc = \" (´def:compiler:exact-anchor´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ExactAnchor { pub boundary : u64 , pub edition : DeclarationId , pub normalized : BTreeMap < String , BTreeMap < String , String > > , pub raw : BTreeMap < String , BTreeMap < String , String > > , pub emitted : BTreeMap < String , BTreeMap < String , String > > , pub numerator : BTreeMap < String , String > , pub denominator : BTreeMap < String , String > , pub standing : BTreeMap < String , String > , pub hull : BTreeMap < String , Bounds > , }"
+  }
+}

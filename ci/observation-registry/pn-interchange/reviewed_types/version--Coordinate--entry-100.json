@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "version::Coordinate",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/version.rs",
+    "syntax": "# [doc = \" An assignable coordinate: a label, a major, a minor. Patch does not\"] # [doc = \" occur.\"] # [doc = \"\"] # [doc = \" The absent field is the point: patch is not part of any coordinate, so\"] # [doc = \" there is no place in the registry's key for it to be mistakenly\"] # [doc = \" consulted.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Coordinate, NamespaceLabel};\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example.thing\\\").expect(\\\"a label\\\");\"] # [doc = \" let at = Coordinate::new(label, 1, 4);\"] # [doc = \" assert_eq!((at.major(), at.minor()), (1, 4));\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Hash)] pub struct Coordinate { label : NamespaceLabel , major : u64 , minor : u64 , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Record",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [doc = \" The mathematical proposal and its evidence are never replaced by a rounded charge.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub procedure : crate :: solve :: Procedure , pub inputs : Inputs , pub attempts : Vec < Attempt > , pub verdict : Verdict , }"
+  }
+}

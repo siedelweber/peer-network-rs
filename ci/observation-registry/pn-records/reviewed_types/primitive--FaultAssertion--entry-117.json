@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::FaultAssertion",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" Owned projection of an evaluator fault, with no operation vocabulary or authority.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FaultAssertion { pub kind : nrz_cas :: FaultKind , pub operation : String , pub logical_id : Option < u64 > , }"
+  }
+}

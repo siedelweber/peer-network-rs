@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CliExit",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Control-plane record and exit class produced while parsing argv.\"] # [derive (Debug , Clone , PartialEq , Eq)] pub struct CliExit { # [doc = \" Record to write to stderr.\"] pub record : ControlPlaneRecord , # [doc = \" Process exit class to use after writing the record.\"] pub exit : CommandExit , }"
+  }
+}

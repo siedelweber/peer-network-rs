@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::OperationKind",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , # [doc = \" Graph formation and dependency partition operations.\"] Graph , # [doc = \" Epoch compiler parameter and ledger operations.\"] Epoch , # [doc = \" Shared act commitment and opening comparisons.\"] ActProfile , }"
+  }
+}

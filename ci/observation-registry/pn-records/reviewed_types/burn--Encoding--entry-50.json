@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::Encoding",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Declared policy encoding; order is sufficient only in the explicit whole-prefix case.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Encoding { CompleteList , PublicCommitment , WholePrefixAcceptAll , }"
+  }
+}

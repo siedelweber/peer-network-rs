@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Attempt",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [doc = \" A complete comparison attempt, including its independent scalar evidence.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub precision : u32 , pub stopped_at : Option < Stage > , pub inverse : Option < InverseRecord > , pub floor_checks : Vec < ComparisonRecord > , pub branches : Option < Branches > , pub delivered : Option < String > , pub delivery_error : Option < Range > , }"
+  }
+}

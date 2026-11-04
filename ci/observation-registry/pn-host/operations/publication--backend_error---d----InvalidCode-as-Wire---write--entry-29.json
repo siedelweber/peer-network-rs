@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_error.rs",
+    "item": "publication::backend_error::<d :: InvalidCode as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , _c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/backend_error.rs::publication::backend_error::<d :: InvalidCode as Wire>::write",
+    "body": "{ match self { Self :: UnsupportedCertificate => Ok (array ([Value :: Unsigned (0)])) , Self :: DecisionOptionMismatch => Ok (array ([Value :: Unsigned (1)])) , Self :: DecisionBox => Ok (array ([Value :: Unsigned (2)])) , Self :: DecisionBoundaryIntersection => Ok (array ([Value :: Unsigned (3)])) , Self :: DecisionOutsideRegion => Ok (array ([Value :: Unsigned (4)])) , Self :: DecisionIntegerRange => Ok (array ([Value :: Unsigned (5)])) , Self :: DecisionMaterializationCapacity => Ok (array ([Value :: Unsigned (6)])) , Self :: DecisionPartitionOverlap => Ok (array ([Value :: Unsigned (7)])) , Self :: DecisionPartitionOutsideDomain => Ok (array ([Value :: Unsigned (8)])) , Self :: StrictSignUnavailable => Ok (array ([Value :: Unsigned (9)])) , Self :: JacobianReadingCycle => Ok (array ([Value :: Unsigned (10)])) , Self :: JacobianFixedSource => Ok (array ([Value :: Unsigned (11)])) , Self :: JacobianDuplicateSource => Ok (array ([Value :: Unsigned (12)])) , Self :: JacobianDomain => Ok (array ([Value :: Unsigned (13)])) , Self :: ReuseKeyMismatch => Ok (array ([Value :: Unsigned (14)])) , Self :: ReadingSingular => Ok (array ([Value :: Unsigned (15)])) , Self :: ReadingNonsingularity => Ok (array ([Value :: Unsigned (16)])) , Self :: DependencyWitness => Ok (array ([Value :: Unsigned (17)])) , Self :: SelectionExpected => Ok (array ([Value :: Unsigned (18)])) , Self :: SelectionBase => Ok (array ([Value :: Unsigned (19)])) , Self :: SelectionDeclaration => Ok (array ([Value :: Unsigned (20)])) , Self :: SelectionDefinition => Ok (array ([Value :: Unsigned (21)])) , Self :: SelectionShape => Ok (array ([Value :: Unsigned (22)])) , Self :: SelectionOutOfRange => Ok (array ([Value :: Unsigned (23)])) , Self :: SelectionDuplicate => Ok (array ([Value :: Unsigned (24)])) , Self :: SelectionOrder => Ok (array ([Value :: Unsigned (25)])) , Self :: ReadingShape => Ok (array ([Value :: Unsigned (26)])) , Self :: ReadingDefinition => Ok (array ([Value :: Unsigned (27)])) , Self :: ReadingUnrelated => Ok (array ([Value :: Unsigned (28)])) , Self :: ReadingMismatch => Ok (array ([Value :: Unsigned (29)])) , Self :: SpaceRegistrationUnavailable => Ok (array ([Value :: Unsigned (30)])) , Self :: SpacePlacementUnavailable => Ok (array ([Value :: Unsigned (31)])) , Self :: AmbientSpaceAmbiguous => Ok (array ([Value :: Unsigned (32)])) , Self :: SymbolSortMismatch => Ok (array ([Value :: Unsigned (33)])) , Self :: AmbientSpaceMismatch => Ok (array ([Value :: Unsigned (34)])) , Self :: PullbackMultipleZero => Ok (array ([Value :: Unsigned (35)])) , Self :: PullbackIncompleteZeros => Ok (array ([Value :: Unsigned (36)])) , Self :: PullbackMapMismatch => Ok (array ([Value :: Unsigned (37)])) , Self :: AnalyticDisagreement => Ok (array ([Value :: Unsigned (38)])) , Self :: DistributionPointValue => Ok (array ([Value :: Unsigned (39)])) , Self :: DistributionProductUndefined => Ok (array ([Value :: Unsigned (40)])) , Self :: TestSpaceMismatch => Ok (array ([Value :: Unsigned (41)])) , Self :: UnknownTotality => Ok (array ([Value :: Unsigned (42)])) , Self :: PendingPremise => Ok (array ([Value :: Unsigned (43)])) , Self :: OverlapConflict => Ok (array ([Value :: Unsigned (44)])) , Self :: CoverageHole => Ok (array ([Value :: Unsigned (45)])) , Self :: Literal => Ok (array ([Value :: Unsigned (46)])) , Self :: ZeroDenominator => Ok (array ([Value :: Unsigned (47)])) , Self :: UndefinedPower => Ok (array ([Value :: Unsigned (48)])) , Self :: Span => Ok (array ([Value :: Unsigned (49)])) , Self :: ForeignHandle => Ok (array ([Value :: Unsigned (50)])) , Self :: Reference => Ok (array ([Value :: Unsigned (51)])) , Self :: Scope => Ok (array ([Value :: Unsigned (52)])) , Self :: Sort => Ok (array ([Value :: Unsigned (53)])) , Self :: Context => Ok (array ([Value :: Unsigned (54)])) , Self :: Policy => Ok (array ([Value :: Unsigned (55)])) , Self :: SourceConflict => Ok (array ([Value :: Unsigned (56)])) , Self :: OccurrenceParent => Ok (array ([Value :: Unsigned (57)])) , Self :: Receipt => Ok (array ([Value :: Unsigned (58)])) , Self :: Encoding => Ok (array ([Value :: Unsigned (59)])) , Self :: Rule => Ok (array ([Value :: Unsigned (60)])) , Self :: EndpointMismatch => Ok (array ([Value :: Unsigned (61)])) , Self :: ConditionMismatch => Ok (array ([Value :: Unsigned (62)])) , Self :: UnsupportedVersion => Ok (array ([Value :: Unsigned (63)])) , Self :: UnsupportedFragment => Ok (array ([Value :: Unsigned (64)])) , Self :: PolynomialFragment => Ok (array ([Value :: Unsigned (65)])) , Self :: CoefficientField => Ok (array ([Value :: Unsigned (66)])) , Self :: ZeroPolynomial => Ok (array ([Value :: Unsigned (67)])) , Self :: RefutedDomain => Ok (array ([Value :: Unsigned (68)])) , Self :: EmptyDomain => Ok (array ([Value :: Unsigned (69)])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

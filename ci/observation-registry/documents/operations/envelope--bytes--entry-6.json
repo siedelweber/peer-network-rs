@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "item": "envelope::bytes",
+    "owner": "DOCUMENTS",
+    "signature": "fn bytes (dataset : & Dataset) -> Result < Vec < u8 > >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/envelope.rs::envelope::bytes",
+    "body": "{ let mut bytes = serde_json :: to_vec_pretty (dataset) ? ; bytes . push (b'\\n') ; Ok (bytes) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for envelope::bytes.",
+    "assessments": {
+      "full_recording": "review-163",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

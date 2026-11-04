@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Assign",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The assignment operator, kept because the two augmenting forms mean\"] # [doc = \" something the plain form does not.\"] # [doc = \"\"] # [doc = \" `assignt = \\\"=\\\" / \\\"/=\\\"` and `assigng = \\\"=\\\" / \\\"//=\\\"`: `=` defines,\"] # [doc = \" `/=` adds a type choice to an existing name, `//=` adds a group choice.\"] # [doc = \" The augmenting forms are what makes the socket/plug convention of\"] # [doc = \" RFC 8610 Section 3.9 work.\"] # [derive (Copy , Clone , Debug , PartialEq , Eq)] pub (crate) enum Assign { # [doc = \" `=`\"] Plain , # [doc = \" `/=`, adding an alternative to a type choice.\"] TypeChoice , # [doc = \" `//=`, adding an alternative to a group choice.\"] GroupChoice , }"
+  }
+}

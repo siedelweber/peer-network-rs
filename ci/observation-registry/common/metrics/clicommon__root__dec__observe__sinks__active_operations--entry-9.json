@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__dec__observe__sinks__active_operations",
+    "kind": "gauge",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

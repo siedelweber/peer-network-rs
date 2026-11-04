@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "RoutingConfig",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [doc = \" User-provided routing configuration.\"] # [derive (Debug , Default , Clone)] pub struct RoutingConfig { # [doc = \" `--redirect` target: capture stdout and stderr merged in raw form.\"] pub redirect : Option < PathBuf > , # [doc = \" `--redirect-output` target: capture stdout only.\"] pub redirect_output : Option < PathBuf > , # [doc = \" `--redirect-error` target: capture stderr only.\"] pub redirect_error : Option < PathBuf > , # [doc = \" `--redirect-prefixed` target: capture both streams with prefixes.\"] pub redirect_prefixed : Option < PathBuf > , # [doc = \" Emit notifications when log files are written.\"] pub notify_on_write : bool , # [doc = \" Retained output-contract control; never selects observation emission.\"] pub debug : bool , }"
+  }
+}

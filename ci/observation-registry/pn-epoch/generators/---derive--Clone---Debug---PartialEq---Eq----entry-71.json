@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "fence::Search",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/fence.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "solve-public-records",
+    "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+  }
+}

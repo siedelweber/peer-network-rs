@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyProjection",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Canonical dependency content; empty is available content, not absence.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DependencyProjection { # [doc = \" Complete empty dependency set.\"] FullEmpty , # [doc = \" Complete nonempty sorted, duplicate-free identifiers; admission also requires self-free earlier targets.\"] Full (Vec < ActId >) , # [doc = \" Content unavailable after this position; never interpreted as empty.\"] Tombstoned (Position) , }"
+  }
+}

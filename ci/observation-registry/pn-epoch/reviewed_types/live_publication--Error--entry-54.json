@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_publication::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/live_publication.rs",
+    "syntax": "# [doc = \" Pending settlement, permanent halt and semantic replay faults remain distinct.\"] # [doc = \" (´rule:admission:live-publication´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"live marker assessment: {0}\")] Live (# [from] live_markers :: Error) , # [error (\"original marker inputs: {0}\")] Burn (# [from] burn :: BurnError) , # [error (\"publication declarations: {0}\")] Records (# [from] pn_records :: ValidationError) , # [error (\"semantic restoration: {0}\")] Publication (# [source] Box < publication :: Error >) , # [error (\"closed lineage is frozen\")] Halted , # [error (\"not one unchanged consecutive closed prefix\")] Prefix , # [error (\"new published response and policy are not established\")] Response , }"
+  }
+}

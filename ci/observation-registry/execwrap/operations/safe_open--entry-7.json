@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "item": "safe_open",
+    "owner": "EXECWRAP",
+    "signature": "fn safe_open (path : & Path) -> io :: Result < File >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/lib.rs::safe_open",
+    "body": "{ if let Some (parent) = path . parent () && ! parent . as_os_str () . is_empty () && ! parent . exists () { create_dir_all (parent) ? ; } File :: create (path) }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for safe_open.",
+    "assessments": {
+      "full_recording": "review-293",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

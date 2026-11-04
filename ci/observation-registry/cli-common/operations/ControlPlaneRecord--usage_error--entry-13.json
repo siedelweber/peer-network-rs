@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::usage_error",
+    "owner": "CLICOMMON",
+    "signature": "fn usage_error (command : & str , clap_error_kind : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::usage_error",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: UsageError , \"invalid command-line arguments\" , Some (ControlPlaneFields :: UsageError { exit_code : CommandExit :: Usage . code () , clap_error_kind : clap_error_kind . to_string () , }) ,) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::usage_error.",
+    "assessments": {
+      "full_recording": "review-253",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

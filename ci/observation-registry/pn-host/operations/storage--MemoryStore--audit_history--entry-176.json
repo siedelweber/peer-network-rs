@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "item": "storage::MemoryStore::audit_history",
+    "owner": "HOST",
+    "signature": "fn audit_history (& self) -> Result < () , StorageError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history",
+    "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::MemoryStore::audit_history\" , & ()) ; let result = (| | { for rows in self . history . values () { for row in rows { verify_row (row) ? ; } if rows . windows (2) . any (| pair | { pair [0] . closes_at != Some (pair [1] . version . opens_at) || pair [0] . version . opens_at >= pair [1] . version . opens_at }) || rows . last () . is_some_and (| row | row . closes_at . is_some ()) { return Err (StorageError :: CorruptHistory) ; } } Ok (()) }) () ; let result = classified (result) ; span . finish (& result) ; result }",
+    "class_decision": "host-storage",
+    "item_premise": "Explicit full memory audit checks each public payload digest and canonical envelope, interval contiguity and the open terminal row. It takes no private configuration and makes no observation-dependent choice. Boundary load does not substitute for this complete audit.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

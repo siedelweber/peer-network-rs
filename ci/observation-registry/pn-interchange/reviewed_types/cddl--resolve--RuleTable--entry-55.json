@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::resolve::RuleTable",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/resolve.rs",
+    "syntax": "# [doc = \" Every name a theory's references may reach.\"] # [doc = \"\"] # [doc = \" The theory's own rules are owned; the prelude's are borrowed from the\"] # [doc = \" one copy the process parses, so a theory costs the prelude nothing.\"] # [derive (Clone , Debug)] pub (crate) struct RuleTable { own : BTreeMap < String , ResolvedRule > , prelude : Option < & 'static BTreeMap < String , ResolvedRule > > , }"
+  }
+}

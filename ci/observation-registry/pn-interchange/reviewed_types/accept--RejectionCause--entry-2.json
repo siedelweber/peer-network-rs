@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "accept::RejectionCause",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/accept.rs",
+    "syntax": "# [doc = \" Why no instrument governs.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{\"] # [doc = \"     dispatch, Envelope, Instrument, NamespaceLabel, RejectionCause, Registry, Version,\"] # [doc = \" };\"] # [doc = \"\"] # [doc = \" let label = NamespaceLabel::parse(\\\"com.example\\\").expect(\\\"a label\\\");\"] # [doc = \" let envelope = Envelope::new(label, Version::new(4, 0, 0));\"] # [doc = \" assert!(matches!(\"] # [doc = \"     dispatch(&Registry::new(), &envelope),\"] # [doc = \"     Instrument::Refused(RejectionCause::UnheldMajor)\"] # [doc = \" ));\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub enum RejectionCause { # [doc = \" No minor of this major is held.\"] UnheldMajor , # [doc = \" The stamp lies at or below the ceiling and was never assigned: a\"] # [doc = \" checkably false claim.\"] UnassignedStamp { # [doc = \" The reader's ceiling of that major.\"] ceiling : u64 , } , }"
+  }
+}

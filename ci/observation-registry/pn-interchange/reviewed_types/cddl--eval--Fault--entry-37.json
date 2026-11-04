@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::eval::Fault",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "syntax": "# [doc = \" One failure of a map match, before it is located and worded.\"] # [derive (Clone , Debug)] struct Fault { key : u64 , expected : String , found : String , kind : MismatchKind , }"
+  }
+}

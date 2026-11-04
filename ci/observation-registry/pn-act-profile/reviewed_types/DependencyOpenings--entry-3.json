@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyOpenings",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" A pure checker for externally supplied tombstone openings.\"] # [doc = \" It reads anchors from the exact retained act passed by records.\"] # [doc = \" (´def:profile:matching´)\"] # [derive (Debug)] pub struct DependencyOpenings (pub Vec < DependencyOpening >) ;"
+  }
+}

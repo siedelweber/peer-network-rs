@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::Observation",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" Public chain positions read for one observation, and the evidence located on them.\"] # [doc = \" (´def:wallet:settlement-observation´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Observation { # [doc = \" Height of the observed best block.\"] pub tip : u64 , # [doc = \" Active-chain block hashes read at the listed heights.\"] pub hashes : BTreeMap < u64 , [u8 ; 32] > , # [doc = \" Located evidence, possibly reported more than once.\"] pub evidence : Vec < Evidence > , }"
+  }
+}

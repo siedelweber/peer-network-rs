@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::Pin",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" The named form of an admitted kind: none, exactly one, or not fixed.\"] # [derive (Copy , Clone , Debug , Default , PartialEq , Eq)] enum Pin { # [doc = \" The kind is not admitted here.\"] # [default] Absent , # [doc = \" It is, and one form of it is named: a width, a tag number, a simple\"] # [doc = \" value.\"] Fixed (u64) , # [doc = \" It is, and no single form is named.\"] Loose , }"
+  }
+}

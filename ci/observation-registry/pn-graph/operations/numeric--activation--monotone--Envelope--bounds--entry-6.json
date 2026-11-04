@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/monotone.rs",
+    "item": "numeric::activation::monotone::Envelope::bounds",
+    "owner": "GRAPH",
+    "signature": "const fn bounds (& self) -> Option < & Range >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "exception",
+    "shape": "shape-graph",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access retains the checked endpoint construction boundary.",
+      "witness": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+      "boundary": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+      "class_decision": "activation-base-public"
+    }
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::bounds",
+    "body": "{ self . bounds . as_ref () }",
+    "class_decision": "activation-base-public",
+    "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::TransportOutput",
+    "package": "pn-records",
+    "path": "packages/records/src/transport.rs",
+    "syntax": "# [doc = \" Exact paired transport and direct mediant, with contributing rate hulls.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TransportOutput < N > { pub normalized : Vec < Matrix < N > > , pub raw : Matrix < N > , pub emitted : Matrix < N > , pub numerator : Vec < N > , pub denominator : Vec < N > , pub standing : Vec < N > , pub hull : Vec < (N , N) > , }"
+  }
+}

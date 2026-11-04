@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/ridge_charge.rs",
+    "item": "numerics::ridge_charge::NumericContext::charged_price_with_ridge",
+    "owner": "RECORDS",
+    "signature": "fn charged_price_with_ridge (& mut self , wall : & Computed , numeraire : & Numeraire , evidence : & ChargeEvidence , verifier : & impl ChargeVerifier ,) -> Result < ChargedPrice , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-ridge-charged-price"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics/ridge_charge.rs::numerics::ridge_charge::NumericContext::charged_price_with_ridge",
+    "body": "{ let result = (| | { if self . comparisons . reserve_attempt (1) . is_err () { return Err (NumericError :: Indecisive) ; } let envelope = self . ridge_envelope (evidence) ? ; verifier . replay (evidence) ? ; let (lower , upper) = envelope . ok_or (NumericError :: Indecisive) ? ; if wall . exact . value . compare (& lower , & mut self . budget) ? . is_lt () { return Err (NumericError :: BelowFloor) ; } if wall . exact . value . compare (& upper , & mut self . budget) ? . is_lt () { return Err (NumericError :: Indecisive) ; } Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , price : self . per_action (wall , numeraire) ? , floor : Floor :: RidgeImage , ridge : Some (Box :: new (evidence . clone ())) , }) }) () ; if result . is_err () { crate :: refused () ; } result }",
+    "class_decision": "public-records",
+    "item_premise": "The closed public ridge transcript, exact wall and named numeraire are public evidence. Independent replay is a declared verifier obligation, not an unchecked comparison verdict. Records checks the complete defining envelope and retains only the submitted rational charge; graph reconstructs numerical evidence. No secret or deployment authority enters.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

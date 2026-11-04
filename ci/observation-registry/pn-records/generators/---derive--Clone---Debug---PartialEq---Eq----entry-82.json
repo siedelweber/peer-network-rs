@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "solve::Bounds",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "solve-public-records",
+    "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Binding",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" A binding refers to complete causes by ordered act identity, not stored validated acts.\"] # [doc = \" Every charge, including historical bindings, is an untrusted price disclosure.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Binding { pub marker : burn :: Marker , pub predecessor : burn :: Marker , pub inputs : Inputs , pub price : numerics :: PriceInput , pub sequence : Vec < ActId > , }"
+  }
+}

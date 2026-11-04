@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "SettlementReferences",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Act-owned settlement metadata, never an endpoint or removable projection.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum SettlementReferences { # [doc = \" Accept names the Bid that opened the negotiated Offer.\"] Accept { settles : ActId } , # [doc = \" Ratify names that Bid and the exact Accept confirming it.\"] Ratify { settles : ActId , accepts : ActId } , }"
+  }
+}

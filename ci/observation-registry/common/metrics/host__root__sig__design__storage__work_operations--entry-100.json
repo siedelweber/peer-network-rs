@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "host__root__sig__design__storage__work_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::BoundReference",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/wall.rs",
+    "syntax": "# [doc = \" A reference definition remains separate from the package's rational debit vintage.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug)] pub struct BoundReference < 'a > { procedure : & 'a pn_records :: solve :: Procedure , input : Inputs , }"
+  }
+}

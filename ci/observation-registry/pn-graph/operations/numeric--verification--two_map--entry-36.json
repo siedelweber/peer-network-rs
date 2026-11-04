@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification.rs",
+    "item": "numeric::verification::two_map",
+    "owner": "GRAPH",
+    "signature": "fn two_map (p : & Procedure , input : & VerificationInput , candidate : & [Range]) -> Result < TwoMapRecord , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::two_map",
+    "body": "{ let first = evaluate_box (p , input , candidate) ? ; let second = evaluate_box (p , input , & first . image) ? ; assemble (p , first , second) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Schedule defects, unresolved comparisons and arithmetic stops remain distinct.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"schedule refusal: {0}\")] Refused (# [from] AdmissionRefusal) , # [error (\"controller: {0}\")] Controller (# [from] controller :: Error) , # [error (\"ridge: {0}\")] Ridge (# [from] ridge :: Error) , # [error (\"bounded exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

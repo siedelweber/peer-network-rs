@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/numbers.rs",
+    "item": "numbers::project",
+    "owner": "DOCUMENTS",
+    "signature": "fn project (dataset : & mut Dataset) -> Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/numbers.rs::numbers::project",
+    "body": "{ if dataset . namespace != NAMESPACE { return dataset_forms (dataset) ; } let mut ids = BTreeSet :: new () ; for row in & mut dataset . rows { let entry : Entry = serde_json :: from_value (serde_json :: to_value (& row) ?) ? ; validate (& entry) ? ; if ! ids . insert (entry . id . clone ()) { return Err (format ! (\"number: duplicate id {}\" , entry . id) . into ()) ; } project_entry (& entry , row) ? ; } Ok (()) }",
+    "class_decision": "public-documents",
+    "item_premise": "Only public committed data, numeric display declarations, typed narrative references and rendered documentation are consumed and returned. Dataset forms use the registry arithmetic at projection; rendering selects forms and resolves explicit references without arithmetic or free-text numeric parsing. No secret carrier or new exposure boundary is admitted. Optional paper keys and tags are public published-result identifiers retained in the projection; validation requires both fields together. External build data is compared by the separate correspondence check and is not an observation payload or registry copy.",
+    "assessments": {
+      "full_recording": "numeric-projection",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

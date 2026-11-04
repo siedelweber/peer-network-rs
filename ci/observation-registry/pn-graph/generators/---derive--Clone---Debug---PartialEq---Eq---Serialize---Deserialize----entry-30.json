@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::Projection",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+  }
+}

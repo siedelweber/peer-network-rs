@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "TracingFilter",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Resolved JSON tracing filter directive.\"] # [derive (Debug , Clone , PartialEq , Eq)] pub struct TracingFilter { # [doc = \" Directive passed to `tracing-subscriber`'s environment filter.\"] pub directive : String , # [doc = \" Input source that selected the directive.\"] pub source : TracingFilterSource , }"
+  }
+}

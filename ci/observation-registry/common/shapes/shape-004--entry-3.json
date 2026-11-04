@@ -1,0 +1,25 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete available argument representation",
+      "result or explicit unavailable capability representation",
+      "terminal outcome",
+      "inclusive duration_seconds",
+      "declared own work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "execwrap__root__rule__observe__spans__started_operations",
+      "execwrap__root__rule__observe__spans__completed_operations",
+      "execwrap__root__rule__observe__spans__work_bytes",
+      "execwrap__root__rule__observe__spans__work_operations",
+      "execwrap__root__rule__observe__spans__active_operations",
+      "execwrap__root__rule__observe__spans__resource_current_bytes",
+      "execwrap__root__rule__observe__spans__elapsed_seconds",
+      "execwrap__root__rule__observe__spans__workload_bytes",
+      "execwrap__root__rule__observe__spans__workload_operations"
+    ]
+  },
+  "name": "shape-004"
+}

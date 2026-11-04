@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Name",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" An `id` as it appears in the source: a type name, group name, bareword,\"] # [doc = \" control-operator name, or generic parameter.\"] # [derive (Clone , Debug)] pub (crate) struct Name { # [doc = \" The identifier, byte for byte.\"] pub (crate) text : String , # [doc = \" Where it was written.\"] pub (crate) span : Span , }"
+  }
+}

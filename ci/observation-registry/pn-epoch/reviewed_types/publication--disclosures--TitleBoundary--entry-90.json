@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::TitleBoundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" One title boundary's asserted premises, candidates and resulting certificate.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleBoundary { pub premises : RecognitionContext , pub candidates : Vec < Settlement > , pub certificate : BTreeMap < pn_records :: PublicReference , Option < String > > , pub consumed : BTreeSet < ActId > , }"
+  }
+}

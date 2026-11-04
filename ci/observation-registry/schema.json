@@ -1,0 +1,64 @@
+{
+  "schema": 2,
+  "configuration": "seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration",
+  "fields": {
+    "operations": [
+      "body",
+      "claim",
+      "exception",
+      "item",
+      "mode",
+      "operation",
+      "owner",
+      "package",
+      "path",
+      "shape",
+      "signature"
+    ],
+    "metrics": [
+      "attributes",
+      "claim",
+      "kind",
+      "name",
+      "owner",
+      "unit"
+    ],
+    "reviews": [
+      "assessments",
+      "body",
+      "class_decision",
+      "item_premise",
+      "operation"
+    ],
+    "generators": [
+      "class_decision",
+      "expansion_review",
+      "item",
+      "kind",
+      "package",
+      "path",
+      "syntax"
+    ],
+    "reviewed_types": [
+      "item",
+      "package",
+      "path",
+      "syntax"
+    ],
+    "class_decisions": [
+      "membership",
+      "name",
+      "premises",
+      "status"
+    ],
+    "shapes": [
+      "fields",
+      "metrics"
+    ],
+    "assessments": [
+      "negative_probe",
+      "premises",
+      "status"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ParentPlacementFault",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" A public causal parent absent from, or misplaced in, finalized history.\"] # [doc = \" Evidence attributes placement to the host without changing the authored act.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ParentPlacementFault { # [doc = \" Finalized child.\"] pub act : ActId , # [doc = \" Exact public causal parent, including settlement metadata.\"] pub parent : ActId , # [doc = \" Missing, self or non-earlier placement; never a representation error.\"] pub cause : ParentCause , }"
+  }
+}

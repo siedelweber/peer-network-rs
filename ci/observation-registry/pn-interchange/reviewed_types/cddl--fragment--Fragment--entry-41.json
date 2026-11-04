@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::fragment::Fragment",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/fragment.rs",
+    "syntax": "# [doc = \" What the root map pins, once membership is decided.\"] # [derive (Clone , Debug)] pub (crate) struct Fragment { label : NamespaceLabel , major : u64 , minor : u64 , slots : Vec < Slot > , }"
+  }
+}

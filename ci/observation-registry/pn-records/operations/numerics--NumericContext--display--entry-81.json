@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::display",
+    "owner": "RECORDS",
+    "signature": "fn display (& mut self , value : & Computed , fractional_digits : u8) -> Result < RoundedDisplay , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-display"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::display",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { if fractional_digits > 18 { return Err (NumericError :: DisplayBound) ; } let arithmetic = nrz_scalar :: ArithmeticContext :: new () ? ; let literal = nrz_scalar :: NumericLiteral :: new (& value . exact . canonical , nrz_scalar :: LiteralLimits :: default ()) ? ; let decoded = literal . decode :: < f64 > (& arithmetic) ? ; Ok (RoundedDisplay { text : format ! (\"{:.*}\" , usize :: from (fractional_digits) , decoded . center () . get ()) , fractional_digits , arithmetic_revision : arithmetic . revision () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body. Floating conversion is nonbinding display only."
+  }
+}

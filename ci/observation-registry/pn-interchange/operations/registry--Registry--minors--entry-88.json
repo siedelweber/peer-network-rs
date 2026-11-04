@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::minors",
+    "owner": "INTERCHANGE",
+    "signature": "fn minors (& self , label : & NamespaceLabel , major : u64) -> impl Iterator < Item = u64 > + '_",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::minors",
+    "body": "{ self . lines . get (label) . and_then (| majors | majors . get (& major)) . map_or (& [] [..] , | line | line . entries . as_slice ()) . iter () . map (| (minor , _) | * minor) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::minors.",
+    "assessments": {
+      "full_recording": "review-091",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

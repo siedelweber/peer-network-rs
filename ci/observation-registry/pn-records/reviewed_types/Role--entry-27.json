@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Role",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" The declared role in one complete act projection.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Role { # [doc = \" The sole projection of a binary act.\"] Binary , # [doc = \" First co-leg of a paired act.\"] A , # [doc = \" Second co-leg of a paired act.\"] T , }"
+  }
+}

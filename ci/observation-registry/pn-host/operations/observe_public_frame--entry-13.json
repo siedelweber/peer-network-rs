@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "observe_public_frame",
+    "owner": "HOST",
+    "signature": "fn observe_public_frame (frame : & wire :: Frame)",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::observe_public_frame",
+    "class_decision": "host-transport",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"observe_public_frame\" , & if cli_common :: observation :: trace_enabled () { Some ((frame . kind , cli_common :: observation :: public_bytes (frame . payload . expose_bytes () ,) ,)) } else { None } ,) ; let result = () ; operation . finish (& result) ; }",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+  }
+}

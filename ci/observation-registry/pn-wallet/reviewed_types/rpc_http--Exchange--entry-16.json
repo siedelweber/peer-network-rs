@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_http::Exchange",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [doc = \" The one connection as a tower service, so timeout and concurrency limit compose around it.\"] struct Exchange (http1 :: SendRequest < Full < Bytes > >) ;"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ridge::Record",
+    "package": "pn-records",
+    "path": "packages/records/src/ridge.rs",
+    "syntax": "# [doc = \" Retained attempted queries and full concavity cover; absence of an image is indecisive.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub input : Inputs , pub queries : Vec < PrimitiveRecord > , pub cells : Vec < Range > , pub image : Option < Range > , pub work : u64 , }"
+  }
+}

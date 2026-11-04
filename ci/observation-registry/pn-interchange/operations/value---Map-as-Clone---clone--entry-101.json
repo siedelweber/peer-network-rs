@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Map as Clone>::clone",
+    "owner": "INTERCHANGE",
+    "signature": "fn clone (& self) -> Map",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+      "class_decision": "value-traits"
+    },
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Map as Clone>::clone",
+    "body": "{ Map (self . 0 . iter () . map (| (key , value) | (clone_iter (key) , clone_iter (value))) . collect ()) }",
+    "class_decision": "value-traits",
+    "item_premise": "This body inherits the value-traits decision for value::<Map as Clone>::clone.",
+    "assessments": {
+      "full_recording": "review-123",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

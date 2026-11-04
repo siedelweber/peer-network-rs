@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::Theory::parse",
+    "owner": "INTERCHANGE",
+    "signature": "fn parse (source : & str) -> Result < Theory , TheoryError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::Theory::parse",
+    "body": "{ let cddl = parse :: parse (source) . map_err (syntax) ? ; let fragment = fragment :: check (& cddl) ? ; let table = RuleTable :: build (& cddl) ? ; let patterns = compile_patterns (& table) ? ; check_operators (& table) ? ; Ok (Theory { source : source . into () , cddl , table , fragment , patterns , }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::Theory::parse.",
+    "assessments": {
+      "full_recording": "review-032",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

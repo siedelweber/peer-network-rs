@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Debit",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" A writing vintage assertion. Its price is independently restored before consummation.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Debit { pub price : numerics :: PriceInput , pub boundary : u64 , pub charged : numerics :: BurnAmount , }"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::records_authentication::",
+    "kind": "item-macro",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_authentication.rs",
+    "syntax": "structure ! (pn_records :: authentication :: AuthenticationFields { proposal_precommitment , actor_proposal_signature , content_edition , dependency_edition , verified_header , host_seal , approval_binding , authentication_edition , public_verification_material }) ;",
+    "class_decision": "host-publication-codec",
+    "expansion_review": "Reviewed exhaustive structure destructuring, explicit array cardinality and closed tag matching. Generic collection mappings preserve sequences and canonicalize declared sets; integer conversions refuse overflow. Generated trait plumbing inherits the public codec operation; derives only inspect public assertions."
+  }
+}

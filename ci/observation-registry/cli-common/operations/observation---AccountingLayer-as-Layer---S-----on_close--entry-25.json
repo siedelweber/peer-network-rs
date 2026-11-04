@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<AccountingLayer as Layer < S >>::on_close",
+    "owner": "CLICOMMON",
+    "signature": "fn on_close (& self , id : Id , context : Context < '_ , S >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_close",
+    "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (& id) && let Some (account) = span . extensions_mut () . remove :: < SpanAccount > () { if let Some (mut operation) = account . operation { let outcome = if std :: thread :: panicking () { \"unwinding\" } else if let Some (outcome) = account . outcome { outcome } else if account . result . as_ref () . is_some_and (| value | value [\"constructor\"] == \"Err\") { \"error\" } else if account . result . is_some () { \"success\" } else if account . fields . 0 . get (\"asynchronous\") . and_then (Value :: as_bool) == Some (true) { \"cancelled\" } else { \"incomplete\" } ; operation . complete (outcome , account . result . unwrap_or (Value :: Null)) ; } if ! self . 0 . full_trace { return ; } if account . fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } self . 0 . emit (json ! ({ \"kind\" : \"span_envelope\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"name\" : \"rule:observe:spans\" , \"origin_name\" : span . name () , \"fields\" : account . fields . 0 , \"duration_seconds\" : self . 0 . clock . elapsed () . checked_sub (account . started) . map (| d | d . as_secs_f64 ()) , \"outcome\" : \"unobservable; explicit operation completion is authoritative\" })) ; } }",
+    "class_decision": "delivery",
+    "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
+    "assessments": {
+      "full_recording": "review-207",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

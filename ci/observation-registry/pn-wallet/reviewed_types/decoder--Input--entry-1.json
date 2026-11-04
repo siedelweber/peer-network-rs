@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Input",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Input fields, with opaque encoded proof carriage rather than a proof verdict.\"] # [doc = \" (´def:wallet:input-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Input { # [doc = \" Transaction identifier and masked output index.\"] pub outpoint : Vec < u8 > , # [doc = \" Peg-in flag.\"] pub pegin : bool , # [doc = \" Public script bytes.\"] pub script : Vec < u8 > , # [doc = \" Consensus sequence.\"] pub sequence : u32 , # [doc = \" Encoded issuance, including its nonce, entropy and both amounts.\"] pub issuance : Vec < u8 > , # [doc = \" Whether the codec found a non-null issuance.\"] pub has_issuance : bool , # [doc = \" Complete encoded input witness.\"] pub witness : Vec < u8 > , }"
+  }
+}

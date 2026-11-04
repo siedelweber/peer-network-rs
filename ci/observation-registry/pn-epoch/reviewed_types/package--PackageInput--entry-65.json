@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::PackageInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Untrusted full-prefix package; no independently asserted balance is accepted.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug)] pub struct PackageInput { pub markers : RecognizedMarkers , pub history : ValidatedHistory , pub inputs : Vec < CompilerInputs > , pub prices : Vec < ChargedPrice > , pub bindings : Vec < EpochBinding > , }"
+  }
+}

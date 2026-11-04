@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "support::SupportError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support.rs",
+    "syntax": "# [doc = \" No partial support escapes invalid premises or bounded computation.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum SupportError { # [error (\"base, ledger or price does not match the bound boundary\")] Boundary , # [error (\"base is not a nonnegative square anchored matrix with positive diagonal\")] Base , # [error (\"anchored ledger pair is missing, has zero count or differs in units\")] Ledger , # [error (\"support product budget exhausted\")] Products , # [error (\"bound parameter: {0}\")] Input (# [from] InputError) , # [error (\"numeric coordinate: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

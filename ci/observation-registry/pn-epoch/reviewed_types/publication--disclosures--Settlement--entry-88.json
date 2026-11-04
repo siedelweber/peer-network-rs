@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Settlement",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Complete settlement assertions, including plain metadata for every handshake leg.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Settlement { pub acts : [ActId ; 3] , pub references : [Option < pn_records :: SettlementReferences > ; 2] , pub targets_bind : bool , pub partners : PartnerEvidence , pub chain : [Option < Metadata > ; 3] , pub times : [Option < pn_records :: TimeEvidence > ; 3] , pub item : Option < pn_records :: PublicReference > , pub prior_owner : Option < String > , pub clauses : BTreeMap < RecognitionClause , bool > , pub withdrawals : Vec < ActId > , pub rescissions : Vec < ActId > , pub consumed : BTreeSet < ActId > , pub recognized : bool , }"
+  }
+}

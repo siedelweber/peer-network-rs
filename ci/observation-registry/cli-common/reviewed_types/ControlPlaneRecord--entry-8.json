@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ControlPlaneRecord",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Shared JSON control-plane record written to stderr.\"] # [derive (Debug , Clone , Serialize , Deserialize , PartialEq , Eq)] pub struct ControlPlaneRecord { # [doc = \" Record schema version.\"] pub schema : u32 , # [doc = \" Binary or entrypoint name.\"] pub command : String , # [doc = \" Machine-readable record kind.\"] pub kind : ControlPlaneRecordKind , # [doc = \" Short human-readable message, still carried inside JSON.\"] pub message : String , # [doc = \" Complete public argv bytes on usage failure, including values clap may abbreviate.\"] # [serde (skip_serializing_if = \"Option::is_none\")] pub arguments : Option < Vec < Vec < u8 > > > , # [doc = \" Kind-specific structured fields.\"] # [serde (skip_serializing_if = \"Option::is_none\")] pub fields : Option < ControlPlaneFields > , }"
+  }
+}

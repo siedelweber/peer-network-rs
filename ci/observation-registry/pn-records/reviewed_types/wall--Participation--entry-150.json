@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wall::Participation",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [doc = \" The effective participation floor follows the certified policy comparison.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Participation { Door , Wall , Indecisive , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "item": "envelope::json",
+    "owner": "DOCUMENTS",
+    "signature": "fn json (text : & str) -> Result < Dataset >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/envelope.rs::envelope::json",
+    "body": "{ serde_json :: from_str (text) . map_err (Error :: from) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for envelope::json.",
+    "assessments": {
+      "full_recording": "review-162",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

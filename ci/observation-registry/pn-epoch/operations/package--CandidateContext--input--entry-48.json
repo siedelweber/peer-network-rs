@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "item": "package::CandidateContext::input",
+    "owner": "EPOCH",
+    "signature": "fn input (& self) -> & CandidateInput",
+    "claim": "ROOT::amend:design:candidate-admission-boundary",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable field access retains candidate verification without promotion.",
+      "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+      "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+      "class_decision": "epoch-package"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/package.rs::package::CandidateContext::input",
+    "body": "{ & self . input }",
+    "class_decision": "epoch-package",
+    "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises.",
+    "assessments": {
+      "full_recording": "epoch-package-full_recording",
+      "secret_flow": "epoch-package-secret_flow",
+      "exposure_consumers": "epoch-package-exposure_consumers"
+    }
+  }
+}

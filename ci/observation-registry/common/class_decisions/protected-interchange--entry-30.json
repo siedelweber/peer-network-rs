@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "protected-interchange",
+    "status": "reviewer-confirmed",
+    "premises": "Private leaves and encoded output remain secrecy containers; tuple structure and explicitly public leaves are observed in full. Per-exit borrowed slices reach only uninstrumented canonical framing and protected output; no ordinary Value is built from a private leaf.",
+    "membership": {
+      "explicit": [
+        "pn-interchange::packages/interchange/src/encode.rs::encode::SecretValue::to_secret_canonical_bytes"
+      ]
+    }
+  }
+}

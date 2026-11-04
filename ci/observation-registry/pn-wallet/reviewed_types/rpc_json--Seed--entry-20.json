@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_json::Seed",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_json.rs",
+    "syntax": "struct Seed < 'a > { depth : usize , remaining : & 'a mut usize , }"
+  }
+}

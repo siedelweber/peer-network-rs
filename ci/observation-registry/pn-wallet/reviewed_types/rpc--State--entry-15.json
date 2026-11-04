@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::State",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [derive (Default)] struct State { attempts : VecDeque < Instant > , next_id : u64 , held : Option < ([u8 ; 32] , crate :: Refusal) > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::ridge::ChargeReplay",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "syntax": "# [doc = \" Independent records-layer charge verifier for the admitted clean ridge transcript.\"] # [doc = \" (´[ROOT-rule:design:ridge-charge-contract]´)\"] # [derive (Debug)] pub struct ChargeReplay ;"
+  }
+}

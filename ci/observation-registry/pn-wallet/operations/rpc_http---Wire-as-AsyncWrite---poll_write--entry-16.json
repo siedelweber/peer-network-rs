@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "item": "rpc_http::<Wire as AsyncWrite>::poll_write",
+    "owner": "WALLET",
+    "signature": "fn poll_write (self : Pin < & mut Self > , cx : & mut Context < '_ > , buf : & [u8]) -> Poll < io :: Result < usize > >",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Connection plumbing inside the instrumented RPC read; the request byte bound is accounted here without observing request bytes.",
+      "witness": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+      "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+      "class_decision": "wallet-decoder"
+    }
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncWrite>::poll_write",
+    "class_decision": "wallet-decoder",
+    "body": "{ let this = self . get_mut () ; let mut watch = this . watch . borrow_mut () ; if watch . written + buf . len () > watch . limits . request_bytes { watch . refusal = Some (RpcRefusal :: RequestBytes) ; return Poll :: Ready (Err (refused ())) ; } let count = ready ! (Pin :: new (& mut this . stream) . poll_write (cx , buf)) ? ; watch . written += count ; Poll :: Ready (Ok (count)) }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "This body passes hyper's serialized request, including the sensitive Basic field under its caveat, to the owned socket and counts bytes against the request ceiling; it neither formats nor retains the bytes, and its only state is the public count."
+  }
+}

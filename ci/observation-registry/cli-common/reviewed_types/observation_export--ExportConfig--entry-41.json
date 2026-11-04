@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::ExportConfig",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "# [doc = \" Executable-owned export configuration; the SDK never receives credentials.\"] # [derive (Debug)] pub struct ExportConfig { # [doc = \" Admitted transport, including its protected connection configuration.\"] pub transport : Arc < dyn ExportTransport > , # [doc = \" Authentication material secret-typed by the caller at acquisition.\"] pub credential : PrivateString , }"
+  }
+}

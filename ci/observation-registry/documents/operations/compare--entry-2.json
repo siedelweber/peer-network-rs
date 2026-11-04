@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "item": "compare",
+    "owner": "DOCUMENTS",
+    "signature": "fn compare (path : & Path , bytes : & [u8] , write : bool) -> Result < bool >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/lib.rs::compare",
+    "body": "{ match fs :: read (path) { Ok (current) if current == bytes => return Ok (false) , Ok (_) => { } Err (error) if error . kind () == std :: io :: ErrorKind :: NotFound => { } Err (error) => return Err (format ! (\"{}: {error}\" , path . display ()) . into ()) , } if write { cli_common :: publish_batch (& [cli_common :: PublicationAsset { role : \"document output\" , path , bytes , }]) . map_err (| error | format ! (\"{}: {error}\" , path . display ())) ? ; } Ok (true) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body inherits the public-documents decision for compare.",
+    "assessments": {
+      "full_recording": "review-169",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

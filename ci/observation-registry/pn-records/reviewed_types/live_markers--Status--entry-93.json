@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_markers::Status",
+    "package": "pn-records",
+    "path": "packages/records/src/live_markers.rs",
+    "syntax": "# [doc = \" A declared live service's assessment, not a conclusion from a depth counter.\"] # [doc = \" (´rule:burn:live-marker-settlement´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Status { Final , Pending , Lost , }"
+  }
+}

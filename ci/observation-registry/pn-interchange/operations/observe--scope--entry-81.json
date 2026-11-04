@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/observe.rs",
+    "item": "observe::scope",
+    "owner": "INTERCHANGE",
+    "signature": "fn scope (owner : & 'static str , label : & 'static str , item : & 'static str , arguments : & dyn std :: fmt :: Debug) -> Scope",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "reviewed-helper",
+    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = owner , claim_owner = \"ROOT\" , claim_label = label , source_item = item , arguments =? arguments) . entered ()) }",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/observe.rs::observe::scope",
+    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = owner , claim_owner = \"ROOT\" , claim_label = label , source_item = item , arguments =? arguments) . entered ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for observe::scope.",
+    "assessments": {
+      "full_recording": "review-081",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Block",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Full block layout without a local signature or proof-verification verdict.\"] # [doc = \" (´def:wallet:block-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Block { # [doc = \" Complete original header, including signing challenge and witness.\"] pub header : Vec < u8 > , # [doc = \" All transactions, not just evidence candidates.\"] pub transactions : Vec < Transaction > , }"
+  }
+}

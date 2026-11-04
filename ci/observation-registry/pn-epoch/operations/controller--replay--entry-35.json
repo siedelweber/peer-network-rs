@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/controller.rs",
+    "item": "controller::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (bound : & BoundProcedure < '_ > , d : & ScheduleDeclaration , search : & InverseSearch , ridge : Option < & CheckedRidge > , e : & Evidence ,) -> Result < CheckedProposal , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
+    "body": "{ if e . declaration != * d . input () || e . search != * search || e . fence != crate :: fence :: search (bound , None) ? { return Err (AdmissionRefusal :: Evidence . into ()) ; } let (p , input) = inputs (bound , d , search , & e . fence) ? ; let checked = pn_graph :: numeric :: controller :: replay (& p , & input , ridge , & e . controller) ? ; if image (& p , d , & checked) ? != e . burn_image { return Err (AdmissionRefusal :: Evidence . into ()) ; } match checked . verdict { Verdict :: Delivered => Ok (CheckedProposal { evidence : e . clone () }) , Verdict :: Indecisive => { let comparison = match checked . attempts . last () . and_then (| a | a . stopped_at) { Some (Stage :: Floor) => Comparison :: Floor , Some (Stage :: InverseGain) => Comparison :: InverseGain , Some (Stage :: Deadband) => Comparison :: Deadband , Some (Stage :: StepCap) => Comparison :: StepCap , Some (Stage :: Delivery) | None => Comparison :: DeliveryError , } ; Err (AdmissionRefusal :: Indecisive (comparison) . into ()) } Verdict :: DeliveryRefused => Err (AdmissionRefusal :: Delivery . into ()) , } }",
+    "class_decision": "canonical-controller-public",
+    "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

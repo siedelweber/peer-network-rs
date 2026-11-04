@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Refinement",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Finite public comparison sequence and independent production/replay ceilings.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Refinement { pub precision_bits : Vec < u32 > , pub maximum_work : u64 , pub maximum_replay_work : u64 , }"
+  }
+}

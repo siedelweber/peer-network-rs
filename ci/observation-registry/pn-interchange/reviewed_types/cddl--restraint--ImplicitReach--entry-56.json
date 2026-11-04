@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::restraint::ImplicitReach",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/restraint.rs",
+    "syntax": "# [doc = \" A position admitting a restrained value without naming it — through\"] # [doc = \" `any`, through an unrestricted major-type reference, or through a\"] # [doc = \" prelude type that reaches one.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Theory;\"] # [doc = \"\"] # [doc = \" let theory = Theory::parse(concat!(\"] # [doc = \"     \\\"e = {0 => \\\\\\\"com.example\\\\\\\", 1 => [0, 0, uint], 2 => payload}\\\\n\\\",\"] # [doc = \"     \\\"payload = [* any]\\\\n\\\",\"] # [doc = \" ))\"] # [doc = \" .expect(\\\"an assignable theory\\\");\"] # [doc = \" let report = theory.restraint();\"] # [doc = \" let reach = report.implicit_reaches().next().expect(\\\"a reach\\\");\"] # [doc = \" assert_eq!(reach.key().get(), 2);\"] # [doc = \" assert_eq!(reach.path().collect::<Vec<&str>>(), [\\\"payload\\\", \\\"any\\\"]);\"] # [doc = \" ```\"] # [derive (Clone , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ImplicitReach { key : ContentKey , kind : Restrained , path : Vec < String > , }"
+  }
+}

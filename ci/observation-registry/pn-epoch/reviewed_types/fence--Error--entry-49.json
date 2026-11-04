@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "fence::Error",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/fence.rs",
+    "syntax": "# [doc = \" Preparation and scope refusals are not mathematical fence failures.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"fence declaration does not bind a supported reference profile\")] Profile , # [error (\"inverse-gain wall requires its checked reference enclosure\")] ReferenceWall , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"numerical request: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , # [error (\"constant profile: {0}\")] Input (# [from] crate :: InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

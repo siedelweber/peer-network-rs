@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AuthenticationDisclosure",
+    "package": "pn-records",
+    "path": "packages/records/src/authentication.rs",
+    "syntax": "# [doc = \" Presence-checked disclosure. This is not authenticated evidence or an act\"] # [doc = \" eligibility verdict; all disclosed bindings remain untrusted.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationDisclosure (AuthenticationFields) ;"
+  }
+}

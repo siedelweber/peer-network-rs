@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler.rs",
+    "item": "compiler::CompiledState::package",
+    "owner": "EPOCH",
+    "signature": "fn package (& self) -> & CompiledSource",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits the joined compiler operation.",
+      "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+      "boundary": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+      "class_decision": "epoch-compiler"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::package",
+    "body": "{ & self . source }",
+    "class_decision": "epoch-compiler",
+    "item_premise": "The joined compiler retains immutable checked public causes and their Published or Candidate authority discriminator, deterministic formation verification, and source, title, ledger, cell, recipient and numeric evidence. The published entry point requires a verified package; the separately instrumented candidate entry point carries no publication authority. Irrational coefficients stay public holds. No secrets, canonical bytes or persistence capability enter; observation is not a premise.",
+    "assessments": {
+      "full_recording": "epoch-compiler-full_recording",
+      "secret_flow": "epoch-compiler-secret_flow",
+      "exposure_consumers": "epoch-compiler-exposure_consumers"
+    }
+  }
+}

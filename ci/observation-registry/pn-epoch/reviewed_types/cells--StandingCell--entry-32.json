@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cells::StandingCell",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/cells.rs",
+    "syntax": "# [doc = \" One coefficient input with every independently counted and debited member.\"] # [doc = \" Exact coordinates are normalized rational spellings, not publication bytes.\"] # [doc = \" (´def:compiler:standing-cells´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StandingCell { pub identity : CellIdentity , pub members : BTreeSet < ActId > , pub coordinates : BTreeMap < String , String > , }"
+  }
+}

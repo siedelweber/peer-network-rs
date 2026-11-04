@@ -1,0 +1,13 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "epoch-base",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/base.rs::base::compile_base"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score."
+  }
+}

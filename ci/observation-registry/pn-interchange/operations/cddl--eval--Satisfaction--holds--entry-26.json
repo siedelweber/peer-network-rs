@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "item": "cddl::eval::Satisfaction::holds",
+    "owner": "INTERCHANGE",
+    "signature": "fn holds (& self) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/eval.rs::cddl::eval::Satisfaction::holds",
+    "body": "{ matches ! (self , Satisfaction :: Holds) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::eval::Satisfaction::holds.",
+    "assessments": {
+      "full_recording": "review-010",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ledger::FinalLedger",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/ledger.rs",
+    "syntax": "# [doc = \" Derived values, not independently asserted replacement balances or publication bytes.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FinalLedger { pub snapshots : Vec < BurnSnapshot > , pub balances : BTreeMap < Address , BurnAmount > , pub counts : BTreeMap < Address , ActionCount > , pub debits : BTreeMap < ActId , ChargedVintage > , }"
+  }
+}

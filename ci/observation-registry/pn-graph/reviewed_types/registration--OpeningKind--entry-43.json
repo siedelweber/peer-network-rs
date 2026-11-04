@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registration::OpeningKind",
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "syntax": "# [doc = \" Which act-owned removable opening a public authorization covers.\"] # [doc = \" Structural graph edges are never removed by either operation.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum OpeningKind { # [doc = \" Content and its co-removed private value.\"] Content , # [doc = \" The declared dependency list and opening.\"] Dependency , }"
+  }
+}

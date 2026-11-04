@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::panic",
+    "owner": "CLICOMMON",
+    "signature": "fn panic (command : & str , thread : Option < & str > , location : Option < & str > , payload : Option < & str >) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::panic",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Panic , \"unexpected panic\" , Some (ControlPlaneFields :: Panic { exit_code : CommandExit :: Failure . code () , thread : thread . map (str :: to_string) , location : location . map (str :: to_string) , payload : payload . map (str :: to_string) , }) ,) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::panic.",
+    "assessments": {
+      "full_recording": "review-255",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

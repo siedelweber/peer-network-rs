@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::InitializationField",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Required initialization fields, retained in missing-input refusals.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum InitializationField { Floor , Wall , Parameters , PolicyFloor , EffectiveBoundary , }"
+  }
+}

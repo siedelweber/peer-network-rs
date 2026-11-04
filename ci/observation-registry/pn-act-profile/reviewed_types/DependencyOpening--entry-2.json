@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyOpening",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Supplied private material for one complete dependency opening.\"] # [doc = \" Opening publication is explicit and does not restore retained carriage.\"] # [doc = \" (´def:profile:matching´)\"] # [derive (Debug)] pub struct DependencyOpening { pub act : ActId , pub salt : SecretSlice < u8 > , pub dependencies : SecretBox < DependencyIds > , }"
+  }
+}

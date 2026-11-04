@@ -1,0 +1,25 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete available argument representation",
+      "result or explicit unavailable capability representation",
+      "terminal outcome",
+      "inclusive duration_seconds",
+      "declared own work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "actprofile__root__amend__decomposition__act_profile__started_operations",
+      "actprofile__root__amend__decomposition__act_profile__completed_operations",
+      "actprofile__root__amend__decomposition__act_profile__work_bytes",
+      "actprofile__root__amend__decomposition__act_profile__work_operations",
+      "actprofile__root__amend__decomposition__act_profile__active_operations",
+      "actprofile__root__amend__decomposition__act_profile__resource_current_bytes",
+      "actprofile__root__amend__decomposition__act_profile__elapsed_seconds",
+      "actprofile__root__amend__decomposition__act_profile__workload_bytes",
+      "actprofile__root__amend__decomposition__act_profile__workload_operations"
+    ]
+  },
+  "name": "shape-act-profile"
+}

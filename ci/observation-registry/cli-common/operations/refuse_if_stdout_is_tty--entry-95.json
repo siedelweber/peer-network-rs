@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "refuse_if_stdout_is_tty",
+    "owner": "CLICOMMON",
+    "signature": "fn refuse_if_stdout_is_tty (binary_name : & str)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::refuse_if_stdout_is_tty",
+    "body": "{ if let Some (record) = stdout_tty_refusal_record (binary_name) { let _ignored = emit_control_plane_record (& record) ; exit_with (CommandExit :: Usage) ; } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for refuse_if_stdout_is_tty.",
+    "assessments": {
+      "full_recording": "review-270",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

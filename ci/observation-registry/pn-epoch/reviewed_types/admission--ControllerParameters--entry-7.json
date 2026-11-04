@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::ControllerParameters",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Exact rational parameters of the canonical controller, not host overrides.\"] # [doc = \" (´[ROOT-amend:design:admission-declarations]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ControllerParameters { pub absolute_cap : String , pub relative_cap : String , pub deadband : String , pub margin : String , }"
+  }
+}

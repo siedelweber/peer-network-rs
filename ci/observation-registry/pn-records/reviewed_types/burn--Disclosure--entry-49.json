@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::Disclosure",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Named required publications, including evidence that no numeric formula consumes.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Disclosure { AddressSpace , Edition , SampleConvention , Bootstrap , UnitCost , SettlementDepth , Finality , Provenance , RecordingCosts , Operator , }"
+  }
+}

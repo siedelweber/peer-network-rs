@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Negative::from_i128",
+    "owner": "INTERCHANGE",
+    "signature": "fn from_i128 (v : i128) -> Result < Negative , ValueError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Negative::from_i128",
+    "body": "{ if v >= 0 { return Err (ValueError :: IntegerOutOfRange { value : v }) ; } u64 :: try_from (- 1 - v) . map (Negative) . map_err (| _ | ValueError :: IntegerOutOfRange { value : v }) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Negative::from_i128.",
+    "assessments": {
+      "full_recording": "review-102",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

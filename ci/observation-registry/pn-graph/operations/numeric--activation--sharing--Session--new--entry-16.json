@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/sharing.rs",
+    "item": "numeric::activation::sharing::Session::new",
+    "owner": "GRAPH",
+    "signature": "fn new (procedure : & Procedure , bleed : & str) -> Result < Self , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+    "body": "{ start (procedure , bleed , None) }",
+    "class_decision": "activation-base-public",
+    "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "RouteKind",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq)] enum RouteKind { CombinedRaw , CombinedPrefixed , StdoutOnly , StderrOnly , }"
+  }
+}

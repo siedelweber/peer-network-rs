@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "run_stdout_json_command",
+    "owner": "CLICOMMON",
+    "signature": "fn run_stdout_json_command < Output , CommandError , Run > (command_name : & str , debug : bool , default_level : tracing :: Level , run : Run ,) -> ExitCode where Output : serde :: Serialize , CommandError : std :: fmt :: Display , Run : FnOnce () -> Result < Output , CommandError > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
+    "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_stdout_json_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } match run () { Ok (output) => match emit (& output) { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to write JSON to stdout\") ; CommandExit :: Failure . exit_code () } } , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for run_stdout_json_command.",
+    "assessments": {
+      "full_recording": "review-276",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

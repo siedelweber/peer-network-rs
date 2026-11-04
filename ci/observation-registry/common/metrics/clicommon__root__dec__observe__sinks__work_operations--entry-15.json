@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__dec__observe__sinks__work_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {}
+  }
+}

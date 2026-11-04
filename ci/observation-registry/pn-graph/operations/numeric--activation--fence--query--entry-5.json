@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/fence.rs",
+    "item": "numeric::activation::fence::query",
+    "owner": "GRAPH",
+    "signature": "fn query (procedure : & Procedure , input : & Inputs) -> Result < Query , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
+    "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let width = super :: nonnegative (& input . width , & mut budget) ? ; let tilt = super :: nonnegative (& input . cumulative_tilt , & mut budget) ? ; let margin = super :: nonnegative (& input . margin , & mut budget) ? ; if ! margin . compare (& Rational :: parse (\"1\" , & mut budget) ? , & mut budget) ? . is_gt () { return Err (Error :: Declaration) ; } if width . is_zero () || tilt . is_zero () { return Ok (Query { coordinates : Vec :: new () , nodes : vec ! [Node :: Rational (\"0\" . into ())] , target : 0 , goal : Goal :: AtMost (\"1\" . into ()) , }) ; } let request = Request { standing : Range { lower : input . wall . clone () , upper : input . wall . clone () , } , bleed_squared : input . bleed_squared . clone () , wall : None , wall_enclosure : None , quantity : Quantity :: ResponsiveLogGain , } ; let mut result = super :: query (& request , & mut budget) ? ; for factor in [\"2\" , & input . margin , & input . width , & input . cumulative_tilt] { let scalar = super :: push (& mut result . nodes , Node :: Rational (factor . into ())) ; result . target = super :: push (& mut result . nodes , Node :: Multiply (result . target , scalar)) ; } result . goal = Goal :: AtMost (\"1\" . into ()) ; Ok (result) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

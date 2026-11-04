@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/local.rs",
+    "item": "numeric::verification::local::replay_local",
+    "owner": "GRAPH",
+    "signature": "fn replay_local (p : & Procedure , input : & VerificationInput , candidate : & [Range] , residual : & TwoMapRecord , declaration : & LocalDeclaration , record : & LocalRecord ,) -> Result < LocalRecord , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::replay_local",
+    "body": "{ replay_two_map (p , input , candidate , residual) ? ; run (p , input , residual , declaration , Some (record)) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

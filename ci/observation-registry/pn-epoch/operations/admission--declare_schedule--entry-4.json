@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "item": "admission::declare_schedule",
+    "owner": "EPOCH",
+    "signature": "fn declare_schedule (input : ScheduleInput , limits : Limits) -> Result < ScheduleDeclaration , DeclarationError >",
+    "claim": "ROOT::alg:design:schedules",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+    "body": "{ if input . controller != \"canonical-interim-v1\" { return Err (DeclarationError :: Controller) ; } let init = & input . initialization ; let floor = init . floor . ok_or (DeclarationError :: Missing (InitializationField :: Floor)) ? ; let wall = init . wall . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: Wall)) ? ; let parameters = init . parameters . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: Parameters)) ? ; let policy = init . policy_floor . as_ref () . ok_or (DeclarationError :: Missing (InitializationField :: PolicyFloor)) ? ; let boundary = init . effective_boundary . ok_or (DeclarationError :: Missing (InitializationField :: EffectiveBoundary)) ? ; if input . announced_at . checked_add (1) != Some (boundary) { return Err (DeclarationError :: Late) ; } let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; let wall = positive (wall , & mut budget , DeclarationError :: InitialWall) ? ; let policy = positive (policy , & mut budget , DeclarationError :: InitialWall) ? ; if policy . compare (& wall , & mut budget) ? == Ordering :: Less { return Err (DeclarationError :: InitialWall) ; } if floor == Floor :: RationalThreeThirtySevenths && wall . compare (& Rational :: parse (\"3/37\" , & mut budget) ? , & mut budget) ? == Ordering :: Less { return Err (DeclarationError :: InitialWall) ; } positive (& parameters . absolute_cap , & mut budget , DeclarationError :: Parameters) ? ; let relative = positive (& parameters . relative_cap , & mut budget , DeclarationError :: Parameters) ? ; let deadband = Rational :: parse (& parameters . deadband , & mut budget) ? ; let margin = positive (& parameters . margin , & mut budget , DeclarationError :: Parameters) ? ; if relative . compare (& one , & mut budget) ? != Ordering :: Less || deadband . is_negative () || deadband . compare (& one , & mut budget) ? != Ordering :: Less || margin . compare (& one , & mut budget) ? != Ordering :: Greater { return Err (DeclarationError :: Parameters) ; } if let Delivery :: Grid { quantum , maximum_error } = & input . delivery { let quantum = positive (quantum , & mut budget , DeclarationError :: Delivery) ? ; let maximum_error = positive (maximum_error , & mut budget , DeclarationError :: Delivery) ? ; if maximum_error . compare (& quantum , & mut budget) ? . is_lt () { return Err (DeclarationError :: Delivery) ; } if ! wall . div (& quantum , & mut budget) ? . is_integer () { return Err (DeclarationError :: Delivery) ; } } let refinement = & input . refinement ; if refinement . precision_bits . is_empty () || refinement . precision_bits . contains (& 0) || refinement . precision_bits . windows (2) . any (| pair | pair [0] >= pair [1]) || refinement . maximum_work == 0 || refinement . maximum_replay_work == 0 { return Err (DeclarationError :: Refinement) ; } Ok (ScheduleDeclaration { input , controller : ControllerEdition :: CanonicalInterim , }) }",
+    "class_decision": "epoch-admission-declarations",
+    "item_premise": "Complete public declarations or candidate causes and closure assertions are retained with their exact result. Candidate and publication verifiers are distinct; immutable access never promotes a proposed context to an admitted or published state. No secret, encoding recipe or deployment authentication is introduced; observation supplies none of the verifier premises. Verification retains exact one-boundary lead and separate candidate/publication authority; structural cause coherence is shared without sharing verifier results. Grid error allowance must cover one quantum; smaller declarations are refused before production.",
+    "assessments": {
+      "full_recording": "epoch-admission-declarations-full_recording",
+      "secret_flow": "epoch-admission-declarations-secret_flow",
+      "exposure_consumers": "epoch-admission-declarations-exposure_consumers"
+    }
+  }
+}

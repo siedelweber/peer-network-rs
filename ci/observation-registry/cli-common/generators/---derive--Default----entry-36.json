@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::LossCauses",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Default)]",
+    "class_decision": "delivery",
+    "expansion_review": "Default initializes finite atomic loss counters to zero; no public payload or secret consumer is generated."
+  }
+}

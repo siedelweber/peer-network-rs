@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "item": "schedules::CheckedSchedule::record",
+    "owner": "EPOCH",
+    "signature": "fn record (& self) -> & Record",
+    "claim": "ROOT::alg:design:effective-schedules",
+    "shape": "shape-epoch",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits schedule replay and performs no decision.",
+      "witness": "EPOCH::claim:admission:effective-schedules-retain-led-prices-and-vintages",
+      "boundary": "pn-epoch::packages/epoch/src/schedules.rs::schedules::replay",
+      "class_decision": "effective-schedule-public"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/schedules.rs::schedules::CheckedSchedule::record",
+    "body": "{ & self . record }",
+    "class_decision": "effective-schedule-public",
+    "item_premise": "Only public completed epochs, declarations and led policy announcements enter this operation. Independent controller and sequence replay checks frozen widths, accepted rungs, delivered charge identity, policy validity and unchanged historical bindings. Immutable evidence confers no final admission or authenticated deployment publication.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

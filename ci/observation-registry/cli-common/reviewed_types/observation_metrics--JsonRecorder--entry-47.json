@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_metrics::JsonRecorder",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_metrics.rs",
+    "syntax": "# [doc = \" One local recorder shared by metrics API handles and JSON snapshots.\"] # [derive (Clone)] pub (super) struct JsonRecorder { instruments : Arc < BTreeMap < (String , String , String) , Arc < Instrument > > > , pub (super) lost : Arc < AtomicU64 > , counter_lost : Arc < AtomicU64 > , }"
+  }
+}

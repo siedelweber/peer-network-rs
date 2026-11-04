@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::verification::dual::Dual",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/verification/dual.rs",
+    "syntax": "pub (super) struct Dual { pub value : Interval , pub gradient : Vec < Interval > , }"
+  }
+}

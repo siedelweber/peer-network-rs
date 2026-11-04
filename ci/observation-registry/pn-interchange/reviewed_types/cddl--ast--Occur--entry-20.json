@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Occur",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `occur = [uint] \\\"*\\\" [uint] / \\\"+\\\" / \\\"?\\\"`.\"] # [derive (Clone , Debug)] pub (crate) struct Occur { # [doc = \" Which form.\"] pub (crate) kind : OccurKind , # [doc = \" Where it was written.\"] pub (crate) span : Span , }"
+  }
+}

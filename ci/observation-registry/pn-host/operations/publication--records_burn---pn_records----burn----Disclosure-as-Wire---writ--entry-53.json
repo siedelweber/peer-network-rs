@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_burn.rs",
+    "item": "publication::records_burn::<pn_records :: burn :: Disclosure as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , _c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_burn.rs::publication::records_burn::<pn_records :: burn :: Disclosure as Wire>::write",
+    "body": "{ match self { Self :: AddressSpace => Ok (array ([Value :: Unsigned (0)])) , Self :: Edition => Ok (array ([Value :: Unsigned (1)])) , Self :: SampleConvention => Ok (array ([Value :: Unsigned (2)])) , Self :: Bootstrap => Ok (array ([Value :: Unsigned (3)])) , Self :: UnitCost => Ok (array ([Value :: Unsigned (4)])) , Self :: SettlementDepth => Ok (array ([Value :: Unsigned (5)])) , Self :: Finality => Ok (array ([Value :: Unsigned (6)])) , Self :: Provenance => Ok (array ([Value :: Unsigned (7)])) , Self :: RecordingCosts => Ok (array ([Value :: Unsigned (8)])) , Self :: Operator => Ok (array ([Value :: Unsigned (9)])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

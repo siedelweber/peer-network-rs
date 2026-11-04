@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::lex::NumberToken",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/lex.rs",
+    "syntax": "# [doc = \" A numeric literal, kept as it was written.\"] # [doc = \"\"] # [doc = \" The lexeme is carried verbatim rather than converted, because a\"] # [doc = \" normalized printing that turned `0x18` into `24` or `1.0` into `1`\"] # [doc = \" would be rewriting the theory rather than laying it out. Conversion is\"] # [doc = \" the evaluator's business, and it has the digits it needs here.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub (crate) struct NumberToken { # [doc = \" The lexeme, byte for byte, sign included.\"] pub (crate) text : String , # [doc = \" Whether the literal carries a fraction or an exponent — the\"] # [doc = \" distinction RFC 8610 draws in its comment on `number`.\"] pub (crate) is_float : bool , }"
+  }
+}

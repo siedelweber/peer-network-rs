@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/wall.rs",
+    "item": "numeric::wall::check_declaration",
+    "owner": "GRAPH",
+    "signature": "fn check_declaration (procedure : & Procedure , input : & Inputs) -> Result < () , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
+    "body": "{ let limits = procedure . enclosure . as_ref () . ok_or (Error :: Declaration) ? . operation . clone () ; validate (procedure , input , & mut Budget :: new (limits) ?) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

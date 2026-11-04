@@ -1,0 +1,26 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "reference-wall-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public reference definitions and complete rational numerical evidence only. The immutable charged price is never replaced. Scalar queries and full returned evidence are recorded; no secret, publication encoder or subscriber is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/conserved/verification.rs::conserved::verification::verification_declaration",
+        "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::consume",
+        "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
+        "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::replay",
+        "pn-epoch::packages/epoch/src/wall.rs::wall::bind",
+        "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::evaluate_box",
+        "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_box",
+        "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_two_map",
+        "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::two_map",
+        "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::local_check",
+        "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::replay_local",
+        "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
+        "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::evaluate",
+        "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Output",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" Output fields; commitment parsing does not establish a confidential amount.\"] # [doc = \" (´def:wallet:output-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Output { # [doc = \" Encoded asset discriminant and value.\"] pub asset : Vec < u8 > , # [doc = \" Encoded value discriminant and integer or commitment.\"] pub value : Vec < u8 > , # [doc = \" Encoded nonce.\"] pub nonce : Vec < u8 > , # [doc = \" Full public script bytes.\"] pub script : Vec < u8 > , # [doc = \" Complete encoded output witness.\"] pub witness : Vec < u8 > , }"
+  }
+}

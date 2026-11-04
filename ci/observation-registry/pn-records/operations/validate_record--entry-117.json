@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "item": "validate_record",
+    "owner": "RECORDS",
+    "signature": "fn validate_record (acts : & [CandidateAct] , history : & ValidatedHistory , declarations : & [Declaration] ,) -> Result < ValidatedRecords , ValidationError >",
+    "claim": "ROOT::sig:design:records",
+    "mode": "instrumented",
+    "shape": "shape-records",
+    "operation": "validate-record"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/lib.rs::validate_record",
+    "body": "{ let bytes = validation_started (acts) ; let result = validate (acts , history , declarations) ; validation_finished (bytes , acts . len () , result . is_ok ()) ; result }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Builds one borrowed identity-to-position index per call and shares the immutable accepted history allocations. Locally validates whole candidates, with asserted parents and placement dependencies resolved against fixed history or earlier proposals. Typed refusal and public snapshot content are observed; counters never influence acceptance."
+  }
+}

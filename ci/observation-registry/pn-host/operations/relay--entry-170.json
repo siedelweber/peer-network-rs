@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "relay",
+    "owner": "HOST",
+    "signature": "async fn relay (state : Relay) -> Result < () , Refusal >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::relay",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ let Relay { shim , socket , startup , key , diagnostics , refusal , } = state ; let result = forward (shim , socket , startup , key , diagnostics , refusal) . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport) { \"error\" } else { \"refusal\" } , \"store relay refused\") ; } result }",
+    "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session. The relay publishes its fieldless cause before dropping stream halves; storage copies only the requested public chain and uses the private typed statement vocabulary."
+  }
+}

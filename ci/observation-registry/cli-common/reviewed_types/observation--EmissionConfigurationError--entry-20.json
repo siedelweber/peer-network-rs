@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::EmissionConfigurationError",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Refused values of the executable-owned emission setting.\"] # [derive (Debug , Clone , PartialEq , Eq , thiserror :: Error)] pub enum EmissionConfigurationError { # [doc = \" Environment-owned exporter settings bypass secret-owned acquisition.\"] # [error (\"{0} refused; use secret-owned ExportConfig\")] ExporterEnvironment (String) , # [doc = \" Only the two declared emission modes are accepted.\"] # [error (\"PN_OBSERVE_LEVEL must be default or trace\")] UnknownLevel , # [doc = \" Configuration is text and must not be decoded lossily.\"] # [error (\"PN_OBSERVE_LEVEL must be UTF-8: default or trace\")] NonUtf8Level , }"
+  }
+}

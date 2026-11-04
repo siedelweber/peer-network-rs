@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::LocalRecord",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" Reconstructible interval forward derivatives and the rational Krawczyk image.\"] # [doc = \" The preconditioner is the declared identity, with denominator one.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalRecord { pub declaration : LocalDeclaration , pub active : Vec < usize > , pub center : Vec < crate :: primitive :: Range > , pub domain : Vec < crate :: primitive :: Range > , pub preconditioner : Vec < Vec < String > > , pub preconditioner_denominator : String , pub jacobian : Vec < Vec < crate :: primitive :: Range > > , pub asserted : Vec < crate :: primitive :: Range > , pub jacobian_norm : String , pub inflation_radius : String , pub image_radius : String , pub above_wall : bool , pub verdict : LocalVerdict , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
+  }
+}

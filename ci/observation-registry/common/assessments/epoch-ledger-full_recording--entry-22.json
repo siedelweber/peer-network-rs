@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
+    "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+  },
+  "name": "epoch-ledger-full_recording"
+}

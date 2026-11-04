@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::version",
+    "owner": "CLICOMMON",
+    "signature": "fn version (command : & str , version : & str) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::version",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Version , \"version requested\" , Some (ControlPlaneFields :: Version { version : version . to_string () , }) ,) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::version.",
+    "assessments": {
+      "full_recording": "review-252",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

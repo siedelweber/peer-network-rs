@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation_export::Message",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation_export.rs",
+    "syntax": "enum Message { Span (Box < SpanData >) , Collect (mpsc :: SyncSender < () >) , }"
+  }
+}

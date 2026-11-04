@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "controller::Delivery",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "canonical-controller-public",
+    "expansion_review": "Structural cloning, equality, public diagnostics and typed error conversion retain inputs and evidence without defaulting a floor or constructing admitted schedules."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "live_publication::LiveState",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/live_publication.rs",
+    "syntax": "# [doc = \" Last closed package survives a breach unchanged. Only the halt bit is mutable.\"] # [doc = \" (´rule:admission:live-publication´)\"] # [derive (Debug)] pub struct LiveState { closed : AdmittedPackage , halted : bool , response : Option < Response > , }"
+  }
+}

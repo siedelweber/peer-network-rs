@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::RuleBody",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" What a rule assigns: a type, or a group entry.\"] # [doc = \"\"] # [doc = \" The two rule alternatives of the ABNF are told apart by what follows\"] # [doc = \" the assignment, not by the name in front of it — `typename` and\"] # [doc = \" `groupname` are both `id`. With `=` either is possible, and the parser\"] # [doc = \" resolves it as the ordered choice does: a type if the text is one, a\"] # [doc = \" group entry otherwise.\"] # [derive (Clone , Debug)] pub (crate) enum RuleBody { # [doc = \" A type rule.\"] Type (Type) , # [doc = \" A group rule, whose body is one `grpent`.\"] # [doc = \"\"] # [doc = \" Boxed: a group entry carries an occurrence indicator and a member\"] # [doc = \" key that a type never has, and type rules are the common case.\"] Group (Box < GroupEntry >) , }"
+  }
+}

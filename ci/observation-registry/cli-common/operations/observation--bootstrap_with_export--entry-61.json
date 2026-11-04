@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::bootstrap_with_export",
+    "owner": "CLICOMMON",
+    "signature": "fn bootstrap_with_export (enabled : bool , debug : bool , default_level : tracing :: Level , config : crate :: observation_export :: ExportConfig ,) -> Result < BootstrapGuard , BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::bootstrap_with_export",
+    "body": "{ let _level = configured_level () ? ; let started = Instant :: now () ; let bridge = if enabled { Some (Arc :: new (crate :: observation_export :: Bridge :: new (config) ?)) } else { None } ; bootstrap_inner (enabled , debug , default_level , bridge , started) }",
+    "class_decision": "delivery",
+    "item_premise": "This body inherits the delivery decision for observation::bootstrap_with_export. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "assessments": {
+      "full_recording": "review-210",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

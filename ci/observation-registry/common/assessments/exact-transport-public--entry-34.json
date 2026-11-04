@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Read the public rational field contract, sparse operator and frozen adapter. Arithmetic state contains public constants and resource counters. All outputs are public exact pairs and hulls or retained irrational terms. The independent operator checks the supported numerical subset.",
+    "negative_probe": "EPOCH::claim:transport:transport-preserves-balance-and-count-mass"
+  },
+  "name": "exact-transport-public"
+}

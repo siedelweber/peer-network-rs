@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "settlement::Observation",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [derive (Clone , Debug , Default , Eq , PartialEq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "epoch-admission-declarations",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/admission.rs::admission::declare_schedule",
+        "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::input",
+        "pn-epoch::packages/epoch/src/admission.rs::admission::ScheduleDeclaration::controller"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Schedule validation reads complete public initialization, controller identity, rational delivery and refinement declarations. Its result is an immutable declaration, not an executed controller, admitted write or publication. Exact arithmetic is bounded; diagnostics retain public inputs and named refusals. No secret material or deployment authentication flows through this operation."
+  }
+}

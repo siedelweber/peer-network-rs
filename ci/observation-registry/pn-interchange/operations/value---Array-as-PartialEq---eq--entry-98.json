@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::<Array as PartialEq>::eq",
+    "owner": "INTERCHANGE",
+    "signature": "fn eq (& self , other : & Array) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "pn-interchange::packages/interchange/src/accept.rs::accept::Verdict::is_accepted",
+      "class_decision": "value-traits"
+    },
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Array as PartialEq>::eq",
+    "body": "{ self . 0 . len () == other . 0 . len () && eq_iter (self . 0 . iter () . zip (other . 0 . iter ()) . collect ()) }",
+    "class_decision": "value-traits",
+    "item_premise": "This body inherits the value-traits decision for value::<Array as PartialEq>::eq.",
+    "assessments": {
+      "full_recording": "review-114",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

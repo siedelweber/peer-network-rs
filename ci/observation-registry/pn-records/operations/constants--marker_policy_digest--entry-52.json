@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/constants.rs",
+    "item": "constants::marker_policy_digest",
+    "owner": "RECORDS",
+    "signature": "fn marker_policy_digest (input : & crate :: burn :: PolicyInput) -> [u8 ; 32]",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "digest-marker-policy"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/constants.rs::constants::marker_policy_digest",
+    "class_decision": "public-records",
+    "body": "{ use crate :: burn :: { CandidateRule , Encoding } ; let crate :: burn :: PolicyInput { identity , edition , sequence , initial_marker , placement_procedure , cadence , verification_profile , published_at , genesis_at , stability_buffer , open_placement , encoding , candidate_rule , } = input ; let mut digest = Sha256 :: new () ; digest . update (MARKER_POLICY_RECIPE . as_bytes ()) ; digest . update ([0]) ; for text in [identity , edition , sequence , initial_marker , placement_procedure , cadence , verification_profile ,] { digest . update ((text . len () as u64) . to_be_bytes ()) ; digest . update (text . as_bytes ()) ; } for value in [published_at , genesis_at , stability_buffer] { digest . update (value . to_be_bytes ()) ; } digest . update ([u8 :: from (* open_placement)]) ; digest . update ([match encoding { Encoding :: CompleteList => 0 , Encoding :: PublicCommitment => 1 , Encoding :: WholePrefixAcceptAll => 2 , }]) ; digest . update ([match candidate_rule { CandidateRule :: FirstValidInHistoryOrder => 0 , CandidateRule :: UniquePerIndex => 1 , }]) ; digest . finalize () . into () }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body hashes every public policy field with explicit versioned framing. Its digest is an internal content commitment, not a protocol serialization or secret. Trace records the public input and computed bytes. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing. The one recipe constant supplies the framed domain and binder comparison; unsupported recipes refuse separately before content comparison. The raw digest helper remains recomputation rather than publication."
+  }
+}

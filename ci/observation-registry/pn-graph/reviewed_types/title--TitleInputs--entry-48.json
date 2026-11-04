@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::TitleInputs",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" Structural indexes derived after whole-history formation revalidation.\"] # [doc = \" These public values are evidence outputs, not a reusable validation token.\"] # [doc = \" (´def:formation:title-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleInputs { # [doc = \" Every complete authored identity, including parallel records.\"] pub acts : BTreeSet < ActId > , # [doc = \" Self-minting Item terms and their genesis Owner acts.\"] pub genesis : BTreeMap < PublicReference , ActId > , # [doc = \" Each Bid identity and the Item named by its A-leg.\"] pub bids : BTreeMap < ActId , PublicReference > , # [doc = \" Accept and Ratify identities with their exact structural references.\"] pub settlements : BTreeMap < ActId , SettlementReferences > , }"
+  }
+}

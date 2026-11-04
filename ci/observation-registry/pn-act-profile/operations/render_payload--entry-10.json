@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "render_payload",
+    "owner": "ACTPROFILE",
+    "signature": "fn render_payload (family : & str , a : & SecretSlice < u8 > , t : Option < & SecretSlice < u8 > >) -> Result < SecretSlice < u8 > , ProfileError >",
+    "claim": "ROOT::amend:decomposition:act-profile",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::render_payload",
+    "body": "{ let (layout , _) = schema (family) . ok_or (ProfileError :: Representation) ? ; let alen = payload_length (a) ? ; match (layout , t) { (Layout :: Binary , None) => Ok (a . clone ()) , (Layout :: Paired , Some (t)) => { let tlen = payload_length (t) ? ; if matches ! (family , \"Invitation\" | \"De-invite\" | \"Tag\" | \"Reference\") && tlen != 0 { return Err (ProfileError :: Representation) ; } if alen == 0 && tlen == 0 { return Ok (SecretSlice :: from (Vec :: new ())) ; } if alen + tlen > 65_536 { return Err (ProfileError :: Bound) ; } let encoded = SecretValue :: Array (vec ! [SecretValue :: Bytes (a . clone ()) , SecretValue :: Bytes (t . clone ())]) . to_secret_canonical_bytes (65_563) . map_err (| _ | ProfileError :: Bound) ? ; payload_buffer (& encoded) } _ => Err (ProfileError :: Representation) , } }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

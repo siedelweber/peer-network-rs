@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "item": "cddl::eval::satisfies_open",
+    "owner": "INTERCHANGE",
+    "signature": "fn satisfies_open (d : & Document , s : & OpenTheory) -> Satisfaction",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/eval.rs::cddl::eval::satisfies_open",
+    "body": "{ let (cddl , table , patterns) = s . parts () ; judge (d , cddl , table , patterns) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::eval::satisfies_open.",
+    "assessments": {
+      "full_recording": "review-017",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

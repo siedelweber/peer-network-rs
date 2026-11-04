@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "title::TitleInputs",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural clone, equality and Debug retain public identity indexes. No serialization, authentication, time or title verdict is generated."
+  }
+}

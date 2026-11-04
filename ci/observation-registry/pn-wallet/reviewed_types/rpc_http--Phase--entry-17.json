@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_http::Phase",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [derive (Clone , Copy , PartialEq)] enum Phase { Head , Held , Body , }"
+  }
+}

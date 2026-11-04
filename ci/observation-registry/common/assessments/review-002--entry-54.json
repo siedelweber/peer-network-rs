@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The current production model has no domain credentials. ExportConfig retains a protected credential and admits only transports that preserve whole private configuration, retained state and errors; future service transports remain held. Protected-carrier and configuration failure/drop witnesses cover the present boundary.",
+    "negative_probe": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop"
+  },
+  "name": "review-002"
+}

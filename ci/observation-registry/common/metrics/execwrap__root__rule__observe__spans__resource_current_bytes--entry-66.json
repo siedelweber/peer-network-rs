@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "execwrap__root__rule__observe__spans__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

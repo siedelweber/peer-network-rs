@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::wire::Context",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/wire.rs",
+    "syntax": "pub (super) struct Context < 'a > { pub numeric : & 'a mut NumericContext , pub arithmetic : d :: limits :: Budget , }"
+  }
+}

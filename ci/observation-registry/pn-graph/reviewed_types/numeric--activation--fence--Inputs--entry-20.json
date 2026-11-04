@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::fence::Inputs",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/fence.rs",
+    "syntax": "# [doc = \" Exact public inputs already joined by the epoch owner to its frozen compiler output.\"] # [doc = \" (´def:numerics:width-fence´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub wall : String , pub bleed_squared : String , pub width : String , pub cumulative_tilt : String , pub margin : String , }"
+  }
+}

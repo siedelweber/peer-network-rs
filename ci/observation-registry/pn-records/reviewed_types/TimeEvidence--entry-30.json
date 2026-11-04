@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "TimeEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" One recurrence observation associated with its immutable act identity.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TimeEvidence { # [doc = \" Act whose attached time was read.\"] pub act : ActId , # [doc = \" Scoped equality, mismatch or explicit absence of a verdict.\"] pub verdict : TimeVerdict , # [doc = \" Recomputed value or its precise evidence limitation.\"] pub recomputed : RecomputedTime , }"
+  }
+}

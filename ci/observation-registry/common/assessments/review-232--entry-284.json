@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_counter. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-232"
+}

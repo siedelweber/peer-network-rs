@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::control::Num",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/control.rs",
+    "syntax": "# [doc = \" A number of the data language or of a CDDL literal, for the comparisons\"] # [doc = \" that are defined on numbers.\"] # [derive (Copy , Clone , Debug)] pub (crate) enum Num { # [doc = \" An integer, in the range the two integer major types cover.\"] Int (i128) , # [doc = \" A floating-point value.\"] Float (f64) , }"
+  }
+}

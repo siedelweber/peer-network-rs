@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Compiled",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Every compiled section remains an asserted value to compare with independent replay.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Compiled { pub title : Title , pub ledger : Ledger , pub cells : Vec < crate :: cells :: StandingCell > , pub coefficients : BTreeMap < crate :: cells :: CellIdentity , compiler :: CoefficientEvidence > , pub recipients : Vec < crate :: recipients :: ResolvedCell > , pub base : crate :: base :: BaseAllocation , pub support : crate :: support :: StandingSupport , }"
+  }
+}

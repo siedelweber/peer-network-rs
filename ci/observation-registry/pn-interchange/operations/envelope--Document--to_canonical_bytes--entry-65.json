@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/envelope.rs",
+    "item": "envelope::Document::to_canonical_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn to_canonical_bytes (& self) -> Vec < u8 >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Document::to_canonical_bytes",
+    "body": "{ self . to_value () . to_canonical_bytes () }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for envelope::Document::to_canonical_bytes.",
+    "assessments": {
+      "full_recording": "review-067",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

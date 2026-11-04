@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve.rs",
+    "item": "solve::BoundProcedure < '_ >::inputs",
+    "owner": "EPOCH",
+    "signature": "fn inputs (& self) -> (& CompiledState , & Procedure)",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "exception",
+    "shape": "shape-epoch",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits the procedure binding boundary.",
+      "witness": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
+      "boundary": "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
+      "class_decision": "solve-public-records"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::inputs",
+    "body": "{ (self . state , & self . procedure) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

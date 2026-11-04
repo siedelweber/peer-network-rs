@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recipients::RecipientError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/recipients.rs",
+    "syntax": "# [doc = \" Whole-result cell, title or bounded exact-arithmetic refusal.\"] # [doc = \" (´def:compiler:recipient-resolution´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecipientError { # [error (\"cell compilation: {0}\")] Cells (# [from] CellError) , # [error (\"title replay: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

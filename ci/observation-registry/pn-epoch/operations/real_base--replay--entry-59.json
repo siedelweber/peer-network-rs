@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/real_base.rs",
+    "item": "real_base::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (bound : & BoundProcedure < '_ > , source : & str , target : & str , attachment : & Attachment , interrupt_at : Option < u64 > ,) -> Result < Evaluation , ProcedureError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay",
+    "body": "{ run (bound , source , target , Some (attachment) , interrupt_at) }",
+    "class_decision": "activation-base-public",
+    "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

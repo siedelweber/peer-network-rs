@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "ControlPlaneRecord::new",
+    "owner": "CLICOMMON",
+    "signature": "fn new (command : & str , kind : ControlPlaneRecordKind , message : & str , fields : Option < ControlPlaneFields >) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::new",
+    "body": "{ Self { schema : CONTROL_PLANE_SCHEMA , command : command . to_string () , kind , message : message . to_string () , arguments : None , fields , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::new.",
+    "assessments": {
+      "full_recording": "review-250",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

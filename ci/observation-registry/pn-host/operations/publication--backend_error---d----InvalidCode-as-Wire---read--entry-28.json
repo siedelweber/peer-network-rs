@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/backend_error.rs",
+    "item": "publication::backend_error::<d :: InvalidCode as Wire>::read",
+    "owner": "HOST",
+    "signature": "fn read (v : & Value , _c : & mut Context < '_ >) -> Result < Self , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::decode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/backend_error.rs::publication::backend_error::<d :: InvalidCode as Wire>::read",
+    "body": "{ let mut fields = array_fields (v) ? ; let Some (Value :: Unsigned (tag)) = fields . next () else { return Err (Error :: Shape) ; } ; let result = match tag { 0 => Self :: UnsupportedCertificate , 1 => Self :: DecisionOptionMismatch , 2 => Self :: DecisionBox , 3 => Self :: DecisionBoundaryIntersection , 4 => Self :: DecisionOutsideRegion , 5 => Self :: DecisionIntegerRange , 6 => Self :: DecisionMaterializationCapacity , 7 => Self :: DecisionPartitionOverlap , 8 => Self :: DecisionPartitionOutsideDomain , 9 => Self :: StrictSignUnavailable , 10 => Self :: JacobianReadingCycle , 11 => Self :: JacobianFixedSource , 12 => Self :: JacobianDuplicateSource , 13 => Self :: JacobianDomain , 14 => Self :: ReuseKeyMismatch , 15 => Self :: ReadingSingular , 16 => Self :: ReadingNonsingularity , 17 => Self :: DependencyWitness , 18 => Self :: SelectionExpected , 19 => Self :: SelectionBase , 20 => Self :: SelectionDeclaration , 21 => Self :: SelectionDefinition , 22 => Self :: SelectionShape , 23 => Self :: SelectionOutOfRange , 24 => Self :: SelectionDuplicate , 25 => Self :: SelectionOrder , 26 => Self :: ReadingShape , 27 => Self :: ReadingDefinition , 28 => Self :: ReadingUnrelated , 29 => Self :: ReadingMismatch , 30 => Self :: SpaceRegistrationUnavailable , 31 => Self :: SpacePlacementUnavailable , 32 => Self :: AmbientSpaceAmbiguous , 33 => Self :: SymbolSortMismatch , 34 => Self :: AmbientSpaceMismatch , 35 => Self :: PullbackMultipleZero , 36 => Self :: PullbackIncompleteZeros , 37 => Self :: PullbackMapMismatch , 38 => Self :: AnalyticDisagreement , 39 => Self :: DistributionPointValue , 40 => Self :: DistributionProductUndefined , 41 => Self :: TestSpaceMismatch , 42 => Self :: UnknownTotality , 43 => Self :: PendingPremise , 44 => Self :: OverlapConflict , 45 => Self :: CoverageHole , 46 => Self :: Literal , 47 => Self :: ZeroDenominator , 48 => Self :: UndefinedPower , 49 => Self :: Span , 50 => Self :: ForeignHandle , 51 => Self :: Reference , 52 => Self :: Scope , 53 => Self :: Sort , 54 => Self :: Context , 55 => Self :: Policy , 56 => Self :: SourceConflict , 57 => Self :: OccurrenceParent , 58 => Self :: Receipt , 59 => Self :: Encoding , 60 => Self :: Rule , 61 => Self :: EndpointMismatch , 62 => Self :: ConditionMismatch , 63 => Self :: UnsupportedVersion , 64 => Self :: UnsupportedFragment , 65 => Self :: PolynomialFragment , 66 => Self :: CoefficientField , 67 => Self :: ZeroPolynomial , 68 => Self :: RefutedDomain , 69 => Self :: EmptyDomain , _ => return Err (Error :: Shape) , } ; finish (fields) ? ; Ok (result) }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

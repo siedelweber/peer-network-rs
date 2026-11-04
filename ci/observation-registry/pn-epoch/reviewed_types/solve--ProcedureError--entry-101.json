@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::ProcedureError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve.rs",
+    "syntax": "# [doc = \" Binding refusals differ from numerical comparison outcomes.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProcedureError { # [error (\"procedure boundary, edition or name differs from frozen package\")] Binding , # [error (\"frozen wall is outside the declared reduction range\")] WallRange , # [error (\"exact binding arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"base entry is absent from the frozen compiler output\")] BaseEntry , # [error (\"procedure publication verification refused\")] Publication , # [error (\"procedure records: {0}\")] Record (# [from] RecordError) , # [error (\"nonlinear backend is not admitted\")] Unsupported , # [error (\"numerical preflight: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , }"
+  }
+}

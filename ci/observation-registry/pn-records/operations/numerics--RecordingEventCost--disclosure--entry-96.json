@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::RecordingEventCost::disclosure",
+    "owner": "RECORDS",
+    "signature": "fn disclosure (& self) -> (& str , & str , & str)",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable field access inherits the enclosing encoding operation.",
+      "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+      "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::RecordingEventCost::disclosure",
+    "body": "{ (& self . exact . canonical , & self . denomination , & self . terms) }",
+    "class_decision": "public-records",
+    "item_premise": "Borrowed immutable public disclosure fields are read by the canonical storage projection. No additional acquisition, secret, transformation, or span is introduced.",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    }
+  }
+}

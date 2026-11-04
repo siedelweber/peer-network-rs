@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ObservationMode",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/bin/execwrap.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , clap :: ValueEnum)] enum ObservationMode { Enabled , Disabled , }"
+  }
+}

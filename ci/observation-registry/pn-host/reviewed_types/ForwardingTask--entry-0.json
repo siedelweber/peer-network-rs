@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ForwardingTask",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "struct ForwardingTask (tokio :: task :: JoinHandle < Result < () , Refusal > >) ;"
+  }
+}

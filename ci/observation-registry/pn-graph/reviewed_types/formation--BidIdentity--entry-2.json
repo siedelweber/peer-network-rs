@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::BidIdentity",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Structural settles target identity, never a node or an edge key.\"] # [doc = \" The asserted family is retained without a binding verdict or byte encoding.\"] # [doc = \" (´def:formation:settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct BidIdentity { # [doc = \" Authored actor atom.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained target family; recognition checks the expected settlement family.\"] pub family : String , }"
+  }
+}

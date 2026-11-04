@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "item": "value::Map::into_entries",
+    "owner": "INTERCHANGE",
+    "signature": "fn into_entries (mut self) -> Vec < (Value , Value) >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value.rs::value::Map::into_entries",
+    "body": "{ mem :: take (& mut self . 0) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for value::Map::into_entries.",
+    "assessments": {
+      "full_recording": "review-129",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ReferenceOrigin",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Which immutable validated source resolves a public identity.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ReferenceOrigin { # [doc = \" Caller-supplied previously accepted history.\"] History , # [doc = \" A complete act or leg in this validated batch.\"] Batch , }"
+  }
+}

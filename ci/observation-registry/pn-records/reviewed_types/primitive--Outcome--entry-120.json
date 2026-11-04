@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::Outcome",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" Checked stopping reasons are kept apart from mathematical verdicts.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Outcome { Pass , Fail , Bound , Indecisive (nrz_cas :: enclosure :: UndecidedReason) , Exhausted , Interrupted , Unsupported , DomainBoundary , }"
+  }
+}

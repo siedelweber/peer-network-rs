@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DeclarationCause",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Finite declaration representation causes.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DeclarationCause { # [doc = \" A key requires a namespace.\"] # [error (\"empty declaration namespace\")] EmptyNamespace , # [doc = \" A key requires a name.\"] # [error (\"empty declaration name\")] EmptyName , # [doc = \" Retrospective announcements would change historical answers.\"] # [error (\"effective boundary before announcement\")] LateAnnouncement , }"
+  }
+}

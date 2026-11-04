@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::BurnEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Companion public audit record bound to the same effective edition and sample convention.\"] # [doc = \" These disclosures are not additional arithmetic inputs.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnEvidence { pub edition : String , pub sample_convention : String , pub settlement_depth : Option < u64 > , pub finality_assumptions : Option < String > , pub provenance : Option < String > , pub recording_costs : Option < Vec < RecordingEventCost > > , pub operator : Option < OperatorEvidence > , }"
+  }
+}

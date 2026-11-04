@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "epoch-package",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+        "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input",
+        "pn-epoch::packages/epoch/src/package.rs::package::verify_candidate",
+        "pn-epoch::packages/epoch/src/package.rs::package::CandidateContext::input",
+        "pn-epoch::packages/epoch/src/package.rs::package::AdmittedBoundary::candidate"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise."
+  }
+}

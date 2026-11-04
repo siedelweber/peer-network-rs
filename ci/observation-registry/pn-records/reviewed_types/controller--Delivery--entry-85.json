@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Delivery",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [doc = \" Public representation rule, in reduced-wall units.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Delivery { ExactRational , Grid { quantum : String , maximum_error : String } , }"
+  }
+}

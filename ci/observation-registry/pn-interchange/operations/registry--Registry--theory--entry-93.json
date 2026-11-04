@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/registry.rs",
+    "item": "registry::Registry::theory",
+    "owner": "INTERCHANGE",
+    "signature": "fn theory (& self , coord : & Coordinate) -> Option < & Theory >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/registry.rs::registry::Registry::theory",
+    "body": "{ self . holding (coord . label () , coord . major ()) ? . theory (coord . minor ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for registry::Registry::theory.",
+    "assessments": {
+      "full_recording": "review-090",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

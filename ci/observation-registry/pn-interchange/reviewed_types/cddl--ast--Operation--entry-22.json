@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::Operation",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The optional half of a `type1`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct Operation { # [doc = \" Which operator.\"] pub (crate) operator : Operator , # [doc = \" The right-hand type.\"] pub (crate) operand : Type2 , # [doc = \" From the operator to the end of the operand.\"] pub (crate) span : Span , }"
+  }
+}

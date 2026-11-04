@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/controller.rs",
+    "item": "numeric::controller::replay",
+    "owner": "GRAPH",
+    "signature": "fn replay (p : & Procedure , input : & Inputs , ridge : Option < & CheckedRidge > , record : & Record) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "shape": "shape-graph",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay",
+    "body": "{ run (p , input , ridge , Some (record)) }",
+    "class_decision": "canonical-controller-public",
+    "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

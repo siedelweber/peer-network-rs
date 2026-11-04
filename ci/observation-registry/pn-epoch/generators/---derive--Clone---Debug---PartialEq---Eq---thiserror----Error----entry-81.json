@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "package::PackageError",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "epoch-package",
+    "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
+  }
+}

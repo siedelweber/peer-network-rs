@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::BaseEntry",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/base.rs",
+    "syntax": "# [doc = \" One sparse entry, retaining contributing cells even when their weight is zero.\"] # [doc = \" (´def:compiler:base-allocation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BaseEntry { pub score : BaseScore , pub cells : BTreeSet < CellIdentity > , }"
+  }
+}

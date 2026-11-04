@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Delivery",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/admission.rs",
+    "syntax": "# [doc = \" Rational delivery choices; all grid quantities are in reduced-wall units.\"] # [doc = \" (´[ROOT-rule:design:wall-delivery-declaration]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Delivery { # [doc = \" Requires proof that the ideal update is this exact rational.\"] ExactRational , # [doc = \" Nearest admissible grid point; ties approach the previous wall, then go lower.\"] # [doc = \" The absolute error from the ideal update must be certified within the bound.\"] Grid { quantum : String , maximum_error : String } , }"
+  }
+}

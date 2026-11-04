@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/label.rs",
+    "item": "label::NamespaceLabel::is_prefix_of",
+    "owner": "INTERCHANGE",
+    "signature": "fn is_prefix_of (& self , other : & NamespaceLabel) -> bool",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/label.rs::label::NamespaceLabel::is_prefix_of",
+    "body": "{ let mut theirs = other . atoms () ; let mut ours = self . atoms () ; ours . all (| atom | theirs . next () == Some (atom)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for label::NamespaceLabel::is_prefix_of.",
+    "assessments": {
+      "full_recording": "review-076",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

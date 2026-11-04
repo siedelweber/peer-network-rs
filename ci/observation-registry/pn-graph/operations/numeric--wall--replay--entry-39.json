@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/wall.rs",
+    "item": "numeric::wall::replay",
+    "owner": "GRAPH",
+    "signature": "fn replay (procedure : & Procedure , input : & Inputs , record : & Record) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay",
+    "body": "{ run (procedure , input , Some (record)) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

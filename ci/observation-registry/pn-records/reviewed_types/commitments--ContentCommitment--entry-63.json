@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "commitments::ContentCommitment",
+    "package": "pn-records",
+    "path": "packages/records/src/commitments.rs",
+    "syntax": "# [doc = \" Independently removable content's retained residue.\"] # [doc = \" (´def:acts:commitment-residues´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ContentCommitment { # [doc = \" Immutable recipe identifier.\"] pub recipe : String , # [doc = \" Opaque public residue, retained after content reduction.\"] pub bytes : [u8 ; 32] , }"
+  }
+}

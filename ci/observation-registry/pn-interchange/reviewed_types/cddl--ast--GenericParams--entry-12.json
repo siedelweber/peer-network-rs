@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::GenericParams",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" `genericparm = \\\"<\\\" S id S *(\\\",\\\" S id S ) \\\">\\\"`.\"] # [derive (Clone , Debug)] # [allow (dead_code)] pub (crate) struct GenericParams { # [doc = \" The parameter names, in order. Never empty: the ABNF requires one.\"] pub (crate) names : Vec < Name > , # [doc = \" From `<` to `>`.\"] pub (crate) span : Span , }"
+  }
+}

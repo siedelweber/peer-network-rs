@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc::RpcClient",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc.rs",
+    "syntax": "# [doc = \" One service reader, one concurrent exchange, one shared rolling attempt budget.\"] # [doc = \" (´def:wallet:rpc-client´)\"] pub struct RpcClient { config : RpcConfig , limits : RpcLimits , decode : crate :: Limits , state : Mutex < State > , }"
+  }
+}

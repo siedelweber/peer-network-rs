@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::CandidateInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Proposed complete prefix, without an assertion that its last write is published.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug)] pub struct CandidateInput { pub causes : PackageInput , pub closure : ClosureStatement , }"
+  }
+}

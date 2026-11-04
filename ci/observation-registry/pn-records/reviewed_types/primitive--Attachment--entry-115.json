@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::Attachment",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" Supplied, untrusted evidence in nrz's own typed format; no new digest or wire format.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attachment { pub schemas : Vec < Schema > , pub certificate : EnclosureCertificate , }"
+  }
+}

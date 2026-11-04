@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Cell compilation reads complete public act history, a public approval verifier, a boundary and exact arithmetic limits. Full arguments, typed holds and cell identities are public trace values. No payload opening, private witness or identity byte recipe enters this operation. Observation does not change folding.",
+    "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+  },
+  "name": "epoch-cells-exposure_consumers"
+}

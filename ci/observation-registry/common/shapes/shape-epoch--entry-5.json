@@ -1,0 +1,25 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete public compiler parameters, markers, act history, cells and arithmetic limits at trace",
+      "complete validated parameters, ledger, cells, coefficients, recipients or typed refusals and holds at trace",
+      "bounded outcome",
+      "inclusive duration_seconds",
+      "declared invocation work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "epoch__root__sig__design__epoch__started_operations",
+      "epoch__root__sig__design__epoch__completed_operations",
+      "epoch__root__sig__design__epoch__work_bytes",
+      "epoch__root__sig__design__epoch__work_operations",
+      "epoch__root__sig__design__epoch__active_operations",
+      "epoch__root__sig__design__epoch__resource_current_bytes",
+      "epoch__root__sig__design__epoch__elapsed_seconds",
+      "epoch__root__sig__design__epoch__workload_bytes",
+      "epoch__root__sig__design__epoch__workload_operations"
+    ]
+  },
+  "name": "shape-epoch"
+}

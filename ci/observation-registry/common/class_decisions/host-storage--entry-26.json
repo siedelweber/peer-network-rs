@@ -1,0 +1,26 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "host-storage",
+    "status": "reviewer-confirmed",
+    "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+    "membership": {
+      "explicit": [
+        "pn-host::packages/host/src/storage.rs::storage::Payload::constants",
+        "pn-host::packages/host/src/storage.rs::storage::Payload::rule",
+        "pn-host::packages/host/src/storage.rs::storage::Payload::marker_policy",
+        "pn-host::packages/host/src/storage.rs::storage::Payload::lineage",
+        "pn-host::packages/host/src/storage.rs::storage::Payload::burn_publication",
+        "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "pn-host::packages/host/src/storage.rs::storage::MemoryStore::append_effective_successor",
+        "pn-host::packages/host/src/storage.rs::storage::MemoryStore::load_boundary",
+        "pn-host::packages/host/src/storage.rs::storage::PostgresStore::commit_admitted_epoch",
+        "pn-host::packages/host/src/storage.rs::storage::PostgresStore::open_store",
+        "pn-host::packages/host/src/storage.rs::storage::PostgresStore::load_boundary",
+        "pn-host::packages/host/src/storage.rs::storage::PostgresStore::audit_history",
+        "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
+        "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history"
+      ]
+    }
+  }
+}

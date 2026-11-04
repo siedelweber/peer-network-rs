@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "run_no_stdout_command_async",
+    "owner": "CLICOMMON",
+    "signature": "async fn run_no_stdout_command_async < CommandError , Run , RunFuture > (command_name : & str , debug : bool , default_level : tracing :: Level , run : Run ,) -> ExitCode where CommandError : std :: fmt :: Display , Run : FnOnce () -> RunFuture , RunFuture : Future < Output = Result < () , CommandError > > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "reviewed-helper",
+    "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
+    "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for run_no_stdout_command_async.",
+    "assessments": {
+      "full_recording": "review-278",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::ClosurePolicy",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Published closure conditions measured in the explicitly named clock's ticks.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClosurePolicy { pub target : u64 , pub minimum_ticks : u64 , pub maximum_ticks : u64 , pub clock : String , }"
+  }
+}

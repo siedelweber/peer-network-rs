@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::Procedure",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_solve_work : u64 , pub maximum_replay_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , pub fence : Option < FenceProfile > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "writer::StreamProps",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/writer.rs",
+    "syntax": "# [doc = \" Per-stream prefix properties for the calligraphic mode.\"] # [derive (Debug , Default , Clone)] pub struct StreamProps { # [doc = \" Prefix for the first line of each wrapped block on stdout.\"] pub line1_prefix_stdout : String , # [doc = \" Prefix for continuation lines on stdout.\"] pub wrap_prefix_stdout : String , # [doc = \" Prefix for the first line of each wrapped block on stderr.\"] pub line1_prefix_stderr : String , # [doc = \" Prefix for continuation lines on stderr.\"] pub wrap_prefix_stderr : String , }"
+  }
+}

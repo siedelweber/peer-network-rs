@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::recoin",
+    "owner": "RECORDS",
+    "signature": "fn recoin (& mut self , amount : & BurnAmount , numeraire : & Numeraire , factor : & Literal , new_unit : & str ,) -> Result < (BurnAmount , Numeraire) , NumericError >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "numeric-recoin"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::recoin",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { sign (& factor . exact , true) ? ; nonempty (new_unit) ? ; units (& amount . unit , & numeraire . amount . unit) ? ; let a = amount . exact . value . mul (& factor . exact . value , & mut self . budget) ? ; let n = numeraire . amount . exact . value . mul (& factor . exact . value , & mut self . budget) ? ; Ok ((BurnAmount { exact : Exact :: new (a , & mut self . budget) ? , unit : new_unit . into () , } , Numeraire { identity : numeraire . identity . clone () , amount : BurnPerAction { exact : Exact :: new (n , & mut self . budget) ? , unit : new_unit . into () , } , } ,)) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+  }
+}

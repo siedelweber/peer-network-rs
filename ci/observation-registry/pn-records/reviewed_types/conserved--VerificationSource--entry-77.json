@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::VerificationSource",
+    "package": "pn-records",
+    "path": "packages/records/src/conserved.rs",
+    "syntax": "# [doc = \" Exact reference source parameters: rate = intercept + slope times the defining wall.\"] # [doc = \" This verification carrier does not replace a frozen charged price.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationSource { pub name : String , pub count : String , pub intercept : String , pub slope : String , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::Scope",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Synchronous span lifetime; never retain this guard across suspension.\"] # [derive (Debug)] pub struct Scope (tracing :: span :: EnteredSpan) ;"
+  }
+}

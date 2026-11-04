@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "clicommon__root__rule__observe__metering__workload_bytes",
+    "kind": "histogram",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

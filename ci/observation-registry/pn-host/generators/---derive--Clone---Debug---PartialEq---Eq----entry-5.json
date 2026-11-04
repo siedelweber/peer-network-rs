@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::EffectiveRow",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+  }
+}

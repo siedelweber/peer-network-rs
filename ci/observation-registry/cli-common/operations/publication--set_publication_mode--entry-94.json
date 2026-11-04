@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "item": "publication::set_publication_mode",
+    "owner": "CLICOMMON",
+    "signature": "fn set_publication_mode (file : & std :: fs :: File , mode : PublicationMode) -> io :: Result < () >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/publication.rs::publication::set_publication_mode",
+    "body": "{ # [cfg (unix)] { use std :: os :: unix :: fs :: PermissionsExt as _ ; file . set_permissions (std :: fs :: Permissions :: from_mode (mode . octal ())) } # [cfg (not (unix))] { let _ = (file , mode) ; Ok (()) } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for publication::set_publication_mode.",
+    "assessments": {
+      "full_recording": "review-236",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -70,6 +70,7 @@ def service(test, root, text, selection):
 
 
 def check(test):
+    observation_controls(test)
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         def git(*args):
@@ -82,6 +83,11 @@ def check(test):
         for name in ('z', 'a'):
             (folder/(name+'.toml')).write_text('name='+json.dumps(name)+'\nclaims=[]\n')
         git('add', '.')
+        monolith = root/(prefix+'.toml')
+        monolith.write_text('namespace="duplicate"\n')
+        with test.assertRaisesRegex(ValueError, 'dual registry authoring'):
+            fragments.read(root, 'claim-obligations')
+        monolith.unlink()
         expected = fragments.read(root, 'claim-obligations')
         test.assertEqual([row['name'] for row in expected['rows']], ['a', 'z'])
         paths = list(fragments.indexed(root).items())
@@ -123,3 +129,56 @@ def check(test):
             ['git', '-C', str(root), 'rev-parse', ':'+prefix+'/a.toml'], text=True).strip()+','+prefix+'/z.toml')
         with test.assertRaisesRegex(ValueError, 'not a regular file'):
             fragments.read(root, 'claim-obligations')
+
+
+def observation_controls(test):
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        folder = root/fragments.ROOTS['observation-registry']
+        folder.mkdir(parents=True)
+        fields = {key: [] for key in ('operations', 'metrics', 'reviews', 'generators',
+                  'reviewed_types', 'class_decisions', 'shapes', 'assessments')}
+        fields['operations'] = ['package', 'path', 'item', 'shape']
+        fields['reviews'] = ['operation', 'class_decision', 'assessments']
+        fields['class_decisions'] = ['name', 'membership']
+        fields['shapes'] = ['metrics']
+        def write(name, value):
+            path = folder/(name+'.json')
+            path.write_text(json.dumps(value))
+            return path
+        write('schema', dict(schema=2, configuration='fixture', fields=fields))
+        write('class', dict(section='class_decisions', value=dict(name='class', membership=dict(explicit=['p::s::f']))))
+        write('shape', dict(section='shapes', name='shape', value=dict(metrics=[])))
+        operation = dict(section='operations', value=dict(package='p', path='s', item='f', shape='shape'),
+                         review=dict(operation='p::s::f', class_decision='class', assessments={}))
+        path = write('operation', operation)
+        subprocess.run(['git', '-C', str(root), 'init', '-q'], check=True, capture_output=True)
+        def stage():
+            subprocess.run(['git', '-C', str(root), 'add', '-A'], check=True, capture_output=True)
+        stage()
+        expected = json.dumps(fragments.read(root, 'observation-registry'))
+        paths = list(fragments.indexed(root).items())
+        rng = random.Random(19)
+        for _ in range(12):
+            rng.shuffle(paths)
+            with patch.object(fragments, 'indexed', return_value=dict(paths)):
+                test.assertEqual(json.dumps(fragments.read(root, 'observation-registry')), expected)
+        duplicate = write('duplicate', operation)
+        stage()
+        with test.assertRaisesRegex(ValueError, 'duplicate fragment') as caught:
+            fragments.read(root, 'observation-registry')
+        test.assertIn('operation.json', str(caught.exception))
+        test.assertIn('duplicate.json', str(caught.exception))
+        duplicate.unlink()
+        stage()
+        original = path.read_text()
+        write('operation', dict(operation, unknown=True))
+        with test.assertRaisesRegex(ValueError, 'unknown or missing fragment key'):
+            fragments.read(root, 'observation-registry')
+        operation['value']['shape'] = 'missing'
+        write('operation', operation)
+        with test.assertRaisesRegex(ValueError, 'unresolved observation shape'):
+            fragments.read(root, 'observation-registry')
+        path.write_text(original[:-1]+', "section": "operations"}')
+        with test.assertRaisesRegex(ValueError, 'duplicate JSON object member'):
+            fragments.read(root, 'observation-registry')

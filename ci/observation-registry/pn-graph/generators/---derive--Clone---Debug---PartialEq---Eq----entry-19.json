@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "title::TitleBoundary",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural Clone, Debug and equality expose public boundary premises, complete title evidence and identity-based consumption. No serialization, authentication or publication is generated."
+  }
+}

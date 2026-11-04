@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Finding",
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "syntax": "# [doc = \" One machine-readable finding with a repository-relative path.\"] # [derive (Debug , PartialEq , Eq , Serialize)] pub struct Finding { # [doc = \" Stable diagnostic category.\"] pub kind : FindingKind , # [doc = \" Repository-relative affected path.\"] pub path : String , }"
+  }
+}

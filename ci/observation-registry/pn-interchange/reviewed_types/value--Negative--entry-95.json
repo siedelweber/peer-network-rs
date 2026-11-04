@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::Negative",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value.rs",
+    "syntax": "# [doc = \" A major-type-1 integer, held as its encoded argument `n`, denoting\"] # [doc = \" `-1 - n`.\"] # [doc = \"\"] # [doc = \" The argument is what is stored because the argument is what the\"] # [doc = \" canonical order compares: major type 1's names ascend as `n` ascends,\"] # [doc = \" which is the reverse of the order of the integers they denote.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::Negative;\"] # [doc = \"\"] # [doc = \" assert_eq!(Negative::from_argument(0).get(), -1);\"] # [doc = \" assert_eq!(Negative::from_i128(-500).expect(\\\"in range\\\").argument(), 499);\"] # [doc = \" ```\"] # [derive (Copy , Clone , Debug , PartialEq , Eq , Hash)] pub struct Negative (u64) ;"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "PrincipalClosure",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" One proposed root and its complete principal closure, without partition membership.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct PrincipalClosure { # [doc = \" Proposed structural root.\"] root : ActId , # [doc = \" Whole-act identities in authoritative order, with no duplicate within a closure.\"] members : Vec < ActId > , }"
+  }
+}

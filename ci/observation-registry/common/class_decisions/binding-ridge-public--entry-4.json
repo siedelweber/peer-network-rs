@@ -1,0 +1,18 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "binding-ridge-public",
+    "status": "reviewer-confirmed",
+    "premises": "Closed public clean-ridge defining inputs, complete majorant boxes, rational comparisons and independently replayed attachments. No secret, deployed gain inversion, charge mutation or production admission is introduced.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::CheckedRidge::image",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::evaluate",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay"
+      ]
+    }
+  }
+}

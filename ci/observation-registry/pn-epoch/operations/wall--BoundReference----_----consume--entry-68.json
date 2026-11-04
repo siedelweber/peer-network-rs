@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/wall.rs",
+    "item": "wall::BoundReference < '_ >::consume",
+    "owner": "EPOCH",
+    "signature": "fn consume < 'a > (& self , bound : & BoundProcedure < 'a > , record : & Record) -> Result < BoundProcedure < 'a > , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::consume",
+    "body": "{ use nrz_cas :: { Rational , limits :: Budget } ; use pn_records :: wall :: Verdict ; if bound . inputs () . 1 != self . procedure || self . procedure . fence . as_ref () . is_none_or (| p | ! p . inverse_wall) { return Err (Error :: Scope) ; } let (prepared , _) = crate :: fence :: prepare (bound) ? ; let mut b = Budget :: new (self . procedure . enclosure . as_ref () . ok_or (Error :: Scope) ? . operation . clone ()) ? ; if Rational :: parse (& prepared . width , & mut b) ? != Rational :: parse (& self . input . width , & mut b) ? || Rational :: parse (& prepared . cumulative_tilt , & mut b) ? != Rational :: parse (& self . input . cumulative_tilt , & mut b) ? { return Err (Error :: Scope) ; } let checked = self . replay (record) ? ; let branches = checked . branches . as_ref () . ok_or (Error :: Scope) ? ; if checked . indecisive || branches . above_floor != Verdict :: Pass || branches . policy_valid != Verdict :: Pass { return Err (Error :: Scope) ; } Ok (bound . with_enclosed_wall (branches . delivered . clone ()) ?) }",
+    "class_decision": "reference-wall-public",
+    "item_premise": "The complete public reference definition and checked record bind to the immutable compiled support; only public rational wall bounds are retained, with no price mutation or secret input.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

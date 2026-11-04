@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Outbound",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "struct Outbound { client : tokio :: io :: ReadHalf < tokio :: io :: DuplexStream > , server : tokio :: io :: WriteHalf < wire :: Socket > , refusal : Arc < Mutex < Option < Refusal > > > , }"
+  }
+}

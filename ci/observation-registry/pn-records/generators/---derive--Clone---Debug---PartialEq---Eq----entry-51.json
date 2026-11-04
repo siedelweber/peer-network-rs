@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "wall::Step",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/wall.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+    "class_decision": "reference-wall-public"
+  }
+}

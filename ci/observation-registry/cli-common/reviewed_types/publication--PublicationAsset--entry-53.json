@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::PublicationAsset",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" One output of a multi-output generation command.\"] # [derive (Debug)] pub struct PublicationAsset < 'a > { # [doc = \" Stable diagnostic role of this output (never file contents).\"] pub role : & 'a str , pub path : & 'a Path , pub bytes : & 'a [u8] , }"
+  }
+}

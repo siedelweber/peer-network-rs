@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "schedules::Effective",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/schedules.rs",
+    "syntax": "# [doc = \" Exact effective coordinate pair and policy; never an enclosure endpoint charge.\"] # [doc = \" (´[ROOT-alg:design:effective-schedules]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Effective { pub boundary : u64 , pub wall : String , pub charge : String , pub numeraire : Numeraire , pub policy_floor : String , }"
+  }
+}

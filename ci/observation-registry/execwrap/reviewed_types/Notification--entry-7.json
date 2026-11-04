@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Notification",
+    "package": "execwrap",
+    "path": "packages/execwrap/src/lib.rs",
+    "syntax": "# [doc = \" Notification emitted by the wrapper while running.\"] # [derive (Debug , Clone)] pub enum Notification { # [doc = \" `--notify-on-write` informational record: writing to a log file.\"] WritingToLog { path : PathBuf , stream : Stream } , # [doc = \" `--notify-on-write` deferred record: wrote to a log file by end of run.\"] WroteToLog { path : PathBuf } , }"
+  }
+}

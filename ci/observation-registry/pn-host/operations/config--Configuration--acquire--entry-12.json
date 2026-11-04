@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/config.rs",
+    "item": "config::Configuration::acquire",
+    "owner": "HOST",
+    "signature": "fn acquire (case : Option < & str > , reader : & mut impl Read) -> Result < Self , Refusal >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
+    "class_decision": "host-transport",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"config::Configuration::acquire\" , & \"secret connection input\" ,) ; let result = Self :: read (case , reader) ; if let Err (cause) = & result { tracing :: warn ! (outcome = \"refusal\" , cause = ? cause , \"store configuration refused\") ; } else { tracing :: info ! (store_link_case = \"host-secured\") ; } operation . finish (& result) ; result }",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+  }
+}

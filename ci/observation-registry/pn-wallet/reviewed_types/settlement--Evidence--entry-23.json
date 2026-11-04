@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "settlement::Evidence",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/settlement.rs",
+    "syntax": "# [doc = \" One explicit evidence output located by public identifiers on one observed chain.\"] # [doc = \" (´def:wallet:settlement-evidence´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub struct Evidence { # [doc = \" Display-order transaction identifier.\"] pub transaction : [u8 ; 32] , # [doc = \" Output index of the evidence output.\"] pub output : u32 , # [doc = \" Display-order hash of the block claimed to include the transaction.\"] pub block : [u8 ; 32] , # [doc = \" Height claimed for that block.\"] pub height : u64 , # [doc = \" Explicit amount selected by the evidence decoder.\"] pub amount : u64 , }"
+  }
+}

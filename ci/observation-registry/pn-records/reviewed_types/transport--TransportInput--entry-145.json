@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::TransportInput",
+    "package": "pn-records",
+    "path": "packages/records/src/transport.rs",
+    "syntax": "# [doc = \" Public exact operator inputs; the epoch adapter owns their provenance.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TransportInput < N > { pub hops : Vec < Matrix < N > > , pub depth_mass : Vec < N > , pub emission : Vec < N > , pub counts : Vec < N > , pub rates : Vec < N > , }"
+  }
+}

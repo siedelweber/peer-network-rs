@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "error::Error",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/error.rs",
+    "syntax": "# [doc = \" One error type for consumers that want one.\"] # [doc = \"\"] # [doc = \" A sum over the six enums a consumer meets directly, for a caller whose\"] # [doc = \" own error type wants a single arm from this crate. Nothing here returns\"] # [doc = \" it: the taxonomy stays a taxonomy, and the aggregate is a convenience\"] # [doc = \" on top of it rather than a flattening of it.\"] # [doc = \"\"] # [doc = \" ```\"] # [doc = \" use pn_interchange::{Error, LabelError, NamespaceLabel};\"] # [doc = \"\"] # [doc = \" let refusal: LabelError = NamespaceLabel::parse(\\\"Com.Example\\\").expect_err(\\\"uppercase\\\");\"] # [doc = \" let aggregated = Error::from(refusal);\"] # [doc = \" assert!(matches!(aggregated, Error::Label(_)));\"] # [doc = \" ```\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum Error { # [doc = \" A `Value` invariant refused at construction.\"] # [error (transparent)] Value (# [from] ValueError) , # [doc = \" Bytes refused as a name of the data language.\"] # [error (transparent)] Decode (# [from] DecodeError) , # [doc = \" A string refused as a namespace label.\"] # [error (transparent)] Label (# [from] LabelError) , # [doc = \" A value refused as a document, or a prefix refused as an envelope.\"] # [error (transparent)] Envelope (# [from] EnvelopeError) , # [doc = \" CDDL refused as an assigned theory.\"] # [error (transparent)] Theory (# [from] TheoryError) , # [doc = \" A theory refused at acquisition.\"] # [error (transparent)] Acquire (# [from] AcquireError) , }"
+  }
+}

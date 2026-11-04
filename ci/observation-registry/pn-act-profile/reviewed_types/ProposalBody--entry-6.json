@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ProposalBody",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Public authored fields; no private projection or host-attached field occurs.\"] # [doc = \" Structural equality preserves every authored integer pair exactly.\"] # [doc = \" (´def:profile:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ProposalBody { pub id : ActId , pub body : StructuralBody , pub legs : Vec < CandidateLeg > , pub protocol_references : Vec < PublicReference > , pub content : ContentRequest , pub dependency : DependencyRequest , }"
+  }
+}

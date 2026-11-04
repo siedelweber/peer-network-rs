@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "envelope::DatasetVisitor",
+    "package": "documents",
+    "path": "packages/documents/src/envelope.rs",
+    "syntax": "struct DatasetVisitor ;"
+  }
+}

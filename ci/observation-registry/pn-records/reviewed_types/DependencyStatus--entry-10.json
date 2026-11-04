@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DependencyStatus",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Status derived from the owning act, not an independently supplied removal fact.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DependencyStatus { # [doc = \" Complete empty content.\"] FullEmpty , # [doc = \" Complete nonempty content.\"] Full , # [doc = \" The act's dependency content is unavailable at this position.\"] Tombstoned (Position) , }"
+  }
+}

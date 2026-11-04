@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recognition::RecognitionClause",
+    "package": "pn-graph",
+    "path": "packages/graph/src/recognition.rs",
+    "syntax": "# [doc = \" The six named clauses, in the paper's order.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum RecognitionClause { # [doc = \" Three complete acts belong to the cumulative boundary set.\"] Completeness , # [doc = \" Both settles pointers and the exact accepts pointer agree.\"] ReferenceBinding , # [doc = \" Record-derived seller and buyer authorize both actor projections.\"] Authorization , # [doc = \" No effective buyer Withdraw defeats this candidate.\"] BuyerConsent , # [doc = \" No effective seller Rescind defeats this candidate.\"] SellerConsent , # [doc = \" The referenced handshake chain is earlier in published placement.\"] WellFormedness , }"
+  }
+}

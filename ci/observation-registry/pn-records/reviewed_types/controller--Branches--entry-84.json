@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::Branches",
+    "package": "pn-records",
+    "path": "packages/records/src/controller.rs",
+    "syntax": "# [doc = \" Separate mathematical choices retain equality at every binding edge.\"] # [doc = \" (´[ROOT-alg:design:production-wall-controller]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Branches { pub zero_width : bool , pub floor : Relation , pub deadband : Relation , pub absolute_cap : Relation , pub relative_cap : Relation , pub direction : Relation , pub proposal : Range , pub ideal : Range , }"
+  }
+}

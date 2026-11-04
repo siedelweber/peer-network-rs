@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+    "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+  },
+  "name": "epoch-compiler-full_recording"
+}

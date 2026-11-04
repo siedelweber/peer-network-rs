@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "FindingKind",
+    "package": "documents",
+    "path": "packages/documents/src/lib.rs",
+    "syntax": "# [doc = \" A stable category of document drift.\"] # [derive (Debug , PartialEq , Eq , Serialize)] # [serde (rename_all = \"snake_case\")] pub enum FindingKind { # [doc = \" A generated dataset differs from its input projection.\"] StaleDataset , # [doc = \" A rendered document differs from its template result.\"] StaleDocument , # [doc = \" A committed dataset has no input projection.\"] OrphanDataset , # [doc = \" A template has no supported output path.\"] UnrenderedTemplate , }"
+  }
+}

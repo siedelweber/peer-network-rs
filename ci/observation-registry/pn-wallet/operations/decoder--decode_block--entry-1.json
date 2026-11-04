@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "item": "decoder::decode_block",
+    "owner": "WALLET",
+    "signature": "fn decode_block (bytes : & [u8] , limits : Limits) -> Result < Block , Refusal >",
+    "claim": "ROOT::sig:design:devnet",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::decode_block",
+    "class_decision": "wallet-decoder",
+    "body": "{ let result = (| | { let mut reader = Reader :: new (bytes , limits) ? ; reader . header () ? ; let header_end = reader . pos ; let count = reader . entries () ? ; let transactions_start = reader . pos ; for _ in 0 .. count { reader . transaction () ? ; } if reader . pos != bytes . len () { return Err (Refusal :: Trailing) ; } let header : elements :: BlockHeader = elements :: encode :: deserialize (& bytes [.. header_end]) . map_err (| _ | Refusal :: Codec) ? ; drop (header) ; let mut cursor = transactions_start ; let mut transactions = Vec :: with_capacity (count) ; for _ in 0 .. count { let mut tx_reader = Reader :: new (& bytes [cursor ..] , limits) ? ; tx_reader . transaction () ? ; let tx = elements :: encoding :: decode_from_slice (& bytes [cursor .. cursor + tx_reader . pos]) . map_err (| _ | Refusal :: Codec) ? ; transactions . push (project (tx)) ; cursor += tx_reader . pos ; } Ok (Block { header : bytes [.. header_end] . to_vec () , transactions , }) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "The whole block is preflighted before allocation; every layout is retained, including transactions that cannot serve as explicit evidence."
+  }
+}

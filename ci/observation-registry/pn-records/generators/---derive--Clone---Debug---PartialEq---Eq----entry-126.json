@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "numerics::price_input::PriceInput",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/price_input.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "semantic-publication-public",
+    "expansion_review": "Structural cloning, equality and public diagnostics retain complete semantic assertions without a codec or a generated constructor for checked publication authority."
+  }
+}

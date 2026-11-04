@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "recipients::ResolvedCell",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/recipients.rs",
+    "syntax": "# [doc = \" One complete cell and its resolved Actor or author's retention channel.\"] # [doc = \" This is destination evidence, not a coefficient or allocation.\"] # [doc = \" (´def:compiler:recipient-resolution´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ResolvedCell { pub cell : StandingCell , pub recipient : String , }"
+  }
+}

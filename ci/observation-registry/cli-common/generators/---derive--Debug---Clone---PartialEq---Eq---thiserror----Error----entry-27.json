@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::EmissionConfigurationError",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Debug , Clone , PartialEq , Eq , thiserror :: Error)]",
+    "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+    "class_decision": "public-cli"
+  }
+}

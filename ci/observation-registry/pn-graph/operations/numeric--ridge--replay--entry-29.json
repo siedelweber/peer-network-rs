@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/ridge.rs",
+    "item": "numeric::ridge::replay",
+    "owner": "GRAPH",
+    "signature": "fn replay (p : & Procedure , input : & Inputs , record : & Record) -> Result < CheckedRidge , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "shape": "shape-graph",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
+    "body": "{ let checked = run (p , input , Some (record)) ? ; Ok (CheckedRidge { procedure : p . clone () , input : input . clone () , image : checked . image , }) }",
+    "class_decision": "binding-ridge-public",
+    "item_premise": "The fixed public definition and complete independently checked evidence are retained. Replay rebuilds every query and box; checked immutable image access supplies no additional authority. No price, secret or admission transition occurs.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

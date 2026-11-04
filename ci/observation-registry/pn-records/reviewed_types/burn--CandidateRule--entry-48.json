@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "burn::CandidateRule",
+    "package": "pn-records",
+    "path": "packages/records/src/burn.rs",
+    "syntax": "# [doc = \" Deterministic identification among candidates at the same index.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum CandidateRule { # [doc = \" Try candidates in their disclosed history order, retaining the first that passes.\"] FirstValidInHistoryOrder , # [doc = \" A deployment promises one candidate per index; a violation stops at that index.\"] UniquePerIndex , }"
+  }
+}

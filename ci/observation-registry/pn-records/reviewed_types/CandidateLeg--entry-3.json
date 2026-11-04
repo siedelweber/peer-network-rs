@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CandidateLeg",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateLeg { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Untrusted input only: any supplied leg removal fact is refused.\"] # [doc = \" Validated legs have no such field; dependency status derives from the act.\"] pub removal : Option < Removal > , }"
+  }
+}

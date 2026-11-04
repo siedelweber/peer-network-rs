@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "CommandExit::exit_code",
+    "owner": "CLICOMMON",
+    "signature": "fn exit_code (self) -> ExitCode",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::CommandExit::exit_code",
+    "body": "{ ExitCode :: from (self . code ()) }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for CommandExit::exit_code.",
+    "assessments": {
+      "full_recording": "review-248",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

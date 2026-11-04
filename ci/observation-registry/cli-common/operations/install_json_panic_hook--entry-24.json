@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "install_json_panic_hook",
+    "owner": "CLICOMMON",
+    "signature": "fn install_json_panic_hook (command_name : & str)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::install_json_panic_hook",
+    "body": "{ let command_name = command_name . to_string () ; std :: panic :: set_hook (Box :: new (move | panic_info | { if ! PANIC_REPORTED . swap (true , Ordering :: SeqCst) { let current_thread = std :: thread :: current () ; let thread_name = current_thread . name () ; let location = panic_info . location () . map (| location | format ! (\"{}:{}:{}\" , location . file () , location . line () , location . column ())) ; let payload = panic_payload_message (panic_info) ; let record = ControlPlaneRecord :: panic (& command_name , thread_name , location . as_deref () , payload) ; let _ignored = try_emit_control_plane_record (& record) ; } exit_with (CommandExit :: Failure) ; })) ; }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for install_json_panic_hook.",
+    "assessments": {
+      "full_recording": "review-267",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

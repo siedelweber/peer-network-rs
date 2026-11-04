@@ -1,0 +1,16 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "closure-admission-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public complete candidate causes, canonical dependency blocks, attested closure, consecutive recognized markers, checked effective schedules and bounded exact gate evidence; no secrets, rejected-submission counter or demand statistics enter. Persistent publication and deployment remain unsupported.",
+    "membership": {
+      "explicit": [
+        "pn-epoch::packages/epoch/src/closure.rs::closure::partition",
+        "pn-epoch::packages/epoch/src/closure.rs::closure::close",
+        "pn-epoch::packages/epoch/src/closure.rs::closure::replay",
+        "pn-epoch::packages/epoch/src/closure.rs::closure::ClosedBoundary::record"
+      ]
+    }
+  }
+}

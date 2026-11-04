@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "execwrap",
+    "path": "packages/execwrap/src/bin/execwrap.rs",
+    "item": "execute",
+    "owner": "EXECWRAP",
+    "signature": "fn execute (args : Args) -> ExitCode",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-004"
+  },
+  "review": {
+    "operation": "execwrap::packages/execwrap/src/bin/execwrap.rs::execute",
+    "body": "{ let scope = cli_common :: observation :: scope (\"EXECWRAP\" , \"rule:observe:spans\" , \"execute\" , & args) ; let result = (| | { let cfg = RoutingConfig { redirect : args . redirect , redirect_output : args . redirect_output , redirect_error : args . redirect_error , redirect_prefixed : args . redirect_prefixed , notify_on_write : args . notify_on_write , debug : args . debug , } ; if let Err (error @ ExecError :: AmbiguousRedirection { .. }) = preflight_routing (& cfg) { let mut record = cli_common :: ControlPlaneRecord :: usage_error (COMMAND_NAME , \"ambiguous_redirection\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } if let Some (directory) = & args . change_directory && let Err (error) = env :: set_current_dir (directory) { tracing :: error ! (error = % error , directory = % directory . display () , \"failed to change working directory\" ,) ; return CommandExit :: Failure . exit_code () ; } let outcome = match run (& args . command , & cfg , emit_notification) { Ok (outcome) => outcome , Err (ExecError :: Spawn { source }) => { tracing :: error ! (error = % source , \"failed to spawn child process\") ; return CommandExit :: Failure . exit_code () ; } Err (error) => { tracing :: error ! (error = % error , \"execwrap setup failed\") ; return CommandExit :: Failure . exit_code () ; } } ; if outcome . data_loss && outcome . exit_code == 0 { tracing :: error ! (\"captured output may be incomplete; treating the run as failed\") ; return CommandExit :: Failure . exit_code () ; } wrapper_exit_from_child_status (outcome . exit_code) }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { cli_common :: observation :: Outcome :: Success } else if result == ExitCode :: from (2) { cli_common :: observation :: Outcome :: Refusal } else { cli_common :: observation :: Outcome :: Error } , & result ,) ; result }",
+    "class_decision": "public-execwrap",
+    "item_premise": "This body inherits the public-execwrap decision for execute.",
+    "assessments": {
+      "full_recording": "review-297",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

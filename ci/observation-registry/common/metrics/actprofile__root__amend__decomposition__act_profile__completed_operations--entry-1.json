@@ -1,0 +1,20 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "actprofile__root__amend__decomposition__act_profile__completed_operations",
+    "kind": "counter",
+    "unit": "operations",
+    "attributes": {
+      "outcome": [
+        "success",
+        "refusal",
+        "error",
+        "cancelled",
+        "unwinding",
+        "incomplete"
+      ]
+    },
+    "owner": "ACTPROFILE",
+    "claim": "ROOT::amend:decomposition:act-profile"
+  }
+}

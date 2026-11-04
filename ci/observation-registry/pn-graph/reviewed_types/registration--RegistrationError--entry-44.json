@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "registration::RegistrationError",
+    "package": "pn-graph",
+    "path": "packages/graph/src/registration.rs",
+    "syntax": "# [doc = \" Scoped refusal; no partial projection graph is returned on any error.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RegistrationError { # [doc = \" This entry point admits Registration only.\"] # [error (\"unsupported act family\")] UnsupportedFamily , # [doc = \" Layout, endpoints or fixed parameter carriage differs from Registration.\"] # [error (\"invalid Registration incidence or body\")] Incidence , # [doc = \" The declared verifier did not establish complete author approval.\"] # [error (\"Registration approval not established\")] Unapproved , # [doc = \" A removal fact lacks the declared verifier's authorization.\"] # [error (\"opening removal not authorized\")] UnauthorizedRemoval , # [doc = \" The backend cannot represent another index.\"] # [error (\"Registration graph capacity exhausted\")] Capacity , # [doc = \" Live identifiers, projections, endpoints or indices differ from reconstruction.\"] # [error (\"Registration graph differs from complete reconstruction\")] GraphMismatch , }"
+  }
+}

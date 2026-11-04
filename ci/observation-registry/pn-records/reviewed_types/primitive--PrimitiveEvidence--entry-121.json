@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "primitive::PrimitiveEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/primitive.rs",
+    "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub usage : nrz_cas :: limits :: BudgetUsage , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < FaultAssertion > , }"
+  }
+}

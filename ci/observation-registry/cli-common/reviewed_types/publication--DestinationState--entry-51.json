@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::DestinationState",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/publication.rs",
+    "syntax": "# [doc = \" Whether a destination already carries the required bytes and mode.\"] # [doc = \"\"] # [doc = \" Read by the compare-if-changed paths before anything is staged.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DestinationState { # [doc = \" Absent, unreadable, or carrying different bytes: republish.\"] StaleBytes , # [doc = \" Bytes already current, mode wrong: repair the mode only.\"] ModeOnly , # [doc = \" Bytes and mode both current: leave completely untouched.\"] Current , }"
+  }
+}

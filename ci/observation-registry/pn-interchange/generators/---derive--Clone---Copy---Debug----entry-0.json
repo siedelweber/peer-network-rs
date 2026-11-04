@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "decode::TransportLimits",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)]",
+    "expansion_review": "The derived structural transport declarations, usage counters and located refusal variants contain only explicit public scalars and fields; generated operations inherit the consuming interchange boundary.",
+    "class_decision": "public-interchange"
+  }
+}

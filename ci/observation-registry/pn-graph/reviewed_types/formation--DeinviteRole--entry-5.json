@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::DeinviteRole",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Constructor role of a Deinvite edge, derived from one complete act.\"] # [doc = \" (´def:formation:deinvite´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum DeinviteRole { # [doc = \" Initiating Actor to Chat.\"] A , # [doc = \" Chat to departing Profile.\"] T , }"
+  }
+}

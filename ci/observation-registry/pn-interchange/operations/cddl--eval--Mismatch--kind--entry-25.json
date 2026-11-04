@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/eval.rs",
+    "item": "cddl::eval::Mismatch::kind",
+    "owner": "INTERCHANGE",
+    "signature": "fn kind (& self) -> MismatchKind",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/eval.rs::cddl::eval::Mismatch::kind",
+    "body": "{ self . kind }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::eval::Mismatch::kind.",
+    "assessments": {
+      "full_recording": "review-015",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

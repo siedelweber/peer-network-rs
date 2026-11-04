@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::disclosures::Closure",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication/disclosures.rs",
+    "syntax": "# [doc = \" Complete closure assertions with no recognized or admitted capability fields.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Closure { pub markers : Recognition , pub bindings : Vec < Binding > , pub statement : package :: ClosureStatement , pub partition : Vec < Vec < ActId > > , pub final_gates : admission :: FinalEvidence , pub schedule : schedules :: Record , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric.rs",
+    "item": "numeric::preflight",
+    "owner": "GRAPH",
+    "signature": "fn preflight (procedure : & Procedure) -> Result < () , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
+    "body": "{ if procedure . backend != \"nrz-cas\" { return Err (Error :: Unsupported) ; } let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let Precision :: AbsoluteWidthBits (bits) = & procedure . precision else { return Err (Error :: Unsupported) ; } ; policy . store . validate () ? ; policy . operation . validate () ? ; if bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1]) || policy . operation . work > policy . store . work || policy . operation . work > procedure . maximum_work || policy . refinement . version != 1 || policy . refinement . rounds == 0 || u64 :: from (policy . refinement . rounds) > procedure . maximum_iterations || ! bits . contains (& policy . refinement . precision) || bits . iter () . any (| p | p . checked_add (2) . is_none_or (| grid | grid > policy . refinement . grid_ceiling)) || procedure . primitives . is_empty () { return Err (Error :: Declaration) ; } for primitive in & procedure . primitives { match primitive { Primitive :: Matrix | Primitive :: Krawczyk => return Err (Error :: Composition) , Primitive :: InverseGain => return Err (Error :: InverseGain) , Primitive :: Rational | Primitive :: Root | Primitive :: Logarithm | Primitive :: Exponential | Primitive :: Sigmoid | Primitive :: Tanh | Primitive :: Power | Primitive :: SmoothDerivative | Primitive :: ClampGeneralized => { } } } Ok (()) }",
+    "class_decision": "certified-primitives-public",
+    "item_premise": "The complete public original request, declared policy, typed evidence and precise refusal or checked outcome are recorded.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

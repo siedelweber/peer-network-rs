@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_primitive.rs",
+    "item": "publication::records_primitive::<pn_records :: primitive :: Outcome as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_primitive.rs::publication::records_primitive::<pn_records :: primitive :: Outcome as Wire>::write",
+    "body": "{ match self { Self :: Pass => Ok (array ([Value :: Unsigned (0)])) , Self :: Fail => Ok (array ([Value :: Unsigned (1)])) , Self :: Bound => Ok (array ([Value :: Unsigned (2)])) , Self :: Indecisive (v0) => Ok (array ([Value :: Unsigned (3) , v0 . write (c) ?])) , Self :: Exhausted => Ok (array ([Value :: Unsigned (4)])) , Self :: Interrupted => Ok (array ([Value :: Unsigned (5)])) , Self :: Unsupported => Ok (array ([Value :: Unsigned (6)])) , Self :: DomainBoundary => Ok (array ([Value :: Unsigned (7)])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

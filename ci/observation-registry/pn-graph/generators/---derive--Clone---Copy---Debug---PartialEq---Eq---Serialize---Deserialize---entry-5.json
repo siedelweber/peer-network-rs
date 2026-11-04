@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::SendRole",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural derives retain the complete public Send importance coordinate, role and shared act metadata. Serde is diagnostic and requires whole-history typed revalidation before binding use; it establishes no canonical bytes or ordering verdict."
+  }
+}

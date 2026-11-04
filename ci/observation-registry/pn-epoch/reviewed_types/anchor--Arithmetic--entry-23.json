@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "anchor::Arithmetic",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/anchor.rs",
+    "syntax": "# [derive (Debug)] struct Arithmetic { budget : Budget , zero : Rational , one : Rational , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "DeclarationContent",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Family-specific structural content; opaque families bind their payload separately.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DeclarationContent { # [doc = \" A family whose content is bound separately.\"] Opaque , # [doc = \" Immutable deployment genesis, not selected by a marker policy payload.\"] Deployment { genesis_at : u64 } , # [doc = \" SHA-256 of the complete marker policy under the internal policy digest framing.\"] MarkerPolicy { recipe : String , digest : [u8 ; 32] } , }"
+  }
+}

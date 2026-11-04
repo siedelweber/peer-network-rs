@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::ValueKind",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The three kinds of literal.\"] # [derive (Clone , Debug)] pub (crate) enum ValueKind { # [doc = \" A numeric literal, kept as written.\"] Number (NumberToken) , # [doc = \" A text literal: the characters between the quotes, escapes intact.\"] # [doc = \"\"] # [doc = \" Escapes are not resolved here. `SESC` admits any printable\"] # [doc = \" character after the backslash, so what an escape *denotes* is a\"] # [doc = \" separate question from whether it is well formed, and the parser\"] # [doc = \" answers only the second.\"] Text (String) , # [doc = \" A byte-string literal: the characters between the quotes, escapes\"] # [doc = \" intact, with the qualifier that says how to read them.\"] Bytes { # [doc = \" `h`, `b64`, or nothing.\"] qual : ByteQual , # [doc = \" The characters between the quotes, byte for byte.\"] raw : String , } , }"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "activation-base-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::evaluate",
+        "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::replay",
+        "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate",
+        "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::bounds",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::records",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::work",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::source",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+        "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::power",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::from_evidence",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::premises",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::work",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evidence",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay"
+      ]
+    }
+  }
+}

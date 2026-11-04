@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::resolve::ResolvedRule",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/resolve.rs",
+    "syntax": "# [doc = \" One rule of a theory or of the prelude, augmentations already merged.\"] # [derive (Clone , Debug)] pub (crate) struct ResolvedRule { params : Vec < String > , body : RuleBody , from_prelude : bool , }"
+  }
+}

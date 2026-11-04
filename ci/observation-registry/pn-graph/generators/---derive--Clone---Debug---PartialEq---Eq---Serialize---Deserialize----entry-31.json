@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "formation::BidIdentity",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+    "class_decision": "graph-affinity",
+    "expansion_review": "Structural derives retain settlement act identities, exact coordinates and finalization metadata. The identity family is fixed by the type; no digest or canonical byte profile is introduced. Diagnostic serde requires complete history-based revalidation before binding use."
+  }
+}

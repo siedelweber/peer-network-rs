@@ -1,0 +1,25 @@
+{
+  "section": "shapes",
+  "value": {
+    "fields": [
+      "complete public records, diagnostic graph and public verifier representation at trace",
+      "complete Registration projection, graph or validation result at trace",
+      "bounded outcome",
+      "inclusive duration_seconds",
+      "declared invocation work",
+      "qualified resource totals"
+    ],
+    "metrics": [
+      "graph__root__sig__design__graph__started_operations",
+      "graph__root__sig__design__graph__completed_operations",
+      "graph__root__sig__design__graph__work_bytes",
+      "graph__root__sig__design__graph__work_operations",
+      "graph__root__sig__design__graph__active_operations",
+      "graph__root__sig__design__graph__resource_current_bytes",
+      "graph__root__sig__design__graph__elapsed_seconds",
+      "graph__root__sig__design__graph__workload_bytes",
+      "graph__root__sig__design__graph__workload_operations"
+    ]
+  },
+  "name": "shape-graph-registration"
+}

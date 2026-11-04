@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::VerifiedPackage",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" Frozen package, constructible only by the verification operation.\"] # [doc = \" (´def:compiler:completed-package´)\"] # [derive (Clone , Debug)] pub struct VerifiedPackage { input : PackageInput , }"
+  }
+}

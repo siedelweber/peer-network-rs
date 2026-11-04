@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "solve::RecordError",
+    "package": "pn-records",
+    "path": "packages/records/src/solve.rs",
+    "syntax": "# [doc = \" Distinct representation refusals; no arithmetic failure becomes a fence FAIL.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecordError { # [error (\"invalid procedure declaration\")] Procedure , # [error (\"invalid descending rung grid or missing zero anchor\")] Grid , # [error (\"invalid nonnegative bounds\")] Bounds , # [error (\"attempt transcript differs from declared procedure\")] Attempt , # [error (\"residual premises or radius are inconsistent\")] Residual , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

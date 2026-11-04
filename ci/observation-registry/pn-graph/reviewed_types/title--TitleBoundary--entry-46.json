@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "title::TitleBoundary",
+    "package": "pn-graph",
+    "path": "packages/graph/src/title.rs",
+    "syntax": "# [doc = \" One boundary's derived recognition premises and resulting title certificate.\"] # [doc = \" Missing owners are represented explicitly by None for encountered Item terms.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleBoundary { # [doc = \" Immediately preceding ownership and consumption, extended by fresh genesis.\"] pub premises : crate :: recognition :: RecognitionContext , # [doc = \" Complete attempted-candidate evidence, including non-binding attempts.\"] pub candidates : Vec < crate :: recognition :: SettlementEvidence > , # [doc = \" Certified owners after this boundary; unresolved genesis remains None.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" All records consumed through this boundary, not just whole-triple keys.\"] pub consumed : BTreeSet < ActId > , }"
+  }
+}

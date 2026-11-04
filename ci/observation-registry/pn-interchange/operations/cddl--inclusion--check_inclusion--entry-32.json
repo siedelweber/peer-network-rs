@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/inclusion.rs",
+    "item": "cddl::inclusion::check_inclusion",
+    "owner": "INTERCHANGE",
+    "signature": "fn check_inclusion (earlier : & Theory , later : & Theory) -> Result < Inclusion , TheoryError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/inclusion.rs::cddl::inclusion::check_inclusion",
+    "body": "{ if earlier . label () != later . label () { return Err (TheoryError :: Incomparable) ; } let (earlier_major , earlier_minor) = earlier . coordinate () ; let (later_major , later_minor) = later . coordinate () ; if earlier_major != later_major || earlier_minor >= later_minor { return Err (TheoryError :: Incomparable) ; } Ok (compare (earlier , later)) }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::inclusion::check_inclusion.",
+    "assessments": {
+      "full_recording": "review-020",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

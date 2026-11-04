@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::MissingField",
+    "package": "pn-records",
+    "path": "packages/records/src/authentication.rs",
+    "syntax": "# [doc = \" The absent field of a malformed disclosure, not a cryptographic verdict.\"] # [doc = \" (´def:acts:authentication-disclosure´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum MissingField { # [doc = \" P is absent.\"] # [error (\"proposal pre-commitment is absent\")] ProposalPrecommitment , # [doc = \" The Actor proposal signature is absent.\"] # [error (\"Actor proposal signature is absent\")] ActorProposalSignature , # [doc = \" The content edition is absent.\"] # [error (\"content edition is absent\")] ContentEdition , # [doc = \" The dependency edition is absent.\"] # [error (\"dependency edition is absent\")] DependencyEdition , # [doc = \" V is absent.\"] # [error (\"verified header is absent\")] VerifiedHeader , # [doc = \" The host seal is absent.\"] # [error (\"host seal is absent\")] HostSeal , # [doc = \" The approval witness is absent.\"] # [error (\"approval binding is absent\")] ApprovalBinding , # [doc = \" The authentication edition is absent.\"] # [error (\"authentication edition is absent\")] AuthenticationEdition , # [doc = \" The public verification material is absent.\"] # [error (\"public verification material is absent\")] PublicVerificationMaterial , }"
+  }
+}

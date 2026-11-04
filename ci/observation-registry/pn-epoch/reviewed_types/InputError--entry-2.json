@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "InputError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/lib.rs",
+    "syntax": "# [doc = \" Distinct structural and bounded-arithmetic refusals.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InputError { # [error (\"constants selection: {0}\")] Constants (# [from] ConstantsError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary zero is not a compiling epoch\")] Boundary , # [error (\"input edition differs from the effective edition\")] Edition , # [error (\"profile mixes constants editions\")] MixedEdition , # [error (\"unit or numeraire differs from the effective edition\")] Units , # [error (\"missing or unsupported literal constant\")] Constant , # [error (\"family profile missing\")] MissingProfile , # [error (\"duplicate or unknown family or undeclared profile\")] ProfileIdentity , # [error (\"negative profile weight\")] NegativeProfile , # [error (\"profile does not sum to one\")] ProfileSum , # [error (\"profile supported outside the family's projection domains\")] ProfileSupport , # [error (\"published domain weight missing\")] MissingDomainWeight , # [error (\"negative published domain weight\")] NegativeDomainWeight , # [error (\"unknown published domain\")] UnknownDomain , # [error (\"hop limit must be a positive integer\")] HopLimit , # [error (\"self retention must be positive\")] SelfBase , # [error (\"depth mass must be nonempty, nonnegative and sum to one\")] DepthMass , }"
+  }
+}

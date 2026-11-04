@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "wire::Frame",
+    "package": "pn-host",
+    "path": "packages/host/src/wire.rs",
+    "syntax": "pub (crate) struct Frame { pub (crate) kind : u8 , pub (crate) payload : Buffer , }"
+  }
+}

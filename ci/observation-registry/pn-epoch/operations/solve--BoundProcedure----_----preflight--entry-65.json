@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve.rs",
+    "item": "solve::BoundProcedure < '_ >::preflight",
+    "owner": "EPOCH",
+    "signature": "fn preflight (& self) -> Result < () , ProcedureError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight",
+    "body": "{ if self . procedure . enclosure . is_none () { return Err (ProcedureError :: Unsupported) ; } pn_graph :: numeric :: preflight (& self . procedure) ? ; Ok (()) }",
+    "class_decision": "solve-public-records",
+    "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+    "assessments": {
+      "full_recording": "solve-public-records",
+      "secret_flow": "solve-public-records",
+      "exposure_consumers": "solve-public-records"
+    }
+  }
+}

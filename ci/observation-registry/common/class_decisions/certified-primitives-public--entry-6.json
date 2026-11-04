@@ -1,0 +1,15 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "certified-primitives-public",
+    "status": "reviewer-confirmed",
+    "premises": "Public procedure, real expression, ordered coordinate box, limits and typed numerical evidence only. All arguments and results are public, including refused or interrupted requests. No secret or subscriber enters the adapter.",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
+        "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
+        "pn-graph::packages/graph/src/numeric.rs::numeric::replay"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+    "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+  },
+  "name": "epoch-support-full_recording"
+}

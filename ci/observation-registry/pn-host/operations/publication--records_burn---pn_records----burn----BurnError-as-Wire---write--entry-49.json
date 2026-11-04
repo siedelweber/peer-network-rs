@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/records_burn.rs",
+    "item": "publication::records_burn::<pn_records :: burn :: BurnError as Wire>::write",
+    "owner": "HOST",
+    "signature": "fn write (& self , c : & mut Context < '_ >) -> Result < Value , Error >",
+    "claim": "HOST::rule:publication:codec",
+    "shape": "shape-publication",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.",
+      "witness": "HOST::claim:publication:canonical-disclosure-roundtrip",
+      "boundary": "pn-host::packages/host/src/publication.rs::publication::encode",
+      "class_decision": "host-publication-codec"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/records_burn.rs::publication::records_burn::<pn_records :: burn :: BurnError as Wire>::write",
+    "body": "{ match self { Self :: PolicySelection (v0) => Ok (array ([Value :: Unsigned (0) , v0 . write (c) ?])) , Self :: PolicyBinding => Ok (array ([Value :: Unsigned (1)])) , Self :: DeploymentBinding => Ok (array ([Value :: Unsigned (2)])) , Self :: PolicyDigest => Ok (array ([Value :: Unsigned (3)])) , Self :: UnsupportedPolicyRecipe => Ok (array ([Value :: Unsigned (4)])) , Self :: Publication (v0) => Ok (array ([Value :: Unsigned (5) , v0 . write (c) ?])) , Self :: EvidenceBinding => Ok (array ([Value :: Unsigned (6)])) , Self :: SampleCoverage => Ok (array ([Value :: Unsigned (7)])) , Self :: Units => Ok (array ([Value :: Unsigned (8)])) , Self :: Bootstrap => Ok (array ([Value :: Unsigned (9)])) , Self :: Policy => Ok (array ([Value :: Unsigned (10)])) , Self :: Buffer => Ok (array ([Value :: Unsigned (11)])) , Self :: Verifier => Ok (array ([Value :: Unsigned (12)])) , Self :: RecordIdentity => Ok (array ([Value :: Unsigned (13)])) , Self :: HistoryPolicy => Ok (array ([Value :: Unsigned (14)])) , Self :: HistoryPosition => Ok (array ([Value :: Unsigned (15)])) , Self :: Initial => Ok (array ([Value :: Unsigned (16)])) , Self :: Succession => Ok (array ([Value :: Unsigned (17)])) , Self :: MissingLineage => Ok (array ([Value :: Unsigned (18)])) , Self :: RegressedLineage => Ok (array ([Value :: Unsigned (19)])) , Self :: Encoding => Ok (array ([Value :: Unsigned (20)])) , Self :: MissingOpening => Ok (array ([Value :: Unsigned (21)])) , Self :: AmbiguousOpening => Ok (array ([Value :: Unsigned (22)])) , Self :: InvalidOpening => Ok (array ([Value :: Unsigned (23)])) , Self :: RegressedAcceptance => Ok (array ([Value :: Unsigned (24)])) , Self :: OutOfLineage => Ok (array ([Value :: Unsigned (25)])) , Self :: InvalidMember => Ok (array ([Value :: Unsigned (26)])) , Self :: InconsistentAlias => Ok (array ([Value :: Unsigned (27)])) , } }",
+    "class_decision": "host-publication-codec",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    }
+  }
+}

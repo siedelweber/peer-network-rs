@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decoder::Transaction",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/decoder.rs",
+    "syntax": "# [doc = \" A transaction whose complete framing and maintained decoding succeeded.\"] # [doc = \" (´def:wallet:validated-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Transaction (TransactionFields) ;"
+  }
+}

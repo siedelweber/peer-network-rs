@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cddl::ast::OccurKind",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/ast.rs",
+    "syntax": "# [doc = \" The three forms of `occur`.\"] # [derive (Clone , Debug)] pub (crate) enum OccurKind { # [doc = \" `[uint] \\\"*\\\" [uint]`: bounded below, above, both, or neither.\"] # [doc = \"\"] # [doc = \" A bare `*` is this variant with both bounds absent. The ABNF admits\"] # [doc = \" no space anywhere inside the production, so `2 * 3` is not one\"] # [doc = \" occurrence indicator.\"] Bounded { # [doc = \" The lower bound, when written.\"] min : Option < Uint > , # [doc = \" The upper bound, when written.\"] max : Option < Uint > , } , # [doc = \" `+`: one or more.\"] OneOrMore , # [doc = \" `?`: zero or one.\"] Optional , }"
+  }
+}

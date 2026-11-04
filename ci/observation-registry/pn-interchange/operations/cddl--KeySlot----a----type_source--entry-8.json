@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/cddl/mod.rs",
+    "item": "cddl::KeySlot < 'a >::type_source",
+    "owner": "INTERCHANGE",
+    "signature": "fn type_source (& self) -> & 'a str",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/cddl/mod.rs::cddl::KeySlot < 'a >::type_source",
+    "body": "{ self . type_source }",
+    "class_decision": "public-interchange",
+    "item_premise": "This body inherits the public-interchange decision for cddl::KeySlot < 'a >::type_source.",
+    "assessments": {
+      "full_recording": "review-043",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

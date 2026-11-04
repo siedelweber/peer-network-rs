@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CommandExit",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Baseline exit-code classes for command-line tools.\"] # [derive (Debug , Clone , Copy , Serialize , Deserialize , PartialEq , Eq)] # [serde (rename_all = \"snake_case\")] pub enum CommandExit { # [doc = \" Successful completion.\"] Success , # [doc = \" Runtime, startup, internal, or command execution failure.\"] Failure , # [doc = \" Command-line usage failure, including clap errors and TTY refusal.\"] Usage , }"
+  }
+}

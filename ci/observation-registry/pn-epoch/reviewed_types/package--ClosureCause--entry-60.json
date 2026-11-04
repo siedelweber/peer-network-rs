@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "package::ClosureCause",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/package.rs",
+    "syntax": "# [doc = \" The attested condition under which the candidate boundary closes.\"] # [doc = \" (´[ROOT-amend:design:candidate-admission-boundary]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ClosureCause { TargetAfterMinimum , MaximumDuration , }"
+  }
+}

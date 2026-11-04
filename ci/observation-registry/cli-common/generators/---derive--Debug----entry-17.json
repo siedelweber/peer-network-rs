@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::Scope",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Debug)]",
+    "expansion_review": "The explicit generator syntax and complete containing type declaration are bound to this admission. Standard derives supply structural value or formatting traits; serde and clap derives supply adapters under their caller boundaries. The private thread-local declaration is nonrecursive recorder state. Unknown or changed generator syntax requires renewed admission.",
+    "class_decision": "public-cli"
+  }
+}

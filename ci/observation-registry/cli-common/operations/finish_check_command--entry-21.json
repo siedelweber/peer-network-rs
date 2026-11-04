@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "finish_check_command",
+    "owner": "CLICOMMON",
+    "signature": "fn finish_check_command < T : serde :: Serialize > (command_name : & str , output : & CheckOutputArgs , report : & T ,) -> Result < () , CheckResultError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This publication adapter inherits the checker command context and delegates all serialized output and file work to their separately observed boundaries without serializing a report twice.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::finish_check_command",
+    "body": "{ match (& output . report , & output . stamp) { (None , None) => { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return Err (CheckResultError :: TtyRefusal) ; } emit (report) ? ; Ok (()) } (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) ? ; let _change = write_json_report_if_changed (report_path , report) ? ; touch_stamp (stamp_path) ? ; Ok (()) } _ => Err (CheckResultError :: InvalidMode) , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This body inherits the public-cli decision for finish_check_command.",
+    "assessments": {
+      "full_recording": "review-285",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

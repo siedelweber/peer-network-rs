@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Arguments",
+    "package": "documents",
+    "path": "packages/documents/src/bin/documents-panic-probe.rs",
+    "syntax": "# [derive (Parser)] # [command (version , about = \"Exercise the shared JSON panic hook\")] struct Arguments { # [command (flatten)] base : BaseArgs , }"
+  }
+}

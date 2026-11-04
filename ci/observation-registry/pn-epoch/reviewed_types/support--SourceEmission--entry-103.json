@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "support::SourceEmission",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support.rs",
+    "syntax": "# [doc = \" One source's reduced rate and its emission and identity-retention fractions.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SourceEmission { pub reduced_rate : String , pub emission : String , pub retained : String , }"
+  }
+}

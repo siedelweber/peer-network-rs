@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "transport::KernelError",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/transport.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "solve-public-records",
+    "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+  }
+}
