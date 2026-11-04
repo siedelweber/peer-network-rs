@@ -2075,6 +2075,14 @@
       "review": "The admitted fixture is disclosed through public untrusted types and independently restored; complete carriers, disclosures and final gate evidence compare equal."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures/profile.rs",
+      "claim": "EPOCH::claim:admission:disclosure-profile-precedes-restoration-work",
+      "before": "",
+      "after": "Claim: In the declared publication fixture, incomplete realization and a changed numeric or procedure limit refuse restoration before any nested instrumented replay operation starts; a successful restoration exercises the same observer.",
+      "review": "The valid restored fixture makes the observer count nested operation spans. Clearing realization evidence or changing numeric, product or replay limits then refuses with the profile or completeness class, exactly one restore-entry span and zero nested operation spans. The counters observe instrumented replay entry, not uninstrumented CPU instructions."
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots",
       "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
       "claim": "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",

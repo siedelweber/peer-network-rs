@@ -426,6 +426,7 @@
     "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals": "",
     "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix": "",
     "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip": "",
+    "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile": "",
     "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots": "",
     "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach": "",
     "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix": "",

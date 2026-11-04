@@ -1997,6 +1997,20 @@
     },
     {
       "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::restoration-guards",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
       "case_budget_reasons": {
         "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission": "Both chartered floors retain complete candidate compilation, independent defining-ridge replay where required, production admission and closure replay with exact final-stamp comparisons.",
         "pn-epoch::solve::admission::ridge_charge::ridge_charge_controls": "The defining-ridge charge controls retain the complete analytic cover, independent proof replay, unresolved-image withholding and altered-definition, image and query refusals."

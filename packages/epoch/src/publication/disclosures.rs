@@ -456,6 +456,12 @@ fn restore_frame(
     ret
 )]
 pub fn restore(disclosure: Disclosure, verifier: &impl Verifier) -> Result<super::AdmittedPackage, Error> {
+    if disclosure.frames.iter().any(|frame| !frame.realization.complete()) {
+        return Err(Error::Structure("missing realization disclosure"));
+    }
+    if !verifier.disclosure_profile(&disclosure) {
+        return Err(Error::Structure("publication profile"));
+    }
     let empty = pn_records::validate_history(&[], &[])?;
     let declarations = pn_records::validate_record(&[], &empty, &disclosure.causes.declarations)?;
     let constants = constants::bind_constants(&declarations, disclosure.causes.editions.clone())?;

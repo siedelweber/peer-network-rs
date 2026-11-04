@@ -22,6 +22,8 @@ pub trait Verifier:
 {
     /// Check the declared publication procedure and resource settings before replay.
     fn publication_profile(&self, carrier: &Carrier) -> bool;
+    /// Check untrusted declared limits and realization evidence before reconstruction.
+    fn disclosure_profile(&self, disclosure: &disclosures::Disclosure) -> bool;
 }
 
 /// Complete public causes. Act presentation is a set; each frame's sequence is ordered.

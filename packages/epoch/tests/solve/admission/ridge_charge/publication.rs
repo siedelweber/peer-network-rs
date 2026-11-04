@@ -64,6 +64,15 @@ impl publication::Verifier for Check {
                     && f.procedure.maximum_products == NumberId::NumbersAdmissionProductCeiling.integer()
             })
     }
+    fn disclosure_profile(&self, carrier: &publication::disclosures::Disclosure) -> bool {
+        carrier.numeric == self.numeric
+            && carrier.frames.iter().all(|f| {
+                f.realization == realization()
+                    && self.procedures.contains(&f.procedure.solve)
+                    && f.procedure.arithmetic == Limits::default()
+                    && f.procedure.maximum_products == NumberId::NumbersAdmissionProductCeiling.integer()
+            })
+    }
 }
 
 fn realization() -> publication::RealizationEvidence {

@@ -1,4 +1,6 @@
 use super::*;
+#[path = "disclosures/profile.rs"]
+mod profile;
 use pn_epoch::publication::disclosures::{self, Section};
 
 fn ridge_successor(
@@ -274,7 +276,17 @@ fn disclosure_refusals() {
     changed = raw.clone();
     changed.numeric.comparison_work = 0;
     assert!(matches!(
-        disclosures::restore(changed, &check),
+        disclosures::restore(changed.clone(), &check),
+        Err(publication::Error::Structure("publication profile"))
+    ));
+    // Retain the numerical exhaustion control under an explicitly admitted test profile.
+    let exhausted = Check {
+        candidates: check.candidates.clone(),
+        procedures: check.procedures.clone(),
+        numeric: changed.numeric.clone(),
+    };
+    assert!(matches!(
+        disclosures::restore(changed, &exhausted),
         Err(publication::Error::Numeric(_))
     ));
     changed = raw;
