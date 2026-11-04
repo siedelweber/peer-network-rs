@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::admission-work"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_work"]
+case_budgets = { "pn-epoch::solve::admission::admission_work" = "calibrated-admission-work-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::admission_work" = "The two-attempt admission solve retains the exact production Work pin, success at that cap, the adjacent solve refusal and independent replay below that cap; each complete run remains inside the measured case." }

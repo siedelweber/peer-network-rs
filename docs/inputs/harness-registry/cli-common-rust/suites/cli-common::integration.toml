@@ -1,0 +1,9 @@
+kind = "suite"
+name = "cli-common::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "cli-common-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["cli-common::integration::base_args_flattens_into_clap_parser", "cli-common::integration::base_args_long_flag_toggles_debug", "cli-common::integration::base_args_rejects_unknown_short_flag", "cli-common::integration::emit_real_stdout_through_public_api", "cli-common::integration::parse_args_from_wraps_help_as_json_control_record"]

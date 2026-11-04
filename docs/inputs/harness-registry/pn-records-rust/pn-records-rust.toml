@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-records-rust"
+evidence = "pure"
+contract = "internal structural records slice"
+edition = "0.1"

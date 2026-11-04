@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-publication"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 8"
+contract = "complete causes and exact canonical package bytes"

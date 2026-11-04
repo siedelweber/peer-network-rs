@@ -1,0 +1,13 @@
+kind = "suite"
+name = "records-records"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::records-dag-1::records-records::duplicate", "contract::records-dag-1::records-records::missing-leg", "contract::records-dag-1::records-records::leg-removal", "contract::records-dag-1::records-records::unresolved-reference", "contract::records-dag-1::records-records::parent-missing", "contract::records-dag-1::records-records::parent-late", "contract::records-dag-1::records-records::parent-duplicate", "contract::records-dag-1::records-records::parent-unsorted", "contract::records-dag-1::records-records::parent-self", "contract::records-dag-1::records-records::parent-bound", "contract::records-dag-1::records-records::dependency-missing", "contract::records-dag-1::records-records::dependency-late", "contract::records-dag-1::records-records::dependency-duplicate", "contract::records-dag-1::records-records::dependency-unsorted", "contract::records-dag-1::records-records::dependency-self", "contract::records-dag-1::records-records::dependency-bound", "contract::records-dag-1::records-records::history-duplicate", "contract::records-dag-1::records-records::edge-only-history", "contract::records-dag-1::records-records::cut-placement", "contract::records-dag-1::records-records::overlapping-closures"]
+parent_case = "pn-records::conformance::shared_cases"
+contract_edition = "records-dag-1"
+claim_owner = "RECORDS"
+claim = "claim:acts:shared-conformance-preserves-whole-acts"

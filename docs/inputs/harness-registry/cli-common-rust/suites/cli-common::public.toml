@@ -1,0 +1,9 @@
+kind = "suite"
+name = "cli-common::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "cli-common-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["cli-common::public::control_record_roundtrip"]

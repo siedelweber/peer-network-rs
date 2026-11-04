@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-verification::properties"
+observation = "Outer observation: consumer-qualified source-v1 seed, verification-owned fixed-point oracle and exact-cause table; same implementation and shared generator."
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-verification::properties::marker_recognition", "pn-verification::properties::numeric_coordinates", "pn-verification::properties::closure_model", "pn-verification::properties::typed_corruptions"]

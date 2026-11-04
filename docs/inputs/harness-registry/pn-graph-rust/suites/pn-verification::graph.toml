@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-verification::graph"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-verification::graph::graph_shared_cases", "pn-verification::graph::generated_partitions"]

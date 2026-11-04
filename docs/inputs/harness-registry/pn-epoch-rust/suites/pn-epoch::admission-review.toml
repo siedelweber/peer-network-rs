@@ -1,0 +1,14 @@
+kind = "suite"
+name = "pn-epoch::admission-review"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_individual_straddle", "pn-epoch::solve::admission::admission_solvent_support"]
+case_budgets = { "pn-epoch::solve::admission::admission_individual_straddle" = "calibrated-admission-individual-straddle-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::admission_individual_straddle" = "The complete pn-epoch::solve::admission::admission_individual_straddle mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload." }

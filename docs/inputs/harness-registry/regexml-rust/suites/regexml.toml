@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["regexml::op_atom::tests::test_atom_case_insensitive", "regexml::op_atom::tests::test_atom_case_sensitive", "regexml::op_choice::tests::test_choice", "regexml::op_choice::tests::test_choice2", "regexml::op_choice::tests::test_choice3", "regexml::op_reluctant_fixed::tests::test_repeat_plus_reluctant", "regexml::op_reluctant_fixed::tests::test_repeat_question_reluctant", "regexml::op_reluctant_fixed::tests::test_repeat_star_relucant", "regexml::op_repeat::tests::test_nullable_counted_xsd", "regexml::op_repeat::tests::test_repeat_choice", "regexml::op_repeat::tests::test_repeat_choice_with_option_first", "regexml::op_repeat::tests::test_repeat_choice_with_option_last", "regexml::op_repeat::tests::test_repeat_option", "regexml::op_repeat::tests::test_repeat_simple", "regexml::re_compiler::tests::test_compile_a_star", "regexml::re_compiler::tests::test_compile_combined", "regexml::re_compiler::tests::test_simple_compile"]

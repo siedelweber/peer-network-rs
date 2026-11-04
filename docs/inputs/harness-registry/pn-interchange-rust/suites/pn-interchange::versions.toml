@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::versions"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::versions::a_coordinate_carries_a_label_a_major_and_a_minor", "pn-interchange::versions::a_version_is_the_three_element_array", "pn-interchange::versions::a_version_survives_the_round_trip_through_bytes", "pn-interchange::versions::anything_but_three_unsigned_integers_is_refused", "pn-interchange::versions::coordinates_order_by_label_then_major_then_minor", "pn-interchange::versions::versions_are_ordered_major_then_minor_then_patch"]

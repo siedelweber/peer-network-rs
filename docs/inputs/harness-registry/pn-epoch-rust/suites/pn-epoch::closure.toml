@@ -1,0 +1,14 @@
+kind = "suite"
+name = "pn-epoch::closure"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::closure_membership", "pn-epoch::solve::admission::closure_markers", "pn-epoch::solve::admission::closure_duration", "pn-epoch::solve::admission::closure_context", "pn-epoch::solve::admission::closure_maximum"]
+case_budgets = { "pn-epoch::solve::admission::closure_membership" = "calibrated-closure-membership-case", "pn-epoch::solve::admission::closure_markers" = "calibrated-closure-markers-case", "pn-epoch::solve::admission::closure_duration" = "calibrated-closure-duration-case", "pn-epoch::solve::admission::closure_context" = "calibrated-closure-context-case", "pn-epoch::solve::admission::closure_maximum" = "calibrated-closure-maximum-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::closure_membership" = "The complete pn-epoch::solve::admission::closure_membership mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::closure_markers" = "The complete pn-epoch::solve::admission::closure_markers mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::closure_duration" = "The complete pn-epoch::solve::admission::closure_duration mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::closure_context" = "The complete pn-epoch::solve::admission::closure_context mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::closure_maximum" = "The closure mechanism retains target and maximum-duration refusals beyond the maximum, verifier attestations and exact-boundary passes over complete candidate histories." }

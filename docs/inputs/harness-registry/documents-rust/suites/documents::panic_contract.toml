@@ -1,0 +1,9 @@
+kind = "suite"
+name = "documents::panic_contract"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "documents-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["documents::panic_contract::panic_proxy"]

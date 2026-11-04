@@ -1,0 +1,14 @@
+kind = "suite"
+name = "pn-epoch::admission"
+contract_edition = "epoch-admission-1"
+contract = "Finite rational-floor candidate admission and local closure under declared verifiers: exact own debits, certified individual and epoch stamps, immutable evidence, whole membership and common-context replay; no published-reference history join, checked-ridge charge, persistence or deployment authentication."
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_equalities", "pn-epoch::solve::admission::admission_refusals", "pn-epoch::solve::admission::admission_empty", "pn-epoch::solve::admission::admission_boundaries", "pn-epoch::solve::admission::admission_refinement", "pn-epoch::solve::admission::admission_quarantine"]
+case_budgets = { "pn-epoch::solve::admission::admission_refusals" = "calibrated-admission-refusals-case", "pn-epoch::solve::admission::admission_boundaries" = "calibrated-admission-boundaries-case", "pn-epoch::solve::admission::admission_refinement" = "calibrated-admission-refinement-case", "pn-epoch::solve::admission::admission_quarantine" = "calibrated-admission-quarantine-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::admission_refusals" = "The complete pn-epoch::solve::admission::admission_refusals mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::admission_boundaries" = "The complete pn-epoch::solve::admission::admission_boundaries mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::admission_refinement" = "The complete pn-epoch::solve::admission::admission_refinement mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::solve::admission::admission_quarantine" = "The complete pn-epoch::solve::admission::admission_quarantine mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload." }

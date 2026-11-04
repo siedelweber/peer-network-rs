@@ -1,0 +1,13 @@
+kind = "suite"
+name = "numerics-records"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::records-numerics-1::numerics-records::zero-amount", "contract::records-numerics-1::numerics-records::coexpressed-units", "contract::records-numerics-1::numerics-records::market-repricing", "contract::records-numerics-1::numerics-records::fractional-reduction", "contract::records-numerics-1::numerics-records::charged-vintage", "contract::records-numerics-1::numerics-records::subunit-cost"]
+parent_case = "pn-records::conformance::numeric_cases"
+contract_edition = "records-numerics-1"
+claim_owner = "RECORDS"
+claim = "claim:numerics:shared-numeric-cases-preserve-exact-contracts"

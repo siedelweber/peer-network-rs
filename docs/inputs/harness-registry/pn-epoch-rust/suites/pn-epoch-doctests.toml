@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-epoch-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::packages/epoch/src/package.rs - package::CandidateContext [example 1]", "doctest::packages/epoch/src/package.rs - package::AdmittedBoundary [example 1]", "doctest::packages/epoch/src/schedules.rs - schedules::Boundary [example 1]", "doctest::packages/epoch/src/admission/finalize.rs - admission::finalize::FinalProcedure [example 1]"]

@@ -1,0 +1,6 @@
+kind = "tier"
+name = "extended"
+steps = ["design-tests", "observation-build", "observation-runtime", "observation-parser", "extended-tests"]
+invocation_budget = "extended-gate"
+status = "active"
+reason = "Whole-checker mutation matrices and cross-process observation-mode coverage remain required alongside the author feedback tier, with unchanged assertions, case budgets and exact result joins."

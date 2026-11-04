@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::live-publication"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_prefix", "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach", "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach" = "calibrated-live-publication-breach-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::live::live_publication_breach" = "Complete old and replacement admissions retain sticky finality halt, separate successful re-anchor and follow replay, and independently refused response-policy substitutions." }

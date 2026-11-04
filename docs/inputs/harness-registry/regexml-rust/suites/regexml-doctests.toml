@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::vendor/regexml/src/regex.rs - regex::Regex::is_full_match_bounded [example 1]"]

@@ -1,0 +1,13 @@
+kind = "suite"
+name = "graph-partition-verification"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-partition-1::graph-partition-verification::minimal", "contract::graph-partition-1::graph-partition-verification::independent", "contract::graph-partition-1::graph-partition-verification::dense", "contract::graph-partition-1::graph-partition-verification::mixed", "contract::graph-partition-1::graph-partition-verification::dependencies", "contract::graph-partition-1::graph-partition-verification::removals"]
+parent_case = "pn-verification::graph::graph_shared_cases"
+contract_edition = "graph-partition-1"
+claim_owner = "VERIFICATION"
+claim = "claim:verification:shared-partitions-retain-complete-results"

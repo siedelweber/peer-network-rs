@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::ridge-charge"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::ridge_charge_controls", "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::ridge_charge_controls" = "calibrated-ridge-charge-controls-case", "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission" = "calibrated-ridge-charge-admission-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::ridge_charge_controls" = "The defining-ridge charge controls retain the complete analytic cover, independent proof replay, unresolved-image withholding and altered-definition, image and query refusals.", "pn-epoch::solve::admission::ridge_charge::ridge_charge_admission" = "Both chartered floors retain complete candidate compilation, independent defining-ridge replay where required, production admission and closure replay with exact final-stamp comparisons." }

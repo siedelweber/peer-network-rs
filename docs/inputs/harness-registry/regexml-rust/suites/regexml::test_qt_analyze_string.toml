@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml::test_qt_analyze_string"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["regexml::test_qt_analyze_string::test_analyze_string_001", "regexml::test_qt_analyze_string::test_analyze_string_003", "regexml::test_qt_analyze_string::test_analyze_string_004", "regexml::test_qt_analyze_string::test_analyze_string_005", "regexml::test_qt_analyze_string::test_analyze_string_006", "regexml::test_qt_analyze_string::test_analyze_string_007", "regexml::test_qt_analyze_string::test_analyze_string_008", "regexml::test_qt_analyze_string::test_analyze_string_009", "regexml::test_qt_analyze_string::test_analyze_string_010", "regexml::test_qt_analyze_string::test_analyze_string_011", "regexml::test_qt_analyze_string::test_analyze_string_012", "regexml::test_qt_analyze_string::test_analyze_string_013", "regexml::test_qt_analyze_string::test_analyze_string_014", "regexml::test_qt_analyze_string::test_analyze_string_015", "regexml::test_qt_analyze_string::test_analyze_string_016", "regexml::test_qt_analyze_string::test_analyze_string_017", "regexml::test_qt_analyze_string::test_analyze_string_017a", "regexml::test_qt_analyze_string::test_analyze_string_018", "regexml::test_qt_analyze_string::test_analyze_string_019", "regexml::test_qt_analyze_string::test_analyze_string_026", "regexml::test_qt_analyze_string::test_analyze_string_027", "regexml::test_qt_analyze_string::test_analyze_string_901", "regexml::test_qt_analyze_string::test_analyze_string_902", "regexml::test_qt_analyze_string::test_analyze_string_903", "regexml::test_qt_analyze_string::test_analyze_string_optional_groups"]

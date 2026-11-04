@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml::test_backtrack"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["regexml::test_backtrack::test_another_backtrack", "regexml::test_backtrack::test_backtrack_attempt", "regexml::test_backtrack::test_backtrack_no_nesting", "regexml::test_backtrack::test_choice_no_repeat", "regexml::test_backtrack::test_choice_plus", "regexml::test_backtrack::test_choice_question", "regexml::test_backtrack::test_choice_star", "regexml::test_backtrack::test_choice_without_postfix", "regexml::test_backtrack::test_plus_inside_and_star_inside_capture_group", "regexml::test_backtrack::test_plus_inside_capture_group", "regexml::test_backtrack::test_question_mark_outside_capture_group", "regexml::test_backtrack::test_simple_capture", "regexml::test_backtrack::test_star_inside_and_outside_capture_group", "regexml::test_backtrack::test_star_inside_capture_group", "regexml::test_backtrack::test_star_outside_capture_group", "regexml::test_backtrack::test_whatever"]

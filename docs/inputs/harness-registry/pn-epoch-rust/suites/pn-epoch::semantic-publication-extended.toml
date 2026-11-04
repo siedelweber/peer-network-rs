@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::semantic-publication-extended"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip", "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip" = "calibrated-publication-roundtrip-case", "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals" = "calibrated-publication-ridge-refusals-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip" = "Both chartered floors retain complete admission, semantic assembly and independent restoration; successful assemblies each keep their own replay while immutable fixture construction is shared.", "pn-epoch::solve::admission::ridge_charge::publication::publication_ridge_refusals" = "Defining ridge, query and transcript mutations retain independent charge replay at consumption and unresolved-image withholding over a complete admitted fixture." }

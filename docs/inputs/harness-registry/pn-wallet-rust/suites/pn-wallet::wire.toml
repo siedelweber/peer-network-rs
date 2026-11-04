@@ -1,0 +1,11 @@
+kind = "suite"
+name = "pn-wallet::wire"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-wallet-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-wallet::wire::wire_compatibility"]
+case_budgets = { "pn-wallet::wire::wire_compatibility" = "calibrated-wallet-wire-wire-compatibility-case" }
+case_budget_reasons = { "pn-wallet::wire::wire_compatibility" = "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged." }

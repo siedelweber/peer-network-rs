@@ -1,0 +1,9 @@
+kind = "suite"
+name = "ci::test_observe"
+status = "active"
+runner = "ci"
+level = "unit"
+implementation = "ci-python"
+tier = "fast"
+budget = "pure-suite"
+cases = ["ci::test_observe.Admission.test_records_operation_field", "ci::test_observe.Admission.test_duplicate_metric", "ci::test_observe.Admission.test_generated_mapping", "ci::test_observe.Admission.test_derived_class_completeness", "ci::test_observe.Admission.test_invalid_exception", "ci::test_observe.Admission.test_observation_streams", "ci::test_observe.Admission.test_omitted_instrumentation", "ci::test_observe.Admission.test_process_delivery_counts", "ci::test_observe.Admission.test_resource_samples", "ci::test_observe.Admission.test_semantic_review", "ci::test_observe.Admission.test_stale_operation", "ci::test_observe.Admission.test_undeclared_dimension", "ci::test_observe.Admission.test_wrong_identity"]

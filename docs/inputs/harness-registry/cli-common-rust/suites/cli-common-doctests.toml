@@ -1,0 +1,9 @@
+kind = "suite"
+name = "cli-common-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "cli-common-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::packages/cli-common/README.md - <module> [example 1]", "doctest::packages/cli-common/README.md - <module> [example 2]"]

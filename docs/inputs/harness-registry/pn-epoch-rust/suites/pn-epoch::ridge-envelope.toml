@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-epoch::ridge-envelope"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::envelope::ridge_envelope_consumption"]

@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::theories"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::theories::a_pattern_that_will_not_compile_is_refused_at_parse", "pn-interchange::theories::a_slot_is_reachable_by_key", "pn-interchange::theories::a_source_that_is_not_cddl_is_a_located_syntax_refusal", "pn-interchange::theories::a_theory_clones_without_recompiling_anything", "pn-interchange::theories::a_theory_outside_the_fragment_is_refused_as_such", "pn-interchange::theories::a_type_nested_past_the_bound_is_a_located_refusal", "pn-interchange::theories::an_assigned_theory_carries_its_pins", "pn-interchange::theories::an_exotic_type_passes_membership_and_fails_only_on_its_operator", "pn-interchange::theories::an_operator_outside_the_subset_is_unevaluable", "pn-interchange::theories::an_undefined_rule_is_a_located_refusal", "pn-interchange::theories::every_fragment_refusal_names_a_line", "pn-interchange::theories::fragment_membership_is_decided_before_resolution", "pn-interchange::theories::slots_are_in_ascending_key_order_with_their_requiredness", "pn-interchange::theories::the_base_theory_is_not_an_assignable_theory", "pn-interchange::theories::the_base_theory_is_one_object", "pn-interchange::theories::the_base_theory_is_the_conventions_schema", "pn-interchange::theories::the_base_theory_normalizes_to_its_four_rules", "pn-interchange::theories::the_conventions_pattern_compiles_inside_a_theory", "pn-interchange::theories::the_printed_form_is_normalized_and_the_source_is_not", "pn-interchange::theories::the_rfc_examples_parse_as_cddl_and_are_not_assignable", "pn-interchange::theories::type_source_is_the_spelling_and_not_an_identity"]

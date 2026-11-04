@@ -8,11 +8,12 @@ import subprocess
 import sys
 import time
 import tomllib
+from registry_fragments import read as read_fragments
 
 from devperf import StructuralError, budgets
 
 CONFIGURATION = 'foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing'
-REGISTRY = Path(__file__).resolve().parent.parent / 'docs/inputs/harness-registry.toml'
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def source_id():
@@ -218,7 +219,7 @@ class Registry:
 
 def load():
     from properties import declarations
-    return Registry(tomllib.loads(REGISTRY.read_text())['rows'], budgets(REGISTRY.with_name('devperf-budgets.toml')), declarations())
+    return Registry(read_fragments(ROOT, 'harness-registry')['rows'], budgets(ROOT/'docs/inputs/devperf-budgets.toml'), declarations())
 
 
 def passing_editions(matrix):

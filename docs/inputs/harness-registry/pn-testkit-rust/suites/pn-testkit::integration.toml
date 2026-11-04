@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-testkit::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-testkit-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-testkit::integration::controlled_replay"]

@@ -1,0 +1,4 @@
+kind = "tier"
+name = "performance"
+status = "held"
+reason = "fast smoke is implemented; comparable machine campaigns and reviewed baselines are unavailable"

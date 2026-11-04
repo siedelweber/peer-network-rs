@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "regexml-rust"
+evidence = "vendor"
+contract = "current package surface"
+edition = "0.1"

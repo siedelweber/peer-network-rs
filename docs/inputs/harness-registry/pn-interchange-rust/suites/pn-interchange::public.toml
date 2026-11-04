@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::public::prefix_extent", "pn-interchange::public::deep_debug"]

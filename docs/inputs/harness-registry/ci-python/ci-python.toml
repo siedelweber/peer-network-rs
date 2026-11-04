@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "ci-python"
+evidence = "pure"
+contract = "repository checks"
+edition = "0.1"

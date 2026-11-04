@@ -1,0 +1,9 @@
+kind = "suite"
+name = "ci::test_observe_syntax"
+status = "active"
+runner = "ci"
+level = "integration"
+implementation = "ci-python"
+tier = "extended"
+budget = "pure-suite"
+cases = ["ci::test_observe_syntax.Syntax.test_parsed_boundaries"]

@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-compiler-outer"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "Implemented scope runs under epoch-compiler-1; unrestricted outer-corpus coverage remains bite 11. Authenticated dependency reopening and real-chain verification retain their named owners."
+contract = "fixed-input cells, recipients and emission"

@@ -1,0 +1,11 @@
+kind = "suite"
+name = "ci::test_harness"
+status = "active"
+runner = "ci"
+level = "unit"
+implementation = "ci-python"
+tier = "fast"
+budget = "pure-suite"
+cases = ["ci::test_harness.Harness.test_wallet_commit_isolation", "ci::test_harness.Harness.test_host_commit_isolation", "ci::test_harness.Harness.test_flake_ledger", "ci::test_harness.Harness.test_reference_tier", "ci::test_harness.Harness.test_case_level_declaration", "ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_interchange_manifest", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
+case_budgets = { "ci::test_harness.Harness.test_host_commit_isolation" = "calibrated-harness-host-commit-isolation-case", "ci::test_harness.Harness.test_wallet_commit_isolation" = "calibrated-harness-wallet-commit-isolation-case" }
+case_budget_reasons = { "ci::test_harness.Harness.test_host_commit_isolation" = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness.", "ci::test_harness.Harness.test_wallet_commit_isolation" = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness." }

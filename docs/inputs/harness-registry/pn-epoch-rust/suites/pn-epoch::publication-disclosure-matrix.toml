@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::publication-disclosure-matrix"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "calibrated-disclosure-refusals-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_refusals" = "The complete section-refusal matrix independently restores every distinct mutation and compares its refusal class." }

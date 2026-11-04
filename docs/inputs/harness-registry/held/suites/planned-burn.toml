@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-burn"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "pure publications and marker recognition run in records-burn-1; real destruction, permanent target provenance and settled-chain verification remain with wallet and host service slices of bite 2"
+contract = "real-service burn disclosures and permanent target provenance"

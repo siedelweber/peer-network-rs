@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-client"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 8"
+contract = "GraphQL node relays and client workflows, wallet request recovery and both command surfaces"

@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-host-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "pn-host-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::packages/host/src/lib.rs - Session [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 2]"]

@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::reference-wall"
+contract_edition = "epoch-numeric-1"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "reference-certificate"
+budget = "reference-certificate-suite"
+case_budget = "reference-wall-case"
+case_span = true
+cases = ["pn-epoch::solve::enclosed_wall_solve"]

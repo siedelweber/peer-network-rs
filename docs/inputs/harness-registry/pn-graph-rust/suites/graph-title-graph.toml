@@ -1,0 +1,13 @@
+kind = "suite"
+name = "graph-title-graph"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-title-1::graph-title-graph::empty", "contract::graph-title-1::graph-title-graph::unique", "contract::graph-title-1::graph-title-graph::conflict", "contract::graph-title-1::graph-title-graph::fresh-retry", "contract::graph-title-1::graph-title-graph::resale", "contract::graph-title-1::graph-title-graph::stale-owner", "contract::graph-title-1::graph-title-graph::cancelled", "contract::graph-title-1::graph-title-graph::wrong-partner"]
+parent_case = "pn-graph::title::title_shared_cases"
+contract_edition = "graph-title-1"
+claim_owner = "GRAPH"
+claim = "claim:formation:shared-title-cases-retain-complete-results"

@@ -1,0 +1,11 @@
+kind = "suite"
+name = "pn-verification::title"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-verification::title::title_shared_cases", "pn-verification::title::title_exhaustive", "pn-verification::title::title_generated"]
+case_budgets = { "pn-verification::title::title_exhaustive" = "calibrated-title-exhaustive-case", "pn-verification::title::title_generated" = "calibrated-title-generated-case" }
+case_budget_reasons = { "pn-verification::title::title_exhaustive" = "The complete two-boundary alphabet retains the baseline and five fault variations in both input orders, with independently checked clauses, ownership, consumption and events.", "pn-verification::title::title_generated" = "The complete pn-verification::title::title_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload." }

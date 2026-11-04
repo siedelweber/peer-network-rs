@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-epoch-rust"
+evidence = "pure"
+contract = "boundary compiler parameters, final ledger, declared conserved numeric procedures and finite candidate admission/closure"
+edition = "0.1"

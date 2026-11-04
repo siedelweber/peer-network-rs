@@ -4,9 +4,69 @@ import random
 import tempfile
 from pathlib import Path
 import subprocess
+import tomllib
 from unittest.mock import patch
 
 import registry_fragments as fragments
+
+
+def toml_value(value):
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False)
+    if isinstance(value, bool):
+        return str(value).lower()
+    if isinstance(value, list):
+        return '['+', '.join(map(toml_value, value))+']'
+    if isinstance(value, dict):
+        return '{ '+', '.join(json.dumps(key)+' = '+toml_value(item) for key, item in value.items())+' }'
+    return str(value)
+
+
+def envelope_text(data):
+    return ('namespace = '+toml_value(data['namespace'])+'\nversion = '+toml_value(data['version'])+'\n'+
+            ''.join('\n[[rows]]\n'+''.join(key+' = '+toml_value(value)+'\n' for key, value in row.items())
+                    for row in data['rows']))
+
+
+def service(test, root, text, selection):
+    from build_graph_evidence import SERVICE_CASE, service_selection
+    data = tomllib.loads(text)
+    folder = root/fragments.ROOTS['harness-registry']
+    folder.mkdir()
+    fields = {}
+    selected = None
+    for index, row in enumerate(data['rows']):
+        fields.setdefault(row['kind'], set()).update(row)
+        path = folder/(str(index)+'.toml')
+        path.write_text(''.join(key+' = '+toml_value(value)+'\n' for key, value in row.items()))
+        if SERVICE_CASE in row.get('cases', []):
+            selected = path
+    (folder/'schema.toml').write_text('namespace = '+toml_value(data['namespace'])+'\nversion = '+
+        toml_value(data['version'])+'\nfields = '+toml_value({k:sorted(v) for k,v in fields.items()})+'\n')
+    (root/'docs/inputs/harness-registry.toml').unlink()
+    def stage():
+        subprocess.run(['git', '-C', str(root), 'add', '-A'], check=True, capture_output=True)
+    stage()
+    test.assertEqual(service_selection(root), selection)
+    held = next(row for row in data['rows'] if row.get('kind')=='suite' and row.get('status')=='held')
+    (folder/'unrelated.toml').write_text(''.join(key+' = '+toml_value(value)+'\n'
+        for key,value in dict(held, name='unrelated-fragment').items()))
+    stage()
+    test.assertEqual(service_selection(root), selection)
+    test.assertIsNotNone(selected)
+    original = selected.read_text()
+    changed = original.replace('scenario_jobs = 4', 'scenario_jobs = 5')
+    test.assertNotEqual(changed, original)
+    selected.write_text(changed)
+    test.assertTrue(service_selection(root)['run'])
+    selected.write_text(original)
+    test.assertEqual(service_selection(root), selection)
+    row = tomllib.loads(original)
+    row['tier'] = 'unresolved-tier'
+    selected.write_text(''.join(key+' = '+toml_value(value)+'\n' for key,value in row.items()))
+    with test.assertRaisesRegex(ValueError, 'requires one tier'):
+        service_selection(root)
+    selected.write_text(original)
 
 
 def check(test):

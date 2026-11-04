@@ -1,0 +1,7 @@
+kind = "tier"
+name = "reference-certificate"
+steps = ["reference-certificates"]
+invocation_budget = "reference-gate"
+status = "active"
+case_budget_policy = "declared-suite"
+reason = "Full-size exact reference declarations and certificate controls retain their own measured case and suite budgets; every case remains required in the gate."

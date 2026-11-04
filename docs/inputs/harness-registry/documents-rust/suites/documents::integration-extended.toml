@@ -1,0 +1,11 @@
+kind = "suite"
+name = "documents::integration-extended"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "documents-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["documents::integration::repository_fixed_point"]
+case_budgets = { "documents::integration::repository_fixed_point" = "calibrated-documents-integration-repository-fixed-point-case" }
+case_budget_reasons = { "documents::integration::repository_fixed_point" = "The full repository generator and renderer fixed point retains every committed input and output comparison." }

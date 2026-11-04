@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-host-memory-and-postgresql"
+evidence = "real"
+contract = "Both adapters execute the same carrier succession roster; service-only cases identify PostgreSQL explicitly."
+edition = "storage-v1"

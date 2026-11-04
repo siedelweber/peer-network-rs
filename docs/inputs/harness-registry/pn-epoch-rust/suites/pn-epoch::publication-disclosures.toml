@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::publication-disclosures"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip" = "calibrated-disclosure-roundtrip-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_roundtrip" = "Complete rational-floor admission and disclosure restoration compare every asserted section and retain independent replay." }

@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::vectors"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::vectors::canonical_rows_decode_reencode_identically_and_roundtrip", "pn-interchange::vectors::corpus_has_the_seeded_shape", "pn-interchange::vectors::refusal_rows_are_refused_with_a_located_error"]

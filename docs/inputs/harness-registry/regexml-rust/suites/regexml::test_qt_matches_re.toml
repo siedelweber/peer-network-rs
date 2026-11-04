@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml::test_qt_matches_re"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["regexml::test_qt_matches_re::test_re00036"]

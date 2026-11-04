@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::reference-receiving"
+contract_edition = "epoch-numeric-1"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "reference-certificate"
+budget = "reference-certificate-suite"
+case_budget = "reference-receiving-case"
+case_span = true
+cases = ["pn-epoch::solve::partitions::receiving_showcase"]

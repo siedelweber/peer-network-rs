@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-storage"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "The carrier SCD2 contract runs in pn-host::storage. The epoch implementer supplies admitted results in bite 5; the host implementer integrates commit-admitted-epoch in bite 8; the verification implementer supplies integrated property/corpus reach in bite 11."
+contract = "Admitted epoch atomicity and integrated storage corpus beyond the executed carrier contract"

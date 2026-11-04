@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-api"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 8"
+contract = "native CBOR, exact bytes, limits and outcomes"

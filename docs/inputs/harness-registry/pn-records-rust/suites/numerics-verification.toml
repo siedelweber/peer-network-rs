@@ -1,0 +1,13 @@
+kind = "suite"
+name = "numerics-verification"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::records-numerics-1::numerics-verification::zero-amount", "contract::records-numerics-1::numerics-verification::coexpressed-units", "contract::records-numerics-1::numerics-verification::market-repricing", "contract::records-numerics-1::numerics-verification::fractional-reduction", "contract::records-numerics-1::numerics-verification::charged-vintage", "contract::records-numerics-1::numerics-verification::subunit-cost"]
+parent_case = "pn-verification::conformance::numeric_cases"
+contract_edition = "records-numerics-1"
+claim_owner = "VERIFICATION"
+claim = "claim:verification:shared-numeric-cases-preserve-exact-contracts"

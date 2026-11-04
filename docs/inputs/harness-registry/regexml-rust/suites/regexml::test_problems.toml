@@ -1,0 +1,9 @@
+kind = "suite"
+name = "regexml::test_problems"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "regexml-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["regexml::test_problems::test_infinite_loop", "regexml::test_problems::test_l_category_group", "regexml::test_problems::test_l_category_membership", "regexml::test_problems::test_low_surrogates", "regexml::test_problems::test_re00036_match_failure", "regexml::test_problems::test_syntax"]

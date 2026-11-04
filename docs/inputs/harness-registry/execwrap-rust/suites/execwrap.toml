@@ -1,0 +1,11 @@
+kind = "suite"
+name = "execwrap"
+case_levels = { "execwrap::tests::default_payload_sites" = "integration" }
+case_level_reasons = { "execwrap::tests::default_payload_sites" = "Composes a real child, pipe readers, relay workers and the observer; in-crate placement permits a test-only representation counter at all three production call sites." }
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "execwrap-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["execwrap::tests::default_payload_sites", "execwrap::tests::aliased_redirection_paths_are_rejected", "execwrap::tests::ambiguous_alias_does_not_truncate_existing_output", "execwrap::tests::calligraphic_adds_prefix_per_line", "execwrap::tests::calligraphic_buffers_partial_lines_until_finalize", "execwrap::tests::calligraphic_output_is_chunking_invariant", "execwrap::tests::calligraphic_preserves_code_point_split_across_three_writes", "execwrap::tests::calligraphic_preserves_code_point_split_across_two_writes", "execwrap::tests::calligraphic_replaces_invalid_utf8_after_buffering", "execwrap::tests::calligraphic_sanitizes_control_bytes", "execwrap::tests::collect_file_specs_rejects_ambiguous_routing", "execwrap::tests::dangling_alias_failure_leaves_target_intact", "execwrap::tests::dangling_symlink_alias_is_rejected", "execwrap::tests::dangling_symlink_chain_resolves_to_final_target", "execwrap::tests::distinct_redirection_targets_validate", "execwrap::tests::missing_directories_under_distinct_ancestors_validate", "execwrap::tests::parent_dir_through_missing_component_still_resolves_symlinks", "execwrap::tests::parent_symlink_alias_is_rejected", "execwrap::tests::routing_config_detects_combined_redirects", "execwrap::tests::routing_config_detects_single_stream_redirects", "execwrap::tests::symlink_and_hardlink_aliases_are_rejected", "execwrap::tests::symlink_loop_is_an_error", "execwrap::tests::symlinked_ancestor_with_missing_directories_is_rejected", "execwrap::tests::two_routes_to_one_log_are_refused_because_they_would_interleave", "execwrap::tests::typesetter_passes_data_through", "execwrap::tests::typesetter_preserves_arbitrary_bytes"]

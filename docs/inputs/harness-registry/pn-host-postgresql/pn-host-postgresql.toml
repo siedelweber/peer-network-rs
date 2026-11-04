@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-host-postgresql"
+evidence = "real"
+contract = "PostgreSQL 19 RC 1 transport only; persistence disabled"
+edition = "19rc1"

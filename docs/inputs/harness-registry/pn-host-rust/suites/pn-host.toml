@@ -1,0 +1,11 @@
+kind = "suite"
+name = "pn-host"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-host-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-host::secret::tests::length_metadata", "pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::ceiling_login_progress", "pn-host::scram::tests::derivation_permits", "pn-host::scram::tests::derivation_cost"]
+case_budgets = { "pn-host::scram::tests::ceiling_login_progress" = "calibrated-host-scram-ceiling-login-progress-case", "pn-host::scram::tests::derivation_cost" = "calibrated-host-scram-derivation-cost-case", "pn-host::scram::tests::derivation_permits" = "calibrated-host-scram-derivation-permits-case" }
+case_budget_reasons = { "pn-host::scram::tests::ceiling_login_progress" = "The real ceiling-cost derivation remains active while a current-thread executor must forward a public relay frame.", "pn-host::scram::tests::derivation_cost" = "The derivation cost fixture retains real password derivations at the declared iteration boundaries and ceiling.", "pn-host::scram::tests::derivation_permits" = "The permit witness retains its timed non-progress controls before and after cancellation, blocked derivations and eventual permit return." }

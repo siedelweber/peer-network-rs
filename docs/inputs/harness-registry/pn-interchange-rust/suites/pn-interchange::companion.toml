@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::companion"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::companion::a_mistyped_optional_key_is_rejected_tolerantly", "pn-interchange::companion::a_repeated_coordinate_frees_only_the_minor", "pn-interchange::companion::deriving_twice_gives_the_same_companion", "pn-interchange::companion::every_content_key_keeps_its_type_and_its_requiredness", "pn-interchange::companion::the_companion_frees_the_minor_cuts_each_key_and_adds_the_wildcard", "pn-interchange::companion::the_companion_keeps_the_label_and_the_floor", "pn-interchange::companion::the_companion_of_a_theory_that_enumerates_nothing", "pn-interchange::companion::the_diff_reads_the_hunks_it_is_asked_about", "pn-interchange::companion::the_edits_are_the_only_ones_whatever_the_theory_enumerates", "pn-interchange::companion::the_rules_below_the_root_come_through_untouched", "pn-interchange::companion::the_wildcard_is_the_base_theorys"]

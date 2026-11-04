@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-host-rust"
+evidence = "pure"
+contract = "secret transport carrier and impostor protocol boundary"
+edition = "0.1"

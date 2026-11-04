@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-wallet-rust"
+evidence = "pure"
+contract = "bounded public Elements layout decoding and independent field oracle"
+edition = "wallet-layout-1"

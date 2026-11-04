@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-host::transport-evidence"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-host-postgresql"
+tier = "service"
+budget = "pure-suite"
+cases = ["pn-host::transport_evidence::public_transport"]

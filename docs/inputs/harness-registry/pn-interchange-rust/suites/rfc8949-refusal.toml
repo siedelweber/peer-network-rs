@@ -1,0 +1,13 @@
+kind = "suite"
+name = "rfc8949-refusal"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::rfc8949::refusal::row-112", "contract::rfc8949::refusal::row-113", "contract::rfc8949::refusal::row-114", "contract::rfc8949::refusal::row-115", "contract::rfc8949::refusal::row-116", "contract::rfc8949::refusal::row-117", "contract::rfc8949::refusal::row-118", "contract::rfc8949::refusal::row-45", "contract::rfc8949::refusal::row-46", "contract::rfc8949::refusal::row-63", "contract::rfc8949::refusal::row-64", "contract::rfc8949::refusal::row-65", "contract::rfc8949::refusal::row-66", "contract::rfc8949::refusal::row-67", "contract::rfc8949::refusal::row-68", "contract::rfc8949::refusal::row-69", "contract::rfc8949::refusal::row-76", "contract::rfc8949::refusal::row-77", "contract::rfc8949::refusal::row-78", "contract::rfc8949::refusal::row-79", "contract::rfc8949::refusal::row-80", "contract::rfc8949::refusal::row-81", "contract::rfc8949::refusal::row-82", "contract::rfc8949::refusal::row-83", "contract::rfc8949::refusal::row-84", "contract::rfc8949::refusal::row-85", "contract::rfc8949::refusal::row-86", "contract::rfc8949::refusal::row-87", "contract::rfc8949::refusal::row-88", "contract::rfc8949::refusal::row-89", "contract::rfc8949::refusal::row-90", "contract::rfc8949::refusal::row-91", "contract::rfc8949::refusal::row-92"]
+parent_case = "pn-interchange::vectors::refusal_rows_are_refused_with_a_located_error"
+contract_edition = "rfc8949"
+claim_owner = "INTERCHANGE"
+claim = "claim:vectors:a-refusal-vector-is-refused-where-it-stands"

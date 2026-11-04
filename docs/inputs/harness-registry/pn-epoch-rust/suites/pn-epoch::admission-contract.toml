@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::admission-contract"
+contract_edition = "epoch-admission-1"
+contract = "Shared complete-candidate final-gate evidence through direct admission, local closure and independent replay; rational-floor fixture scope only."
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::admission_contract"]

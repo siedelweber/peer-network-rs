@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::labels"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::labels::a_bad_character_is_located_in_characters_not_bytes", "pn-interchange::labels::a_parent_exists_while_two_atoms_remain", "pn-interchange::labels::atoms_descend_the_tree", "pn-interchange::labels::every_route_into_the_type_is_the_same_scanner", "pn-interchange::labels::hyphens_are_interior_only_and_unlimited_there", "pn-interchange::labels::length_is_judged_before_the_alphabet", "pn-interchange::labels::prefix_authority_is_atom_wise", "pn-interchange::labels::the_grammar_accepts", "pn-interchange::labels::the_grammar_refuses", "pn-interchange::labels::the_length_bound_admits_255_bytes_and_refuses_256"]

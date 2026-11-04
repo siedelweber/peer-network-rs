@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-wallet-elements"
+evidence = "real"
+contract = "Elements 29.4.1 RC 1 daemon reads: genesis provisioning, cookie rotation, node-signed fixture blocks and settlement forks; recognition held"
+edition = "29.4.1rc1"

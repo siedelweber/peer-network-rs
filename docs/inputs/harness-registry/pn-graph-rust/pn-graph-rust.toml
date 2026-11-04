@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-graph-rust"
+evidence = "pure"
+contract = "records-level dependent-act partition, scoped Registration formation and the declared rational-endpoint numeric fragment"
+edition = "0.1"

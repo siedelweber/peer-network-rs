@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-readouts"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 10"
+contract = "terminal separation and exact raw paths"

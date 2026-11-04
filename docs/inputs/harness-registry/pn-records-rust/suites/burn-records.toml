@@ -1,0 +1,13 @@
+kind = "suite"
+name = "burn-records"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::records-burn-1::burn-records::missing-provenance", "contract::records-burn-1::burn-records::missing-finality", "contract::records-burn-1::burn-records::missing-costs", "contract::records-burn-1::burn-records::missing-operator", "contract::records-burn-1::burn-records::empty-bootstrap", "contract::records-burn-1::burn-records::sample-gap", "contract::records-burn-1::burn-records::late-policy", "contract::records-burn-1::burn-records::closed-placement", "contract::records-burn-1::burn-records::buffer", "contract::records-burn-1::burn-records::wrong-profile", "contract::records-burn-1::burn-records::duplicate-record", "contract::records-burn-1::burn-records::initial", "contract::records-burn-1::burn-records::skipped-index", "contract::records-burn-1::burn-records::duplicate-index", "contract::records-burn-1::burn-records::lost-predecessor", "contract::records-burn-1::burn-records::lost-lineage", "contract::records-burn-1::burn-records::regressed-lineage", "contract::records-burn-1::burn-records::regressed-acceptance", "contract::records-burn-1::burn-records::out-of-lineage", "contract::records-burn-1::burn-records::invalid-member", "contract::records-burn-1::burn-records::alias-address", "contract::records-burn-1::burn-records::alias-amount", "contract::records-burn-1::burn-records::history-mix", "contract::records-burn-1::burn-records::policy-mix", "contract::records-burn-1::burn-records::wrong-encoding", "contract::records-burn-1::burn-records::missing-opening", "contract::records-burn-1::burn-records::ambiguous-opening", "contract::records-burn-1::burn-records::invalid-opening", "contract::records-burn-1::burn-records::initial-index", "contract::records-burn-1::burn-records::predecessor-position", "contract::records-burn-1::burn-records::successor-snapshot", "contract::records-burn-1::burn-records::policy-identity", "contract::records-burn-1::burn-records::policy-sequence", "contract::records-burn-1::burn-records::burn-unit", "contract::records-burn-1::burn-records::unexplained-operator", "contract::records-burn-1::burn-records::empty-name", "contract::records-burn-1::burn-records::self-predecessor", "contract::records-burn-1::burn-records::cost-unit", "contract::records-burn-1::burn-records::operator-unit", "contract::records-burn-1::burn-records::valid"]
+parent_case = "pn-records::conformance::burn_cases"
+contract_edition = "records-burn-1"
+claim_owner = "RECORDS"
+claim = "claim:burn:shared-marker-cases-preserve-recognition-contracts"

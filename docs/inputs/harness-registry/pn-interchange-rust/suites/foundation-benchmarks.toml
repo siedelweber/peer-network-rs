@@ -1,0 +1,9 @@
+kind = "suite"
+name = "foundation-benchmarks"
+status = "active"
+runner = "benchmark"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["benchmark::canonical-decode", "benchmark::canonical-encode"]

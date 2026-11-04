@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "cli-common-rust"
+evidence = "pure"
+contract = "current package surface"
+edition = "0.1"

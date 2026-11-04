@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "ci-composition-services"
+evidence = "real"
+contract = "repository composition with PostgreSQL and Elements lifecycle evidence"
+edition = "0.1"

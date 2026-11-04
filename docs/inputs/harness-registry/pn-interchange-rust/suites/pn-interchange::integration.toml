@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::integration::a_held_stamp_is_judged_strictly", "pn-interchange::integration::a_held_stamp_the_document_fails_is_rejected_under_that_theory", "pn-interchange::integration::a_major_nothing_is_held_of_is_rejected_whole", "pn-interchange::integration::a_prefix_too_short_to_carry_an_envelope_asks_for_more_bytes", "pn-interchange::integration::a_stamp_above_the_ceiling_is_judged_tolerantly", "pn-interchange::integration::a_stamp_above_the_ceiling_still_answers_to_the_floor", "pn-interchange::integration::a_stamp_below_the_ceiling_that_was_never_assigned_is_rejected_whole", "pn-interchange::integration::an_empty_registry_rejects_everything_whole", "pn-interchange::integration::dispatch_names_the_instrument_for_each_disposition", "pn-interchange::integration::refusal_turns_a_strict_verdict_tolerant_and_then_unheld", "pn-interchange::integration::the_companion_follows_the_ceiling_up_and_down", "pn-interchange::integration::the_patch_position_does_not_occur_in_the_condition", "pn-interchange::integration::the_prefix_path_agrees_with_the_full_envelope", "pn-interchange::integration::the_prefix_path_certifies_no_membership"]

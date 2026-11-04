@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::benchmark_correctness"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::benchmark_correctness::decode_workload", "pn-interchange::benchmark_correctness::encode_workload"]

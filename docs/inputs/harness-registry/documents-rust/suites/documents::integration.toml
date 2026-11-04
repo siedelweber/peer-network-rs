@@ -1,0 +1,11 @@
+kind = "suite"
+name = "documents::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "documents-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["documents::integration::atomic_refresh", "documents::integration::clean_result", "documents::integration::control_records", "documents::integration::dataset_mutation", "documents::integration::declaration_authority", "documents::integration::empty_root", "documents::integration::exhibited_labels", "documents::integration::finding_status", "documents::integration::git_required", "documents::integration::io_paths", "documents::integration::json_model", "documents::integration::named_refusals", "documents::integration::paired_census", "documents::integration::premise_refusals", "documents::integration::protected_outputs", "documents::integration::record_authority", "documents::integration::record_observed_row", "documents::integration::record_row_key", "documents::integration::registry_relation", "documents::integration::release_premises", "documents::integration::tracker_replacement_artifacts", "documents::integration::number_registry", "documents::integration::directed_number_displays", "documents::integration::runtime_error", "documents::integration::stale_rendering", "documents::integration::template_fragments", "documents::integration::terminal_refusal", "documents::integration::text_output", "documents::integration::tracked_census", "documents::integration::vendor_census"]
+case_budgets = {  }
+case_budget_reasons = {  }

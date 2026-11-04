@@ -1,0 +1,9 @@
+kind = "suite"
+name = "documents::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "documents-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["documents::public::report_carrier"]

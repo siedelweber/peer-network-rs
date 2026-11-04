@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::prefix"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::prefix::a_head_outside_preferred_serialization_is_refused", "pn-interchange::prefix::a_label_that_is_not_valid_utf8_is_refused", "pn-interchange::prefix::a_short_prefix_asks_for_more_bytes", "pn-interchange::prefix::a_value_that_is_not_a_map_is_refused", "pn-interchange::prefix::an_empty_prefix_needs_one_byte", "pn-interchange::prefix::an_over_long_label_is_refused_without_reading_it", "pn-interchange::prefix::key_0_holds_a_label_and_key_1_a_version", "pn-interchange::prefix::peek_agrees_with_a_full_decode", "pn-interchange::prefix::peek_certifies_no_membership", "pn-interchange::prefix::peek_reads_no_more_than_the_bound", "pn-interchange::prefix::the_bound_is_tight_and_the_tail_is_never_reached", "pn-interchange::prefix::the_first_two_keys_must_be_0_and_1_in_that_order"]

@@ -1,0 +1,6 @@
+kind = "tier"
+name = "service"
+steps = ["host-postgresql-start", "wallet-elements-start", "service-tests", "host-observation-build", "host-observation-runtime", "wallet-conformance", "wallet-elements-stop", "host-postgresql-stop", "linter-entry-tests"]
+invocation_budget = "service-gate"
+status = "active"
+reason = "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence and Elements 29.4.1 RC 1 for wallet read evidence; executable activation, admitted epoch transactions and other service integrations remain held."

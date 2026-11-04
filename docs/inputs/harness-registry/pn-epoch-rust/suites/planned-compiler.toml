@@ -1,0 +1,13 @@
+kind = "suite"
+name = "planned-compiler"
+contract_edition = "epoch-compiler-1"
+contract = "Fixed complete-input compilation, cells, recipients, coefficients and emission under declared verifiers; no deployment authentication."
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::compiler::compiler_contract", "pn-epoch::compiler::compiler_tables", "pn-epoch::compiler::compiler_splits", "pn-epoch::compiler::compiler_properties", "pn-epoch::compiler::compiler_generated"]
+case_budgets = { "pn-epoch::compiler::compiler_properties" = "calibrated-compiler-properties-case", "pn-epoch::compiler::compiler_generated" = "calibrated-compiler-generated-case" }
+case_budget_reasons = { "pn-epoch::compiler::compiler_properties" = "The complete pn-epoch::compiler::compiler_properties mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload.", "pn-epoch::compiler::compiler_generated" = "The complete pn-epoch::compiler::compiler_generated mechanism retains its declared fixture, all independent replays and refusal controls; the public-main warm campaign measures that unchanged workload." }

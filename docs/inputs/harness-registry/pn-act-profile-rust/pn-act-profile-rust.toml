@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-act-profile-rust"
+evidence = "pure"
+contract = "typed commitment comparison and supplied-opening replay"
+edition = "0.1"

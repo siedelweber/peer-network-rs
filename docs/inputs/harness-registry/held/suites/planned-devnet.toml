@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-devnet"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 2"
+contract = "settled burns, grants, quotas and recovery"

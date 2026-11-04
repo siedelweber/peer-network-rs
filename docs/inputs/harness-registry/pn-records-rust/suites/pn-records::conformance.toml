@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-records::conformance"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::conformance::burn_cases", "pn-records::conformance::numeric_cases", "pn-records::conformance::shared_cases"]

@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-graph"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "partition is implemented in its own scoped suites; family formation, geometry and title remain held"
+contract = "formation, title folds and dependency closure"

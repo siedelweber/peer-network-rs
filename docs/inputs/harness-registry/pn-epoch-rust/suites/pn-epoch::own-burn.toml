@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::own-burn"
+contract_edition = "epoch-numeric-1"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "mechanism-certificate"
+budget = "own-burn-suite"
+case_budget = "own-burn-case"
+case_span = true
+cases = ["pn-epoch::solve::burn_own"]

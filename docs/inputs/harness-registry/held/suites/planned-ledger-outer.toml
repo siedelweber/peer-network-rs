@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-ledger-outer"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "Implemented scope runs under epoch-ledger-1; unrestricted outer-corpus coverage remains bite 11. Real-chain realization belongs to the devnet owners; persistent admitted results remain bite 8."
+contract = "exact charged values and retained vintages"

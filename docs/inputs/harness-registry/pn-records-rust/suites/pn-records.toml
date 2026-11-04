@@ -1,0 +1,11 @@
+kind = "suite"
+name = "pn-records"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::numerics::tests::literal_admission", "pn-records::tests::deployment_announcement_guard", "pn-records::tests::whole_act_carrier", "pn-records::tests::history_storage_is_shared", "pn-records::tests::identity_components"]
+case_budgets = { "pn-records::tests::whole_act_carrier" = "calibrated-whole-act-carrier-case" }
+case_budget_reasons = { "pn-records::tests::whole_act_carrier" = "The generated complete-act carrier retains history validation, record validation, every co-leg and boundary assembly. The serial campaign maximum includes its observed off-CPU delay; the allowance follows the uniform warm-wall rule without claiming intrinsic work growth." }

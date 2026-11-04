@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-graph::reference-maps"
+contract_edition = "graph-numeric-1"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "reference-certificate"
+budget = "reference-certificate-suite"
+case_budget = "reference-map-case"
+case_span = true
+cases = ["pn-graph::numeric::verification_box", "pn-graph::numeric::verification_corpus"]

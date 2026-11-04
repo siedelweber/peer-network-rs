@@ -10,6 +10,7 @@ import subprocess
 import time
 import tomllib
 import uuid
+from registry_fragments import read as read_fragments
 
 from build_graph import SHELL_STEPS, identity, read_result, report_path, roster, selected, tracked
 
@@ -23,14 +24,14 @@ SERVICE_HOLD = 'ROOT::rule:buildgraph:service-selection'
 SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_graph.py', 'ci/gate.sh',
                   'ci/build_graph_runtime_witnesses.py', 'ci/build_graph_witnesses.py',
                   'ci/build_graph_evidence.py', 'ci/test_linter_entry.py',
-                  'packages/wallet/provisioning.json', 'ci/harness.py',
+                  'packages/wallet/provisioning.json', 'ci/harness.py', 'ci/registry_fragments.py',
                   'packages/host/postgresql-target.txt', 'packages/host/Cargo.toml',
                   'docs/inputs/numeric-dependencies.toml', 'Cargo.lock', 'docs/inputs/host-dependencies.toml')
 
 
 def service_registry(root):
     """Project the selected witness and its declarations, excluding sibling cases."""
-    data = tomllib.loads((root/'docs/inputs/harness-registry.toml').read_text())
+    data = read_fragments(root, 'harness-registry')
     if data.get('namespace') != 'org.peer-network.harness.registry' or data.get('version') != [1, 0, 0]:
         raise ValueError('service registry has an unsupported declaration')
     rows = data['rows']

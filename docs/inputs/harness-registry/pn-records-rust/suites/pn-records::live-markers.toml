@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-records::live-markers"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::public::live_markers::live_marker_rules", "pn-records::public::live_markers::live_marker_openings", "pn-records::public::live_markers::live_marker_aliases"]
+case_budgets = { "pn-records::public::live_markers::live_marker_rules" = "calibrated-live-marker-rules-case" }
+case_budget_reasons = { "pn-records::public::live_markers::live_marker_rules" = "Declared live recognition checks valid reversed history and exact lineage, initial-marker, policy-binding, copied-name and missing or lost evidence refusals." }

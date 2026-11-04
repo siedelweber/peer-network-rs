@@ -1,0 +1,9 @@
+kind = "tier"
+name = "fast"
+steps = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "cargo-config-measurement", "fmt", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks"]
+jobs = 8
+finalize_steps = ["test-evidence", "test-budgets", "harness-matrix", "claim-evidence", "observation-syntax"]
+invocation_budget = "gate"
+status = "active"
+reason = "per-change local and process evidence"
+extended_case_threshold_ms = 5000

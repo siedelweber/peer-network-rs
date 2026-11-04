@@ -325,7 +325,9 @@ class Conformance(unittest.TestCase):
                 path.write_bytes(b'unchanged')
             registry_path = root/'docs/inputs/harness-registry.toml'
             registry_path.parent.mkdir(parents=True, exist_ok=True)
-            registry_text = (Path(__file__).resolve().parent.parent/'docs/inputs/harness-registry.toml').read_text()
+            from registry_fragments import read
+            from fragment_witnesses import envelope_text
+            registry_text = envelope_text(read(Path(__file__).resolve().parent.parent, 'harness-registry'))
             registry_path.write_text(registry_text)
             def commit(message):
                 for args in (['add', '.'], ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message]):
@@ -383,6 +385,9 @@ class Conformance(unittest.TestCase):
                     self.assertNotEqual(service_selection(root)['inputs'], selection['inputs'])
                     self.assertFalse(held_service(record, root))
                     (root/name).write_bytes(original)
+
+                from fragment_witnesses import service
+                service(self, root, registry_text, selection)
 
         from test_harness import fixture, result
         from test_claims import fixture as claim_fixture

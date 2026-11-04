@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-admission"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "Declaration and candidate-interface controls run in pn-epoch::package; the final admission contract remains held for rec:design:bite-seven-checklist. These controls grant no admission contract edition."
+contract = "individual/final-set safety, fixed floor and wall-controller cases"

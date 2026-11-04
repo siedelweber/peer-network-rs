@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-testkit-rust"
+evidence = "pure"
+contract = "development support"
+edition = "0.1"

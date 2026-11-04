@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-replay"
+status = "held"
+tier = "service"
+implementation = ""
+cases = []
+reason = "contract not implemented; first contributing domain bite 9"
+contract = "independent reconstruction and attributable mismatches"

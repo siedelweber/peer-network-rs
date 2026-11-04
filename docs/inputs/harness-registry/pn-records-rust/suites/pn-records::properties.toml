@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-records::properties"
+case_budgets = { "pn-records::properties::marker_recognition" = "calibrated-marker-recognition-case", "pn-records::properties::typed_corruptions" = "calibrated-typed-corruptions-case" }
+case_budget_reasons = { "pn-records::properties::marker_recognition" = "The recorded property draw count and generated lineage/burn-recognition predicates remain unchanged; reducing draws would remove declared evidence.", "pn-records::properties::typed_corruptions" = "The recorded property draw count and typed corruption families remain unchanged; reducing draws would remove declared evidence." }
+observation = "Inner observation: source-v1 seed and records-owned transitive-search predicates."
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::properties::marker_recognition", "pn-records::properties::numeric_coordinates", "pn-records::properties::closure_model", "pn-records::properties::typed_corruptions"]

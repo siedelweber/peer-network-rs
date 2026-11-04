@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::publication-ridge-integration"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix"]
+case_budgets = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix" = "calibrated-disclosure-ridge-prefix-case" }
+case_budget_reasons = { "pn-epoch::solve::admission::ridge_charge::publication::disclosures::disclosure_ridge_prefix" = "The slower two-boundary ridge integration check keeps independent carrier consumption and disclosure restoration, with successful assembly and later-frame proof refusal in both entries; the paths cannot share a replay result." }

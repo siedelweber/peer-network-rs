@@ -1,0 +1,11 @@
+kind = "suite"
+name = "ci::test_host_runtime"
+status = "active"
+runner = "ci"
+level = "integration"
+implementation = "pn-host-postgresql"
+tier = "service"
+budget = "postgresql-suite"
+cases = ["ci::test_host_runtime.HostRuntime.test_statement_type_boundary", "ci::test_host_runtime.HostRuntime.test_storage_statements", "ci::test_host_runtime.HostRuntime.test_storage_restart", "ci::test_host_runtime.HostRuntime.test_independent_instances", "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport", "ci::test_host_runtime.HostRuntime.test_sensitive_result_control", "ci::test_host_runtime.HostRuntime.test_binary_reachability_control"]
+case_budgets = { "ci::test_host_runtime.HostRuntime.test_independent_instances" = "calibrated-host-runtime-independent-instances-case", "ci::test_host_runtime.HostRuntime.test_statement_type_boundary" = "calibrated-host-runtime-statement-type-boundary-case", "ci::test_host_runtime.HostRuntime.test_storage_statements" = "calibrated-host-runtime-storage-statements-case" }
+case_budget_reasons = { "ci::test_host_runtime.HostRuntime.test_independent_instances" = "Independent real PostgreSQL instances retain deep-root socket placement, port ownership, sibling survival and complete cleanup checks.", "ci::test_host_runtime.HostRuntime.test_statement_type_boundary" = "Source traversal and renamed-driver controls retain the actual compiler refusal for inline SQL at the closed Statement boundary.", "ci::test_host_runtime.HostRuntime.test_storage_statements" = "Real child processes retain complete storage statement observations and the refusal when bootstrap is omitted on a retake." }

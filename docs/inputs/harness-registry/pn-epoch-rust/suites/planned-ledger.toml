@@ -1,0 +1,11 @@
+kind = "suite"
+name = "planned-ledger"
+contract_edition = "epoch-ledger-1"
+contract = "Complete recognized-prefix ledger, exact writing-price debits and retained vintages under the declared verifier; no chain finality or admitted-result storage."
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::compiler::ledger_contract", "pn-epoch::ledger::ledger_derivation", "pn-epoch::ledger::whole_act_ledger", "pn-epoch::ledger::ledger_vintages", "pn-epoch::ledger::ledger_aliases"]

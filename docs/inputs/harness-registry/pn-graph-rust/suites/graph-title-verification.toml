@@ -1,0 +1,13 @@
+kind = "suite"
+name = "graph-title-verification"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-title-1::graph-title-verification::empty", "contract::graph-title-1::graph-title-verification::unique", "contract::graph-title-1::graph-title-verification::conflict", "contract::graph-title-1::graph-title-verification::fresh-retry", "contract::graph-title-1::graph-title-verification::resale", "contract::graph-title-1::graph-title-verification::stale-owner", "contract::graph-title-1::graph-title-verification::cancelled", "contract::graph-title-1::graph-title-verification::wrong-partner"]
+parent_case = "pn-verification::title::title_shared_cases"
+contract_edition = "graph-title-1"
+claim_owner = "VERIFICATION"
+claim = "claim:verification:shared-title-cases-retain-complete-results"

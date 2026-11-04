@@ -1,0 +1,12 @@
+kind = "suite"
+name = "pn-epoch::schedule-policy-extended"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::solve::schedules::retained_policy"]
+case_budgets = { "pn-epoch::solve::schedules::retained_policy" = "calibrated-retained-policy-case" }
+case_budget_reasons = { "pn-epoch::solve::schedules::retained_policy" = "The retained policy case checks the distinct rising-wall and migration-policy refusals after removal of the duplicate inverse-floor control; the public top-up measures this current body, with its fixtures, solve and independent replay." }

@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-graph::title"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::title::title_shared_cases"]

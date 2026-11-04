@@ -1,0 +1,8 @@
+kind = "suite"
+name = "planned-numeric-outer"
+status = "held"
+tier = "fast"
+implementation = ""
+cases = []
+reason = "Implemented scope runs under epoch-numeric-1; unrestricted outer-corpus coverage remains bite 11. Additional platforms and production ridge/controller admission retain their named holds."
+contract = "representation, certified bounds and deterministic refinement"

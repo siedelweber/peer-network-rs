@@ -1,0 +1,9 @@
+kind = "suite"
+name = "execwrap::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "execwrap-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["execwrap::public::empty_command_preflight"]
