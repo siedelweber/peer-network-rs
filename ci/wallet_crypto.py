@@ -5,6 +5,8 @@ import re
 import subprocess
 import tomllib
 import hashlib
+import os
+import tarfile
 from discipline import vendor_packages
 
 
@@ -20,6 +22,40 @@ def check_vendor_contents(root, declaration, reviewed):
     files = evidence.get('files')
     if not isinstance(files, dict) or not files:
         raise ValueError('vendor content manifest empty')
+    omitted = evidence.get('omitted', {})
+    if not isinstance(omitted, dict):
+        raise ValueError('vendor omitted members must be a map')
+    permitted = declaration.get('omitted_documentation', [])
+    if set(omitted) != set(permitted):
+        raise ValueError('vendor omitted-member declaration differs')
+    if omitted:
+        # The only reviewed documentation omission is a root changelog. This is
+        # deliberately not a suffix-based exemption for arbitrary source trees.
+        if set(omitted) != {'CHANGELOG.md'} or set(files) & set(omitted):
+            raise ValueError('vendor omission is not reviewed documentation-only')
+        cache = Path(os.environ.get('CARGO_HOME', Path.home()/'.cargo'))/'registry/cache'
+        archives = sorted(cache.glob(f'*/{identity[0]}-{identity[1]}.crate'))
+        archives = [archive for archive in archives
+                    if hashlib.sha256(archive.read_bytes()).hexdigest() == reviewed[identity]]
+        if not archives:
+            raise ValueError('vendor omitted-member archive unavailable or checksum differs')
+        archive_files = {}
+        with tarfile.open(archives[0], 'r:gz') as archive:
+            prefix = f'{identity[0]}-{identity[1]}/'
+            for member in archive:
+                if member.isdir():
+                    continue
+                if not member.isfile() or not member.name.startswith(prefix):
+                    raise ValueError('vendor archive member is not a regular package file')
+                name = member.name[len(prefix):]
+                if not name or name in archive_files or '..' in Path(name).parts:
+                    raise ValueError('vendor archive member path differs')
+                data = archive.extractfile(member).read()
+                archive_files[name] = hashlib.sha256(data).hexdigest()
+                if name != 'CHANGELOG.md' and not name.endswith('.md') and b'CHANGELOG.md' in data:
+                    raise ValueError('vendor omitted member is referenced by a build or test input')
+        if archive_files != dict(files, **omitted):
+            raise ValueError('vendor complete archive members differ')
     actual = {}
     for file in path.rglob('*'):
         if file.is_symlink():

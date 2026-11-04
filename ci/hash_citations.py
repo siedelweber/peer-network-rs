@@ -237,7 +237,7 @@ class BoundVendorFiles:
 
     def __init__(self, directory, evidence):
         self.files = frozenset(directory + '/' + name for name in evidence['files'])
-        self.values = frozenset([evidence['archive_checksum'], *evidence['files'].values()])
+        self.values = frozenset([evidence['archive_checksum'], *evidence['files'].values(), *evidence.get('omitted', {}).values()])
 
     def __call__(self, value, _line):
         return value in self.values

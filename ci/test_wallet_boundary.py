@@ -267,6 +267,53 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
             file.write_bytes(b'public fixture'); (file.parent/'extra').write_bytes(b'extra')
             with self.assertRaisesRegex(ValueError,'contents differ'): wallet_crypto.check_vendor_contents(root,row,reviewed)
+        # Omission still binds every archive member; only reviewed changelog prose
+        # may be absent, never source, build input, licence or notice material.
+        import io
+        import tarfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); source = root/'vendor/example'; source.mkdir(parents=True)
+            cache = root/'cargo/registry/cache/fixture'; cache.mkdir(parents=True)
+            members = {'src/lib.rs': b'pub fn fixture() {}', 'build.rs': b'fn main() {}',
+                       'LICENSE': b'Fixture licence', 'NOTICE': b'Fixture notice',
+                       'CHANGELOG.md': b'Upstream history'}
+            archive = cache/'example-1.0.0.crate'
+            with tarfile.open(archive, 'w:gz') as output:
+                for name, data in members.items():
+                    entry = tarfile.TarInfo('example-1.0.0/'+name); entry.size=len(data)
+                    output.addfile(entry, io.BytesIO(data))
+            checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
+            hashes = {name:hashlib.sha256(data).hexdigest() for name,data in members.items()}
+            row = dict(name='example',version='1.0.0',path='vendor/example',content_manifest='contents.json',omitted_documentation=['CHANGELOG.md'])
+            evidence = dict(name='example',version='1.0.0',archive_checksum=checksum,
+                            files={name:digest for name,digest in hashes.items() if name!='CHANGELOG.md'},
+                            omitted={'CHANGELOG.md':hashes['CHANGELOG.md']})
+            for name,data in members.items():
+                if name!='CHANGELOG.md':
+                    file=source/name; file.parent.mkdir(parents=True,exist_ok=True); file.write_bytes(data)
+            manifest=root/'contents.json'
+            def check(value):
+                manifest.write_text(json.dumps(value))
+                wallet_crypto.check_vendor_contents(root,row,{('example','1.0.0'):checksum})
+            with patch.dict(os.environ,CARGO_HOME=str(root/'cargo')):
+                self.assertIsNone(check(evidence))
+                for name in ('src/lib.rs','build.rs','LICENSE','NOTICE'):
+                    changed=dict(evidence,files={key:value for key,value in evidence['files'].items() if key!=name},
+                                 omitted=dict(evidence['omitted'],**{name:hashes[name]}))
+                    with self.assertRaisesRegex(ValueError,'omitted-member declaration differs'): check(changed)
+                    row['omitted_documentation']=['CHANGELOG.md',name]
+                    with self.assertRaisesRegex(ValueError,'not reviewed documentation-only'): check(changed)
+                    row['omitted_documentation']=['CHANGELOG.md']
+                with self.assertRaisesRegex(ValueError,'complete archive members differ'):
+                    check(dict(evidence,omitted={'CHANGELOG.md':'b'*64}))
+                with self.assertRaisesRegex(ValueError,'omitted-member declaration differs'):
+                    check(dict(evidence,omitted={}))
+                with self.assertRaisesRegex(ValueError,'omitted-member declaration differs'):
+                    check({key:value for key,value in evidence.items() if key!='omitted'})
+                changed=dict(evidence,files=dict(evidence['files'],**{'src/lib.rs':'b'*64}))
+                with self.assertRaisesRegex(ValueError,'complete archive members differ'): check(changed)
+                (source/'src/lib.rs').write_bytes(b'changed')
+                with self.assertRaisesRegex(ValueError,'contents differ'): check(evidence)
         with self.assertRaisesRegex(ValueError,'unbound'):
             wallet_crypto.check_checksums(dict(package=[dict(name='secp256k1',version='0.29.1')]),[],{('secp256k1','0.29.1')})
         with self.assertRaisesRegex(ValueError,'unbound'):
