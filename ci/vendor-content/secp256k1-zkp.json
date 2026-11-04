@@ -1,6 +1,4 @@
 {
-  "name": "secp256k1-zkp",
-  "version": "0.11.2",
   "archive_checksum": "403f6ab6ef5189ded7d11cb384a96a9f871001e50b391a8fcbb310c9ebc2099b",
   "files": {
     "CHANGELOG.md": "f844ff3e4eb76c8641c68d440fe1efd17e856a3a6d28cc25c1426709362159f8",
@@ -14,12 +12,36 @@
     "src/lib.rs": "2e32c5fe29ade0800f8fbba62206a7a4441237503e82f0ee48394326379d69c0",
     "src/serde_util.rs": "ccc300c33afd593b9389c072fd42a68505fb86f9a066568cf5c2d5d92d0c4458",
     "src/zkp/ecdsa_adaptor.rs": "8fed5e6aa2732bda9e1cf1a8e40a24e7d229835db1f9aec7c30116d3dd2f0542",
-    "src/zkp/generator.rs": "a3044067ac8819be6567b60553bb9cb9d92f325acaa2e0883bb86411412e1561",
+    "src/zkp/generator.rs": "54e737f3d802bab14a02066aaa72c05eabac4f8c5f81d6d4e7f0f0cb964a22c9",
     "src/zkp/mod.rs": "83be02c95b0f2fbc3a80e2359c9c69d44539e676c4973672d2304270215a2906",
-    "src/zkp/pedersen.rs": "166bcb4e7d9040dad3a7b1795a9e62c0ef4233c487b087afd462cb5c748da88e",
-    "src/zkp/rangeproof.rs": "96e8f311c71d72e92483cf216a1a8668f1db2658848e2af7717ba06f5ad2e8d6",
-    "src/zkp/surjection_proof.rs": "927cf9dc5690a86ce8aea78f331112f1e4060da660690b909d6d141cfbcc7b1c",
+    "src/zkp/pedersen.rs": "ca7b79cc6bef5b10f920f07a921ec05d57e4491760dce5dcb86a3394ccd4ef93",
+    "src/zkp/rangeproof.rs": "454cc33121cc11c0342b9b15893a2768ebcbbba995144bbb28cff0607dfe0f3d",
+    "src/zkp/surjection_proof.rs": "27b5f3aa92465eefc5ae65b5ccb3e439685f9ebe32a624c7bb2973ec2ae06538",
     "src/zkp/tag.rs": "326c7eb575c5576c8b0f3a9eea7b2b61efe4ad5fe4f2710073cf24f7e68ed368",
     "src/zkp/whitelist.rs": "0d90ddd7e379c9b2bd4762f527e07d555623e563b2df4906bfe0f8a0bc689b47"
-  }
+  },
+  "name": "secp256k1-zkp",
+  "patch": {
+    "members": {
+      "src/zkp/generator.rs": {
+        "patched": "54e737f3d802bab14a02066aaa72c05eabac4f8c5f81d6d4e7f0f0cb964a22c9",
+        "upstream": "a3044067ac8819be6567b60553bb9cb9d92f325acaa2e0883bb86411412e1561"
+      },
+      "src/zkp/pedersen.rs": {
+        "patched": "ca7b79cc6bef5b10f920f07a921ec05d57e4491760dce5dcb86a3394ccd4ef93",
+        "upstream": "166bcb4e7d9040dad3a7b1795a9e62c0ef4233c487b087afd462cb5c748da88e"
+      },
+      "src/zkp/rangeproof.rs": {
+        "patched": "454cc33121cc11c0342b9b15893a2768ebcbbba995144bbb28cff0607dfe0f3d",
+        "upstream": "96e8f311c71d72e92483cf216a1a8668f1db2658848e2af7717ba06f5ad2e8d6"
+      },
+      "src/zkp/surjection_proof.rs": {
+        "patched": "27b5f3aa92465eefc5ae65b5ccb3e439685f9ebe32a624c7bb2973ec2ae06538",
+        "upstream": "927cf9dc5690a86ce8aea78f331112f1e4060da660690b909d6d141cfbcc7b1c"
+      }
+    },
+    "path": "vendor/secp256k1-zkp.patch",
+    "sha256": "74611b1a831625c8cecd9857d8351513382f794b71fb562e62fa28e120de7008"
+  },
+  "version": "0.11.2"
 }

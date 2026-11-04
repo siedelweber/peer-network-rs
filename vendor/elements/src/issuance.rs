@@ -158,7 +158,7 @@ impl AssetBlindingNonce {
     /// the blockchain). So callers of this function should be sure that this is a blinding
     /// factor that they intend to reveal.)
     pub fn from_blinding_factor(bf: AssetBlindingFactor) -> Self {
-        Self(*bf.into_inner().as_ref())
+        Self(core::convert::TryInto::try_into(&bf.into_inner()[..]).expect("scalar length"))
     }
 }
 

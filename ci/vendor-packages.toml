@@ -10,6 +10,7 @@ version = "0.32.102"
 path = "vendor/bitcoin"
 mode = "patch"
 content_manifest = "ci/vendor-content/bitcoin.json"
+patch_file = "vendor/bitcoin.patch"
 omitted_documentation = ["CHANGELOG.md"]
 
 [[packages]]
@@ -18,6 +19,7 @@ version = "0.27.0"
 path = "vendor/elements"
 mode = "patch"
 content_manifest = "ci/vendor-content/elements.json"
+patch_file = "vendor/elements.patch"
 
 [[packages]]
 name = "secp256k1"
@@ -25,6 +27,7 @@ version = "0.29.1"
 path = "vendor/secp256k1"
 mode = "patch"
 content_manifest = "ci/vendor-content/secp256k1.json"
+patch_file = "vendor/secp256k1.patch"
 
 [[packages]]
 name = "secp256k1-sys"
@@ -39,6 +42,7 @@ version = "0.11.2"
 path = "vendor/secp256k1-zkp"
 mode = "patch"
 content_manifest = "ci/vendor-content/secp256k1-zkp.json"
+patch_file = "vendor/secp256k1-zkp.patch"
 
 [[packages]]
 name = "secp256k1-zkp-sys"

@@ -516,8 +516,20 @@ class HashCitations(unittest.TestCase):
         ´claim:discipline:identity-occurrences-need-warrants´
         ´test:integration:test-hash-accounting´
         """
-        from hash_citations import establish
+        from hash_citations import establish, BoundVendorFiles
         import hashlib
+        # Patched members and their diff are not whole-file exemptions: only
+        # the actual validated upstream literals and recomputed digests inherit accounting.
+        source_value = 'abcd' + 'ef12' + '3456'
+        introduced_value = 'abcd' + 'ef98' + '7654'
+        evidence = dict(archive_checksum='a'*64, files={'src/lib.rs':'b'*64, 'LICENSE':'c'*64},
+                        patch=dict(sha256='d'*64, members={'src/lib.rs':dict(upstream='e'*64,patched='b'*64)}))
+        reader = BoundVendorFiles('vendor/sample', evidence, {'src/lib.rs':source_value.encode()})
+        self.assertEqual(reader.files, {'vendor/sample/LICENSE'})
+        self.assertTrue(reader(source_value, ''))
+        self.assertTrue(reader('d'*64, ''))
+        self.assertTrue(reader('e'*64, ''))
+        self.assertFalse(reader(introduced_value, ''))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root/'vendor/sample').mkdir(parents=True)

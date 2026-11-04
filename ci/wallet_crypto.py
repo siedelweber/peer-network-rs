@@ -106,6 +106,8 @@ def check_vendor_contents(root, declaration, reviewed):
             actual[file.relative_to(path).as_posix()] = hashlib.sha256(file.read_bytes()).hexdigest()
     if actual != files:
         raise ValueError('vendor contents differ')
+    if patch:
+        return archive_bytes
 
 
 def artifact_package(message):

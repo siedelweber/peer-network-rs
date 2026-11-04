@@ -3980,6 +3980,7 @@
         "pn-wallet::rpc_http::tests::acquisition_cases": "calibrated-wallet-rpc-http-acquisition-cases-case"
       },
       "cases": [
+        "pn-wallet::decoder::owned::owned_secrets",
         "pn-wallet::decoder::tests::global_context_initialization",
         "pn-wallet::rpc::tests::attempts_and_holds",
         "pn-wallet::rpc::tests::projections",

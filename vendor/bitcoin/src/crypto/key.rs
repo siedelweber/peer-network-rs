@@ -394,7 +394,7 @@ impl From<&CompressedPublicKey> for WPubkeyHash {
 }
 
 /// A Bitcoin ECDSA private key
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct PrivateKey {
     /// Whether this private key should be serialized as compressed
     pub compressed: bool,
@@ -402,6 +402,12 @@ pub struct PrivateKey {
     pub network: NetworkKind,
     /// The actual ECDSA key
     pub inner: secp256k1::SecretKey,
+}
+
+impl core::fmt::Debug for PrivateKey {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("PrivateKey([REDACTED])")
+    }
 }
 
 impl PrivateKey {
@@ -507,7 +513,7 @@ impl PrivateKey {
         PrivateKey {
             compressed: self.compressed,
             network: self.network,
-            inner: self.inner.negate(),
+            inner: self.inner.clone().negate(),
         }
     }
 }
@@ -736,11 +742,17 @@ pub type UntweakedKeypair = Keypair;
 /// let _pk = TweakedPublicKey::from(keypair);
 /// # }
 /// ```
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(crate = "actual_serde"))]
 #[cfg_attr(feature = "serde", serde(transparent))]
 pub struct TweakedKeypair(Keypair);
+
+impl core::fmt::Debug for TweakedKeypair {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("TweakedKeypair([REDACTED])")
+    }
+}
 
 /// A trait for tweaking BIP340 key types (x-only public keys and key pairs).
 pub trait TapTweak {

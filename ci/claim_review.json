@@ -4773,6 +4773,14 @@
       "review": "Read separate child processes with one profiler each, complete drop before statistics, all five per-vector bounds and zero allocation for the rejected prefixes."
     },
     {
+      "operation": "pn-wallet::decoder::owned::owned_secrets",
+      "path": "packages/wallet/src/decoder.rs",
+      "claim": "WALLET::claim:wallet:owned-secrets-refuse-implicit-copy-and-fingerprints",
+      "before": "",
+      "after": "Claim: The patched key, shared-secret and blinding carriers checked here do not implement Copy, their Debug output is the same constant for two distinct inputs, and the three former binding `display_secret` methods no longer override the unit-returning test trait. This does not establish erasure of compiler temporaries or forbid explicit byte export or explicit owned Clone.",
+      "review": "The trait-ambiguity expressions stop compiling if any named carrier implements Copy. Two distinct inputs must each format to the exact constant, and inherent secret display helpers would override the unit-returning fixture trait and fail the typed calls. Explicit owned clones and byte exports remain outside this witness; Drop erasure is a source property, not a memory observation."
+    },
+    {
       "operation": "pn-wallet::decoder::tests::global_context_initialization",
       "path": "packages/wallet/src/decoder.rs",
       "claim": "WALLET::claim:wallet:global-context-initializes-once",

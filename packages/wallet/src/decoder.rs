@@ -594,3 +594,70 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+mod owned {
+    use elements::{bitcoin, secp256k1_zkp as secp};
+
+    trait AmbiguousIfCopy<A> {
+        fn check() {}
+    }
+    impl<T: ?Sized> AmbiguousIfCopy<()> for T {}
+    struct CopyPresent;
+    impl<T: Copy> AmbiguousIfCopy<CopyPresent> for T {}
+
+    // An inherent display helper would take precedence and return its secret-display
+    // carrier, so the unit-typed calls below would no longer compile.
+    trait RemovedDisplay {
+        fn display_secret(&self) {}
+    }
+    impl RemovedDisplay for secp::SecretKey {}
+    impl RemovedDisplay for secp::Keypair {}
+    impl RemovedDisplay for secp::ecdh::SharedSecret {}
+
+    /// Claim: The patched key, shared-secret and blinding carriers checked here do not implement Copy, their Debug output is the same constant for two distinct inputs, and the three former binding `display_secret` methods no longer override the unit-returning test trait. This does not establish erasure of compiler temporaries or forbid explicit byte export or explicit owned Clone.
+    /// ´claim:wallet:owned-secrets-refuse-implicit-copy-and-fingerprints´
+    /// ´test:unit:owned-secrets´
+    #[test]
+    fn owned_secrets() {
+        let _ = <secp::SecretKey as AmbiguousIfCopy<_>>::check;
+        let _ = <secp::Keypair as AmbiguousIfCopy<_>>::check;
+        let _ = <secp::ecdh::SharedSecret as AmbiguousIfCopy<_>>::check;
+        let _ = <secp::ellswift::ElligatorSwiftSharedSecret as AmbiguousIfCopy<_>>::check;
+        let _ = <secp::SecretTweak as AmbiguousIfCopy<_>>::check;
+        let _ = <elements::confidential::AssetBlindingFactor as AmbiguousIfCopy<_>>::check;
+        let _ = <elements::confidential::ValueBlindingFactor as AmbiguousIfCopy<_>>::check;
+        let _ = <bitcoin::PrivateKey as AmbiguousIfCopy<_>>::check;
+        let _ = <bitcoin::bip32::Xpriv as AmbiguousIfCopy<_>>::check;
+        let _ = <bitcoin::key::TweakedKeypair as AmbiguousIfCopy<_>>::check;
+        let _ = <elements::schnorr::TweakedKeypair as AmbiguousIfCopy<_>>::check;
+        let context = secp::Secp256k1::new();
+        for byte in [1, 2] {
+            let key = secp::SecretKey::from_slice(&[byte; 32]).unwrap();
+            let pair = secp::Keypair::from_secret_key(&context, &key);
+            let shared = secp::ecdh::SharedSecret::from_bytes([byte; 32]);
+            let (): () = key.display_secret();
+            let (): () = pair.display_secret();
+            let (): () = shared.display_secret();
+            assert_eq!(format!("{key:?}"), "SecretKey([REDACTED])");
+            assert_eq!(format!("{pair:?}"), "Keypair([REDACTED])");
+            assert_eq!(format!("{shared:?}"), "SharedSecret([REDACTED])");
+            let swift = secp::ellswift::ElligatorSwiftSharedSecret::from_secret_bytes([byte; 32]);
+            assert_eq!(format!("{swift:?}"), "ElligatorSwiftSharedSecret([REDACTED])");
+            let tweak = secp::SecretTweak::from_inner([byte; 32]).unwrap();
+            assert_eq!(format!("{tweak:?}"), "SecretTweak([REDACTED])");
+            let asset = elements::confidential::AssetBlindingFactor::from_byte_array([byte; 32]).unwrap();
+            let value = elements::confidential::ValueBlindingFactor::from_slice(&[byte; 32]).unwrap();
+            assert_eq!(format!("{asset:?}"), "BlindingFactor([REDACTED])");
+            assert_eq!(format!("{value:?}"), "BlindingFactor([REDACTED])");
+            let private = bitcoin::PrivateKey::new(key, bitcoin::NetworkKind::Test);
+            assert_eq!(format!("{private:?}"), "PrivateKey([REDACTED])");
+            let extended = bitcoin::bip32::Xpriv::new_master(bitcoin::NetworkKind::Test, &[byte; 32]).unwrap();
+            assert_eq!(format!("{extended:?}"), "Xpriv([REDACTED])");
+            let bitcoin_pair = bitcoin::key::TweakedKeypair::dangerous_assume_tweaked(pair.clone());
+            assert_eq!(format!("{bitcoin_pair:?}"), "TweakedKeypair([REDACTED])");
+            let elements_pair = elements::schnorr::TweakedKeypair::dangerous_assume_tweaked(pair);
+            assert_eq!(format!("{elements_pair:?}"), "TweakedKeypair([REDACTED])");
+        }
+    }
+}

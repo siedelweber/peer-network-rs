@@ -1217,6 +1217,7 @@
     "pn-verification::title::title_generated": "Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the shared compliant public suite without claiming faulted-chain coverage or a second implementation.",
     "pn-verification::title::title_shared_cases": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
     "pn-wallet::allocation::decoder_reservations": "",
+    "pn-wallet::decoder::owned::owned_secrets": "",
     "pn-wallet::decoder::tests::global_context_initialization": "",
     "pn-wallet::layout::decoder_campaign": "",
     "pn-wallet::layout::explicit_evidence": "",

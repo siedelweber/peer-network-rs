@@ -7,7 +7,7 @@ use core::fmt;
 use std::io;
 
 use secp256k1_zkp::rand::{CryptoRng, RngCore};
-use secp256k1_zkp::{self, Generator, PedersenCommitment, Secp256k1, SecretKey, Signing, Tweak};
+use secp256k1_zkp::{self, Generator, PedersenCommitment, Secp256k1, SecretKey, Signing, SecretTweak};
 #[cfg(feature = "serde")]
 use serde::{Deserializer, Serializer};
 
@@ -32,10 +32,10 @@ impl RangeProof {
         min_value: u64,
         commitment: PedersenCommitment,
         value: u64,
-        commitment_blinding: Tweak,
+        commitment_blinding: SecretTweak,
         message: &[u8],
         additional_commitment: &[u8],
-        sk: SecretKey,
+        sk: &SecretKey,
         exp: i32,
         min_bits: u8,
         additional_generator: Generator,
@@ -83,7 +83,7 @@ impl RangeProof {
             vbf.into_inner(),    // blinding factor
             &[],                 // message
             &[],                 // add commitment
-            SecretKey::new(rng), // nonce
+            &SecretKey::new(rng), // nonce
             -1,                  // exp
             0,                   // min bits
             asset_gen,           // additional gen

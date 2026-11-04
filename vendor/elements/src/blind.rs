@@ -21,7 +21,7 @@ use std::{self, collections::BTreeMap, fmt};
 use secp256k1_zkp::{
     self,
     rand::{CryptoRng, RngCore},
-    PedersenCommitment, SecretKey, Tag, Tweak, Verification, ZERO_TWEAK,
+    PedersenCommitment, SecretKey, Tag, SecretTweak, Verification, ZERO_SECRET_TWEAK,
 };
 use secp256k1_zkp::{Generator, Secp256k1, Signing};
 
@@ -234,7 +234,7 @@ mod range_proof_message {
 
         /// Computes the commmitment of the rangeproof message.
         pub fn commitment<C: Signing>(&self, secp: &Secp256k1<C>) -> Generator {
-            Generator::new_blinded(secp, self.asset_id.into_tag(), self.asset_bf.into_inner())
+            Generator::new_blinded(secp, self.asset_id.into_tag(), &self.asset_bf.clone().into_inner())
         }
 
         /// Parses a message from bytes
@@ -283,7 +283,7 @@ mod range_proof_message {
         pub fn to_byte_array(&self) -> [u8; 64] {
             let mut message = [0u8; 64];
             message[..32].copy_from_slice(self.asset_id.into_tag().as_ref());
-            message[32..].copy_from_slice(self.asset_bf.into_inner().as_ref());
+            message[32..].copy_from_slice(self.asset_bf.clone().into_inner().as_ref());
             message
         }
     }
@@ -313,8 +313,8 @@ mod range_proof_message {
                 Self::ExplicitAssetMismatch { in_txout, in_message } => {
                     write!(f, "txout had explicit asset ID {in_txout}, but rangeproof encoded asset ID {in_message}")
                 }
-                Self::ExplicitAssetNonzeroBf { blinding_factor } => {
-                    write!(f, "txout had explicit asset ID, but rangeproof encoded a nonzero asset blinding factor {blinding_factor}")
+                Self::ExplicitAssetNonzeroBf { ref blinding_factor } => {
+                    write!(f, "txout had explicit asset ID, but rangeproof encoded a nonzero asset blinding factor {blinding_factor:?}")
                 }
                 Self::ConfidentialAssetMismatch { in_txout, in_message } => {
                     write!(f, "txout had asset commitment {in_txout}, but rangeproof encoded asset commitment {in_message}")
@@ -344,7 +344,7 @@ pub use self::range_proof_message::{RangeProofMessage, RangeProofMessageError};
     feature = "serde",
     derive(serde::Serialize, serde::Deserialize),
 )]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash)]
 pub struct TxOutSecrets {
     /// Asset
     pub asset: AssetId,
@@ -377,16 +377,16 @@ impl TxOutSecrets {
     /// Returns a tuple `(assetid, blind_factor, generator)` if the blinds are
     /// consistent with asset commitment
     /// Otherwise, returns an error
-    pub fn surjection_inputs<C: Signing>(&self, secp: &Secp256k1<C>) -> (Generator, Tag, Tweak) {
+    pub fn surjection_inputs<C: Signing>(&self, secp: &Secp256k1<C>) -> (Generator, Tag, SecretTweak) {
         let tag = self.asset.into_tag();
-        let bf = self.asset_bf.into_inner();
-        let gen = Generator::new_blinded(secp, tag, bf);
+        let bf = self.asset_bf.clone().into_inner();
+        let gen = Generator::new_blinded(secp, tag, &bf);
         (gen, tag, bf)
     }
 
     /// Gets the required fields for last value blinding factor calculation from [`TxOutSecrets`]
     pub fn value_blind_inputs(&self) -> (u64, AssetBlindingFactor, ValueBlindingFactor) {
-        (self.value, self.asset_bf, self.value_bf)
+        (self.value, self.asset_bf.clone(), self.value_bf.clone())
     }
 }
 
@@ -397,7 +397,7 @@ impl TxOutSecrets {
 ///
 /// Explicit assets can be provided as [`SurjectionInput::Unknown`]. There is no
 /// need to construct a `Known` variant with secrets
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum SurjectionInput {
     /// Unknown inputs for whom we don't know the secrets(asset tags/blinding factors)
     Unknown(Asset),
@@ -443,19 +443,19 @@ impl SurjectionInput {
     pub fn surjection_target<C: Signing>(
         &self,
         secp: &Secp256k1<C>,
-    ) -> Result<(Generator, Tag, Tweak), TxOutError> {
+    ) -> Result<(Generator, Tag, SecretTweak), TxOutError> {
         match self {
             SurjectionInput::Unknown(asset) => {
                 let gen = asset
                     .into_asset_gen(secp)
                     .ok_or(TxOutError::UnExpectedNullAsset)?;
                 // Return the input as 0 tag and 0 tweak. This also correctly handles explicit case
-                Ok((gen, Tag::default(), ZERO_TWEAK))
+                Ok((gen, Tag::default(), ZERO_SECRET_TWEAK))
             }
             SurjectionInput::Known { asset, asset_bf } => {
                 let tag = asset.into_tag();
-                let bf = asset_bf.into_inner();
-                let gen = Generator::new_blinded(secp, tag, bf);
+                let bf = asset_bf.clone().into_inner();
+                let gen = Generator::new_blinded(secp, tag, &bf);
                 Ok((gen, tag, bf))
             }
         }
@@ -479,18 +479,18 @@ impl Asset {
     where
         R: RngCore + CryptoRng,
         C: Signing,
-        S: Into<SurjectionInput> + Copy,
+        S: Into<SurjectionInput> + Clone,
     {
         let asset = self
             .explicit()
             .ok_or(ConfidentialTxOutError::ExpectedExplicitAsset)?;
-        let out_asset = Asset::new_confidential(secp, asset, asset_bf);
+        let out_asset = Asset::new_confidential(secp, asset, asset_bf.clone());
 
         let inputs = spent_utxo_secrets
             .iter()
             .enumerate()
             .map(|(i, surject_inp)| {
-                (*surject_inp)
+                surject_inp.clone()
                     .into()
                     .surjection_target(secp)
                     .map_err(|e| ConfidentialTxOutError::TxOutError(i, e))
@@ -516,7 +516,7 @@ impl Value {
         secp: &Secp256k1<C>,
         vbf: ValueBlindingFactor,
         receiver_blinding_pk: secp256k1_zkp::PublicKey,
-        ephemeral_sk: SecretKey,
+        ephemeral_sk: &SecretKey,
         spk: &Script,
         msg: &RangeProofMessage,
     ) -> Result<(Self, Nonce, RangeProof), ConfidentialTxOutError> {
@@ -524,7 +524,7 @@ impl Value {
             Nonce::with_ephemeral_sk(secp, ephemeral_sk, &receiver_blinding_pk);
 
         let (value_commit, rangeproof) =
-            self.blind_with_shared_secret(secp, vbf, shared_secret, spk, msg)?;
+            self.blind_with_shared_secret(secp, vbf, &shared_secret, spk, msg)?;
         Ok((value_commit, nonce, rangeproof))
     }
 
@@ -536,7 +536,7 @@ impl Value {
         self,
         secp: &Secp256k1<C>,
         vbf: ValueBlindingFactor,
-        shared_secret: SecretKey,
+        shared_secret: &SecretKey,
         spk: &Script,
         msg: &RangeProofMessage,
     ) -> Result<(Self, RangeProof), ConfidentialTxOutError> {
@@ -544,7 +544,7 @@ impl Value {
             .explicit()
             .ok_or(ConfidentialTxOutError::ExpectedExplicitValue)?;
         let out_asset_commitment = msg.commitment(secp);
-        let value_commitment = Value::new_confidential(secp, value, out_asset_commitment, vbf);
+        let value_commitment = Value::new_confidential(secp, value, out_asset_commitment, vbf.clone());
 
         let rangeproof = RangeProof::new(
             secp,
@@ -595,7 +595,7 @@ impl TxOut {
     where
         R: RngCore + CryptoRng,
         C: Signing,
-        S: Into<SurjectionInput> + Copy,
+        S: Into<SurjectionInput> + Clone,
     {
         let spk = address.script_pubkey();
         let blinder = address
@@ -603,7 +603,7 @@ impl TxOut {
             .ok_or(ConfidentialTxOutError::NoBlindingKeyInAddress)?;
         let asset_bf = AssetBlindingFactor::new(rng);
         let value_bf = ValueBlindingFactor::new(rng);
-        let out_secrets = TxOutSecrets::new(asset, asset_bf, value, value_bf);
+        let out_secrets = TxOutSecrets::new(asset, asset_bf.clone(), value, value_bf.clone());
         let ephemeral_sk = SecretKey::new(rng);
 
         let txout = Self::with_txout_secrets(
@@ -611,7 +611,7 @@ impl TxOut {
             secp,
             spk,
             blinder,
-            ephemeral_sk,
+            &ephemeral_sk,
             out_secrets,
             spent_utxo_secrets,
         )?;
@@ -633,18 +633,18 @@ impl TxOut {
         secp: &Secp256k1<C>,
         spk: Script,
         receiver_blinding_pk: secp256k1_zkp::PublicKey,
-        ephemeral_sk: SecretKey,
+        ephemeral_sk: &SecretKey,
         out_secrets: TxOutSecrets,
         spent_utxo_secrets: &[S],
     ) -> Result<Self, ConfidentialTxOutError>
     where
         R: RngCore + CryptoRng,
         C: Signing,
-        S: Into<SurjectionInput> + Copy,
+        S: Into<SurjectionInput> + Clone,
     {
         let exp_asset = Asset::Explicit(out_secrets.asset);
         let (out_asset, surjection_proof) =
-            exp_asset.blind(rng, secp, out_secrets.asset_bf, spent_utxo_secrets)?;
+            exp_asset.blind(rng, secp, out_secrets.asset_bf.clone(), spent_utxo_secrets)?;
 
         let msg = RangeProofMessage::new(
             out_secrets.asset,
@@ -692,7 +692,7 @@ impl TxOut {
     where
         R: RngCore + CryptoRng,
         C: Signing,
-        S: Into<SurjectionInput> + Copy,
+        S: Into<SurjectionInput> + Clone,
     {
         let (txout, abf, vbf, ephemeral_sk) = Self::new_not_last_confidential(
             rng,
@@ -783,8 +783,8 @@ impl TxOut {
             spk,
             blinder,
             asset,
-            ephemeral_sk,
-            out_abf,
+            &ephemeral_sk,
+            out_abf.clone(),
             spent_utxo_secrets,
             output_secrets,
         )?;
@@ -801,7 +801,7 @@ impl TxOut {
         spk: Script,
         blinder: secp256k1_zkp::PublicKey,
         asset: AssetId,
-        ephemeral_sk: SecretKey,
+        ephemeral_sk: &SecretKey,
         out_abf: AssetBlindingFactor,
         spent_utxo_secrets: &[TxOutSecrets],
         output_secrets: &[&TxOutSecrets],
@@ -824,11 +824,11 @@ impl TxOut {
         let out_vbf = ValueBlindingFactor::last(
             secp,
             value,
-            out_abf,
+            out_abf.clone(),
             &value_blind_inputs,
             &value_blind_outputs,
         );
-        let out_secrets = TxOutSecrets::new(asset, out_abf, value, out_vbf);
+        let out_secrets = TxOutSecrets::new(asset, out_abf, value, out_vbf.clone());
         let txout = TxOut::with_txout_secrets(
             rng,
             secp,
@@ -867,7 +867,7 @@ impl TxOut {
         let (opening, _) = rangeproof.rewind(
             secp,
             commitment,
-            shared_secret,
+            &shared_secret,
             self.script_pubkey.as_bytes(),
             additional_generator,
         ).map_err(UnblindError::Rewind)?;
@@ -885,7 +885,7 @@ impl TxOut {
 
         Ok(TxOutSecrets {
             asset: *message.asset_id(),
-            asset_bf: *message.blinding_factor(),
+            asset_bf: message.blinding_factor().clone(),
             value,
             value_bf,
         })
@@ -940,8 +940,8 @@ impl TxIn {
         secp: &Secp256k1<C>,
         issue_vbf: ValueBlindingFactor,
         token_vbf: ValueBlindingFactor,
-        issue_sk: SecretKey,
-        token_sk: SecretKey,
+        issue_sk: &SecretKey,
+        token_sk: &SecretKey,
     ) -> Result<(), BlindError> {
         if !self.has_issuance() {
             return Err(BlindError::NoIssuanceToBlind);
@@ -1001,7 +1001,7 @@ impl TxIn {
         let token_vbf = ValueBlindingFactor::new(rng);
         let issue_sk = SecretKey::new(rng);
         let token_sk = SecretKey::new(rng);
-        self.blind_issuances_with_bfs(secp, issue_vbf, token_vbf, issue_sk, token_sk)?;
+        self.blind_issuances_with_bfs(secp, issue_vbf.clone(), token_vbf.clone(), &issue_sk, &token_sk)?;
         Ok((issue_vbf, issue_sk, token_vbf, token_sk))
     }
 }
@@ -1248,7 +1248,7 @@ impl Transaction {
                 )?;
 
                 let location = CtLocation { input_index: i, ty: CtLocationType::Input};
-                blinds.insert(location, (abf, vbf, ephemeral_sk));
+                blinds.insert(location, (abf.clone(), vbf.clone(), ephemeral_sk));
                 out_secrets.push(TxOutSecrets::new(
                     out.asset.explicit().unwrap(),
                     abf,

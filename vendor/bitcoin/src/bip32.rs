@@ -69,8 +69,7 @@ hash_newtype! {
 }
 
 /// Extended private key
-#[derive(Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Xpriv {
     /// The network this key is to be used on
     pub network: NetworkKind,
@@ -88,18 +87,14 @@ pub struct Xpriv {
 #[cfg(feature = "serde")]
 crate::serde_utils::serde_string_impl!(Xpriv, "a BIP-32 extended private key");
 
-#[cfg(not(feature = "std"))]
-impl fmt::Debug for Xpriv {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("Xpriv")
-            .field("network", &self.network)
-            .field("depth", &self.depth)
-            .field("parent_fingerprint", &self.parent_fingerprint)
-            .field("child_number", &self.child_number)
-            .field("chain_code", &self.chain_code)
-            .field("private_key", &"[SecretKey]")
-            .finish()
+impl Drop for Xpriv {
+    fn drop(&mut self) {
+        secp256k1::ffi::non_secure_erase_impl(&mut self.chain_code, ChainCode::from([0u8; 32]));
     }
+}
+
+impl fmt::Debug for Xpriv {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { f.write_str("Xpriv([REDACTED])") }
 }
 
 /// Extended public key
@@ -592,7 +587,7 @@ impl Xpriv {
 
     /// Constructs ECDSA compressed private key matching internal secret key representation.
     pub fn to_priv(self) -> PrivateKey {
-        PrivateKey { compressed: true, network: self.network, inner: self.private_key }
+        PrivateKey { compressed: true, network: self.network, inner: self.private_key.clone() }
     }
 
     /// Constructs BIP340 keypair for Schnorr signatures and Taproot use matching the internal
@@ -610,7 +605,7 @@ impl Xpriv {
         secp: &Secp256k1<C>,
         path: &P,
     ) -> Result<Xpriv, Error> {
-        let mut sk: Xpriv = *self;
+        let mut sk: Xpriv = self.clone();
         for cnum in path.as_ref() {
             sk = sk.ckd_priv(secp, *cnum)?;
         }
@@ -643,7 +638,7 @@ impl Xpriv {
         let sk = secp256k1::SecretKey::from_slice(&hmac_result[..32])
             .expect("statistically impossible to hit");
         let tweaked =
-            sk.add_tweak(&self.private_key.into()).expect("statistically impossible to hit");
+            sk.add_tweak(&self.private_key.clone().into()).expect("statistically impossible to hit");
 
         Ok(Xpriv {
             network: self.network,

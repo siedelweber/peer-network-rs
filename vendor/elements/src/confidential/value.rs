@@ -9,7 +9,7 @@ use std::io;
 use secp256k1_zkp::rand::Rng;
 use secp256k1_zkp::{
     self, compute_adaptive_blinding_factor, CommitmentSecrets, Generator, PedersenCommitment,
-    Secp256k1, SecretKey, Signing, Tweak, ZERO_TWEAK,
+    Secp256k1, SecretKey, Signing, SecretTweak as Tweak, ZERO_SECRET_TWEAK,
 };
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -61,7 +61,7 @@ impl Value {
         v_bf: BlindingFactor,
         a_bf: AssetBlindingFactor,
     ) -> Self {
-        let generator = Generator::new_blinded(secp, asset.into_tag(), a_bf.0);
+        let generator = Generator::new_blinded(secp, asset.into_tag(), &a_bf.0);
         let comm = ConfInner::new(secp, value, v_bf.0, generator);
 
         Self::Confidential(comm)
@@ -225,7 +225,7 @@ impl<'de> Deserialize<'de> for Value {
 }
 
 /// Blinding factor used for value commitments.
-#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub struct BlindingFactor(pub(crate) Tweak);
 
 impl BlindingFactor {
@@ -248,16 +248,16 @@ impl BlindingFactor {
             .iter()
             .map(|(value, abf, vbf)| CommitmentSecrets {
                 value: *value,
-                value_blinding_factor: vbf.0,
-                generator_blinding_factor: abf.into_inner(),
+                value_blinding_factor: vbf.0.clone(),
+                generator_blinding_factor: abf.clone().into_inner(),
             })
             .collect::<Vec<_>>();
         let set_b = outputs
             .iter()
             .map(|(value, abf, vbf)| CommitmentSecrets {
                 value: *value,
-                value_blinding_factor: vbf.0,
-                generator_blinding_factor: abf.into_inner(),
+                value_blinding_factor: vbf.0.clone(),
+                generator_blinding_factor: abf.clone().into_inner(),
             })
             .collect::<Vec<_>>();
 
@@ -273,7 +273,7 @@ impl BlindingFactor {
     pub fn into_inner(self) -> Tweak { self.0 }
 
     /// Get a unblinded/zero `AssetBlinding` factor
-    pub fn zero() -> Self { Self(ZERO_TWEAK) }
+    pub fn zero() -> Self { Self(ZERO_SECRET_TWEAK) }
 }
 
 impl AddAssign for BlindingFactor {
@@ -286,7 +286,7 @@ impl AddAssign for BlindingFactor {
             // Since libsecp does not expose low level APIs
             // for scalar arethematic, we need to abuse secret key
             // operations for this
-            let sk2 = SecretKey::from_slice(self.into_inner().as_ref()).expect("Valid key");
+            let sk2 = SecretKey::from_slice(self.0.as_ref()).expect("Valid key");
             let sk = SecretKey::from_slice(other.into_inner().as_ref()).expect("Valid key");
             // The only reason that secret key addition can fail
             // is when the keys add up to zero since we have already checked
@@ -307,7 +307,7 @@ impl Neg for BlindingFactor {
         if self.0.as_ref() == &[0u8; 32] {
             self
         } else {
-            let sk = SecretKey::from_slice(self.into_inner().as_ref()).expect("Valid key").negate();
+            let sk = SecretKey::from_slice(self.0.as_ref()).expect("Valid key").negate();
             Self::from_slice(sk.as_ref()).expect("Valid Tweak")
         }
     }
@@ -317,10 +317,9 @@ impl core::borrow::Borrow<[u8]> for BlindingFactor {
     fn borrow(&self) -> &[u8] { &self.0[..] }
 }
 
-hex::impl_fmt_traits! {
-    #[display_backward(true)]
-    impl fmt_traits for BlindingFactor {
-        const LENGTH: usize = 32;
+impl core::fmt::Debug for BlindingFactor {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("BlindingFactor([REDACTED])")
     }
 }
 

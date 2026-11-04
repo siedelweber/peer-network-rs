@@ -130,7 +130,7 @@
 | pn-host | active | unit | pn-host-rust | fast | 7 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
-| pn-wallet | active | unit | pn-wallet-rust | fast | 13 |
+| pn-wallet | active | unit | pn-wallet-rust | fast | 14 |
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::allocation | active | integration | pn-wallet-rust | fast | 1 |
 | pn-wallet::wire | active | integration | pn-wallet-rust | extended | 1 |

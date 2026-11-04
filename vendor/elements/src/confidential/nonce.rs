@@ -46,14 +46,14 @@ impl Nonce {
         receiver_blinding_pk: &ConfInner,
     ) -> (Self, SecretKey) {
         let ephemeral_sk = SecretKey::new(rng);
-        Self::with_ephemeral_sk(secp, ephemeral_sk, receiver_blinding_pk)
+        Self::with_ephemeral_sk(secp, &ephemeral_sk, receiver_blinding_pk)
     }
 
     /// Similar to [`Self::new_confidential`], but with a given `ephemeral_sk`
     /// instead of sampling it from rng.
     pub fn with_ephemeral_sk<C: Signing>(
         secp: &Secp256k1<C>,
-        ephemeral_sk: SecretKey,
+        ephemeral_sk: &SecretKey,
         receiver_blinding_pk: &ConfInner,
     ) -> (Self, SecretKey) {
         let sender_pk = ConfInner::from_secret_key(secp, &ephemeral_sk);

@@ -1,0 +1,128 @@
+--- a/src/bip32.rs
++++ b/src/bip32.rs
+@@ -69,8 +69,7 @@
+ }
+ 
+ /// Extended private key
+-#[derive(Copy, Clone, PartialEq, Eq)]
+-#[cfg_attr(feature = "std", derive(Debug))]
++#[derive(Clone, PartialEq, Eq)]
+ pub struct Xpriv {
+     /// The network this key is to be used on
+     pub network: NetworkKind,
+@@ -88,18 +87,14 @@
+ #[cfg(feature = "serde")]
+ crate::serde_utils::serde_string_impl!(Xpriv, "a BIP-32 extended private key");
+ 
+-#[cfg(not(feature = "std"))]
++impl Drop for Xpriv {
++    fn drop(&mut self) {
++        secp256k1::ffi::non_secure_erase_impl(&mut self.chain_code, ChainCode::from([0u8; 32]));
++    }
++}
++
+ impl fmt::Debug for Xpriv {
+-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+-        f.debug_struct("Xpriv")
+-            .field("network", &self.network)
+-            .field("depth", &self.depth)
+-            .field("parent_fingerprint", &self.parent_fingerprint)
+-            .field("child_number", &self.child_number)
+-            .field("chain_code", &self.chain_code)
+-            .field("private_key", &"[SecretKey]")
+-            .finish()
+-    }
++    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { f.write_str("Xpriv([REDACTED])") }
+ }
+ 
+ /// Extended public key
+@@ -592,7 +587,7 @@
+ 
+     /// Constructs ECDSA compressed private key matching internal secret key representation.
+     pub fn to_priv(self) -> PrivateKey {
+-        PrivateKey { compressed: true, network: self.network, inner: self.private_key }
++        PrivateKey { compressed: true, network: self.network, inner: self.private_key.clone() }
+     }
+ 
+     /// Constructs BIP340 keypair for Schnorr signatures and Taproot use matching the internal
+@@ -610,7 +605,7 @@
+         secp: &Secp256k1<C>,
+         path: &P,
+     ) -> Result<Xpriv, Error> {
+-        let mut sk: Xpriv = *self;
++        let mut sk: Xpriv = self.clone();
+         for cnum in path.as_ref() {
+             sk = sk.ckd_priv(secp, *cnum)?;
+         }
+@@ -643,7 +638,7 @@
+         let sk = secp256k1::SecretKey::from_slice(&hmac_result[..32])
+             .expect("statistically impossible to hit");
+         let tweaked =
+-            sk.add_tweak(&self.private_key.into()).expect("statistically impossible to hit");
++            sk.add_tweak(&self.private_key.clone().into()).expect("statistically impossible to hit");
+ 
+         Ok(Xpriv {
+             network: self.network,
+--- a/src/crypto/key.rs
++++ b/src/crypto/key.rs
+@@ -394,7 +394,7 @@
+ }
+ 
+ /// A Bitcoin ECDSA private key
+-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
++#[derive(Clone, PartialEq, Eq)]
+ pub struct PrivateKey {
+     /// Whether this private key should be serialized as compressed
+     pub compressed: bool,
+@@ -402,6 +402,12 @@
+     pub network: NetworkKind,
+     /// The actual ECDSA key
+     pub inner: secp256k1::SecretKey,
++}
++
++impl core::fmt::Debug for PrivateKey {
++    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++        f.write_str("PrivateKey([REDACTED])")
++    }
+ }
+ 
+ impl PrivateKey {
+@@ -507,7 +513,7 @@
+         PrivateKey {
+             compressed: self.compressed,
+             network: self.network,
+-            inner: self.inner.negate(),
++            inner: self.inner.clone().negate(),
+         }
+     }
+ }
+@@ -736,11 +742,17 @@
+ /// let _pk = TweakedPublicKey::from(keypair);
+ /// # }
+ /// ```
+-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
++#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+ #[cfg_attr(feature = "serde", serde(crate = "actual_serde"))]
+ #[cfg_attr(feature = "serde", serde(transparent))]
+ pub struct TweakedKeypair(Keypair);
++
++impl core::fmt::Debug for TweakedKeypair {
++    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++        f.write_str("TweakedKeypair([REDACTED])")
++    }
++}
+ 
+ /// A trait for tweaking BIP340 key types (x-only public keys and key pairs).
+ pub trait TapTweak {
+--- a/src/psbt/mod.rs
++++ b/src/psbt/mod.rs
+@@ -852,7 +852,7 @@
+                 }
+ 
+                 let pubkey_odd = PublicKey::new(xonly.public_key(secp256k1::Parity::Odd));
+-                if let Some(priv_key) = self.get(&pubkey_odd).copied() {
++                if let Some(priv_key) = self.get(&pubkey_odd).cloned() {
+                     let negated_priv_key  = priv_key.negate();
+                     return Ok(Some(negated_priv_key));
+                 }

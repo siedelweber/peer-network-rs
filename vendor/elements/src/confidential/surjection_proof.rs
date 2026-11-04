@@ -6,7 +6,7 @@ use core::fmt;
 use std::io;
 
 use secp256k1_zkp::rand::{CryptoRng, RngCore};
-use secp256k1_zkp::{self, Generator, Secp256k1, Signing, Tweak, ZERO_TWEAK};
+use secp256k1_zkp::{self, Generator, Secp256k1, Signing, SecretTweak, ZERO_SECRET_TWEAK};
 #[cfg(feature = "serde")]
 use serde::{Deserializer, Serializer};
 
@@ -35,7 +35,7 @@ impl SurjectionProof {
     where
         R: RngCore + CryptoRng,
         C: Signing,
-        S: AsRef<[(Generator, secp256k1_zkp::Tag, Tweak)]>,
+        S: AsRef<[(Generator, secp256k1_zkp::Tag, SecretTweak)]>,
     {
         secp256k1_zkp::SurjectionProof::new(
             secp,
@@ -73,7 +73,7 @@ impl SurjectionProof {
         abf: AssetBlindingFactor,
     ) -> Result<Self, secp256k1_zkp::Error> {
         let gen = Generator::new_unblinded(secp, asset.into_tag());
-        Self::new(secp, rng, asset, abf, [(gen, asset.into_tag(), ZERO_TWEAK)])
+        Self::new(secp, rng, asset, abf, [(gen, asset.into_tag(), ZERO_SECRET_TWEAK)])
     }
 
     /// Verifies a [`SurjectionProof`] proving that an asset matches an exact asset ID.

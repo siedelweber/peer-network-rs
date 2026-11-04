@@ -106,6 +106,41 @@ impl Tweak {
         Ok(Tweak(data))
     }
 }
+/// Owned secret blinding scalar. Public tweaks retain their copyable representation.
+#[derive(Default, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+pub struct SecretTweak(Tweak);
+
+impl SecretTweak {
+    /// Validate an owned blinding scalar.
+    pub fn from_inner(bytes: [u8; 32]) -> Result<Self, Error> { Tweak::from_inner(bytes).map(Self) }
+    /// Validate a blinding scalar supplied as bytes.
+    pub fn from_slice(bytes: &[u8]) -> Result<Self, Error> { Tweak::from_slice(bytes).map(Self) }
+    /// Generate an owned blinding scalar.
+    #[cfg(feature = "actual-rand")]
+    pub fn new<R: Rng + ?Sized>(rng: &mut R) -> Self { Self(Tweak::new(rng)) }
+}
+
+impl Drop for SecretTweak {
+    fn drop(&mut self) { ffi::non_secure_erase_impl(&mut self.0, ZERO_TWEAK); }
+}
+impl fmt::Debug for SecretTweak {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { f.write_str("SecretTweak([REDACTED])") }
+}
+impl AsRef<[u8]> for SecretTweak {
+    fn as_ref(&self) -> &[u8] { &self.0[..] }
+}
+impl<I: core::slice::SliceIndex<[u8]>> core::ops::Index<I> for SecretTweak {
+    type Output = I::Output;
+    fn index(&self, index: I) -> &Self::Output { &self.0[index] }
+}
+impl ffi::CPtr for SecretTweak {
+    type Target = u8;
+    fn as_c_ptr(&self) -> *const u8 { self.0.as_c_ptr() }
+    fn as_mut_c_ptr(&mut self) -> *mut u8 { self.0.as_mut_c_ptr() }
+}
+/// The public zero represented as an owned secret scalar.
+pub const ZERO_SECRET_TWEAK: SecretTweak = SecretTweak(ZERO_TWEAK);
+
 /// Represents a generator on the secp256k1 curve.
 ///
 /// A generator is a public key internally but has a slightly different serialization with the first byte being tweaked.
@@ -157,7 +192,7 @@ impl Generator {
 
     /// Creates a new [`Generator`] by blinding a [`Tag`] using the given blinding factor.
     /// Use [Generator::new_unblinded] for creating a [`Generator`] with zero blinding factor
-    pub fn new_blinded<C: Signing>(secp: &Secp256k1<C>, tag: Tag, blinding_factor: Tweak) -> Self {
+    pub fn new_blinded<C: Signing>(secp: &Secp256k1<C>, tag: Tag, blinding_factor: &SecretTweak) -> Self {
         let mut generator = unsafe { ffi::PublicKey::new() };
 
         let ret = unsafe {
@@ -176,7 +211,7 @@ impl Generator {
     /// Creates a new unblinded [`Generator`] by from [`Tag`]
     /// Same as using zero [`Tweak`] with [`Generator::new_blinded`]
     pub fn new_unblinded<C: Signing>(secp: &Secp256k1<C>, tag: Tag) -> Self {
-        Generator::new_blinded(secp, tag, ZERO_TWEAK)
+        Generator::new_blinded(secp, tag, &ZERO_SECRET_TWEAK)
     }
 
     /// Extracts the internal representation of this generator.

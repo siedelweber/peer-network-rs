@@ -6,7 +6,7 @@ use core::{fmt, str};
 use std::io;
 
 use secp256k1_zkp::rand::Rng;
-use secp256k1_zkp::{self, Generator, Secp256k1, Signing, Tweak, ZERO_TWEAK};
+use secp256k1_zkp::{self, Generator, Secp256k1, Signing, SecretTweak as Tweak, ZERO_SECRET_TWEAK};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -43,7 +43,7 @@ impl Asset {
         asset: AssetId,
         bf: BlindingFactor,
     ) -> Self {
-        Self::Confidential(ConfInner::new_blinded(secp, asset.into_tag(), bf.into_inner()))
+        Self::Confidential(ConfInner::new_blinded(secp, asset.into_tag(), &bf.into_inner()))
     }
 
     /// Serialized length, in bytes
@@ -222,7 +222,7 @@ impl<'de> Deserialize<'de> for Asset {
 }
 
 /// Blinding factor used for asset commitments.
-#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub struct BlindingFactor(pub(crate) Tweak);
 
 impl BlindingFactor {
@@ -247,17 +247,16 @@ impl BlindingFactor {
     pub fn into_inner(self) -> Tweak { self.0 }
 
     /// Get a unblinded/zero `AssetBlinding` factor
-    pub fn zero() -> Self { Self(ZERO_TWEAK) }
+    pub fn zero() -> Self { Self(ZERO_SECRET_TWEAK) }
 }
 
 impl core::borrow::Borrow<[u8]> for BlindingFactor {
     fn borrow(&self) -> &[u8] { &self.0[..] }
 }
 
-hex::impl_fmt_traits! {
-    #[display_backward(true)]
-    impl fmt_traits for BlindingFactor {
-        const LENGTH: usize = 32;
+impl core::fmt::Debug for BlindingFactor {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("BlindingFactor([REDACTED])")
     }
 }
 

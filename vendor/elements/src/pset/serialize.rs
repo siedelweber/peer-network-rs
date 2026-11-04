@@ -112,7 +112,7 @@ impl Deserialize for VarInt {
 
 impl Serialize for AssetBlindingFactor {
     fn serialize(&self) -> Vec<u8> {
-        encode::serialize(self.into_inner().as_ref())
+        encode::serialize(self.clone().into_inner().as_ref())
     }
 }
 

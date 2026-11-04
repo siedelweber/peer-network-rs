@@ -890,7 +890,7 @@ establishment = "recomputable"
 reader = "vendor-content"
 source = "ci/vendor-content/elements.json"
 definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
-paths = ["vendor/elements/**", "ci/vendor-content/elements.json"]
+paths = ["vendor/elements/**", "ci/vendor-content/elements.json", "vendor/elements.patch"]
 
 [[rows]]
 family = "vendor-elements-archive"
@@ -912,7 +912,7 @@ establishment = "recomputable"
 reader = "vendor-content"
 source = "ci/vendor-content/secp256k1.json"
 definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
-paths = ["vendor/secp256k1/**", "ci/vendor-content/secp256k1.json"]
+paths = ["vendor/secp256k1/**", "ci/vendor-content/secp256k1.json", "vendor/secp256k1.patch"]
 
 [[rows]]
 family = "vendor-secp256k1-archive"
@@ -956,7 +956,7 @@ establishment = "recomputable"
 reader = "vendor-content"
 source = "ci/vendor-content/secp256k1-zkp.json"
 definition = "The exact extracted file set and contents must match the manifest and the reviewed package, version and archive checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
-paths = ["vendor/secp256k1-zkp/**", "ci/vendor-content/secp256k1-zkp.json"]
+paths = ["vendor/secp256k1-zkp/**", "ci/vendor-content/secp256k1-zkp.json", "vendor/secp256k1-zkp.patch"]
 
 [[rows]]
 family = "vendor-secp256k1-zkp-archive"
@@ -1000,7 +1000,7 @@ establishment = "recomputable"
 reader = "vendor-content"
 source = "ci/vendor-content/bitcoin.json"
 definition = "The carried file set and bytes must match the manifest; the carried and declared omitted member digests together must match the complete archive under its reviewed package, version and checksum before these values are accounted. This is content provenance, not a cryptographic validity assertion."
-paths = ["vendor/bitcoin/**", "ci/vendor-content/bitcoin.json"]
+paths = ["vendor/bitcoin/**", "ci/vendor-content/bitcoin.json", "vendor/bitcoin.patch"]
 
 
 [[rows]]

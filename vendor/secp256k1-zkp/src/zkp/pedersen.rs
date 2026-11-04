@@ -1,7 +1,7 @@
 use ffi::CPtr;
 
 use crate::ffi;
-use crate::{from_hex, Error, Generator, Secp256k1, Signing, Tweak, ZERO_TWEAK};
+use crate::{from_hex, Error, Generator, Secp256k1, Signing, SecretTweak, ZERO_SECRET_TWEAK};
 use core::{fmt, slice, str};
 
 /// Represents a commitment to a single u64 value.
@@ -59,7 +59,7 @@ impl PedersenCommitment {
     pub fn new<C: Signing>(
         secp: &Secp256k1<C>,
         value: u64,
-        blinding_factor: Tweak,
+        blinding_factor: SecretTweak,
         generator: Generator,
     ) -> Self {
         let mut commitment = ffi::PedersenCommitment::default();
@@ -88,7 +88,7 @@ impl PedersenCommitment {
         value: u64,
         generator: Generator,
     ) -> Self {
-        PedersenCommitment::new(secp, value, ZERO_TWEAK, generator)
+        PedersenCommitment::new(secp, value, ZERO_SECRET_TWEAK, generator)
     }
 
     pub(crate) fn as_inner(&self) -> &ffi::PedersenCommitment {
@@ -108,14 +108,14 @@ pub struct CommitmentSecrets {
     /// The value that is committed to.
     pub value: u64,
     /// The blinding factor used when committing to the value.
-    pub value_blinding_factor: Tweak,
+    pub value_blinding_factor: SecretTweak,
     /// The blinding factor used when producing the [`Generator`] that is necessary to commit to the value.
-    pub generator_blinding_factor: Tweak,
+    pub generator_blinding_factor: SecretTweak,
 }
 
 impl CommitmentSecrets {
     /// Constructor.
-    pub fn new(value: u64, value_blinding_factor: Tweak, generator_blinding_factor: Tweak) -> Self {
+    pub fn new(value: u64, value_blinding_factor: SecretTweak, generator_blinding_factor: SecretTweak) -> Self {
         CommitmentSecrets {
             value,
             value_blinding_factor,
@@ -128,11 +128,11 @@ impl CommitmentSecrets {
 pub fn compute_adaptive_blinding_factor<C: Signing>(
     secp: &Secp256k1<C>,
     value: u64,
-    generator_blinding_factor: Tweak,
+    generator_blinding_factor: SecretTweak,
     set_a: &[CommitmentSecrets],
     set_b: &[CommitmentSecrets],
-) -> Tweak {
-    let value_blinding_factor_placeholder = ZERO_TWEAK; // this placeholder will be filled with the generated blinding factor
+) -> SecretTweak {
+    let value_blinding_factor_placeholder = ZERO_SECRET_TWEAK; // this placeholder will be filled with the generated blinding factor
 
     let (mut values, mut secrets) = set_a
         .iter()
@@ -140,7 +140,7 @@ pub fn compute_adaptive_blinding_factor<C: Signing>(
         .map(|c| {
             (
                 c.value,
-                (c.value_blinding_factor, c.generator_blinding_factor),
+                (c.value_blinding_factor.clone(), c.generator_blinding_factor.clone()),
             )
         })
         .unzip::<_, _, Vec<_>, Vec<_>>();
@@ -166,7 +166,7 @@ pub fn compute_adaptive_blinding_factor<C: Signing>(
 
     let last = vbf.last().expect("this vector is never empty");
     let slice = unsafe { slice::from_raw_parts(*last, 32) };
-    Tweak::from_slice(slice).expect("data is always 32 bytes")
+    SecretTweak::from_slice(slice).expect("data is always 32 bytes")
 }
 
 /// Verifies that the sum of the committed values within the commitments of both sets is equal.

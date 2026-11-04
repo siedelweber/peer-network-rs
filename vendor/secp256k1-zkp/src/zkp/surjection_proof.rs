@@ -14,7 +14,7 @@ pub struct SurjectionProof {
 #[cfg(feature = "actual-rand")]
 mod with_rand {
     use super::*;
-    use crate::{Signing, Tag, Tweak};
+    use crate::{Signing, Tag, SecretTweak};
     use ffi::CPtr;
     use rand::Rng;
 
@@ -27,8 +27,8 @@ mod with_rand {
             secp: &Secp256k1<C>,
             rng: &mut R,
             codomain_tag: Tag,
-            codomain_blinding_factor: Tweak,
-            domain: &[(Generator, Tag, Tweak)],
+            codomain_blinding_factor: SecretTweak,
+            domain: &[(Generator, Tag, SecretTweak)],
         ) -> Result<SurjectionProof, Error> {
             let mut proof = ffi::SurjectionProof::new();
 
@@ -40,12 +40,10 @@ mod with_rand {
 
             let mut domain_blinded_tags = Vec::with_capacity(domain.len());
             let mut domain_tags = Vec::with_capacity(domain.len());
-            let mut domain_blinding_factors = Vec::with_capacity(domain.len());
 
-            for (blinded_tag, tag, bf) in domain {
+            for (blinded_tag, tag, _) in domain {
                 domain_blinded_tags.push(*blinded_tag.as_inner());
                 domain_tags.push(tag.into_inner());
-                domain_blinding_factors.push(*bf);
             }
 
             let ret = unsafe {
@@ -67,7 +65,7 @@ mod with_rand {
             }
 
             let codomain_blinded_tag =
-                Generator::new_blinded(secp, codomain_tag, codomain_blinding_factor);
+                Generator::new_blinded(secp, codomain_tag, &codomain_blinding_factor);
 
             let ret = unsafe {
                 ffi::secp256k1_surjectionproof_generate(

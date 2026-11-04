@@ -1,6 +1,10 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['vendor/secp256k1-zkp.patch', 'build-graph,wallet-conformance,hash-citations,linter,token', ''],
+  ['vendor/secp256k1.patch', 'build-graph,wallet-conformance,hash-citations,linter,token', ''],
+  ['vendor/elements.patch', 'build-graph,wallet-conformance,hash-citations,linter,token', ''],
+  ['vendor/bitcoin.patch', 'build-graph,wallet-conformance,hash-citations,linter,token', ''],
   ['ci/build-inputs/vendor/meson.build', 'build-graph', ''],
 ]
 foreach row : local_inputs

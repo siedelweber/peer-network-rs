@@ -6,7 +6,7 @@ use crate::Error;
 use crate::Generator;
 use crate::PedersenCommitment;
 use crate::Verification;
-use crate::{ffi, Secp256k1, SecretKey, Signing, Tweak};
+use crate::{ffi, Secp256k1, SecretKey, Signing, SecretTweak};
 use std::ops::Range;
 use std::str;
 
@@ -71,10 +71,10 @@ impl RangeProof {
         min_value: u64,
         commitment: PedersenCommitment,
         value: u64,
-        commitment_blinding: Tweak,
+        commitment_blinding: SecretTweak,
         message: &[u8],
         additional_commitment: &[u8],
-        sk: SecretKey,
+        sk: &SecretKey,
         exp: i32,
         min_bits: u8,
         additional_generator: Generator,
@@ -153,7 +153,7 @@ impl RangeProof {
         &self,
         secp: &Secp256k1<C>,
         commitment: PedersenCommitment,
-        sk: SecretKey,
+        sk: &SecretKey,
         additional_commitment: &[u8],
         additional_generator: Generator,
     ) -> Result<(Opening, Range<u64>), Error> {
@@ -190,7 +190,7 @@ impl RangeProof {
 
         let opening = Opening {
             value,
-            blinding_factor: Tweak::from_slice(&blinding_factor)?,
+            blinding_factor: SecretTweak::from_slice(&blinding_factor)?,
             message: message[..message_length].into(),
         };
 
@@ -257,7 +257,7 @@ pub struct Opening {
     /// The value that the prover originally committed to in the Pedersen commitment.
     pub value: u64,
     /// The blinding factor that was used to create the Pedersen commitment of above value.
-    pub blinding_factor: Tweak,
+    pub blinding_factor: SecretTweak,
     /// The message that was embedded by the prover.
     pub message: Box<[u8]>,
 }

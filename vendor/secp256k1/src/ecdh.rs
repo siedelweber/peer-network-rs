@@ -31,9 +31,9 @@ const SHARED_SECRET_SIZE: usize = constants::SECRET_KEY_SIZE;
 /// assert_eq!(sec1, sec2);
 /// # }
 // ```
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SharedSecret([u8; SHARED_SECRET_SIZE]);
-impl_display_secret!(SharedSecret);
+impl_owned_secret!(SharedSecret);
 impl_non_secure_erase!(SharedSecret, 0, [0u8; SHARED_SECRET_SIZE]);
 
 impl SharedSecret {

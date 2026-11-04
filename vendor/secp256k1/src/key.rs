@@ -54,9 +54,9 @@ use crate::{
 /// [`bincode`]: https://docs.rs/bincode
 /// [`cbor`]: https://docs.rs/cbor
 /// [cryptographically secure pseudorandom number generator]: https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct SecretKey([u8; constants::SECRET_KEY_SIZE]);
-impl_display_secret!(SecretKey);
+impl_owned_secret!(SecretKey);
 impl_non_secure_erase!(SecretKey, 0, [1u8; constants::SECRET_KEY_SIZE]);
 
 impl PartialEq for SecretKey {
@@ -770,9 +770,9 @@ impl<'de> serde::Deserialize<'de> for PublicKey {
 /// ```
 /// [`bincode`]: https://docs.rs/bincode
 /// [`cbor`]: https://docs.rs/cbor
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct Keypair(ffi::Keypair);
-impl_display_secret!(Keypair);
+impl_owned_secret!(Keypair);
 impl_fast_comparisons!(Keypair);
 
 impl Keypair {

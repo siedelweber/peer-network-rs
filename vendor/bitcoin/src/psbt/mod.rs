@@ -852,7 +852,7 @@ impl GetKey for $map<PublicKey, PrivateKey> {
                 }
 
                 let pubkey_odd = PublicKey::new(xonly.public_key(secp256k1::Parity::Odd));
-                if let Some(priv_key) = self.get(&pubkey_odd).copied() {
+                if let Some(priv_key) = self.get(&pubkey_odd).cloned() {
                     let negated_priv_key  = priv_key.negate();
                     return Ok(Some(negated_priv_key));
                 }

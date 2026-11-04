@@ -414,7 +414,7 @@ impl PartiallySignedTransaction {
         // collect input factors
         let inp_secrets = inp_txout_sec
             .values()
-            .map(|sec| (sec.value, sec.asset_bf, sec.value_bf))
+            .map(|sec| (sec.value, sec.asset_bf.clone(), sec.value_bf.clone()))
             .collect::<Vec<_>>();
 
         Ok((inp_secrets, blind_out_indices))
@@ -438,7 +438,7 @@ impl PartiallySignedTransaction {
                 .as_ref()
                 .ok_or(PsetBlindError::MissingWitnessUtxo(i))?;
             let surject_target = match inp_txout_sec.get(&i) {
-                Some(sec) => SurjectionInput::from_txout_secrets(*sec),
+                Some(sec) => SurjectionInput::from_txout_secrets(sec.clone()),
                 None => SurjectionInput::Unknown(utxo.asset),
             };
             ret.push(surject_target);
@@ -516,7 +516,7 @@ impl PartiallySignedTransaction {
             let value = self.outputs[i]
                 .amount
                 .ok_or(PsetBlindError::MustHaveExplicitTxOut(i))?;
-            out_secrets.push((value, abf, vbf));
+            out_secrets.push((value, abf.clone(), vbf.clone()));
 
             // mutate the pset
             {
@@ -533,7 +533,7 @@ impl PartiallySignedTransaction {
                     .asset
                     .ok_or(PsetBlindError::MustHaveExplicitTxOut(i))?;
                 self.outputs[i].blind_asset_proof = Some(
-                    SurjectionProof::blind_asset_proof(rng, secp, asset_id, abf)
+                    SurjectionProof::blind_asset_proof(rng, secp, asset_id, abf.clone())
                         .map_err(|e| PsetBlindError::BlindingProofsCreationError(i, e))?,
                 );
 
@@ -544,7 +544,7 @@ impl PartiallySignedTransaction {
                     .amount_comm
                     .expect("Blinding proof successful");
                 self.outputs[i].blind_value_proof = Some(
-                    RangeProof::blind_value_proof(rng, secp, value, value_comm, asset_gen, vbf)
+                    RangeProof::blind_value_proof(rng, secp, value, value_comm, asset_gen, vbf.clone())
                         .map_err(|e| PsetBlindError::BlindingProofsCreationError(i, e))?,
                 );
             }
@@ -572,7 +572,7 @@ impl PartiallySignedTransaction {
         // BUG in pset
         // Bug in Pset, scalars can be the same value, but there is no place
         // in pset to place them as it would break the uniqueness constraint.
-        self.global.scalars.push(vbf2.into_inner());
+        self.global.scalars.push(secp256k1_zkp::Tweak::from_slice(vbf2.into_inner().as_ref()).expect("validated scalar"));
         Ok(ret)
     }
 
@@ -622,7 +622,7 @@ impl PartiallySignedTransaction {
             .ok_or(PsetBlindError::MustHaveExplicitTxOut(last_out_index))?;
         let out_abf = AssetBlindingFactor::new(rng);
         let exp_asset = confidential::Asset::Explicit(asset_id);
-        let blind_res = exp_asset.blind(rng, secp, out_abf, &surject_inputs);
+        let blind_res = exp_asset.blind(rng, secp, out_abf.clone(), &surject_inputs);
 
         let (out_asset_commitment, surjection_proof) =
             blind_res.map_err(|e| PsetBlindError::ConfidentialTxOutError(last_out_index, e))?;
@@ -644,11 +644,11 @@ impl PartiallySignedTransaction {
             }
         }
         let mut final_vbf =
-            ValueBlindingFactor::last(secp, value, out_abf, &inp_secrets, &exp_out_secrets);
+            ValueBlindingFactor::last(secp, value, out_abf.clone(), &inp_secrets, &exp_out_secrets);
 
         // Add all the scalars
         for value_diff in &self.global.scalars {
-            final_vbf += ValueBlindingFactor(*value_diff);
+            final_vbf += ValueBlindingFactor::from_slice(value_diff.as_ref()).expect("validated scalar");
         }
 
         let receiver_blinding_pk = &self.outputs[last_out_index]
@@ -656,19 +656,19 @@ impl PartiallySignedTransaction {
             .ok_or(PsetBlindError::MustHaveExplicitTxOut(last_out_index))?;
         let ephemeral_sk = SecretKey::new(rng);
         let spk = &self.outputs[last_out_index].script_pubkey;
-        let msg = RangeProofMessage::new(asset_id, out_abf);
+        let msg = RangeProofMessage::new(asset_id, out_abf.clone());
         let blind_res = exp_value.blind(
             secp,
-            final_vbf,
+            final_vbf.clone(),
             receiver_blinding_pk.inner,
-            ephemeral_sk,
+            &ephemeral_sk,
             spk,
             &msg,
         );
         let (value_commitment, nonce, rangeproof) =
             blind_res.map_err(|e| PsetBlindError::ConfidentialTxOutError(last_out_index, e))?;
         let location = CtLocation{ input_index: last_out_index, ty: CtLocationType::Input};
-        ret.insert(location, (out_abf, final_vbf, ephemeral_sk));
+        ret.insert(location, (out_abf.clone(), final_vbf.clone(), ephemeral_sk));
 
         // mutate the pset
         {

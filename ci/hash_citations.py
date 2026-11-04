@@ -235,9 +235,19 @@ def act_profile_vectors(path):
 class BoundVendorFiles:
     """A validated archive accounts whole files; its manifest digests stay values."""
 
-    def __init__(self, directory, evidence):
-        self.files = frozenset(directory + '/' + name for name in evidence['files'])
-        self.values = frozenset([evidence['archive_checksum'], *evidence['files'].values(), *evidence.get('omitted', {}).values()])
+    def __init__(self, directory, evidence, upstream=None):
+        patch = evidence.get('patch', {})
+        changed = patch.get('members', {})
+        # Changed source and patch sidecars retain value-by-value auditing. Only
+        # values actually present in their validated upstream members are inherited.
+        self.files = frozenset(directory + '/' + name for name in evidence['files'] if name not in changed)
+        values = [evidence['archive_checksum'], *evidence['files'].values(), *evidence.get('omitted', {}).values()]
+        if patch:
+            values.append(patch['sha256'])
+            values.extend(digests['upstream'] for digests in changed.values())
+            values.extend(match.group() for name in changed for line in upstream[name].decode('latin1').splitlines()
+                          for match in occurrences(line))
+        self.values = frozenset(values)
 
     def __call__(self, value, _line):
         return value in self.values
@@ -254,7 +264,10 @@ def establish(root, rule):
         if len(declared) != 1 or declared[0]['mode'] != 'patch':
             raise ValueError('hash citations: vendor manifest is not a declared patch')
         row = declared[0]
-        if kind == 'vendor-content' and rule['paths'] != [row['path'] + '/**', row['content_manifest']]:
+        paths = [row['path'] + '/**', row['content_manifest']]
+        if row.get('patch_file'):
+            paths.append(row['patch_file'])
+        if kind == 'vendor-content' and rule['paths'] != paths:
             raise ValueError('hash citations: vendor family exceeds its bound paths')
         reviewed = {}
         for register in ('wallet', 'host'):
@@ -262,12 +275,12 @@ def establish(root, rule):
                 key = (entry['name'].split()[0], entry['version'])
                 if entry.get('checksum') and reviewed.setdefault(key, entry['checksum']) != entry['checksum']:
                     raise ValueError('hash citations: vendor archive reviews disagree')
-        check_vendor_contents(root, row, reviewed)
+        upstream = check_vendor_contents(root, row, reviewed)
         manifest = relative_file(root, rule['source'])
         evidence = json.loads(manifest.read_text())
         if kind == 'vendor-archive':
             return lambda value, _line: value == evidence['archive_checksum']
-        return BoundVendorFiles(row['path'], evidence)
+        return BoundVendorFiles(row['path'], evidence, upstream)
     if kind == 'assertion-reviews' and standing == 'recomputable':
         from claims import read_register, witness_currency
         if rule.get('source') != 'ci/claim_review.json' or rule.get('paths') != ['ci/claim_review.json']:

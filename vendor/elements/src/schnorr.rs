@@ -35,8 +35,14 @@ pub struct TweakedPublicKey(XOnlyPublicKey);
 pub type UntweakedKeypair = Keypair;
 
 /// Tweaked Schnorr key pair
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TweakedKeypair(Keypair);
+
+impl core::fmt::Debug for TweakedKeypair {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("TweakedKeypair([REDACTED])")
+    }
+}
 
 /// A trait for tweaking Schnorr key types (x-only public keys and key pairs).
 pub trait TapTweak {
