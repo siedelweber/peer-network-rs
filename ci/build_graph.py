@@ -14,6 +14,7 @@ import resource
 import signal
 import subprocess
 import sys
+sys.dont_write_bytecode = True
 import time
 import tomllib
 import uuid
@@ -215,11 +216,13 @@ def list_for(path):
 
 
 def configure(args):
-    """Serialize only the declarations evaluated by Meson, never discover inputs."""
+    """Serialize Meson declarations and their admitted exact-index families."""
     inputs = []
     for value in args.input:
         path, consumers, producer = value.split('\t')
         inputs.append(dict(path=path, consumers=consumers.split(',') if consumers else [], producer=producer))
+    from registry_fragments import expanded_inputs
+    inputs.extend(expanded_inputs(Path(args.root), inputs))
     steps = []
     edges = dependencies(Path(args.root))
     for value in args.step:
@@ -315,6 +318,14 @@ def check(root, graph_path, report_path):
     # Never let an earlier successful report survive a structural refusal.
     report_path.unlink(missing_ok=True)
     graph = json.loads(graph_path.read_text())
+    # A new indexed fragment need not edit a Meson filename manifest. Refresh
+    # only the admitted families; all other exact declarations stay untouched.
+    from registry_fragments import ROOTS, expanded_inputs
+    static = [row for row in graph['inputs']
+              if not any(row['path'].startswith(prefix+'/') and
+                         row['path'] not in {prefix+'/schema.toml', prefix+'/schema.json'}
+                         for prefix in ROOTS.values())]
+    graph['inputs'] = static + expanded_inputs(root, static)
     findings, count = incidence(root, graph)
     print(f'GRAPH-INCIDENCE tracked={count} declared={len(graph["inputs"])} excluded={len(graph["excluded"])} steps={len(graph["steps"])} findings={len(findings)}', flush=True)
     for finding in findings:

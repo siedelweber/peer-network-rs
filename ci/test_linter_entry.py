@@ -228,6 +228,8 @@ class Conformance(unittest.TestCase):
         ´test:integration:test-build-graph-census´
         """
         from build_graph_witnesses import exercise
+        from fragment_witnesses import check
+        check(self)
         exercise(self)
 
     def test_build_graph_delegation(self):

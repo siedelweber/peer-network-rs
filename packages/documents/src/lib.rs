@@ -180,12 +180,43 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
     let mut projections = Vec::new();
     let mut namespaces = BTreeSet::new();
     let mut numeric_input = None;
-    for path in files(&root.join("docs/inputs"))? {
+    let input_root = root.join("docs/inputs");
+    let families = ["claim-obligations", "harness-registry", "linter-owners"];
+    let mut inputs = Vec::new();
+    for entry in at(&input_root, fs::read_dir(&input_root))? {
+        let entry = at(&input_root, entry)?;
+        let path = entry.path();
+        if at(&path, entry.file_type())?.is_symlink() {
+            return Err(format!("symlink is not a document input: {}", path.display()).into());
+        }
+        if families.iter().any(|name| entry.file_name() == *name) {
+            inputs.push(path.join("schema.toml"));
+        } else if at(&path, entry.file_type())?.is_dir() {
+            inputs.extend(files(&path)?);
+        } else {
+            inputs.push(path);
+        }
+    }
+    inputs.sort();
+    for path in inputs {
         if path.extension().is_none_or(|ext| ext != "toml") {
             return Err(format!("input carrier: expected TOML: {}", path.display()).into());
         }
-        let input = read(&path)?;
-        let mut dataset = envelope::input(&input).map_err(|error| format!("{}: {error}", path.display()))?;
+        let family = families.iter().find(|name| path == input_root.join(name).join("schema.toml"));
+        let mut dataset = if let Some(family) = family {
+            let output = std::process::Command::new("python3")
+                .arg("-B")
+                .arg(root.join("ci/registry_fragments.py"))
+                .arg(root)
+                .arg(family)
+                .output()?;
+            if !output.status.success() {
+                return Err(format!("fragment loader: {}", String::from_utf8_lossy(&output.stderr)).into());
+            }
+            envelope::json(std::str::from_utf8(&output.stdout)?)?
+        } else {
+            envelope::input(&read(&path)?).map_err(|error| format!("{}: {error}", path.display()))?
+        };
         numbers::project(&mut dataset)?;
         if dataset.namespace == numbers::NAMESPACE {
             numeric_input = Some(dataset.clone());
