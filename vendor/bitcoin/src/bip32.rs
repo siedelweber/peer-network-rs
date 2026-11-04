@@ -638,7 +638,7 @@ impl Xpriv {
         let sk = secp256k1::SecretKey::from_slice(&hmac_result[..32])
             .expect("statistically impossible to hit");
         let tweaked =
-            sk.add_tweak(&self.private_key.clone().into()).expect("statistically impossible to hit");
+            sk.add_secret_tweak(&self.private_key).expect("statistically impossible to hit");
 
         Ok(Xpriv {
             network: self.network,
@@ -839,9 +839,11 @@ impl Xpub {
     }
 }
 
-impl fmt::Display for Xpriv {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        base58::encode_check_to_fmt(fmt, &self.encode()[..])
+impl Xpriv {
+    /// Explicitly exports this extended private key as a base58 string.
+    pub fn to_base58(&self) -> String {
+        let encoded = crate::crypto::key::SecretBytes(self.encode());
+        base58::encode_check(&encoded.0)
     }
 }
 
@@ -849,7 +851,8 @@ impl FromStr for Xpriv {
     type Err = Error;
 
     fn from_str(inp: &str) -> Result<Xpriv, Error> {
-        let data = base58::decode_check(inp)?;
+        let decoded = crate::crypto::key::SecretBytes(base58::decode_check(inp)?);
+        let data = &decoded.0;
 
         if data.len() != 78 {
             return Err(InvalidBase58PayloadLengthError { length: data.len() }.into());

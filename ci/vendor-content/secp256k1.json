@@ -36,7 +36,7 @@
     "src/ecdsa/recovery.rs": "2426f98a84e45bdbeac5aaf46c13b6db620cb654810a39d0be4f3430ef46e5f0",
     "src/ecdsa/serialized_signature.rs": "1b2ba81e04a4929a61b27956833a78a6cac35dca43616437c9ad144575d113cd",
     "src/ellswift.rs": "67a437db021b0989fd84da61bf44d7233468a047ab7fb2680f38d6a2df634a14",
-    "src/key.rs": "47246b530cb9a72a2d2abe893f27d2d797813a5a6634d6d569e85e32042f8c86",
+    "src/key.rs": "45193b7073547271eaaa26ef3225c078145bde446c3e1cd0764a5e663cbf0a06",
     "src/lib.rs": "284c99e99124f104af554db4b0e855078dfb75c8533abbb6f19abe729e150a89",
     "src/macros.rs": "31ece8ad2fa96786df7cc5498e455f454dee353c6a0383c2a282f87a034d0b7b",
     "src/scalar.rs": "3850bb13c5dd35a5107eed56227c8f2a490c09fd13564cc0bdb198290922987a",
@@ -57,7 +57,7 @@
         "upstream": "605a8579b1ff96604f683d0ca275dcd5f268d0bb1c8ef3c7252b3cf50200d2bc"
       },
       "src/key.rs": {
-        "patched": "47246b530cb9a72a2d2abe893f27d2d797813a5a6634d6d569e85e32042f8c86",
+        "patched": "45193b7073547271eaaa26ef3225c078145bde446c3e1cd0764a5e663cbf0a06",
         "upstream": "afc9ffe8f83abc995258197ebc41804c6a109324f28e79857257d06642a98403"
       },
       "src/secret.rs": {
@@ -66,7 +66,7 @@
       }
     },
     "path": "vendor/secp256k1.patch",
-    "sha256": "4847d28b2838d4e2008b3b2e55b7de4252ef7d6dd38130a14f342c06328a6a99"
+    "sha256": "aaa1f2b76f022e1c825c40c3f2523c26dcc073af4d1c32e241e993222df0c872"
   },
   "version": "0.29.1"
 }

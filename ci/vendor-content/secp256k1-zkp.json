@@ -18,7 +18,7 @@
     "src/zkp/rangeproof.rs": "454cc33121cc11c0342b9b15893a2768ebcbbba995144bbb28cff0607dfe0f3d",
     "src/zkp/surjection_proof.rs": "27b5f3aa92465eefc5ae65b5ccb3e439685f9ebe32a624c7bb2973ec2ae06538",
     "src/zkp/tag.rs": "326c7eb575c5576c8b0f3a9eea7b2b61efe4ad5fe4f2710073cf24f7e68ed368",
-    "src/zkp/whitelist.rs": "0d90ddd7e379c9b2bd4762f527e07d555623e563b2df4906bfe0f8a0bc689b47"
+    "src/zkp/whitelist.rs": "1137cebdf3a87bc77788aa80aba871d2d5fe294510e9609f3c606d4dd9fbb890"
   },
   "name": "secp256k1-zkp",
   "patch": {
@@ -38,10 +38,14 @@
       "src/zkp/surjection_proof.rs": {
         "patched": "27b5f3aa92465eefc5ae65b5ccb3e439685f9ebe32a624c7bb2973ec2ae06538",
         "upstream": "927cf9dc5690a86ce8aea78f331112f1e4060da660690b909d6d141cfbcc7b1c"
+      },
+      "src/zkp/whitelist.rs": {
+        "patched": "1137cebdf3a87bc77788aa80aba871d2d5fe294510e9609f3c606d4dd9fbb890",
+        "upstream": "0d90ddd7e379c9b2bd4762f527e07d555623e563b2df4906bfe0f8a0bc689b47"
       }
     },
     "path": "vendor/secp256k1-zkp.patch",
-    "sha256": "74611b1a831625c8cecd9857d8351513382f794b71fb562e62fa28e120de7008"
+    "sha256": "58c6043539792c2586122e4be6bb8a2b058c58c15f0b3b163e838d4b3e9c4556"
   },
   "version": "0.11.2"
 }

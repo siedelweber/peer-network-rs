@@ -19,7 +19,7 @@
     "src/array_vec.rs": "6457b5d9bcd9945e5e5386dcd3a731a85d814a1daffb0a07ee38c028312ffb02",
     "src/bip152.rs": "120053ba00c392da770379753ff83c457e8925e74b495471f711f02a844b02e6",
     "src/bip158.rs": "dc6e46648b35e7b44cdc16c4cf917a844bb88ab076e4731e430698f47dc4ae1f",
-    "src/bip32.rs": "924c7add0c7b29f120959d79f90d24ba8ea21ec2b70d3ffefe6c08b2fb59e62e",
+    "src/bip32.rs": "87fe1ed7a001ab5458b034fd2f2812e692f6dc42a4bb351995b6f67dc5d75f81",
     "src/blockdata/block.rs": "6901e1ac06adfebadddb6dc842c0fabe585832411e2c023caf7b85c3aaf67ac0",
     "src/blockdata/constants.rs": "2896e3e9b54d0465bad94cc5832ef29c2fd3af51e8739a8ef1394528ced8f63e",
     "src/blockdata/locktime/absolute.rs": "0bc3e654ec43f45c1d9d2e99e4ccd81ccedc3eb110160d7154a072454d910029",
@@ -45,7 +45,7 @@
     "src/consensus/validation.rs": "9279d104dcdea50ca32b1599864a2ecd885fd0d15b02a446d31696de1449e0b2",
     "src/const_tools.rs": "1379c6a62679dc3c62978736e34bc6ae7bf03a745dacad7c8743a8c6343a7142",
     "src/crypto/ecdsa.rs": "a6b8f0eedf3bea0279a8f14b9f397288c67a507ecd5a9081e380a27ce3ae93d0",
-    "src/crypto/key.rs": "31394725bbd357772690d76ebe1b92055e37af0e885874ebc770519e40fe1a6d",
+    "src/crypto/key.rs": "5c3d1aff8adadc8d727088bafef60ca59810c9ef9594305e2a7fc571582ba057",
     "src/crypto/mod.rs": "49b9ad7d99c9ed4f346d12f8d59c4394de7e603253c5a8a3781b7e255cf50fc9",
     "src/crypto/sighash.rs": "19f963fb474f1653bb863b316e567c046adfd3d7d87639522898f78a6d1a518b",
     "src/crypto/taproot.rs": "d22969ce715f6419fa63ce10209ba9451c820fccb7ef86345a5ebd91dc59bf88",
@@ -89,11 +89,11 @@
   "patch": {
     "members": {
       "src/bip32.rs": {
-        "patched": "924c7add0c7b29f120959d79f90d24ba8ea21ec2b70d3ffefe6c08b2fb59e62e",
+        "patched": "87fe1ed7a001ab5458b034fd2f2812e692f6dc42a4bb351995b6f67dc5d75f81",
         "upstream": "a6ecd3d1eb92237625f94db9bc502c53cd2af1fbb70af15e90d56b7f40a93900"
       },
       "src/crypto/key.rs": {
-        "patched": "31394725bbd357772690d76ebe1b92055e37af0e885874ebc770519e40fe1a6d",
+        "patched": "5c3d1aff8adadc8d727088bafef60ca59810c9ef9594305e2a7fc571582ba057",
         "upstream": "fd5747fc9b1eb85f74de9342a44d1666a9b0b2033704f84666c12693f89a5861"
       },
       "src/psbt/mod.rs": {
@@ -102,7 +102,7 @@
       }
     },
     "path": "vendor/bitcoin.patch",
-    "sha256": "a58ea1784c6af25f74c1310292667871c3bd58c0dcb9d9cfed8476ca9ef312d7"
+    "sha256": "61ec2e299a8b596e0740e97cab9f567ea4773e7f1b2bc7a226aa8ccbcd64514d"
   },
   "version": "0.32.102"
 }

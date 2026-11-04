@@ -606,6 +606,13 @@ mod owned {
     struct CopyPresent;
     impl<T: Copy> AmbiguousIfCopy<CopyPresent> for T {}
 
+    trait AmbiguousIfDisplay<A> {
+        fn check() {}
+    }
+    impl<T: ?Sized> AmbiguousIfDisplay<()> for T {}
+    struct DisplayPresent;
+    impl<T: core::fmt::Display> AmbiguousIfDisplay<DisplayPresent> for T {}
+
     // An inherent display helper would take precedence and return its secret-display
     // carrier, so the unit-typed calls below would no longer compile.
     trait RemovedDisplay {
@@ -615,7 +622,7 @@ mod owned {
     impl RemovedDisplay for secp::Keypair {}
     impl RemovedDisplay for secp::ecdh::SharedSecret {}
 
-    /// Claim: The patched key, shared-secret and blinding carriers checked here do not implement Copy, their Debug output is the same constant for two distinct inputs, and the three former binding `display_secret` methods no longer override the unit-returning test trait. This does not establish erasure of compiler temporaries or forbid explicit byte export or explicit owned Clone.
+    /// Claim: The patched key, shared-secret and blinding carriers checked here do not implement Copy or Display, their Debug output is the same constant for two distinct inputs, and the three former binding `display_secret` methods no longer override the unit-returning test trait. This does not establish erasure of compiler temporaries or forbid explicit byte export or explicit owned Clone.
     /// ´claim:wallet:owned-secrets-refuse-implicit-copy-and-fingerprints´
     /// ´test:unit:owned-secrets´
     #[test]
@@ -631,6 +638,17 @@ mod owned {
         let _ = <bitcoin::bip32::Xpriv as AmbiguousIfCopy<_>>::check;
         let _ = <bitcoin::key::TweakedKeypair as AmbiguousIfCopy<_>>::check;
         let _ = <elements::schnorr::TweakedKeypair as AmbiguousIfCopy<_>>::check;
+        let _ = <secp::SecretKey as AmbiguousIfDisplay<_>>::check;
+        let _ = <secp::Keypair as AmbiguousIfDisplay<_>>::check;
+        let _ = <secp::ecdh::SharedSecret as AmbiguousIfDisplay<_>>::check;
+        let _ = <secp::ellswift::ElligatorSwiftSharedSecret as AmbiguousIfDisplay<_>>::check;
+        let _ = <secp::SecretTweak as AmbiguousIfDisplay<_>>::check;
+        let _ = <elements::confidential::AssetBlindingFactor as AmbiguousIfDisplay<_>>::check;
+        let _ = <elements::confidential::ValueBlindingFactor as AmbiguousIfDisplay<_>>::check;
+        let _ = <bitcoin::PrivateKey as AmbiguousIfDisplay<_>>::check;
+        let _ = <bitcoin::bip32::Xpriv as AmbiguousIfDisplay<_>>::check;
+        let _ = <bitcoin::key::TweakedKeypair as AmbiguousIfDisplay<_>>::check;
+        let _ = <elements::schnorr::TweakedKeypair as AmbiguousIfDisplay<_>>::check;
         let context = secp::Secp256k1::new();
         for byte in [1, 2] {
             let key = secp::SecretKey::from_slice(&[byte; 32]).unwrap();

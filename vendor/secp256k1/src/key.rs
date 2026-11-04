@@ -281,12 +281,23 @@ impl SecretKey {
     ///
     /// Returns an error if the resulting key would be invalid.
     #[inline]
-    pub fn add_tweak(mut self, tweak: &Scalar) -> Result<SecretKey, Error> {
+    pub fn add_tweak(self, tweak: &Scalar) -> Result<SecretKey, Error> {
+        self.add_tweak_bytes(tweak.as_be_bytes())
+    }
+
+    /// Adds an owned secret tweak without converting it to the public Scalar carrier.
+    ///
+    /// Returns an error if the resulting key would be invalid.
+    pub fn add_secret_tweak(self, tweak: &SecretKey) -> Result<SecretKey, Error> {
+        self.add_tweak_bytes(&tweak.0)
+    }
+
+    fn add_tweak_bytes(mut self, tweak: &[u8; 32]) -> Result<SecretKey, Error> {
         unsafe {
             if ffi::secp256k1_ec_seckey_tweak_add(
                 ffi::secp256k1_context_no_precomp,
                 self.as_mut_c_ptr(),
-                tweak.as_c_ptr(),
+                tweak.as_ptr(),
             ) != 1
             {
                 Err(Error::InvalidTweak)

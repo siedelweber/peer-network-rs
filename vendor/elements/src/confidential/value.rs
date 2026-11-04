@@ -291,7 +291,7 @@ impl AddAssign for BlindingFactor {
             // The only reason that secret key addition can fail
             // is when the keys add up to zero since we have already checked
             // keys are in valid secret keys
-            match sk.add_tweak(&sk2.into()) {
+            match sk.add_secret_tweak(&sk2) {
                 Ok(sk_tweaked) =>
                     *self = Self::from_slice(sk_tweaked.as_ref()).expect("Valid Tweak"),
                 Err(_) => *self = Self::zero(),
@@ -327,10 +327,26 @@ impl str::FromStr for BlindingFactor {
     type Err = encode::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut slice: [u8; 32] = hex::decode_to_array(s)?;
-        slice.reverse();
+        struct ParseBytes([u8; 32]);
+        impl Drop for ParseBytes {
+            fn drop(&mut self) {
+                secp256k1_zkp::ffi::non_secure_erase_impl(&mut self.0, [0; 32]);
+            }
+        }
+        if s.len() != 64 {
+            // Preserve the upstream fixed-length error without decoding a partial secret.
+            hex::decode_to_array::<32>(s)?;
+            unreachable!("a wrong-length string cannot decode to a fixed array");
+        }
+        let mut slice = ParseBytes([0; 32]);
+        for (slot, byte) in slice.0.iter_mut().zip(
+            hex::HexSliceToBytesIter::new(s).expect("the checked length is even"),
+        ) {
+            *slot = byte.map_err(hex::DecodeFixedLengthBytesError::from)?;
+        }
+        slice.0.reverse();
 
-        let inner = Tweak::from_inner(slice)?;
+        let inner = Tweak::from_slice(&slice.0)?;
         Ok(Self(inner))
     }
 }

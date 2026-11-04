@@ -21,3 +21,11 @@ path = "fuzz_targets/decode_layout.rs"
 test = false
 doc = false
 bench = false
+
+[patch.crates-io]
+bitcoin = { path = "../../../vendor/bitcoin" }
+elements = { path = "../../../vendor/elements" }
+secp256k1 = { path = "../../../vendor/secp256k1" }
+secp256k1-zkp = { path = "../../../vendor/secp256k1-zkp" }
+secp256k1-sys = { path = "../../../vendor/secp256k1-sys" }
+secp256k1-zkp-sys = { path = "../../../vendor/secp256k1-zkp-sys" }

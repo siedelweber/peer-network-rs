@@ -6,7 +6,7 @@
 //! (de)serialized.
 
 use core::convert::Infallible;
-use core::fmt::{self, Write as _};
+use core::fmt;
 use core::ops;
 use core::str::FromStr;
 
@@ -471,14 +471,15 @@ impl PrivateKey {
     /// Get WIF encoding of this private key.
     pub fn to_wif(self) -> String {
         let mut buf = String::new();
-        buf.write_fmt(format_args!("{}", self)).unwrap();
+        self.fmt_wif(&mut buf).unwrap();
         buf.shrink_to_fit();
         buf
     }
 
     /// Parse WIF encoded private key.
     pub fn from_wif(wif: &str) -> Result<PrivateKey, FromWifError> {
-        let data = base58::decode_check(wif)?;
+        let decoded = SecretBytes(base58::decode_check(wif)?);
+        let data = &decoded.0;
 
         let compressed = match data.len() {
             33 => false,
@@ -518,8 +519,15 @@ impl PrivateKey {
     }
 }
 
-impl fmt::Display for PrivateKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { self.fmt_wif(f) }
+// A parse buffer owns and erases every decoded byte on success and error returns.
+pub(crate) struct SecretBytes<T: AsMut<[u8]>>(pub(crate) T);
+
+impl<T: AsMut<[u8]>> Drop for SecretBytes<T> {
+    fn drop(&mut self) {
+        for byte in self.0.as_mut() {
+            secp256k1::ffi::non_secure_erase_impl(byte, 0);
+        }
+    }
 }
 
 impl FromStr for PrivateKey {

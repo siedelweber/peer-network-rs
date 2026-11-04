@@ -349,6 +349,37 @@
      }
  }
  
+@@ -265,10 +264,26 @@
+     type Err = encode::Error;
+ 
+     fn from_str(s: &str) -> Result<Self, Self::Err> {
+-        let mut slice: [u8; 32] = hex::decode_to_array(s)?;
+-        slice.reverse();
+-
+-        let inner = Tweak::from_inner(slice)?;
++        struct ParseBytes([u8; 32]);
++        impl Drop for ParseBytes {
++            fn drop(&mut self) {
++                secp256k1_zkp::ffi::non_secure_erase_impl(&mut self.0, [0; 32]);
++            }
++        }
++        if s.len() != 64 {
++            // Preserve the upstream fixed-length error without decoding a partial secret.
++            hex::decode_to_array::<32>(s)?;
++            unreachable!("a wrong-length string cannot decode to a fixed array");
++        }
++        let mut slice = ParseBytes([0; 32]);
++        for (slot, byte) in slice.0.iter_mut().zip(
++            hex::HexSliceToBytesIter::new(s).expect("the checked length is even"),
++        ) {
++            *slot = byte.map_err(hex::DecodeFixedLengthBytesError::from)?;
++        }
++        slice.0.reverse();
++
++        let inner = Tweak::from_slice(&slice.0)?;
+         Ok(Self(inner))
+     }
+ }
 --- a/src/confidential/nonce.rs
 +++ b/src/confidential/nonce.rs
 @@ -46,14 +46,14 @@
@@ -489,7 +520,7 @@
  }
  
  impl AddAssign for BlindingFactor {
-@@ -286,7 +286,7 @@
+@@ -286,12 +286,12 @@
              // Since libsecp does not expose low level APIs
              // for scalar arethematic, we need to abuse secret key
              // operations for this
@@ -498,6 +529,12 @@
              let sk = SecretKey::from_slice(other.into_inner().as_ref()).expect("Valid key");
              // The only reason that secret key addition can fail
              // is when the keys add up to zero since we have already checked
+             // keys are in valid secret keys
+-            match sk.add_tweak(&sk2.into()) {
++            match sk.add_secret_tweak(&sk2) {
+                 Ok(sk_tweaked) =>
+                     *self = Self::from_slice(sk_tweaked.as_ref()).expect("Valid Tweak"),
+                 Err(_) => *self = Self::zero(),
 @@ -307,7 +307,7 @@
          if self.0.as_ref() == &[0u8; 32] {
              self
@@ -521,6 +558,37 @@
      }
  }
  
+@@ -328,10 +327,26 @@
+     type Err = encode::Error;
+ 
+     fn from_str(s: &str) -> Result<Self, Self::Err> {
+-        let mut slice: [u8; 32] = hex::decode_to_array(s)?;
+-        slice.reverse();
+-
+-        let inner = Tweak::from_inner(slice)?;
++        struct ParseBytes([u8; 32]);
++        impl Drop for ParseBytes {
++            fn drop(&mut self) {
++                secp256k1_zkp::ffi::non_secure_erase_impl(&mut self.0, [0; 32]);
++            }
++        }
++        if s.len() != 64 {
++            // Preserve the upstream fixed-length error without decoding a partial secret.
++            hex::decode_to_array::<32>(s)?;
++            unreachable!("a wrong-length string cannot decode to a fixed array");
++        }
++        let mut slice = ParseBytes([0; 32]);
++        for (slot, byte) in slice.0.iter_mut().zip(
++            hex::HexSliceToBytesIter::new(s).expect("the checked length is even"),
++        ) {
++            *slot = byte.map_err(hex::DecodeFixedLengthBytesError::from)?;
++        }
++        slice.0.reverse();
++
++        let inner = Tweak::from_slice(&slice.0)?;
+         Ok(Self(inner))
+     }
+ }
 --- a/src/issuance.rs
 +++ b/src/issuance.rs
 @@ -158,7 +158,7 @@

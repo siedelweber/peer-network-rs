@@ -30,12 +30,12 @@
     "src/blech32/mod.rs": "97d7eac8f0f95cbad283590cb08782b17e296824b6f8e7c3bd6bb238064e6a2a",
     "src/blind.rs": "b18d845433b8e955e4a88057ae27d8998b3143b5d9d79e961cda77782b5a10ab",
     "src/block.rs": "8bd0150df7ca95e15908a4658faeddb23b40880d967989ff25664cf1dbdce866",
-    "src/confidential/asset.rs": "69d4f0ca9054e46a8ccdfdda8dbddb280617d241c0665084c5cbad9b7d562464",
+    "src/confidential/asset.rs": "4b594bf14f278ec50c6a2d84d32108abd5845350c4faa2a40c9a5b4c67a0b8b2",
     "src/confidential/mod.rs": "b5cabaaa536aab963a9120320afbe4cab2ca9b2ea8f4b7e0b82b6982294ab601",
     "src/confidential/nonce.rs": "177e2b2a8e3c67657896fd35bb26b80e868c32071d3871d87df2e8e54b5f479d",
     "src/confidential/range_proof.rs": "eb4e3f9eb52053678c4f09293a44d439c35037e7cdb0472459c3b1fdc2751a0a",
     "src/confidential/surjection_proof.rs": "feb164bf67bc5719b2337e3b63a22b0e44cdc76e34606bb4ba7175a88b6c05b7",
-    "src/confidential/value.rs": "161d06d08076f10d5a7c606febdead8952dcb1a926fd9bd7a010503933269588",
+    "src/confidential/value.rs": "8503d03bf7e4ee8f50c07627cb0286ba6661ce721d7d14b42358d1d40068a549",
     "src/dynafed.rs": "85b1064fbde55d876efdb0adb52cfac281e319da7fbe28612ccff52a53390105",
     "src/encode.rs": "ba5f65de0df4bccb6356449ea1f8f3772aa84821994403e9e2c957c78e3b492e",
     "src/endian.rs": "166f8c683d252250070a0f48eb0e121dbb8e0746d617ec413ebeb4c042e02588",
@@ -95,7 +95,7 @@
         "upstream": "09c1811a0ba65e642f6fe8e49becc3e81f092fd6e1823d3a1f46cba3af3d5dc2"
       },
       "src/confidential/asset.rs": {
-        "patched": "69d4f0ca9054e46a8ccdfdda8dbddb280617d241c0665084c5cbad9b7d562464",
+        "patched": "4b594bf14f278ec50c6a2d84d32108abd5845350c4faa2a40c9a5b4c67a0b8b2",
         "upstream": "a0fb8312ce55f336d9d794e517d1facd332103b3a3e6fb896b2c87dd129a9dd1"
       },
       "src/confidential/nonce.rs": {
@@ -111,7 +111,7 @@
         "upstream": "3729da15937e27accf1d55bfa544466b8e30e3182cf79e9b14b097caedd85dd8"
       },
       "src/confidential/value.rs": {
-        "patched": "161d06d08076f10d5a7c606febdead8952dcb1a926fd9bd7a010503933269588",
+        "patched": "8503d03bf7e4ee8f50c07627cb0286ba6661ce721d7d14b42358d1d40068a549",
         "upstream": "9f039334cbd40fd153d646d4997db67a142a06182d061d769beaa126fc54fa48"
       },
       "src/issuance.rs": {
@@ -132,7 +132,7 @@
       }
     },
     "path": "vendor/elements.patch",
-    "sha256": "e560a12279a844219d23009f0a37587d949d37275669a6096eeed7ce4089f747"
+    "sha256": "1faebce66b67d96f608c3cdd62b99cb256a7814a211d66aa6f76b64704259bec"
   },
   "version": "0.27.0"
 }

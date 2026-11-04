@@ -59,12 +59,46 @@
              .expect("statistically impossible to hit");
          let tweaked =
 -            sk.add_tweak(&self.private_key.into()).expect("statistically impossible to hit");
-+            sk.add_tweak(&self.private_key.clone().into()).expect("statistically impossible to hit");
++            sk.add_secret_tweak(&self.private_key).expect("statistically impossible to hit");
  
          Ok(Xpriv {
              network: self.network,
+@@ -844,9 +839,11 @@
+     }
+ }
+ 
+-impl fmt::Display for Xpriv {
+-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+-        base58::encode_check_to_fmt(fmt, &self.encode()[..])
++impl Xpriv {
++    /// Explicitly exports this extended private key as a base58 string.
++    pub fn to_base58(&self) -> String {
++        let encoded = crate::crypto::key::SecretBytes(self.encode());
++        base58::encode_check(&encoded.0)
+     }
+ }
+ 
+@@ -854,7 +851,8 @@
+     type Err = Error;
+ 
+     fn from_str(inp: &str) -> Result<Xpriv, Error> {
+-        let data = base58::decode_check(inp)?;
++        let decoded = crate::crypto::key::SecretBytes(base58::decode_check(inp)?);
++        let data = &decoded.0;
+ 
+         if data.len() != 78 {
+             return Err(InvalidBase58PayloadLengthError { length: data.len() }.into());
 --- a/src/crypto/key.rs
 +++ b/src/crypto/key.rs
+@@ -6,7 +6,7 @@
+ //! (de)serialized.
+ 
+ use core::convert::Infallible;
+-use core::fmt::{self, Write as _};
++use core::fmt;
+ use core::ops;
+ use core::str::FromStr;
+ 
 @@ -394,7 +394,7 @@
  }
  
@@ -87,16 +121,53 @@
  }
  
  impl PrivateKey {
-@@ -507,7 +513,7 @@
+@@ -465,14 +471,15 @@
+     /// Get WIF encoding of this private key.
+     pub fn to_wif(self) -> String {
+         let mut buf = String::new();
+-        buf.write_fmt(format_args!("{}", self)).unwrap();
++        self.fmt_wif(&mut buf).unwrap();
+         buf.shrink_to_fit();
+         buf
+     }
+ 
+     /// Parse WIF encoded private key.
+     pub fn from_wif(wif: &str) -> Result<PrivateKey, FromWifError> {
+-        let data = base58::decode_check(wif)?;
++        let decoded = SecretBytes(base58::decode_check(wif)?);
++        let data = &decoded.0;
+ 
+         let compressed = match data.len() {
+             33 => false,
+@@ -507,13 +514,20 @@
          PrivateKey {
              compressed: self.compressed,
              network: self.network,
 -            inner: self.inner.negate(),
+-        }
+-    }
+-}
+-
+-impl fmt::Display for PrivateKey {
+-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { self.fmt_wif(f) }
 +            inner: self.inner.clone().negate(),
-         }
-     }
++        }
++    }
++}
++
++// A parse buffer owns and erases every decoded byte on success and error returns.
++pub(crate) struct SecretBytes<T: AsMut<[u8]>>(pub(crate) T);
++
++impl<T: AsMut<[u8]>> Drop for SecretBytes<T> {
++    fn drop(&mut self) {
++        for byte in self.0.as_mut() {
++            secp256k1::ffi::non_secure_erase_impl(byte, 0);
++        }
++    }
  }
-@@ -736,11 +742,17 @@
+ 
+ impl FromStr for PrivateKey {
+@@ -736,11 +750,17 @@
  /// let _pk = TweakedPublicKey::from(keypair);
  /// # }
  /// ```

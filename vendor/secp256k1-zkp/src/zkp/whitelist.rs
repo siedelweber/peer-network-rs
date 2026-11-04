@@ -237,8 +237,8 @@ mod tests {
         for our_idx in vec![0, n_keys / 2, n_keys - 1].into_iter() {
             // sign
 
-            let summed_key = keys_offline[our_idx]
-                .add_tweak(&whitelist_sk.into())
+            let summed_key = keys_offline[our_idx].clone()
+                .add_secret_tweak(&whitelist_sk)
                 .unwrap();
 
             let signature = WhitelistSignature::new(
@@ -301,8 +301,8 @@ mod tests {
         let (whitelist_sk, whitelist_pk) = SECP256K1.generate_keypair(&mut rng);
 
         let our_idx = 100;
-        let summed_key = keys_offline[our_idx]
-            .add_tweak(&whitelist_sk.into())
+        let summed_key = keys_offline[our_idx].clone()
+            .add_secret_tweak(&whitelist_sk)
             .unwrap();
 
         {
