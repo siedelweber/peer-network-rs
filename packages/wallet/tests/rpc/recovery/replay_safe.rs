@@ -2,8 +2,8 @@
 use super::{Identity, Node, configure, identity, node, rpc};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
-use std::sync::Mutex;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Barrier, Mutex};
 
 const METHODS: &str = "getwalletinfo,getnewaddress,getaddressinfo,listunspent,createrawtransaction,converttopsbt,walletprocesspsbt,finalizepsbt,decoderawtransaction,sendrawtransaction,getblockcount,getblockhash,getblock,getrawmempool,getrawtransaction,gettxout,help";
 type Coin = (String, u64);
@@ -167,6 +167,28 @@ fn broadcast(node: &Node, identity: &Identity, signed: &Value) -> Value {
     .1
 }
 
+fn overlapping_writers(node: &Node, identity: &Identity, notes: &Mutex<Notes>, stock: &Value, fee: &Value) {
+    // Both writers propose the same unused inputs before either is admitted.
+    // Admission, not preselected disjoint coins, must exclude the losing writer.
+    let barrier = Barrier::new(2);
+    let calls = SIGN_CALLS.load(Ordering::SeqCst);
+    let overlapping = std::thread::scope(|scope| {
+        let first = scope.spawn(|| {
+            barrier.wait();
+            attempt(node, identity, notes, 5, stock, fee, (1000, 1000))
+        });
+        let second = scope.spawn(|| {
+            barrier.wait();
+            attempt(node, identity, notes, 6, stock, fee, (2000, 2000))
+        });
+        [first.join().unwrap(), second.join().unwrap()]
+    });
+    assert_eq!(overlapping.iter().filter(|attempt| attempt.is_some()).count(), 1);
+    assert_eq!(SIGN_CALLS.load(Ordering::SeqCst), calls + 1);
+    let locked = notes.lock().unwrap();
+    assert_ne!(locked.contains_key(&5), locked.contains_key(&6));
+}
+
 fn recover(node: &Node, identity: &Identity, request: u8, scripts: &BTreeSet<String>) -> Vec<(String, u64)> {
     let tip = call(node, identity, "getblockcount", json!([])).as_u64().unwrap();
     let mut owned = BTreeSet::new();
@@ -326,6 +348,7 @@ fn descriptor_conflicts() {
     assert!(broadcast(&node, &identity, &prior).get("error").is_some());
     assert!(broadcast(&node, &identity, &prior_other).get("error").is_some());
     assert_eq!(recover(&node, &identity, 2, &scripts), Vec::<(String, u64)>::new());
+    overlapping_writers(&node, &identity, &notes, &stocks[7], &fees[7]);
     let (concurrent_first, concurrent_second) = std::thread::scope(|scope| {
         let concurrent_first = scope.spawn(|| attempt(&node, &identity, &notes, 3, &stocks[4], &fees[4], (1000, 1000)).unwrap());
         let concurrent_second = scope.spawn(|| attempt(&node, &identity, &notes, 4, &stocks[5], &fees[5], (2000, 1000)).unwrap());
