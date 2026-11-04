@@ -756,6 +756,12 @@ class SourceDiscipline(unittest.TestCase):
         ´claim:discipline:uncontrolled-output-is-refused´
         ´test:integration:test-printing´
         """
+        self.assertFalse(source_findings(Path('src/lib.rs'), 'fn exit(&self, id: Id) {}', 'printing'))
+        self.assertFalse(source_findings(Path('src/lib.rs'), 'fn\n exit(&self, id: Id) {}', 'printing'))
+        for body in ('exit(1);', 'std::process::exit(1);', 'process::exit(1);',
+                     'use std::process::exit;', 'println!("x");'):
+            with self.subTest(body=body):
+                self.assertTrue(source_findings(Path('src/lib.rs'), f'fn exit(&self, id: Id) {{ {body} }}', 'printing'))
         for stream in ('stdout', 'stderr'):
             for sink in ('Stdio::piped()', 'std::process::Stdio::null()',
                          'std::fs::File::create("capture").unwrap()', 'File::open("input")?'):

@@ -229,7 +229,13 @@ def source_findings(path, source, mode, forced_test=False):
         pattern = r"\b(?:print|println|eprint|eprintln|dbg)\s*!|\b(?:exit|stdout|stderr|inherit)\s*(?:\(|\bas\b)|\b(?:process|io)\s*::\s*(?:exit|stdout|stderr)\b"
         imports = re.finditer(r"\buse\s+[^;]+;", code)
         forbidden_import = any(re.search(r"\b(?:exit|stdout|stderr|print|println|eprint|eprintln|dbg)\b|\b(?:process|io)\s*::\s*\*", item.group()) for item in imports)
-        return ["uncontrolled printing, stream handle or exit"] if forbidden_import or re.search(pattern, code) else []
+        # A method definition declares a name; it is not a process-exit call.
+        # Skip only that token, so calls and printing in its body still refuse.
+        forbidden_call = any(
+            not (match.group().startswith('exit') and re.search(r"\bfn\s+$", code[:match.start()]))
+            for match in re.finditer(pattern, code)
+        )
+        return ["uncontrolled printing, stream handle or exit"] if forbidden_import or forbidden_call else []
     findings = []
     test_ranges = test_item_ranges(code)
     for match in re.finditer(r"#\s*(!?)\s*\[([^]]*)\]", code, re.S):
