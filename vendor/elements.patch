@@ -9,7 +9,35 @@
  };
  use secp256k1_zkp::{Generator, Secp256k1, Signing};
  
-@@ -234,7 +234,7 @@
+@@ -31,6 +31,18 @@
+     confidential::{Asset, AssetBlindingFactor, Nonce, Value, ValueBlindingFactor},
+     Address, AssetId, Transaction, TxOut, TxOutWitness,
+ };
++
++// Own (or borrow) the initialized message bytes until every parsing path exits.
++// The existing binding primitive performs volatile writes and a compiler fence.
++struct EraseMessage<T: AsMut<[u8]>>(T);
++
++impl<T: AsMut<[u8]>> Drop for EraseMessage<T> {
++    fn drop(&mut self) {
++        for byte in self.0.as_mut() {
++            secp256k1_zkp::ffi::non_secure_erase_impl(byte, 0);
++        }
++    }
++}
+ 
+ /// Transaction Output related errors
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+@@ -205,7 +217,7 @@
+     use core::fmt;
+     use internals::array::ArrayExt;
+     use secp256k1_zkp::{Generator, Signing, Secp256k1};
+-    use super::{Asset, AssetId, AssetBlindingFactor};
++    use super::{Asset, AssetId, AssetBlindingFactor, EraseMessage};
+ 
+     /// The Rangeproof message
+     #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
+@@ -234,13 +246,23 @@
  
          /// Computes the commmitment of the rangeproof message.
          pub fn commitment<C: Signing>(&self, secp: &Secp256k1<C>) -> Generator {
@@ -18,7 +46,23 @@
          }
  
          /// Parses a message from bytes
-@@ -283,7 +283,7 @@
+         pub fn from_byte_array<C: Signing>(
+             secp: &Secp256k1<C>,
+             inner: [u8; 64],
++            expected_asset: &Asset,
++        ) -> Result<Self, RangeProofMessageError> {
++            let inner = EraseMessage(inner);
++            Self::from_bytes(secp, &inner.0, expected_asset)
++        }
++
++        // Unblinding already owns guarded bytes; do not copy its message again.
++        pub(super) fn from_bytes<C: Signing>(
++            secp: &Secp256k1<C>,
++            inner: &[u8; 64],
+             expected_asset: &Asset,
+         ) -> Result<Self, RangeProofMessageError> {
+             let (asset_id, asset_bf) = inner.split_array::<32, 32>();
+@@ -283,7 +305,7 @@
          pub fn to_byte_array(&self) -> [u8; 64] {
              let mut message = [0u8; 64];
              message[..32].copy_from_slice(self.asset_id.into_tag().as_ref());
@@ -27,7 +71,7 @@
              message
          }
      }
-@@ -313,8 +313,8 @@
+@@ -313,8 +335,8 @@
                  Self::ExplicitAssetMismatch { in_txout, in_message } => {
                      write!(f, "txout had explicit asset ID {in_txout}, but rangeproof encoded asset ID {in_message}")
                  }
@@ -38,7 +82,7 @@
                  }
                  Self::ConfidentialAssetMismatch { in_txout, in_message } => {
                      write!(f, "txout had asset commitment {in_txout}, but rangeproof encoded asset commitment {in_message}")
-@@ -344,7 +344,7 @@
+@@ -344,7 +366,7 @@
      feature = "serde",
      derive(serde::Serialize, serde::Deserialize),
  )]
@@ -47,7 +91,7 @@
  pub struct TxOutSecrets {
      /// Asset
      pub asset: AssetId,
-@@ -377,16 +377,16 @@
+@@ -377,16 +399,16 @@
      /// Returns a tuple `(assetid, blind_factor, generator)` if the blinds are
      /// consistent with asset commitment
      /// Otherwise, returns an error
@@ -68,7 +112,7 @@
      }
  }
  
-@@ -397,7 +397,7 @@
+@@ -397,7 +419,7 @@
  ///
  /// Explicit assets can be provided as [`SurjectionInput::Unknown`]. There is no
  /// need to construct a `Known` variant with secrets
@@ -77,7 +121,7 @@
  pub enum SurjectionInput {
      /// Unknown inputs for whom we don't know the secrets(asset tags/blinding factors)
      Unknown(Asset),
-@@ -443,19 +443,19 @@
+@@ -443,19 +465,19 @@
      pub fn surjection_target<C: Signing>(
          &self,
          secp: &Secp256k1<C>,
@@ -101,7 +145,7 @@
                  Ok((gen, tag, bf))
              }
          }
-@@ -479,18 +479,18 @@
+@@ -479,18 +501,18 @@
      where
          R: RngCore + CryptoRng,
          C: Signing,
@@ -123,7 +167,7 @@
                      .into()
                      .surjection_target(secp)
                      .map_err(|e| ConfidentialTxOutError::TxOutError(i, e))
-@@ -516,7 +516,7 @@
+@@ -516,7 +538,7 @@
          secp: &Secp256k1<C>,
          vbf: ValueBlindingFactor,
          receiver_blinding_pk: secp256k1_zkp::PublicKey,
@@ -132,7 +176,7 @@
          spk: &Script,
          msg: &RangeProofMessage,
      ) -> Result<(Self, Nonce, RangeProof), ConfidentialTxOutError> {
-@@ -524,7 +524,7 @@
+@@ -524,7 +546,7 @@
              Nonce::with_ephemeral_sk(secp, ephemeral_sk, &receiver_blinding_pk);
  
          let (value_commit, rangeproof) =
@@ -141,7 +185,7 @@
          Ok((value_commit, nonce, rangeproof))
      }
  
-@@ -536,7 +536,7 @@
+@@ -536,7 +558,7 @@
          self,
          secp: &Secp256k1<C>,
          vbf: ValueBlindingFactor,
@@ -150,7 +194,7 @@
          spk: &Script,
          msg: &RangeProofMessage,
      ) -> Result<(Self, RangeProof), ConfidentialTxOutError> {
-@@ -544,7 +544,7 @@
+@@ -544,7 +566,7 @@
              .explicit()
              .ok_or(ConfidentialTxOutError::ExpectedExplicitValue)?;
          let out_asset_commitment = msg.commitment(secp);
@@ -159,7 +203,7 @@
  
          let rangeproof = RangeProof::new(
              secp,
-@@ -595,7 +595,7 @@
+@@ -595,7 +617,7 @@
      where
          R: RngCore + CryptoRng,
          C: Signing,
@@ -168,7 +212,7 @@
      {
          let spk = address.script_pubkey();
          let blinder = address
-@@ -603,7 +603,7 @@
+@@ -603,7 +625,7 @@
              .ok_or(ConfidentialTxOutError::NoBlindingKeyInAddress)?;
          let asset_bf = AssetBlindingFactor::new(rng);
          let value_bf = ValueBlindingFactor::new(rng);
@@ -177,7 +221,7 @@
          let ephemeral_sk = SecretKey::new(rng);
  
          let txout = Self::with_txout_secrets(
-@@ -611,7 +611,7 @@
+@@ -611,7 +633,7 @@
              secp,
              spk,
              blinder,
@@ -186,7 +230,7 @@
              out_secrets,
              spent_utxo_secrets,
          )?;
-@@ -633,18 +633,18 @@
+@@ -633,18 +655,18 @@
          secp: &Secp256k1<C>,
          spk: Script,
          receiver_blinding_pk: secp256k1_zkp::PublicKey,
@@ -208,7 +252,7 @@
  
          let msg = RangeProofMessage::new(
              out_secrets.asset,
-@@ -692,7 +692,7 @@
+@@ -692,7 +714,7 @@
      where
          R: RngCore + CryptoRng,
          C: Signing,
@@ -217,7 +261,7 @@
      {
          let (txout, abf, vbf, ephemeral_sk) = Self::new_not_last_confidential(
              rng,
-@@ -783,8 +783,8 @@
+@@ -783,8 +805,8 @@
              spk,
              blinder,
              asset,
@@ -228,7 +272,7 @@
              spent_utxo_secrets,
              output_secrets,
          )?;
-@@ -801,7 +801,7 @@
+@@ -801,7 +823,7 @@
          spk: Script,
          blinder: secp256k1_zkp::PublicKey,
          asset: AssetId,
@@ -237,7 +281,7 @@
          out_abf: AssetBlindingFactor,
          spent_utxo_secrets: &[TxOutSecrets],
          output_secrets: &[&TxOutSecrets],
-@@ -824,11 +824,11 @@
+@@ -824,11 +846,11 @@
          let out_vbf = ValueBlindingFactor::last(
              secp,
              value,
@@ -251,7 +295,7 @@
          let txout = TxOut::with_txout_secrets(
              rng,
              secp,
-@@ -867,7 +867,7 @@
+@@ -867,25 +889,26 @@
          let (opening, _) = rangeproof.rewind(
              secp,
              commitment,
@@ -260,7 +304,21 @@
              self.script_pubkey.as_bytes(),
              additional_generator,
          ).map_err(UnblindError::Rewind)?;
-@@ -885,7 +885,7 @@
+ 
++        let message_bytes = EraseMessage(opening.message);
+         let value = opening.value;
+         let value_bf = ValueBlindingFactor(opening.blinding_factor);
+-        let asset_and_bf = SliceExt::split_first_chunk::<64>(opening.message.as_ref())
++        let asset_and_bf = SliceExt::split_first_chunk::<64>(message_bytes.0.as_ref())
+             .ok_or(UnblindError::MissingRangeproof)?
+             .0;
+-        let message = RangeProofMessage::from_byte_array(
++        let message = RangeProofMessage::from_bytes(
+             secp,
+-            *asset_and_bf,
++            asset_and_bf,
+             &self.asset,
+         ).map_err(UnblindError::RangeProofMessage)?;
  
          Ok(TxOutSecrets {
              asset: *message.asset_id(),
@@ -269,7 +327,7 @@
              value,
              value_bf,
          })
-@@ -940,8 +940,8 @@
+@@ -940,8 +963,8 @@
          secp: &Secp256k1<C>,
          issue_vbf: ValueBlindingFactor,
          token_vbf: ValueBlindingFactor,
@@ -280,7 +338,7 @@
      ) -> Result<(), BlindError> {
          if !self.has_issuance() {
              return Err(BlindError::NoIssuanceToBlind);
-@@ -1001,7 +1001,7 @@
+@@ -1001,7 +1024,7 @@
          let token_vbf = ValueBlindingFactor::new(rng);
          let issue_sk = SecretKey::new(rng);
          let token_sk = SecretKey::new(rng);
@@ -289,7 +347,7 @@
          Ok((issue_vbf, issue_sk, token_vbf, token_sk))
      }
  }
-@@ -1248,7 +1248,7 @@
+@@ -1248,7 +1271,7 @@
                  )?;
  
                  let location = CtLocation { input_index: i, ty: CtLocationType::Input};

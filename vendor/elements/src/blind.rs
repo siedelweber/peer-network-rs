@@ -32,6 +32,18 @@ use crate::{
     Address, AssetId, Transaction, TxOut, TxOutWitness,
 };
 
+// Own (or borrow) the initialized message bytes until every parsing path exits.
+// The existing binding primitive performs volatile writes and a compiler fence.
+struct EraseMessage<T: AsMut<[u8]>>(T);
+
+impl<T: AsMut<[u8]>> Drop for EraseMessage<T> {
+    fn drop(&mut self) {
+        for byte in self.0.as_mut() {
+            secp256k1_zkp::ffi::non_secure_erase_impl(byte, 0);
+        }
+    }
+}
+
 /// Transaction Output related errors
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum TxOutError {
@@ -205,7 +217,7 @@ mod range_proof_message {
     use core::fmt;
     use internals::array::ArrayExt;
     use secp256k1_zkp::{Generator, Signing, Secp256k1};
-    use super::{Asset, AssetId, AssetBlindingFactor};
+    use super::{Asset, AssetId, AssetBlindingFactor, EraseMessage};
 
     /// The Rangeproof message
     #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -241,6 +253,16 @@ mod range_proof_message {
         pub fn from_byte_array<C: Signing>(
             secp: &Secp256k1<C>,
             inner: [u8; 64],
+            expected_asset: &Asset,
+        ) -> Result<Self, RangeProofMessageError> {
+            let inner = EraseMessage(inner);
+            Self::from_bytes(secp, &inner.0, expected_asset)
+        }
+
+        // Unblinding already owns guarded bytes; do not copy its message again.
+        pub(super) fn from_bytes<C: Signing>(
+            secp: &Secp256k1<C>,
+            inner: &[u8; 64],
             expected_asset: &Asset,
         ) -> Result<Self, RangeProofMessageError> {
             let (asset_id, asset_bf) = inner.split_array::<32, 32>();
@@ -872,14 +894,15 @@ impl TxOut {
             additional_generator,
         ).map_err(UnblindError::Rewind)?;
 
+        let message_bytes = EraseMessage(opening.message);
         let value = opening.value;
         let value_bf = ValueBlindingFactor(opening.blinding_factor);
-        let asset_and_bf = SliceExt::split_first_chunk::<64>(opening.message.as_ref())
+        let asset_and_bf = SliceExt::split_first_chunk::<64>(message_bytes.0.as_ref())
             .ok_or(UnblindError::MissingRangeproof)?
             .0;
-        let message = RangeProofMessage::from_byte_array(
+        let message = RangeProofMessage::from_bytes(
             secp,
-            *asset_and_bf,
+            asset_and_bf,
             &self.asset,
         ).map_err(UnblindError::RangeProofMessage)?;
 

@@ -28,7 +28,7 @@
     "src/address.rs": "0840f6dccf8876f088d01e3f939b1e6eaaecae82ff217daac9ca1f5e05846ee4",
     "src/blech32/decode.rs": "6a4bda64f56b17f66f3c0d6892f041c85f1e3d55b3810b2eade78b4d09b2c9ef",
     "src/blech32/mod.rs": "97d7eac8f0f95cbad283590cb08782b17e296824b6f8e7c3bd6bb238064e6a2a",
-    "src/blind.rs": "b18d845433b8e955e4a88057ae27d8998b3143b5d9d79e961cda77782b5a10ab",
+    "src/blind.rs": "02905bf412f4c98ac54c54b0a7e254d32869fb760ea1cfb21d3798278481f31f",
     "src/block.rs": "8bd0150df7ca95e15908a4658faeddb23b40880d967989ff25664cf1dbdce866",
     "src/confidential/asset.rs": "4b594bf14f278ec50c6a2d84d32108abd5845350c4faa2a40c9a5b4c67a0b8b2",
     "src/confidential/mod.rs": "b5cabaaa536aab963a9120320afbe4cab2ca9b2ea8f4b7e0b82b6982294ab601",
@@ -91,7 +91,7 @@
   "patch": {
     "members": {
       "src/blind.rs": {
-        "patched": "b18d845433b8e955e4a88057ae27d8998b3143b5d9d79e961cda77782b5a10ab",
+        "patched": "02905bf412f4c98ac54c54b0a7e254d32869fb760ea1cfb21d3798278481f31f",
         "upstream": "09c1811a0ba65e642f6fe8e49becc3e81f092fd6e1823d3a1f46cba3af3d5dc2"
       },
       "src/confidential/asset.rs": {
@@ -132,7 +132,7 @@
       }
     },
     "path": "vendor/elements.patch",
-    "sha256": "1faebce66b67d96f608c3cdd62b99cb256a7814a211d66aa6f76b64704259bec"
+    "sha256": "38fc5cea51fcb172de807941528a9f701bae35d998c0ecb9b0e4e5da8347831e"
   },
   "version": "0.27.0"
 }
