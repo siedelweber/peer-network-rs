@@ -12,7 +12,7 @@ gate_cgroup_root() {
     done < /proc/self/cgroup
 }
 gate_resource_sample() {
-    local destination=$1 root=$2 file value
+    local destination=$1 root=$2 proc=${3:-/proc} file value
     {
         printf 'epoch_seconds=%s\ncgroup=%s\n' "$EPOCHREALTIME" "$root"
         for file in cpu.stat cpu.pressure memory.pressure io.pressure memory.current memory.peak; do
@@ -24,5 +24,16 @@ gate_resource_sample() {
                 printf 'unavailable\n'
             fi
         done
+        for file in pressure/cpu pressure/memory pressure/io loadavg stat; do
+            printf '[proc/%s]\n' "$file"
+            if [[ -r "$proc/$file" ]]; then
+                value=$(<"$proc/$file")
+                printf '%s\n' "$value"
+            else
+                printf 'unavailable\n'
+            fi
+        done
+        printf '[clock-ticks]\n'
+        getconf CLK_TCK
     } > "$destination"
 }

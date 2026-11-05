@@ -1,4 +1,4 @@
-"""Cgroup v2 samples; counters use kernel units, absent readings stay unavailable."""
+"""Separate gate-cgroup and system-wide proc counters; absence is not zero."""
 import json
 from pathlib import Path
 import sys
@@ -13,18 +13,32 @@ def context(resource, owned=None):
     root=start.get('cgroup')
     if not root or root!=end.get('cgroup') or not any(v is not None for v in start['values'].values()) or not any(v is not None for v in end['values'].values()):
         return None,'unavailable'
-    return root,'gate' if owned==root else 'shared'
+    return root,'gate-cgroup'
 
 
 def compact(resource, owned=None):
     _,scope=context(resource,owned)
     start,end=resource['start']['values'],resource['end']['values']
-    samples=[[start.get(k),end.get(k),resource['node_load_deltas'].get(k)] for k in COUNTERS]
+    samples=[[start.get(k),end.get(k),resource['cgroup_deltas'].get(k)] for k in COUNTERS]
     averages=[[start.get(k),end.get(k)] for k in AVERAGES]
-    usage=resource['node_load_deltas'].get('cpu.stat.usage_usec')
+    usage=resource['cgroup_deltas'].get('cpu.stat.usage_usec')
     wall=resource.get('wall_seconds')
     cores='unavailable' if usage is None or wall is None or wall<=0 else f'{usage/1e6/wall:.3f}'
-    return 'scope='+scope+' interval_scope=gate node_cores='+cores+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
+    def encoded(value):
+        return json.dumps(value,separators=(',',':'))
+    return ('cgroup_scope='+scope+' interval_scope=gate cgroup_cores='+cores+
+            ' cgroup_samples='+encoded(samples)+' cgroup_psi_avg='+encoded(averages)+
+            ' cgroup_psi='+encoded(resource['cgroup_pressure_fraction'])+
+            ' node_scope='+resource['node_scope']+' node_source=proc-systemwide'+
+            ' node_cores='+seconds(resource['node_busy_cores'])+
+            ' node_psi='+encoded(resource['node_pressure_fraction'])+
+            ' node_samples='+encoded({k:[resource['start'].get('node_values',{}).get(k),resource['end'].get('node_values',{}).get(k),v] for k,v in sorted(resource['node_deltas'].items())})+
+            ' node_loadavg='+encoded([resource[side].get('node_loadavg') for side in ('start','end')]))
+
+
+def node_stall(resource):
+    """Legacy cgroup-only reports cannot supply system-wide load evidence."""
+    return resource.get('node_pressure_fraction',{}).get('cpu.some') if resource.get('node_scope')=='node-wide' else None
 
 
 def seconds(value):
@@ -54,7 +68,27 @@ def raw_sample(path):
         for name in ('memory.current','memory.peak'):
             value=''.join(files.get(name,[]))
             values[name]=int(value) if value.isdigit() else None
-        return dict(epoch_seconds=epoch,cgroup=root or None,values=values)
+        node={}
+        for resource in ('cpu','memory','io'):
+            for line in files.get('proc/pressure/'+resource,[]):
+                parts=line.split()
+                if parts and parts[0] in ('some','full'):
+                    for pair in parts[1:]:
+                        field,value=pair.split('=')
+                        node[f'{resource}.pressure.{parts[0]}.{field}']=int(value) if field=='total' else float(value)
+        boot=None
+        for line in files.get('proc/stat',[]):
+            parts=line.split()
+            if parts and parts[0]=='cpu':
+                # Guest ticks are already included in user and nice ticks.
+                for field,value in zip(('user','nice','system','idle','iowait','irq','softirq','steal'),parts[1:9]):
+                    node['cpu.ticks.'+field]=int(value)
+            elif parts and parts[0]=='btime': boot=int(parts[1])
+        load=files.get('proc/loadavg',[])
+        load=[float(value) for value in load[0].split()[:3]] if load and load[0]!='unavailable' else None
+        ticks=''.join(files.get('clock-ticks',[]))
+        return dict(epoch_seconds=epoch,cgroup=root or None,values=values,node_values=node,node_boot=boot,
+                    node_loadavg=load,clock_ticks=int(ticks) if ticks.isdigit() else None)
     except (OSError,ValueError,IndexError): return dict(epoch_seconds=None,cgroup=None,values={})
 
 
@@ -62,7 +96,18 @@ def joined(start,end,wall):
     keys=set(start['values'])|set(end['values'])
     delta={k:(end['values'].get(k)-start['values'][k] if start['cgroup'] and start['cgroup']==end['cgroup'] and start['values'].get(k) is not None and end['values'].get(k) is not None else None) for k in keys if '.avg' not in k}
     pressure={f'{r}.{kind}': (delta.get(f'{r}.pressure.{kind}.total')/1e6/wall if delta.get(f'{r}.pressure.{kind}.total') is not None and wall>0 else None) for r in ('cpu','memory','io') for kind in ('some','full')}
-    return dict(start=start,end=end,node_load_deltas=delta,node_pressure_fraction=pressure,wall_seconds=wall)
+    node_start,node_end=start.get('node_values',{}),end.get('node_values',{})
+    same_boot=start.get('node_boot') is not None and start.get('node_boot')==end.get('node_boot')
+    node_delta={k:(node_end[k]-node_start[k] if same_boot and k in node_start and k in node_end and node_end[k]>=node_start[k] else None)
+                for k in set(node_start)|set(node_end) if '.avg' not in k}
+    node_pressure={f'{r}.{kind}': (node_delta[f'{r}.pressure.{kind}.total']/1e6/wall if wall>0 and node_delta.get(f'{r}.pressure.{kind}.total') is not None else None)
+                  for r in ('cpu','memory','io') for kind in ('some','full')}
+    busy=[node_delta.get('cpu.ticks.'+field) for field in ('user','nice','system','irq','softirq','steal')]
+    ticks=start.get('clock_ticks')
+    cores=sum(busy)/ticks/wall if None not in busy and ticks and ticks==end.get('clock_ticks') and wall>0 else None
+    return dict(start=start,end=end,cgroup_scope=context(dict(start=start,end=end))[1],cgroup_deltas=delta,
+                cgroup_pressure_fraction=pressure,node_scope='node-wide' if node_pressure['cpu.some'] is not None else 'unavailable',
+                node_deltas=node_delta,node_pressure_fraction=node_pressure,node_busy_cores=cores,wall_seconds=wall)
 
 
 def cpu_from_log(lines):
@@ -88,7 +133,7 @@ def main():
     whole=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
     owned=os.environ.get('GATE_OWN_CGROUP')
     cgroup,scope=context(whole,owned)
-    print('RESOURCE-LEGEND cgroup='+str(cgroup or 'unavailable')+' scope='+scope+' shared=node-load-not-gate-CPU; gate=launcher-declared-GATE_OWN_CGROUP; own_user_s/own_sys_s=process-and-child CPU seconds; samples=[start,end,delta] ordered='+json.dumps(COUNTERS,separators=(',',':'))+'; psi_avg=[start,end] percent ordered='+json.dumps(AVERAGES,separators=(',',':'))+'; node_cores=delta-usage-microseconds/1000000/wall-seconds; psi=delta-stall-microseconds/1000000/wall-seconds; cpu.stat=microseconds/counts; memory=bytes; unavailable=null')
+    print('RESOURCE-LEGEND cgroup='+str(cgroup or 'unavailable')+' cgroup_scope='+scope+'; cgroup=gate-container-not-node; node_source=/proc/pressure,/proc/stat,/proc/loadavg; node_scope='+whole['node_scope']+'; own_user_s/own_sys_s=process-and-child CPU seconds; cgroup_samples=[start,end,delta] ordered='+json.dumps(COUNTERS,separators=(',',':'))+'; cgroup_psi_avg=[start,end] percent ordered='+json.dumps(AVERAGES,separators=(',',':'))+'; cgroup_cores=delta-usage-microseconds/1000000/wall-seconds; node_samples=counter-to-[start,end,delta]-mapping; node_cores=delta-busy-ticks/CLK_TCK/wall-seconds; node_loadavg=[start,end]-one-five-fifteen-minute-averages; psi=delta-stall-microseconds/1000000/wall-seconds; cpu.stat=microseconds/counts; memory=bytes; unavailable=null')
     reports=[]
     for line in (root/'gate-steps.tsv').read_text().splitlines():
         name,status,started,ended=line.split('\t'); wall=float(ended)-float(started)

@@ -313,7 +313,7 @@ wait
             lane = root/'.lane'
             lane.mkdir()
             for wall, expected, cold, old_cold, old_stall in ((1, False, False, False, .2), (1, False, False, True, .2), (2, False, True, False, .2), (3, True, True, False, .2), (3, True, False, False, .2), (3, True, False, False, .9)):
-                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
+                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
@@ -326,7 +326,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -387,7 +387,7 @@ wait
             lane = root/'.lane'
             lane.mkdir()
             measured = dict(step='gate', wall_seconds=1.2, own_user_s=1, own_sys_s=.1,
-                            node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
+                            node_scope='node-wide', node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
             (lane/'gate-resources.json').write_text(json.dumps([measured]))
             figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
                            baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
@@ -563,11 +563,20 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed = baseline_context(root, registry)
                 self.assertIsNone(old)
-                candidate = dict(path=str(path), source='ancestor', tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)
+                candidate = dict(path=str(path), source='ancestor', tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
                 quiet_bytes = path.read_bytes()
+                from build_graph import quiet_baseline
+                import copy
+                for scope in (None, 'gate-cgroup', 'shared'):
+                    wrong=copy.deepcopy(candidate)
+                    wrong['whole']['node_scope']=scope
+                    self.assertFalse(quiet_baseline(wrong), 'own pressure cannot establish node quiet')
+                    wrong=copy.deepcopy(candidate)
+                    wrong['tiers']={'fast':{'resources':{'node_scope':scope,'node_pressure_fraction':{'cpu.some':0}}}}
+                    self.assertFalse(quiet_baseline(wrong), 'every tier needs node evidence')
                 candidate['whole']['stall'] = .101
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
@@ -578,7 +587,7 @@ wait
                 retain_baseline(root)
                 self.assertFalse(new_path.exists())
                 candidate['whole']['stall'] = .1
-                candidate['tiers'] = {'fast':{'resources':{'node_pressure_fraction':{'cpu.some':.101}}}}
+                candidate['tiers'] = {'fast':{'resources':{'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.101}}}}
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(new_path.exists(), 'a quiet whole cannot hide a loaded tier')
@@ -624,7 +633,7 @@ wait
             (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
                 path, _, _ = baseline_context(root, registry)
-                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)))
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                 retain_baseline(root)
                 _, retained, changed = baseline_context(root, registry)
                 self.assertEqual(retained['source'], original)
@@ -636,7 +645,7 @@ wait
                 other = git('-c', 'commit.gpgsign=false', 'commit-tree', other_tree, '-p', imported, input='unimported candidate\n')
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
                     other_path, _, _ = baseline_context(root, registry)
-                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)))
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                     retain_baseline(root)
                 self.assertNotEqual(path, other_path)
                 self.assertTrue(path.exists())
@@ -647,7 +656,7 @@ wait
                 # A rejected loaded import points only to a quiet ancestor tree.
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
                     loaded = dict(path=str(other_path), source=other, tree=other_tree, tiers={},
-                                  whole={'stall':.101}, load_unresolved_pressure_percent=10,
+                                  whole={'node_scope':'node-wide','stall':.101}, load_unresolved_pressure_percent=10,
                                   previous_baseline_tree=tree)
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(loaded))
                     retain_baseline(root)

@@ -155,9 +155,9 @@ if python3 -B ci/gate_resources.py .lane "$gate_wall" > .lane/gate-resource-line
     python3 -B ci/build_graph.py resource-lines .lane/gate-resource-lines.log
 else
     while IFS=$'\t' read -r name status started ended; do
-        printf 'STEP=%s STATUS=%s WALL=unavailable own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$name" "$status"
+        printf 'STEP=%s STATUS=%s WALL=unavailable own_user_s=unavailable own_sys_s=unavailable cgroup_scope=unavailable node_scope=unavailable sampler=unavailable\n' "$name" "$status"
     done < .lane/gate-steps.tsv
-    printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$gate_wall"
+    printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable cgroup_scope=unavailable node_scope=unavailable sampler=unavailable\n' "$gate_wall"
 fi
 python3 -B ci/build_graph.py check-inputs || failed=1
 python3 -B ci/build_graph.py wall-summary "$failed" "$gate_started" "$gate_ended" || failed=1

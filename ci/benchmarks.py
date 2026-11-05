@@ -186,7 +186,7 @@ def measured_workloads(mode, directory):
                       variant=point['variant'], mode=mode, outcome='failed' if status else 'passed', returncode=status,
                       invocation_ms=elapsed, own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
                       start_load=load, end_load=list(os.getloadavg()),
-                      resource_scope="container cgroup; own CPU from waited process accounting; not other logins", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
+                      resource_scope="gate container cgroup; node-wide proc counters separately; own CPU from waited process accounting", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
         if not status:
             receipt, samples, estimates = checked_result(owned, point, run_id, mode)
             result.update(receipt=receipt, samples=samples, estimates=estimates)
@@ -244,7 +244,7 @@ def campaign(mode):
     resource_sample(directory/'end.resources')
     summary.update(artifact=str(directory), wall_s=wall, assessment='inconclusive',
                    reason='component measurement; no reviewed comparable baseline or capacity declaration',
-                   resource_scope="container cgroup; own CPU from waited process accounting; not other logins", resources=joined(raw_sample(directory/'start.resources'), raw_sample(directory/'end.resources'), wall))
+                   resource_scope="gate container cgroup; node-wide proc counters separately; own CPU from waited process accounting", resources=joined(raw_sample(directory/'start.resources'), raw_sample(directory/'end.resources'), wall))
     (directory/'summary.json').write_text(json.dumps(summary, indent=2, allow_nan=False)+'\n')
     return summary, status
 

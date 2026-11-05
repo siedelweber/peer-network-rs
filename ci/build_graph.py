@@ -706,9 +706,11 @@ def baseline_context(root, registry, policy=None):
 
 def quiet_baseline(candidate, policy=None):
     """Every measured interval must meet the existing unresolved-load policy."""
+    from gate_resources import node_stall
     limit = (policy or candidate)['load_unresolved_pressure_percent']/100
-    pressures = [candidate.get('whole', {}).get('stall')]
-    pressures.extend(row.get('resources', {}).get('node_pressure_fraction', {}).get('cpu.some')
+    whole = candidate.get('whole', {})
+    pressures = [whole.get('stall') if whole.get('node_scope') == 'node-wide' else None]
+    pressures.extend(node_stall(row.get('resources', {}))
                      for row in candidate['tiers'].values())
     return all(isinstance(value, (int, float)) and 0 <= value <= limit for value in pressures)
 
@@ -868,8 +870,9 @@ def tier_summary(root, registry, worker_statuses):
         if not comparable_cases and not omitted:
             comparable_cpu, comparable_old, comparable_cases, intersection = case_intersection(
                 cases, prior.get('selected_cases', []), case_costs[tier], prior.get('case_costs', {}), comparable_cpu, comparable_old)
-        stall = measurement.get('node_pressure_fraction', {}).get('cpu.some')
-        old_stall = prior.get('resources', {}).get('node_pressure_fraction', {}).get('cpu.some')
+        from gate_resources import node_stall
+        stall = node_stall(measurement)
+        old_stall = node_stall(prior.get('resources', {}))
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
             baseline_stall=old_stall, comparable_cases=comparable_cases, comparable_wall=comparable_wall)
@@ -941,7 +944,8 @@ def wall_summary(root, status, interval=None):
     growths = [row['compile_wall_growth_s'] for row in tiers.values() if row.get('compile_wall_growth_s') is not None]
     growth = sum(growths) if growths else None
     changed = sorted({path for row in tiers.values() for path in row['changed_build_inputs']})
-    stall = measured.get('node_pressure_fraction', {}).get('cpu.some')
+    from gate_resources import node_stall
+    stall = node_stall(measured)
     limit = budget['budget_ms']/1000
     excess = max(0.0, wall-limit)
     classification = overrun_class(excess > 0, current_cpu, prior_cpu, stall, current_build, prior_build, changed, policy,
@@ -951,7 +955,7 @@ def wall_summary(root, status, interval=None):
     fast = tiers.get('fast', {})
     result = dict(wall=wall, budget_s=limit, excess_s=excess, over_budget=excess > 0, classification=classification,
         status=status, own_user_s=measured['own_user_s'], own_sys_s=measured['own_sys_s'],
-        stall=stall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
+        stall=stall, node_scope=measured.get('node_scope', 'unavailable'), baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
         baseline_source=fast.get('baseline_source'), baseline_match=fast.get('baseline_match'),
         comparable_cpu_s=current_cpu, baseline_comparable_cpu_s=prior_cpu,
         comparable_build_cpu_s=current_build, baseline_comparable_build_cpu_s=prior_build,

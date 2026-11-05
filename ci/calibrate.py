@@ -162,7 +162,7 @@ def measure(directory, name, argv, env):
                    wall_s=end-start, load_start=load_start, load_end=os.getloadavg(),
                    own_user_s=cpu_end.ru_utime-cpu_start.ru_utime,
                    own_sys_s=cpu_end.ru_stime-cpu_start.ru_stime,
-                   cgroup_scope='shared-node', interval_scope='calibration-suite',
+                   cgroup_scope='gate-cgroup', load_scope='node-wide', interval_scope='calibration-suite',
                    resources=joined(before, after, end-start))
     path.with_suffix('.context.json').write_text(json.dumps(context, sort_keys=True)+'\n')
     print('CALIBRATION-SUITE '+json.dumps(context, sort_keys=True), flush=True)
