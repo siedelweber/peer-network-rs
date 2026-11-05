@@ -1,0 +1,83 @@
+namespace = "org.peer-network.workload.benchmarks"
+version = [1, 0, 0]
+
+[[rows]]
+kind = "policy"
+name = "structural-series"
+seed = 0
+recipe = "structural-workloads/v1"
+samples = 10
+warmup_ms = 100
+measurement_ms = 1000
+resamples = 1000
+sampling = "flat"
+profile = "gate"
+outcomes = ["passed", "failed", "refused", "unsupported", "incomplete"]
+scope = "Component curves only; no deployment workload or capacity is declared."
+numeric_display = { seed = { display = "exact", exact_digits = 32 }, samples = { display = "exact", exact_digits = 32 }, warmup_ms = { display = "exact", exact_digits = 32 }, measurement_ms = { display = "exact", exact_digits = 32 }, resamples = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "acts"
+grid = "B1"
+package = "pn-records"
+target = "workload-records"
+features = ["test-support"]
+implementation = "pn-records-rust"
+sizes = [16, 64, 256, 1024]
+variants = ["parallel", "mixed"]
+smoke_sizes = [8]
+smoke_variant = "parallel"
+suite = "records-workload-benchmarks"
+correctness_case = "pn-records::conformance::workload_construction"
+claim = "claim:acts:workload-construction-controls"
+unit = "complete acts"
+actors = 4
+recipe = "Distinct sequential identities over the same named cell, four alternating Actor names; mixed alternates binary and paired structural fixture families. No graph formation or authentication validity is claimed."
+timed = "validate_history, including returned owned output destruction"
+excluded = "raw construction and correctness checks"
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 }, actors = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "markers"
+grid = "B13"
+package = "pn-records"
+target = "workload-records"
+features = ["test-support"]
+implementation = "pn-records-rust"
+sizes = [1, 4, 16, 64]
+variants = ["list", "commitment"]
+unit = "markers including initial marker"
+recipe = "Seed-zero burn fixture; initial empty marker then repeated complete accepted singleton r0 and lineage r0,r1, with distinct sequential predecessor positions. Three retained burn records include one consistent alias. Fixture proof equality is not cryptography or chain finality."
+timed = "validate_marker_history followed by recognize_markers, including returned owned output destruction"
+excluded = "raw construction, burn and policy binding, correctness, per-iteration input clone"
+numeric_display = { sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "bytes"
+grid = "B14"
+package = "pn-interchange"
+target = "workload-transport"
+features = []
+implementation = "pn-interchange-rust"
+sizes = [256, 1024, 4096, 16384]
+variants = ["strict", "chunked"]
+smoke_sizes = [256]
+smoke_variant = "chunked"
+suite = "transport-workload-benchmarks"
+correctness_case = "pn-interchange::benchmark_correctness::transport_workload"
+claim = "claim:vectors:transport-workload-controls"
+unit = "payload bytes"
+chunk_bytes = 64
+payload_modulus = 251
+allocation_multiplier = 4
+work_multiplier = 16
+depth = 2
+nesting = 1
+recipe = "Payload index modulo payload_modulus; canonical byte string or indefinite string with an initial empty chunk and an empty chunk after each definite chunk. Input limit equals wire length; item limit equals payload length plus four. These are experiment limits, never production defaults."
+timed = "strict or transport decoding and owned output destruction; transport counters include the decoder's allocations"
+excluded = "payload and canonical/chunked encoding construction, correctness"
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 }, chunk_bytes = { display = "exact", exact_digits = 32 }, payload_modulus = { display = "exact", exact_digits = 32 }, allocation_multiplier = { display = "exact", exact_digits = 32 }, work_multiplier = { display = "exact", exact_digits = 32 }, depth = { display = "exact", exact_digits = 32 }, nesting = { display = "exact", exact_digits = 32 } }
+

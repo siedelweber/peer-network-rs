@@ -2,6 +2,51 @@
 pub mod pins;
 use pins::NumberId as N;
 
+#[path = "common/workload_inputs.rs"]
+mod workload_inputs;
+
+/// Claim: Structural workload grids retain their requested whole-act and marker counts through public validation, and duplicate acts and marker positions refuse before timing.
+/// ´claim:acts:workload-construction-controls´
+/// ´test:integration:workload-construction´
+#[test]
+fn workload_construction() {
+    for count in [8, 16, 64, 256, 1024] {
+        for mixed in [false, true] {
+            let (mut acts, names) = workload_inputs::history(count, mixed);
+            assert_eq!(pn_records::validate_history(&acts, &names).unwrap().acts().len(), count);
+            acts.push(acts[0].clone());
+            assert!(matches!(
+                pn_records::validate_history(&acts, &names),
+                Err(pn_records::ValidationError::DuplicateAct(_))
+            ));
+        }
+    }
+    for count in [1, 4, 16, 64] {
+        for commitment in [false, true] {
+            let mut case = workload_inputs::marker_case(count, commitment);
+            let policy = workload_inputs::marker_policy(&case);
+            let checked = pn_records::burn::validate_marker_history(
+                case.history.clone(),
+                &policy,
+                &pn_records::test_support::burn::FixtureVerifier,
+            )
+            .unwrap();
+            let recognized = pn_records::burn::recognize_markers(&checked);
+            assert_eq!(recognized.markers().len(), count);
+            assert!(recognized.first_refusal().is_none());
+            case.history.markers.push(case.history.markers[0].clone());
+            assert!(matches!(
+                pn_records::burn::validate_marker_history(
+                    case.history,
+                    &policy,
+                    &pn_records::test_support::burn::FixtureVerifier
+                ),
+                Err(pn_records::burn::BurnError::HistoryPosition)
+            ));
+        }
+    }
+}
+
 #[path = "common/checks.rs"]
 mod checks;
 

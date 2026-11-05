@@ -1748,6 +1748,7 @@ name = "pn-records"
 version = "0.1.0"
 dependencies = [
  "cli-common",
+ "criterion",
  "metrics",
  "nrz-accuracy",
  "nrz-cas",

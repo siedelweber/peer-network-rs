@@ -7,6 +7,9 @@ import json
 import os
 from pathlib import Path
 import platform
+import math
+import hashlib
+import resource
 import subprocess
 import sys
 import time
@@ -15,6 +18,142 @@ import uuid
 
 from devperf import StructuralError, budgets, report
 from harness import CONFIGURATION, load as load_registry
+from gate_resources import raw_sample, joined
+
+
+def workload_points(rows, mode):
+    """Expand only declared grids; names and coordinates are unique before any effects."""
+    points = []
+    for row in rows:
+        if row.get('kind') != 'grid':
+            continue
+        if row['package'] not in ('pn-records', 'pn-interchange') or row['target'] not in ('workload-records', 'workload-transport'):
+            raise StructuralError('unknown workload target')
+        for variant in row['variants']:
+            for size in row['sizes'] if mode != 'smoke' else row.get('smoke_sizes', []):
+                if mode == 'smoke' and variant != row.get('smoke_variant'):
+                    continue
+                if type(size) is not int or size <= 0:
+                    raise StructuralError('invalid workload size')
+                points.append({**row, 'size': size, 'variant': variant,
+                               'name': f"{row['name']}-{variant}-{size}"})
+    names = [row['name'] for row in points]
+    if not points or len(names) != len(set(names)):
+        raise StructuralError('missing or duplicate workload point')
+    return points
+
+
+def workload_declarations():
+    rows = tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+    if len({row['name'] for row in rows}) != len(rows):
+        raise StructuralError('duplicate workload carrier identity')
+    policies = [row for row in rows if row['kind'] == 'policy']
+    if len(policies) != 1 or tuple(policies[0][key] for key in ('samples', 'warmup_ms', 'measurement_ms', 'resamples', 'sampling', 'seed', 'profile')) != (10, 100, 1000, 1000, 'flat', 0, 'gate'):
+        raise StructuralError('workload sampling recipe differs')
+    for row in rows:
+        if row['kind'] not in ('policy', 'grid', 'campaign', 'point'):
+            raise StructuralError('unknown workload carrier kind')
+        if row['kind'] in ('campaign', 'point'):
+            if row['outcome'] not in policies[0]['outcomes'] or not isinstance(row.get('scope'), str):
+                raise StructuralError('invalid measured workload outcome')
+            for key in ('wall_s', 'own_cpu_s'):
+                if type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0:
+                    raise StructuralError('invalid measured workload '+key)
+            if row['kind'] == 'point' and row['outcome'] == 'passed':
+                if len(row.get('sample_times_ns', [])) != policies[0]['samples'] or len(row.get('sample_iterations', [])) != policies[0]['samples']:
+                    raise StructuralError('measured workload sample inventory differs')
+            if row['outcome'] != 'passed' and not row.get('reason'):
+                raise StructuralError('nonpassing workload lacks reason')
+    return rows
+
+
+def checked_result(directory, point, run_id, mode):
+    """A fresh invocation receipt binds correctness and Criterion output to one point."""
+    receipt_path = directory / 'receipt.json'
+    if not receipt_path.is_file():
+        raise StructuralError('missing workload correctness receipt')
+    receipt = json.loads(receipt_path.read_text())
+    expected = dict(name=point['name'], size=point['size'], variant=point['variant'], mode=mode, run=run_id)
+    if any(receipt.get(key) != value for key, value in expected.items()):
+        raise StructuralError('wrong or stale workload receipt')
+    if receipt.get('correctness') != 'passed':
+        raise StructuralError('workload correctness failed')
+    if mode == 'pilot':
+        return receipt, None, None
+    root = directory / 'criterion' / point['target'] / point['name'] / 'new'
+    if not all((root / name).is_file() for name in ('estimates.json', 'sample.json', 'benchmark.json')):
+        raise StructuralError('missing workload Criterion result')
+    identity = json.loads((root / 'benchmark.json').read_text())
+    if identity.get('full_id') != point['target'] + '/' + point['name']:
+        raise StructuralError('wrong workload Criterion result')
+    samples = json.loads((root / 'sample.json').read_text())
+    estimates = json.loads((root / 'estimates.json').read_text())
+    if len(samples.get('iters', [])) != 10 or len(samples.get('times', [])) != 10:
+        raise StructuralError('wrong workload sample inventory')
+    if any(not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0
+           for value in samples['iters'] + samples['times']):
+        raise StructuralError('invalid workload sample')
+    mean = estimates['mean']['point_estimate']
+    if not isinstance(mean, (int, float)) or not math.isfinite(mean) or mean <= 0:
+        raise StructuralError('invalid workload estimate')
+    return receipt, samples, estimates
+
+
+def resource_sample(path):
+    subprocess.run(['bash', '-c', 'source ci/gate_resources.sh; gate_resource_sample "$1" "$(gate_cgroup_root)"',
+                    'benchmark-resource-sample', str(path)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+
+
+def measured_workloads(mode, directory):
+    """Serial points have private outputs, per-point resources and nonbinding timings."""
+    rows = workload_declarations()
+    points = workload_points(rows, mode)
+    targets = sorted({(point['package'], point['target'], tuple(point['features'])) for point in points})
+    binaries = {}
+    builds = []
+    for package, target, features in targets:
+        command = ['cargo', 'bench', '-p', package, '--bench', target, '--profile', 'gate',
+                   '--no-run', '--locked', '--offline', '--message-format=json']
+        if features:
+            command += ['--features', ','.join(features)]
+        before = resource.getrusage(resource.RUSAGE_CHILDREN)
+        status, wall_ms = capture(command, directory, target + '-build')
+        after = resource.getrusage(resource.RUSAGE_CHILDREN)
+        builds.append(dict(package=package, target=target, status=status, wall_ms=wall_ms,
+                           own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime))
+        if status:
+            return dict(status='failed', phase='build', builds=builds, points=[]), 1
+        artifacts = [json.loads(line) for line in (directory/(target+'-build.stdout.log')).read_text().splitlines() if line.startswith('{')]
+        found = {row['executable'] for row in artifacts if row.get('reason') == 'compiler-artifact' and row.get('executable') and row['target']['name'] == target}
+        if len(found) != 1:
+            raise StructuralError('workload executable inventory differs')
+        binaries[target] = found.pop()
+    results = []
+    for point in points:
+        owned = directory / point['name']
+        owned.mkdir()  # Never reuse a previous point's result directory.
+        run_id = uuid.uuid4().hex
+        environment = {key: value for key, value in os.environ.items() if not key.startswith('CARGO_CRITERION_')}
+        environment.update(PN_BENCH_OUTPUT=str((owned/'criterion').resolve()), PN_BENCH_POINT=point['name'],
+                           PN_BENCH_SIZE=str(point['size']), PN_BENCH_VARIANT=point['variant'], PN_BENCH_MODE=mode,
+                           PN_BENCH_RUN=run_id, PN_BENCH_RECEIPT=str((owned/'receipt.json').resolve()))
+        load = list(os.getloadavg())
+        resource_sample(owned/'start.resources')
+        before = resource.getrusage(resource.RUSAGE_CHILDREN)
+        status, elapsed = capture([binaries[point['target']], '--test' if mode == 'pilot' else '--bench'], owned, 'run', environment)
+        after = resource.getrusage(resource.RUSAGE_CHILDREN)
+        resource_sample(owned/'end.resources')
+        result = dict(name=point['name'], package=point['package'], target=point['target'], size=point['size'],
+                      variant=point['variant'], mode=mode, outcome='failed' if status else 'passed', returncode=status,
+                      invocation_ms=elapsed, own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
+                      start_load=load, end_load=list(os.getloadavg()),
+                      resource_scope="container cgroup; own CPU from waited process accounting; not other logins", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
+        if not status:
+            receipt, samples, estimates = checked_result(owned, point, run_id, mode)
+            result.update(receipt=receipt, samples=samples, estimates=estimates)
+        results.append(result)
+        (owned/'result.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
+    return dict(status='failed' if any(row['returncode'] for row in results) else 'passed', builds=builds, points=results), functional_status([row['returncode'] for row in results])
 
 
 def utc():
@@ -40,13 +179,45 @@ def capture(command, directory, name, environment=None):
     return result.returncode, (time.monotonic()-start)*1000
 
 
+def campaign(mode):
+    directory = Path('.lane/benchmarks') / uuid.uuid4().hex
+    directory.mkdir(parents=True)
+    status, _ = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
+    if status:
+        raise StructuralError('benchmark source unavailable')
+    toolchain_status, _ = capture(['rustc', '-Vv'], directory, 'toolchain')
+    if toolchain_status:
+        raise StructuralError('benchmark toolchain unavailable')
+    metadata = dict(source=(directory/'source.stdout.log').read_text().strip(), mode=mode,
+                    platform=platform.platform(), affinity=sorted(os.sched_getaffinity(0)),
+                    machine=platform.node(), priority=os.getpriority(os.PRIO_PROCESS, 0),
+                    lock_sha256=hashlib.sha256(Path('Cargo.lock').read_bytes()).hexdigest(),
+                    declarations=workload_declarations(),
+                    load=list(os.getloadavg()), utc=utc(), profile='gate',
+                    allocation_measurement='transport decoder reservation counter only; otherwise unavailable',
+                    memory_measurement='container cgroup readings; no per-point own peak measurement',
+                    toolchain=(directory/'toolchain.stdout.log').read_text())
+    (directory/'metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
+    resource_sample(directory/'start.resources')
+    start = time.monotonic()
+    summary, status = measured_workloads(mode, directory)
+    wall = time.monotonic()-start
+    resource_sample(directory/'end.resources')
+    summary.update(artifact=str(directory), wall_s=wall, assessment='inconclusive',
+                   reason='component measurement; no reviewed comparable baseline or capacity declaration',
+                   resource_scope="container cgroup; own CPU from waited process accounting; not other logins", resources=joined(raw_sample(directory/'start.resources'), raw_sample(directory/'end.resources'), wall))
+    (directory/'summary.json').write_text(json.dumps(summary, indent=2, allow_nan=False)+'\n')
+    return summary, status
+
+
 def run():
     registry = load_registry()
     workloads = tomllib.loads(Path('docs/inputs/harness-workloads.toml').read_text())['rows']
     if len({row['name'] for row in workloads}) != len(workloads) or not workloads:
         raise StructuralError('missing or duplicate benchmark workload')
-    registry.roster('benchmark', ['benchmark::'+row['name'] for row in workloads])
-    if any(row.get('correctness_case') not in registry.cases or not row.get('claim') for row in workloads):
+    grids = tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+    registry.roster('benchmark', ['benchmark::'+row['name'] for row in workloads + workload_points(grids, 'smoke')])
+    if any(row.get('correctness_case') not in registry.cases or not row.get('claim') for row in workloads + workload_points(grids, 'smoke')):
         raise StructuralError('benchmark lacks its registered correctness case or claim')
     directory = Path('.lane/benchmarks') / uuid.uuid4().hex
     directory.mkdir(parents=True)
@@ -113,12 +284,26 @@ def run():
         records.append(registry.join(record, source))
     records.append(registry.suite_event('foundation-benchmarks', (time.monotonic()-sample_started)*1000,
                                       'failed' if any(row['outcome'] == 'failed' for row in records) else 'passed', source))
+    additional, additional_status = measured_workloads('smoke', directory)
+    (directory/'workload-smoke.json').write_text(json.dumps(additional, indent=2, allow_nan=False)+'\n')
+    if additional_status:
+        return dict(status='failed', phase='workload-smoke', artifact=str(directory)), 1
+    for point in additional['points']:
+        declaration = next(row for row in workload_points(tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows'], 'smoke') if row['name'] == point['name'])
+        records.append(registry.join(dict(operation='benchmark::'+point['name'], source=source, configuration=CONFIGURATION,
+                            implementation=declaration['implementation'], outcome=point['outcome'],
+                            duration_ms=point['estimates']['mean']['point_estimate']/1_000_000,
+                            invocation_ms=point['invocation_ms'], own_cpu_s=point['own_cpu_s'], utc=utc(),
+                            owner=declaration['package'], claim=declaration['claim'], correctness_case=declaration['correctness_case']), source))
+        records.append(registry.suite_event(declaration['suite'], point['invocation_ms'], point['outcome'], source))
     result_status = publish(records, budgets(Path('docs/inputs/devperf-budgets.toml')), directory)
     events = ''.join(json.dumps(row, allow_nan=False)+'\n' for row in records)
     (directory/'events.jsonl').write_text(events)
     Path('.lane/harness-benchmarks.jsonl').write_text(events)
     summary = dict(status='failed' if result_status else 'passed', source=source, artifact=str(directory),
-                   cases=len(workloads), build_ms=build_ms, assessment='inconclusive',
+                   cases=len(workloads)+len(additional['points']),
+                   build_ms=build_ms+sum(row['wall_ms'] for row in additional['builds']),
+                   foundation_build_ms=build_ms, workload_builds=additional['builds'], assessment='inconclusive',
                    reason='shared-worker smoke; no reviewed comparable baseline',
                    findings=sum(1 for line in (directory/'findings.jsonl').read_text().splitlines() if line))
     summary['evidence_bytes_before_summary'] = sum(path.stat().st_size for path in directory.rglob('*') if path.is_file())
@@ -131,12 +316,13 @@ def main():
         if sys.stdout.isatty():
             print(json.dumps({'error': 'stdout terminal refused before benchmark effects'}), file=sys.stderr)
             return 2
-        if sys.argv[1:]:
-            print(json.dumps({'error': 'benchmark runner takes no arguments; declarations are committed data'}), file=sys.stderr)
+        arguments = sys.argv[1:]
+        if arguments not in ([], ['--full'], ['--pilot']):
+            print(json.dumps({'error': 'benchmark runner accepts only --full or --pilot; grids are committed data'}), file=sys.stderr)
             return 2
         # Own any incidental Python output as well as both child streams.
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            summary, status = run()
+            summary, status = campaign(arguments[0][2:]) if arguments else run()
         print(json.dumps(summary, allow_nan=False), file=sys.stderr if status else sys.stdout)
         return status
     except BaseException as error:

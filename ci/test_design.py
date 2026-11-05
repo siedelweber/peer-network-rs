@@ -153,8 +153,13 @@ class Correspondence(unittest.TestCase):
         shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets', copy_function=compact_json_fixture)
         (self.root / 'docs/inputs').mkdir()
         shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
-        for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements', 'observe-fixtures'):
+        for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements', 'observe-fixtures', 'workload-benchmarks'):
             shutil.copy(REPOSITORY / f'docs/inputs/{name}.toml', self.root / f'docs/inputs/{name}.toml')
+        for name in ('packages/records/benches/workload-records.rs', 'packages/records/tests/common/workload_inputs.rs',
+                     'packages/interchange/benches/workload-transport.rs', 'packages/interchange/tests/support/transport_workloads.rs'):
+            destination = self.root / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(REPOSITORY / name, destination)
         (self.root / '.linter').mkdir()
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
@@ -280,7 +285,7 @@ class Correspondence(unittest.TestCase):
         readme.write_text('twenty-four one-half two-map')
         self.assertEqual(self.check().returncode, 0)
         readme = self.root / 'packages/records/README.md'
-        readme.parent.mkdir(parents=True)
+        readme.parent.mkdir(parents=True, exist_ok=True)
         readme.write_text('3-marker')
         git(self.root, 'add', 'packages/records/README.md')
         self.assertNotEqual(self.check().returncode, 0)

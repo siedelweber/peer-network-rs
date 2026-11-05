@@ -1,0 +1,9 @@
+kind = "suite"
+name = "records-workload-benchmarks"
+status = "active"
+runner = "benchmark"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["benchmark::acts-parallel-8"]

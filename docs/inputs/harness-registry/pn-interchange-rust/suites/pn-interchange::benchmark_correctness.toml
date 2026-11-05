@@ -6,4 +6,4 @@ level = "integration"
 implementation = "pn-interchange-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-interchange::benchmark_correctness::decode_workload", "pn-interchange::benchmark_correctness::encode_workload"]
+cases = ["pn-interchange::benchmark_correctness::decode_workload", "pn-interchange::benchmark_correctness::encode_workload", "pn-interchange::benchmark_correctness::transport_workload"]

@@ -14,6 +14,50 @@ import benchmarks
 
 
 class SupportGuard(unittest.TestCase):
+    def test_workload_results(self):
+        """Declared grids enumerate once, and missing, substituted, stale or correctness-failed results cannot become measurements; timing does not decide success.
+        ´claim:harness:workload-result-binding´
+        ´test:integration:test-workload-results´
+        """
+        rows = [dict(kind='grid', name='probe', package='pn-records', target='workload-records',
+                     sizes=[1, 4], variants=['list', 'commitment'], smoke_sizes=[1], smoke_variant='list')]
+        points = benchmarks.workload_points(rows, 'full')
+        self.assertEqual([p['name'] for p in points], ['probe-list-1', 'probe-list-4', 'probe-commitment-1', 'probe-commitment-4'])
+        self.assertEqual(len(benchmarks.workload_points(rows, 'smoke')), 1)
+        with self.assertRaisesRegex(StructuralError, 'duplicate'):
+            benchmarks.workload_points(rows+rows, 'full')
+        point = points[0]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaisesRegex(StructuralError, 'missing'):
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+            receipt = dict(name=point['name'], size=1, variant='list', mode='full', run='fresh', correctness='passed')
+            def write_receipt(value):
+                (root/'receipt.json').write_text(json.dumps(value))
+            for changes in [dict(name='another'), dict(size=4), dict(variant='commitment'), dict(run='old')]:
+                write_receipt({**receipt, **changes})
+                with self.assertRaisesRegex(StructuralError, 'wrong or stale'):
+                    benchmarks.checked_result(root, point, 'fresh', 'full')
+            write_receipt({**receipt, 'correctness': 'failed'})
+            with self.assertRaisesRegex(StructuralError, 'correctness failed'):
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+            write_receipt(receipt)
+            with self.assertRaisesRegex(StructuralError, 'missing workload Criterion'):
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+            output = root/'criterion'/'workload-records'/point['name']/'new'
+            output.mkdir(parents=True)
+            (output/'benchmark.json').write_text(json.dumps(dict(full_id='wrong')))
+            (output/'sample.json').write_text(json.dumps(dict(iters=[1]*10, times=[1]*10)))
+            (output/'estimates.json').write_text(json.dumps(dict(mean=dict(point_estimate=1))))
+            with self.assertRaisesRegex(StructuralError, 'wrong workload Criterion'):
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+            (output/'benchmark.json').write_text(json.dumps(dict(full_id='workload-records/'+point['name'])))
+            for time_ns in [1, 10**15]:
+                (output/'estimates.json').write_text(json.dumps(dict(mean=dict(point_estimate=time_ns))))
+                self.assertEqual(benchmarks.checked_result(root, point, 'fresh', 'full')[2]['mean']['point_estimate'], time_ns)
+                self.assertEqual(benchmarks.functional_status([0]), 0)
+            self.assertEqual(benchmarks.functional_status([1]), 1)
+
     def test_benchmark_terminal(self):
         """A benchmark command refuses terminal stdout before building, sampling or creating artifacts.
         ´claim:harness:benchmark-terminal-preflight´

@@ -442,11 +442,15 @@ class Processes(unittest.TestCase):
         declarations = tomllib.loads(Path('docs/inputs/graph-dependencies.toml').read_text())['rows']
         locked = tomllib.loads(Path('Cargo.lock').read_text())['package']
 
-        def feature_tree(owner):
+        def feature_tree(owner, edges=None, root=None):
             command = ['cargo', 'tree', '--offline', '--locked', '--prefix', 'none', '--format', '{p}|{f}', '--no-dedupe']
             command += ['--workspace'] if owner == 'workspace' else ['-p', owner]
+            if edges:
+                command += ['-e', edges]
+            if root is not None:
+                command.remove('--locked')  # The private mutation adds an edge.
             started = time.monotonic()
-            output = subprocess.check_output(command, text=True)
+            output = subprocess.check_output(command, text=True, cwd=root)
             print(f'DEPENDENCY-FEATURES owner={owner} wall={time.monotonic()-started:.6f}s')
             features = {}
             for line in output.splitlines():
@@ -474,12 +478,37 @@ class Processes(unittest.TestCase):
         self.assertEqual(serde['version'], '1.0.229')
         self.assertEqual(set(serde['features']), {'alloc', 'default', 'derive', 'serde_derive', 'std'})
         numeric = tomllib.loads(Path('docs/inputs/numeric-dependencies.toml').read_text())['rows']
-        numeric_serde = next(row for row in numeric if row['name'] == 'serde')
+        normal = feature_tree('pn-records', 'normal,build')
+
+        def check_numeric(row, actual):
+            key = (row['name'], row['version'])
+            self.assertEqual(row['built_for_records'], key in actual)
+            self.assertEqual(set(row['features'].split(', ')) - {'none'}, actual.get(key, set()))
+
         for row in numeric:
             self.assertIn('pn-records built on its own', row['feature_scope'])
-            check_row(row, 'pn-records')
+            check_numeric(row, normal)
+            check_row(row | {'features': row['development_features']}, 'pn-records')
             with self.assertRaises(AssertionError):
-                check_row(row | {'features': ['unresolved-feature']}, 'pn-records')
+                check_numeric(row | {'features': 'unresolved-feature'}, normal)
+        # Cargo mutations run only in the shared helper's private commit tree.
+        from isolation import workspace as isolated_workspace
+        source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        with isolated_workspace(Path.cwd(), 'numeric-feature-mutation', source) as (tree, _):
+            path = tree/'packages/records/Cargo.toml'
+            original = path.read_text()
+            for section in ('dependencies', 'build-dependencies'):
+                for feature in ('alloc', 'rc'):
+                    addition = f'serde = {{ workspace = true, features = ["{feature}"] }}\n'
+                    header = f'[{section}]\n'
+                    mutated = original.replace(header, header+addition) if header in original else original+'\n'+header+addition
+                    self.assertNotEqual(mutated, original)
+                    path.write_text(mutated)
+                    changed = feature_tree('pn-records', 'normal,build', tree)
+                    self.assertIn(feature, changed[('serde', '1.0.229')])
+                    with self.assertRaises(AssertionError):
+                        for row in numeric:
+                            check_numeric(row, changed)
         host = tomllib.loads(Path('docs/inputs/host-dependencies.toml').read_text())['rows']
 
         def check_host(row):
@@ -498,8 +527,6 @@ class Processes(unittest.TestCase):
             check_host(criterion | {'built_for_host': True})
         with self.assertRaises(AssertionError):
             check_row(serde | {'features': [feature for feature in serde['features'] if feature != 'alloc']}, 'workspace')
-        with self.assertRaises(AssertionError):
-            check_row(numeric_serde | {'features': serde['features']}, 'pn-records')
 
     def test_generated_records_refusals(self):
         """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.

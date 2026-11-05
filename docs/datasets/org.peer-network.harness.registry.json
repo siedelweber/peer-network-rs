@@ -755,7 +755,8 @@
         "ci::test_testkit.SupportGuard.test_benchmark_streams",
         "ci::test_testkit.SupportGuard.test_benchmark_terminal",
         "ci::test_testkit.SupportGuard.test_property_seed",
-        "ci::test_testkit.SupportGuard.test_support_edges"
+        "ci::test_testkit.SupportGuard.test_support_edges",
+        "ci::test_testkit.SupportGuard.test_workload_results"
       ],
       "implementation": "ci-python",
       "kind": "suite",
@@ -3098,7 +3099,8 @@
       "budget": "pure-suite",
       "cases": [
         "pn-interchange::benchmark_correctness::decode_workload",
-        "pn-interchange::benchmark_correctness::encode_workload"
+        "pn-interchange::benchmark_correctness::encode_workload",
+        "pn-interchange::benchmark_correctness::transport_workload"
       ],
       "implementation": "pn-interchange-rust",
       "kind": "suite",
@@ -3639,7 +3641,8 @@
       "cases": [
         "pn-records::conformance::burn_cases",
         "pn-records::conformance::numeric_cases",
-        "pn-records::conformance::shared_cases"
+        "pn-records::conformance::shared_cases",
+        "pn-records::conformance::workload_construction"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",
@@ -4144,6 +4147,19 @@
       "observation": "Outer conformance observation: shared inputs, verification-owned oracle and expected causes; not a second implementation.",
       "parent_case": "pn-verification::conformance::shared_cases",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "benchmark::acts-parallel-8"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "records-workload-benchmarks",
+      "runner": "benchmark",
       "status": "active",
       "tier": "fast"
     },
@@ -5471,6 +5487,19 @@
       "name": "rfc8949-refusal",
       "parent_case": "pn-interchange::vectors::refusal_rows_are_refused_with_a_located_error",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "benchmark::bytes-chunked-256"
+      ],
+      "implementation": "pn-interchange-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "transport-workload-benchmarks",
+      "runner": "benchmark",
       "status": "active",
       "tier": "fast"
     }

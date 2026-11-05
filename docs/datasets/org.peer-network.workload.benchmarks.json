@@ -1,0 +1,426 @@
+{
+  "namespace": "org.peer-network.workload.benchmarks",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "kind": "policy",
+      "measurement_ms": 1000,
+      "name": "structural-series",
+      "number_forms": {
+        "measurement_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "resamples": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "samples": {
+          "exact": "10",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "seed": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "warmup_ms": {
+          "exact": "100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "100",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "measurement_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "resamples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "seed": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "warmup_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "outcomes": [
+        "passed",
+        "failed",
+        "refused",
+        "unsupported",
+        "incomplete"
+      ],
+      "profile": "gate",
+      "recipe": "structural-workloads/v1",
+      "resamples": 1000,
+      "samples": 10,
+      "sampling": "flat",
+      "scope": "Component curves only; no deployment workload or capacity is declared.",
+      "seed": 0,
+      "warmup_ms": 100
+    },
+    {
+      "actors": 4,
+      "claim": "claim:acts:workload-construction-controls",
+      "correctness_case": "pn-records::conformance::workload_construction",
+      "excluded": "raw construction and correctness checks",
+      "features": [
+        "test-support"
+      ],
+      "grid": "B1",
+      "implementation": "pn-records-rust",
+      "kind": "grid",
+      "name": "acts",
+      "number_forms": {
+        "actors": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "sizes": [
+          {
+            "exact": "16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "256",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "256",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1 024",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1 024",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "smoke_sizes": [
+          {
+            "exact": "8",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "actors": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "smoke_sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-records",
+      "recipe": "Distinct sequential identities over the same named cell, four alternating Actor names; mixed alternates binary and paired structural fixture families. No graph formation or authentication validity is claimed.",
+      "sizes": [
+        16,
+        64,
+        256,
+        1024
+      ],
+      "smoke_sizes": [
+        8
+      ],
+      "smoke_variant": "parallel",
+      "suite": "records-workload-benchmarks",
+      "target": "workload-records",
+      "timed": "validate_history, including returned owned output destruction",
+      "unit": "complete acts",
+      "variants": [
+        "parallel",
+        "mixed"
+      ]
+    },
+    {
+      "excluded": "raw construction, burn and policy binding, correctness, per-iteration input clone",
+      "features": [
+        "test-support"
+      ],
+      "grid": "B13",
+      "implementation": "pn-records-rust",
+      "kind": "grid",
+      "name": "markers",
+      "number_forms": {
+        "sizes": [
+          {
+            "exact": "1",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-records",
+      "recipe": "Seed-zero burn fixture; initial empty marker then repeated complete accepted singleton r0 and lineage r0,r1, with distinct sequential predecessor positions. Three retained burn records include one consistent alias. Fixture proof equality is not cryptography or chain finality.",
+      "sizes": [
+        1,
+        4,
+        16,
+        64
+      ],
+      "target": "workload-records",
+      "timed": "validate_marker_history followed by recognize_markers, including returned owned output destruction",
+      "unit": "markers including initial marker",
+      "variants": [
+        "list",
+        "commitment"
+      ]
+    },
+    {
+      "allocation_multiplier": 4,
+      "chunk_bytes": 64,
+      "claim": "claim:vectors:transport-workload-controls",
+      "correctness_case": "pn-interchange::benchmark_correctness::transport_workload",
+      "depth": 2,
+      "excluded": "payload and canonical/chunked encoding construction, correctness",
+      "features": [],
+      "grid": "B14",
+      "implementation": "pn-interchange-rust",
+      "kind": "grid",
+      "name": "bytes",
+      "nesting": 1,
+      "number_forms": {
+        "allocation_multiplier": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "chunk_bytes": {
+          "exact": "64",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "64",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "depth": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "nesting": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "payload_modulus": {
+          "exact": "251",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "251",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "sizes": [
+          {
+            "exact": "256",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "256",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1 024",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1 024",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4 096",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4 096",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16 384",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16 384",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "smoke_sizes": [
+          {
+            "exact": "256",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "256",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "work_multiplier": {
+          "exact": "16",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "16",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "allocation_multiplier": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "chunk_bytes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "depth": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "nesting": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "payload_modulus": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "smoke_sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "work_multiplier": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-interchange",
+      "payload_modulus": 251,
+      "recipe": "Payload index modulo payload_modulus; canonical byte string or indefinite string with an initial empty chunk and an empty chunk after each definite chunk. Input limit equals wire length; item limit equals payload length plus four. These are experiment limits, never production defaults.",
+      "sizes": [
+        256,
+        1024,
+        4096,
+        16384
+      ],
+      "smoke_sizes": [
+        256
+      ],
+      "smoke_variant": "chunked",
+      "suite": "transport-workload-benchmarks",
+      "target": "workload-transport",
+      "timed": "strict or transport decoding and owned output destruction; transport counters include the decoder's allocations",
+      "unit": "payload bytes",
+      "variants": [
+        "strict",
+        "chunked"
+      ],
+      "work_multiplier": 16
+    }
+  ]
+}

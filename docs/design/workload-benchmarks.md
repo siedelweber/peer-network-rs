@@ -1,0 +1,24 @@
+# Structural workload measurements · `rec:design:workload-benchmark-series`
+
+**Convention (Workload inputs)** · `conv:harness:workload-benchmark-inputs` Component curves measure a declared deterministic recipe through public constructors and validators. Correctness is checked before sampling and after the timed series; input construction is excluded, while allocations made by the operation and destruction of its returned owned output remain timed. Consuming marker operations receive a fresh input clone outside each timed iteration. Fixture proof equality measures structural evidence handling, not cryptographic verification or chain finality. A refused, unsupported or incomplete point remains an explicitly typed result and cannot be fitted as successful throughput. Source, configuration, dimensions, limits, setup, raw samples and resource scope accompany every measurement. Resource samples describe the build container's cgroup, not other logins or the node as a whole; waited process accounting gives the campaign's own CPU. Load averages are recorded as context, without attributing their activity to other logins. These curves declare no host workload, production API limit or capacity.
+
+**Record (Sampling contract)** · `rec:workload:sampling` Full campaigns use 10 samples, 100 ms warm-up, 1 000 ms measurement targets and 1 000 statistical resamples, with flat iteration scheduling. The profile is gate and the deterministic seed is 0. These are bounded sampling settings, not elapsed deadlines: a slow operation completes and retains its measured cost. A serialized pilot precedes a full series. The existing foundation smoke retains its settings; the extra smoke points are declared in the grid carrier. Full campaigns run serially at idle priority on a recorded allowed CPU with a separate build target. Timing is nonverdict under (`rule:devperf:nonverdict`). The dataset names each package-owned construction control. Result association is checked by (`claim:harness:workload-result-binding`).
+
+## Declared grids · `sec:workload:grids`
+
+| Grid | Package and target | Sizes | Variants | Timed | Excluded |
+| --- | --- | --- | --- | --- | --- |
+| B1 | pn-records / workload-records | 16, 64, 256, 1 024 complete acts | parallel, mixed | validate_history, including returned owned output destruction | raw construction and correctness checks |
+| B13 | pn-records / workload-records | 1, 4, 16, 64 markers including initial marker | list, commitment | validate_marker_history followed by recognize_markers, including returned owned output destruction | raw construction, burn and policy binding, correctness, per-iteration input clone |
+| B14 | pn-interchange / workload-transport | 256, 1 024, 4 096, 16 384 payload bytes | strict, chunked | strict or transport decoding and owned output destruction; transport counters include the decoder's allocations | payload and canonical/chunked encoding construction, correctness |
+
+**Record (Act history curve)** · `rec:workload:act-history` The act grid measures complete-history structural validation with distinct act identities and fixed Actor names over a shared endpoint. Its mixed variant alternates complete binary and paired fixture families. It does not execute the epoch compiler's family formation or establish authentication validity. The recipe and sizes live in the workload dataset; no paper wall bound is inferred for the complete validator.
+
+**Record (Marker history curve)** · `rec:workload:marker-history` The marker grid measures validation and recognition together, with policy and burn binding prepared before timing. The initial marker has an empty accepted set; successors repeat a complete accepted singleton with valid lineage and predecessor links. List and commitment representations are separate curves. The commitment fixture checks the complete opening bytes; no real settlement latency is represented by its synthetic positions.
+
+**Record (Transport byte curve)** · `rec:workload:codec-bytes` The byte grid compares strict canonical byte strings with allowed indefinite transport strings over equal payloads. Empty chunks remain legal and are included. Each transport operation receives explicit input, allocation, item, depth, nesting and work limits from the experiment recipe. The decoder's reservation counter explains requested allocation work; it is not a general allocator or peak-memory measurement.
+
+## Campaign evidence · `sec:workload:campaigns`
+
+| Campaign or point | Outcome | Wall seconds | Own CPU seconds | Source and scope |
+| --- | --- | --- | --- | --- |

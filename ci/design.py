@@ -407,6 +407,32 @@ def published_correspondence(rows, path=None):
 
 
 def numeric_correspondence():
+    # Experiment settings are carried by their dataset, never registry copies.
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from benchmarks import workload_declarations
+    workloads = {row['name']: row for row in workload_declarations()}
+    transport = Path('packages/interchange/tests/support/transport_workloads.rs').read_text()
+    for field, pattern in [('chunk_bytes', r'payload\.chunks\((\d+)\)'),
+                           ('payload_modulus', r'index % (\d+)'),
+                           ('allocation_multiplier', r'allocation_bytes:\s*size \* (\d+)'),
+                           ('work_multiplier', r'work:\s*size \* (\d+)'),
+                           ('depth', r'depth:\s*(\d+)'), ('nesting', r'nesting:\s*(\d+)')]:
+        match = re.search(pattern, transport)
+        if not match or int(match[1]) != workloads['bytes'][field]:
+            raise ValueError('workload transport recipe differs: '+field)
+    acts = Path('packages/records/tests/common/workload_inputs.rs').read_text()
+    if int(re.search(r'workload-actor-\{\}", index % (\d+)', acts)[1]) != workloads['acts']['actors']:
+        raise ValueError('workload Actor recipe differs')
+    for target in ('records', 'transport'):
+        package = 'records' if target == 'records' else 'interchange'
+        source = Path(f'packages/{package}/benches/workload-{target}.rs').read_text()
+        for field, pattern in [('samples', r'sample_size\((\d+)\)'), ('resamples', r'nresamples\((\d+)\)'),
+                               ('warmup_ms', r'warm_up_time\(Duration::from_millis\(if mode == "full" \{ (\d+) \}'),
+                               ('measurement_ms', r'measurement_time\(Duration::from_millis\(if mode == "full" \{ (\d+) \}')]:
+            match = re.search(pattern, source)
+            if not match or int(match[1]) != workloads['structural-series'][field]:
+                raise ValueError('workload Criterion recipe differs: '+target+' '+field)
     """Derived rate pins retain the recorded samples' full rational precision."""
     rows = tomllib.loads(Path('docs/inputs/numbers.toml').read_text())['rows']
     published_correspondence(rows, os.environ.get('PN_PAPER_VALUES'))
