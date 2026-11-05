@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 exclude = ["packages/interchange/fuzz", "packages/wallet/fuzz", "vendor/bitcoin", "vendor/elements", "vendor/secp256k1", "vendor/secp256k1-sys", "vendor/secp256k1-zkp", "vendor/secp256k1-zkp-sys"]
-members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records", "packages/verification", "packages/host", "packages/wallet", "packages/graph", "packages/epoch", "packages/act-profile"]
+members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records", "packages/verification", "packages/host", "packages/wallet", "packages/graph", "packages/epoch", "packages/act-profile", "packages/secret-home"]
 
 [workspace.package]
 authors = ["Peer Network contributors"]
@@ -12,6 +12,9 @@ version = "0.1.0"
 license = "AGPL-3.0-only"
 
 [workspace.dependencies]
+rustix = { version = "=1.1.6", features = ["mm", "process"] }
+zeroize = { version = "=1.9.1", default-features = false }
+getrandom = { version = "=0.4.3", default-features = false }
 hyper = { version = "=1.12.0", default-features = false }
 tower = { version = "=0.5.3", default-features = false }
 hyper-util = { version = "=0.1.21", default-features = false }

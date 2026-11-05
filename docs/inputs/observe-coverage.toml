@@ -83,6 +83,15 @@ generators = 156
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
+name = "pn-secret-home"
+operations = 9
+instrumented = 3
+exceptions = 6
+helpers = 0
+generators = 1
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
 name = "pn-wallet"
 operations = 29
 instrumented = 6

@@ -14,7 +14,7 @@ from devperf import StructuralError
 from harness import source_id
 from registry_fragments import read as read_fragments
 
-OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
+OWNERS={'secret-home':'SECRETHOME','cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
 HELPERS={
     'cli-common::packages/cli-common/src/observation.rs::observation::scope',
     'cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation',

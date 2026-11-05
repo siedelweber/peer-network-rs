@@ -1,0 +1,43 @@
+version = 1
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "map"
+label = "cav:crypto:home-map"
+expression = "rustix::mm::mmap_anonymous(std::ptr::null_mut(), len, ProtFlags::READ | ProtFlags::WRITE, MapFlags::PRIVATE)"
+safety = "The nonzero bounded length requests a fresh private readable/writable anonymous mapping, with no fixed address or overlapping allocation. This owner alone releases it."
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "protect"
+label = "cav:crypto:home-advice"
+expression = "rustix::mm::madvise(self.pointer, self.len, advice)"
+safety = "This single owner holds the live page-aligned mapping with its original full length; no slice exists and neither advice changes the parent's readable/writable mapping."
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "lock"
+label = "cav:crypto:home-lock"
+expression = "rustix::mm::mlock(self.pointer, self.len)"
+safety = "This single owner holds the live page-aligned mapping with its original full length; it has not been unmapped and no slice is active."
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "bytes"
+label = "cav:crypto:home-bytes"
+expression = "std::slice::from_raw_parts_mut(self.pointer.cast(), self.len)"
+safety = "This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end."
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "unlock"
+label = "cav:crypto:home-unlock"
+expression = "rustix::mm::munlock(self.pointer, self.len)"
+safety = "This single owner still holds the live page-aligned mapping and its original full length; all byte borrows have ended and the mapping has not been released."
+
+[[sites]]
+path = "packages/secret-home/src/lib.rs"
+function = "unmap"
+label = "cav:crypto:home-unmap"
+expression = "rustix::mm::munmap(self.pointer, self.len)"
+safety = "This single owner releases its original page-aligned mapping and full length exactly once; no Rust reference survives and no later operation uses the pointer."

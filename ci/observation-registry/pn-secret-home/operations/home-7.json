@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/lib.rs",
+    "item": "<Home as std :: fmt :: Debug>::fmt",
+    "owner": "SECRETHOME",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::amend:crypto:secret-home",
+    "mode": "exception",
+    "shape": "shape-secret-home",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: Secret-home diagnostics are constant regardless of secret contents or allocation address.",
+      "witness": "SECRETHOME::claim:crypto:home-has-no-implicit-secret-observation",
+      "boundary": "pn-secret-home::packages/secret-home/src/lib.rs::Protection::import",
+      "class_decision": "secret-home-private"
+    }
+  },
+  "review": {
+    "operation": "pn-secret-home::packages/secret-home/src/lib.rs::<Home as std :: fmt :: Debug>::fmt",
+    "body": "{ f . write_str (\"Home([REDACTED])\") }",
+    "class_decision": "secret-home-private",
+    "item_premise": "The fixed owner and borrowed Staging emit constant Debug; only sizes, content-free errors and Protection are recorded. No pointer or raw byte slice crosses an observed boundary. Erasure and kernel tests witness acquisition, not subscriber absence or cryptographic operations.",
+    "assessments": {
+      "full_recording": "secret-home-review",
+      "secret_flow": "secret-home-review",
+      "exposure_consumers": "secret-home-review"
+    }
+  }
+}

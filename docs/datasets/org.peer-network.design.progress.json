@@ -38744,6 +38744,40 @@
     {
       "category": "record-coverage",
       "exact_citing": 0,
+      "name": "pn-secret-home",
+      "number_forms": {
+        "exact_citing": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exact_citing": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "total": 3
+    },
+    {
+      "category": "record-coverage",
+      "exact_citing": 0,
       "name": "pn-testkit",
       "number_forms": {
         "exact_citing": {
@@ -38857,10 +38891,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 528",
+          "exact": "1 538",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 528",
+          "num": "1 538",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38875,7 +38909,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1528
+      "total": 1538
     },
     {
       "category": "record-coverage",

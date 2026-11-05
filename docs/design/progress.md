@@ -53,10 +53,11 @@
 | pn-readouts | 0 | 0 |
 | pn-records | 51 | 19 |
 | pn-replay | 0 | 0 |
+| pn-secret-home | 3 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 528 | 198 |
+| ROOT (repository-wide) | 1 538 | 198 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

@@ -483,3 +483,39 @@ allowances = []
 
 [ACTPROFILE."profile.claims-conform"]
 allowances = []
+
+[SECRETHOME."labels.citations-import-form"]
+allowances = []
+
+[SECRETHOME."labels.citations-imported-resolve"]
+allowances = []
+
+[SECRETHOME."labels.citations-layer-conform"]
+allowances = []
+
+[SECRETHOME."labels.citations-local-resolve"]
+allowances = []
+
+[SECRETHOME."labels.generated-regions-conform"]
+allowances = []
+
+[SECRETHOME."labels.heads-conform"]
+allowances = []
+
+[SECRETHOME."labels.mints-kind-conform"]
+allowances = []
+
+[SECRETHOME."labels.mints-unique"]
+allowances = []
+
+[SECRETHOME."labels.mints-well-formed"]
+allowances = []
+
+[SECRETHOME."labels.outlines-conform"]
+allowances = []
+
+[SECRETHOME."profile.tests-conform"]
+allowances = []
+
+[SECRETHOME."profile.claims-conform"]
+allowances = []

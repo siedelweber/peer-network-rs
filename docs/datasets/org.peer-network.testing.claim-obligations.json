@@ -2927,6 +2927,28 @@
       "witnessed_labels": []
     },
     {
+      "claims": [
+        "SECRETHOME::claim:crypto:home-protections-and-erasure-are-observed",
+        "SECRETHOME::claim:crypto:home-acquisition-failures-erase-and-refuse",
+        "SECRETHOME::claim:crypto:home-has-no-implicit-secret-observation",
+        "SECRETHOME::claim:crypto:home-public-boundary-requires-declared-budget",
+        "SECRETHOME::claim:crypto:home-lock-failure-never-degrades",
+        "ROOT::claim:discipline:unsafe-sites-match-the-owned-mapping-inventory"
+      ],
+      "closing_condition": "Pass the finite kernel, acquisition, ownership and source inventory controls.",
+      "closing_step": "Secret-home implementation before signing.",
+      "evidence_paragraph": "SECRETHOME::rec:home:evidence",
+      "hold": "",
+      "missing": "Outside scope: signing, wallet migration and stronger privileged-memory protection.",
+      "name": "ROOT::verif:crypto:secret-home",
+      "owner": "Secret-home implementer and independent cryptographic integration reviewer",
+      "path": "adr/023-cryptographic-base.md",
+      "premises": "Finite Linux mapping, process and refusal controls; no signing or paper theorem is realized by these operational checks.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
       "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",

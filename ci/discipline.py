@@ -251,6 +251,14 @@ def source_findings(path, source, mode, forced_test=False):
         test_tree |= bool(re.match(r"\s*#\[\s*(?:test|cfg\s*\([^]]*\btest\b)", following))
         item_follows = bool(re.match(r"\s*(?:#\[[^]]+\]\s*)*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?(?:fn|struct|enum|impl|trait|const|static|type|mod)\b", following))
         names = suppressions[0].group(1).strip()
+        # This one inventoried production mechanism requires Rust's reason form.
+        # The complete source/register join below checks each item and unsafe block.
+        home_expect = (path.as_posix() == 'packages/secret-home/src/lib.rs'
+                       and re.fullmatch(r'\s*expect\s*\(\s*unsafe_code\s*,\s*reason\s*=\s*\)\s*', body)
+                       and not match.group(1) and not test_tree and justified
+                       and re.match(r'\s*fn\s+(?:map|protect|lock|bytes|unlock|unmap)\s*\(', following))
+        if home_expect:
+            continue
         named = bool(re.fullmatch(r"[a-z_][a-z_0-9]*(?:::[a-z_][a-z_0-9]*)?(?:\s*,\s*[a-z_][a-z_0-9]*(?:::[a-z_][a-z_0-9]*)?)*\s*,?", names))
         groups = {"warnings", "unused", "all", "pedantic", "nursery", "complexity", "correctness", "perf", "style", "suspicious", "deprecated_safe", "future_incompatible", "let_underscore", "nonstandard_style", "rust_2018_compatibility", "rust_2018_idioms", "rust_2021_compatibility", "rust_2024_compatibility"}
         named &= not any(name.strip().split("::")[-1] in groups for name in names.split(","))
@@ -261,6 +269,52 @@ def source_findings(path, source, mode, forced_test=False):
         if match.group(1) or conditional or (test_tree and not fixture_exit) or not justified or not named or not item_follows:
             findings.append("suppression is not a justified named production-item attribute")
     findings.extend(exposure_sites(path, source)[1])
+    return findings
+
+
+def unsafe_inventory(sources, rows):
+    """Join every first-party unsafe block to the closed owning-mapping mechanism."""
+    path = pathlib.Path('packages/secret-home/src/lib.rs')
+    calls = {'map': 'rustix::mm::mmap_anonymous', 'protect': 'rustix::mm::madvise',
+             'lock': 'rustix::mm::mlock', 'bytes': 'std::slice::from_raw_parts_mut',
+             'unlock': 'rustix::mm::munlock', 'unmap': 'rustix::mm::munmap'}
+    findings, observed = [], []
+    keys = [(row.get('path'), row.get('function')) for row in rows]
+    if len(set(keys)) != len(keys) or set(keys) != {(str(path), name) for name in calls}:
+        findings.append('unsafe inventory is not the six declared mapping sites')
+    by_key = dict(zip(keys, rows))
+    normalize = lambda value: re.sub(r'\s+', '', re.sub(r',\s*\)', ')', value))
+    for file, source in sources.items():
+        code = rust_code(source)
+        methods = [(m, item_end(code, m.end())) for m in re.finditer(r'\bfn\s+(\w+)\b', code)]
+        for token in re.finditer(r'\bunsafe\b', code):
+            enclosing = [(m, end) for m, end in methods if m.start() < token.start() < end]
+            if file != path or not enclosing or not re.match(r'\s*\{', code[token.end():]):
+                findings.append(f'{file}: unsafe outside a declared private mapping block')
+                continue
+            method, end = enclosing[-1]
+            name = method.group(1)
+            row = by_key.get((str(file), name))
+            if row is None:
+                findings.append(f'{file}: undeclared unsafe site {name}')
+                continue
+            opening = code.index('{', token.end())
+            closing = item_end(code, opening)
+            expression = source[opening+1:closing-1].strip()
+            prefix = source[:method.start()]
+            attribute = re.search(r'#\[expect\(unsafe_code,\s*reason\s*=\s*"[^"\n]+"\)\]\s*$', prefix)
+            comment = source[method.end():token.start()]
+            valid = (set(row) == {'path','function','label','expression','safety'}
+                     and attribute is not None
+                     and expression.startswith(calls[name] + '(')
+                     and normalize(expression) == normalize(row['expression'])
+                     and '// SAFETY: '+row['safety'] in comment
+                     and '(´[ROOT-'+row['label']+']´)' in comment)
+            if not valid:
+                findings.append(f'{file}: mapping safety argument, expression or item permission differs: {name}')
+            observed.append((str(file), name))
+    if sorted(observed) != sorted(keys):
+        findings.append('unsafe sites differ from the inventory')
     return findings
 
 
@@ -633,6 +687,12 @@ def main():
         if mode == "suppressions":
             exposures.extend(exposure_sites(path, source)[0])
     if mode == "suppressions":
+        unsafe_rows = tomllib.loads(pathlib.Path('ci/unsafe-sites.toml').read_text())['sites']
+        unsafe_findings = unsafe_inventory(sources, unsafe_rows)
+        for finding in unsafe_findings:
+            print(finding)
+        failed |= bool(unsafe_findings)
+        print(f'UNSAFE-SITES sites={len(unsafe_rows)} findings={len(unsafe_findings)}')
         labels = [row["label"] for row in exposures if row["label"]]
         if len(labels) != len(set(labels)):
             print("SECRET-EXPOSURES duplicate labels")

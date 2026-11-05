@@ -82,6 +82,7 @@
 | pn-host | 196 | 24 | 172 | 0 | 146 |
 | pn-interchange | 156 | 120 | 35 | 1 | 93 |
 | pn-records | 118 | 46 | 72 | 0 | 156 |
+| pn-secret-home | 9 | 3 | 6 | 0 | 1 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |
 
 

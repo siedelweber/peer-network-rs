@@ -211,7 +211,7 @@
 | regex 1.13.1 | MIT OR Apache-2.0 | not built for pn-host | 1.65 | none | f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d |
 | regex-automata 0.4.18 | MIT OR Apache-2.0 | alloc, dfa-build, dfa-search, nfa-thompson, std, syntax | 1.65 | none | ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2 |
 | regex-syntax 0.8.11 | MIT OR Apache-2.0 | std | 1.65 | none | d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4 |
-| rustix 1.1.5 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | alloc, default, fs, std | 1.65 | build script: build-script-build | 891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d |
+| rustix 1.1.6 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | alloc, default, fs, std | 1.65 | build script: build-script-build | e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa |
 | rustversion 1.0.23 | MIT OR Apache-2.0 | none enabled | 1.31 | build script: build-script-build; procedural macro rustversion | cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f |
 | rusty-fork 0.3.1 | MIT/Apache-2.0 | not built for pn-host | not declared | none | cc6bf79ff24e648f6da1f8d1f011e9cac26491b619e6b9280f2b47f1774e6ee2 |
 | same-file 1.0.6 | Unlicense/MIT | not built for pn-host | not declared | none | 93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502 |

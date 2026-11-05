@@ -763,6 +763,8 @@ pub enum OperationKind {
     Epoch,
     /// Shared act commitment and opening comparisons.
     ActProfile,
+    /// Locked secret mapping acquisition.
+    SecretHome,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -780,6 +782,7 @@ impl OperationKind {
             Self::Graph => "graph__root__sig__design__graph",
             Self::Epoch => "epoch__root__sig__design__epoch",
             Self::ActProfile => "actprofile__root__amend__decomposition__act_profile",
+            Self::SecretHome => "secrethome__root__amend__crypto__secret_home",
         }
     }
     const fn label(self) -> &'static str {
@@ -794,6 +797,7 @@ impl OperationKind {
             Self::Graph => "sig:design:graph",
             Self::Epoch => "sig:design:epoch",
             Self::ActProfile => "amend:decomposition:act-profile",
+            Self::SecretHome => "amend:crypto:secret-home",
         }
     }
     const fn owner(self) -> &'static str {
@@ -807,6 +811,7 @@ impl OperationKind {
             Self::Graph => "GRAPH",
             Self::Epoch => "EPOCH",
             Self::ActProfile => "ACTPROFILE",
+            Self::SecretHome => "SECRETHOME",
             _ => "CLICOMMON",
         }
     }
@@ -1191,6 +1196,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("GRAPH") => Some(OperationKind::Graph),
                     Some("EPOCH") => Some(OperationKind::Epoch),
                     Some("ACTPROFILE") => Some(OperationKind::ActProfile),
+                    Some("SECRETHOME") => Some(OperationKind::SecretHome),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

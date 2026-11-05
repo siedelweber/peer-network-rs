@@ -2,6 +2,16 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "secret-home-fixture-bytes"
+group = "first-party secret-home witnesses"
+measures = "Public byte patterns for import, erasure and constant-diagnostic controls"
+producer = "Authored secret-home fixtures"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit integer literals denote the public byte patterns placed in test staging or the test-only mapped view. Their numeric values distinguish nonzero contents from erased zero bytes and distinct contents from constant diagnostics; they assert no digest or secret identity. Bare identity-shaped values remain excluded."
+paths = ["packages/secret-home/src/tests.rs", "packages/secret-home/tests/public.rs"]
+
+[[rows]]
 family = "assertion-review-closures"
 group = "reviewed paper witnesses"
 measures = "The reviewed case's same-file closure under the calibration identity recipe"

@@ -196,6 +196,10 @@
         {
           "owner": "ACTPROFILE",
           "target": "GRAPH"
+        },
+        {
+          "owner": "SECRETHOME",
+          "target": "ROOT"
         }
       ],
       "name": "declaration",
@@ -213,7 +217,8 @@
         "GRAPH",
         "EPOCH",
         "VENDOR",
-        "ACTPROFILE"
+        "ACTPROFILE",
+        "SECRETHOME"
       ],
       "partitions": [
         {
@@ -305,6 +310,11 @@
           "name": "act-profile-package",
           "owner": "ACTPROFILE",
           "pattern": "%s\"packages/act-profile/\" *VCHAR"
+        },
+        {
+          "name": "secret-home-package",
+          "owner": "SECRETHOME",
+          "pattern": "%s\"packages/secret-home/\" *VCHAR"
         }
       ],
       "root_owner": "ROOT"

@@ -118,6 +118,13 @@
       "name": "pn-records-rust"
     },
     {
+      "contract": "owned Linux mapping and process protection",
+      "edition": "secret-home-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-secret-home-rust"
+    },
+    {
       "contract": "development support",
       "edition": "0.1",
       "evidence": "pure",
@@ -519,6 +526,7 @@
         "ci::test_discipline.SourceDiscipline.test_printing",
         "ci::test_discipline.SourceDiscipline.test_suppressions",
         "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
+        "ci::test_discipline.WorkspaceChecks.test_unsafe_inventory",
         "ci::test_discipline.WorkspaceChecks.test_discovered_members",
         "ci::test_discipline.WorkspaceChecks.test_http_admission",
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits"
@@ -3764,6 +3772,47 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-records::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-secret-home::integration::kernel_limits"
+      ],
+      "implementation": "pn-secret-home-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-secret-home::integration",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-secret-home::public::declared_budget"
+      ],
+      "implementation": "pn-secret-home-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-secret-home::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-secret-home::tests::kernel_home",
+        "pn-secret-home::tests::acquisition",
+        "pn-secret-home::tests::ownership"
+      ],
+      "implementation": "pn-secret-home-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-secret-home::unit",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

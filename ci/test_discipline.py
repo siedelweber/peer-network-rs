@@ -27,6 +27,30 @@ from hash_citations import audit, establish, occurrences
 
 
 class WorkspaceChecks(unittest.TestCase):
+    def test_unsafe_inventory(self):
+        """Only the six private mapping sites with their exact expressions, item permissions and safety arguments are admitted; foreign, added, missing and changed sites refuse.
+        ´claim:discipline:unsafe-sites-match-the-owned-mapping-inventory´
+        ´test:integration:test-unsafe-inventory´
+        """
+        from discipline import unsafe_inventory
+        path = Path('packages/secret-home/src/lib.rs')
+        source = path.read_text()
+        rows = tomllib.loads(Path('ci/unsafe-sites.toml').read_text())['sites']
+        self.assertEqual(unsafe_inventory({path: source}, rows), [])
+        self.assertEqual(source_findings(path, source, 'suppressions'), [])
+        foreign = {path: source, Path('packages/records/src/probe.rs'): 'fn probe() { unsafe { foreign() } }'}
+        self.assertTrue(unsafe_inventory(foreign, rows))
+        self.assertTrue(unsafe_inventory({path: source+'\nfn probe() { unsafe { foreign() } }'}, rows))
+        for before, after in [('unsafe { rustix::mm::mlock(self.pointer, self.len) }', 'unsafe { rustix::mm::mlock(self.pointer, 1) }'),
+                              ('// SAFETY:', '// unchecked:'),
+                              ('reason = "owned mapping lock"', 'reason = ""'),
+                              ('fn lock(', 'pub fn lock(')]:
+            bad = source.replace(before, after)
+            self.assertNotEqual(bad, source)
+            self.assertTrue(unsafe_inventory({path: bad}, rows))
+        self.assertTrue(unsafe_inventory({path: source}, rows[:-1]))
+        self.assertTrue(unsafe_inventory({path: source}, rows+rows[:1]))
+
     def test_http_admission(self):
         """The first HTTP dependency edge and its transitive closure must stay within admitted versions and features; absent edges do not manufacture lock entries.
         ´claim:discipline:http-edges-stay-within-admission´

@@ -218,6 +218,14 @@
       "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_unsafe_inventory",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:unsafe-sites-match-the-owned-mapping-inventory",
+      "before": "",
+      "after": "Only the six private mapping sites with their exact expressions, item permissions and safety arguments are admitted; foreign, added, missing and changed sites refuse.",
+      "review": "The real six-site source and register pass; a foreign block, an extra home block, changed syscall argument, lost safety text, empty reason, public method and missing/duplicate register rows each refuse."
+    },
+    {
       "operation": "ci::test_harness.Harness.test_flake_ledger",
       "path": "ci/test_harness.py",
       "claim": "ROOT::claim:harness:flake-ledger-retains-recurrences",
@@ -4586,6 +4594,46 @@
       "before": "",
       "after": "Claim: With an injected internal declaration whose announcement is after genesis but effect is before it, the binder's announcement guard refuses independently; public declaration validation already excludes this inconsistent ordering.",
       "review": "A valid fixture binds before mutation. The unit test then injects an internally inconsistent announcement after genesis with effect unchanged, bypassing the public ordering validator solely to isolate the defensive announcement guard."
+    },
+    {
+      "operation": "pn-secret-home::integration::kernel_limits",
+      "path": "packages/secret-home/tests/integration.rs",
+      "claim": "SECRETHOME::claim:crypto:home-lock-failure-never-degrades",
+      "before": "",
+      "after": "An isolated child lowers the kernel memlock limit after bootstrap: acquisition\nrefuses Lock rather than creating an unlocked home, and a budget above the\nlowered limit also refuses. The parent requires successful child assertions.",
+      "review": "The child lowers the real memlock hard and soft limits after bootstrap; successful creation or the wrong refusal class fails the assertions. The parent refuses a failed child, so no skipped host capability is counted as evidence."
+    },
+    {
+      "operation": "pn-secret-home::public::declared_budget",
+      "path": "packages/secret-home/tests/public.rs",
+      "claim": "SECRETHOME::claim:crypto:home-public-boundary-requires-declared-budget",
+      "before": "",
+      "after": "Public acquisition refuses undeclared zero and conflicting budgets, and\nconsumes imported staging without exposing a byte accessor or signing API.",
+      "review": "Public constructors reject zero and conflicting declared budgets and erase imported staging while retaining the constant secret diagnostic."
+    },
+    {
+      "operation": "pn-secret-home::tests::acquisition",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-acquisition-failures-erase-and-refuse",
+      "before": "",
+      "after": "Partial entropy failure refuses and releases its mapping; imported staging is\nerased even on a refused size, and the ordinary generator calls the OS source.",
+      "review": "A partial-fill error returns Entropy and releases the reservation; oversized import zeroes caller staging, zero length refuses, real OS acquisition succeeds, and a full declared mapping budget excludes a second allocation."
+    },
+    {
+      "operation": "pn-secret-home::tests::kernel_home",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-protections-and-erasure-are-observed",
+      "before": "",
+      "after": "The Linux mapping retains its address while the handle moves, reads back locked,\nno-dump and no-fork flags, and erases every allocation byte before release.",
+      "review": "The witness reads kernel VmLck, smaps lo/dd/dc flags, dumpability and core limits; it observes the same mapping address after moving only the handle and observes every byte zero before release. It does not read freed memory or assert a cryptographic property."
+    },
+    {
+      "operation": "pn-secret-home::tests::ownership",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-has-no-implicit-secret-observation",
+      "before": "",
+      "after": "The secret mapping owner has neither Copy, Clone nor Display, and Debug is\nconstant across different imported bytes; process bootstrap diagnostics are constant too.",
+      "review": "Safe trait ambiguity fails to compile if Home or Staging gains Copy, Clone or Display; two different fixture inputs produce the same exact Home Debug. This detects diagnostics and trait regressions, not all physical copies."
     },
     {
       "operation": "pn-testkit::public::runner_results",
