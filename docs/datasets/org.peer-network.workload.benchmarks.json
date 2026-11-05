@@ -485,7 +485,13 @@
         "criterion/default-features-off"
       ],
       "kind": "campaign",
-      "lock_identity": "Cargo.lock in source_tree",
+      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied",
+      "measured_series": [
+        {
+          "commit": "7cc999af9e209ce9cda111a7db1554e3cb11232f",
+          "patch_id": "0a1f215440a4e8a6bdd8af10f12192b8e7463acb"
+        }
+      ],
       "memory_scope": "container cgroup readings; no per-point own peak measurement",
       "name": "kranich-structural-pilot",
       "nice": 19,
@@ -4206,8 +4212,6 @@
       "scheduler": "SCHED_IDLE",
       "scope": "Container cgroup samples only; waited runner/process accounting is own CPU. Component evidence, no capacity or other-logins attribution.",
       "source_base": "ad94eb24887ecbda0f34a95884ca99b7f6f504e9",
-      "source_locator_status": "Measured tree before signing/import; public commit locator pending import under campaign-tree admission.",
-      "source_tree": "4879e68b530c75f771813625a033c86be8c4d1eb",
       "start_epoch_s": 1793897983.9725618,
       "toolchain": "nightly-2026-10-16",
       "utc": "2026-11-05T16:59:44.043145Z",
@@ -4276,7 +4280,13 @@
         "criterion/default-features-off"
       ],
       "kind": "campaign",
-      "lock_identity": "Cargo.lock in source_tree",
+      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied",
+      "measured_series": [
+        {
+          "commit": "7cc999af9e209ce9cda111a7db1554e3cb11232f",
+          "patch_id": "0a1f215440a4e8a6bdd8af10f12192b8e7463acb"
+        }
+      ],
       "memory_scope": "container cgroup readings; no per-point own peak measurement",
       "name": "kranich-structural-full",
       "nice": 19,
@@ -4443,8 +4453,6 @@
       "scheduler": "SCHED_IDLE",
       "scope": "Container cgroup samples only; waited runner/process accounting is own CPU. Component evidence, no capacity or other-logins attribution.",
       "source_base": "ad94eb24887ecbda0f34a95884ca99b7f6f504e9",
-      "source_locator_status": "Measured tree before signing/import; public commit locator pending import under campaign-tree admission.",
-      "source_tree": "4879e68b530c75f771813625a033c86be8c4d1eb",
       "start_epoch_s": 1793898058.3764703,
       "toolchain": "nightly-2026-10-16",
       "utc": "2026-11-05T17:00:58.451522Z",
