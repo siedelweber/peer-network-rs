@@ -224,14 +224,11 @@ fn bytes() -> Vec<u8> {
 #[test]
 fn publication_independent_bytes() {
     let expected = bytes();
-    let disclosure = pn_host::publication::decode(&expected, &mut base::numeric(), wire_limits()).unwrap();
+    let disclosure = super::decode_exact(&expected);
     assert_eq!(disclosure.frames.len(), 2);
     assert_eq!(disclosure.frames[0].parameters.boundary, 1);
     assert_eq!(disclosure.frames[1].parameters.boundary, 2);
     let encoded = pn_host::publication::encode(&disclosure, &mut base::numeric(), wire_limits()).unwrap();
     assert_eq!(encoded, expected);
-    assert_eq!(
-        pn_host::publication::decode(&encoded, &mut base::numeric(), wire_limits()).unwrap(),
-        disclosure
-    );
+    assert_eq!(super::decode_exact(&encoded), disclosure);
 }

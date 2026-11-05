@@ -55,6 +55,8 @@ pub enum Error {
     Encoding,
     /// Unknown namespace or version.
     Edition,
+    /// A patch version outside this theory's exact byte identity.
+    Patch,
     /// Missing, extra or wrongly typed field or unknown variant.
     Shape,
     /// A declared integer range was exceeded.
@@ -304,6 +306,9 @@ pub fn decode(bytes: &[u8], numeric: &mut NumericContext, limits: d::Limits) -> 
         || document.envelope().version().minor() != 0
     {
         return Err(Error::Edition);
+    }
+    if document.envelope().version().patch() != 0 {
+        return Err(Error::Patch);
     }
     if !matches!(
         pn_interchange::accept(registry()?, &document),

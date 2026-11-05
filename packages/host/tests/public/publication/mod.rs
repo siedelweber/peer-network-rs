@@ -18,7 +18,7 @@ fn publication_codec_roundtrip() {
     let (admitted, check) = fixture::complete();
     let raw = admitted.disclosures();
     let bytes = pn_host::publication::encode(&raw, &mut base::numeric(), wire_limits()).unwrap();
-    let decoded = pn_host::publication::decode(&bytes, &mut base::numeric(), wire_limits()).unwrap();
+    let decoded = decode_exact(&bytes);
     assert_eq!(decoded, raw);
     let mut shuffled = raw.clone();
     shuffled.causes.acts.reverse();
@@ -30,16 +30,30 @@ fn publication_codec_roundtrip() {
     let mut reordered = raw.clone();
     assert!(reordered.frames[0].sequence.len() > 1);
     reordered.frames[0].sequence.reverse();
+    let reordered_bytes = pn_host::publication::encode(&reordered, &mut base::numeric(), wire_limits()).unwrap();
+    assert_eq!(decode_exact(&reordered_bytes), reordered);
     assert_ne!(
         pn_host::publication::encode(&reordered, &mut base::numeric(), wire_limits()).unwrap(),
         bytes
     );
     let mut duplicate = raw.clone();
     duplicate.causes.acts.push(raw.causes.acts[0].clone());
-    assert!(pn_host::publication::encode(&duplicate, &mut base::numeric(), wire_limits()).is_err());
+    assert!(matches!(
+        pn_host::publication::encode(&duplicate, &mut base::numeric(), wire_limits()),
+        Err(pn_host::publication::Error::Order)
+    ));
     let restored = base::d::restore(decoded, &check).unwrap();
     assert_eq!(restored.carrier(), admitted.carrier());
     assert_eq!(restored.boundary().evidence(), admitted.boundary().evidence());
+}
+
+fn decode_exact(bytes: &[u8]) -> base::d::Disclosure {
+    let decoded = pn_host::publication::decode(bytes, &mut base::numeric(), wire_limits()).unwrap();
+    assert_eq!(
+        pn_host::publication::encode(&decoded, &mut base::numeric(), wire_limits()).unwrap(),
+        bytes
+    );
+    decoded
 }
 
 fn wire_limits() -> base::Limits {

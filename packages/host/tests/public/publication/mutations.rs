@@ -3,7 +3,7 @@ use base::d;
 
 fn roundtrip(raw: &d::Disclosure) -> d::Disclosure {
     let bytes = pn_host::publication::encode(raw, &mut base::numeric(), wire_limits()).unwrap();
-    let decoded = pn_host::publication::decode(&bytes, &mut base::numeric(), wire_limits()).unwrap();
+    let decoded = super::decode_exact(&bytes);
     assert_eq!(&decoded, raw);
     decoded
 }

@@ -1,4 +1,5 @@
 ; Test deployment only. Arrays preserve sequence; sets and maps additionally require canonical structural order.
+; Interchange requires uint in the patch position. The host codec additionally requires patch zero before registry acceptance: full bytes identify the publication.
 e = {0 => "org.peer-network.test.publication", 1 => [1, 0, uint], 2 => accepted, 3 => [* epoch-publication-disclosures-Ledger], 4 => [* projection], 5 => [* epoch-support-StandingSupport], 6 => [* [records-conserved-SolveRecord, epoch-admission-FinalEvidence]], 7 => [* closure], 8 => reproduction}
 accepted = [[* records-CandidateAct], [* records-PublicReference], [* [[* records-ActId], epoch-package-ClosureStatement, [* [* records-ActId]]]]]
 projection = [[* epoch-cells-StandingCell], {* epoch-cells-CellIdentity => epoch-compiler-CoefficientEvidence}, [* epoch-recipients-ResolvedCell], epoch-base-BaseAllocation]
