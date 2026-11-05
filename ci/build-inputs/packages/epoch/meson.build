@@ -12,3 +12,4 @@ endforeach
 subdir('src')
 subdir('tests')
 subdir('examples')
+subdir('benches')

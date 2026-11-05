@@ -15,9 +15,14 @@ tracing.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
+criterion.workspace = true
 pn-records = { path = "../records", features = ["test-support"] }
 cli-common.workspace = true
 pn-testkit.workspace = true
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "workload-epoch"
+harness = false

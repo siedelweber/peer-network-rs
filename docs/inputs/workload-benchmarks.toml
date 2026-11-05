@@ -82,6 +82,228 @@ excluded = "payload and canonical/chunked encoding construction, correctness"
 numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "chunk_bytes" = { "display" = "exact", "exact_digits" = 32 }, "payload_modulus" = { "display" = "exact", "exact_digits" = 32 }, "allocation_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "work_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "depth" = { "display" = "exact", "exact_digits" = 32 }, "nesting" = { "display" = "exact", "exact_digits" = 32 } }
 
 [[rows]]
+kind = "grid"
+name = "partition"
+unit = "complete acts"
+grid = "B2"
+package = "pn-graph"
+target = "workload-graph"
+features = []
+implementation = "pn-graph-rust"
+sizes = [8, 32, 128, 512]
+variants = ["0", "1", "2"]
+smoke_sizes = [8]
+smoke_variant = "0"
+correctness_case = "pn-graph::workload_correctness::partition_inputs"
+claim = "claim:membership:workload-partition-inputs-retain-counts-and-cover"
+recipe = "Seed zero, constructor-backed B2 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+suite = "graph-partition-workload-benchmarks"
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "transport"
+unit = "Actors"
+grid = "B4"
+package = "pn-graph"
+target = "workload-graph"
+features = []
+implementation = "pn-graph-rust"
+sizes = [2, 4, 8, 16]
+variants = ["sparse-exact", "sparse-enclosed", "dense-exact", "dense-enclosed"]
+smoke_sizes = [2]
+smoke_variant = "sparse-exact"
+correctness_case = "pn-graph::workload_correctness::transport_inputs"
+claim = "claim:numerics:workload-transport-inputs-agree-with-column-oracle"
+recipe = "Seed zero, constructor-backed B4 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+suite = "graph-transport-workload-benchmarks"
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "title"
+unit = "complete acts"
+grid = "B16"
+package = "pn-graph"
+target = "workload-graph"
+features = []
+implementation = "pn-graph-rust"
+sizes = [4, 16, 64, 256]
+variants = ["alternating"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-graph::workload_correctness::workload_title_inputs"
+claim = "claim:formation:workload-title-inputs-retain-transfer-oracle"
+recipe = "Seed zero, constructor-backed B16 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "compile-actors"
+unit = "Actors"
+grid = "B3"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [2, 4, 8, 16]
+variants = ["ring", "dense"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::compiled_inputs"
+claim = "claim:compiler:workload-compiled-inputs-retain-complete-counts"
+recipe = "Seed zero, constructor-backed B3 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "compile-acts"
+unit = "complete acts"
+grid = "B3"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [8, 32, 128, 512]
+variants = ["parallel", "mixed"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::compiled_inputs"
+claim = "claim:compiler:workload-compiled-inputs-retain-complete-counts"
+recipe = "Seed zero, constructor-backed B3 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "fence"
+unit = "precision bits"
+grid = "B5"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [8, 16]
+variants = ["equal", "late", "limited"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::fence_inputs"
+claim = "claim:rungs:workload-fence-recipes-retain-distinct-outcomes"
+recipe = "Seed zero, constructor-backed B5 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "solve"
+unit = "Actors"
+grid = "B6"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [2, 4, 8, 16]
+variants = ["ring", "dense"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::solve_replay_inputs"
+claim = "claim:numerics:workload-solve-replay-share-produced-transcripts"
+recipe = "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "replay"
+unit = "Actors"
+grid = "B7"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [2, 4, 8, 16]
+variants = ["ring", "dense"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::solve_replay_inputs"
+claim = "claim:numerics:workload-solve-replay-share-produced-transcripts"
+recipe = "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "admit"
+unit = "complete acts"
+grid = "B8"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [4, 16, 64]
+variants = ["pass", "own", "individual", "policy"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::admission_inputs"
+claim = "claim:admission:workload-admission-recipes-distinguish-gates"
+recipe = "Seed zero, constructor-backed B8 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "trials"
+unit = "boundary-search sets"
+grid = "B9"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [1, 2, 4, 8]
+variants = ["serial"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::trial_inputs"
+claim = "claim:admission:workload-trial-inputs-retain-whole-blocks"
+recipe = "Seed zero, constructor-backed B9 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+kind = "grid"
+name = "scalar"
+unit = "refinement cap"
+grid = "B10"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [1, 2, 4, 8]
+variants = ["rational", "ridge"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::scalar_inputs"
+claim = "claim:numerics:workload-scalar-replay-inputs-retain-defining-routes"
+recipe = "Seed zero, constructor-backed B10 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { sizes = { display = "exact", exact_digits = 32 }, smoke_sizes = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
 kind = "campaign"
 name = "kranich-structural-pilot"
 phase = "pilot"

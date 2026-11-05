@@ -874,6 +874,18 @@ id = "num:numbers:controller-test-bracket-upper"
 value = "1"
 
 [[rows]]
+id = "num:numbers:controller-test-chartered-tilt"
+value = "15/8"
+
+[[rows]]
+id = "num:numbers:controller-test-error"
+value = "1/128"
+
+[[rows]]
+id = "num:numbers:controller-test-quantum"
+value = "1/128"
+
+[[rows]]
 id = "num:numbers:controller-test-scope-precision"
 value = "2"
 

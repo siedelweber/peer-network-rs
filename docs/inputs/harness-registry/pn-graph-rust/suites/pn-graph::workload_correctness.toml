@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-graph::workload_correctness"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::workload_correctness::partition_inputs", "pn-graph::workload_correctness::transport_inputs", "pn-graph::workload_correctness::workload_title_inputs"]

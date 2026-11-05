@@ -67,6 +67,19 @@ class SupportGuard(unittest.TestCase):
                 self.assertEqual(benchmarks.checked_result(root, point, 'fresh', 'full')[2]['mean']['point_estimate'], time_ns)
                 self.assertEqual(benchmarks.functional_status([0]), 0)
             self.assertEqual(benchmarks.functional_status([1]), 1)
+            for package, target in [('pn-graph', 'workload-graph'), ('pn-epoch', 'workload-epoch')]:
+                self.assertEqual(len(benchmarks.workload_points([{**rows[0], 'package': package, 'target': target}], 'full')), 4)
+            with self.assertRaisesRegex(StructuralError, 'unknown workload target'):
+                benchmarks.workload_points([{**rows[0], 'package': 'pn-graph', 'target': 'workload-epoch'}], 'full')
+            write_receipt({**receipt, 'outcome': 'refused', 'reason': 'Work ceiling'})
+            with self.assertRaisesRegex(StructuralError, 'fitted samples'):
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+            (output/'sample.json').unlink()
+            self.assertEqual(benchmarks.checked_result(root, point, 'fresh', 'full')[1:], (None, None))
+            with self.assertRaisesRegex(StructuralError, 'reason'):
+                write_receipt({**receipt, 'outcome': 'refused'})
+                benchmarks.checked_result(root, point, 'fresh', 'full')
+
 
     def test_benchmark_terminal(self):
         """A benchmark command refuses terminal stdout before building, sampling or creating artifacts.

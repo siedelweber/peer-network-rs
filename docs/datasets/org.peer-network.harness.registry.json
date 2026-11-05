@@ -1224,6 +1224,19 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "benchmark::partition-0-8"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-partition-workload-benchmarks",
+      "runner": "benchmark",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "contract::graph-title-1::graph-title-graph::empty",
         "contract::graph-title-1::graph-title-graph::unique",
         "contract::graph-title-1::graph-title-graph::conflict",
@@ -1266,6 +1279,19 @@
       "name": "graph-title-verification",
       "parent_case": "pn-verification::title::title_shared_cases",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "benchmark::transport-sparse-exact-2"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-transport-workload-benchmarks",
+      "runner": "benchmark",
       "status": "active",
       "tier": "fast"
     },
@@ -2158,6 +2184,24 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::workload_correctness::admission_inputs",
+        "pn-epoch::workload_correctness::compiled_inputs",
+        "pn-epoch::workload_correctness::fence_inputs",
+        "pn-epoch::workload_correctness::scalar_inputs",
+        "pn-epoch::workload_correctness::solve_replay_inputs",
+        "pn-epoch::workload_correctness::trial_inputs"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-epoch::workload_correctness",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-graph::tests::publication_guard"
       ],
       "implementation": "pn-graph-rust",
@@ -2488,6 +2532,21 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-graph::title",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::workload_correctness::partition_inputs",
+        "pn-graph::workload_correctness::transport_inputs",
+        "pn-graph::workload_correctness::workload_title_inputs"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-graph::workload_correctness",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

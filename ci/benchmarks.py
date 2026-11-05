@@ -28,7 +28,7 @@ def workload_points(rows, mode):
     for row in rows:
         if row.get('kind') != 'grid':
             continue
-        if row['package'] not in ('pn-records', 'pn-interchange') or row['target'] not in ('workload-records', 'workload-transport'):
+        if (row['package'], row['target']) not in (('pn-records', 'workload-records'), ('pn-interchange', 'workload-transport'), ('pn-graph', 'workload-graph'), ('pn-epoch', 'workload-epoch')):
             raise StructuralError('unknown workload target')
         for variant in row['variants']:
             for size in row['sizes'] if mode != 'smoke' else row.get('smoke_sizes', []):
@@ -117,6 +117,15 @@ def checked_result(directory, point, run_id, mode):
         raise StructuralError('wrong or stale workload receipt')
     if receipt.get('correctness') != 'passed':
         raise StructuralError('workload correctness failed')
+    outcome = receipt.get('outcome', 'passed')
+    if outcome not in ('passed', 'refused', 'unsupported', 'incomplete'):
+        raise StructuralError('invalid workload receipt outcome')
+    if outcome != 'passed':
+        if not receipt.get('reason') or mode == 'smoke':
+            raise StructuralError('refused workload needs reason and cannot pass smoke')
+        if list(directory.glob('criterion/**/sample.json')):
+            raise StructuralError('refused workload must not carry fitted samples')
+        return receipt, None, None
     if mode == 'pilot':
         return receipt, None, None
     root = directory / 'criterion' / point['target'] / point['name'] / 'new'
@@ -189,7 +198,10 @@ def measured_workloads(mode, directory):
                       resource_scope="gate container cgroup; node-wide proc counters separately; own CPU from waited process accounting", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
         if not status:
             receipt, samples, estimates = checked_result(owned, point, run_id, mode)
-            result.update(receipt=receipt, samples=samples, estimates=estimates)
+            result.update(receipt=receipt, samples=samples, estimates=estimates, outcome=receipt.get('outcome', 'passed'),
+                          raw_sample_reference=str(owned/'criterion'/point['target']/point['name']/'new'/'sample.json') if samples else None,
+                          raw_sample_unavailable_reason='' if samples else 'pilot or retained nonsampled refusal',
+                          evidence_reference=str(owned/'receipt.json'))
         results.append(result)
         (owned/'result.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
     return dict(status='failed' if any(row['returncode'] for row in results) else 'passed', builds=builds, points=results), functional_status([row['returncode'] for row in results])
