@@ -5,8 +5,10 @@
 use rustix::mm::{Advice, MapFlags, ProtFlags};
 use rustix::process::{DumpableBehavior, Resource, Rlimit};
 use std::ffi::c_void;
-use std::sync::OnceLock;
+use std::os::fd::AsRawFd;
+use std::os::unix::fs::MetadataExt;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, OnceLock};
 use zeroize::Zeroize;
 
 static BUDGET: OnceLock<usize> = OnceLock::new();
@@ -28,12 +30,55 @@ pub enum Error {
     Process,
 }
 
+// A held namespace descriptor prevents namespace inode reuse while an owner exists.
+struct ProcessIdentity {
+    pid: u32,
+    namespace: Arc<std::fs::File>,
+    task: Arc<std::fs::File>,
+}
+
+impl ProcessIdentity {
+    fn acquire() -> Result<Self, Error> {
+        Ok(Self {
+            pid: std::process::id(),
+            namespace: Arc::new(std::fs::File::open("/proc/self/ns/pid").map_err(|_| Error::Process)?),
+            task: Arc::new(std::fs::File::open("/proc/self").map_err(|_| Error::Process)?),
+        })
+    }
+
+    fn share(&self) -> Self {
+        Self {
+            pid: self.pid,
+            namespace: Arc::clone(&self.namespace),
+            task: Arc::clone(&self.task),
+        }
+    }
+
+    fn is_current(&self) -> bool {
+        if self.pid != std::process::id() {
+            return false;
+        }
+        let Ok(held) = self.namespace.metadata() else {
+            return false;
+        };
+        let Ok(current) = std::fs::metadata("/proc/self/ns/pid") else {
+            return false;
+        };
+        if (held.dev(), held.ino()) != (current.dev(), current.ino()) {
+            return false;
+        }
+        // Resolve through the retained proc directory, not a reusable PID path.
+        // A fresh lookup cannot reuse a buffered proc read after the task exits.
+        std::fs::File::open(format!("/proc/self/fd/{}/stat", self.task.as_raw_fd())).is_ok()
+    }
+}
+
 /// Process-start protection and the declared total mapping budget.
 /// (´[ROOT-amend:crypto:secret-home]´)
 pub struct Protection {
     page: usize,
     budget: usize,
-    process: u32,
+    process: ProcessIdentity,
 }
 
 impl std::fmt::Debug for Protection {
@@ -112,7 +157,7 @@ impl Protection {
         Ok(Self {
             page,
             budget,
-            process: std::process::id(),
+            process: ProcessIdentity::acquire()?,
         })
     }
 
@@ -160,7 +205,7 @@ impl Protection {
 
     /// Justified: Acquisition inherits the public constructor boundary and never observes raw secret bytes.
     fn generate_with(&self, size: usize, fill: impl FnOnce(&mut [u8]) -> Result<(), Error>) -> Result<Home, Error> {
-        if self.process != std::process::id() {
+        if !self.process.is_current() {
             return Err(Error::Process);
         }
         verify_process()?;
@@ -176,7 +221,7 @@ impl Protection {
                 n.checked_add(len).filter(|v| *v <= self.budget)
             })
             .map_err(|_| Error::Budget)?;
-        let mut home = match Home::map(len, self.process) {
+        let mut home = match Home::map(len, self.process.share()) {
             Ok(home) => home,
             Err(error) => {
                 RESERVED.fetch_sub(len, Ordering::SeqCst);
@@ -230,7 +275,7 @@ fn page_size() -> Result<usize, Error> {
 pub struct Home {
     pointer: *mut c_void,
     len: usize,
-    process: u32,
+    process: ProcessIdentity,
     locked: bool,
 }
 
@@ -244,7 +289,7 @@ impl std::fmt::Debug for Home {
 impl Home {
     // Justified: Only this owner creates anonymous mappings under the inventoried exception.
     #[expect(unsafe_code, reason = "owned anonymous mapping")]
-    fn map(len: usize, process: u32) -> Result<Self, Error> {
+    fn map(len: usize, process: ProcessIdentity) -> Result<Self, Error> {
         // SAFETY: The nonzero bounded length requests a fresh private readable/writable anonymous mapping, with no fixed address or overlapping allocation. This owner alone releases it.
         // (´[ROOT-cav:crypto:home-map]´)
         let pointer = unsafe {
@@ -288,7 +333,10 @@ impl Home {
     // Justified: The sole private byte view lends the owned initialized mapping for the duration of an exclusive borrow.
     #[expect(unsafe_code, reason = "exclusive owned mapping bytes")]
     fn bytes(&mut self) -> &mut [u8] {
-        assert_eq!(self.process, std::process::id(), "mapping belongs to another process");
+        assert!(
+            self.process.is_current(),
+            "mapping belongs to another process or identity is unavailable"
+        );
         assert!(!self.pointer.is_null());
         // SAFETY: This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end.
         // (´[ROOT-cav:crypto:home-bytes]´)
@@ -321,7 +369,7 @@ impl Drop for Home {
     /// Justified: Destruction erases in place before unlock and release without observing secret data.
     fn drop(&mut self) {
         // DONTFORK removes the mapping in a child. An inherited handle must not touch it.
-        if self.process != std::process::id() {
+        if !self.process.is_current() {
             return;
         }
         if !self.pointer.is_null() {

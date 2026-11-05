@@ -51,6 +51,22 @@ class WorkspaceChecks(unittest.TestCase):
         self.assertTrue(unsafe_inventory({path: source}, rows[:-1]))
         self.assertTrue(unsafe_inventory({path: source}, rows+rows[:1]))
 
+    def test_unsafe_nonblock(self):
+        """Non-block unsafe functions, implementations, extern blocks and attributes refuse in both the exception crate and another first-party crate.
+        ´claim:discipline:nonblock-unsafe-is-never-an-inventoried-site´
+        ´test:integration:test-unsafe-nonblock´
+        """
+        from discipline import unsafe_inventory
+        path = Path('packages/secret-home/src/lib.rs')
+        source = path.read_text()
+        rows = tomllib.loads(Path('ci/unsafe-sites.toml').read_text())['sites']
+        self.assertEqual(unsafe_inventory({path: source}, rows), [])
+        for extra in ['unsafe fn probe() {}', 'unsafe impl Send for Probe {}',
+                      'unsafe extern "C" {}', '#[unsafe(no_mangle)] fn probe() {}']:
+            with self.subTest(form=extra):
+                self.assertTrue(unsafe_inventory({path: source+'\n'+extra}, rows))
+                self.assertTrue(unsafe_inventory({path: source, Path('packages/records/src/probe.rs'): extra}, rows))
+
     def test_http_admission(self):
         """The first HTTP dependency edge and its transitive closure must stay within admitted versions and features; absent edges do not manufacture lock entries.
         ´claim:discipline:http-edges-stay-within-admission´

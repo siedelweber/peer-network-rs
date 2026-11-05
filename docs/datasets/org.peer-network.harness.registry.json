@@ -527,6 +527,7 @@
         "ci::test_discipline.SourceDiscipline.test_suppressions",
         "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
         "ci::test_discipline.WorkspaceChecks.test_unsafe_inventory",
+        "ci::test_discipline.WorkspaceChecks.test_unsafe_nonblock",
         "ci::test_discipline.WorkspaceChecks.test_discovered_members",
         "ci::test_discipline.WorkspaceChecks.test_http_admission",
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits"
@@ -3808,7 +3809,9 @@
       "cases": [
         "pn-secret-home::tests::kernel_home",
         "pn-secret-home::tests::acquisition",
-        "pn-secret-home::tests::ownership"
+        "pn-secret-home::tests::ownership",
+        "pn-secret-home::tests::namespace_identity",
+        "pn-secret-home::tests::no_deref"
       ],
       "implementation": "pn-secret-home-rust",
       "kind": "suite",

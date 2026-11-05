@@ -125,3 +125,92 @@ fn ownership() {
     }
     assert_eq!(format!("{protection:?}"), "Protection");
 }
+
+/// Equal numeric PIDs do not identify a process across namespaces: a distinct held
+/// namespace refuses acquisition and byte access, while the actual identity passes.
+/// This finite kernel-handle control does not claim to execute a namespace fork.
+/// ´claim:crypto:home-identity-includes-the-held-namespace´
+/// ´test:unit:namespace-identity´
+#[test]
+fn namespace_identity() {
+    if std::env::var_os("PN_HOME_TASK_CHILD").is_some() {
+        use std::io::Read;
+        let mut byte = [0];
+        let _ = std::io::stdin().read(&mut byte).unwrap();
+        return;
+    }
+    if std::env::var_os("PN_HOME_NAMESPACE_CHILD").is_none() {
+        let result = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::namespace_identity", "--nocapture"])
+            .env("PN_HOME_NAMESPACE_CHILD", "1")
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "{result:?}");
+        return;
+    }
+    let _serial = SERIAL.lock().unwrap();
+    let mut protection = protection();
+    assert!(protection.process.is_current());
+    let original = protection.process.share();
+    // Keep a proc directory open across task death; it must not become a
+    // liveness assertion for a later process reusing the numeric PID.
+    let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "tests::namespace_identity", "--nocapture"])
+        .env("PN_HOME_TASK_CHILD", "1")
+        .stdin(std::process::Stdio::piped())
+        .spawn()
+        .unwrap();
+    let dead_task = Arc::new(std::fs::File::open(format!("/proc/{}", child.id())).unwrap());
+    drop(child.stdin.take());
+    assert!(child.wait().unwrap().success());
+    protection.process.task = dead_task;
+    assert_eq!(protection.process.pid, std::process::id());
+    assert!(!protection.process.is_current());
+    assert_eq!(protection.generate(32).unwrap_err(), Error::Process);
+    protection.process = original.share();
+    let other = Arc::new(std::fs::File::open("/proc/self/ns/mnt").unwrap());
+    let a = original.namespace.metadata().unwrap();
+    let b = other.metadata().unwrap();
+    assert_ne!((a.dev(), a.ino()), (b.dev(), b.ino()));
+    protection.process.namespace = Arc::clone(&other);
+    assert_eq!(protection.process.pid, std::process::id());
+    assert!(!protection.process.is_current());
+    assert_eq!(protection.generate(32).unwrap_err(), Error::Process);
+    protection.process = original;
+    let mut home = protection.generate(32).unwrap();
+    let original = home.process.share();
+    home.process.namespace = Arc::clone(&other);
+    assert_eq!(home.process.pid, std::process::id());
+    assert!(!home.process.is_current());
+    let refused = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let _ = home.bytes();
+    }));
+    home.process = original;
+    assert!(refused.is_err());
+    assert!(home.process.is_current());
+    let reserved = RESERVED.load(Ordering::SeqCst);
+    let locked = locked_kib();
+    home.process.namespace = other;
+    ERASED.store(false, Ordering::SeqCst);
+    OBSERVE_ERASE.store(true, Ordering::SeqCst);
+    drop(home);
+    assert!(!ERASED.load(Ordering::SeqCst));
+    assert_eq!(RESERVED.load(Ordering::SeqCst), reserved);
+    assert_eq!(locked_kib(), locked);
+    // This isolated child exits with the deliberately untouched mapping: no second
+    // owner is manufactured to reclaim it and no test reads released memory.
+}
+
+/// Neither shared nor mutable dereferencing can expose the home's bytes implicitly.
+/// ´claim:crypto:home-has-no-deref-surface´
+/// ´test:unit:no-deref´
+#[test]
+fn no_deref() {
+    trait Ambiguous<A> {
+        fn probe() {}
+    }
+    impl<T: ?Sized> Ambiguous<()> for T {}
+    impl<T: ?Sized + std::ops::Deref> Ambiguous<u8> for T {}
+    impl<T: ?Sized + std::ops::DerefMut> Ambiguous<u16> for T {}
+    let _ = <Home as Ambiguous<_>>::probe;
+}

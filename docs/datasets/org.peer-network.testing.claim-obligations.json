@@ -2933,7 +2933,10 @@
         "SECRETHOME::claim:crypto:home-has-no-implicit-secret-observation",
         "SECRETHOME::claim:crypto:home-public-boundary-requires-declared-budget",
         "SECRETHOME::claim:crypto:home-lock-failure-never-degrades",
-        "ROOT::claim:discipline:unsafe-sites-match-the-owned-mapping-inventory"
+        "ROOT::claim:discipline:unsafe-sites-match-the-owned-mapping-inventory",
+        "SECRETHOME::claim:crypto:home-identity-includes-the-held-namespace",
+        "SECRETHOME::claim:crypto:home-has-no-deref-surface",
+        "ROOT::claim:discipline:nonblock-unsafe-is-never-an-inventoried-site"
       ],
       "closing_condition": "Pass the finite kernel, acquisition, ownership and source inventory controls.",
       "closing_step": "Secret-home implementation before signing.",

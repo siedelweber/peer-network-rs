@@ -4,6 +4,6 @@
     "item": "Protection",
     "package": "pn-secret-home",
     "path": "packages/secret-home/src/lib.rs",
-    "syntax": "# [doc = \" Process-start protection and the declared total mapping budget.\"] # [doc = \" (´[ROOT-amend:crypto:secret-home]´)\"] pub struct Protection { page : usize , budget : usize , process : u32 , }"
+    "syntax": "# [doc = \" Process-start protection and the declared total mapping budget.\"] # [doc = \" (´[ROOT-amend:crypto:secret-home]´)\"] pub struct Protection { page : usize , budget : usize , process : ProcessIdentity , }"
   }
 }

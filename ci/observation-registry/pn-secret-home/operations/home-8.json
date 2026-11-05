@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-secret-home::packages/secret-home/src/lib.rs::<Home as Drop>::drop",
-    "body": "{ if self . process != std :: process :: id () { return ; } if ! self . pointer . is_null () { self . erase () ; # [cfg (test)] tests :: observe_erased (self . bytes ()) ; } if self . locked { let _ = self . unlock () ; } let _ = self . unmap () ; RESERVED . fetch_sub (self . len , Ordering :: SeqCst) ; }",
+    "body": "{ if ! self . process . is_current () { return ; } if ! self . pointer . is_null () { self . erase () ; # [cfg (test)] tests :: observe_erased (self . bytes ()) ; } if self . locked { let _ = self . unlock () ; } let _ = self . unmap () ; RESERVED . fetch_sub (self . len , Ordering :: SeqCst) ; }",
     "class_decision": "secret-home-private",
     "item_premise": "The fixed owner and borrowed Staging emit constant Debug; only sizes, content-free errors and Protection are recorded. No pointer or raw byte slice crosses an observed boundary. Erasure and kernel tests witness acquisition, not subscriber absence or cryptographic operations.",
     "assessments": {

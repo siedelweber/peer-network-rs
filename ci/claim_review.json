@@ -226,6 +226,14 @@
       "review": "The real six-site source and register pass; a foreign block, an extra home block, changed syscall argument, lost safety text, empty reason, public method and missing/duplicate register rows each refuse."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_unsafe_nonblock",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:nonblock-unsafe-is-never-an-inventoried-site",
+      "before": "",
+      "after": "Non-block unsafe functions, implementations, extern blocks and attributes refuse in both the exception crate and another first-party crate.",
+      "review": "Each of unsafe fn, unsafe impl, unsafe extern and an unsafe attribute is separately added both inside the declared crate and in a foreign first-party file; all eight refuse beside the unchanged six-site positive. No inventory exception is added."
+    },
+    {
       "operation": "ci::test_harness.Harness.test_flake_ledger",
       "path": "ci/test_harness.py",
       "claim": "ROOT::claim:harness:flake-ledger-retains-recurrences",
@@ -4634,6 +4642,22 @@
       "before": "",
       "after": "The Linux mapping retains its address while the handle moves, reads back locked,\nno-dump and no-fork flags, and erases every allocation byte before release.",
       "review": "The witness reads kernel VmLck, smaps lo/dd/dc flags, dumpability and core limits; it observes the same mapping address after moving only the handle and observes every byte zero before release. It does not read freed memory or assert a cryptographic property."
+    },
+    {
+      "operation": "pn-secret-home::tests::namespace_identity",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-identity-includes-the-held-namespace",
+      "before": "",
+      "after": "Equal numeric PIDs do not identify a process across namespaces: a distinct held\nnamespace refuses acquisition and byte access, while the actual identity passes.\nThis finite kernel-handle control does not claim to execute a namespace fork.",
+      "review": "The real PID namespace passes. A distinct live kernel namespace handle with the unchanged current PID refuses the shared identity predicate, acquisition and the private byte view. An isolated test child drops such a handle and observes no erase, no reservation decrement and no unlocked pages; the kernel cleans up at child exit. This fails if the guard regresses to PID alone, without asserting a namespace fork was executed. A retained proc directory from a reaped child refuses with PID and namespace checks matched, so a dead owner cannot be revived by PID reuse; this does not claim to force PID reuse."
+    },
+    {
+      "operation": "pn-secret-home::tests::no_deref",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-has-no-deref-surface",
+      "before": "",
+      "after": "Neither shared nor mutable dereferencing can expose the home's bytes implicitly.",
+      "review": "Independent Deref and DerefMut trait-ambiguity implementations make this case fail compilation if either trait is implemented for Home."
     },
     {
       "operation": "pn-secret-home::tests::ownership",
