@@ -1025,3 +1025,15 @@ commit = "2d46bf652ed01fc5154180f0ed937de096231b98"
 patch_id = "031acd404c165e82d13c5015e7758d8f3f0139ed"
 definition = "The public imported source is the measured tree; its stable patch identity is independently recomputed."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "design-kranich-public-warm-series"
+group = "warm case allowance calibration"
+measures = "Public measured source and its stable patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "95e5686213bc44d41ba54b515eaa788a68f1df06"
+patch_id = "4b5b6c117f4da7186c48f8da74a36e017c187436"
+definition = "The public source names the measured case closures; the campaign records the kranich platform separately from earlier node measurements."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]

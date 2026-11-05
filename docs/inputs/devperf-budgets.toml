@@ -156,6 +156,21 @@ numeric_refs = { record_margin_percent = { dataset = "org.peer-network.numbers.r
 numeric_text = ["reason"]
 
 [[rows.calibration_campaigns]]
+label = "campaign:devperf:design-kranich-public-warm"
+base_commit = "95e5686213bc44d41ba54b515eaa788a68f1df06"
+configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
+warmup_wall_seconds = 13.750247240066528
+sample_walls_seconds = [15.125356197357178, 12.12858247756958, 11.700447797775269]
+discarded_warmups = 1
+warm_samples = 3
+sample_choice = "maximum-of-three-warm-serial"
+multiplier = 2
+round_ms = 50
+rounding = "upward"
+warm = true
+measured_series = [{ commit = "95e5686213bc44d41ba54b515eaa788a68f1df06", patch_id = "4b5b6c117f4da7186c48f8da74a36e017c187436" }]
+
+[[rows.calibration_campaigns]]
 label = "campaign:devperf:design-codec-public-warm"
 base_commit = "2d46bf652ed01fc5154180f0ed937de096231b98"
 configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
@@ -1351,16 +1366,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-linter-entry-build-graph-census-case"
 category = "case"
-budget_ms = 13650
+budget_ms = 11050
 scope = "one ci::test_linter_entry.Conformance.test_build_graph_census case"
 reason = "The complete tracked-input census retains real linter projections and all missing, mismatched and undeclared source controls."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [5313.021635869518, 5325.505279935896, 6815.304628107697]
+calibration_walls_ms = [5519.980669021606, 3788.724660873413, 3698.64821434021]
+calibration_own_cpu_ms = [5253.115000000003, 3647.739000000005, 3578.268999999999]
+calibration_load_start = [[13.63427734375, 14.83154296875, 9.9130859375], [13.58837890625, 14.7978515625, 9.982421875], [11.9599609375, 14.40869140625, 9.9072265625]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 3
-calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_census", digest = "945a724c1f41c7a9e1b0cffafad7848e3e6f361895cd299d2270a2469a31aae8", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:owned-cases-warm"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_selected_sample = 1
+calibration_source = { path = "ci/test_linter_entry.py", function = "test_build_graph_census", digest = "5ddaede41dc4935876c39f8d2bbe51fc235dbe6a0480a8a49cbf358f83c60da3", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2848,17 +2865,18 @@ calibration_source = { "path" = "packages/epoch/tests/solve/admission/ridge_char
 [[rows]]
 name = "calibrated-wallet-descriptor-recovery-case"
 category = "case"
-budget_ms = 15350
+budget_ms = 9900
 scope = "one pn-wallet::rpc::recovery::replay_safe::descriptor_conflicts case"
 reason = "The real Elements descriptor history retains common-input conflict, pre-sign refusal, lost-reply recovery, abandonment, disjoint concurrent requests, complete fixture scan and shallow reorg controls, including its daemon lifecycle."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [7652.6594161987305, 7586.456775665283, 6880.591630935669]
-calibration_own_cpu_ms = [2221.125999999999, 2221.6710000000016, 2181.936000000002]
+calibration_walls_ms = [4942.342281341553, 3755.784511566162, 3686.325788497925]
+calibration_own_cpu_ms = [1767.436, 1570.4280000000006, 1563.9930000000008]
+calibration_load_start = [[15.42529296875, 15.18310546875, 10.05322265625], [13.58837890625, 14.7978515625, 9.982421875], [11.2421875, 14.21923828125, 9.8701171875]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/wallet/tests/rpc/recovery/replay_safe.rs", function = "descriptor_conflicts", digest = "45b85f14fc93b1a89a4e2d332d2efa0cf789c222b0471fa78b02a91a09bdf4d8", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-public-refresh"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
+calibration_source = { path = "packages/wallet/tests/rpc/recovery/replay_safe.rs", function = "descriptor_conflicts", digest = "34aae959d3434630da26ede860d54a46e54ed71d2ad2d26a59173e1d1deec0c7", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2867,18 +2885,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-host-publication-authentication-mutations-case"
 category = "case"
-budget_ms = 2000
+budget_ms = 1550
 scope = "one pn-host::public::publication::mutations::publication_authentication_mutations case"
 reason = "Every named authentication field retains canonical byte preservation and an independent refused restoration after mutation."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [993.1058883666992, 974.9245643615723, 985.2054119110107]
-calibration_own_cpu_ms = [993.0449999999809, 974.9759999999803, 985.251999999992]
-calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_walls_ms = [758.617639541626, 756.568193435669, 742.6228523254395]
+calibration_own_cpu_ms = [755.8259999999995, 752.4469999999983, 740.0330000000048]
+calibration_load_start = [[14.51025390625, 14.9970703125, 10.0205078125], [12.740234375, 14.6015625, 9.94482421875], [10.58203125, 14.03271484375, 9.8330078125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_authentication_mutations", digest = "e9a30593debb8c8238810bdacbd2bb435f5bfbcd6d58869c8816ec4d2c395a26", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-codec-public-warm"
-calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_authentication_mutations", digest = "ebfa11bfece91346a43803f85f8c264d3c5fedbefc526c9b5f3b434cd55d31f2", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2887,18 +2905,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-host-publication-ridge-transcript-refusal-case"
 category = "case"
-budget_ms = 1600
+budget_ms = 1200
 scope = "one pn-host::public::publication::mutations::publication_ridge_transcript_refusal case"
 reason = "The ridge transcript substitution retains canonical transport and independent charge replay refusal."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [792.5782203674316, 794.5315837860107, 781.0394763946533]
-calibration_own_cpu_ms = [792.4800000000065, 794.5990000000052, 781.1539999999936]
-calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_walls_ms = [561.9196891784668, 592.5178527832031, 583.2986831665039]
+calibration_own_cpu_ms = [558.9269999999989, 589.4060000000012, 580.7169999999973]
+calibration_load_start = [[14.51025390625, 14.9970703125, 10.0205078125], [12.740234375, 14.6015625, 9.94482421875], [10.58203125, 14.03271484375, 9.8330078125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 2
-calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_ridge_transcript_refusal", digest = "61d7dfc68ff3ca736fa974be9364b80080c3694e4356093ccd36cf88cb82a76a", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-codec-public-warm"
-calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_ridge_transcript_refusal", digest = "9c39a46c776d102392f91823ca4e23eba5204976c21df988314c1bcec86b3afc", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2907,18 +2925,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-host-publication-section-mutations-case"
 category = "case"
-budget_ms = 3100
+budget_ms = 2650
 scope = "one pn-host::public::publication::mutations::publication_section_mutations case"
 reason = "Each complete publication section retains its own codec or restoration refusal after mutation."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [1536.1742973327637, 1510.584831237793, 1513.6897563934326]
-calibration_own_cpu_ms = [1536.160999999975, 1510.6920000000023, 1513.6320000000119]
-calibration_load_start = [[69.68212890625, 46.396484375, 44.09326171875], [56.67236328125, 45.9931640625, 44.052734375], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_walls_ms = [1318.1791305541992, 1179.4633865356445, 1060.7538223266602]
+calibration_own_cpu_ms = [1308.2030000000002, 1173.4310000000062, 1055.7520000000036]
+calibration_load_start = [[14.51025390625, 14.9970703125, 10.0205078125], [12.740234375, 14.6015625, 9.94482421875], [10.58203125, 14.03271484375, 9.8330078125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_section_mutations", digest = "4ce74dcf22d2b3726413fe21160d599c03c5f091d2a68d872e0f85b65d3259f5", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-codec-public-warm"
-calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_source = { path = "packages/host/tests/public/publication/mutations.rs", function = "publication_section_mutations", digest = "56e1c20dd216f9b7f9aff8980719b8734c19afe9e494e06e42a56d1db06dc47e", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2927,18 +2945,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-host-publication-codec-roundtrip-case"
 category = "case"
-budget_ms = 2050
+budget_ms = 1600
 scope = "one pn-host::public::publication::publication_codec_roundtrip case"
 reason = "The complete admitted publication retains disclosure encoding, canonical decoding and independent restored equality."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [1014.0557289123535, 1002.7682781219482, 999.7007846832275]
-calibration_own_cpu_ms = [1013.9090000000231, 1002.6909999999987, 999.661999999983]
-calibration_load_start = [[68.18603515625, 46.47314453125, 44.13037109375], [52.9345703125, 45.3955078125, 43.86962890625], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_walls_ms = [795.1712608337402, 757.9753398895264, 713.9060497283936]
+calibration_own_cpu_ms = [791.2180000000064, 754.5179999999938, 710.3139999999986]
+calibration_load_start = [[14.51025390625, 14.9970703125, 10.0205078125], [11.9599609375, 14.40869140625, 9.9072265625], [10.58203125, 14.03271484375, 9.8330078125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
 calibration_selected_sample = 1
-calibration_source = { path = "packages/host/tests/public/publication/mod.rs", function = "publication_codec_roundtrip", digest = "18bfd3bb9c9c8e94e38ec13fd5b86b7bde4cf37a6b05f2342dfcd18db988326d", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-codec-public-warm"
-calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_source = { path = "packages/host/tests/public/publication/mod.rs", function = "publication_codec_roundtrip", digest = "1b915f0b4b3541d33ee67b5f36cbb24ea6007b01917a2160968326634d4b94cd", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
@@ -2947,18 +2965,18 @@ calibration_discarded_warmups = 1
 [[rows]]
 name = "calibrated-host-publication-malformed-documents-case"
 category = "case"
-budget_ms = 1900
+budget_ms = 2600
 scope = "one pn-host::public::publication::refusals::publication_malformed_documents case"
 reason = "The codec retains the complete malformed-field, variant, rational and canonical-byte refusal matrix."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [936.4802837371826, 927.2074699401855, 923.0823516845703]
-calibration_own_cpu_ms = [936.5870000000172, 927.3179999999996, 923.0069999999948]
-calibration_load_start = [[68.18603515625, 46.47314453125, 44.13037109375], [52.9345703125, 45.3955078125, 43.86962890625], [43.04833984375, 43.96142578125, 43.46533203125]]
+calibration_walls_ms = [1225.9387969970703, 1294.4929599761963, 1210.3271484375]
+calibration_own_cpu_ms = [1220.0869999999954, 1288.1380000000036, 1203.7420000000125]
+calibration_load_start = [[14.51025390625, 14.9970703125, 10.0205078125], [11.9599609375, 14.40869140625, 9.9072265625], [10.58203125, 14.03271484375, 9.8330078125]]
 calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 1
-calibration_source = { path = "packages/host/tests/public/publication/refusals.rs", function = "publication_malformed_documents", digest = "f0f70ea993641620cd3dcfb82e25aa832d82c26ccf5bc4f7954559948b1305e7", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-codec-public-warm"
-calibration_configuration = "gate/default-features; design Python cases and pn-host public binary; cases serial"
+calibration_selected_sample = 2
+calibration_source = { path = "packages/host/tests/public/publication/refusals.rs", function = "publication_malformed_documents", digest = "acd393ecd2318232c6b190c3670f4898fef9372c6b8684fa5295fd0109280691", owner = "lane/design" }
+calibration_campaign = "campaign:devperf:design-kranich-public-warm"
+calibration_configuration = "kranich; declared lane TMPDIR; gate/default-features; serial CI, host publication and wallet descriptor cases"
 calibration_multiplier = 2
 calibration_round_ms = 50
 calibration_warm = true
