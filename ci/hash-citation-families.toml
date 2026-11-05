@@ -1047,3 +1047,25 @@ commit = "95e5686213bc44d41ba54b515eaa788a68f1df06"
 patch_id = "4b5b6c117f4da7186c48f8da74a36e017c187436"
 definition = "The public source names the measured case closures; the campaign records the kranich platform separately from earlier node measurements."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/devperf-budgets.toml", "docs/datasets/org.peer-network.devperf.budgets.json"]
+
+[[rows]]
+family = "workload-structural-base"
+group = "workload structural campaign"
+measures = "Public base of the benchmark implementation"
+producer = "Git commit resolution"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "ad94eb24887ecbda0f34a95884ca99b7f6f504e9"
+definition = "The public base is an ancestor; the separately named exercised tree contains the new benchmark implementation."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/workload-benchmarks.toml", "docs/datasets/org.peer-network.workload.benchmarks.json", "docs/design/workload-benchmarks.md"]
+
+[[rows]]
+family = "workload-structural-tree"
+group = "workload structural campaign"
+measures = "Exact tree exercised by the pilot and full campaign"
+producer = "Git tree of the measured source"
+establishment = "resolvable"
+reader = "campaign-tree"
+tree = "4879e68b530c75f771813625a033c86be8c4d1eb"
+definition = "The exercised tree must occur in checked-out history. Signing preserves it; bind the public commit locator on import. A content-changing rebase does not silently retarget this campaign."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/workload-benchmarks.toml", "docs/datasets/org.peer-network.workload.benchmarks.json", "docs/design/workload-benchmarks.md"]

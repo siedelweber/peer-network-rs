@@ -22,3 +22,12 @@
 | --- | --- | --- | --- | --- |
 {% for item in rows('org.peer-network.workload.benchmarks') %}{% if item.kind == 'campaign' or item.kind == 'point' %}| {{ item.name }} | {{ item.outcome }} | {{ item.number_forms.wall_s | display }} | {{ item.number_forms.own_cpu_s | display }} | {{ item.scope }} |
 {% endif %}{% endfor -%}
+
+| Measured source | Public base | Exercised tree | Scheduling and machine |
+| --- | --- | --- | --- |
+{% for item in rows('org.peer-network.workload.benchmarks') %}{% if item.kind == 'campaign' %}| {{ item.name }} | `{{ item.source_base }}` | `{{ item.source_tree }}` | {{ item.node }}; {{ item.cpu_model }}; {{ item.scheduler }}. {{ item.source_locator_status }} |
+{% endif %}{% endfor %}
+| Full point | Size | Mean ns | Mean confidence interval ns | Setup seconds | Outcome |
+| --- | --- | --- | --- | --- | --- |
+{% for item in rows('org.peer-network.workload.benchmarks') %}{% if item.kind == 'point' %}| {{ item.coordinate }} | {{ item.number_forms.requested_size | display }} | {{ item.number_forms.mean_ns | display }} | {{ item.number_forms.mean_ci_low_ns | display }} to {{ item.number_forms.mean_ci_high_ns | display }} | {{ item.number_forms.setup_s | display }} | {{ item.outcome }} |
+{% endif %}{% endfor -%}
