@@ -627,8 +627,9 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
 def baseline_context(root, registry, policy=None):
     """A retained target compares only the same runner configuration and lineage."""
     from harness import CONFIGURATION
+    from gate_resources import node_identity
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
-    identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers,
+    identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers, node=node_identity(),
         profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
         toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
         runtime=dict(python=sys.version, machine=os.uname().machine, flags=os.environ.get('RUSTFLAGS'),
@@ -898,7 +899,8 @@ def tier_summary(root, registry, worker_statuses):
     (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
     tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
                           capture_output=True, text=True, check=True).stdout.strip()
-    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree,
+    from gate_resources import node_identity
+    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(),
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,

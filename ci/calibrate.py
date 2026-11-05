@@ -13,7 +13,7 @@ import tomllib
 
 from build_graph import cancellable
 from devperf import StructuralError, budgets, excess_ledger, report
-from gate_resources import joined, raw_sample
+from gate_resources import joined, raw_sample, node_identity, node_stall
 from flake_ledger import Session
 from harness import CONFIGURATION, load, source_id
 from isolation import import_base, workspace
@@ -76,6 +76,8 @@ def join_cpu(cases, directory, source):
 
 def comparison(before, after, changed):
     """Flag package-code changes conservatively, not as a causal attribution."""
+    if not before.get('node') or before['node'] != after.get('node'):
+        raise StructuralError('calibration comparison node identity is unavailable or differs')
     old = {row['operation']:row for row in before['records'] if row.get('scope') == 'case'}
     rows = []
     for row in after['records']:
@@ -176,6 +178,8 @@ def run():
     source = source_id()
     directory = Path('.lane/calibration');directory.mkdir()
     started = time.time()
+    before = sample(directory/'whole-start.raw')
+    measured_node = node_identity()
     records = []
     contexts = []
     for key in list(os.environ):
@@ -199,6 +203,7 @@ def run():
     env.update(NEXTEST_EXPERIMENTAL_LIBTEST_JSON='1', PN_CONTRACT_RESULTS=str(contracts),
                PN_HARNESS_SOURCE=source, PN_HARNESS_CONFIGURATION=CONFIGURATION, PN_HARNESS_UTC=instant())
     status = 0
+    benchmarks_done = False
     services = [('host_postgresql.py', env['PN_HOST_TEST_ROOT']), ('wallet_elements.py', env['PN_WALLET_TEST_ROOT'])]
     try:
         for script, root in services:
@@ -214,6 +219,14 @@ def run():
             if suite['status'] != 'active' or suite['runner'] == 'contract':
                 continue
             runner = suite['runner']
+            expected_cases = set(suite['cases'])
+            if runner == 'benchmark':
+                if benchmarks_done:
+                    continue
+                benchmarks_done = True
+                expected_cases = {case for item in registry.suites.values()
+                                  if item['status'] == 'active' and item['runner'] == 'benchmark'
+                                  for case in item['cases']}
             if runner == 'nextest':
                 argv = ['cargo', 'nextest', 'run', '--config-file', 'ci/nextest.toml', '--user-config-file', 'none',
                         '--profile', 'default', '--retries', '0', '--no-fail-fast', '--ignore-default-filter',
@@ -246,7 +259,7 @@ def run():
                 # other suite runs during its mutation and restoration probes.
                 suite_env['PN_CI_ISOLATED'] = name.removeprefix('ci::')
             if runner != 'ci':
-                for case in suite['cases']:
+                for case in expected_cases:
                     ledger_session.begin(case)
             code, text, context = measure(directory, name, argv, suite_env)
             status |= code;contexts.append(context)
@@ -260,8 +273,11 @@ def run():
             else:
                 filename = 'harness-ci-'+name.removeprefix('ci::')+'.jsonl' if runner == 'ci' else 'harness-benchmarks.jsonl'
                 cases = [json.loads(line) for line in (Path('.lane')/filename).read_text().splitlines()]
-                cases = [row for row in cases if row.get('scope') == 'case']
-            if {row['operation'] for row in cases} != set(suite['cases']) or len(cases) != len(suite['cases']):
+                if runner == 'benchmark':
+                    cases, benchmark_suites = benchmark_batch(cases, registry, source)
+                else:
+                    cases = [row for row in cases if row.get('scope') == 'case']
+            if {row['operation'] for row in cases} != expected_cases or len(cases) != len(expected_cases):
                 raise StructuralError('calibration suite result union differs')
             if runner != 'ci':
                 failed_output = []
@@ -273,7 +289,10 @@ def run():
                 for row in cases:
                     ledger_session.finish(row['operation'], row['outcome'], '\n'.join(failed_output))
             records += cases
-            records.append(registry.suite_event(name, context['wall_s']*1000, 'failed' if code else 'passed', source))
+            if runner == 'benchmark':
+                records += benchmark_suites
+            else:
+                records.append(registry.suite_event(name, context['wall_s']*1000, 'failed' if code else 'passed', source))
         records += contract_events(contracts, registry, source, records)
         for row in records:
             if row.get('scope') == 'case' and 'cpu_scope' not in row:
@@ -291,7 +310,12 @@ def run():
     ledger = excess_ledger([directory/'findings.jsonl'], source, declared)
     for row in ledger['entries']:
         row['owning_package'] = owning_package(row['operation'], row.get('implementation', ''), inventory, packages)
-    result = dict(source=source, configuration=CONFIGURATION, start=started, end=time.time(),
+    ended = time.time()
+    after = sample(directory/'whole-end.raw')
+    if node_identity() != measured_node:
+        raise StructuralError('calibration node changed during invocation')
+    result = dict(source=source, configuration=CONFIGURATION, node=measured_node, start=started, end=ended,
+                  resources=joined(before, after, ended-started),
                   status=status, records=records, suites=contexts, ledger=ledger,
                   policy='suites alone; nextest and doctest cases serial; external node load recorded')
     (directory/'result.json').write_text(json.dumps(result, sort_keys=True, indent=2)+'\n')
@@ -310,6 +334,29 @@ def warm_allowance(samples, policy):
     return math.ceil(max(samples)*policy['allowance_multiple']/quantum)*quantum
 
 
+def quiet_campaign_run(sample, policy):
+    """Every measured suite and the whole interval require node-wide pressure."""
+    resources=[sample.get('resources', {})]+[context['resources'] for context in sample['suites']]
+    return all(isinstance(node_stall(row), (int,float)) and
+               0 <= node_stall(row) <= policy['load_unresolved_pressure_percent']/100 for row in resources)
+
+
+def benchmark_batch(events, registry, source):
+    """The smoke command emits every declared benchmark suite exactly once."""
+    suites = {name: suite for name, suite in registry.suites.items()
+              if suite['status'] == 'active' and suite['runner'] == 'benchmark'}
+    expected = {case for suite in suites.values() for case in suite['cases']}
+    cases = [row for row in events if row.get('scope') == 'case']
+    aggregates = [row for row in events if row.get('scope') == 'suite']
+    if (len(events) != len(cases)+len(aggregates)
+            or len(cases) != len(expected) or {row['operation'] for row in cases} != expected
+            or len(aggregates) != len(suites) or {row['suite'] for row in aggregates} != set(suites)):
+        raise StructuralError('calibration benchmark batch union differs')
+    if any(row.get('source') != source or row.get('configuration') != CONFIGURATION for row in events):
+        raise StructuralError('calibration benchmark batch identity differs')
+    return cases, aggregates
+
+
 def campaign():
     """Retain a complete warm-up and three subsequent serial invocations."""
     root = Path.cwd()
@@ -320,6 +367,7 @@ def campaign():
     destination.mkdir(parents=True, exist_ok=False)
     started = time.time()
     runs = []
+    node = node_identity()
     for index in range(policy['warm_samples']+1):
         name = 'warmup' if index == 0 else f'sample-{index}'
         artifact = root/'.lane/calibration'
@@ -331,18 +379,22 @@ def campaign():
         shutil.copytree(artifact, destination/name)
         sample = json.loads((artifact/'result.json').read_text())
         runs.append(dict(name=name, warm=index != 0, source=sample['source'],
-                         configuration=sample['configuration'], status=result.returncode,
+                         configuration=sample['configuration'], node=sample['node'], status=result.returncode,
                          start=sample['start'], end=sample['end']))
         status = result.returncode or sample['status']
-        if sample['source'] != source or sample['configuration'] != CONFIGURATION:
+        if sample['source'] != source or sample['configuration'] != CONFIGURATION or sample['node'] != node:
             raise StructuralError('calibration campaign source or configuration changed')
-        report = dict(source=source, start=started, end=time.time(), status=status, runs=runs,
+        quiet = quiet_campaign_run(sample, policy)
+        report = dict(source=source, node=node, start=started, end=time.time(), status=status, runs=runs, quiet=quiet,
                       sample_choice='maximum-of-three-warm-serial', policy=policy)
         (destination/'result.json').write_text(json.dumps(report, indent=2)+'\n')
         print('CALIBRATION-CAMPAIGN '+json.dumps(dict(sample=name, status=status,
               wall_s=sample['end']-sample['start'], warm=index != 0)), flush=True)
         if status:
             return status
+        if index and not quiet:
+            print('CALIBRATION-NOT-ADMITTED reason=node-load-or-unavailable budgets=unchanged', flush=True)
+            return 2
     return 0
 
 

@@ -47,7 +47,9 @@ class Performance(unittest.TestCase):
             root = Path(directory)
             path = root/'case.py'
             identity = dict(path='case.py', function='probe', digest=case_identity(source, 'case.py', 'probe'), owner='fixture-owner')
-            declared = {'case':dict(calibration_campaign='fixture', calibration_source=identity, budget_ms=100)}
+            from gate_resources import node_identity
+            declared = {'gate':dict(calibration_campaigns=[dict(label='fixture', node=node_identity())]),
+                        'case':dict(calibration_campaign='fixture', calibration_source=identity, budget_ms=100)}
             original = copy.deepcopy(declared)
             for body, status in ((source, 'exact'), (source+'\ndef other():\n    return 2\n', 'exact'),
                                  (source.replace('return 1', 'return 2'), 'pending'), ('', 'pending')):
@@ -56,6 +58,13 @@ class Performance(unittest.TestCase):
                 self.assertEqual(row['status'], status)
                 self.assertEqual(row['owner'], 'fixture-owner')
                 self.assertEqual(declared, original)
+            path.write_text(source)
+            for node, reason in ((None, 'node-identity-unavailable'), ({'cpu_models':['different']}, 'different-node-identity')):
+                altered = copy.deepcopy(declared)
+                altered['gate']['calibration_campaigns'][0]['node'] = node
+                measured, = calibration_identities(altered, root)
+                self.assertEqual(measured['status'], 'pending')
+                self.assertEqual(measured['reason'], reason)
             rust = 'fn probe() { let text = "}"; /* } */ assert!(true); }'
             self.assertEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust+'\nfn other() {}', 'case.rs', 'probe'))
             self.assertNotEqual(case_identity(rust, 'case.rs', 'probe'), case_identity(rust.replace('true','false'), 'case.rs', 'probe'))
@@ -568,6 +577,15 @@ wait
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
                 quiet_bytes = path.read_bytes()
+                from gate_resources import node_identity
+                node = node_identity()
+                for key, value in (('cpu_models',['another CPU']), ('allowed_cpus',node['allowed_cpus']+1),
+                                   ('pressure_scope','container-cgroup'), ('resource_scope','shared-cgroup')):
+                    with patch('gate_resources.node_identity', return_value=dict(node, **{key:value})):
+                        foreign_path, foreign_baseline, _ = baseline_context(root, registry)
+                    self.assertNotEqual(foreign_path.parent, path.parent)
+                    self.assertIsNone(foreign_baseline)
+                self.assertEqual(path.read_bytes(), quiet_bytes)
                 from build_graph import quiet_baseline
                 import copy
                 for scope in (None, 'gate-cgroup', 'shared'):
@@ -825,6 +843,15 @@ wait
                 with self.assertRaises(StructuralError):
                     budgets(path)
         self.assertEqual(assess(execution(101), declarations())[0]['kind'], 'budget-excess')
+        from devperf import calibration_defaults
+        registry = SimpleNamespace(cases={'public-case':{'level':'public-surface'}},
+            levels={'public-surface':{'budget':'crate'}}, case_budget=lambda case:'allowance')
+        defaults = {'crate':dict(budget_ms=500), 'allowance':dict(category='case', budget_ms=1550, calibration_campaign='fixture')}
+        calibration_defaults(defaults, registry)
+        for value in (500, 450):
+            defaults['allowance']['budget_ms'] = value
+            with self.assertRaisesRegex(StructuralError, 'fits default crate'):
+                calibration_defaults(defaults, registry)
         from devperf import calibration_declarations
         source = tomllib.loads((Path(__file__).parents[1]/'docs/inputs/devperf-budgets.toml').read_text())
         declared = {row['name']:row for row in source['rows']}

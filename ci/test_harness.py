@@ -134,7 +134,35 @@ class Harness(unittest.TestCase):
                 with self.assertRaisesRegex(StructuralError, 'union'):
                     join_cpu([record], path, 'current')
         record = dict(operation='pn-epoch::solve::fixture', scope='case')
-        before, after = [dict(source=source, records=[record]) for source in ('before', 'after')]
+        from gate_resources import node_identity
+        from calibrate import quiet_campaign_run
+        from calibrate import benchmark_batch
+        batch_registry = SimpleNamespace(suites={name:dict(status='active', runner='benchmark', cases=[name])
+                                                 for name in ('first','second')})
+        batch = [dict(scope='case', operation=name, source='current', configuration=CONFIGURATION)
+                 for name in batch_registry.suites]
+        batch += [dict(scope='suite', suite=name, source='current', configuration=CONFIGURATION)
+                  for name in batch_registry.suites]
+        cases, suites = benchmark_batch(batch, batch_registry, 'current')
+        self.assertEqual(len(cases), 2)
+        self.assertEqual(len(suites), 2)
+        for wrong in (batch[:-1], batch+[batch[0]], [dict(batch[0],operation='unknown')]+batch[1:]):
+            with self.assertRaisesRegex(StructuralError, 'batch union'):
+                benchmark_batch(wrong, batch_registry, 'current')
+        with self.assertRaisesRegex(StructuralError, 'batch identity'):
+            benchmark_batch(batch, batch_registry, 'stale')
+        node = node_identity()
+        before, after = [dict(source=source, node=node, records=[record]) for source in ('before', 'after')]
+        for foreign in (None, dict(node, allowed_cpus=node['allowed_cpus']+1), dict(node, pressure_scope='container')):
+            with self.assertRaisesRegex(StructuralError, 'node identity'):
+                comparison(before, dict(after,node=foreign), [])
+        resource = dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':.1})
+        sample = dict(resources=resource, suites=[dict(resources=resource)])
+        policy = dict(load_unresolved_pressure_percent=10)
+        self.assertTrue(quiet_campaign_run(sample, policy))
+        for bad in ({}, dict(resource,node_scope='gate-cgroup'), dict(resource,node_pressure_fraction={'cpu.some':.101})):
+            self.assertFalse(quiet_campaign_run(dict(sample,resources=bad), policy))
+            self.assertFalse(quiet_campaign_run(dict(sample,suites=[dict(resources=bad)]), policy))
         for paths, changed in ((['packages/epoch/tests/common/joined.rs'], True),
                                (['packages/graph/src/numeric.rs'], True),
                                (['packages/documents/src/pins.rs'], True),
@@ -435,12 +463,13 @@ assert (root/'payload').read_text() == 'committed'
         from types import SimpleNamespace
         from unittest.mock import patch
         from calibrate import campaign
+        from gate_resources import node_identity
         for complete in (False, True):
             with tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 inputs = root/'docs/inputs'
                 inputs.mkdir(parents=True)
-                (inputs/'devperf-budgets.toml').write_text('[[rows]]\nname = "gate"\nwarm_samples = 3\n')
+                (inputs/'devperf-budgets.toml').write_text('[[rows]]\nname = "gate"\nwarm_samples = 3\nload_unresolved_pressure_percent = 10\n')
                 calls = []
                 def invocation(_argv):
                     artifact = root/'.lane/calibration'
@@ -450,7 +479,8 @@ assert (root/'payload').read_text() == 'committed'
                     calls.append(status)
                     if status == 0 or complete:
                         (artifact/'result.json').write_text(json.dumps(dict(source='current',
-                            configuration=CONFIGURATION, status=status, start=0, end=1)))
+                            configuration=CONFIGURATION, node=node_identity(), status=status, start=0, end=1,
+                            resources=dict(node_scope='node-wide',node_pressure_fraction={'cpu.some':0}), suites=[])))
                     return SimpleNamespace(returncode=status)
                 with patch('calibrate.Path.cwd', return_value=root), patch('calibrate.source_id', return_value='current'), patch('calibrate.cancellable', side_effect=invocation):
                     if complete:

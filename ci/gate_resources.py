@@ -8,6 +8,16 @@ COUNTERS=[f'cpu.stat.{k}' for k in ('usage_usec','user_usec','system_usec','nr_p
 AVERAGES=[f'{r}.pressure.{k}.{a}' for r in ('cpu','memory','io') for k in ('some','full') for a in ('avg10','avg60','avg300')]
 
 
+def node_identity():
+    """Machine class and observation scopes, not a login or mutable hostname."""
+    models=sorted({line.split(':',1)[1].strip() for line in Path('/proc/cpuinfo').read_text().splitlines()
+                   if line.split(':',1)[0].strip() in ('model name','Hardware')})
+    if not models:
+        raise ValueError('node CPU model unavailable')
+    return dict(cpu_models=models, allowed_cpus=len(os.sched_getaffinity(0)),
+                pressure_scope='node-wide-proc', resource_scope='gate-cgroup', cpu_scope='process-and-reaped-children')
+
+
 def context(resource, owned=None):
     start,end=resource['start'],resource['end']
     root=start.get('cgroup')

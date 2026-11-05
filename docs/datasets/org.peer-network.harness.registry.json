@@ -451,12 +451,6 @@
     },
     {
       "budget": "pure-suite",
-      "case_budget_reasons": {
-        "ci::test_devperf.Performance.test_distinct_excess_ledger": "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases."
-      },
-      "case_budgets": {
-        "ci::test_devperf.Performance.test_distinct_excess_ledger": "calibrated-devperf-distinct-excess-ledger-case"
-      },
       "cases": [
         "ci::test_devperf.Performance.test_gate_cancel_cleanup",
         "ci::test_devperf.Performance.test_gate_target_lock",

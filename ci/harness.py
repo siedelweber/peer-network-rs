@@ -10,7 +10,7 @@ import time
 import tomllib
 from registry_fragments import read as read_fragments
 
-from devperf import StructuralError, budgets
+from devperf import StructuralError, budgets, calibration_defaults
 
 CONFIGURATION = 'foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing'
 ROOT = Path(__file__).resolve().parent.parent
@@ -133,6 +133,7 @@ class Registry:
         for suite in self.suites.values():
             if suite.get('runner') == 'contract' and (suite.get('parent_case') not in self.cases or not suite.get('contract_edition') or not suite.get('claim')):
                 raise StructuralError('contract case mapping lacks parent, edition or establishing claim')
+        calibration_defaults(declared, self)
 
     def case_budget(self, name):
         suite = self.cases[name]

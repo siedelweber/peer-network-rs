@@ -711,11 +711,27 @@
           "num_exact": true,
           "num_relation": "="
         },
+        "redundant_level_count": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
         "shared_target_ceiling_bytes": {
           "exact": "17 179 869 184",
           "exact_exact": true,
           "exact_relation": "=",
           "num": "17 179 869 184",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "superseded_uniform_count": {
+          "exact": "55",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
@@ -773,7 +789,15 @@
           "display": "exact",
           "exact_digits": 32
         },
+        "redundant_level_count": {
+          "display": "exact",
+          "exact_digits": 32
+        },
         "shared_target_ceiling_bytes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "superseded_uniform_count": {
           "display": "exact",
           "exact_digits": 32
         },
@@ -807,8 +831,10 @@
       "record_pressure_percent": 2,
       "record_second_cpu_seconds": 233,
       "record_second_wall_seconds": "85.5",
+      "redundant_level_count": 1,
       "scope": "author fast tier inside the complete per-change gate, with its own retained node target",
       "shared_target_ceiling_bytes": 17179869184,
+      "superseded_uniform_count": 55,
       "warm_samples": 3
     },
     {
@@ -6297,53 +6323,6 @@
       },
       "reason": "The complete analytic ridge prerequisite, independent certificate replay, strict delivered-floor comparison, failed certificate neighbour and exact-representation refusal retain the declared defining object.",
       "scope": "one pn-graph::numeric::controller::controller_ridge case"
-    },
-    {
-      "budget_ms": 50,
-      "calibration_campaign": "campaign:devperf:design-public-refresh",
-      "calibration_configuration": "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing",
-      "calibration_discarded_warmups": 1,
-      "calibration_multiplier": 2,
-      "calibration_own_cpu_ms": [
-        1.214000000003601,
-        1.2559999999979254,
-        1.1690000000008638
-      ],
-      "calibration_round_ms": 50,
-      "calibration_sample_choice": "maximum-of-three-warm-serial",
-      "calibration_selected_sample": 2,
-      "calibration_source": {
-        "digest": "ab476cc5d6b23ffd8e8c09512afc307294781c9cbe720205f294d2f13d504b0a",
-        "function": "test_distinct_excess_ledger",
-        "owner": "lane/design",
-        "path": "ci/test_devperf.py"
-      },
-      "calibration_walls_ms": [
-        1.2226104736328125,
-        1.2662410736083984,
-        1.1782646179199219
-      ],
-      "calibration_warm": true,
-      "category": "case",
-      "name": "calibrated-devperf-distinct-excess-ledger-case",
-      "number_forms": {
-        "budget_ms": {
-          "exact": "50",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "50",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "budget_ms": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      },
-      "reason": "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases.",
-      "scope": "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
     },
     {
       "budget_ms": 20550,

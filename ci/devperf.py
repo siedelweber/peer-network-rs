@@ -141,6 +141,18 @@ def calibration_declarations(declared):
             raise StructuralError(name+': budget differs from the rule over recorded walls')
 
 
+def calibration_defaults(declared, registry):
+    """An override must exceed the actual level default its removal restores."""
+    for case, suite in registry.cases.items():
+        name = registry.case_budget(case)
+        row = declared[name]
+        if 'calibration_campaign' not in row or row['category'] != 'case':
+            continue
+        default = registry.levels[suite['level']]['budget']
+        if name != default and row['budget_ms'] <= declared[default]['budget_ms']:
+            raise StructuralError(name+': calibrated allowance fits default '+default+' for '+case)
+
+
 def identity_functions(text, path):
     """Collect exact functions and conservative same-file reference edges."""
     functions = {}
@@ -297,6 +309,9 @@ def case_identity(text, path, function):
 
 def calibration_identities(declared, root):
     """Changed bodies retain their allowance but lose calibrated standing."""
+    from gate_resources import node_identity
+    current_node = node_identity()
+    campaigns = {row['label']:row for row in declared.get('gate', {}).get('calibration_campaigns', [])}
     result = []
     for name, row in declared.items():
         if 'calibration_pending_owner' in row:
@@ -308,9 +323,13 @@ def calibration_identities(declared, root):
                 actual = case_identity(path.read_text(), identity['path'], identity['function'])
             except (OSError, StructuralError):
                 actual = None
-            result.append(dict(budget=name, status='exact' if actual == identity['digest'] else 'pending',
+            measured_node = campaigns.get(row['calibration_campaign'], {}).get('node')
+            reason = ('changed-case-closure' if actual != identity['digest'] else
+                      'node-identity-unavailable' if not measured_node else
+                      'different-node-identity' if measured_node != current_node else 'same-case-closure')
+            result.append(dict(budget=name, status='exact' if reason == 'same-case-closure' else 'pending',
                                owner=identity['owner'], measured=identity['digest'], current=actual,
-                               reason='same-case-closure' if actual == identity['digest'] else 'changed-case-closure'))
+                               measured_node=measured_node, current_node=current_node, reason=reason))
     return result
 
 

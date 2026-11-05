@@ -140,6 +140,8 @@ owner_target_ceiling_bytes = 4294967296
 shared_target_ceiling_bytes = 17179869184
 cpu_growth_percent = 20
 load_unresolved_pressure_percent = 10
+superseded_uniform_count = 55
+redundant_level_count = 1
 allowance_multiple = 2
 allowance_round_ms = 50
 warm_samples = 3
@@ -147,7 +149,7 @@ rebuild_steps = ["test-build", "clippy", "nursery-advisory", "minimal", "rustdoc
 budget_ms = 120000
 scope = "author fast tier inside the complete per-change gate, with its own retained node target"
 reason = "The author-tier target retains the historical gate allowance: pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload."
-numeric_display = { owner_target_ceiling_bytes = { display = "exact", exact_digits = 32 }, shared_target_ceiling_bytes = { display = "exact", exact_digits = 32 }, isolation_retention_imports = { display = "exact", exact_digits = 32 }, cpu_growth_percent = { display = "exact", exact_digits = 32 }, load_unresolved_pressure_percent = { display = "exact", exact_digits = 32 }, allowance_multiple = { display = "exact", exact_digits = 32 }, allowance_round_ms = { display = "exact", exact_digits = 32 }, warm_samples = { display = "exact", exact_digits = 32 }, budget_ms = { display = "exact", exact_digits = 32 }, record_first_wall_seconds = { display = "exact", exact_digits = 32 }, record_second_wall_seconds = { display = "exact", exact_digits = 32 }, record_second_cpu_seconds = { display = "exact", exact_digits = 32 }, record_pressure_percent = { display = "exact", exact_digits = 32 } }
+numeric_display = { superseded_uniform_count = { display = "exact", exact_digits = 32 }, redundant_level_count = { display = "exact", exact_digits = 32 }, owner_target_ceiling_bytes = { display = "exact", exact_digits = 32 }, shared_target_ceiling_bytes = { display = "exact", exact_digits = 32 }, isolation_retention_imports = { display = "exact", exact_digits = 32 }, cpu_growth_percent = { display = "exact", exact_digits = 32 }, load_unresolved_pressure_percent = { display = "exact", exact_digits = 32 }, allowance_multiple = { display = "exact", exact_digits = 32 }, allowance_round_ms = { display = "exact", exact_digits = 32 }, warm_samples = { display = "exact", exact_digits = 32 }, budget_ms = { display = "exact", exact_digits = 32 }, record_first_wall_seconds = { display = "exact", exact_digits = 32 }, record_second_wall_seconds = { display = "exact", exact_digits = 32 }, record_second_cpu_seconds = { display = "exact", exact_digits = 32 }, record_pressure_percent = { display = "exact", exact_digits = 32 } }
 record_first_wall_seconds = "81.2"
 record_second_wall_seconds = "85.5"
 record_second_cpu_seconds = 233
@@ -2123,25 +2125,6 @@ calibration_warm = true
 calibration_discarded_warmups = 1
 calibration_campaign = "campaign:devperf:graph-public-main-warm"
 calibration_source = { "path" = "packages/graph/tests/numeric/controller.rs", "function" = "controller_ridge", "digest" = "5007453ebc9b1b61eef2048891dd23a53d69a56490b3c60424b338b3b92d0bde", "owner" = "lane/graph" }
-
-[[rows]]
-name = "calibrated-devperf-distinct-excess-ledger-case"
-category = "case"
-budget_ms = 50
-scope = "one ci::test_devperf.Performance.test_distinct_excess_ledger case"
-reason = "The ledger retains cross-file deduplication, largest repeated measurements, stale and non-budget exclusion, and disjoint budget and tier counts; classifier witnesses are separate cases."
-numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
-calibration_walls_ms = [1.2226104736328125, 1.2662410736083984, 1.1782646179199219]
-calibration_own_cpu_ms = [1.214000000003601, 1.2559999999979254, 1.1690000000008638]
-calibration_sample_choice = "maximum-of-three-warm-serial"
-calibration_selected_sample = 2
-calibration_source = { path = "ci/test_devperf.py", function = "test_distinct_excess_ledger", digest = "ab476cc5d6b23ffd8e8c09512afc307294781c9cbe720205f294d2f13d504b0a", owner = "lane/design" }
-calibration_campaign = "campaign:devperf:design-public-refresh"
-calibration_configuration = "foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing"
-calibration_multiplier = 2
-calibration_round_ms = 50
-calibration_warm = true
-calibration_discarded_warmups = 1
 
 [[rows]]
 name = "calibrated-schedule-covariance-case"
