@@ -159,6 +159,7 @@ else
     done < .lane/gate-steps.tsv
     printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$gate_wall"
 fi
+python3 -B ci/build_graph.py check-inputs || failed=1
 python3 -B ci/build_graph.py wall-summary "$failed" "$gate_started" "$gate_ended" || failed=1
 python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
 if [ "$failed" = 0 ] && [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then

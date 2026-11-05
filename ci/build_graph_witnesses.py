@@ -229,7 +229,7 @@ def exercise(case):
 def delegation(case):
     """Compare isolated legacy/graph executions and reject stale result envelopes."""
     import time
-    from build_graph import bind_inputs, context, execute, identity, read_result, resource_line
+    from build_graph import bind_inputs, check_inputs, context, execute, identity, read_result, resource_line
     checker = Path(__file__).resolve().with_name('build_graph.py')
     meson = os.environ['PN_MESON_BIN']
     commands = [('before', 'python3 fixture.py read'),
@@ -305,6 +305,25 @@ else:
                         old = context(root, dynamic_graph, 'before')['inputs']
                         generated.write_text('second')
                         case.assertNotEqual(old, context(root, dynamic_graph, 'before')['inputs'])
+                        with patch.dict(os.environ, PN_GATE_SOURCE=initial_binding['source']):
+                            check_inputs(root)  # Declared untracked output is allowed.
+                            result = run_at(root, ['python3', '-c', "from pathlib import Path; p=Path('fixture.py'); p.write_text(p.read_text()+'# step mutation\\n')"])
+                            case.assertEqual(result.returncode, 0, result.stdout)
+                            with case.assertRaisesRegex(ValueError, 'gate end input mismatch.*fixture.py'):
+                                check_inputs(root)
+                            tracked_input.write_text(saved_input)
+                            check_inputs(root)
+                            result = run_at(root, ['git','-c','user.name=Fixture','-c','user.email=fixture@example.invalid','-c','commit.gpgsign=false','commit','--allow-empty','-qm','Moved HEAD'])
+                            case.assertEqual(result.returncode, 0, result.stdout)
+                            with case.assertRaisesRegex(ValueError, 'gate end input mismatch'):
+                                check_inputs(root)
+                            result = run_at(root, ['git','reset','--hard',initial_binding['source']])
+                            case.assertEqual(result.returncode, 0, result.stdout)
+                            check_inputs(root)
+                        gate = (checker.parent/'gate.sh').read_text()
+                        case.assertLess(gate.index('ci/build_graph.py check-inputs'), gate.index('ci/build_graph.py retain-baseline'))
+                        case.assertIn('ci/build_graph.py check-inputs || failed=1', gate)
+
                     for name,command in commands:
                         start=time.monotonic()
                         argv=['bash','-c',command] if route=='legacy' else ['python3','-B',str(checker),'delegate',name]

@@ -563,10 +563,31 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed = baseline_context(root, registry)
                 self.assertIsNone(old)
-                candidate = dict(path=str(path), source='ancestor', tiers={})
+                candidate = dict(path=str(path), source='ancestor', tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
+                quiet_bytes = path.read_bytes()
+                candidate['whole']['stall'] = .101
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                retain_baseline(root)
+                self.assertEqual(path.read_bytes(), quiet_bytes)
+                new_path = path.parent/'loaded.json'
+                candidate['path'] = str(new_path)
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                retain_baseline(root)
+                self.assertFalse(new_path.exists())
+                candidate['whole']['stall'] = .1
+                candidate['tiers'] = {'fast':{'resources':{'node_pressure_fraction':{'cpu.some':.101}}}}
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                retain_baseline(root)
+                self.assertFalse(new_path.exists(), 'a quiet whole cannot hide a loaded tier')
+                candidate['tiers'] = {}
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                retain_baseline(root)
+                self.assertTrue(new_path.exists(), 'the threshold itself remains quiet')
+                new_path.unlink()
+
                 with patch('build_graph.subprocess.run', side_effect=[good, good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
                     same_path, old, changed = baseline_context(root, registry)
                 self.assertEqual(path, same_path)
@@ -603,7 +624,7 @@ wait
             (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
                 path, _, _ = baseline_context(root, registry)
-                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={})))
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)))
                 retain_baseline(root)
                 _, retained, changed = baseline_context(root, registry)
                 self.assertEqual(retained['source'], original)
@@ -615,7 +636,7 @@ wait
                 other = git('-c', 'commit.gpgsign=false', 'commit-tree', other_tree, '-p', imported, input='unimported candidate\n')
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
                     other_path, _, _ = baseline_context(root, registry)
-                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={})))
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, whole={'stall':0}, load_unresolved_pressure_percent=10)))
                     retain_baseline(root)
                 self.assertNotEqual(path, other_path)
                 self.assertTrue(path.exists())
@@ -623,6 +644,21 @@ wait
                 other_path.unlink()
                 with patch.dict(os.environ, PN_IMPORT_BASE=other):
                     self.assertIsNone(baseline_context(root, registry)[1], 'a mismatched tree must refuse the comparison')
+                # A rejected loaded import points only to a quiet ancestor tree.
+                with patch.dict(os.environ, PN_GATE_SOURCE=other):
+                    loaded = dict(path=str(other_path), source=other, tree=other_tree, tiers={},
+                                  whole={'stall':.101}, load_unresolved_pressure_percent=10,
+                                  previous_baseline_tree=tree)
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(loaded))
+                    retain_baseline(root)
+                    self.assertFalse(other_path.exists())
+                with patch.dict(os.environ, PN_IMPORT_BASE=other):
+                    _, previous, _ = baseline_context(root, registry)
+                    self.assertEqual(previous['source'], original)
+                    self.assertEqual(previous['match'], 'previous-quiet-import-tree')
+                    marker = other_path.with_suffix('.skipped.json')
+                    marker.write_text(json.dumps({'previous_tree': 'f'*40}))
+                    self.assertIsNone(baseline_context(root, registry)[1], 'an unrelated predecessor must refuse')
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 

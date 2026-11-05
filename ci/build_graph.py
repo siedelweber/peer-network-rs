@@ -444,6 +444,17 @@ def bind_inputs(root):
     return value
 
 
+def check_inputs(root):
+    """Refuse a final tracked edit or HEAD change; untracked products are owned."""
+    bound = json.loads((root/'.lane/build-input-binding.json').read_text())
+    source, tree = subprocess.check_output(
+        ['git', '-C', str(root), 'rev-parse', 'HEAD', 'HEAD^{tree}'], text=True).splitlines()
+    dirty = subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=no'], text=True)
+    if bound != dict(run=os.environ.get('PN_BUILDGRAPH_RUN'), source=source, tree=tree) or source != os.environ.get('PN_GATE_SOURCE') or dirty:
+        raise ValueError('gate end input mismatch: HEAD='+source+' expected='+str(bound.get('source'))+' tracked='+repr(dirty))
+    print('GATE-TREE unchanged=true source='+source+' tree='+tree)
+
+
 def input_binding(root, graph, step, source, run_id):
     """Retain byte digests only for generated and current-run consumer inputs."""
     bound = json.loads((root/'.lane/build-input-binding.json').read_text())
@@ -613,7 +624,7 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     return 'growth'
 
 
-def baseline_context(root, registry):
+def baseline_context(root, registry, policy=None):
     """A retained target compares only the same runner configuration and lineage."""
     from harness import CONFIGURATION
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
@@ -646,13 +657,39 @@ def baseline_context(root, registry):
         candidates.extend(sorted(directory.glob('*.json'), key=lambda p:p.stat().st_mtime, reverse=True))
     legacy = directory.with_suffix('.json')
     if legacy.exists(): candidates.append(legacy)
+    comparisons = {}
+    if base_tree and not base_tree.returncode:
+        # Only an explicitly skipped import may lead back to an older quiet
+        # baseline. Verify that tree in the import's public ancestry.
+        cursor = base_tree.stdout.strip()
+        visited = set()
+        while cursor not in visited:
+            visited.add(cursor)
+            try:
+                previous = json.loads((directory/(cursor+'.skipped.json')).read_text())['previous_tree']
+            except (FileNotFoundError, KeyError, ValueError):
+                break
+            if not previous: break
+            history = subprocess.run(['git', 'log', '--format=%H %T', base], cwd=root,
+                                     capture_output=True, text=True, check=True).stdout.splitlines()
+            matches = [line.split()[0] for line in history if line.split()[-1] == previous]
+            if not matches: break
+            candidate = directory/(previous+'.json')
+            candidates.append(candidate)
+            comparisons[candidate] = matches[0]
+            cursor = previous
     for candidate in candidates:
         try:
             value = json.loads(candidate.read_text())
+            if not quiet_baseline(value, policy): continue
             if base_tree and not base_tree.returncode:
-                if value.get('tree') != base_tree.stdout.strip(): continue
-                comparison = base
-                value['match'] = 'import-base-tree'
+                if candidate in comparisons:
+                    comparison = comparisons[candidate]
+                    value['match'] = 'previous-quiet-import-tree'
+                else:
+                    if value.get('tree') != base_tree.stdout.strip(): continue
+                    comparison = base
+                    value['match'] = 'import-base-tree'
             else:
                 ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', value['source'], source], cwd=root, capture_output=True)
                 if ancestor.returncode: continue
@@ -665,6 +702,15 @@ def baseline_context(root, registry):
         except (FileNotFoundError, ValueError, KeyError):
             continue
     return path, baseline, changed
+
+
+def quiet_baseline(candidate, policy=None):
+    """Every measured interval must meet the existing unresolved-load policy."""
+    limit = (policy or candidate)['load_unresolved_pressure_percent']/100
+    pressures = [candidate.get('whole', {}).get('stall')]
+    pressures.extend(row.get('resources', {}).get('node_pressure_fraction', {}).get('cpu.some')
+                     for row in candidate['tiers'].values())
+    return all(isinstance(value, (int, float)) and 0 <= value <= limit for value in pressures)
 
 
 def retain_baseline(root):
@@ -681,9 +727,20 @@ def retain_baseline(root):
             print('GATE-STATUS-CHANGE '+json.dumps(change, sort_keys=True))
         print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
+    if not quiet_baseline(candidate):
+        # Keep the prior quiet file intact, even for a loaded repeat of its tree.
+        skipped = path.with_suffix('.skipped.json')
+        temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+        temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
+        temporary.replace(skipped)
+        print('GATE-BASELINE retained=false reason=load-unresolved previous_tree='+str(candidate.get('previous_baseline_tree')))
+        return
+    candidate['quiet'] = True
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
     temporary.replace(path)
+    path.with_suffix('.skipped.json').unlink(missing_ok=True)
+    print('GATE-BASELINE retained=true source='+candidate['source'])
 
 
 def compile_comparison(current, prior, serialized):
@@ -745,7 +802,7 @@ def tier_summary(root, registry, worker_statuses):
     from gate_resources import cpu_from_log, raw_sample, joined, compact
     declared = budgets(root/'docs/inputs/devperf-budgets.toml')
     policy = declared['gate']
-    baseline_path, baseline, changed = baseline_context(root, registry)
+    baseline_path, baseline, changed = baseline_context(root, registry, policy)
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
     groups = {name: tier['steps'] for name, tier in registry.tiers.items() if 'steps' in tier}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
@@ -840,6 +897,8 @@ def tier_summary(root, registry, worker_statuses):
                           capture_output=True, text=True, check=True).stdout.strip()
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree,
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports,
+        load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
+        previous_baseline_tree=baseline.get('tree') if baseline else None,
         previous_whole=baseline.get('whole') if baseline else None,
         previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 
@@ -999,6 +1058,7 @@ def main():
     audit.add_argument('--report', required=True)
     sub.add_parser('gate')
     sub.add_parser('bind-inputs')
+    sub.add_parser('check-inputs')
     sub.add_parser('plan')
     sub.add_parser('finish')
     sub.add_parser('schedule')
@@ -1023,6 +1083,9 @@ def main():
     args = parser.parse_args()
     if args.action == 'bind-inputs':
         bind_inputs(Path.cwd())
+        return 0
+    if args.action == 'check-inputs':
+        check_inputs(Path.cwd())
         return 0
     if args.action == 'plan':
         print(plan(Path.cwd()), end='')
