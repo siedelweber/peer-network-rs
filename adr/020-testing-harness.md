@@ -110,7 +110,7 @@
 | pn-epoch::reference-receiving | active | public-surface | pn-epoch-rust | reference-certificate | 1 |
 | pn-epoch::reference-wall | active | public-surface | pn-epoch-rust | reference-certificate | 1 |
 | pn-epoch::replay-work | active | public-surface | pn-epoch-rust | fast | 1 |
-| pn-epoch::restoration-guards | active | public-surface | pn-epoch-rust | fast | 2 |
+| pn-epoch::restoration-guards | active | public-surface | pn-epoch-rust | fast | 3 |
 | pn-epoch::ridge-charge | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::ridge-envelope | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::schedule-policy | active | public-surface | pn-epoch-rust | fast | 1 |

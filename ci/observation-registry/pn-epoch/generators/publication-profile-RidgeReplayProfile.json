@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "publication::RidgeReplayProfile",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "semantic-publication-public",
+    "expansion_review": "Derives retain only public procedure limits, typed profile refusal classes or a borrowed public profile; no secret or encoder is present."
+  }
+}

@@ -338,6 +338,7 @@ fn restore_binding(
     history: &pn_records::ValidatedHistory,
     numeric: &mut numerics::NumericContext,
     limits: Limits,
+    verifier: &impl Verifier,
 ) -> Result<package::EpochBinding, Error> {
     let parameters = crate::bind_inputs(constants, input.inputs.parameters.clone(), limits)?;
     if parameters.constants().content() != &input.inputs.constants {
@@ -359,7 +360,7 @@ fn restore_binding(
         marker: input.marker.clone(),
         predecessor: input.predecessor.clone(),
         inputs: parameters,
-        price: numeric.restore_charged_price(&input.price, &pn_graph::numeric::ridge::ChargeReplay)?,
+        price: super::restore_price(numeric, &input.price, input.inputs.parameters.boundary, verifier)?,
         sequence,
     })
 }
@@ -384,7 +385,16 @@ fn restore_frame(
         .closure
         .bindings
         .iter()
-        .map(|b| restore_binding(b, constants, history, &mut context, frame.procedure.arithmetic.clone()))
+        .map(|b| {
+            restore_binding(
+                b,
+                constants,
+                history,
+                &mut context,
+                frame.procedure.arithmetic.clone(),
+                verifier,
+            )
+        })
         .collect::<Result<_, _>>()?;
     let graph = pn_graph::formation::reconstruct_replay(history, verifier)
         .map_err(pn_graph::recognition::RecognitionError::Formation)
@@ -396,7 +406,7 @@ fn restore_frame(
     }
     let mut debits = BTreeMap::new();
     for (id, debit) in frame.compiled.ledger.debits {
-        let price = context.restore_charged_price(&debit.price, &pn_graph::numeric::ridge::ChargeReplay)?;
+        let price = super::restore_price(&mut context, &debit.price, debit.boundary, verifier)?;
         let restored = context.consummate(&price, numerics::ActionCount(1), debit.boundary)?;
         if restored.charged() != &debit.charged {
             return Err(Error::Disclosure(Section::Debit));
@@ -440,7 +450,7 @@ fn restore_frame(
 }
 
 /// Restore checked components from disclosures and then replay the complete package.
-/// The consumer selects `ChargeReplay`; a disclosure cannot select or replace its verifier.
+/// The consumer selects the ridge profile and kernel; a disclosure cannot replace either.
 /// (´rule:admission:publication-disclosures´)
 /// # Errors
 /// Refuses recognition, input, sequence, debit or compiled-section substitutions, and
@@ -461,6 +471,15 @@ pub fn restore(disclosure: Disclosure, verifier: &impl Verifier) -> Result<super
     }
     if !verifier.disclosure_profile(&disclosure) {
         return Err(Error::Structure("publication profile"));
+    }
+    for frame in &disclosure.frames {
+        super::charge_profile(&frame.price, frame.parameters.boundary, verifier)?;
+        for binding in &frame.closure.bindings {
+            super::charge_profile(&binding.price, binding.inputs.parameters.boundary, verifier)?;
+        }
+        for debit in frame.compiled.ledger.debits.values() {
+            super::charge_profile(&debit.price, debit.boundary, verifier)?;
+        }
     }
     let empty = pn_records::validate_history(&[], &[])?;
     let declarations = pn_records::validate_record(&[], &empty, &disclosure.causes.declarations)?;

@@ -24,6 +24,100 @@ pub trait Verifier:
     fn publication_profile(&self, carrier: &Carrier) -> bool;
     /// Check untrusted declared limits and realization evidence before reconstruction.
     fn disclosure_profile(&self, disclosure: &disclosures::Disclosure) -> bool;
+    /// Return the admitted ridge charge procedure for this historical boundary.
+    /// The caller's disclosure is not an input to this selection; absence admits no ridge charge.
+    fn ridge_charge_profile(&self, boundary: u64) -> Option<&RidgeReplayProfile>;
+}
+
+/// Consumer-owned ridge execution declaration, separate from a retained certificate.
+/// (´rule:admission:publication-disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RidgeReplayProfile {
+    pub procedure: pn_records::solve::Procedure,
+    pub maximum_depth: u32,
+    pub maximum_work: u64,
+    pub maximum_replay_work: u64,
+}
+
+/// A disclosed ridge execution declaration differs before replay begins.
+/// (´rule:admission:publication-disclosures´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RidgeProfileError {
+    Missing,
+    Procedure,
+    Limits,
+}
+
+fn charge_profile<'a>(
+    price: &numerics::PriceInput,
+    boundary: u64,
+    verifier: &'a impl Verifier,
+) -> Result<Option<&'a RidgeReplayProfile>, Error> {
+    let Some(evidence) = price.ridge.as_deref() else {
+        return Ok(None);
+    };
+    let profile = verifier
+        .ridge_charge_profile(boundary)
+        .ok_or(Error::RidgeProfile(RidgeProfileError::Missing))?;
+    if evidence.procedure != profile.procedure {
+        return Err(Error::RidgeProfile(RidgeProfileError::Procedure));
+    }
+    for input in [&evidence.input, &evidence.record.input] {
+        if input.maximum_depth != profile.maximum_depth
+            || input.maximum_work != profile.maximum_work
+            || input.maximum_replay_work != profile.maximum_replay_work
+        {
+            return Err(Error::RidgeProfile(RidgeProfileError::Limits));
+        }
+    }
+    Ok(Some(profile))
+}
+
+#[derive(Debug)]
+struct ProfiledChargeReplay<'a>(Option<&'a RidgeReplayProfile>);
+
+impl pn_records::ridge::ChargeVerifier for ProfiledChargeReplay<'_> {
+    #[tracing::instrument(
+        name = "sig:design:epoch",
+        fields(
+            execution_owner = "EPOCH",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:epoch",
+            source_item = "publication::<ProfiledChargeReplay < '_ > as pn_records :: ridge :: ChargeVerifier>::replay"
+        ),
+        ret
+    )]
+    fn replay(&self, evidence: &pn_records::ridge::ChargeEvidence) -> Result<(), numerics::NumericError> {
+        use numerics::NumericError;
+        let profile = self.0.ok_or(NumericError::RidgeEvidence)?;
+        if evidence.analytic_premises != "clean-ridge-analytic-v1" {
+            return Err(NumericError::RidgeDefinition);
+        }
+        let mut input = evidence.input.clone();
+        input.maximum_depth = profile.maximum_depth;
+        input.maximum_work = profile.maximum_work;
+        input.maximum_replay_work = profile.maximum_replay_work;
+        ridge::replay(&profile.procedure, &input, &evidence.record)
+            .map(|_| ())
+            .map_err(|error| match error {
+                ridge::Error::Definition => NumericError::RidgeDefinition,
+                ridge::Error::Numeric(pn_graph::numeric::Error::Backend(fault)) | ridge::Error::Arithmetic(fault) => {
+                    NumericError::Backend(fault)
+                }
+                ridge::Error::Operational { fault: Some(fault), .. } => NumericError::RetainedFault(fault),
+                _ => NumericError::RidgeEvidence,
+            })
+    }
+}
+
+fn restore_price(
+    numeric: &mut numerics::NumericContext,
+    price: &numerics::PriceInput,
+    boundary: u64,
+    verifier: &impl Verifier,
+) -> Result<numerics::ChargedPrice, Error> {
+    let profile = charge_profile(price, boundary, verifier)?;
+    Ok(numeric.restore_charged_price(price, &ProfiledChargeReplay(profile))?)
 }
 
 /// Complete public causes. Act presentation is a set; each frame's sequence is ordered.
@@ -142,6 +236,8 @@ pub struct AdmittedPackage {
 /// (´rule:admission:semantic-carrier´)
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("publication ridge profile: {0:?}")]
+    RidgeProfile(RidgeProfileError),
     #[error("publication disclosure differs: {0:?}")]
     Disclosure(disclosures::Section),
     #[error("publication structure: {0}")]
@@ -265,10 +361,12 @@ fn rebuild(
     if frame.price.floor != input.constants().content().floor || frame.price.numeraire != input.parameters().numeraire {
         return Err(Error::Structure("mixed charge declaration"));
     }
-    let price = carrier
-        .numeric
-        .context()?
-        .restore_charged_price(&frame.price, &ridge::ChargeReplay)?;
+    let price = restore_price(
+        &mut carrier.numeric.context()?,
+        &frame.price,
+        frame.parameters.boundary,
+        verifier,
+    )?;
     let names: Vec<_> = carrier.causes.names.iter().cloned().collect();
     let boundary = frame.parameters.boundary;
     let acts: Vec<_> = carrier
@@ -331,7 +429,7 @@ fn standing(state: &compiler::CompiledState, frame: &Frame, verifier: &impl Veri
 }
 
 /// Rebuild every checked boundary from complete public causes. Every restored charge is
-/// reverified under graph `ChargeReplay` before candidate compilation; all output sections
+/// reverified through the profiled graph ridge kernel before candidate compilation; all output sections
 /// are compared with independent derivation, not trusted from a digest or prior carrier.
 /// (´rule:admission:semantic-carrier´)
 /// # Errors
@@ -357,6 +455,15 @@ fn consume_sections(carrier: Carrier, verifier: &impl Verifier, sections: bool) 
     }
     if !verifier.publication_profile(&carrier) {
         return Err(Error::Structure("publication profile"));
+    }
+    for frame in &carrier.frames {
+        charge_profile(&frame.price, frame.parameters.boundary, verifier)?;
+        for binding in &frame.closure.bindings {
+            charge_profile(&binding.price.disclosure(), binding.inputs.parameters().boundary, verifier)?;
+        }
+        for debit in frame.compiled.ledger.debits.values() {
+            charge_profile(&debit.price().disclosure(), debit.boundary(), verifier)?;
+        }
     }
     let empty = pn_records::validate_history(&[], &[])?;
     let declarations = pn_records::validate_record(&[], &empty, &carrier.causes.declarations)?;

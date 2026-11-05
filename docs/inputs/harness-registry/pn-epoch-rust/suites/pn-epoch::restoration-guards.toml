@@ -7,4 +7,4 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile", "pn-epoch::solve::replay_work::fence_faults"]
+cases = ["pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile", "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::ridge_disclosure_profile", "pn-epoch::solve::replay_work::fence_faults"]

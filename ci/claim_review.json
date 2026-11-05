@@ -2099,6 +2099,14 @@
       "review": "The valid restored fixture makes the observer count nested operation spans. Clearing realization evidence or changing numeric, product or replay limits then refuses with the profile or completeness class, exactly one restore-entry span and zero nested operation spans. The counters observe instrumented replay entry, not uninstrumented CPU instructions."
     },
     {
+      "operation": "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::ridge_disclosure_profile",
+      "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/disclosures/profile.rs",
+      "claim": "EPOCH::claim:admission:ridge-disclosures-use-consumer-profile",
+      "before": "",
+      "after": "Claim: In the finite ridge publication fixture, frame, binding and debit proofs must exactly match the consumer's boundary profile. Changed procedure or depth and Work limits refuse with their typed profile cause before any nested replay span; matching disclosures restore with all evidence retained and observed replay.",
+      "review": "The matching ridge fixture restores equal full disclosures and produces nested replay spans. Twenty-one distinct mutations cover frame, historical binding and debit procedure plus depth, production Work and replay Work in both input copies; each is unequal to the original and refuses Procedure or Limits with one entry span and zero nested spans. Missing profile and direct carrier consumption also refuse by typed cause. The finite instrumentation witnesses replay entry, not every CPU instruction."
+    },
+    {
       "operation": "pn-epoch::solve::admission::ridge_charge::publication::live::live_marker_snapshots",
       "path": "packages/epoch/tests/solve/admission/ridge_charge/publication/live.rs",
       "claim": "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
@@ -2120,14 +2128,14 @@
       "claim": "EPOCH::claim:admission:finality-loss-freezes-live-publication",
       "before": "",
       "after": "Claim: In the declared live fixture a lost final marker freezes the complete last closed package and prevents same-policy continuation. Re-anchor and follow are separate explicitly published new-policy responses, replaying replacement admission while preserving the old package and the exact supersession list; no real-chain finality or automatic Layer-1 repair is claimed.",
-      "review": "A declared lost-final assessment sets the sticky halt, blocks further continuation and leaves the complete old carrier equal. Two independently restored new-policy responses separately exercise re-anchor and follow. Wrong supersession and absent continuity are refused locally even with a response verifier that accepts the exact bad payload. No chain finality, durable storage or automatic repair is inferred. New-policy replacements retaining the old initial marker, non-later publication or unchanged sequence, and follow divergence at the old frame count each refuse Response despite a matching permissive response attestation.",
+      "review": "A declared lost-final assessment sets the sticky halt, blocks further continuation and leaves the complete old carrier equal. Two independently restored new-policy responses separately exercise re-anchor and follow. Wrong supersession and absent continuity are refused locally even with a response verifier that accepts the exact bad payload. No chain finality, durable storage or automatic repair is inferred. New-policy replacements retaining the old initial marker, non-later publication or unchanged sequence, and follow divergence at the old frame count each refuse Response despite a matching permissive response attestation. F-1240 adds the required empty ridge-profile map to the rational replacement helper; all finality, prefix and marker assertions and declared live-verifier premises remain unchanged.",
       "paper_witnesses": {
         "rem:comparator:finality-breach-halts": "The sticky halt, same-policy refusal and complete old-carrier equality assertions fail if a lost final marker allows continuation or rewrites a closed state. Explicit new-policy responses are separate deployment choices under declared publication and continuity verification."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "live_publication_breach",
-        "digest": "1008ff7a82cfdf22e368d9adbf14cc0203f15a6f7e267d8121f457df66520d2b"
+        "digest": "19861f9a8dc24a3f23fcf5b126d14b16f76d296acecc23a08644e73bfd785f5b"
       }
     },
     {
@@ -2136,14 +2144,14 @@
       "claim": "EPOCH::claim:admission:live-publication-retains-marker-registration",
       "before": "",
       "after": "Claim: The finite host-only complete prefix closes one marker once, retains original disclosures and empty-increment snapshots, and independently rechecks each live assessment and admission. Skipped, repeated, copied and pending proposals refuse under a declared verifier, not a real chain or offline authenticator.",
-      "review": "A complete two-boundary fixture is independently consumed and compared field-for-field. Repeated and skipped closes, a copied prior marker, pending live settlement, missing live evidence and a doubled asserted gross snapshot refuse at their named checks. A future recognized marker remains unclosed; original gates and bindings stay equal. Settlement authenticity is the declared live verifier premise.",
+      "review": "A complete two-boundary fixture is independently consumed and compared field-for-field. Repeated and skipped closes, a copied prior marker, pending live settlement, missing live evidence and a doubled asserted gross snapshot refuse at their named checks. A future recognized marker remains unclosed; original gates and bindings stay equal. Settlement authenticity is the declared live verifier premise. F-1240 adds the required empty ridge-profile map to the rational replacement helper; all finality, prefix and marker assertions and declared live-verifier premises remain unchanged.",
       "paper_witnesses": {
         "cond:comparator:marker-epoch-registration": "The one-step prefix, repeated/skip refusals and future-marker control detect failure of ordered one-to-one closure registration in the finite fixture. Independent admission restoration binds each closed frame to its original recognized marker."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
         "function": "live_publication_prefix",
-        "digest": "150c2037153f4d06aaa86b8761d292b1c21f4140cbab7706d9f7781ab1745950"
+        "digest": "1932c4ae895b6250f9ecef068e5a0a11b9bf52db024389837bb51013d6d98873"
       }
     },
     {
@@ -2160,7 +2168,7 @@
       "claim": "EPOCH::claim:admission:restored-ridge-prices-reselect-replay",
       "before": "",
       "after": "Claim: The finite ridge semantic disclosure controls reselect the admitted graph verifier at consumption and refuse changed defining bleed, query precision and transcript image; an unresolved ridge never becomes a restored charge. Neither a stored digest nor a different verifier supplies checked authority.",
-      "review": "Finite complete self-supported fixture and explicit mutations exercise the semantic restore boundary. The tests do not assert encoding, persistence, authenticated deployment or unrestricted publication completeness."
+      "review": "Finite complete self-supported fixture and explicit mutations exercise the semantic restore boundary. The tests do not assert encoding, persistence, authenticated deployment or unrestricted publication completeness. F-1240 preserves the defining-input, query and image refusals. Substituting the coarse procedure now refuses RidgeProfile(Procedure) before replay; independent schedule replay of that same coarse evidence retains the exact INDECISIVE Floor assertion."
     },
     {
       "operation": "pn-epoch::solve::admission::ridge_charge::publication::publication_roundtrip",
@@ -3320,7 +3328,7 @@
       "claim": "HOST::claim:publication:ridge-transcript-reaches-fixed-replay",
       "before": "Claim: A substituted primitive transcript carried as ridge charge evidence survives byte decoding but is refused by the consumer's fixed ChargeReplay verifier, rather than by the host fixture's cause attestation.",
       "after": "Claim: A substituted primitive transcript carried as ridge charge evidence survives byte decoding but is refused by the consumer's fixed ridge replay verifier, rather than by the host fixture's cause attestation.",
-      "review": "The assertions check structural bytes and explicit restoration refusals under a synthetic verifier; they assert no cryptographic or production authority."
+      "review": "The assertions check structural bytes and explicit restoration refusals under a synthetic verifier; they assert no cryptographic or production authority. F-1240 explicitly admits the fixture ridge procedure and caps before inserting the bad transcript, so the original Numeric(RidgeEvidence) assertion still reaches replay rather than the earlier profile guard."
     },
     {
       "operation": "pn-host::public::publication::mutations::publication_section_mutations",

@@ -78,3 +78,75 @@ fn disclosure_profile() {
         assert_eq!(counts.replay.load(Ordering::SeqCst), 0);
     }
 }
+
+/// Claim: In the finite ridge publication fixture, frame, binding and debit proofs must exactly match the consumer's boundary profile. Changed procedure or depth and Work limits refuse with their typed profile cause before any nested replay span; matching disclosures restore with all evidence retained and observed replay.
+/// ´claim:admission:ridge-disclosures-use-consumer-profile´
+/// ´test:integration:ridge-disclosure-profile´
+#[test]
+fn ridge_disclosure_profile() {
+    let evidence = proof(NumberId::NumbersRidgeCertificatePrecision);
+    let (closed, carrier, check) = fixture(Some(&evidence));
+    let admitted = publication::assemble(&closed, carrier.clone(), &check).unwrap();
+    let raw = admitted.disclosures();
+    let counts = Arc::new(Counts::default());
+    let restored = tracing::subscriber::with_default(Observer(counts.clone()), || {
+        disclosures::restore(raw.clone(), &check).unwrap()
+    });
+    assert_eq!(restored.disclosures(), raw);
+    assert_eq!(counts.profile.load(Ordering::SeqCst), 1);
+    assert!(counts.replay.load(Ordering::SeqCst) > 0);
+    for section in 0..3 {
+        for field in 0..7 {
+            let mut changed = raw.clone();
+            let frame = &mut changed.frames[0];
+            let price = match section {
+                0 => &mut frame.price,
+                1 => &mut frame.closure.bindings[0].price,
+                _ => &mut frame.compiled.ledger.debits.values_mut().next().unwrap().price,
+            };
+            let proof = price.ridge.as_mut().unwrap();
+            if field == 0 {
+                proof.procedure.maximum_replay_work += 1;
+            } else {
+                let input = if field <= 3 {
+                    &mut proof.input
+                } else {
+                    &mut proof.record.input
+                };
+                match (field - 1) % 3 {
+                    0 => input.maximum_depth += 1,
+                    1 => input.maximum_work += 1,
+                    _ => input.maximum_replay_work += 1,
+                }
+            }
+            assert_ne!(changed, raw);
+            counts.profile.store(0, Ordering::SeqCst);
+            counts.replay.store(0, Ordering::SeqCst);
+            let error = tracing::subscriber::with_default(Observer(counts.clone()), || {
+                disclosures::restore(changed, &check).unwrap_err()
+            });
+            let expected = if field == 0 {
+                publication::RidgeProfileError::Procedure
+            } else {
+                publication::RidgeProfileError::Limits
+            };
+            assert!(matches!(error, publication::Error::RidgeProfile(actual) if actual == expected));
+            assert_eq!(counts.profile.load(Ordering::SeqCst), 1);
+            assert_eq!(counts.replay.load(Ordering::SeqCst), 0);
+        }
+    }
+    let denied = Check {
+        ridge_profiles: std::collections::BTreeMap::new(),
+        ..check.clone()
+    };
+    assert!(matches!(
+        disclosures::restore(raw, &denied),
+        Err(publication::Error::RidgeProfile(publication::RidgeProfileError::Missing))
+    ));
+    let mut changed = carrier;
+    changed.frames[0].price.ridge.as_mut().unwrap().input.maximum_replay_work += 1;
+    assert!(matches!(
+        publication::consume(changed, &check),
+        Err(publication::Error::RidgeProfile(publication::RidgeProfileError::Limits))
+    ));
+}

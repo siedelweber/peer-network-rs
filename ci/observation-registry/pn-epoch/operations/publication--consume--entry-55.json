@@ -14,7 +14,7 @@
     "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::consume",
     "body": "{ consume_sections (carrier , verifier , false) }",
     "class_decision": "semantic-publication-public",
-    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; graph ChargeReplay is selected at every restored charge. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
+    "item_premise": "Public complete causes, declared resource policy, exact charge assertions and complete proof attachments are recorded. Independent consumption checks marker disclosures, compilation, final gates, standing and next announcement; the admitted graph ridge kernel is selected at every restored charge with the consumer-selected publication profile. Immutable getters disclose existing evidence without new authority. No secret credentials enter the declared verifier interface. The semantic publication bridge retains locally admitted authority separately from external publication; restored causes and charges are independently rebuilt.",
     "assessments": {
       "full_recording": "certified-primitives-public",
       "secret_flow": "certified-primitives-public",

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "item": "publication::<ProfiledChargeReplay < '_ > as pn_records :: ridge :: ChargeVerifier>::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (& self , evidence : & pn_records :: ridge :: ChargeEvidence) -> Result < () , numerics :: NumericError >",
+    "claim": "ROOT::sig:design:epoch",
+    "shape": "shape-epoch",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/publication.rs::publication::<ProfiledChargeReplay < '_ > as pn_records :: ridge :: ChargeVerifier>::replay",
+    "body": "{ use numerics :: NumericError ; let profile = self . 0 . ok_or (NumericError :: RidgeEvidence) ? ; if evidence . analytic_premises != \"clean-ridge-analytic-v1\" { return Err (NumericError :: RidgeDefinition) ; } let mut input = evidence . input . clone () ; input . maximum_depth = profile . maximum_depth ; input . maximum_work = profile . maximum_work ; input . maximum_replay_work = profile . maximum_replay_work ; ridge :: replay (& profile . procedure , & input , & evidence . record) . map (| _ | ()) . map_err (| error | match error { ridge :: Error :: Definition => NumericError :: RidgeDefinition , ridge :: Error :: Numeric (pn_graph :: numeric :: Error :: Backend (fault)) | ridge :: Error :: Arithmetic (fault) => { NumericError :: Backend (fault) } ridge :: Error :: Operational { fault : Some (fault) , .. } => NumericError :: RetainedFault (fault) , _ => NumericError :: RidgeEvidence , }) }",
+    "class_decision": "semantic-publication-public",
+    "item_premise": "Complete public ridge evidence and the consumer-selected profile are observed. Publication checks disclosed procedure and all caps before replay; this private verifier supplies the selected procedure and caps to independent graph replay. No secret data is admitted.",
+    "assessments": {
+      "full_recording": "certified-primitives-public",
+      "secret_flow": "certified-primitives-public",
+      "exposure_consumers": "certified-primitives-public"
+    }
+  }
+}

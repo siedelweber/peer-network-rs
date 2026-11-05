@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::RidgeProfileError",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" A disclosed ridge execution declaration differs before replay begins.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum RidgeProfileError { Missing , Procedure , Limits , }"
+  }
+}

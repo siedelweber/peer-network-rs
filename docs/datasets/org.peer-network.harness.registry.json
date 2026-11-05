@@ -2009,6 +2009,7 @@
       "case_span": true,
       "cases": [
         "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::disclosure_profile",
+        "pn-epoch::solve::admission::ridge_charge::publication::disclosures::profile::ridge_disclosure_profile",
         "pn-epoch::solve::replay_work::fence_faults"
       ],
       "implementation": "pn-epoch-rust",

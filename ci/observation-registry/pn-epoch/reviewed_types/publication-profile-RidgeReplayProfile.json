@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::RidgeReplayProfile",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [doc = \" Consumer-owned ridge execution declaration, separate from a retained certificate.\"] # [doc = \" (´rule:admission:publication-disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RidgeReplayProfile { pub procedure : pn_records :: solve :: Procedure , pub maximum_depth : u32 , pub maximum_work : u64 , pub maximum_replay_work : u64 , }"
+  }
+}

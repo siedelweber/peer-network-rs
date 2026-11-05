@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::ProfiledChargeReplay",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/publication.rs",
+    "syntax": "# [derive (Debug)] struct ProfiledChargeReplay < 'a > (Option < & 'a RidgeReplayProfile >) ;"
+  }
+}

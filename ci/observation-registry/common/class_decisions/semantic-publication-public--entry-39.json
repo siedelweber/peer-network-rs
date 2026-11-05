@@ -12,7 +12,8 @@
         "pn-epoch::packages/epoch/src/publication.rs::publication::assemble",
         "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::boundary",
         "pn-epoch::packages/epoch/src/publication.rs::publication::AdmittedPackage::carrier",
-        "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted"
+        "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_admitted",
+        "pn-epoch::packages/epoch/src/publication.rs::publication::<ProfiledChargeReplay < '_ > as pn_records :: ridge :: ChargeVerifier>::replay"
       ]
     }
   }

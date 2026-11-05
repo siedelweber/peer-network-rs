@@ -4,11 +4,21 @@ use pn_graph::registration::{OpeningKind, RegistrationVerifier};
 use pn_records::{Declaration, DeclarationContent, DeclarationId, Position, ValidatedAct, burn};
 use std::collections::BTreeSet;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Check {
     candidates: Vec<package::CandidateInput>,
     procedures: Vec<pn_records::solve::Procedure>,
     numeric: NumericPolicy,
+    ridge_profiles: std::collections::BTreeMap<u64, publication::RidgeReplayProfile>,
+}
+
+fn ridge_profile(evidence: &ChargeEvidence) -> publication::RidgeReplayProfile {
+    publication::RidgeReplayProfile {
+        procedure: evidence.procedure.clone(),
+        maximum_depth: evidence.input.maximum_depth,
+        maximum_work: evidence.input.maximum_work,
+        maximum_replay_work: evidence.input.maximum_replay_work,
+    }
 }
 impl burn::PublicVerifier for Check {
     fn profile(&self) -> &'static str {
@@ -55,6 +65,9 @@ impl pn_epoch::solve::ProcedureVerifier for Check {
     }
 }
 impl publication::Verifier for Check {
+    fn ridge_charge_profile(&self, boundary: u64) -> Option<&publication::RidgeReplayProfile> {
+        self.ridge_profiles.get(&boundary)
+    }
     fn publication_profile(&self, carrier: &Carrier) -> bool {
         carrier.numeric == self.numeric
             && carrier.frames.iter().all(|f| {
@@ -317,6 +330,7 @@ fn fixture(evidence: Option<&ChargeEvidence>) -> (ClosedBoundary, Carrier, Check
         candidates: vec![candidate_input],
         procedures: vec![plan.solve],
         numeric,
+        ridge_profiles: evidence.map(|e| (1, ridge_profile(e))).into_iter().collect(),
     };
     (closed, carrier, check)
 }
@@ -480,9 +494,26 @@ fn publication_ridge_refusals() {
     changed = carrier;
     changed.frames[0].price.ridge = Some(Box::new(proof(NumberId::NumbersRidgeCertificateFailedPrecision)));
     assert!(matches!(
-        publication::consume(changed, &check),
-        Err(publication::Error::Schedule(schedules::Error::Refused(
-            AdmissionRefusal::Indecisive(admission::Comparison::Floor)
+        publication::consume(changed.clone(), &check),
+        Err(publication::Error::RidgeProfile(publication::RidgeProfileError::Procedure))
+    ));
+    // The coarse declaration still witnesses the original unresolved floor: publication
+    // now refuses its substitution earlier, before this independent schedule replay.
+    let frame = &changed.frames[0];
+    let coarse = frame.price.ridge.as_ref().unwrap();
+    let ridge = kernel::replay(&coarse.procedure, &coarse.input, &coarse.record).unwrap();
+    let declaration =
+        admission::declare_schedule(frame.closure.schedule.declaration.clone(), changed.numeric.arithmetic.clone()).unwrap();
+    assert!(matches!(
+        schedules::replay(
+            &declaration,
+            &[],
+            Some(&ridge),
+            changed.numeric.arithmetic.clone(),
+            &frame.closure.schedule,
+        ),
+        Err(schedules::Error::Refused(AdmissionRefusal::Indecisive(
+            admission::Comparison::Floor
         )))
     ));
 }

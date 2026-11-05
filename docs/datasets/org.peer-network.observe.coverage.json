@@ -296,9 +296,9 @@
     },
     {
       "exceptions": 21,
-      "generators": 106,
+      "generators": 109,
       "helpers": 0,
-      "instrumented": 51,
+      "instrumented": 52,
       "name": "pn-epoch",
       "number_forms": {
         "exceptions": {
@@ -310,10 +310,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "106",
+          "exact": "109",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "106",
+          "num": "109",
           "num_exact": true,
           "num_relation": "="
         },
@@ -326,18 +326,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "51",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "72",
+          "exact": "73",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "72",
+          "num": "73",
           "num_exact": true,
           "num_relation": "="
         }
@@ -364,7 +364,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 72
+      "operations": 73
     },
     {
       "exceptions": 8,

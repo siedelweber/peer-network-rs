@@ -180,6 +180,7 @@ fn settled_fixture(edition: u64) -> (ClosedBoundary, Carrier, Check) {
         candidates: vec![candidate_input],
         procedures: vec![plan.solve],
         numeric,
+        ridge_profiles: std::collections::BTreeMap::new(),
     };
     (closed, carrier, check)
 }

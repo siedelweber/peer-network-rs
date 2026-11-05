@@ -86,7 +86,7 @@ fn publication_ridge_transcript_refusal() {
         primitive::Range,
         ridge,
     };
-    let (admitted, check) = fixture::complete();
+    let (admitted, mut check) = fixture::complete();
     let mut raw = admitted.disclosures();
     let input = ridge::Inputs {
         definition: ridge::Definition {
@@ -103,6 +103,12 @@ fn publication_ridge_transcript_refusal() {
         maximum_work: 100_000_000,
         maximum_replay_work: 100_000_000,
     };
+    check.ridge_profile = Some(pn_epoch::publication::RidgeReplayProfile {
+        procedure: raw.frames[0].procedure.solve.clone(),
+        maximum_depth: input.maximum_depth,
+        maximum_work: input.maximum_work,
+        maximum_replay_work: input.maximum_replay_work,
+    });
     let queries = raw.frames[0]
         .standing
         .rounds

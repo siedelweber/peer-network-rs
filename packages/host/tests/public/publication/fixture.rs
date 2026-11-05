@@ -4,6 +4,7 @@ pub(super) struct Check {
     candidates: Vec<package::CandidateInput>,
     procedures: Vec<pn_records::solve::Procedure>,
     numeric: NumericPolicy,
+    pub(super) ridge_profile: Option<publication::RidgeReplayProfile>,
 }
 impl burn::PublicVerifier for Check {
     fn profile(&self) -> &'static str {
@@ -50,6 +51,9 @@ impl pn_epoch::solve::ProcedureVerifier for Check {
     }
 }
 impl publication::Verifier for Check {
+    fn ridge_charge_profile(&self, _: u64) -> Option<&publication::RidgeReplayProfile> {
+        self.ridge_profile.as_ref()
+    }
     fn publication_profile(&self, carrier: &Carrier) -> bool {
         carrier.numeric == self.numeric
             && carrier.frames.iter().all(|f| {
@@ -306,6 +310,7 @@ fn fixture() -> (ClosedBoundary, Carrier, Check) {
         candidates: vec![candidate_input],
         procedures: vec![plan.solve],
         numeric,
+        ridge_profile: None,
     };
     (closed, carrier, check)
 }

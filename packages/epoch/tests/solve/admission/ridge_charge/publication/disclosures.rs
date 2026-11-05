@@ -10,6 +10,7 @@ fn ridge_successor(
     led: &schedules::CheckedSchedule,
     evidence: &ChargeEvidence,
 ) -> (Frame, ClosedBoundary, pn_epoch::compiler::CompiledState) {
+    check.ridge_profiles.insert(2, ridge_profile(evidence));
     let mut frame = carrier.frames[0].clone();
     let mut marker = frame.marker_history.markers[1].clone();
     marker.predecessor = Some(marker.history_position);
@@ -284,6 +285,7 @@ fn disclosure_refusals() {
         candidates: check.candidates.clone(),
         procedures: check.procedures.clone(),
         numeric: changed.numeric.clone(),
+        ridge_profiles: check.ridge_profiles.clone(),
     };
     assert!(matches!(
         disclosures::restore(changed, &exhausted),
