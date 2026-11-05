@@ -15,6 +15,7 @@ import sys
 import time
 import tomllib
 import uuid
+from decimal import Decimal
 
 from devperf import StructuralError, budgets, report
 from harness import CONFIGURATION, load as load_registry
@@ -43,8 +44,46 @@ def workload_points(rows, mode):
     return points
 
 
+def workload_decimal(value):
+    """Expand the shortest round-trip float spelling without changing its digits."""
+    if not math.isfinite(value):
+        raise StructuralError('nonfinite workload number')
+    spelling = format(Decimal(repr(value)), 'f')
+    return spelling if '.' in spelling else spelling + '.0'
+
+
+def read_workload_carrier(text):
+    """Validate numeric tokens through TOML's float parser, not a text search."""
+    def number(token):
+        value = float(token)
+        if token != workload_decimal(value):
+            raise StructuralError('workload float requires exponent-free shortest round-trip decimal')
+        return value
+    return tomllib.loads(text, parse_float=number)
+
+
+def write_workload_carrier(data):
+    """Serialize the carrier with one round-trip representation for every float."""
+    def value(item):
+        if isinstance(item, str):
+            return json.dumps(item, ensure_ascii=False)
+        if isinstance(item, bool):
+            return str(item).lower()
+        if isinstance(item, float):
+            return workload_decimal(item)
+        if isinstance(item, int):
+            return str(item)
+        if isinstance(item, list):
+            return '[' + ', '.join(value(part) for part in item) + ']'
+        if isinstance(item, dict):
+            return '{ ' + ', '.join(json.dumps(key) + ' = ' + value(part) for key, part in item.items()) + ' }'
+        raise StructuralError('unsupported workload carrier value')
+    header = ''.join(key + ' = ' + value(item) + '\n' for key, item in data.items() if key != 'rows')
+    return header + ''.join('\n[[rows]]\n' + ''.join(key + ' = ' + value(item) + '\n' for key, item in row.items()) for row in data['rows'])
+
+
 def workload_declarations():
-    rows = tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+    rows = read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
     if len({row['name'] for row in rows}) != len(rows):
         raise StructuralError('duplicate workload carrier identity')
     policies = [row for row in rows if row['kind'] == 'policy']
@@ -215,7 +254,7 @@ def run():
     workloads = tomllib.loads(Path('docs/inputs/harness-workloads.toml').read_text())['rows']
     if len({row['name'] for row in workloads}) != len(workloads) or not workloads:
         raise StructuralError('missing or duplicate benchmark workload')
-    grids = tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+    grids = read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
     registry.roster('benchmark', ['benchmark::'+row['name'] for row in workloads + workload_points(grids, 'smoke')])
     if any(row.get('correctness_case') not in registry.cases or not row.get('claim') for row in workloads + workload_points(grids, 'smoke')):
         raise StructuralError('benchmark lacks its registered correctness case or claim')
@@ -289,7 +328,7 @@ def run():
     if additional_status:
         return dict(status='failed', phase='workload-smoke', artifact=str(directory)), 1
     for point in additional['points']:
-        declaration = next(row for row in workload_points(tomllib.loads(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows'], 'smoke') if row['name'] == point['name'])
+        declaration = next(row for row in workload_points(read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows'], 'smoke') if row['name'] == point['name'])
         records.append(registry.join(dict(operation='benchmark::'+point['name'], source=source, configuration=CONFIGURATION,
                             implementation=declaration['implementation'], outcome=point['outcome'],
                             duration_ms=point['estimates']['mean']['point_estimate']/1_000_000,

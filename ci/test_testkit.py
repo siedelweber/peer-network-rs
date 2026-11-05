@@ -26,6 +26,16 @@ class SupportGuard(unittest.TestCase):
         self.assertEqual(len(benchmarks.workload_points(rows, 'smoke')), 1)
         with self.assertRaisesRegex(StructuralError, 'duplicate'):
             benchmarks.workload_points(rows+rows, 'full')
+        raw = dict(rows=[dict(values=[1.25e-5, 1e20, -0.0, 1.25, 5e-324])])
+        encoded = benchmarks.write_workload_carrier(raw)
+        decoded = benchmarks.read_workload_carrier(encoded)
+        self.assertEqual([v.hex() for v in decoded['rows'][0]['values']],
+                         [v.hex() for v in raw['rows'][0]['values']])
+        mutated = encoded.replace('0.0000125', '1.25e-05')
+        self.assertNotEqual(mutated, encoded)
+        with self.assertRaisesRegex(StructuralError, 'exponent-free'):
+            benchmarks.read_workload_carrier(mutated)
+        self.assertEqual(benchmarks.write_workload_carrier(decoded), encoded)
         point = points[0]
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
