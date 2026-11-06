@@ -8,7 +8,10 @@
       "explicit": [
         "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
         "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
-        "pn-graph::packages/graph/src/numeric.rs::numeric::replay"
+        "pn-graph::packages/graph/src/numeric.rs::numeric::replay",
+        "pn-graph::packages/graph/src/numeric/scope.rs::numeric::scope::Prepared::new",
+        "pn-graph::packages/graph/src/numeric/scope.rs::numeric::scope::Prepared::setup_work",
+        "pn-graph::packages/graph/src/numeric/scope.rs::numeric::scope::Prepared::run"
       ]
     }
   }

@@ -10,7 +10,9 @@
         "pn-epoch::packages/epoch/src/conserved.rs::conserved::evaluate_map",
         "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
         "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
-        "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay"
+        "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay",
+        "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::solve",
+        "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::replay"
       ]
     }
   }

@@ -17,7 +17,7 @@ pub struct EnclosurePolicy {
 
 /// Original ordered expression nodes; references must point strictly backwards.
 /// (´def:numerics:primitive-records´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Node {
     Rational(String),
     Coordinate(usize),
@@ -39,7 +39,7 @@ pub enum Node {
 
 /// An exact question about the original target, not a rounded display.
 /// (´def:numerics:primitive-records´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Goal {
     Width,
     AtMost(String),
@@ -49,7 +49,7 @@ pub enum Goal {
 
 /// A signed rational box bound; standing hull nonnegativity is a separate contract.
 /// (´def:numerics:primitive-records´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Range {
     pub lower: String,
     pub upper: String,
@@ -57,7 +57,7 @@ pub struct Range {
 
 /// Empty-assumption real context, ordered coordinates and original expression.
 /// (´def:numerics:primitive-records´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Query {
     pub coordinates: Vec<Range>,
     pub nodes: Vec<Node>,

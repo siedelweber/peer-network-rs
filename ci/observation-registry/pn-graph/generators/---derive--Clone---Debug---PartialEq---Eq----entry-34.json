@@ -5,7 +5,7 @@
     "kind": "derive",
     "package": "pn-graph",
     "path": "packages/graph/src/numeric/activation.rs",
-    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
     "class_decision": "activation-base-public",
     "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
   }

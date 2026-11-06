@@ -7,6 +7,7 @@ use pn_records::{
     primitive::{Goal, Node, PrimitiveRecord, Query, Range},
     solve::Procedure,
 };
+use std::collections::BTreeMap;
 
 /// One evaluation's checked constants, ordered requests and charged Work ledger.
 /// (´[ROOT-rule:design:evaluation-schedule]´)
@@ -20,6 +21,8 @@ pub struct Session {
     budget: Budget,
     active: bool,
     production: bool,
+    prepared: Option<super::super::Prepared>,
+    index: BTreeMap<Request, usize>,
 }
 
 fn limited(procedure: &Procedure, budget: &Budget) -> Result<Procedure, Error> {
@@ -70,9 +73,24 @@ fn checked(
     query: Query,
     supplied: Option<&PrimitiveRecord>,
     budget: &mut Budget,
+    prepared: &mut Option<super::super::Prepared>,
 ) -> Result<PrimitiveRecord, Error> {
     let policy = limited(procedure, budget)?;
-    let evidence = if let Some(record) = supplied {
+    if supplied
+        .is_some_and(|r| r.query != query || r.precision != policy.enclosure.as_ref().map_or(0, |p| p.refinement.precision))
+    {
+        return Err(Error::Declaration);
+    }
+    let evidence = if let Some(receiver) = prepared {
+        let attachment = supplied
+            .map(|r| r.evidence.attachment.as_ref().ok_or(Error::Declaration))
+            .transpose()?;
+        receiver.run(
+            &query,
+            attachment,
+            policy.enclosure.as_ref().ok_or(Error::Unsupported)?.operation.work,
+        )?
+    } else if let Some(record) = supplied {
         if record.query != query || record.precision != policy.enclosure.as_ref().ok_or(Error::Unsupported)?.refinement.precision
         {
             return Err(Error::Declaration);
@@ -89,6 +107,15 @@ fn checked(
     if let Some(fault) = &evidence.resource_fault {
         return Err(Error::Resource(fault.clone()));
     }
+    if prepared.is_some()
+        && supplied.is_some_and(|r| {
+            r.evidence.bounds != evidence.bounds
+                || r.evidence.outcome != evidence.outcome
+                || r.evidence.resource_fault != evidence.resource_fault
+        })
+    {
+        return Err(Error::Declaration);
+    }
     budget.work(evidence.work, Location::new("evaluation-local scalar request"))?;
     Ok(PrimitiveRecord {
         query,
@@ -97,7 +124,7 @@ fn checked(
     })
 }
 
-fn start(procedure: &Procedure, bleed: &str, supplied: Option<&[PrimitiveRecord]>) -> Result<Session, Error> {
+fn start(procedure: &Procedure, bleed: &str, supplied: Option<&[PrimitiveRecord]>, reuse: bool) -> Result<Session, Error> {
     super::super::preflight(procedure)?;
     let policy = procedure.enclosure.as_ref().ok_or(Error::Unsupported)?;
     let mut limits = policy.operation.clone();
@@ -109,13 +136,21 @@ fn start(procedure: &Procedure, bleed: &str, supplied: Option<&[PrimitiveRecord]
     {
         return Err(Error::Declaration);
     }
-    let first = checked(procedure, beta(), supplied.and_then(|s| s.first()), &mut budget)?;
+    let mut prepared = reuse.then(|| super::super::Prepared::new(procedure));
+    let first = checked(
+        procedure,
+        beta(),
+        supplied.and_then(|s| s.first()),
+        &mut budget,
+        &mut prepared,
+    )?;
     let beta = range(&first, &mut budget)?;
     let second = checked(
         procedure,
         normalization(beta.clone(), bleed),
         supplied.and_then(|s| s.get(1)),
         &mut budget,
+        &mut prepared,
     )?;
     let q = range(&second, &mut budget)?;
     let lower = Rational::parse(&q.lower, &mut budget)?;
@@ -131,6 +166,8 @@ fn start(procedure: &Procedure, bleed: &str, supplied: Option<&[PrimitiveRecord]
         budget,
         active: true,
         production: supplied.is_none(),
+        prepared,
+        index: BTreeMap::new(),
     })
 }
 
@@ -161,6 +198,53 @@ fn key_work(input: &Request) -> Result<u64, Error> {
 }
 
 impl Session {
+    /// Reduce the prepared receiver's remaining allowance before another map pass.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// Justified: This only narrows an operational cap; it admits no evidence or mathematical premise.
+    /// # Errors
+    /// Refuses legacy receivers and arithmetic overflow; a cap is never increased.
+    pub fn cap_remaining(&mut self, remaining: u64) -> Result<(), Error> {
+        if self.prepared.is_none() {
+            return Err(Error::Declaration);
+        }
+        self.procedure.maximum_work = self
+            .procedure
+            .maximum_work
+            .min(self.budget.usage().work.checked_add(remaining).ok_or(Error::Declaration)?);
+        let spent = self.budget.usage().work;
+        let mut limits = self.budget.limits().clone();
+        limits.work = self.procedure.maximum_work;
+        let mut narrowed = Budget::new(limits)?;
+        narrowed.work(spent, Location::new("prepared retained Work prefix"))?;
+        self.budget = narrowed;
+        Ok(())
+    }
+    /// Prepare revision-one constants once in an independently owned solve receiver.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// # Errors
+    /// Refuses invalid declarations, substituted premises and exhausted setup.
+    #[tracing::instrument(
+        name = "sig:design:graph",
+        fields(
+            execution_owner = "GRAPH",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:graph",
+            source_item = "numeric::activation::sharing::Session::prepared"
+        ),
+        ret
+    )]
+    pub fn prepared(procedure: &Procedure, bleed: &str, records: Option<&[PrimitiveRecord]>) -> Result<Self, Error> {
+        start(procedure, bleed, records, true)
+    }
+
+    /// Descriptor admission Work already included in the cumulative ledger.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// Justified: Immutable accounting access cannot supply evidence.
+    #[must_use]
+    pub fn setup_work(&self) -> u64 {
+        self.prepared.as_ref().map_or(0, super::super::Prepared::setup_work)
+    }
+
     /// Start empty and check beta followed by Q(1) at the declaration's precision.
     /// (´[ROOT-rule:design:evaluation-schedule]´)
     /// # Errors
@@ -176,7 +260,7 @@ impl Session {
         ret
     )]
     pub fn new(procedure: &Procedure, bleed: &str) -> Result<Self, Error> {
-        start(procedure, bleed, None)
+        start(procedure, bleed, None, false)
     }
 
     /// Rebuild both constant questions in a replay-only receiver using fresh stores.
@@ -194,7 +278,7 @@ impl Session {
         ret
     )]
     pub fn from_evidence(procedure: &Procedure, bleed: &str, records: &[PrimitiveRecord]) -> Result<Self, Error> {
-        start(procedure, bleed, Some(records))
+        start(procedure, bleed, Some(records), false)
     }
 
     /// Borrow the two producing records in their declared order.
@@ -246,7 +330,18 @@ impl Session {
         }
         super::wall_binding(&self.procedure, input, &mut self.budget)?;
         self.budget.work(key_work(input)?, Location::new("evaluation memo key"))?;
-        for (index, entry) in self.retained.iter().enumerate() {
+        if self.prepared.is_some()
+            && let Some(index) = self.index.get(input)
+        {
+            self.active = true;
+            return Ok(*index);
+        }
+        for (index, entry) in self
+            .retained
+            .iter()
+            .enumerate()
+            .take(if self.prepared.is_none() { self.retained.len() } else { 0 })
+        {
             self.budget
                 .work(key_work(&entry.input)?, Location::new("evaluation memo comparison"))?;
             if entry.input == *input {
@@ -266,9 +361,12 @@ impl Session {
             return Err(Error::Declaration);
         }
         let query = super::shared_query(input, &mut self.budget, Some(&self.constants))?;
-        let record = checked(&self.procedure, query, None, &mut self.budget)?;
+        let record = checked(&self.procedure, query, None, &mut self.budget, &mut self.prepared)?;
         if record.evidence.attachment.is_none() || record.evidence.resource_fault.is_some() {
             return Err(Error::Declaration);
+        }
+        if self.prepared.is_some() {
+            self.index.insert(input.clone(), self.retained.len());
         }
         self.retained.push(Evaluation {
             input: input.clone(),
@@ -303,7 +401,27 @@ impl Session {
         super::wall_binding(&self.procedure, &input.input, &mut self.budget)?;
         self.budget
             .work(key_work(&input.input)?, Location::new("evaluation memo key"))?;
-        for entry in &self.retained {
+        if self.prepared.is_some()
+            && let Some(index) = self.index.get(&input.input)
+        {
+            let entry = &self.retained[*index];
+            if entry.primitive.query != input.primitive.query
+                || entry.primitive.precision != input.primitive.precision
+                || entry.primitive.evidence.attachment != input.primitive.evidence.attachment
+                || entry.primitive.evidence.bounds != input.primitive.evidence.bounds
+                || entry.primitive.evidence.resource_fault != input.primitive.evidence.resource_fault
+                || entry.primitive.evidence.outcome != input.primitive.evidence.outcome
+            {
+                return Err(Error::Declaration);
+            }
+            self.active = true;
+            return Ok(entry.primitive.clone());
+        }
+        for entry in self
+            .retained
+            .iter()
+            .take(if self.prepared.is_none() { self.retained.len() } else { 0 })
+        {
             self.budget
                 .work(key_work(&entry.input)?, Location::new("evaluation memo comparison"))?;
             if entry.input == input.input {
@@ -329,9 +447,18 @@ impl Session {
             return Err(Error::Declaration);
         }
         let query = super::shared_query(&input.input, &mut self.budget, Some(&self.constants))?;
-        let record = checked(&self.procedure, query, Some(&input.primitive), &mut self.budget)?;
+        let record = checked(
+            &self.procedure,
+            query,
+            Some(&input.primitive),
+            &mut self.budget,
+            &mut self.prepared,
+        )?;
         if record.evidence.attachment.is_none() || record.evidence.resource_fault.is_some() {
             return Err(Error::Declaration);
+        }
+        if self.prepared.is_some() {
+            self.index.insert(input.input.clone(), self.retained.len());
         }
         self.retained.push(Evaluation {
             input: input.input.clone(),

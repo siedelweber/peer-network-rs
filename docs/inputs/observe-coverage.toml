@@ -39,20 +39,20 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-epoch"
-operations = 73
-instrumented = 52
+operations = 75
+instrumented = 54
 exceptions = 21
 helpers = 0
-generators = 109
+generators = 111
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-graph"
-operations = 52
-instrumented = 43
-exceptions = 9
+operations = 58
+instrumented = 45
+exceptions = 13
 helpers = 0
-generators = 62
+generators = 63
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]

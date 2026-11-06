@@ -4,6 +4,6 @@
     "item": "primitive::Node",
     "package": "pn-records",
     "path": "packages/records/src/primitive.rs",
-    "syntax": "# [doc = \" Original ordered expression nodes; references must point strictly backwards.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Node { Rational (String) , Coordinate (usize) , Negate (usize) , Add (usize , usize) , Subtract (usize , usize) , Multiply (usize , usize) , Divide (usize , usize) , SquareRoot (usize) , Logarithm (usize) , Exponential (usize) , Sigmoid (usize) , Tanh (usize) , PositivePower (usize , String) , Derivative (usize , usize) , Clamp (usize , usize) , GeneralizedDerivative (usize , usize) , }"
+    "syntax": "# [doc = \" Original ordered expression nodes; references must point strictly backwards.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Node { Rational (String) , Coordinate (usize) , Negate (usize) , Add (usize , usize) , Subtract (usize , usize) , Multiply (usize , usize) , Divide (usize , usize) , SquareRoot (usize) , Logarithm (usize) , Exponential (usize) , Sigmoid (usize) , Tanh (usize) , PositivePower (usize , String) , Derivative (usize , usize) , Clamp (usize , usize) , GeneralizedDerivative (usize , usize) , }"
   }
 }

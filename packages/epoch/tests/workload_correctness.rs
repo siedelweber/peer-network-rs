@@ -30,7 +30,7 @@ fn solve_replay_inputs() {
     let fence = pn_epoch::fence::search(&bound, None).unwrap();
     assert_eq!(fence.selected.as_deref(), Some("1"));
     let record = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    inputs::check_solve(&state, &procedure, &record);
+    check_solve(&state, &procedure, &record);
     assert!(inputs::solve_counters(&record).contains("K="));
 }
 
@@ -184,7 +184,7 @@ fn solve_resource_cause() {
     let fence = pn_epoch::fence::search(&bound, None).unwrap();
     let record = pn_epoch::conserved::solve(&bound, &fence).unwrap();
     assert!(record.work > 0 && record.replay_work > 0);
-    inputs::check_solve(&state, &p, &record);
+    check_solve(&state, &p, &record);
 }
 
 /// Claim: The rational fixture completes at its first sufficient five-step cap and independently replays with positive Work; caps one and two retain the inverse stopping refusal.
@@ -212,4 +212,94 @@ fn scaling_scalar_procedure() {
         pn_graph::numeric::controller::replay(&procedure, &input, None, &record).unwrap(),
         checked
     );
+}
+
+/// Claim: Prepared revision one and legacy solves independently certify overlapping standing enclosures on the same small frozen cases; revision and replay-counter substitutions refuse.
+/// ´claim:numerics:prepared-solves-retain-certified-scope´
+/// ´test:integration:prepared-solve-agreement´
+#[test]
+fn prepared_solve_agreement() {
+    use nrz_cas::{Rational, limits::Budget};
+    use pn_epoch::conserved::{self, prepared};
+    for shape in ["ring", "dense"] {
+        let c = candidate(inputs::SEED, 2, None, shape, "pass");
+        let state = compile(&c).unwrap();
+        let p = inputs::scaling_procedure(&state, 16);
+        let bound = bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+        let fence = pn_epoch::fence::search(&bound, None).unwrap();
+        let legacy = conserved::solve(&bound, &fence).unwrap();
+        let old_checked = conserved::replay(&bound, &legacy).unwrap();
+        let fresh = prepared::solve(&bound, &fence).unwrap();
+        let checked = prepared::replay(&bound, &fresh).unwrap();
+        assert_eq!(legacy.fence, fresh.solve.fence);
+        assert_eq!(checked.solve.rounds.len(), old_checked.rounds.len());
+        let mut budget = Budget::new(Limits::default()).unwrap();
+        for (old, new) in old_checked.rounds.iter().zip(&checked.solve.rounds) {
+            assert_eq!(
+                old.standing.keys().collect::<Vec<_>>(),
+                new.standing.keys().collect::<Vec<_>>()
+            );
+            for (actor, a) in &old.standing {
+                let b = &new.standing[actor];
+                let al = Rational::parse(&a.lower, &mut budget).unwrap();
+                let au = Rational::parse(&a.upper, &mut budget).unwrap();
+                let bl = Rational::parse(&b.lower, &mut budget).unwrap();
+                let bu = Rational::parse(&b.upper, &mut budget).unwrap();
+                assert!(!al.compare(&bu, &mut budget).unwrap().is_gt());
+                assert!(!bl.compare(&au, &mut budget).unwrap().is_gt());
+            }
+        }
+        for (a, total) in [
+            (&fresh.production, fresh.solve.work),
+            (&fresh.mandatory_replay, fresh.solve.replay_work),
+        ] {
+            assert!(a.setup > 0);
+            assert_eq!(
+                a.setup + a.driver_work + a.map_passes.iter().sum::<u64>() + a.final_checks.iter().sum::<u64>(),
+                total
+            );
+        }
+        let mut wrong = fresh.clone();
+        let primitives = &mut wrong.solve.rounds[0].proposals[0].primitives;
+        assert_eq!(primitives[2].query, primitives[3].query);
+        primitives[3].evidence.bounds = None;
+        assert!(matches!(
+            prepared::replay(&bound, &wrong),
+            Err(conserved::Error::Primitive(pn_graph::numeric::Error::Declaration))
+        ));
+        let mut wrong = fresh.clone();
+        wrong.revision = "unknown".into();
+        assert!(matches!(prepared::replay(&bound, &wrong), Err(conserved::Error::Scope)));
+        let mut wrong = fresh.clone();
+        wrong.solve.replay_work += 1;
+        assert!(matches!(prepared::replay(&bound, &wrong), Err(conserved::Error::ReplayWork)));
+        let mut wrong = fresh.clone();
+        wrong.solve.rounds[0].certified.point.values_mut().next().unwrap().push('0');
+        assert!(prepared::replay(&bound, &wrong).is_err());
+    }
+}
+
+fn check_solve(s: &pn_epoch::compiler::CompiledState, p: &pn_records::solve::Procedure, r: &pn_records::conserved::SolveRecord) {
+    let bound = bind_procedure(s, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let replay = pn_epoch::conserved::replay(&bound, r).unwrap();
+    assert_eq!(replay.rounds.len(), r.rounds.len());
+    for (checked, produced) in replay.rounds.iter().zip(&r.rounds) {
+        assert_eq!(checked.standing, produced.standing);
+        assert_eq!(checked.residual, produced.residual);
+        assert_eq!(checked.radius, produced.radius);
+        assert_eq!(checked.certified.point, produced.certified.point);
+        assert_eq!(checked.proposals.len(), produced.proposals.len());
+    }
+    assert_eq!(replay.fence, r.fence);
+    assert_eq!(replay.work, r.replay_work);
+    for round in &r.rounds {
+        assert_eq!(round.certified.image.len(), s.view().base.rows.len());
+        assert!(round.proposals.len() <= usize::try_from(p.maximum_iterations).unwrap());
+    }
+    let mut wrong = r.clone();
+    wrong.replay_work += 1;
+    assert!(matches!(
+        pn_epoch::conserved::replay(&bound, &wrong),
+        Err(pn_epoch::conserved::Error::ReplayWork)
+    ));
 }

@@ -4,6 +4,6 @@
     "item": "numeric::activation::sharing::Session",
     "package": "pn-graph",
     "path": "packages/graph/src/numeric/activation/sharing.rs",
-    "syntax": "# [doc = \" One evaluation's checked constants, ordered requests and charged Work ledger.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Debug)] pub struct Session { procedure : Procedure , bleed : String , constants : [Range ; 2] , premises : Vec < PrimitiveRecord > , retained : Vec < Evaluation > , budget : Budget , active : bool , production : bool , }"
+    "syntax": "# [doc = \" One evaluation's checked constants, ordered requests and charged Work ledger.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Debug)] pub struct Session { procedure : Procedure , bleed : String , constants : [Range ; 2] , premises : Vec < PrimitiveRecord > , retained : Vec < Evaluation > , budget : Budget , active : bool , production : bool , prepared : Option < super :: super :: Prepared > , index : BTreeMap < Request , usize > , }"
   }
 }

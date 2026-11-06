@@ -112,52 +112,60 @@ impl ExactArithmetic for Arithmetic {
         a.compare(b, &mut self.budget).map_err(fault)
     }
 }
-pub fn transport(seed: u64, n: usize, dense: bool) -> TransportInput<Rational> {
-    let mut b = Budget::new(Limits::default()).unwrap();
-    let mut number = |v: u64| Rational::parse(&v.to_string(), &mut b).unwrap();
-    let hops = vec![
-        (0..n)
-            .map(|i| {
-                (0..n)
-                    .filter(|j| dense || *j == i || *j == (i + 1) % n)
-                    .map(|j| (j, number(1)))
-                    .collect()
-            })
-            .collect(),
-    ];
-    TransportInput {
-        hops,
-        depth_mass: vec![number(1)],
-        emission: vec![number(1); n],
-        counts: vec![number(1); n],
+pub fn transport(seed: u64, n: usize, dense: bool) -> Result<TransportInput<Rational>, nrz_cas::Fault> {
+    let mut b = Budget::new(Limits::default())?;
+    let mut number = |v: u64| Rational::parse(&v.to_string(), &mut b);
+    let mut rows = Vec::new();
+    for i in 0..n {
+        let mut row = BTreeMap::new();
+        for j in 0..n {
+            if dense || j == i || j == (i + 1) % n {
+                row.insert(j, number(1)?);
+            }
+        }
+        rows.push(row);
+    }
+    Ok(TransportInput {
+        hops: vec![rows],
+        depth_mass: vec![number(1)?],
+        emission: vec![number(1)?; n],
+        counts: vec![number(1)?; n],
         rates: (0..n)
             .map(|i| number(2 + ((u64::try_from(i).unwrap() + seed) % n as u64)))
-            .collect(),
-    }
+            .collect::<Result<_, _>>()?,
+    })
 }
-pub fn enclosed(input: &TransportInput<Rational>) -> TransportInput<Interval> {
-    let mut b = Budget::new(Limits::default()).unwrap();
-    let mut singleton = |v: &Rational| Interval::singleton(v, &mut b).unwrap();
-    TransportInput {
+pub fn enclosed(input: &TransportInput<Rational>) -> Result<TransportInput<Interval>, nrz_cas::Fault> {
+    let mut b = Budget::new(Limits::default())?;
+    let mut singleton = |v: &Rational| Interval::singleton(v, &mut b);
+    Ok(TransportInput {
         hops: input
             .hops
             .iter()
             .map(|hop| {
                 hop.iter()
-                    .map(|row| row.iter().map(|(k, v)| (*k, singleton(v))).collect())
-                    .collect()
+                    .map(|row| {
+                        row.iter()
+                            .map(|(k, v)| Ok((*k, singleton(v)?)))
+                            .collect::<Result<_, nrz_cas::Fault>>()
+                    })
+                    .collect::<Result<_, _>>()
             })
-            .collect(),
-        depth_mass: input.depth_mass.iter().map(&mut singleton).collect(),
-        emission: input.emission.iter().map(&mut singleton).collect(),
-        counts: input.counts.iter().map(&mut singleton).collect(),
-        rates: input.rates.iter().map(&mut singleton).collect(),
-    }
+            .collect::<Result<_, _>>()?,
+        depth_mass: input.depth_mass.iter().map(&mut singleton).collect::<Result<_, _>>()?,
+        emission: input.emission.iter().map(&mut singleton).collect::<Result<_, _>>()?,
+        counts: input.counts.iter().map(&mut singleton).collect::<Result<_, _>>()?,
+        rates: input.rates.iter().map(&mut singleton).collect::<Result<_, _>>()?,
+    })
 }
 pub fn check_transport(seed: u64, n: usize, dense: bool) -> Result<(), KernelError> {
-    let input = transport(seed, n, dense);
+    let input = transport(seed, n, dense).map_err(fault)?;
     let exact = pn_graph::transport::exact_transport(&input, &mut Arithmetic::with_limits(oracle_limits()), CELLS)?;
-    let range = pn_graph::transport::enclosed::evaluate(&enclosed(&input), &mut Budget::new(oracle_limits()).unwrap(), CELLS)?;
+    let range = pn_graph::transport::enclosed::evaluate(
+        &enclosed(&input).map_err(fault)?,
+        &mut Budget::new(oracle_limits()).unwrap(),
+        CELLS,
+    )?;
     let mut b = Budget::new(Limits::default()).unwrap();
     for (i, (v, r)) in exact.standing.iter().zip(&range.standing).enumerate() {
         assert_eq!(v.exact_string(&mut b).unwrap(), r.lower().exact_string(&mut b).unwrap());

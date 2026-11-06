@@ -5,6 +5,7 @@ pub mod activation;
 pub mod controller;
 pub mod ridge;
 mod scope;
+pub use scope::Prepared;
 pub mod verification;
 pub mod wall;
 

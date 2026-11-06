@@ -122,11 +122,11 @@
 | pn-epoch::semantic-publication | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::semantic-publication-extended | active | public-surface | pn-epoch-rust | extended | 2 |
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
-| pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 8 |
+| pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 9 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
 | pn-graph::formation | active | public-surface | pn-graph-rust | fast | 44 |
 | pn-graph::integration | active | integration | pn-graph-rust | fast | 1 |
-| pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 16 |
+| pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 17 |
 | pn-graph::properties | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::public | active | public-surface | pn-graph-rust | fast | 4 |
 | pn-graph::reference-controller | active | public-surface | pn-graph-rust | reference-certificate | 1 |
@@ -140,7 +140,7 @@
 | pn-graph::replay-faults | active | public-surface | pn-graph-rust | fast | 2 |
 | pn-graph::singleton-residual | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::title | active | public-surface | pn-graph-rust | fast | 1 |
-| pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 4 |
+| pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 5 |
 | pn-host | active | unit | pn-host-rust | fast | 7 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 3 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |

@@ -4,6 +4,6 @@
     "item": "primitive::Query",
     "package": "pn-records",
     "path": "packages/records/src/primitive.rs",
-    "syntax": "# [doc = \" Empty-assumption real context, ordered coordinates and original expression.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Query { pub coordinates : Vec < Range > , pub nodes : Vec < Node > , pub target : usize , pub goal : Goal , }"
+    "syntax": "# [doc = \" Empty-assumption real context, ordered coordinates and original expression.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Query { pub coordinates : Vec < Range > , pub nodes : Vec < Node > , pub target : usize , pub goal : Goal , }"
   }
 }

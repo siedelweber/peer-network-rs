@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/prepared.rs",
+    "item": "conserved::prepared::replay",
+    "owner": "EPOCH",
+    "signature": "fn replay (bound : & BoundProcedure < '_ > , supplied : & Record) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::replay",
+    "body": "{ if supplied . revision != \"prepared-rational-v1\" { return Err (Error :: Scope) ; } let rung = & supplied . solve . rounds . first () . ok_or (Error :: Scope) ? . certified . rung ; let (checked , accounting) = run (bound , & supplied . solve . fence , rung , Some (& supplied . solve)) ? ; if checked . work != supplied . solve . replay_work || accounting != supplied . mandatory_replay { return Err (Error :: ReplayWork) ; } Ok (Record { revision : supplied . revision . clone () , solve : checked , production : supplied . production . clone () , mandatory_replay : accounting , }) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The prepared receiver retains only frozen public declarations and exact numerical requests, bounds, certificates and actual Work. New coordinate boxes are checked independently; reuse admits no secret, subscriber or publication bytes.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

@@ -91,8 +91,20 @@ fn transports(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
             }
             let setup = Instant::now();
             let oracle = inputs::check_transport(seed, n, dense);
-            let input = inputs::transport(seed, n, dense);
-            let enclosed = inputs::enclosed(&input);
+            let prepared =
+                inputs::transport(seed, n, dense).and_then(|input| inputs::enclosed(&input).map(|enclosed| (input, enclosed)));
+            let (input, enclosed) = match prepared {
+                Ok(values) => values,
+                Err(error) => {
+                    for interval in [false, true] {
+                        let name = format!("B4-transport-n{n}-dense{dense}-enclosed{interval}");
+                        if selected(&name) {
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", setup.elapsed().as_secs_f64())).unwrap();
+                        }
+                    }
+                    continue;
+                }
+            };
             let setup = setup.elapsed();
             for interval in if mode == "smoke" { vec![false] } else { vec![false, true] } {
                 let name = format!("B4-transport-n{n}-dense{dense}-enclosed{interval}");

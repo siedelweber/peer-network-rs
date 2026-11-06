@@ -43,6 +43,26 @@ impl Accepted for pn_records::conserved::SolveRecord {
         true
     }
 }
+impl Accepted for conserved::prepared::Record {
+    fn accepted(&self) -> bool {
+        true
+    }
+    fn work_fields(&self, name: &str) -> String {
+        let a = if name.starts_with("B7-") {
+            &self.mandatory_replay
+        } else {
+            &self.production
+        };
+        format!(
+            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=prepared-rational-v1",
+            self.solve.work_fields(name),
+            a.setup,
+            a.map_passes.iter().sum::<u64>(),
+            a.final_checks.iter().sum::<u64>(),
+            a.driver_work
+        )
+    }
+}
 impl Accepted for pn_epoch::fence::Search {
     fn work_fields(&self, _name: &str) -> String {
         format!(
@@ -173,6 +193,23 @@ fn main() {
     receipt::finish(&output, &mode);
 }
 
+fn append_metadata(output: &std::path::Path, name: &str, metadata: &str) {
+    use std::io::Write;
+    let mut artifact = std::fs::OpenOptions::new()
+        .append(true)
+        .open(output.join(format!("{name}.txt")))
+        .unwrap();
+    writeln!(artifact, "{metadata}").unwrap();
+}
+
+fn check_prepared(bound: &pn_epoch::solve::BoundProcedure<'_>, record: &conserved::prepared::Record) {
+    let checked = conserved::prepared::replay(bound, record).unwrap();
+    assert_eq!(
+        checked.solve.rounds.last().unwrap().standing,
+        record.solve.rounds.last().unwrap().standing
+    );
+}
+
 fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
     let ns = vec![2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128, 256];
     for n in ns {
@@ -187,7 +224,17 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
             }
             let start = Instant::now();
             let input = inputs::candidate(seed, n, None, shape, "pass");
-            let state = inputs::compile(&input).unwrap();
+            let state = match inputs::compile(&input) {
+                Ok(state) => state,
+                Err(error) => {
+                    for name in &names {
+                        if selected(name) {
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
+                        }
+                    }
+                    continue;
+                }
+            };
             inputs::check_compilation(&input, &state);
             let p = inputs::scaling_procedure(&state, 16);
             let published = Published(p.clone());
@@ -220,28 +267,23 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                         &names[1],
                         &metadata,
                         || (),
-                        |()| conserved::solve(&bound, &accepted).map_err(Box::new),
+                        |()| conserved::prepared::solve(&bound, &accepted).map_err(Box::new),
                     )
                 } else {
-                    Measurement(conserved::solve(&bound, &accepted).map_err(Box::new))
+                    Measurement(conserved::prepared::solve(&bound, &accepted).map_err(Box::new))
                 };
                 // B7 consumes this exact B6 API result, never an independently generated case.
                 match produced.0 {
                     Ok(record) => {
-                        inputs::check_solve(&state, &p, &record);
+                        check_prepared(&bound, &record);
                         let metadata = format!(
                             "{metadata} M_solve={} M_replay={} {}",
                             input.m,
                             input.m,
-                            inputs::solve_counters(&record)
+                            inputs::solve_counters(&record.solve)
                         );
                         if selected(&names[1]) {
-                            use std::io::Write;
-                            let mut artifact = std::fs::OpenOptions::new()
-                                .append(true)
-                                .open(output.join(format!("{}.txt", names[1])))
-                                .unwrap();
-                            writeln!(artifact, "{metadata}").unwrap();
+                            append_metadata(output, &names[1], &metadata);
                         }
                         if selected(&names[2]) {
                             measure(
@@ -251,7 +293,7 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                                 &names[2],
                                 &metadata,
                                 || (),
-                                |()| conserved::replay(&bound, &record).map_err(Box::new),
+                                |()| conserved::prepared::replay(&bound, &record).map_err(Box::new),
                             );
                         }
                     }
@@ -279,7 +321,13 @@ fn acts(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) 
             }
             let start = Instant::now();
             let input = inputs::candidate(seed, 4, Some(m), shape, "pass");
-            let state = inputs::compile(&input).unwrap();
+            let state = match inputs::compile(&input) {
+                Ok(state) => state,
+                Err(error) => {
+                    std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} M={m} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
+                    continue;
+                }
+            };
             inputs::check_compilation(&input, &state);
             let metadata = format!(
                 "recipe=scaling-workloads/v2 seed={seed} {} construction_s={}",

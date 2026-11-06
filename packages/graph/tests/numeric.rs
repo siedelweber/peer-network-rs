@@ -1795,3 +1795,58 @@ fn evaluation_costs() {
         assert!(sharing_prefix(work - 1, count).is_err());
     }
 }
+
+/// Claim: A prepared original square-root form admits its descriptors once across changed boxes; fresh replay certifies each exact root, and a certificate from the other box refuses.
+/// ´claim:numerics:prepared-forms-bind-current-operands´
+/// ´test:integration:prepared-form-operands´
+#[test]
+fn prepared_form_operands() {
+    let p = procedure();
+    let mut owner = pn_graph::numeric::Prepared::new(&p);
+    let mut verifier = pn_graph::numeric::Prepared::new(&p);
+    let mut input = Query {
+        coordinates: vec![Range {
+            lower: "4".into(),
+            upper: "4".into(),
+        }],
+        nodes: vec![Node::Coordinate(0), Node::SquareRoot(0)],
+        target: 1,
+        goal: Goal::Width,
+    };
+    let first = owner.run(&input, None, p.maximum_work).unwrap();
+    let setup = owner.setup_work();
+    assert!(setup > 0);
+    assert_eq!(
+        first.bounds,
+        verifier
+            .run(&input, first.attachment.as_ref(), p.maximum_work)
+            .unwrap()
+            .bounds
+    );
+    input.coordinates[0] = Range {
+        lower: "9".into(),
+        upper: "9".into(),
+    };
+    let next = owner.run(&input, None, p.maximum_work).unwrap();
+    assert_eq!(owner.setup_work(), setup);
+    assert_eq!(
+        next.bounds,
+        verifier.run(&input, next.attachment.as_ref(), p.maximum_work).unwrap().bounds
+    );
+    let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    for (e, root) in [(&first, "2"), (&next, "3")] {
+        let expected = nrz_cas::Rational::parse(root, &mut b).unwrap();
+        let bounds = e.bounds.as_ref().unwrap();
+        assert_eq!(bounds.lower(), &expected);
+        assert_eq!(bounds.upper(), &expected);
+    }
+    assert!(verifier.run(&input, first.attachment.as_ref(), p.maximum_work).is_err());
+    let mut limited = pn_graph::numeric::Prepared::new(&p);
+    assert!(matches!(
+        limited.run(&input, None, 1),
+        Err(Error::Backend(nrz_cas::Fault {
+            kind: nrz_cas::FaultKind::Exhausted { .. },
+            ..
+        }))
+    ));
+}

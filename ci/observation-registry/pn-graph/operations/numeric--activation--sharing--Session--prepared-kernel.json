@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/sharing.rs",
+    "item": "numeric::activation::sharing::Session::prepared",
+    "owner": "GRAPH",
+    "signature": "fn prepared (procedure : & Procedure , bleed : & str , records : Option < & [PrimitiveRecord] >) -> Result < Self , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::prepared",
+    "body": "{ start (procedure , bleed , records , true) }",
+    "class_decision": "activation-base-public",
+    "item_premise": "The prepared receiver retains only frozen public declarations and exact numerical requests, bounds, certificates and actual Work. New coordinate boxes are checked independently; reuse admits no secret, subscriber or publication bytes.",
+    "assessments": {
+      "full_recording": "activation-base-public",
+      "secret_flow": "activation-base-public",
+      "exposure_consumers": "activation-base-public"
+    }
+  }
+}

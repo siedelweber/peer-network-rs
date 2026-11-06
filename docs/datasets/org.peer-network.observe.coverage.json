@@ -296,9 +296,9 @@
     },
     {
       "exceptions": 21,
-      "generators": 109,
+      "generators": 111,
       "helpers": 0,
-      "instrumented": 52,
+      "instrumented": 54,
       "name": "pn-epoch",
       "number_forms": {
         "exceptions": {
@@ -310,10 +310,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "109",
+          "exact": "111",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "109",
+          "num": "111",
           "num_exact": true,
           "num_relation": "="
         },
@@ -326,18 +326,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "52",
+          "exact": "54",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "54",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "73",
+          "exact": "75",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "73",
+          "num": "75",
           "num_exact": true,
           "num_relation": "="
         }
@@ -364,28 +364,28 @@
           "exact_digits": 32
         }
       },
-      "operations": 73
+      "operations": 75
     },
     {
-      "exceptions": 9,
-      "generators": 62,
+      "exceptions": 13,
+      "generators": 63,
       "helpers": 0,
-      "instrumented": 43,
+      "instrumented": 45,
       "name": "pn-graph",
       "number_forms": {
         "exceptions": {
-          "exact": "9",
+          "exact": "13",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "13",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "62",
+          "exact": "63",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "63",
           "num_exact": true,
           "num_relation": "="
         },
@@ -398,18 +398,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "43",
+          "exact": "45",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "43",
+          "num": "45",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "52",
+          "exact": "58",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "58",
           "num_exact": true,
           "num_relation": "="
         }
@@ -436,7 +436,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 52
+      "operations": 58
     },
     {
       "exceptions": 172,

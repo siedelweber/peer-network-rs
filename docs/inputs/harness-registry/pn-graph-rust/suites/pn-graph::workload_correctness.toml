@@ -6,4 +6,4 @@ level = "integration"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::workload_correctness::partition_inputs", "pn-graph::workload_correctness::scaling_transport_oracle", "pn-graph::workload_correctness::transport_inputs", "pn-graph::workload_correctness::workload_title_inputs"]
+cases = ["pn-graph::workload_correctness::partition_inputs", "pn-graph::workload_correctness::scaling_transport_oracle", "pn-graph::workload_correctness::transport_construction_refusals", "pn-graph::workload_correctness::transport_inputs", "pn-graph::workload_correctness::workload_title_inputs"]

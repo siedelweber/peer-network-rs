@@ -41,7 +41,7 @@ fn workload_title_inputs() {
 #[test]
 fn scaling_transport_oracle() {
     inputs::check_transport(0, 16, true).unwrap();
-    let input = inputs::enclosed(&inputs::transport(0, 16, true));
+    let input = inputs::enclosed(&inputs::transport(0, 16, true).unwrap()).unwrap();
     let mut b = nrz_cas::limits::Budget::new(nrz_cas::limits::Limits::default()).unwrap();
     let error = pn_graph::transport::enclosed::evaluate(&input, &mut b, inputs::CELLS).unwrap_err();
     let pn_records::transport::KernelError::Arithmetic(message) = error else {
@@ -50,4 +50,29 @@ fn scaling_transport_oracle() {
     assert!(message.contains("Work"));
     assert!(message.contains("2000000"));
     assert!(message.contains("2000021"));
+}
+
+/// Claim: The dense transport fixture builders return the original typed Work exhaustion instead of panicking at construction or interval conversion.
+/// ´claim:numerics:workload-transport-builders-retain-resource-causes´
+/// ´test:integration:transport-construction-refusals´
+#[test]
+fn transport_construction_refusals() {
+    let large = inputs::transport(0, 128, true).unwrap_err();
+    assert!(matches!(
+        large.kind,
+        nrz_cas::FaultKind::Exhausted {
+            budget: nrz_cas::limits::BudgetKind::Work,
+            ..
+        }
+    ));
+    let input = inputs::transport(0, 64, true).unwrap();
+    let convert = inputs::enclosed(&input).unwrap_err();
+    assert!(matches!(
+        convert.kind,
+        nrz_cas::FaultKind::Exhausted {
+            budget: nrz_cas::limits::BudgetKind::Work,
+            ..
+        }
+    ));
+    inputs::enclosed(&inputs::transport(0, 2, true).unwrap()).unwrap();
 }

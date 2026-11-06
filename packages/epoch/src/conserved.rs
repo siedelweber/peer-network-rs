@@ -4,6 +4,8 @@
 mod arithmetic;
 mod driver;
 mod map;
+pub mod prepared;
+mod prepared_map;
 mod residual;
 mod verification;
 

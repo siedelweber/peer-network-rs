@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::from_evidence",
-    "body": "{ start (procedure , bleed , Some (records)) }",
+    "body": "{ start (procedure , bleed , Some (records) , false) }",
     "class_decision": "activation-base-public",
     "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
     "assessments": {

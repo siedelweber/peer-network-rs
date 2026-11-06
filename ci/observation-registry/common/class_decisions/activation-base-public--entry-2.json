@@ -22,7 +22,10 @@
         "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::work",
         "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evidence",
         "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
-        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay"
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::cap_remaining",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::prepared",
+        "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::setup_work"
       ]
     }
   }

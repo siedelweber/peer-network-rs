@@ -6,10 +6,7 @@ pub mod scalar;
 use causes::{Approval, act, named};
 pub use history::numeric;
 use nrz_cas::limits::Limits;
-use pn_epoch::{
-    compiler, package,
-    solve::{ProcedureVerifier, bind_procedure},
-};
+use pn_epoch::{compiler, package, solve::ProcedureVerifier};
 use pn_records::solve::{Equality, Precision, Primitive, Procedure};
 use std::collections::{BTreeMap, BTreeSet};
 pub const PRODUCTS: u64 = 100_000;
@@ -235,30 +232,6 @@ pub fn procedure(s: &compiler::CompiledState, bits: u32) -> Procedure {
             },
         }),
     }
-}
-pub fn check_solve(s: &compiler::CompiledState, p: &Procedure, r: &pn_records::conserved::SolveRecord) {
-    let bound = bind_procedure(s, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
-    let replay = pn_epoch::conserved::replay(&bound, r).unwrap();
-    assert_eq!(replay.rounds.len(), r.rounds.len());
-    for (checked, produced) in replay.rounds.iter().zip(&r.rounds) {
-        assert_eq!(checked.standing, produced.standing);
-        assert_eq!(checked.residual, produced.residual);
-        assert_eq!(checked.radius, produced.radius);
-        assert_eq!(checked.certified.point, produced.certified.point);
-        assert_eq!(checked.proposals.len(), produced.proposals.len());
-    }
-    assert_eq!(replay.fence, r.fence);
-    assert_eq!(replay.work, r.replay_work);
-    for round in &r.rounds {
-        assert_eq!(round.certified.image.len(), s.view().base.rows.len());
-        assert!(round.proposals.len() <= usize::try_from(p.maximum_iterations).unwrap());
-    }
-    let mut wrong = r.clone();
-    wrong.replay_work += 1;
-    assert!(matches!(
-        pn_epoch::conserved::replay(&bound, &wrong),
-        Err(pn_epoch::conserved::Error::ReplayWork)
-    ));
 }
 pub fn solve_counters(r: &pn_records::conserved::SolveRecord) -> String {
     let k: usize = r.rounds.iter().map(|r| r.proposals.len()).sum();

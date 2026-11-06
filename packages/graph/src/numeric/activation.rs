@@ -14,7 +14,7 @@ use pn_records::{
 
 /// Distinct formula requests; a generalized slope is never a smooth derivative.
 /// (´def:numerics:activation´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Quantity {
     Responsive,
     Clamped,
@@ -26,7 +26,7 @@ pub enum Quantity {
 
 /// Public standing box and bleed, with either a rational or independent enclosed wall.
 /// (´def:numerics:activation´)
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Request {
     pub standing: Range,
     pub bleed_squared: String,

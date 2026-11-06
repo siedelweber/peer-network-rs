@@ -8,7 +8,7 @@ use pn_records::{
     solve::{AttemptStop, Completion, Evidence, Precision},
 };
 
-fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<Rational, Error> {
+pub(super) fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<Rational, Error> {
     let p = bound.inputs().1;
     let limits = p.enclosure.as_ref().ok_or(Error::Scope)?.operation.clone();
     pn_records::solve::validate_evidence(p, evidence, limits.clone())?;

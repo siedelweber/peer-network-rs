@@ -9,9 +9,116 @@ use nrz_cas::{
     syntax::{AtomicSort, Branch, Declaration, Draft, Environment, ExpressionDraft, Field, Operator, Sort},
 };
 use pn_records::{
-    primitive::{Goal, Node, Query},
+    primitive::{Attachment, Goal, Node, PrimitiveEvidence, Query},
     solve::{Primitive, Procedure},
 };
+use std::collections::BTreeMap;
+
+type Form = (Vec<Node>, usize, Goal, usize);
+
+/// Prepared rational adapter revision one retains original descriptors, not changed-value proofs.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+#[derive(Debug)]
+pub struct Prepared {
+    procedure: Procedure,
+    forms: BTreeMap<Form, (Cas, EnclosureRequest)>,
+    setup_work: u64,
+}
+
+impl Prepared {
+    /// Bind all arithmetic and refinement settings for this independently owned receiver.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// Justified: Construction retains a declaration and no evidence or checked authority.
+    #[must_use]
+    pub fn new(procedure: &Procedure) -> Self {
+        Self {
+            procedure: procedure.clone(),
+            forms: BTreeMap::new(),
+            setup_work: 0,
+        }
+    }
+
+    /// Actual descriptor admission Work, a subset of the operation Work already charged.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// Justified: Immutable access cannot change retained forms or their original domains.
+    #[must_use]
+    pub fn setup_work(&self) -> u64 {
+        self.setup_work
+    }
+
+    /// Bind exact coordinate boxes and independently check each supplied certificate.
+    /// (´[ROOT-rule:design:backend-evidence]´)
+    /// # Errors
+    /// Refuses changed domains, invalid evidence, exceeded storage and arithmetic limits.
+    #[tracing::instrument(
+        name = "sig:design:graph",
+        fields(
+            execution_owner = "GRAPH",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:graph",
+            source_item = "numeric::scope::Prepared::run"
+        ),
+        ret
+    )]
+    pub fn run(&mut self, query: &Query, supplied: Option<&Attachment>, remaining: u64) -> Result<PrimitiveEvidence, Error> {
+        super::preflight(&self.procedure)?;
+        if let Some(attachment) = supplied {
+            super::schemas(&attachment.schemas)?;
+        }
+        let policy = self.procedure.enclosure.as_ref().ok_or(Error::Unsupported)?;
+        let mut limits = policy.operation.clone();
+        limits.work = limits.work.min(remaining);
+        let mut budget = Budget::new(limits)?;
+        let key = (query.nodes.clone(), query.target, query.goal.clone(), query.coordinates.len());
+        // Full ordered equality, never an unchecked hash hit. Meter a conservative tree path.
+        let bytes = u64::try_from(format!("{key:?}").len()).map_err(|_| Error::Declaration)?;
+        let paths = u64::from(self.forms.len().checked_add(1).ok_or(Error::Declaration)?.ilog2()) + 1;
+        budget.work(
+            bytes.checked_mul(paths).ok_or(Error::Declaration)?,
+            nrz_cas::Location::new("prepared form key"),
+        )?;
+        if !self.forms.contains_key(&key) {
+            if u64::try_from(self.forms.len()).map_err(|_| Error::Declaration)? >= policy.store.proof_nodes {
+                return Err(Error::Declaration);
+            }
+            let start = budget.usage().work;
+            let form = build(&self.procedure, query, &mut budget)?;
+            self.setup_work = self
+                .setup_work
+                .checked_add(budget.usage().work - start)
+                .ok_or(Error::Declaration)?;
+            self.forms.insert(key.clone(), form);
+        }
+        let (cas, request) = self.forms.get_mut(&key).ok_or(Error::Declaration)?;
+        // The original ambient real domain does not change. Boxes are numerical operands.
+        for (coordinate, range) in request.coordinates.iter_mut().zip(&query.coordinates) {
+            coordinate.interval = Interval::new(
+                Rational::parse(&range.lower, &mut budget)?,
+                Rational::parse(&range.upper, &mut budget)?,
+                &mut budget,
+            )?;
+        }
+        let mut interrupt = |_| false;
+        let report = if let Some(attachment) = supplied {
+            cas.check_enclosure(
+                request,
+                policy.refinement,
+                &attachment.certificate,
+                &mut budget,
+                &mut interrupt,
+            )?
+        } else {
+            cas.enclose(request, policy.refinement, &mut budget, &mut interrupt)?
+        };
+        let result = super::mapped(report, &budget.usage(), matches!(query.goal, Goal::Width))?;
+        if let (Some(given), Some(checked)) = (supplied, &result.attachment)
+            && given.schemas != checked.schemas
+        {
+            return Err(Error::Schema);
+        }
+        Ok(result)
+    }
+}
 
 fn real() -> Sort {
     Sort::Value(AtomicSort::Scalar(Field::Real))

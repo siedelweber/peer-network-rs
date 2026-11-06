@@ -4,6 +4,6 @@
     "item": "numeric::activation::Quantity",
     "package": "pn-graph",
     "path": "packages/graph/src/numeric/activation.rs",
-    "syntax": "# [doc = \" Distinct formula requests; a generalized slope is never a smooth derivative.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Quantity { Responsive , Clamped , Hop { strength : String , shape : String } , ResponsiveLogGain , CleanScreenLogGain , GeneralizedLogGain , }"
+    "syntax": "# [doc = \" Distinct formula requests; a generalized slope is never a smooth derivative.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Quantity { Responsive , Clamped , Hop { strength : String , shape : String } , ResponsiveLogGain , CleanScreenLogGain , GeneralizedLogGain , }"
   }
 }

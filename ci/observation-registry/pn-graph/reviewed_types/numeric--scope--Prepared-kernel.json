@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::scope::Prepared",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/scope.rs",
+    "syntax": "# [doc = \" Prepared rational adapter revision one retains original descriptors, not changed-value proofs.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Debug)] pub struct Prepared { procedure : Procedure , forms : BTreeMap < Form , (Cas , EnclosureRequest) > , setup_work : u64 , }"
+  }
+}
