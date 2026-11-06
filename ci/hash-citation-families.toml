@@ -1094,3 +1094,15 @@ commit = "71e2a4cfaebc3a8bb021eb6a500cb0566072e83a"
 patch_id = "ede3fc42e141903c825c88e95f3f5fb1b8e2e816"
 definition = "The scaling campaign measures this exact clean public commit with a private target directory. The stable patch-id is its recomputable locator; no patch was applied to another base."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/workload-benchmarks.toml", "docs/datasets/org.peer-network.workload.benchmarks.json", "docs/design/workload-benchmarks.md"]
+
+[[rows]]
+family = "workload-host-public-series"
+group = "workload host campaign"
+measures = "Exact public source and stable implementation patch identity"
+producer = "Git stable patch-id"
+establishment = "recomputable"
+reader = "ancestor-patch"
+commit = "51fa529297d8cd862bbf782bb8f69969dd6df34b"
+patch_id = "2d4dce685f9962a3a73e2636c8a74cdfcb879087"
+definition = "The host pilot and full campaign measured a clean checkout of this exact public commit with a private target. The stable patch-id is recomputed from that imported implementation commit, not from a lane tree."
+paths = ["ci/hash-citation-families.toml", "docs/inputs/workload-benchmarks.toml", "docs/datasets/org.peer-network.workload.benchmarks.json", "docs/design/workload-benchmarks.md"]
