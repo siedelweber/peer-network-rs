@@ -216,11 +216,236 @@ The earlier structural campaign records its public base with the measured implem
 | kranich-all-components-2-scalar-ridge-2 | passed | 5.155 154 480 999 045 | 4.982 764 000 000 011 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
 | kranich-all-components-2-scalar-ridge-4 | passed | 5.295 320 883 000 386 | 5.072 337 000 000 01 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
 | kranich-all-components-2-scalar-ridge-8 | passed | 5.370 919 963 999 768 | 5.193 663 000 000 006 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3 | failed | 1 438.361 390 590 667 7 | 1 307.357 496 999 999 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-16 | passed | 1.190 306 655 000 313 2 | 1.143 05 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-32 | passed | 1.140 608 613 000 949 8 | 1.105 983 999 999 999 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-64 | passed | 1.140 688 049 999 880 6 | 1.103 425 999 999 999 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-128 | passed | 1.140 615 084 994 351 5 | 1.081 443 999 999 999 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-256 | passed | 1.133 904 556 001 653 | 1.069 175 000 000 000 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-512 | passed | 1.189 141 536 990 064 2 | 1.139 876 000 000 000 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-1024 | passed | 1.236 325 943 013 071 | 1.163 048 000 000 001 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-parallel-2048 | passed | 1.343 512 395 003 927 | 1.270 462 000 000 000 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-16 | passed | 0.781 390 713 993 459 9 | 0.749 654 999 999 999 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-32 | passed | 1.189 759 811 997 646 5 | 1.109 403 999 999 999 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-64 | passed | 1.089 647 130 997 036 6 | 1.045 160 999 999 998 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-128 | passed | 1.192 479 179 007 932 5 | 1.175 767 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-256 | passed | 1.189 490 844 000 829 4 | 1.168 241 000 000 000 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-512 | passed | 1.189 775 972 001 371 | 1.167 066 999 999 997 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-1024 | passed | 1.241 828 794 998 582 5 | 1.192 882 999 999 998 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-acts-mixed-2048 | passed | 0.835 124 981 007 538 7 | 0.781 773 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-1 | passed | 1.137 836 538 007 832 1 | 1.095 800 000 000 002 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-2 | passed | 1.189 866 389 002 418 1 | 1.155 847 999 999 998 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-4 | passed | 1.190 077 640 989 329 7 | 1.142 128 999 999 999 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-8 | passed | 1.187 923 099 001 636 7 | 1.141 196 999 999 999 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-16 | passed | 1.136 952 792 003 285 1 | 1.106 619 999 999 997 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-32 | passed | 1.139 849 658 007 733 5 | 1.131 023 999 999 997 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-64 | passed | 1.189 690 514 001 995 3 | 1.134 647 999 999 996 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-list-128 | passed | 1.140 665 048 005 757 9 | 1.111 865 000 000 003 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-1 | passed | 1.140 349 954 002 886 | 1.109 617 999 999 998 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-2 | passed | 1.238 986 290 001 776 | 1.187 612 999 999 998 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-4 | passed | 1.189 883 169 994 573 | 1.175 227 000 000 002 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-8 | passed | 1.190 003 754 003 555 5 | 1.139 932 999 999 999 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-16 | passed | 1.188 983 083 004 132 | 1.156 327 999 999 996 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-32 | passed | 1.139 094 439 000 473 4 | 1.120 722 000 000 005 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-64 | passed | 1.190 937 544 000 917 1 | 1.137 387 000 000 004 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-markers-commitment-128 | passed | 1.245 250 742 998 905 5 | 1.169 306 999 999 999 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-256 | passed | 1.087 746 391 000 109 7 | 1.025 131 000 000 001 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-512 | passed | 1.086 511 825 007 619 3 | 1.054 573 999 999 996 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-1024 | passed | 1.239 229 360 988 247 2 | 1.203 154 000 000 001 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-2048 | passed | 1.138 900 799 996 918 | 1.101 583 000 000 003 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-4096 | passed | 0.884 706 577 999 168 1 | 0.862 750 999 999 996 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-8192 | passed | 1.191 515 814 003 651 | 1.161 655 999 999 997 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-16384 | passed | 1.189 383 685 006 76 | 1.140 159 000 000 002 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-strict-32768 | passed | 1.190 066 188 995 842 8 | 1.159 138 999 999 992 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-256 | passed | 1.190 994 628 996 122 6 | 1.152 313 999 999 996 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-512 | passed | 1.138 984 614 997 753 | 1.092 367 999 999 994 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-1024 | passed | 1.086 495 955 998 543 6 | 1.073 292 000 000 002 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-2048 | passed | 1.188 396 726 996 870 7 | 1.180 128 000 000 001 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-4096 | passed | 1.187 200 982 007 198 | 1.158 871 000 000 003 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-8192 | passed | 1.345 151 111 003 360 7 | 1.282 572 000 000 008 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-16384 | passed | 1.187 106 338 009 471 | 1.133 987 000 000 001 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-bytes-chunked-32768 | passed | 1.188 758 668 009 541 | 1.137 435 999 999 996 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-8 | passed | 1.188 095 999 998 040 5 | 1.135 695 000 000 003 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-16 | passed | 1.287 434 045 007 103 1 | 1.223 420 999 999 997 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-32 | passed | 1.137 409 397 997 544 1 | 1.125 179 999 999 998 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-64 | passed | 1.189 473 873 004 317 3 | 1.164 483 000 000 002 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-128 | passed | 1.188 135 263 000 731 4 | 1.133 992 000 000 000 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-256 | passed | 1.192 848 221 995 518 5 | 1.144 824 000 000 000 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-512 | passed | 1.137 995 393 000 892 4 | 1.111 199 999 999 999 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-0-1024 | passed | 1.395 192 166 994 093 | 1.357 283 999 999 999 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-8 | passed | 1.495 466 116 000 898 2 | 1.427 020 999 999 988 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-16 | passed | 0.931 389 343 997 58 | 0.875 594 999 999 988 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-32 | passed | 1.241 191 013 992 647 6 | 1.221 473 000 000 011 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-64 | passed | 1.341 080 660 989 973 7 | 1.293 978 999 999 991 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-128 | passed | 1.239 288 049 007 882 4 | 1.221 881 999 999 996 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-256 | passed | 1.396 672 609 000 234 | 1.362 225 000 000 005 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-512 | passed | 2.514 675 951 999 379 3 | 2.421 075 999 999 994 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-1-1024 | passed | 6.744 613 148 999 633 | 6.678 232 000 000 02 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-8 | passed | 0.833 913 768 001 366 4 | 0.795 666 999 999 985 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-16 | passed | 1.188 790 846 994 379 5 | 1.157 067 999 999 999 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-32 | passed | 1.087 068 095 002 905 5 | 1.049 967 000 000 005 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-64 | passed | 1.190 057 313 011 493 5 | 1.140 611 999 999 991 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-128 | passed | 1.390 966 029 008 268 4 | 1.322 171 999 999 994 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-256 | passed | 1.293 604 935 999 610 5 | 1.234 825 999 999 991 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-512 | passed | 1.293 824 672 000 482 7 | 1.243 084 999 999 993 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-partition-2-1024 | passed | 1.600 395 948 989 899 | 1.550 163 000 000 007 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-2 | passed | 1.188 608 698 997 995 8 | 1.174 043 999 999 984 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-4 | passed | 1.188 831 543 011 474 4 | 1.139 729 000 000 004 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-8 | passed | 1.290 945 378 990 727 5 | 1.240 844 999 999 986 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-16 | passed | 1.085 955 955 000 827 | 1.058 996 000 000 004 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-32 | passed | 1.240 207 210 998 050 9 | 1.187 626 999 999 986 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-64 | passed | 1.189 083 839 999 511 8 | 1.133 152 999 999 996 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-128 | passed | 1.239 711 763 992 090 7 | 1.224 405 999 999 991 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-exact-256 | passed | 1.295 212 292 010 546 7 | 1.254 705 999 999 996 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-2 | passed | 1.188 248 993 988 963 8 | 1.138 745 000 000 006 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-4 | passed | 1.191 400 821 000 570 4 | 1.180 810 999 999 997 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-8 | passed | 1.190 266 820 995 020 7 | 1.149 400 000 000 005 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-16 | passed | 1.190 057 723 011 705 | 1.170 914 999 999 991 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-32 | passed | 1.238 363 717 013 271 5 | 1.198 110 000 000 009 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-64 | passed | 1.240 979 370 995 774 | 1.220 844 999 999 997 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-128 | passed | 1.343 258 124 004 933 | 1.293 678 999 999 995 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-sparse-enclosed-256 | passed | 1.342 926 720 011 746 5 | 1.291 296 999 999 998 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-2 | passed | 1.188 633 205 005 317 | 1.157 994 000 000 000 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-4 | passed | 1.491 304 367 998 964 2 | 1.422 296 999 999 994 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-8 | passed | 0.987 654 198 004 747 7 | 0.952 540 999 999 985 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-16 | passed | 0.981 860 097 002 936 5 | 0.933 692 000 000 003 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-32 | passed | 1.740 264 605 003 176 3 | 1.642 813 000 000 014 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-64 | failed | 0.067 768 703 011 097 39 | 0.049 730 999 999 983 76 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-128 | failed | 0.020 226 834 996 719 845 | 0.011 299 000 000 004 167 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-exact-256 | failed | 0.023 481 051 990 529 522 | 0.011 596 999 999 998 747 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-2 | passed | 0.879 739 647 993 119 4 | 0.810 398 000 000 006 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-4 | passed | 1.291 975 947 999 162 6 | 1.239 677 999 999 999 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-8 | passed | 1.444 002 042 990 177 9 | 1.312 922 000 000 000 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-16 | passed | 1.238 420 702 007 715 6 | 1.158 861 999 999 999 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-32 | passed | 2.052 415 124 999 243 | 1.922 705 000 000 015 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-64 | failed | 0.116 634 721 998 707 39 | 0.071 704 999 999 997 91 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-128 | failed | 0.020 329 846 011 009 067 | 0.011 438 000 000 012 05 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-transport-dense-enclosed-256 | failed | 0.022 187 055 001 268 163 | 0.011 583 999 999 997 374 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-4 | passed | 1.092 689 766 999 683 3 | 0.995 236 000 000 005 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-7 | passed | 1.236 864 599 995 897 2 | 1.130 419 999 999 997 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-16 | passed | 0.987 427 488 988 032 6 | 0.946 146 000 000 007 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-31 | passed | 1.087 888 153 997 482 7 | 1.004 658 000 000 017 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-64 | passed | 1.135 833 958 993 316 6 | 1.044 831 999 999 987 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-127 | passed | 1.337 791 229 001 595 6 | 1.267 651 000 000 004 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-256 | passed | 3.221 142 841 997 789 | 3.032 507 999 999 999 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-title-alternating-511 | passed | 11.450 296 419 003 28 | 9.914 974 000 000 004 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-2 | passed | 0.899 344 971 010 577 9 | 0.775 390 000 000 029 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-4 | passed | 1.148 381 289 996 905 3 | 0.959 954 000 000 027 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-8 | passed | 1.324 019 068 997 586 1 | 0.957 863 000 000 007 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-16 | passed | 1.232 160 426 996 415 5 | 1.025 256 999 999 998 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-32 | passed | 1.242 307 672 000 606 5 | 1.084 223 000 000 014 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-64 | passed | 1.798 151 324 008 358 6 | 1.615 619 000 000 014 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-128 | passed | 2.211 590 873 994 282 4 | 1.998 421 999 999 997 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-ring-256 | passed | 2.884 796 565 995 202 4 | 2.636 337 000 000 012 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-2 | passed | 1.089 812 358 011 840 8 | 0.961 288 000 000 000 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-4 | passed | 1.246 812 826 007 953 8 | 1.060 820 000 000 012 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-8 | passed | 1.492 545 515 997 335 3 | 1.335 829 000 000 023 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-16 | passed | 2.510 735 524 003 394 | 2.437 402 999 999 994 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-32 | failed | 0.121 542 181 994 300 34 | 0.097 672 000 000 004 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-64 | failed | 0.274 044 178 993 790 4 | 0.235 896 999 999 996 91 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-128 | failed | 1.190 373 688 004 911 | 1.130 942 999 999 998 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-actors-dense-256 | failed | 7.240 173 132 988 275 | 6.986 645 000 000 019 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-8 | passed | 1.237 789 512 990 275 4 | 1.203 899 000 000 003 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-16 | passed | 1.184 782 632 990 391 | 1.155 154 999 999 990 8 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-32 | passed | 1.291 252 037 000 958 8 | 1.246 393 999 999 994 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-64 | passed | 0.827 792 650 990 886 6 | 0.797 379 000 000 000 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-128 | passed | 1.439 407 573 998 323 6 | 1.414 816 999 999 988 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-256 | passed | 1.497 780 372 999 841 3 | 1.475 648 000 000 003 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-512 | passed | 1.648 168 854 997 493 3 | 1.604 199 000 000 006 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-parallel-1024 | passed | 2.360 937 215 009 471 4 | 2.291 036 000 000 021 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-8 | passed | 1.138 561 632 003 984 4 | 1.119 927 999 999 989 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-16 | passed | 1.239 943 142 994 889 | 1.204 196 000 000 021 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-32 | passed | 1.291 088 785 001 193 2 | 1.239 777 999 999 989 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-64 | passed | 1.345 408 366 993 069 6 | 1.302 865 999 999 994 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-128 | passed | 1.393 390 308 992 820 8 | 1.365 414 000 000 017 2 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-256 | passed | 1.852 169 627 993 134 8 | 1.793 309 999 999 993 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-512 | passed | 2.310 120 170 994 196 | 2.258 967 000 000 003 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-compile-acts-mixed-1024 | failed | 0.067 642 298 992 723 23 | 0.043 058 000 000 006 48 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-equal-8 | passed | 1.292 582 110 996 591 | 1.260 115 999 999 999 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-equal-16 | passed | 1.239 486 046 004 458 3 | 1.216 103 999 999 969 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-late-8 | passed | 2.205 905 401 991 913 | 2.152 132 000 000 019 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-late-16 | passed | 2.560 123 161 005 322 | 2.462 896 000 000 001 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-limited-8 | refused | 0.012 163 919 993 327 | 0.009 197 000 000 021 216 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-fence-limited-16 | refused | 0.021 595 900 005 195 29 | 0.009 688 000 000 016 572 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-2 | passed | 7.701 198 651 993 764 | 7.447 087 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-3 | passed | 7.867 220 701 009 501 | 7.766 532 999 999 978 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-4 | passed | 8.942 573 385 997 093 | 8.873 189 000 000 02 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-5 | passed | 11.490 098 181 006 033 | 11.385 488 000 000 02 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-6 | passed | 13.065 444 673 993 625 | 12.920 580 000 000 008 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-7 | passed | 31.682 477 726 004 436 | 29.646 364 000 000 013 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-8 | passed | 25.775 924 964 997 103 | 24.561 437 999 999 974 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-ring-16 | passed | 75.188 340 392 007 38 | 69.673 348 000 000 03 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-2 | passed | 10.255 288 847 998 6 | 9.057 546 999 999 975 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-3 | passed | 12.806 272 109 999 554 | 11.512 048 000 000 004 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-4 | passed | 16.097 836 556 989 932 | 14.638 714 999 999 957 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-5 | passed | 15.345 925 184 999 942 | 14.196 998 000 000 022 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-6 | passed | 23.210 883 976 003 97 | 21.804 665 000 000 035 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-7 | passed | 26.552 109 857 992 036 | 23.030 525 999 999 995 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-8 | passed | 38.618 610 039 004 125 | 34.807 010 999 999 97 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-solve-dense-16 | refused | 6.952 091 122 991 987 5 | 6.158 370 999 999 976 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-2 | passed | 5.069 277 304 995 921 | 4.484 055 999 999 945 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-3 | passed | 7.471 469 373 005 675 | 6.590 608 000 000 053 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-4 | passed | 9.244 723 002 004 32 | 8.017 921 999 999 967 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-5 | passed | 11.275 103 926 003 794 | 10.054 830 000 000 01 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-6 | passed | 13.208 350 395 012 53 | 11.402 169 999 999 968 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-7 | passed | 17.880 583 760 008 45 | 15.978 082 000 000 1 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-8 | passed | 15.139 582 443 007 384 | 13.638 152 999 999 928 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-ring-16 | passed | 38.508 996 201 009 72 | 33.611 211 000 000 026 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-2 | passed | 4.951 468 938 001 199 | 4.440 562 000 000 032 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-3 | passed | 5.862 305 153 990 746 5 | 5.472 975 000 000 019 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-4 | passed | 7.466 590 487 005 305 5 | 6.852 702 999 999 988 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-5 | passed | 8.134 743 230 009 917 | 7.714 151 999 999 932 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-6 | passed | 12.524 691 010 999 959 | 11.862 553 999 999 959 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-7 | passed | 11.312 932 222 004 747 | 10.198 331 999 999 933 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-8 | passed | 15.723 549 836 999 155 | 14.992 071 000 000 045 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-replay-dense-16 | refused | 3.169 828 686 994 151 | 3.071 480 000 000 032 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-4 | passed | 2.711 285 276 003 764 | 2.600 770 000 000 013 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-8 | passed | 2.564 476 093 000 848 8 | 2.503 033 000 000 091 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-16 | passed | 2.816 743 958 013 830 7 | 2.545 002 000 000 084 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-32 | passed | 2.938 806 303 005 549 | 2.540 230 999 999 896 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-64 | passed | 3.287 328 110 993 257 7 | 2.578 629 999 999 950 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-128 | passed | 3.029 574 656 000 477 3 | 2.715 429 000 000 056 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-256 | passed | 3.276 318 128 991 988 5 | 2.847 657 999 999 976 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-pass-512 | passed | 4.441 767 081 007 129 | 3.759 211 000 000 069 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-own-4 | refused | 0.016 894 662 010 599 86 | 0.008 745 000 000 141 445 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-own-16 | refused | 0.018 844 624 995 836 057 | 0.010 265 999 999 959 696 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-own-64 | refused | 0.036 701 459 001 051 26 | 0.017 850 000 000 033 894 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-individual-4 | refused | 0.625 490 462 989 546 4 | 0.527 728 000 000 053 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-individual-16 | refused | 0.784 862 444 997 998 | 0.626 656 999 999 966 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-individual-64 | refused | 0.675 433 399 010 216 8 | 0.573 201 000 000 068 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-policy-4 | refused | 0.476 305 901 000 159 8 | 0.381 495 999 999 983 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-policy-16 | refused | 0.423 465 198 997 291 74 | 0.378 073 000 000 056 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-admit-controls-policy-64 | refused | 0.473 373 139 000 614 2 | 0.410 400 000 000 017 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-1 | passed | 2.821 685 870 992 951 | 2.521 109 999 999 999 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-2 | passed | 5.587 560 216 998 099 | 4.700 610 999 999 919 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-4 | passed | 10.942 775 592 004 182 | 9.746 495 999 999 99 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-8 | passed | 26.646 922 551 008 174 | 19.972 815 000 000 01 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-16 | passed | 47.498 352 291 004 27 | 39.927 603 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-32 | passed | 97.660 944 821 996 96 | 81.660 928 000 000 04 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-64 | passed | 165.639 395 137 011 9 | 150.443 539 999 999 9 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-trials-serial-128 | incomplete | 180.022 331 726 999 25 | 169.251 563 000 000 06 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-1 | refused | 3.363 607 658 000 546 5 | 2.951 504 000 000 149 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-2 | refused | 3.300 203 488 994 157 | 2.940 152 999 999 952 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-4 | refused | 3.993 938 635 001 541 | 3.538 698 999 999 977 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-5 | passed | 18.861 363 648 989 936 | 17.109 649 999 999 867 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-6 | passed | 20.274 522 238 993 086 | 16.487 619 999 999 986 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-8 | passed | 18.779 891 465 004 766 | 16.500 520 000 000 026 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-12 | passed | 19.425 525 697 995 91 | 17.051 260 999 999 847 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-rational-16 | passed | 19.179 754 486 991 442 | 16.783 896 999 999 993 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-1 | refused | 3.225 576 313 998 317 3 | 2.948 888 000 000 195 6 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-2 | passed | 5.979 972 993 009 142 | 5.219 932 999 999 896 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-4 | passed | 6.533 511 344 008 73 | 5.573 816 999 999 916 5 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-5 | passed | 6.380 424 304 006 738 | 5.611 709 999 999 989 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-6 | passed | 3.994 103 560 005 896 7 | 3.877 138 999 999 942 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-8 | passed | 3.227 292 142 008 082 | 3.144 001 999 999 862 7 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-12 | passed | 3.226 875 089 996 610 8 | 3.184 465 999 999 937 4 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
+| kranich-scaling-components-3-scalar-ridge-16 | passed | 3.943 544 333 000 318 | 3.722 212 000 000 028 3 | Component evidence only, no capacity declaration. node_scope=node-wide from proc; cgroup_scope=gate-cgroup from the campaign container; waited process CPU is own CPU. |
 | Measured source | Public base | Public implementation commit and stable patch-id | Scheduling and machine |
 | --- | --- | --- | --- |
 | kranich-structural-pilot | `ad94eb24887ecbda0f34a95884ca99b7f6f504e9` | commit `7cc999af9e209ce9cda111a7db1554e3cb11232f`; stable patch-id `0a1f215440a4e8a6bdd8af10f12192b8e7463acb` | kranich; AMD Ryzen 9 5950X 16-Core Processor; SCHED_IDLE. |
 | kranich-structural-full | `ad94eb24887ecbda0f34a95884ca99b7f6f504e9` | commit `7cc999af9e209ce9cda111a7db1554e3cb11232f`; stable patch-id `0a1f215440a4e8a6bdd8af10f12192b8e7463acb` | kranich; AMD Ryzen 9 5950X 16-Core Processor; SCHED_IDLE. |
 | kranich-all-components-2 | `2afc7a89ce57783a2bc6928828ae0066fb19178e` | commit `2afc7a89ce57783a2bc6928828ae0066fb19178e`; stable patch-id `d943a78a85880844ee4cec32ef19abac7652bd6b` | kranich; AMD Ryzen 9 5950X 16-Core Processor; SCHED_IDLE. |
+| kranich-scaling-components-3 | `71e2a4cfaebc3a8bb021eb6a500cb0566072e83a` | commit `71e2a4cfaebc3a8bb021eb6a500cb0566072e83a`; stable patch-id `ede3fc42e141903c825c88e95f3f5fb1b8e2e816` | kranich; AMD Ryzen 9 5950X 16-Core Processor; SCHED_IDLE. |
 
 | Full point | Size | Mean ns | Mean confidence interval ns | Setup seconds | Outcome |
 | --- | --- | --- | --- | --- | --- |
@@ -366,3 +591,226 @@ The earlier structural campaign records its public base with the measured implem
 | scalar-ridge-2 | 2 | 180 006 324.1 | 177 464 566.577 5 to 182 486 611.455 | 0.000 000 101 | passed |
 | scalar-ridge-4 | 4 | 187 042 161.7 | 183 963 258.527 5 to 189 887 167.345 | 0.000 000 1 | passed |
 | scalar-ridge-8 | 8 | 186 906 477.4 | 183 902 431.752 5 to 189 497 701.247 5 | 0.000 000 141 | passed |
+| acts-parallel-16 | 16 | 53 700.347 010 309 284 | 53 249.431 724 226 79 to 54 197.102 457 474 23 | 0.000 216 271 | passed |
+| acts-parallel-32 | 32 | 103 063.865 641 025 64 | 101 881.431 376 923 08 to 104 439.676 328 205 13 | 0.000 387 357 | passed |
+| acts-parallel-64 | 64 | 212 116.007 838 983 03 | 209 243.671 965 042 36 to 215 839.362 669 491 56 | 0.000 607 455 | passed |
+| acts-parallel-128 | 128 | 452 418.292 129 629 64 | 414 854.144 942 129 7 to 478 958.697 685 185 24 | 0.001 158 555 | passed |
+| acts-parallel-256 | 256 | 570 271.371 428 571 5 | 562 932.002 422 360 4 to 576 648.767 453 416 1 | 0.002 279 742 | passed |
+| acts-parallel-512 | 512 | 2 034 297.313 999 999 8 | 2 008 471.100 450 000 3 to 2 058 094.699 6 | 0.004 701 207 | passed |
+| acts-parallel-1024 | 1 024 | 2 364 039.530 232 558 5 | 2 284 575.266 918 604 7 to 2 483 718.407 209 302 3 | 0.005 474 06 | passed |
+| acts-parallel-2048 | 2 048 | 13 725 683.55 | 12 121 267.678 437 501 to 15 350 587.922 500 001 | 0.023 669 391 | passed |
+| acts-mixed-16 | 16 | 38 277.831 177 547 29 | 33 473.699 618 669 925 to 46 266.366 653 447 23 | 0.000 295 427 | passed |
+| acts-mixed-32 | 32 | 126 650.647 761 194 04 | 105 382.982 412 935 34 to 143 135.314 748 134 32 | 0.000 479 177 | passed |
+| acts-mixed-64 | 64 | 234 375.518 734 177 2 | 192 316.386 202 531 63 to 271 512.412 170 886 | 0.000 689 137 | passed |
+| acts-mixed-128 | 128 | 305 332.856 676 557 9 | 303 467.555 237 388 76 to 307 417.146 016 320 5 | 0.000 779 794 | passed |
+| acts-mixed-256 | 256 | 641 601.391 082 802 6 | 635 970.730 573 248 4 to 647 097.516 926 751 6 | 0.001 518 944 | passed |
+| acts-mixed-512 | 512 | 1 299 117.829 870 129 7 | 1 292 425.785 389 610 3 to 1 304 851.500 422 078 | 0.002 905 291 | passed |
+| acts-mixed-1024 | 1 024 | 2 570 476.857 5 | 2 545 882.613 000 000 4 to 2 602 551.316 125 | 0.005 810 993 | passed |
+| acts-mixed-2048 | 2 048 | 5 537 369.481 818 182 | 5 517 649.339 318 181 to 5 564 730.234 999 999 | 0.019 456 448 | passed |
+| markers-list-1 | 1 | 2 973.629 454 096 844 3 | 2 956.847 035 314 074 7 to 2 990.088 598 745 759 | 0.000 103 451 | passed |
+| markers-list-2 | 2 | 4 631.758 922 770 617 | 4 615.423 587 053 337 to 4 647.033 689 746 411 | 0.000 108 731 | passed |
+| markers-list-4 | 4 | 8 467.045 645 588 792 | 8 412.829 255 017 037 to 8 511.772 626 845 888 | 0.000 112 589 | passed |
+| markers-list-8 | 8 | 15 355.560 891 938 254 | 15 293.406 603 773 585 to 15 424.192 713 550 601 | 0.000 130 291 | passed |
+| markers-list-16 | 16 | 29 207.514 029 749 833 | 29 090.883 690 838 407 to 29 336.403 815 922 92 | 0.000 179 873 | passed |
+| markers-list-32 | 32 | 55 746.982 449 494 94 | 55 567.655 576 073 24 to 55 901.007 960 858 595 | 0.000 275 941 | passed |
+| markers-list-64 | 64 | 108 288.606 122 449 | 107 867.969 684 873 93 to 108 643.313 007 202 87 | 0.000 430 537 | passed |
+| markers-list-128 | 128 | 214 351.810 386 473 46 | 213 230.125 060 386 46 to 215 234.314 794 686 | 0.000 863 029 | passed |
+| markers-commitment-1 | 1 | 3 041.819 889 059 447 6 | 3 025.752 152 525 816 to 3 056.597 088 159 363 | 0.000 089 566 | passed |
+| markers-commitment-2 | 2 | 5 175.413 488 700 565 | 5 167.147 548 993 644 to 5 185.950 744 026 6 | 0.000 103 812 | passed |
+| markers-commitment-4 | 4 | 9 423.004 837 179 891 | 9 374.384 071 029 612 to 9 476.089 752 344 82 | 0.000 114 212 | passed |
+| markers-commitment-8 | 8 | 16 869.301 066 925 313 | 16 796.841 357 904 95 to 16 945.552 296 314 258 | 0.000 134 75 | passed |
+| markers-commitment-16 | 16 | 34 651.909 267 326 73 | 34 317.340 808 910 89 to 35 009.789 909 900 996 | 0.000 201 303 | passed |
+| markers-commitment-32 | 32 | 65 888.336 858 721 4 | 65 653.432 997 237 56 to 66 110.685 734 017 36 | 0.000 300 507 | passed |
+| markers-commitment-64 | 64 | 122 347.548 022 598 87 | 121 919.796 578 389 85 to 122 707.629 802 259 91 | 0.000 467 175 | passed |
+| markers-commitment-128 | 128 | 247 653.753 658 536 65 | 241 835.263 048 780 5 to 258 104.714 735 772 34 | 0.000 901 139 | passed |
+| bytes-strict-256 | 256 | 100.568 116 619 960 26 | 91.361 598 498 556 28 to 109.097 887 740 956 03 | 0.000 031 939 | passed |
+| bytes-strict-512 | 512 | 113.459 657 470 221 74 | 107.849 383 306 244 87 to 117.629 337 470 390 15 | 0.000 024 435 | passed |
+| bytes-strict-1024 | 1 024 | 136.394 471 480 600 1 | 134.638 107 415 913 23 to 137.783 831 644 395 95 | 0.000 028 313 | passed |
+| bytes-strict-2048 | 2 048 | 221.173 004 590 949 55 | 218.985 895 609 541 27 to 223.291 164 009 101 44 | 0.000 029 705 | passed |
+| bytes-strict-4096 | 4 096 | 179.502 497 054 269 6 | 150.499 026 959 519 34 to 211.817 065 334 352 58 | 0.000 042 308 | passed |
+| bytes-strict-8192 | 8 192 | 167.172 428 290 201 82 | 165.847 209 253 204 26 to 168.899 054 022 085 32 | 0.000 033 351 | passed |
+| bytes-strict-16384 | 16 384 | 303.241 919 851 748 9 | 302.220 296 911 435 47 to 304.399 582 649 988 36 | 0.000 056 735 | passed |
+| bytes-strict-32768 | 32 768 | 630.276 420 465 328 2 | 628.374 552 858 643 to 632.356 819 514 555 8 | 0.000 095 867 | passed |
+| bytes-chunked-256 | 256 | 304.104 415 370 786 | 303.240 306 149 904 3 to 305.108 061 751 288 74 | 0.000 020 799 | passed |
+| bytes-chunked-512 | 512 | 479.649 617 629 351 7 | 475.054 833 095 336 5 to 484.929 029 681 614 85 | 0.000 020 738 | passed |
+| bytes-chunked-1024 | 1 024 | 810.472 743 782 474 9 | 808.945 822 739 578 7 to 812.167 915 825 892 6 | 0.000 016 43 | passed |
+| bytes-chunked-2048 | 2 048 | 1 403.073 664 218 789 6 | 1 400.984 027 285 388 7 to 1 405.537 482 836 723 7 | 0.000 019 586 | passed |
+| bytes-chunked-4096 | 4 096 | 2 535.520 061 767 784 | 2 530.213 333 418 412 7 to 2 541.462 524 566 732 6 | 0.000 028 553 | passed |
+| bytes-chunked-8192 | 8 192 | 5 470.704 135 772 749 | 5 051.856 259 147 81 to 6 237.739 715 816 079 | 0.000 048 069 | passed |
+| bytes-chunked-16384 | 16 384 | 9 368.144 275 466 282 | 9 310.253 838 354 854 to 9 432.072 015 781 923 | 0.000 105 676 | passed |
+| bytes-chunked-32768 | 32 768 | 18 390.068 549 589 858 | 18 313.509 436 521 25 to 18 476.084 320 003 727 | 0.000 182 037 | passed |
+| partition-0-8 | 8 | 9 142.883 123 612 137 | 9 124.380 670 105 476 to 9 165.382 571 012 215 | 0.000 159 946 | passed |
+| partition-0-16 | 16 | 30 767.102 517 788 724 | 27 596.294 287 082 65 to 35 098.966 387 520 52 | 0.000 265 732 | passed |
+| partition-0-32 | 32 | 57 950.743 796 455 11 | 57 642.036 546 598 06 to 58 257.759 281 017 73 | 0.000 499 716 | passed |
+| partition-0-64 | 64 | 165 934.859 400 998 36 | 165 144.215 062 396 05 to 166 682.407 895 174 75 | 0.001 121 147 | passed |
+| partition-0-128 | 128 | 531 081.045 212 765 9 | 529 530.116 210 106 4 to 532 717.551 622 340 5 | 0.002 235 551 | passed |
+| partition-0-256 | 256 | 1 858 281.738 181 818 3 | 1 853 898.894 636 363 5 to 1 862 766.794 636 363 6 | 0.007 832 828 | passed |
+| partition-0-512 | 512 | 7 023 379.457 142 857 | 6 990 763.732 321 428 to 7 054 166.784 285 715 | 0.013 063 316 | passed |
+| partition-0-1024 | 1 024 | 26 984 910.15 | 26 818 550.169 375 to 27 173 704.498 125 | 0.040 844 362 | passed |
+| partition-1-8 | 8 | 20 461.493 698 252 074 | 17 441.837 428 702 853 to 23 490.755 651 257 285 | 0.000 181 556 | passed |
+| partition-1-16 | 16 | 57 974.855 275 974 01 | 53 789.579 318 181 815 to 65 011.577 840 909 08 | 0.000 796 876 | passed |
+| partition-1-32 | 32 | 225 617.467 806 841 07 | 202 309.786 815 895 35 to 258 892.267 655 935 6 | 0.001 731 066 | passed |
+| partition-1-64 | 64 | 838 089.903 053 435 1 | 772 500.651 984 732 7 to 931 845.954 770 992 2 | 0.008 484 856 | passed |
+| partition-1-128 | 128 | 3 028 265.551 515 151 3 | 3 019 522.361 136 363 4 to 3 036 317.058 106 06 | 0.027 909 144 | passed |
+| partition-1-256 | 256 | 12 782 685.287 5 | 12 589 626.663 125 to 13 035 057.082 187 5 | 0.121 157 63 | passed |
+| partition-1-512 | 512 | 76 713 396.75 | 61 744 938.956 250 004 to 95 952 676.031 249 99 | 0.586 743 345 | passed |
+| partition-1-1024 | 1 024 | 276 873 270.0 | 274 564 452.512 5 to 279 122 529.397 5 | 2.779 675 258 | passed |
+| partition-2-8 | 8 | 12 611.439 674 667 725 | 11 212.010 605 534 615 to 14 516.763 795 377 901 | 0.000 300 646 | passed |
+| partition-2-16 | 16 | 34 454.478 979 180 66 | 34 100.240 892 377 44 to 34 880.589 420 752 185 | 0.000 332 205 | passed |
+| partition-2-32 | 32 | 93 974.426 627 218 94 | 91 842.529 684 418 13 to 96 061.513 520 710 05 | 0.000 631 841 | passed |
+| partition-2-64 | 64 | 312 069.823 248 407 6 | 309 625.737 085 987 23 to 314 954.381 632 165 6 | 0.001 334 011 | passed |
+| partition-2-128 | 128 | 1 500 703.970 886 075 9 | 1 323 298.299 873 417 5 to 1 728 592.024 430 38 | 0.003 886 709 | passed |
+| partition-2-256 | 256 | 5 096 289.904 761 905 | 4 876 506.366 666 667 to 5 334 085.419 880 952 | 0.012 666 721 | passed |
+| partition-2-512 | 512 | 20 356 705.759 999 998 | 19 956 644.903 to 20 834 902.471 | 0.039 077 129 | passed |
+| partition-2-1024 | 1 024 | 107 258 175.2 | 105 384 564.175 to 109 060 422.792 5 | 0.140 796 245 | passed |
+| transport-sparse-exact-2 | 2 | 39 774.912 214 657 59 | 39 581.884 276 131 36 to 39 972.665 886 063 274 | 0.000 231 389 | passed |
+| transport-sparse-exact-4 | 4 | 76 696.632 151 300 23 | 75 942.148 875 098 5 to 77 514.417 543 341 22 | 0.000 400 952 | passed |
+| transport-sparse-exact-8 | 8 | 168 899.300 941 915 22 | 167 765.502 582 417 57 to 170 135.096 299 058 06 | 0.000 740 922 | passed |
+| transport-sparse-exact-16 | 16 | 374 125.687 058 823 53 | 359 855.030 705 882 35 to 387 493.843 666 666 7 | 0.001 599 382 | passed |
+| transport-sparse-exact-32 | 32 | 666 885.960 927 152 3 | 663 548.756 490 066 2 to 669 961.345 629 139 2 | 0.003 053 246 | passed |
+| transport-sparse-exact-64 | 64 | 1 242 625.128 947 368 4 | 1 222 718.797 269 736 6 to 1 261 958.770 164 473 7 | 0.006 098 475 | passed |
+| transport-sparse-exact-128 | 128 | 2 563 864.69 | 2 516 729.502 124 999 6 to 2 612 641.520 812 500 3 | 0.011 110 74 | passed |
+| transport-sparse-exact-256 | 256 | 5 246 185.352 631 578 | 5 201 270.111 578 947 to 5 291 646.969 868 421 | 0.023 658 15 | passed |
+| transport-sparse-enclosed-2 | 2 | 88 600.755 233 644 86 | 87 494.741 079 439 25 to 89 589.527 476 635 51 | 0.000 233 452 | passed |
+| transport-sparse-enclosed-4 | 4 | 172 942.059 862 778 75 | 171 651.745 437 392 8 to 174 932.708 168 953 72 | 0.000 407 635 | passed |
+| transport-sparse-enclosed-8 | 8 | 329 909.115 932 203 36 | 328 664.513 186 440 6 to 330 941.378 093 220 3 | 0.000 729 251 | passed |
+| transport-sparse-enclosed-16 | 16 | 654 319.659 868 421 | 652 495.398 815 789 5 to 656 101.371 315 789 4 | 0.001 495 97 | passed |
+| transport-sparse-enclosed-32 | 32 | 1 317 411.114 285 714 2 | 1 311 357.206 558 441 7 to 1 325 061.569 415 584 4 | 0.002 843 025 | passed |
+| transport-sparse-enclosed-64 | 64 | 2 617 887.007 692 307 7 | 2 587 890.210 320 512 8 to 2 667 687.796 602 564 | 0.005 609 34 | passed |
+| transport-sparse-enclosed-128 | 128 | 5 800 970.572 222 223 | 5 707 951.656 527 777 to 5 906 380.229 305 555 | 0.011 251 611 | passed |
+| transport-sparse-enclosed-256 | 256 | 10 584 450.677 777 778 | 10 504 797.677 777 778 to 10 703 802.307 777 777 | 0.025 674 535 | passed |
+| transport-dense-exact-2 | 2 | 40 948.684 758 679 09 | 39 994.076 997 248 1 to 42 077.229 454 911 096 | 0.000 238 331 | passed |
+| transport-dense-exact-4 | 4 | 179 840.904 755 244 76 | 151 439.324 587 412 62 to 212 980.112 419 580 43 | 0.000 611 673 | passed |
+| transport-dense-exact-8 | 8 | 755 307.390 990 990 9 | 684 598.426 193 693 7 to 839 750.913 513 513 7 | 0.004 638 973 | passed |
+| transport-dense-exact-16 | 16 | 3 340 818.477 272 727 5 | 2 774 654.437 045 454 5 to 3 892 547.790 795 454 3 | 0.016 534 465 | passed |
+| transport-dense-exact-32 | 32 | 14 931 361.611 111 11 | 13 912 413.834 444 443 to 15 868 512.817 5 | 0.041 216 612 | passed |
+| transport-dense-exact-64 | 64 | unavailable: failed | not fitted | unavailable | failed |
+| transport-dense-exact-128 | 128 | unavailable: failed | not fitted | unavailable | failed |
+| transport-dense-exact-256 | 256 | unavailable: failed | not fitted | unavailable | failed |
+| transport-dense-enclosed-2 | 2 | 115 282.830 511 463 84 | 101 479.190 798 059 98 to 129 858.437 539 682 53 | 0.000 490 619 | passed |
+| transport-dense-enclosed-4 | 4 | 358 888.194 019 933 6 | 331 709.293 164 451 8 to 392 899.087 549 833 9 | 0.001 081 213 | passed |
+| transport-dense-enclosed-8 | 8 | 1 807 459.519 354 838 9 | 1 652 202.105 080 645 to 1 967 779.561 935 484 | 0.002 339 563 | passed |
+| transport-dense-enclosed-16 | 16 | 8 180 891.6 | 7 662 962.708 958 332 to 8 603 877.422 291 666 | 0.016 348 401 | passed |
+| transport-dense-enclosed-32 | 32 | 35 991 757.4 | 34 865 238.218 75 to 36 981 604.851 875 | 0.069 602 349 | passed |
+| transport-dense-enclosed-64 | 64 | unavailable: failed | not fitted | unavailable | failed |
+| transport-dense-enclosed-128 | 128 | unavailable: failed | not fitted | unavailable | failed |
+| transport-dense-enclosed-256 | 256 | unavailable: failed | not fitted | unavailable | failed |
+| title-alternating-4 | 4 | 32 828.736 754 850 09 | 31 123.851 425 044 093 to 34 205.119 849 206 35 | 0.000 481 492 | passed |
+| title-alternating-7 | 7 | 91 206.762 851 952 78 | 89 400.260 647 138 97 to 93 091.118 001 816 53 | 0.000 583 591 | passed |
+| title-alternating-16 | 16 | 294 939.226 923 076 96 | 269 145.343 182 692 3 to 328 552.115 875 | 0.000 973 553 | passed |
+| title-alternating-31 | 31 | 1 143 798.001 333 333 | 1 097 970.438 4 to 1 185 232.050 866 666 5 | 0.002 473 461 | passed |
+| title-alternating-64 | 64 | 6 417 389.52 | 6 174 382.629 5 to 6 704 180.879 333 333 | 0.010 574 116 | passed |
+| title-alternating-127 | 127 | 20 872 394.959 999 997 | 17 981 290.034 5 to 23 795 006.778 999 995 | 0.030 311 894 | passed |
+| title-alternating-256 | 256 | 130 150 865.45 | 125 488 812.987 5 to 135 044 514.1 | 0.077 850 326 | passed |
+| title-alternating-511 | 511 | 816 015 735.1 | 792 809 504.719 999 9 to 846 079 648.765 | 0.822 227 062 | passed |
+| compile-actors-ring-2 | 2 | 715 632.302 970 297 | 626 934.757 178 217 9 to 804 513.035 198 019 7 | 0.001 668 421 | passed |
+| compile-actors-ring-4 | 4 | 1 524 380.741 269 841 3 | 1 393 967.160 000 000 1 to 1 646 409.344 404 762 | 0.002 605 896 | passed |
+| compile-actors-ring-8 | 8 | 4 076 183.161 538 462 | 3 232 230.556 442 308 to 5 247 801.750 480 77 | 0.004 820 258 | passed |
+| compile-actors-ring-16 | 16 | 6 754 648.057 142 856 5 | 5 946 996.496 071 429 to 7 642 440.319 821 427 | 0.009 291 75 | passed |
+| compile-actors-ring-32 | 32 | 12 795 873.828 571 43 | 11 709 669.400 714 286 to 13 819 402.412 142 856 | 0.017 086 348 | passed |
+| compile-actors-ring-64 | 64 | 29 104 446.725 | 27 853 194.46 to 30 442 079.666 25 | 0.042 259 404 | passed |
+| compile-actors-ring-128 | 128 | 60 562 423.25 | 56 608 576.908 750 005 to 63 414 308.07 | 0.067 170 173 | passed |
+| compile-actors-ring-256 | 256 | 123 220 681.1 | 119 087 836.525 to 127 096 157.52 | 0.190 857 87 | passed |
+| compile-actors-dense-2 | 2 | 944 504.020 618 556 6 | 896 070.395 463 917 5 to 1 001 035.613 324 742 2 | 0.001 949 952 | passed |
+| compile-actors-dense-4 | 4 | 4 564 235.968 181 817 | 4 249 575.690 909 09 to 4 917 882.620 795 455 | 0.005 395 804 | passed |
+| compile-actors-dense-8 | 8 | 18 596 316.683 333 337 | 17 574 861.729 166 67 to 19 486 011.575 833 33 | 0.018 458 83 | passed |
+| compile-actors-dense-16 | 16 | 74 584 293.65 | 73 146 776.182 499 99 to 76 241 008.591 25 | 0.084 641 263 | passed |
+| compile-actors-dense-32 | 32 | unavailable: failed | not fitted | unavailable | failed |
+| compile-actors-dense-64 | 64 | unavailable: failed | not fitted | unavailable | failed |
+| compile-actors-dense-128 | 128 | unavailable: failed | not fitted | unavailable | failed |
+| compile-actors-dense-256 | 256 | unavailable: failed | not fitted | unavailable | failed |
+| compile-acts-parallel-8 | 8 | 742 847.233 333 333 3 | 740 518.058 111 111 2 to 745 153.525 907 407 4 | 0.001 315 276 | passed |
+| compile-acts-parallel-16 | 16 | 978 531.597 115 384 6 | 965 064.527 548 076 8 to 993 683.086 995 192 3 | 0.001 617 987 | passed |
+| compile-acts-parallel-32 | 32 | 1 404 079.509 459 459 7 | 1 380 672.041 216 216 3 to 1 435 148.848 547 297 | 0.002 335 215 | passed |
+| compile-acts-parallel-64 | 64 | 2 554 957.974 999 999 6 | 2 289 726.119 479 167 to 2 893 069.846 354 166 5 | 0.003 467 273 | passed |
+| compile-acts-parallel-128 | 128 | 4 273 351.880 769 231 | 3 910 064.704 326 923 5 to 4 773 883.986 346 154 5 | 0.006 017 405 | passed |
+| compile-acts-parallel-256 | 256 | 9 739 043.34 | 8 999 403.139 75 to 10 453 009.813 5 | 0.011 804 495 | passed |
+| compile-acts-parallel-512 | 512 | 17 188 619.44 | 15 939 281.152 500 002 to 18 575 168.063 500 002 | 0.036 810 902 | passed |
+| compile-acts-parallel-1024 | 1 024 | 34 418 339.133 333 33 | 34 063 900.004 166 66 to 34 755 092.681 666 665 | 0.071 107 456 | passed |
+| compile-acts-mixed-8 | 8 | 798 558.817 460 317 5 | 796 108.407 182 539 7 to 801 083.830 297 619 1 | 0.001 376 75 | passed |
+| compile-acts-mixed-16 | 16 | 1 456 494.723 529 411 7 | 1 447 659.474 264 705 8 to 1 464 160.465 404 411 8 | 0.002 162 896 | passed |
+| compile-acts-mixed-32 | 32 | 2 746 209.470 270 27 | 2 739 093.044 932 432 5 to 2 754 275.765 608 107 7 | 0.003 727 565 | passed |
+| compile-acts-mixed-64 | 64 | 5 453 914.968 421 052 | 5 409 767.471 842 105 5 to 5 496 164.691 710 526 | 0.006 865 366 | passed |
+| compile-acts-mixed-128 | 128 | 11 183 574.377 777 78 | 11 137 227.330 833 336 to 11 228 839.245 277 781 | 0.013 830 808 | passed |
+| compile-acts-mixed-256 | 256 | 24 810 790.54 | 22 387 482.115 000 002 to 28 652 021.323 5 | 0.027 986 116 | passed |
+| compile-acts-mixed-512 | 512 | 45 052 344.399 999 99 | 44 785 078.013 333 336 to 45 400 450.892 499 99 | 0.053 267 332 | passed |
+| compile-acts-mixed-1024 | 1 024 | unavailable: failed | not fitted | unavailable | failed |
+| fence-equal-8 | 8 | 9 860.914 012 627 149 | 8 883.764 256 620 485 to 10 940.284 887 977 901 | 0.000 000 16 | passed |
+| fence-equal-16 | 16 | 10 142.299 104 079 3 | 8 966.437 610 798 703 to 11 827.250 111 513 535 | 0.000 000 16 | passed |
+| fence-late-8 | 8 | 87 161 861.3 | 81 517 082.688 75 to 98 044 207.103 749 99 | 0.000 000 16 | passed |
+| fence-late-16 | 16 | 182 380 942.7 | 154 941 353.12 to 207 442 086.997 499 97 | 0.000 000 13 | passed |
+| fence-limited-8 | 8 | unavailable: refused | not fitted | 0.000 000 11 | refused |
+| fence-limited-16 | 16 | unavailable: refused | not fitted | 0.000 000 14 | refused |
+| solve-ring-2 | 2 | 525 857 435.4 | 445 149 550.762 5 to 597 642 996.057 5 | 0.001 669 142 | passed |
+| solve-ring-3 | 3 | 566 120 784.8 | 535 484 854.397 5 to 610 296 631.2 | 0.001 234 266 | passed |
+| solve-ring-4 | 4 | 642 411 787.3 | 640 180 672.152 5 to 644 525 985.325 | 0.001 462 239 | passed |
+| solve-ring-5 | 5 | 817 701 152.0 | 800 531 659.957 5 to 834 965 919.76 | 0.001 816 554 | passed |
+| solve-ring-6 | 6 | 918 247 326.4 | 896 486 768.01 to 939 030 389.972 500 1 | 0.002 037 053 | passed |
+| solve-ring-7 | 7 | 2 384 356 760.1 | 2 036 644 286.962 5 to 2 731 209 653.212 5 | 0.003 284 644 | passed |
+| solve-ring-8 | 8 | 1 844 925 171.5 | 1 651 883 345.767 5 to 1 982 156 304.987 5 | 0.008 008 173 | passed |
+| solve-ring-16 | 16 | 5 273 697 983.8 | 4 747 154 747.925 to 5 698 764 345.807 5 | 0.008 732 093 | passed |
+| solve-dense-2 | 2 | 744 424 800.3 | 725 882 819.752 5 to 761 689 383.584 999 9 | 0.001 646 129 | passed |
+| solve-dense-3 | 3 | 909 050 886.4 | 887 479 297.102 500 1 to 929 651 757.162 5 | 0.006 550 763 | passed |
+| solve-dense-4 | 4 | 1 168 127 954.2 | 1 132 349 181.097 5 to 1 205 194 853.592 5 | 0.005 429 306 | passed |
+| solve-dense-5 | 5 | 1 108 968 493.2 | 936 675 740.52 to 1 274 739 656.372 5 | 0.008 500 124 | passed |
+| solve-dense-6 | 6 | 1 719 827 881.4 | 1 454 595 173.71 to 1 977 745 951.952 499 9 | 0.005 715 005 | passed |
+| solve-dense-7 | 7 | 1 893 812 241.9 | 1 810 542 985.68 to 1 995 360 423.977 5 | 0.018 077 694 | passed |
+| solve-dense-8 | 8 | 2 728 600 742.2 | 2 691 203 352.214 999 7 to 2 772 882 423.775 | 0.021 878 955 | passed |
+| solve-dense-16 | 16 | unavailable: refused | not fitted | 0.093 454 438 | refused |
+| replay-ring-2 | 2 | 267 928 952.1 | 258 085 790.515 to 278 231 132.425 | 0.001 757 536 | passed |
+| replay-ring-3 | 3 | 401 376 093.0 | 391 680 171.012 500 05 to 410 487 757.68 | 0.002 497 556 | passed |
+| replay-ring-4 | 4 | 514 251 196.1 | 481 572 443.005 to 551 549 355.032 499 9 | 0.002 725 027 | passed |
+| replay-ring-5 | 5 | 617 398 232.8 | 605 996 821.197 5 to 630 589 922.535 | 0.003 470 578 | passed |
+| replay-ring-6 | 6 | 732 219 710.0 | 691 238 850.697 5 to 780 112 592.505 | 0.003 382 566 | passed |
+| replay-ring-7 | 7 | 977 377 225.5 | 961 146 374.300 000 1 to 990 625 628.605 | 0.005 424 538 | passed |
+| replay-ring-8 | 8 | 827 296 318.4 | 806 758 979.887 5 to 847 718 694.585 | 0.003 989 91 | passed |
+| replay-ring-16 | 16 | 2 164 392 661.4 | 2 081 416 909.637 5 to 2 274 439 694.882 5 | 0.008 011 589 | passed |
+| replay-dense-2 | 2 | 259 219 078.8 | 251 913 143.140 000 02 to 267 581 806.177 499 98 | 0.002 042 423 | passed |
+| replay-dense-3 | 3 | 316 956 243.2 | 306 232 869.725 to 325 367 950.435 | 0.003 634 051 | passed |
+| replay-dense-4 | 4 | 404 289 165.9 | 397 301 429.077 5 to 411 693 160.72 | 0.007 150 715 | passed |
+| replay-dense-5 | 5 | 439 499 918.5 | 419 886 159.137 5 to 456 613 844.567 5 | 0.013 744 457 | passed |
+| replay-dense-6 | 6 | 686 807 555.0 | 675 531 138.59 to 698 236 421.247 5 | 0.012 850 923 | passed |
+| replay-dense-7 | 7 | 615 609 421.2 | 601 004 765.555 to 632 091 013.405 | 0.019 051 788 | passed |
+| replay-dense-8 | 8 | 827 487 821.0 | 812 670 298.345 to 841 984 673.942 5 | 0.022 366 949 | passed |
+| replay-dense-16 | 16 | unavailable: refused | not fitted | 0.067 499 093 | refused |
+| admit-pass-4 | 4 | 198 796 962.9 | 194 377 076.715 to 203 134 215.494 999 97 | 0.000 000 611 | passed |
+| admit-pass-8 | 8 | 183 997 377.0 | 175 548 785.04 to 192 757 900.5 | 0.000 000 702 | passed |
+| admit-pass-16 | 16 | 202 178 611.3 | 195 955 220.635 to 207 924 341.342 5 | 0.000 000 49 | passed |
+| admit-pass-32 | 32 | 217 125 963.3 | 205 866 915.062 5 to 230 221 515.017 499 98 | 0.000 000 852 | passed |
+| admit-pass-64 | 64 | 243 743 500.5 | 211 732 822.152 5 to 282 101 720.007 5 | 0.000 000 992 | passed |
+| admit-pass-128 | 128 | 211 740 976.8 | 201 654 358.717 5 to 222 356 716.024 999 98 | 0.000 001 373 | passed |
+| admit-pass-256 | 256 | 217 590 472.5 | 192 241 547.157 5 to 247 024 518.5 | 0.000 001 973 | passed |
+| admit-pass-512 | 512 | 258 710 123.0 | 242 395 200.345 000 03 to 274 957 093.087 5 | 0.000 001 673 | passed |
+| admit-controls-own-4 | 4 | unavailable: refused | not fitted | 0.000 000 551 | refused |
+| admit-controls-own-16 | 16 | unavailable: refused | not fitted | 0.000 000 581 | refused |
+| admit-controls-own-64 | 64 | unavailable: refused | not fitted | 0.000 000 831 | refused |
+| admit-controls-individual-4 | 4 | unavailable: refused | not fitted | 0.000 000 611 | refused |
+| admit-controls-individual-16 | 16 | unavailable: refused | not fitted | 0.000 000 712 | refused |
+| admit-controls-individual-64 | 64 | unavailable: refused | not fitted | 0.000 000 801 | refused |
+| admit-controls-policy-4 | 4 | unavailable: refused | not fitted | 0.000 000 521 | refused |
+| admit-controls-policy-16 | 16 | unavailable: refused | not fitted | 0.000 000 892 | refused |
+| admit-controls-policy-64 | 64 | unavailable: refused | not fitted | 0.000 000 901 | refused |
+| trials-serial-1 | 1 | 205 272 236.4 | 194 511 105.245 to 218 393 951.942 5 | 0.000 000 812 | passed |
+| trials-serial-2 | 2 | 394 713 618.9 | 362 807 171.877 5 to 428 287 028.63 | 0.000 000 772 | passed |
+| trials-serial-4 | 4 | 781 981 171.9 | 761 980 107.972 5 to 804 094 875.07 | 0.000 001 323 | passed |
+| trials-serial-8 | 8 | 1 931 039 248.3 | 1 736 401 272.592 500 2 to 2 148 982 266.992 5 | 0.000 007 995 | passed |
+| trials-serial-16 | 16 | 3 595 314 332.9 | 3 385 863 005.375 to 3 804 414 410.132 5 | 0.000 017 993 | passed |
+| trials-serial-32 | 32 | 7 194 459 125.5 | 6 719 948 050.049 999 to 7 911 125 545.097 5 | 0.000 029 434 | passed |
+| trials-serial-64 | 64 | 11 178 145 634.3 | 9 674 168 542.125 to 12 523 199 852.305 | 0.000 064 029 | passed |
+| trials-serial-128 | 128 | unavailable: incomplete | not fitted | unavailable | incomplete |
+| scalar-rational-1 | 1 | unavailable: refused | not fitted | unavailable | refused |
+| scalar-rational-2 | 2 | unavailable: refused | not fitted | unavailable | refused |
+| scalar-rational-4 | 4 | unavailable: refused | not fitted | unavailable | refused |
+| scalar-rational-5 | 5 | 1 096 942 407.7 | 1 044 718 505.472 5 to 1 153 304 473.75 | 0.000 000 07 | passed |
+| scalar-rational-6 | 6 | 1 272 829 813.8 | 1 058 550 739.232 500 2 to 1 556 852 232.142 499 7 | 0.000 000 07 | passed |
+| scalar-rational-8 | 8 | 1 108 104 694.8 | 1 064 924 860.595 to 1 144 977 566.487 500 2 | 0.000 000 06 | passed |
+| scalar-rational-12 | 12 | 1 172 562 726.7 | 1 146 028 002.437 5 to 1 207 231 533.737 5 | 0.000 000 1 | passed |
+| scalar-rational-16 | 16 | 1 139 166 032.9 | 1 080 845 324.330 000 2 to 1 202 471 877.617 499 8 | 0.000 000 07 | passed |
+| scalar-ridge-1 | 1 | unavailable: refused | not fitted | 0.000 000 12 | refused |
+| scalar-ridge-2 | 2 | 209 284 998.1 | 195 318 850.2 to 229 155 785.392 5 | 0.000 000 12 | passed |
+| scalar-ridge-4 | 4 | 225 526 491.1 | 212 852 501.597 500 03 to 244 640 516.777 499 97 | 0.000 000 11 | passed |
+| scalar-ridge-5 | 5 | 219 867 268.8 | 211 444 544.935 to 228 539 984.047 499 98 | 0.000 000 12 | passed |
+| scalar-ridge-6 | 6 | 108 574 910.9 | 105 580 497.905 to 112 837 150.655 | 0.000 000 1 | passed |
+| scalar-ridge-8 | 8 | 105 424 557.7 | 105 222 522.235 to 105 647 900.597 500 01 | 0.000 000 19 | passed |
+| scalar-ridge-12 | 12 | 118 257 863.8 | 111 054 836.262 499 99 to 127 799 028.52 | 0.000 000 19 | passed |
+| scalar-ridge-16 | 16 | 173 504 308.9 | 141 108 141.422 5 to 201 642 012.244 999 97 | 0.000 000 13 | passed |
