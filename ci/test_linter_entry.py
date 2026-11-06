@@ -15,12 +15,14 @@ POLICIES=['labels.mints-well-formed','labels.mints-unique','labels.citations-loc
 class Tree:
     def __init__(self, policies=POLICIES):
         self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
+        # This fixture's ROOT owns a crate: structural reach already supplies
+        # self and ROOT. An explicit PEER-to-ROOT row is not a canonical snapshot.
         self.write('.linter/owners.toml', '''namespace="org.example.linter.owners"
 version=[1,0,0]
 root_owner="ROOT"
 owners=["ROOT","PEER"]
 partitions=[{name="root",owner="ROOT",pattern='(%s"root/" *VCHAR / %s"Cargo.toml")'},{name="peer",owner="PEER",pattern='%s"peer/" *VCHAR'},{name="data",owner="ROOT",pattern='%s".linter/" *VCHAR'}]
-may_cite=[{owner="PEER",target="ROOT"}]
+may_cite=[]
 ''')
         self.write('.linter/environments.toml','namespace="org.example.linter.environments"\nversion=[1,0,0]\nenvironments=[{environment="Section",kind="sec"},{environment="Claim",kind="claim"}]\nreserved_kinds=["test"]\n')
         self.write('.linter/shape.toml','namespace="org.example.linter.shape"\nversion=[1,0,0]\nuniverse="git-tracked"\nignore=[]\n')
