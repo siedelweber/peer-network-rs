@@ -119,7 +119,7 @@
       "claim": "ROOT::claim:devperf:gate-cancellation-retains-exclusion",
       "before": "",
       "after": "Cancellation retains target exclusion until a slow EXIT stop and its session finish.",
-      "review": "The pipe barrier starts cancellation only after both fixture processes exist. The EXIT stop remains active beyond the former supervisor escalation, while a competing target lock still refuses. The test requires both process waits to complete before supervisor exit and successful lock acquisition."
+      "review": "The stop remains behind a parent-controlled release pipe until the liveness and lock checks finish; the 5.25 s delay still exposes the old kill deadline, but cannot let correct cleanup outrun the assertion. The pipe barrier starts cancellation only after both fixture processes exist. The EXIT stop remains active beyond the former supervisor escalation, while a competing target lock still refuses. The test requires both process waits to complete before supervisor exit and successful lock acquisition."
     },
     {
       "operation": "ci::test_devperf.Performance.test_gate_target_lock",
@@ -599,7 +599,7 @@
       "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",
       "before": "",
       "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.",
-      "review": "Read real-socket allocation, TIME_WAIT and occupied-port controls, isolated concurrent version checks, and typed failure diagnostics. The real unencrypted legacy wallet confirms descriptors are disabled and both keypool sizes equal PRODUCER_KEYPOOL; mocked exchanges assert administrative versus steady-state socket bounds, one connection/request/close, and credential-free timing for success, error and timeout."
+      "review": "Re-reviewed the same TIME_WAIT assertions with client EOF observation before close, replacing the fixed 100 ms FIN delay. Read real-socket allocation, TIME_WAIT and occupied-port controls, isolated concurrent version checks, and typed failure diagnostics. The real unencrypted legacy wallet confirms descriptors are disabled and both keypool sizes equal PRODUCER_KEYPOOL; mocked exchanges assert administrative versus steady-state socket bounds, one connection/request/close, and credential-free timing for success, error and timeout."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",
@@ -767,7 +767,7 @@
       "claim": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary",
       "before": "Claim: The JSON recorder forwards the same admitted byte increments into the SDK counter; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.",
       "after": "Claim: Production summarize exports the same started and completed atomic totals as its JSON summary before any snapshot, including across repeated collections; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.",
-      "review": "Reads the actual successful export batch from production summarize before the JSON snapshot, compares started and completed values with that summary at totals one and two, and retains transport payload and credential failure assertions."
+      "review": "The test-only collection deadline is 10 s and successful acknowledgement is required before the snapshot. A locked export sink and zero deadline force timeout loss without relying on scheduling; releasing it and collecting again proves recovery. Existing counts, payload and secret assertions are unchanged. Reads the actual successful export batch from production summarize before the JSON snapshot, compares started and completed values with that summary at totals one and two, and retains transport payload and credential failure assertions."
     },
     {
       "operation": "cli-common::observation::tests::status_after_stalled_delivery",
@@ -1223,7 +1223,7 @@
       "claim": "CLICOMMON::claim:cli:touch-stamp-creates-empty-and-redates-an-empty-stamp",
       "before": "touch stamp creates empty and redates an empty stamp.",
       "after": "Claim: Creating and then touching an empty success stamp preserves zero length and advances its modification time, making renewed success observable.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+      "review": "The fixture sets an old mtime explicitly before the second touch, preserving the strict advance assertion without a filesystem clock-resolution sleep. Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
       "operation": "cli-common::tests::touch_stamp_refuses_a_nonempty_stamp_without_destroying_it",

@@ -620,7 +620,13 @@ impl Observation {
         }
         let _wake = self.sender.try_send(Message::Wake);
         #[cfg(test)]
-        let duration = if self.refuse_drain_wait { Duration::ZERO } else { duration };
+        let duration = if self.refuse_drain_wait {
+            Duration::ZERO
+        } else {
+            // Fixture completion waits are watchdogs, not the production drain budget.
+            // Explicit zero-deadline controls still exercise the loss accounting.
+            duration.max(Duration::from_secs(30))
+        };
         match wait.recv_timeout(duration) {
             Ok(()) => {}
             Err(mpsc::RecvTimeoutError::Timeout) => {

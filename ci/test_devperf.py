@@ -214,7 +214,8 @@ class Performance(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             ready_read, ready_write = os.pipe()
-            command = '''trap 'trap - EXIT; trap "" TERM INT; printf "stopping\\n"; sleep 6; kill -KILL "$service"; wait "$service"; printf "service-stopped\\n"; kill -KILL "$session"; wait "$session"; printf "session-closed\\n"' EXIT
+            release_read, release_write = os.pipe()
+            command = '''trap 'trap - EXIT; trap "" TERM INT; printf "stopping\\n"; read -r release; kill -KILL "$service"; wait "$service"; printf "service-stopped\\n"; kill -KILL "$session"; wait "$session"; printf "session-closed\\n"' EXIT
 trap 'trap "" TERM INT; exit 143' TERM INT
 bash -c 'trap "" TERM INT; printf "service-ready\\n"; exec sleep 60' & service=$!
 bash -c 'trap "" TERM INT; printf "session-ready\\n"; exec sleep 60' & session=$!
@@ -224,6 +225,9 @@ wait
 '''
             def supervise():
                 os.close(ready_read)
+                os.close(release_write)
+                os.dup2(release_read, 0)
+                os.close(release_read)
                 os.dup2(ready_write, 1)
                 os.close(ready_write)
                 with (root/'stderr').open('w') as errors:
@@ -233,6 +237,7 @@ wait
             child = multiprocessing.get_context('fork').Process(target=supervise)
             child.start()
             os.close(ready_write)
+            os.close(release_read)
             try:
                 with os.fdopen(ready_read) as events, (root/'.gate-target.lock').open('a') as lock:
                     self.assertTrue(events.readline().startswith('GATE-TARGET-LOCK'))
@@ -247,6 +252,7 @@ wait
                         os.kill(pid, 0)
                     with self.assertRaises(BlockingIOError):
                         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    os.write(release_write, b'release\n')
                     self.assertEqual(events.readline(), 'service-stopped\n')
                     self.assertEqual(events.readline(), 'session-closed\n')
                     child.join(10)
@@ -257,6 +263,7 @@ wait
                             os.kill(pid, 0)
                     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             finally:
+                os.close(release_write)
                 if child.is_alive():
                     os.kill(child.pid, signal.SIGKILL)
                     child.join(10)

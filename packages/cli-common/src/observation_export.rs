@@ -151,6 +151,8 @@ pub(super) struct Bridge {
     reader: Reader,
     #[cfg(test)]
     pub(super) exported: Arc<Mutex<Vec<ResourceMetrics>>>,
+    #[cfg(test)]
+    pub(super) collection_timeout: Duration,
 }
 
 impl Bridge {
@@ -250,6 +252,8 @@ impl Bridge {
             reader,
             #[cfg(test)]
             exported,
+            #[cfg(test)]
+            collection_timeout: COLLECTION_TIMEOUT,
         })
     }
 
@@ -280,7 +284,11 @@ impl Bridge {
     }
     pub(super) fn flush(&self) {
         let (done, wait) = mpsc::sync_channel(1);
-        if self.sender.try_send(Message::Collect(done)).is_err() || wait.recv_timeout(COLLECTION_TIMEOUT).is_err() {
+        #[cfg(not(test))]
+        let timeout = COLLECTION_TIMEOUT;
+        #[cfg(test)]
+        let timeout = self.collection_timeout;
+        if self.sender.try_send(Message::Collect(done)).is_err() || wait.recv_timeout(timeout).is_err() {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }

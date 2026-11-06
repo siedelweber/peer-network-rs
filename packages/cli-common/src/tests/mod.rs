@@ -583,8 +583,14 @@ fn touch_stamp_creates_empty_and_redates_an_empty_stamp() {
     let created = std::fs::metadata(&stamp).expect("stamp exists");
     assert_eq!(created.len(), 0, "a stamp is empty by contract");
 
-    let before = created.modified().expect("mtime");
-    std::thread::sleep(std::time::Duration::from_millis(20));
+    let old = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1);
+    std::fs::File::options()
+        .write(true)
+        .open(&stamp)
+        .unwrap()
+        .set_modified(old)
+        .unwrap();
+    let before = std::fs::metadata(&stamp).unwrap().modified().expect("mtime");
 
     crate::touch_stamp(&stamp).expect("second touch re-dates an empty stamp");
     let metadata = std::fs::metadata(&stamp).expect("metadata");

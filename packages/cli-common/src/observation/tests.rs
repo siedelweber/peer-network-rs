@@ -903,7 +903,9 @@ fn export_fixture(fail: bool) -> (Arc<crate::observation_export::Bridge>, Arc<Lo
         transport: transport.clone(),
         credential: PrivateString::new(SecretRole::Authentication, SecretString::from("fixture-private-token")),
     };
-    (Arc::new(crate::observation_export::Bridge::new(config).unwrap()), transport)
+    let mut bridge = crate::observation_export::Bridge::new(config).unwrap();
+    bridge.collection_timeout = Duration::from_secs(10);
+    (Arc::new(bridge), transport)
 }
 
 fn assert_exported_operations(batch: &opentelemetry_sdk::metrics::data::ResourceMetrics, summary: &Value, expected: u64) {
@@ -957,6 +959,11 @@ fn provider_bridge() {
             .operation(OperationKind::Command, Value::Null)
             .finish(Outcome::Success, Value::Null);
         observation.summarize();
+        assert_eq!(
+            bridge.lost.load(Ordering::Relaxed),
+            0,
+            "provider-bridge: 10 s collection acknowledgement deadline"
+        );
         let rows = records(&observation, &capture);
         let summary = rows.iter().rev().find(|row| row["kind"] == "metric_summary").unwrap();
         let batches = bridge.exported.lock().unwrap();
@@ -1000,6 +1007,11 @@ fn provider_bridge() {
         tracing::info!(public_result = 23);
     });
     bridge.flush();
+    assert_eq!(
+        bridge.lost.load(Ordering::Relaxed),
+        0,
+        "provider-bridge: 10 s export acknowledgement deadline"
+    );
     let requests = transport.requests.lock().unwrap();
     assert!(requests.iter().any(|(path, body)| {
         path == "/v1/traces"
@@ -1009,12 +1021,37 @@ fn provider_bridge() {
     }));
     assert!(requests.iter().any(|(path, body)| path == "/v1/metrics" && !body.is_empty()));
     assert_eq!(bridge.lost.load(Ordering::Relaxed), 0);
+    assert_export_loss();
+}
+
+fn assert_export_loss() {
+    use opentelemetry_sdk::metrics::data::{AggregatedMetrics, MetricData};
+    let (mut blocked, _) = export_fixture(false);
+    Arc::get_mut(&mut blocked).unwrap().collection_timeout = Duration::ZERO;
+    // Holding the sink prevents acknowledgement independently of worker scheduling.
+    let held = blocked.exported.lock().unwrap();
+    blocked.flush();
+    assert_eq!(blocked.lost.load(Ordering::Relaxed), 1);
+    drop(held);
+    Arc::get_mut(&mut blocked).unwrap().collection_timeout = Duration::from_secs(10);
+    blocked.flush();
+    assert_eq!(
+        blocked.lost.load(Ordering::Relaxed),
+        1,
+        "provider-bridge: 10 s post-timeout acknowledgement deadline"
+    );
+    assert_eq!(blocked.exported.lock().unwrap().len(), 2);
     let (failed, _) = export_fixture(true);
     let recorder = JsonRecorder::with_meter(Some(&failed.meter()));
     metrics::with_local_recorder(&recorder, || {
         metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(11);
     });
     failed.flush();
+    let failure_count = failed.failures.lock().unwrap().len();
+    assert_eq!(
+        failure_count, 1,
+        "provider-bridge: 10 s transport-failure acknowledgement deadline"
+    );
     assert_eq!(failed.lost.load(Ordering::Relaxed), 1);
     assert!(
         failed
@@ -1293,8 +1330,12 @@ fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
     )
 }
 fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
-    observation.flush();
-    captured_records(capture)
+    if observation.closing.load(Ordering::Acquire) {
+        // These callers have returned from guard destruction and its final status write.
+        captured_records(capture)
+    } else {
+        drained_records(observation, capture)
+    }
 }
 fn drained_records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     // Inspect only after the delivery thread acknowledges the requested drain.
@@ -1302,7 +1343,9 @@ fn drained_records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     let (done, drained) = mpsc::sync_channel(1);
     observation.flush_sender.send(done).unwrap();
     observation.sender.send(Message::Wake).unwrap();
-    drained.recv().unwrap();
+    drained
+        .recv_timeout(Duration::from_secs(30))
+        .expect("capture: 30 s drain acknowledgement deadline");
     captured_records(capture)
 }
 fn captured_records(capture: &Capture) -> Vec<Value> {

@@ -137,7 +137,8 @@ class WalletBoundary(unittest.TestCase):
             client = socket.create_connection(('127.0.0.1', port))
             accepted, _ = server.accept()
             accepted.close()
-            time.sleep(0.1)
+            client.settimeout(30)
+            self.assertEqual(client.recv(1), b'', 'server FIN must be observed before client close')
             client.close()
         with socket.socket() as plain, self.assertRaises(OSError):
             plain.bind(('127.0.0.1', port))
