@@ -100,6 +100,19 @@ def occurrences(text):
     return found
 
 
+
+def json_number_mask(text):
+    """Mask only JSON number tokens; string contents retain their exact spans."""
+    def reject_constant(value):
+        raise ValueError("not a JSON number: " + value)
+    try:
+        json.loads(text, parse_int=str, parse_float=str, parse_constant=reject_constant)
+    except ValueError:
+        return text
+    token = re.compile(r'"(?:[^"\\]|\\.)*"|(?P<number>-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)')
+    return token.sub(lambda match: ' ' * len(match.group()) if match.group('number') is not None else match.group(), text)
+
+
 def relative_file(root, name):
     path = pathlib.PurePosixPath(name)
     if path.is_absolute() or any(part in {"", ".", ".."} for part in name.split("/")):
@@ -552,13 +565,15 @@ def audit(root, paths, table):
             used.update(bound)
             continue
         # Decode one byte to one character, so binary tracked content is scanned too.
-        for number, line in enumerate(full.read_bytes().decode("latin1").splitlines(), 1):
+        text = full.read_bytes().decode("latin1")
+        scanned = json_number_mask(text) if path.endswith(".json") else text
+        for number, (line, scan) in enumerate(zip(text.splitlines(), scanned.splitlines()), 1):
             numeric = [(rule, check.get(path, {}).get(number)) for rule, check in compiled
                        if rule['reader'] == 'numeric-registry']
             numeric = [(rule, span) for rule, span in numeric if span is not None]
             # Count even short decimal runs in these fields: a family's use does
             # not depend on an accidental collision with identity recognition.
-            seen = {(match.start(), match.end()): match for match in occurrences(line)}
+            seen = {(match.start(), match.end()): match for match in occurrences(scan)}
             for _, (start, end) in numeric:
                 for match in re.finditer(r'[0-9]+', line):
                     if start <= match.start() and match.end() <= end:

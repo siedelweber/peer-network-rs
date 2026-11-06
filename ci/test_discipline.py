@@ -556,6 +556,32 @@ class HashCitations(unittest.TestCase):
         ´claim:discipline:identity-occurrences-need-warrants´
         ´test:integration:test-hash-accounting´
         """
+        # JSON numeric tokens are quantities, while every string remains audited.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            value = 'f' * 40
+            rule = dict(family='fixture', group='test', measures='public identity',
+                        producer='fixture', establishment='resolvable', reader='public-git',
+                        commit=value, locator='https://github.com/example/engine/commit/'+value,
+                        definition='Exact public fixture locator', paths=['sample.json', 'sample.md'])
+            table = dict(namespace='org.peer-network.ci.hash-citations', version=[1, 0, 0], rows=[rule])
+            path = root/'sample.json'
+            numbers = ['1.' + '098974391375141' + 'e-8', '-1.' + '098974391375141' + 'E+8',
+                       '0', '-0', '12.5', '1' * 40, '1' * 5000]
+            for number in numbers:
+                path.write_text('{"identity":'+json.dumps(value)+',"quantity":'+number+'}')
+                self.assertEqual(audit(root, ['sample.json'], table)[0], [])
+            for string in ('e' * 40, '1.' + '098974391375141' + 'e-8', 'ab12'+'ef34'):
+                path.write_text(json.dumps(dict(identity=value, note=string, escaped='quote: " and slash: \\')))
+                self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.json'], table)[0]))
+            path.write_text(json.dumps(dict(identity=value)))
+            rule['commit'] = 'a' * 40
+            rule['locator'] = 'https://github.com/example/engine/commit/'+rule['commit']
+            self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.json'], table)[0]))
+            rule['commit'] = value
+            rule['locator'] = 'https://github.com/example/engine/commit/'+value
+            (root/'sample.md').write_text('{"identity":'+json.dumps(value)+',"quantity":1.'+'098974391375141'+'e-8}')
+            self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.md'], table)[0]))
         from hash_citations import establish, BoundVendorFiles
         import hashlib
         import io, tarfile
