@@ -582,6 +582,32 @@ class HashCitations(unittest.TestCase):
             rule['locator'] = 'https://github.com/example/engine/commit/'+value
             (root/'sample.md').write_text('{"identity":'+json.dumps(value)+',"quantity":1.'+'098974391375141'+'e-8}')
             self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.md'], table)[0]))
+            # Only a full identity resolved by this family in this file anchors a prefix.
+            from hash_citations import public_git_abbreviation
+            import tomllib
+            families = tomllib.loads(Path(__file__).with_name('hash-citation-families.toml').read_text())
+            compiler = next(row['commit'] for row in families['rows']
+                            if row['family'] == 'pinned-rustc-identity')
+            short = compiler[:9]
+            rule['commit'] = compiler
+            rule['locator'] = 'https://github.com/rust-lang/rust/commit/' + compiler
+            path.write_text(json.dumps(dict(identity=compiler, version=short)))
+            self.assertEqual(audit(root, ['sample.json'], table)[0], [])
+            path.write_text(json.dumps(dict(version=short)))
+            self.assertTrue(any(short in finding for finding in audit(root, ['sample.json'], table)[0]))
+            path.write_text(json.dumps(dict(identity=compiler, version=compiler[:8])))
+            self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.json'], table)[0]))
+            self.assertTrue(public_git_abbreviation(short, {compiler}))
+            self.assertFalse(public_git_abbreviation(short, {compiler, short + 'a' * 31}))
+            self.assertFalse(public_git_abbreviation(compiler[:8], {compiler}))
+            self.assertFalse(public_git_abbreviation(short, set()))
+            # Exercise the audit with two full identities resolved by one family.
+            from unittest.mock import patch
+            resolved = {compiler, short + 'a' * 31}
+            path.write_text(json.dumps(dict(identities=sorted(resolved), version=short)))
+            with patch('hash_citations.establish', return_value=lambda token, line: token in resolved):
+                self.assertEqual(audit(root, ['sample.json'], table)[0],
+                                 ['sample.json:1: unaccounted hexadecimal value ' + short])
         from hash_citations import establish, BoundVendorFiles
         import hashlib
         import io, tarfile

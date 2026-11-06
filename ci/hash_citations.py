@@ -534,6 +534,12 @@ def establish(root, rule):
     raise ValueError(f"hash citations: no reader establishment for {rule['family']}")
 
 
+def public_git_abbreviation(value, resolved):
+    """An abbreviation needs exactly one already resolved full file-local identity."""
+    return bool(re.fullmatch(r'[0-9a-f]{9,39}', value)) and sum(
+        commit.startswith(value) for commit in resolved) == 1
+
+
 def audit(root, paths, table):
     if list(table)[:2] != ["namespace", "version"] or table.get("namespace") != "org.peer-network.ci.hash-citations":
         raise ValueError("hash citations: expected namespace then version")
@@ -567,6 +573,12 @@ def audit(root, paths, table):
         # Decode one byte to one character, so binary tracked content is scanned too.
         text = full.read_bytes().decode("latin1")
         scanned = json_number_mask(text) if path.endswith(".json") else text
+        public_commits = {
+            rule['family']: {match.group() for line in scanned.splitlines()
+                             for match in occurrences(line)
+                             if re.fullmatch(r'[0-9a-f]{40}', match.group()) and check(match.group(), line)}
+            for rule, check in compiled if rule['reader'] == 'public-git'
+            and any(fnmatch.fnmatchcase(path, pattern) for pattern in rule['paths'])}
         for number, (line, scan) in enumerate(zip(text.splitlines(), scanned.splitlines()), 1):
             numeric = [(rule, check.get(path, {}).get(number)) for rule, check in compiled
                        if rule['reader'] == 'numeric-registry']
@@ -582,6 +594,8 @@ def audit(root, paths, table):
                 value = match.group()
                 count += 1
                 matches = [rule["family"] for rule, check in compiled if rule['reader'] != 'numeric-registry' and any(fnmatch.fnmatchcase(path, pattern) for pattern in rule["paths"]) and check(value, line)]
+                matches.extend(family for family, commits in public_commits.items()
+                               if public_git_abbreviation(value, commits))
                 matches.extend(rule['family'] for rule, (start, end) in numeric
                                if start <= match.start() and match.end() <= end)
                 if not matches:
