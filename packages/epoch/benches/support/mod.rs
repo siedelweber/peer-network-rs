@@ -310,3 +310,18 @@ pub fn schedule(c: &Candidate, policy: &str) -> pn_epoch::schedules::CheckedSche
     let r = pn_epoch::schedules::evaluate(&d, &[], None, Limits::default()).unwrap();
     pn_epoch::schedules::replay(&d, &[], None, Limits::default(), &r).unwrap()
 }
+
+// Workload fixture only: 100 times the old 200-million allowance permits the
+// denser N=2..8 series; the runner's per-point wall deadline remains independent.
+pub fn scaling_procedure(state: &compiler::CompiledState, bits: u32) -> Procedure {
+    let mut p = procedure(state, bits);
+    let work = 20_000_000_000;
+    p.maximum_work = work;
+    p.maximum_solve_work = work;
+    p.maximum_replay_work = work;
+    let e = p.enclosure.as_mut().unwrap();
+    e.operation.work = work;
+    e.operation.arithmetic_steps = 1_000_000_000;
+    e.store = e.operation.clone();
+    p
+}

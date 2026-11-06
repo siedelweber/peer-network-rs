@@ -9,7 +9,23 @@ use pn_records::transport::{ExactArithmetic, KernelError, TransportInput};
 use std::collections::BTreeMap;
 
 pub const SEED: u64 = 0;
-pub const CELLS: usize = 100_000;
+pub const CELLS: usize = 1_000_000;
+// Oracle is independently bounded and excluded from operation measurements.
+pub fn operation_limits() -> Limits {
+    Limits {
+        work: 2_000_000_000,
+        arithmetic_steps: 100_000_000,
+        ..Limits::default()
+    }
+}
+pub const ORACLE_WORK: u64 = 20_000_000_000;
+pub fn oracle_limits() -> Limits {
+    Limits {
+        work: ORACLE_WORK,
+        arithmetic_steps: 1_000_000_000,
+        ..Limits::default()
+    }
+}
 
 pub fn partition(seed: u64, m: usize, shape: usize) -> pn_records::ValidatedRecords {
     assert!(m > 0 && shape < 3);
@@ -60,7 +76,10 @@ pub struct Arithmetic {
 }
 impl Arithmetic {
     pub fn new() -> Self {
-        let mut budget = Budget::new(Limits::default()).unwrap();
+        Self::with_limits(operation_limits())
+    }
+    pub fn with_limits(limits: Limits) -> Self {
+        let mut budget = Budget::new(limits).unwrap();
         let zero = Rational::parse("0", &mut budget).unwrap();
         let one = Rational::parse("1", &mut budget).unwrap();
         Self { budget, zero, one }
@@ -137,8 +156,8 @@ pub fn enclosed(input: &TransportInput<Rational>) -> TransportInput<Interval> {
 }
 pub fn check_transport(seed: u64, n: usize, dense: bool) -> Result<(), KernelError> {
     let input = transport(seed, n, dense);
-    let exact = pn_graph::transport::exact_transport(&input, &mut Arithmetic::new(), CELLS)?;
-    let range = pn_graph::transport::enclosed::evaluate(&enclosed(&input), &mut Budget::new(Limits::default()).unwrap(), CELLS)?;
+    let exact = pn_graph::transport::exact_transport(&input, &mut Arithmetic::with_limits(oracle_limits()), CELLS)?;
+    let range = pn_graph::transport::enclosed::evaluate(&enclosed(&input), &mut Budget::new(oracle_limits()).unwrap(), CELLS)?;
     let mut b = Budget::new(Limits::default()).unwrap();
     for (i, (v, r)) in exact.standing.iter().zip(&range.standing).enumerate() {
         assert_eq!(v.exact_string(&mut b).unwrap(), r.lower().exact_string(&mut b).unwrap());

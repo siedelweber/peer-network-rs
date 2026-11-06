@@ -34,6 +34,8 @@ def workload_points(rows, mode):
             for size in row['sizes'] if mode != 'smoke' else row.get('smoke_sizes', []):
                 if mode == 'smoke' and variant != row.get('smoke_variant'):
                     continue
+                if type(row.get('wall_seconds', 180)) is not int or row.get('wall_seconds', 180) <= 0:
+                    raise StructuralError('invalid workload wall bound')
                 if type(size) is not int or size <= 0:
                     raise StructuralError('invalid workload size')
                 points.append({**row, 'size': size, 'variant': variant,
@@ -188,7 +190,7 @@ def measured_workloads(mode, directory):
         load = list(os.getloadavg())
         resource_sample(owned/'start.resources')
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
-        status, elapsed = capture([binaries[point['target']], '--test' if mode == 'pilot' else '--bench'], owned, 'run', environment)
+        status, elapsed = capture([binaries[point['target']], '--test' if mode == 'pilot' else '--bench'], owned, 'run', environment, timeout=point.get('wall_seconds', 180))
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
         resource_sample(owned/'end.resources')
         result = dict(name=point['name'], package=point['package'], target=point['target'], size=point['size'],
@@ -196,6 +198,11 @@ def measured_workloads(mode, directory):
                       invocation_ms=elapsed, own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
                       start_load=load, end_load=list(os.getloadavg()),
                       resource_scope="gate container cgroup; node-wide proc counters separately; own CPU from waited process accounting", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
+        if status == 124:
+            result.update(outcome='incomplete', reason='declared per-point wall bound exhausted',
+                          refusal=dict(kind='wall-bound', limit_seconds=point.get('wall_seconds', 180)),
+                          samples=None, estimates=None,
+                          raw_sample_unavailable_reason='terminated point; partial samples are not fitted')
         if not status:
             receipt, samples, estimates = checked_result(owned, point, run_id, mode)
             result.update(receipt=receipt, samples=samples, estimates=estimates, outcome=receipt.get('outcome', 'passed'),
@@ -223,11 +230,15 @@ def publish(records, declared, directory):
     return functional_status([0 if record['outcome'] == 'passed' else 1 for record in records])
 
 
-def capture(command, directory, name, environment=None):
+def capture(command, directory, name, environment=None, timeout=None):
     start = time.monotonic()
     with (directory / (name+'.stdout.log')).open('w') as out, (directory / (name+'.stderr.log')).open('w') as err:
-        result = subprocess.run(command, stdout=out, stderr=err, env=environment, check=False)
-    return result.returncode, (time.monotonic()-start)*1000
+        try:
+            result = subprocess.run(command, stdout=out, stderr=err, env=environment, check=False, timeout=timeout)
+            status = result.returncode
+        except subprocess.TimeoutExpired:
+            status = 124
+    return status, (time.monotonic()-start)*1000
 
 
 def campaign(mode):

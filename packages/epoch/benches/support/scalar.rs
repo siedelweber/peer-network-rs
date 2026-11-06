@@ -70,6 +70,7 @@ pub fn check(p: &Procedure) {
     let mut bad = r.clone();
     bad.input.definition.schema.push_str("-changed");
     assert!(pn_graph::numeric::ridge::replay(&p, &i, &bad).is_err());
+    let p = rational_procedure(&p);
     let (i, r) = rational(&p, 8).unwrap();
     assert!(matches!(
         rational(&p, 1),
@@ -81,4 +82,21 @@ pub fn check(p: &Procedure) {
     let mut bad = r.clone();
     bad.inputs.maximum_steps += 1;
     assert!(pn_graph::numeric::controller::replay(&p, &i, None, &bad).is_err());
+}
+
+// Same finite procedure for rational construction, its oracle and replay.
+// The 21-bit certificate fixture already completes cap 8 under the 2-billion
+// input ceiling; do not inherit the solve recipe's former 200-million ceiling.
+pub fn rational_procedure(p: &Procedure) -> Procedure {
+    let mut p = p.clone();
+    let bits = u32::try_from(N::NumbersRidgeCertificatePrecision.integer()).unwrap();
+    p.precision = pn_records::solve::Precision::AbsoluteWidthBits(vec![bits]);
+    p.maximum_work = N::NumbersControllerTestWork.integer();
+    let e = p.enclosure.as_mut().unwrap();
+    e.refinement.precision = bits;
+    e.operation.work = p.maximum_work;
+    e.operation.arithmetic_steps = 1_000_000_000;
+    e.operation.literal_bytes = 4096;
+    e.store = e.operation.clone();
+    p
 }

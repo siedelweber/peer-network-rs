@@ -16,6 +16,9 @@ use support as inputs;
 type Bench<'a> = criterion::BenchmarkGroup<'a, criterion::measurement::WallTime>;
 
 trait Accepted {
+    fn work_fields(&self, _name: &str) -> String {
+        "work_unavailable=internal-ledgers-not-exposed".into()
+    }
     fn accepted(&self) -> bool;
 }
 impl Accepted for pn_epoch::compiler::CompiledState {
@@ -24,11 +27,29 @@ impl Accepted for pn_epoch::compiler::CompiledState {
     }
 }
 impl Accepted for pn_records::conserved::SolveRecord {
+    fn work_fields(&self, name: &str) -> String {
+        if name.starts_with("B7-") {
+            format!("work={} replay_work={}", self.work, self.work)
+        } else {
+            format!(
+                "work={} solve_work={} replay_work={}",
+                self.work.checked_add(self.replay_work).unwrap(),
+                self.work,
+                self.replay_work
+            )
+        }
+    }
     fn accepted(&self) -> bool {
         true
     }
 }
 impl Accepted for pn_epoch::fence::Search {
+    fn work_fields(&self, _name: &str) -> String {
+        format!(
+            "primitive_work={} work_unavailable=preparation-ledger-not-exposed",
+            self.evidence.primitives.iter().map(|p| p.evidence.work).sum::<u64>()
+        )
+    }
     fn accepted(&self) -> bool {
         self.selected.is_some() && self.operational_stop.is_none()
     }
@@ -44,6 +65,9 @@ impl Accepted for Vec<pn_epoch::package::AdmittedBoundary> {
     }
 }
 impl Accepted for pn_graph::numeric::ridge::CheckedRidge {
+    fn work_fields(&self, _name: &str) -> String {
+        format!("work={} replay_work={}", self.replay_work(), self.replay_work())
+    }
     fn accepted(&self) -> bool {
         self.image().is_some()
     }
@@ -51,6 +75,14 @@ impl Accepted for pn_graph::numeric::ridge::CheckedRidge {
 impl Accepted for pn_records::controller::Record {
     fn accepted(&self) -> bool {
         self.verdict == pn_records::controller::Verdict::Delivered
+    }
+}
+impl Accepted for (pn_records::controller::Record, u64) {
+    fn accepted(&self) -> bool {
+        self.0.verdict == pn_records::controller::Verdict::Delivered
+    }
+    fn work_fields(&self, _name: &str) -> String {
+        format!("work={} replay_work={}", self.1, self.1)
     }
 }
 fn own_ticks() -> Option<u64> {
@@ -88,10 +120,13 @@ fn measure<S, T: Debug + Accepted, E: Debug>(
     let cpu = own_ticks().zip(cpu_start).map(|(after, before)| after - before);
     let accepted = expected.as_ref().is_ok_and(Accepted::accepted);
     let signature = format!("{expected:?}");
+    let work = expected
+        .as_ref()
+        .map_or_else(|_| "work_unavailable=no-completed-operation".into(), |r| r.work_fields(name));
     std::fs::write(
         output.join(format!("{name}.txt")),
         format!(
-            "{metadata} fresh_setup_s={} pilot_operation_s={} outcome={} own_cpu_ticks={cpu:?} diagnostic_bytes={}\n{signature}\n",
+            "{work} {metadata} fresh_setup_s={} pilot_operation_s={} outcome={} own_cpu_ticks={cpu:?} diagnostic_bytes={}\n{signature}\n",
             setup_time.as_secs_f64(),
             operation.as_secs_f64(),
             if accepted { "PASS" } else { "REFUSED_OR_INDECISIVE" },
@@ -139,7 +174,7 @@ fn main() {
 }
 
 fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
-    let ns = vec![2, 4, 8, 16];
+    let ns = vec![2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128, 256];
     for n in ns {
         for shape in ["ring", "dense"] {
             let names = [
@@ -154,11 +189,11 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
             let input = inputs::candidate(seed, n, None, shape, "pass");
             let state = inputs::compile(&input).unwrap();
             inputs::check_compilation(&input, &state);
-            let p = inputs::procedure(&state, 16);
+            let p = inputs::scaling_procedure(&state, 16);
             let published = Published(p.clone());
             let bound = bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
             let metadata = format!(
-                "recipe=epoch-1 seed={seed} {} construction_s={} procedure={p:?} {}",
+                "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} {}",
                 inputs::dimensions(&input, &state),
                 start.elapsed().as_secs_f64(),
                 limits(&p)
@@ -236,7 +271,7 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
 }
 
 fn acts(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
-    for m in [8, 32, 128, 512] {
+    for m in [8, 16, 32, 64, 128, 256, 512, 1024] {
         for shape in ["parallel", "mixed"] {
             let name = format!("B3-compile-m{m}-{shape}");
             if !selected(&name) {
@@ -247,7 +282,7 @@ fn acts(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) 
             let state = inputs::compile(&input).unwrap();
             inputs::check_compilation(&input, &state);
             let metadata = format!(
-                "recipe=epoch-1 seed={seed} {} construction_s={}",
+                "recipe=scaling-workloads/v2 seed={seed} {} construction_s={}",
                 inputs::dimensions(&input, &state),
                 start.elapsed().as_secs_f64()
             );
@@ -282,7 +317,7 @@ fn fences(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
             let published = Published(p.clone());
             let bound = bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
             let metadata = format!(
-                "recipe=epoch-1 seed={seed} {} procedure={p:?} {}",
+                "recipe=scaling-workloads/v2 seed={seed} {} procedure={p:?} {}",
                 inputs::dimensions(&input, &state),
                 limits(&p)
             );
@@ -292,7 +327,7 @@ fn fences(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
 }
 
 fn admissions(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
-    for m in [4, 16, 64] {
+    for m in [4, 8, 16, 32, 64, 128, 256, 512] {
         for outcome in ["pass", "own", "individual", "policy"] {
             let name = format!("B8-admit-m{m}-{outcome}");
             if !selected(&name) {
@@ -310,7 +345,7 @@ fn admissions(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
             let schedule = inputs::schedule(&input, if outcome == "policy" { "1000" } else { "2" });
             let published = Published(p);
             let metadata = format!(
-                "recipe=epoch-1 seed={seed} M={m} N=2 S=1 intended={outcome} plan={plan:?} {}",
+                "recipe=scaling-workloads/v2 seed={seed} M={m} N=2 S=1 intended={outcome} plan={plan:?} {}",
                 limits(&plan.solve)
             );
             measure(group, output, mode, &name, &metadata, inputs::numeric, |numeric| {
@@ -321,7 +356,7 @@ fn admissions(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
 }
 
 fn trials(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
-    for s in [1, 2, 4, 8] {
+    for s in [1, 2, 4, 8, 16, 32, 64, 128] {
         let name = format!("B9-trials-s{s}");
         if !selected(&name) {
             continue;
@@ -338,7 +373,7 @@ fn trials(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
             })
             .collect();
         let schedules: Vec<_> = cases.iter().map(|c| inputs::schedule(c, "2")).collect();
-        let metadata = format!("recipe=epoch-1 seed={seed} M=4 S={s} boundary_search=stand-in-no-live-scheduler");
+        let metadata = format!("recipe=scaling-workloads/v2 seed={seed} M=4 S={s} boundary_search=stand-in-no-live-scheduler");
         measure(
             group,
             output,
@@ -369,7 +404,7 @@ fn trials(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
 }
 
 fn scalars(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
-    for cap in [1, 2, 4, 8] {
+    for cap in [1, 2, 4, 5, 6, 8, 12, 16] {
         for route in ["rational", "ridge"] {
             let name = format!("B10-{route}-cap{cap}");
             if !selected(&name) {
@@ -379,7 +414,7 @@ fn scalars(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u6
             let state = inputs::compile(&input).unwrap();
             let p = inputs::procedure(&state, 16);
             inputs::scalar::check(&p);
-            let metadata = format!("recipe=epoch-1 seed={seed} route={route} cap={cap}");
+            let metadata = format!("recipe=scaling-workloads/v2 seed={seed} route={route} cap={cap}");
             if route == "ridge" {
                 let (p, i, r) = inputs::scalar::ridge(&p, cap);
                 measure(
@@ -399,6 +434,7 @@ fn scalars(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u6
                 );
             } else {
                 let started = Instant::now();
+                let p = inputs::scalar::rational_procedure(&p);
                 let produced = inputs::scalar::rational(&p, u64::from(cap));
                 let (i, r) = match produced {
                     Ok(pair) => pair,
@@ -421,7 +457,7 @@ fn scalars(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u6
                     &name,
                     &format!("{metadata} verdict={:?} attempts={}", r.verdict, r.attempts.len()),
                     || (),
-                    |()| pn_graph::numeric::controller::replay(&p, &i, None, &r),
+                    |()| pn_graph::numeric::controller::replay_with_work(&p, &i, None, &r),
                 );
             }
         }

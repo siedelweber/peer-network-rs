@@ -34,3 +34,20 @@ fn workload_title_inputs() {
         inputs::check_title(seed, 4);
     }
 }
+
+/// Claim: The separately bounded dense sixteen-Actor oracle agrees with the exact operation; the former oracle allowance still refuses with its exhausted Work cause.
+/// ´claim:numerics:scaling-transport-oracle-retains-limit-control´
+/// ´test:integration:scaling-transport-oracle´
+#[test]
+fn scaling_transport_oracle() {
+    inputs::check_transport(0, 16, true).unwrap();
+    let input = inputs::enclosed(&inputs::transport(0, 16, true));
+    let mut b = nrz_cas::limits::Budget::new(nrz_cas::limits::Limits::default()).unwrap();
+    let error = pn_graph::transport::enclosed::evaluate(&input, &mut b, inputs::CELLS).unwrap_err();
+    let pn_records::transport::KernelError::Arithmetic(message) = error else {
+        panic!("unexpected refusal: {error:?}");
+    };
+    assert!(message.contains("Work"));
+    assert!(message.contains("2000000"));
+    assert!(message.contains("2000021"));
+}

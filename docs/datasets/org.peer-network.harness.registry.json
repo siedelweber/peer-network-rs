@@ -750,7 +750,8 @@
         "ci::test_testkit.SupportGuard.test_benchmark_terminal",
         "ci::test_testkit.SupportGuard.test_property_seed",
         "ci::test_testkit.SupportGuard.test_support_edges",
-        "ci::test_testkit.SupportGuard.test_workload_results"
+        "ci::test_testkit.SupportGuard.test_workload_results",
+        "ci::test_testkit.SupportGuard.test_workload_wall_bound"
       ],
       "implementation": "ci-python",
       "kind": "suite",
@@ -2182,7 +2183,9 @@
         "pn-epoch::workload_correctness::compiled_inputs",
         "pn-epoch::workload_correctness::fence_inputs",
         "pn-epoch::workload_correctness::scalar_inputs",
+        "pn-epoch::workload_correctness::scaling_scalar_procedure",
         "pn-epoch::workload_correctness::solve_replay_inputs",
+        "pn-epoch::workload_correctness::solve_resource_cause",
         "pn-epoch::workload_correctness::trial_inputs"
       ],
       "implementation": "pn-epoch-rust",
@@ -2534,6 +2537,7 @@
       "budget": "pure-suite",
       "cases": [
         "pn-graph::workload_correctness::partition_inputs",
+        "pn-graph::workload_correctness::scaling_transport_oracle",
         "pn-graph::workload_correctness::transport_inputs",
         "pn-graph::workload_correctness::workload_title_inputs"
       ],

@@ -11,7 +11,8 @@
         "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay",
         "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::compare",
         "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::replay_comparison",
-        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay"
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::<ChargeReplay as pn_records :: ridge :: ChargeVerifier>::replay",
+        "pn-graph::packages/graph/src/numeric/ridge.rs::numeric::ridge::CheckedRidge::replay_work"
       ]
     }
   }

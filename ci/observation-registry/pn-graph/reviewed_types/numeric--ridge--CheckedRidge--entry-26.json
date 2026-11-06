@@ -4,6 +4,6 @@
     "item": "numeric::ridge::CheckedRidge",
     "package": "pn-graph",
     "path": "packages/graph/src/numeric/ridge.rs",
-    "syntax": "# [doc = \" Only independent replay constructs this immutable authority for ridge comparisons.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug)] pub struct CheckedRidge { procedure : Procedure , input : Inputs , image : Option < Range > , }"
+    "syntax": "# [doc = \" Only independent replay constructs this immutable authority for ridge comparisons.\"] # [doc = \" (´[ROOT-alg:design:binding-ridge]´)\"] # [derive (Clone , Debug)] pub struct CheckedRidge { procedure : Procedure , input : Inputs , image : Option < Range > , replay_work : u64 , }"
   }
 }

@@ -86,6 +86,9 @@ fn checked(
     } else {
         super::super::evaluate(&policy, &query, None)?
     };
+    if let Some(fault) = &evidence.resource_fault {
+        return Err(Error::Resource(fault.clone()));
+    }
     budget.work(evidence.work, Location::new("evaluation-local scalar request"))?;
     Ok(PrimitiveRecord {
         query,

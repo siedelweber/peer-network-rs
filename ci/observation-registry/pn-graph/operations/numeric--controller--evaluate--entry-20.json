@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::evaluate",
-    "body": "{ run (p , input , ridge , None) }",
+    "body": "{ run (p , input , ridge , None) . map (| (record , _) | record) }",
     "class_decision": "canonical-controller-public",
     "item_premise": "Only declared public inputs and frozen compiled widths enter the controller. Independent reconstruction checks every inverse attachment, branch and delivered error; immutable evidence does not confer schedule validity or final admission.",
     "assessments": {

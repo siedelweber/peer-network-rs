@@ -46,9 +46,18 @@ pub struct CheckedRidge {
     procedure: Procedure,
     input: Inputs,
     image: Option<Range>,
+    replay_work: u64,
 }
 
 impl CheckedRidge {
+    /// Actual Work consumed by the independent defining replay, never the producer assertion.
+    /// (´[ROOT-alg:design:binding-ridge]´)
+    /// Justified: Immutable measurement access inherits the replay operation.
+    #[must_use]
+    pub fn replay_work(&self) -> u64 {
+        self.replay_work
+    }
+
     /// Borrow the checked image; absence means the defining evidence stayed indecisive.
     /// (´[ROOT-alg:design:binding-ridge]´)
     /// Justified: Immutable access inherits the replay operation and supplies no new verdict.
@@ -342,6 +351,7 @@ pub fn replay(p: &Procedure, input: &Inputs, record: &Record) -> Result<CheckedR
         procedure: p.clone(),
         input: input.clone(),
         image: checked.image,
+        replay_work: checked.work,
     })
 }
 

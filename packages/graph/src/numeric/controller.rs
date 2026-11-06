@@ -435,7 +435,7 @@ impl Run<'_> {
     }
 }
 
-fn run(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>, supplied: Option<&Record>) -> Result<Record, Error> {
+fn run(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>, supplied: Option<&Record>) -> Result<(Record, u64), Error> {
     if supplied.is_some_and(|r| r.inputs != *input || r.procedure != *p) {
         return Err(Error::Evidence);
     }
@@ -492,7 +492,8 @@ fn run(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>, supplied: Op
     if supplied.is_some_and(|r| r != &result) {
         return Err(Error::Evidence);
     }
-    Ok(result)
+    let work = run.spent.checked_add(run.b.usage().work).ok_or(Error::Work)?;
+    Ok((result, work))
 }
 
 /// Retain the mathematical proposal and certify the independently deliverable rational wall.
@@ -510,7 +511,7 @@ fn run(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>, supplied: Op
     ret
 )]
 pub fn evaluate(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>) -> Result<Record, Error> {
-    run(p, input, ridge, None)
+    run(p, input, ridge, None).map(|(record, _)| record)
 }
 
 /// Independently reconstruct every inverse query, branch and grid selection from the inputs.
@@ -528,5 +529,28 @@ pub fn evaluate(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>) -> 
     ret
 )]
 pub fn replay(p: &Procedure, input: &Inputs, ridge: Option<&CheckedRidge>, record: &Record) -> Result<Record, Error> {
+    run(p, input, ridge, Some(record)).map(|(record, _)| record)
+}
+
+/// Independently replay while retaining the fresh execution's total arithmetic Work.
+/// (´[ROOT-alg:design:production-wall-controller]´)
+/// # Errors
+/// Refuses exactly the same evidence and resource defects as ordinary replay.
+#[tracing::instrument(
+    name = "sig:design:graph",
+    fields(
+        execution_owner = "GRAPH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:graph",
+        source_item = "numeric::controller::replay_with_work"
+    ),
+    ret
+)]
+pub fn replay_with_work(
+    p: &Procedure,
+    input: &Inputs,
+    ridge: Option<&CheckedRidge>,
+    record: &Record,
+) -> Result<(Record, u64), Error> {
     run(p, input, ridge, Some(record))
 }

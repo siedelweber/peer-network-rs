@@ -16700,7 +16700,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/workload-benchmarks.md",
+        "docs/templates/docs/design/workload-benchmarks.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "prop:scalability:allocation-input-maintenance-cost",
@@ -16719,7 +16722,9 @@
       "elsewhere": [
         "docs/datasets/org.peer-network.design.questions.json",
         "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
+        "docs/design/workload-benchmarks.md",
+        "docs/inputs/design-questions.toml",
+        "docs/templates/docs/design/workload-benchmarks.md.j2"
       ],
       "holds": [],
       "kind": "invariant check",
@@ -16788,7 +16793,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/workload-benchmarks.md",
+        "docs/templates/docs/design/workload-benchmarks.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "prop:scalability:conserved-standing-verifiability",
@@ -16972,7 +16980,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/workload-benchmarks.md",
+        "docs/templates/docs/design/workload-benchmarks.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:scalability:boundary-search-cost",
@@ -35183,10 +35194,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "60",
+          "exact": "63",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60",
+          "num": "63",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35197,7 +35208,7 @@
           "exact_digits": 32
         }
       },
-      "total": 60
+      "total": 63
     },
     {
       "category": "total",
@@ -38891,10 +38902,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 546",
+          "exact": "1 550",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 546",
+          "num": "1 550",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38909,7 +38920,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1546
+      "total": 1550
     },
     {
       "category": "record-coverage",

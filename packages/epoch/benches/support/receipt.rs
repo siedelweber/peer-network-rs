@@ -86,6 +86,8 @@ pub(super) fn finish(output: &Path, mode: &str) {
         "solve_work",
         "replay_work",
         "work",
+        "primitive_work",
+        "oracle_work_limit",
         "diagnostic_transcript_bytes",
         "diagnostic_bytes",
         "maximum_work",

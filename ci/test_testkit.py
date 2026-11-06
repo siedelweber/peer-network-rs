@@ -81,6 +81,25 @@ class SupportGuard(unittest.TestCase):
                 benchmarks.checked_result(root, point, 'fresh', 'full')
 
 
+    def test_workload_wall_bound(self):
+        """A declared point deadline reaches the child invocation; expiration returns status 124 and other failures retain their status.
+        ´claim:harness:workload-wall-bound-is-operational´
+        ´test:integration:test-workload-wall-bound´
+        """
+        import subprocess
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.object(benchmarks.subprocess, 'run', side_effect=subprocess.TimeoutExpired(['probe'], 180)) as child:
+                status, elapsed = benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)
+            self.assertEqual(status, 124)
+            self.assertGreaterEqual(elapsed, 0)
+            self.assertEqual(child.call_args.kwargs['timeout'], 180)
+            with patch.object(benchmarks.subprocess, 'run') as child:
+                child.return_value.returncode = 7
+                self.assertEqual(benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)[0], 7)
+        row = dict(kind='grid', name='probe', package='pn-epoch', target='workload-epoch', sizes=[2], variants=['ring'], wall_seconds=0)
+        with self.assertRaisesRegex(StructuralError, 'wall bound'):
+            benchmarks.workload_points([row], 'full')
+
     def test_benchmark_terminal(self):
         """A benchmark command refuses terminal stdout before building, sampling or creating artifacts.
         ´claim:harness:benchmark-terminal-preflight´

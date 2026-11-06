@@ -10,7 +10,8 @@
         "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay",
         "pn-epoch::packages/epoch/src/controller.rs::controller::evaluate",
         "pn-epoch::packages/epoch/src/controller.rs::controller::replay",
-        "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence"
+        "pn-epoch::packages/epoch/src/controller.rs::controller::CheckedProposal::evidence",
+        "pn-graph::packages/graph/src/numeric/controller.rs::numeric::controller::replay_with_work"
       ]
     }
   }

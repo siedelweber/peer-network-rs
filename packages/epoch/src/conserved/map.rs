@@ -65,6 +65,9 @@ impl Checks<'_> {
             } else {
                 numeric::evaluate(&policy, &expected, None)?
             };
+            if let Some(fault) = &evidence.resource_fault {
+                return Err(numeric::Error::Resource(fault.clone()).into());
+            }
             self.budget.work(evidence.work, Location::new("conserved scalar request"))?;
             let record = PrimitiveRecord {
                 query: expected.clone(),

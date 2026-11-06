@@ -45,6 +45,8 @@ pub enum Error {
     Declaration,
     #[error("unknown schema, version or mismatched certificate inventory")]
     Schema,
+    #[error("numerical resource refusal: {0:?}")]
+    Resource(pn_records::primitive::FaultAssertion),
     #[error("invalid certificate or original-scope join: {0}")]
     InvalidCertificate(nrz_cas::Fault),
     #[error("nrz request or evidence refusal: {0}")]

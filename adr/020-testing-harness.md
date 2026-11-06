@@ -50,7 +50,7 @@
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
-| ci::test_testkit | active | unit | ci-python | fast | 10 |
+| ci::test_testkit | active | unit | ci-python | fast | 11 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 8 |
 | cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
@@ -120,7 +120,7 @@
 | pn-epoch::semantic-publication | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::semantic-publication-extended | active | public-surface | pn-epoch-rust | extended | 2 |
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
-| pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 6 |
+| pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 8 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
 | pn-graph::formation | active | public-surface | pn-graph-rust | fast | 44 |
 | pn-graph::integration | active | integration | pn-graph-rust | fast | 1 |
@@ -138,7 +138,7 @@
 | pn-graph::replay-faults | active | public-surface | pn-graph-rust | fast | 2 |
 | pn-graph::singleton-residual | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::title | active | public-surface | pn-graph-rust | fast | 1 |
-| pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 3 |
+| pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 4 |
 | pn-host | active | unit | pn-host-rust | fast | 7 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 3 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |

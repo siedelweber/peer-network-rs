@@ -41,7 +41,9 @@ fn main() {
     let receipt = serde_json::json!({"name": name, "size": size, "variant": variant, "mode": mode,
         "run": std::env::var("PN_BENCH_RUN").unwrap(), "setup_s": setup_s, "correctness": "passed",
         "input_bytes": bytes.len(), "allocation_calls": usage.allocation_calls,
-        "allocation_bytes": usage.allocation_bytes, "items": usage.items, "work": usage.work,
+        "allocation_bytes": usage.allocation_bytes, "items": usage.items, "work": if variant == "chunked" { Some(usage.work) } else { None },
+        "work_scope": if variant == "chunked" { "identical bounded transport operation" } else { "unavailable: strict decoder has no Work meter" },
+        "transport_control_work": usage.work,
         "usage_scope": "separate identical transport read, including for strict control"});
     std::fs::write(
         std::env::var_os("PN_BENCH_RECEIPT").unwrap(),

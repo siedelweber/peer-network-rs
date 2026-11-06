@@ -14,7 +14,7 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 60 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 63 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
@@ -57,7 +57,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 546 | 198 |
+| ROOT (repository-wide) | 1 550 | 198 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -999,12 +999,12 @@
 | ``rem:scalability:advertising-centrality-exact`` | none; none | unassigned | | | | |  | | |
 | ``subsec:scalability:conserved-standing-work-model`` | none; none | unassigned | | | | |  | | |
 | ``def:scalability:conserved-standing-work-measures`` | pn-epoch; function | unassigned | | | | |  | | |
-| ``prop:scalability:allocation-input-maintenance-cost`` | pn-epoch; invariant check | unassigned | | | | |  | | |
-| ``prop:scalability:conserved-map-pass-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
+| ``prop:scalability:allocation-input-maintenance-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
+| ``prop:scalability:conserved-map-pass-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/design/workload-benchmarks.md` `docs/inputs/design-questions.toml` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
 | ``prop:scalability:standing-certificate-cost`` | pn-epoch; invariant check | designed | ``ROOT::rule:design:costs`` | | | |  | | |
 | ``thm:scalability:conserved-equilibrium-cost`` | pn-epoch; invariant check | designed | ``CONSTANTS::const.standing.worst_contraction`` | | | |  | | |
 | ``tbl:scalability:conserved-standing-work`` | pn-epoch; fixture | unassigned | | | | |  | | |
-| ``prop:scalability:conserved-standing-verifiability`` | pn-replay; invariant check | unassigned | | | | |  | | |
+| ``prop:scalability:conserved-standing-verifiability`` | pn-replay; invariant check | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
 | ``subsec:scalability:fixed-point-cost`` | pn-replay; invariant check | unassigned | | | | |  | | |
 | ``lem:scalability:contraction-stopping-rule`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``subsec:scalability:solver-decomposition`` | pn-epoch; invariant check | unassigned | | | | |  | | |
@@ -1015,7 +1015,7 @@
 | ``prop:scalability:fixed-point-check-cost`` | pn-replay; invariant check | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:residual``; one certified map evaluation and residual reduction for checking the proposed equilibrium<br>|
 | ``rem:scalability:certification-is-one-sweep`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``subsec:scalability:boundary-search`` | pn-epoch; policy | unassigned | | | | |  | | |
-| ``rem:scalability:boundary-search-cost`` | pn-host; policy | unassigned | | | | |  | | |
+| ``rem:scalability:boundary-search-cost`` | pn-host; policy | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
 | ``subsec:scalability:dense-projection`` | pn-host; policy | unassigned | | | | |  | | |
 | ``rem:scalability:dense-projection-cost`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``subsec:scalability:approximation-guarantee`` | pn-epoch; policy | unassigned | | | | |  | | |

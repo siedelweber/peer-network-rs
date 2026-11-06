@@ -24,7 +24,7 @@ package = "pn-records"
 target = "workload-records"
 features = ["test-support"]
 implementation = "pn-records-rust"
-sizes = [16, 64, 256, 1024]
+sizes = [16, 32, 64, 128, 256, 512, 1024, 2048]
 variants = ["parallel", "mixed"]
 smoke_sizes = [8]
 smoke_variant = "parallel"
@@ -36,7 +36,10 @@ actors = 4
 recipe = "Distinct sequential identities over the same named cell, four alternating Actor names; mixed alternates binary and paired structural fixture families. No graph formation or authentication validity is claimed."
 timed = "validate_history, including returned owned output destruction"
 excluded = "raw construction and correctness checks"
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "actors" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "actors" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -46,13 +49,16 @@ package = "pn-records"
 target = "workload-records"
 features = ["test-support"]
 implementation = "pn-records-rust"
-sizes = [1, 4, 16, 64]
+sizes = [1, 2, 4, 8, 16, 32, 64, 128]
 variants = ["list", "commitment"]
 unit = "markers including initial marker"
 recipe = "Seed-zero burn fixture; initial empty marker then repeated complete accepted singleton r0 and lineage r0,r1, with distinct sequential predecessor positions. Three retained burn records include one consistent alias. Fixture proof equality is not cryptography or chain finality."
 timed = "validate_marker_history followed by recognize_markers, including returned owned output destruction"
 excluded = "raw construction, burn and policy binding, correctness, per-iteration input clone"
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -62,7 +68,7 @@ package = "pn-interchange"
 target = "workload-transport"
 features = []
 implementation = "pn-interchange-rust"
-sizes = [256, 1024, 4096, 16384]
+sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
 variants = ["strict", "chunked"]
 smoke_sizes = [256]
 smoke_variant = "chunked"
@@ -79,7 +85,10 @@ nesting = 1
 recipe = "Payload index modulo payload_modulus; canonical byte string or indefinite string with an initial empty chunk and an empty chunk after each definite chunk. Input limit equals wire length; item limit equals payload length plus four. These are experiment limits, never production defaults."
 timed = "strict or transport decoding and owned output destruction; transport counters include the decoder's allocations"
 excluded = "payload and canonical/chunked encoding construction, correctness"
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "chunk_bytes" = { "display" = "exact", "exact_digits" = 32 }, "payload_modulus" = { "display" = "exact", "exact_digits" = 32 }, "allocation_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "work_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "depth" = { "display" = "exact", "exact_digits" = 32 }, "nesting" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "chunk_bytes" = { "display" = "exact", "exact_digits" = 32 }, "payload_modulus" = { "display" = "exact", "exact_digits" = 32 }, "allocation_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "work_multiplier" = { "display" = "exact", "exact_digits" = 32 }, "depth" = { "display" = "exact", "exact_digits" = 32 }, "nesting" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -90,7 +99,7 @@ package = "pn-graph"
 target = "workload-graph"
 features = []
 implementation = "pn-graph-rust"
-sizes = [8, 32, 128, 512]
+sizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 variants = ["0", "1", "2"]
 smoke_sizes = [8]
 smoke_variant = "0"
@@ -100,7 +109,10 @@ recipe = "Seed zero, constructor-backed B2 recipe in packages/graph/benches/supp
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
 suite = "graph-partition-workload-benchmarks"
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -111,17 +123,20 @@ package = "pn-graph"
 target = "workload-graph"
 features = []
 implementation = "pn-graph-rust"
-sizes = [2, 4, 8, 16]
+sizes = [2, 4, 8, 16, 32, 64, 128, 256]
 variants = ["sparse-exact", "sparse-enclosed", "dense-exact", "dense-enclosed"]
 smoke_sizes = [2]
 smoke_variant = "sparse-exact"
 correctness_case = "pn-graph::workload_correctness::transport_inputs"
 claim = "claim:numerics:workload-transport-inputs-agree-with-column-oracle"
-recipe = "Seed zero, constructor-backed B4 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+recipe = "Seed zero, constructor-backed B4 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate oracle Work 20,000,000,000 and operation Work 2,000,000,000 support the denser grid without coupling the exact operation to the former 2,000,000 enclosed oracle."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
 suite = "graph-transport-workload-benchmarks"
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -132,7 +147,7 @@ package = "pn-graph"
 target = "workload-graph"
 features = []
 implementation = "pn-graph-rust"
-sizes = [4, 16, 64, 256]
+sizes = [4, 7, 16, 31, 64, 127, 256, 511]
 variants = ["alternating"]
 smoke_sizes = []
 smoke_variant = ""
@@ -141,7 +156,10 @@ claim = "claim:formation:workload-title-inputs-retain-transfer-oracle"
 recipe = "Seed zero, constructor-backed B16 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -152,7 +170,7 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [2, 4, 8, 16]
+sizes = [2, 4, 8, 16, 32, 64, 128, 256]
 variants = ["ring", "dense"]
 smoke_sizes = []
 smoke_variant = ""
@@ -161,7 +179,10 @@ claim = "claim:compiler:workload-compiled-inputs-retain-complete-counts"
 recipe = "Seed zero, constructor-backed B3 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -172,7 +193,7 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [8, 32, 128, 512]
+sizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 variants = ["parallel", "mixed"]
 smoke_sizes = []
 smoke_variant = ""
@@ -181,7 +202,10 @@ claim = "claim:compiler:workload-compiled-inputs-retain-complete-counts"
 recipe = "Seed zero, constructor-backed B3 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -201,7 +225,10 @@ claim = "claim:rungs:workload-fence-recipes-retain-distinct-outcomes"
 recipe = "Seed zero, constructor-backed B5 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = ["limited"]
 
 [[rows]]
 kind = "grid"
@@ -212,16 +239,19 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [2, 4, 8, 16]
+sizes = [2, 3, 4, 5, 6, 7, 8, 16]
 variants = ["ring", "dense"]
 smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::solve_replay_inputs"
 claim = "claim:numerics:workload-solve-replay-share-produced-transcripts"
-recipe = "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+recipe = "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -232,16 +262,19 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [2, 4, 8, 16]
+sizes = [2, 3, 4, 5, 6, 7, 8, 16]
 variants = ["ring", "dense"]
 smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::solve_replay_inputs"
 claim = "claim:numerics:workload-solve-replay-share-produced-transcripts"
-recipe = "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+recipe = "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -252,16 +285,42 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [4, 16, 64]
-variants = ["pass", "own", "individual", "policy"]
+sizes = [4, 8, 16, 32, 64, 128, 256, 512]
+variants = ["pass"]
 smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::admission_inputs"
 claim = "claim:admission:workload-admission-recipes-distinguish-gates"
-recipe = "Seed zero, constructor-backed B8 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+recipe = "Seed zero, constructor-backed B8 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Successful validation varies M independently over eight sizes; the separate admit-controls grid retains the nine counterexamples."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
+
+[[rows]]
+kind = "grid"
+name = "admit-controls"
+unit = "complete acts"
+grid = "B8 final-admission counterexamples"
+package = "pn-epoch"
+target = "workload-epoch"
+features = []
+implementation = "pn-epoch-rust"
+sizes = [4, 16, 64]
+variants = ["own", "individual", "policy"]
+smoke_sizes = []
+smoke_variant = ""
+correctness_case = "pn-epoch::workload_correctness::admission_inputs"
+claim = "claim:admission:workload-admission-recipes-distinguish-gates"
+recipe = "Seed zero, constructor-backed B8 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. These nine negative controls retain M=4,16,64 unchanged."
+timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
+excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = ["own", "individual", "policy"]
 
 [[rows]]
 kind = "grid"
@@ -272,7 +331,7 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [1, 2, 4, 8]
+sizes = [1, 2, 4, 8, 16, 32, 64, 128]
 variants = ["serial"]
 smoke_sizes = []
 smoke_variant = ""
@@ -281,7 +340,10 @@ claim = "claim:admission:workload-trial-inputs-retain-whole-blocks"
 recipe = "Seed zero, constructor-backed B9 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
 
 [[rows]]
 kind = "grid"
@@ -292,16 +354,20 @@ package = "pn-epoch"
 target = "workload-epoch"
 features = []
 implementation = "pn-epoch-rust"
-sizes = [1, 2, 4, 8]
+sizes = [1, 2, 4, 5, 6, 8, 12, 16]
 variants = ["rational", "ridge"]
 smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::scalar_inputs"
 claim = "claim:numerics:workload-scalar-replay-inputs-retain-defining-routes"
-recipe = "Seed zero, constructor-backed B10 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults."
+recipe = "Seed zero, constructor-backed B10 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Rational caps 1 and 2 are stopping controls, 4 remains an insufficient-width control, 5 and above are completion points. Ridge cap 1 is the unresolved-cover control."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
-numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
+wall_seconds = 180
+recipe_edition = "scaling-workloads/v2"
+control_variants = []
+control_sizes_by_variant = { "rational" = [1, 2, 4], "ridge" = [1] }
 
 [[rows]]
 kind = "campaign"

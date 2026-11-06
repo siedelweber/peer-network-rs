@@ -139,3 +139,77 @@ fn trial_inputs() {
 fn check_trial_compile(input: &inputs::Candidate) {
     inputs::check_compilation(input, &compile(input).unwrap());
 }
+
+/// Claim: A producing solve retains an exhausted Work request's typed budget, limit, needed charge and operation; a changed activation declaration still refuses as Declaration, and the separately bounded fixture procedure completes and replays the same candidate.
+/// ´claim:numerics:workload-solve-retains-resource-causes´
+/// ´test:integration:solve-resource-cause´
+#[test]
+fn solve_resource_cause() {
+    let input = candidate(0, 4, None, "ring", "pass");
+    let state = compile(&input).unwrap();
+    let p = procedure(&state, 16);
+    let published = Published(p.clone());
+    let bound = bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
+    let fence = pn_epoch::fence::search(&bound, None).unwrap();
+    let error = pn_epoch::conserved::solve(&bound, &fence).unwrap_err();
+    let pn_epoch::conserved::Error::Primitive(pn_graph::numeric::Error::Resource(fault)) = error else {
+        panic!("Work exhaustion lost its typed cause: {error:?}");
+    };
+    let nrz_cas::FaultKind::Exhausted {
+        budget, limit, needed, ..
+    } = fault.kind
+    else {
+        panic!("not an exhausted resource: {fault:?}");
+    };
+    assert_eq!(budget, nrz_cas::limits::BudgetKind::Work);
+    assert!(limit > 0 && limit < p.maximum_solve_work);
+    assert!(needed > limit);
+    assert_eq!(fault.operation, "rational multiplication");
+    assert_eq!(fault.logical_id, None);
+    let mut session = pn_graph::numeric::activation::sharing::Session::new(&p, "1/400").unwrap();
+    let changed = pn_graph::numeric::activation::Request {
+        standing: pn_records::primitive::Range {
+            lower: "10".into(),
+            upper: "10".into(),
+        },
+        bleed_squared: "1/100".into(),
+        wall: Some("2".into()),
+        wall_enclosure: None,
+        quantity: pn_graph::numeric::activation::Quantity::Clamped,
+    };
+    assert_eq!(session.evaluate(&changed), Err(pn_graph::numeric::Error::Declaration));
+    let p = inputs::scaling_procedure(&state, 16);
+    let published = Published(p.clone());
+    let bound = bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
+    let fence = pn_epoch::fence::search(&bound, None).unwrap();
+    let record = pn_epoch::conserved::solve(&bound, &fence).unwrap();
+    assert!(record.work > 0 && record.replay_work > 0);
+    inputs::check_solve(&state, &p, &record);
+}
+
+/// Claim: The rational fixture completes at its first sufficient five-step cap and independently replays with positive Work; caps one and two retain the inverse stopping refusal.
+/// ´claim:numerics:scaling-controller-fixture-retains-stopping-controls´
+/// ´test:integration:scaling-scalar-procedure´
+#[test]
+fn scaling_scalar_procedure() {
+    let candidate = candidate(0, 2, None, "ring", "equal");
+    let state = compile(&candidate).unwrap();
+    let procedure = inputs::scalar::rational_procedure(&procedure(&state, 16));
+    for cap in [1, 2] {
+        assert!(matches!(
+            inputs::scalar::rational(&procedure, cap),
+            Err(pn_graph::numeric::controller::Error::Inverse(
+                pn_graph::numeric::wall::Error::Iterations
+            ))
+        ));
+    }
+    let (input, record) = inputs::scalar::rational(&procedure, 5).unwrap();
+    assert_eq!(record.verdict, pn_records::controller::Verdict::Delivered);
+    let (checked, work) = pn_graph::numeric::controller::replay_with_work(&procedure, &input, None, &record).unwrap();
+    assert_eq!(checked, record);
+    assert!(work > 0 && work <= input.maximum_replay_work);
+    assert_eq!(
+        pn_graph::numeric::controller::replay(&procedure, &input, None, &record).unwrap(),
+        checked
+    );
+}
