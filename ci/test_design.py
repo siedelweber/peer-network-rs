@@ -11,6 +11,7 @@ import sys
 import tempfile
 import time
 import unittest
+from functools import lru_cache
 from unittest.mock import patch
 
 from design import PENDING_RENDERED_SPACING, PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_rendered_spacing, validate
@@ -18,9 +19,10 @@ from design import PENDING_RENDERED_SPACING, PAPER_EDITION_FIXTURES, PAPER_TAG, 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 
-# Reuse the optimized interpreter, not validation results or parsed datasets.
-# Each request executes the complete command in a fresh module namespace and
-# rereads the fixture tree. Mutations still cross the real optimized boundary.
+# Reuse the optimized interpreter. Each request executes the complete command
+# in a fresh module namespace and rereads the fixture tree. The workload reader
+# may reuse validation only for identical content; mutations still cross the
+# real optimized boundary and changed content is checked afresh.
 CHECKER = r'''
 import contextlib, io, json, sys, traceback
 path = sys.argv[1]
@@ -49,12 +51,43 @@ def git(root, *args):
 
 def compact_json_fixture(source, destination):
     """Keep every dataset value without repeating pretty-print scan work."""
-    value = json.loads(Path(source).read_text())
-    Path(destination).write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':'))+'\n')
+    Path(destination).write_text(compact_json_content(Path(source).read_text()))
     return destination
 
 
+@lru_cache(maxsize=128)
+def compact_json_content(text):
+    """Only identical bytes share parsing; every fixture remains a private file."""
+    return json.dumps(json.loads(text), ensure_ascii=False, separators=(',', ':'))+'\n'
+
+
 class Correspondence(unittest.TestCase):
+    def test_content_cache_refusals(self):
+        """Identical bytes reuse parsing; private projections cannot poison it and changed sample inventory still refuses.
+        ´claim:design:content-reuse-retains-sample-refusals´
+        ´test:integration:test-content-cache-refusals´
+        """
+        import benchmarks
+        policy = dict(kind='policy', name='fixture', samples=10, warmup_ms=100, measurement_ms=1000,
+                      resamples=1000, sampling='flat', seed=0, profile='gate', outcomes=['passed'])
+        point = dict(kind='point', name='point', outcome='passed', scope='fixture', wall_s=1.0, own_cpu_s=1.0,
+                     sample_times_ns=[1.0] * 10, sample_iterations=[1.0] * 10)
+        original = benchmarks.write_workload_carrier(dict(rows=[policy, point]))
+        benchmarks.validated_workload_content.cache_clear()
+        with patch.object(benchmarks.Path, 'read_text', return_value=original):
+            rows = benchmarks.workload_declarations()
+            rows.clear()
+            self.assertTrue(benchmarks.workload_declarations())
+        self.assertEqual(benchmarks.validated_workload_content.cache_info().misses, 1)
+        self.assertEqual(benchmarks.validated_workload_content.cache_info().hits, 1)
+        changed = benchmarks.read_workload_carrier(original)
+        point = next(row for row in changed['rows'] if row['kind'] == 'point' and row['outcome'] == 'passed')
+        point['sample_times_ns'].pop()
+        with patch.object(benchmarks.Path, 'read_text', return_value=benchmarks.write_workload_carrier(changed)):
+            with self.assertRaisesRegex(ValueError, 'sample inventory'):
+                benchmarks.workload_declarations(kinds=('policy', 'grid'))
+        self.assertNotEqual(compact_json_content('{"value":1}'), compact_json_content('{"value":2}'))
+
     def published_registry(self):
         import tomllib
         from design import published_correspondence

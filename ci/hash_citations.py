@@ -81,21 +81,29 @@ def occurrences(text):
     This changes recognition only; every recognized value still needs a family.
     """
     found = []
+    end = -1
+    contextual = False
+    has_field = False
     for match in HEX.finditer(text):
         value = match.group()
         if (not BARE.fullmatch(value) or len(value) in {40, 64}
                 or (any(c.isalpha() for c in value) and (len(value) >= 40 or any(c.isdigit() for c in value)))):
             found.append(match)
             continue
-        start = text.rfind("\n", 0, match.start()) + 1
-        end = text.find("\n", match.end())
-        line = text[start:end if end >= 0 else len(text)]
+        if match.start() >= end:
+            start = text.rfind("\n", 0, match.start()) + 1
+            end = text.find("\n", match.end())
+            if end < 0:
+                end = len(text)
+            line = text[start:end]
+            contextual = bool(IDENTITY_CONTEXT.search(line))
+            has_field = bool(re.search(r'\b(?:hash|rev|revision|tree|object)\b', line, re.I))
         version = (text[max(start, match.start() - 1):match.start()] == "("
                    and re.match(r" \d{4}-\d{2}-\d{2}\)", text[match.end():]))
         decimal_version = (value.isdecimal() and len(value) <= 40
                            and text[max(start, match.start() - 1):match.start()] == "("
                            and text[match.end():match.end() + 1] == " ")
-        if IDENTITY_CONTEXT.search(line) or IDENTITY_FIELD.search(text[start:match.start()]) or version or decimal_version:
+        if contextual or (has_field and IDENTITY_FIELD.search(text[start:match.start()])) or version or decimal_version:
             found.append(match)
     return found
 
@@ -573,19 +581,23 @@ def audit(root, paths, table):
         # Decode one byte to one character, so binary tracked content is scanned too.
         text = full.read_bytes().decode("latin1")
         scanned = json_number_mask(text) if path.endswith(".json") else text
+        applicable = [(rule, check) for rule, check in compiled
+                      if any(fnmatch.fnmatchcase(path, pattern) for pattern in rule['paths'])]
+        numeric_checks = [(rule, check.get(path, {})) for rule, check in applicable
+                          if rule['reader'] == 'numeric-registry']
+        value_checks = [(rule, check) for rule, check in applicable if rule['reader'] != 'numeric-registry']
+        lines = [(line, occurrences(scan)) for line, scan in zip(text.splitlines(), scanned.splitlines())]
         public_commits = {
-            rule['family']: {match.group() for line in scanned.splitlines()
-                             for match in occurrences(line)
+            rule['family']: {match.group() for line, matches in lines
+                             for match in matches
                              if re.fullmatch(r'[0-9a-f]{40}', match.group()) and check(match.group(), line)}
-            for rule, check in compiled if rule['reader'] == 'public-git'
-            and any(fnmatch.fnmatchcase(path, pattern) for pattern in rule['paths'])}
-        for number, (line, scan) in enumerate(zip(text.splitlines(), scanned.splitlines()), 1):
-            numeric = [(rule, check.get(path, {}).get(number)) for rule, check in compiled
-                       if rule['reader'] == 'numeric-registry']
+            for rule, check in value_checks if rule['reader'] == 'public-git'}
+        for number, (line, candidates) in enumerate(lines, 1):
+            numeric = [(rule, check.get(number)) for rule, check in numeric_checks]
             numeric = [(rule, span) for rule, span in numeric if span is not None]
             # Count even short decimal runs in these fields: a family's use does
             # not depend on an accidental collision with identity recognition.
-            seen = {(match.start(), match.end()): match for match in occurrences(scan)}
+            seen = {(match.start(), match.end()): match for match in candidates}
             for _, (start, end) in numeric:
                 for match in re.finditer(r'[0-9]+', line):
                     if start <= match.start() and match.end() <= end:
@@ -593,7 +605,7 @@ def audit(root, paths, table):
             for match in seen.values():
                 value = match.group()
                 count += 1
-                matches = [rule["family"] for rule, check in compiled if rule['reader'] != 'numeric-registry' and any(fnmatch.fnmatchcase(path, pattern) for pattern in rule["paths"]) and check(value, line)]
+                matches = [rule["family"] for rule, check in value_checks if check(value, line)]
                 matches.extend(family for family, commits in public_commits.items()
                                if public_git_abbreviation(value, commits))
                 matches.extend(rule['family'] for rule, (start, end) in numeric

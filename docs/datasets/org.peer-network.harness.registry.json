@@ -430,6 +430,7 @@
         "ci::test_design.Correspondence.test_tracked_prose_boundaries": "calibrated-design-tracked-prose-boundaries-case"
       },
       "cases": [
+        "ci::test_design.Correspondence.test_content_cache_refusals",
         "ci::test_design.Correspondence.test_rendered_continuations",
         "ci::test_design.Correspondence.test_rendered_spacing",
         "ci::test_design.Correspondence.test_empty_selections",
@@ -452,6 +453,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_devperf.Performance.test_loaded_step_context",
         "ci::test_devperf.Performance.test_gate_cancel_cleanup",
         "ci::test_devperf.Performance.test_gate_target_lock",
         "ci::test_devperf.Performance.test_whole_gate_warning",
@@ -493,6 +495,7 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
+        "ci::test_discipline.HashCitations.test_hash_indexed_lines",
         "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
         "ci::test_discipline.HashCitations.test_artifact_vector",
         "ci::test_discipline.HashCitations.test_hash_accounting",

@@ -41,9 +41,9 @@
 | burn-records | active | integration | pn-records-rust | fast | 40 |
 | burn-verification | active | integration | pn-records-rust | fast | 40 |
 | ci::test_claims | active | unit | ci-python | fast | 25 |
-| ci::test_design | active | integration | ci-python | extended | 10 |
-| ci::test_devperf | active | unit | ci-python | fast | 23 |
-| ci::test_discipline | active | integration | ci-python | fast | 32 |
+| ci::test_design | active | integration | ci-python | extended | 11 |
+| ci::test_devperf | active | unit | ci-python | fast | 24 |
+| ci::test_discipline | active | integration | ci-python | fast | 33 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 9 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |

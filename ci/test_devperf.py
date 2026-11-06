@@ -36,6 +36,35 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 
 class Performance(unittest.TestCase):
+    def test_loaded_step_context(self):
+        """Loaded step costs remain unattributed context, including missing and changed steps, independently of quiet baselines.
+        ´claim:devperf:loaded-step-context-is-nonverdict´
+        ´test:integration:test-loaded-step-context´
+        """
+        from build_graph import retain_baseline, retain_step_context, step_cpu_context
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prior = dict(source='previous', step_cpu={'design-tests': 52.0, 'gone': 2.0}, quiet=False)
+            retain_step_context(root, prior)
+            self.assertFalse(list(root.glob('*.json')))
+            previous = json.loads((root/'last-run.context').read_text())
+            rows = step_cpu_context({'design-tests': 106.0, 'new': None}, previous)
+            self.assertEqual(rows[0]['delta_cpu_s'], 54.0)
+            self.assertEqual(rows[0]['previous_source'], 'previous')
+            self.assertIsNone(rows[1]['delta_cpu_s'])
+            self.assertTrue(all(row['verdict_effect'] == 'none' and row['attribution'] == 'unattributed-context' for row in rows))
+            for malformed in ([], {}, dict(source='old', steps={'design-tests': 'bad'})):
+                self.assertIsNone(step_cpu_context({'design-tests': 1.0}, malformed)[0]['previous_cpu_s'])
+            retain_step_context(root, dict(source='current', step_cpu={'design-tests': 20.0}))
+            self.assertEqual(json.loads((root/'last-run.context').read_text())['source'], 'current')
+            (root/'.lane').mkdir()
+            candidate = dict(source='loaded', path=str(root/'quiet.json'), step_cpu={'design-tests': 30.0})
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+            with patch('build_graph.evidence_statuses', return_value={}), patch('build_graph.quiet_baseline', return_value=False):
+                retain_baseline(root)
+            self.assertFalse((root/'quiet.json').exists())
+            self.assertEqual(json.loads((root/'last-run.context').read_text())['steps'], {'design-tests': 30.0})
+
     def test_calibration_identity(self):
         """A measured function retains exact standing through unrelated edits, while a changed or missing body becomes pending under its owner without changing its allowance.
         ´claim:devperf:changed-calibration-is-pending´

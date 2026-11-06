@@ -730,6 +730,7 @@ def retain_baseline(root):
             print('GATE-STATUS-CHANGE '+json.dumps(change, sort_keys=True))
         print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
+    retain_step_context(path.parent, candidate)
     if not quiet_baseline(candidate):
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')
@@ -744,6 +745,32 @@ def retain_baseline(root):
     temporary.replace(path)
     path.with_suffix('.skipped.json').unlink(missing_ok=True)
     print('GATE-BASELINE retained=true source='+candidate['source'])
+
+
+def retain_step_context(directory, candidate):
+    """Keep observational context independently of quiet verdict baselines."""
+    path = directory/'last-run.context'
+    temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+    temporary.write_text(json.dumps(dict(source=candidate['source'], steps=candidate.get('step_cpu', {})))+'\n')
+    temporary.replace(path)
+
+
+def step_cpu_context(current, previous):
+    """No load attribution, budget comparison or verdict follows these deltas."""
+    if (not isinstance(previous, dict) or not isinstance(previous.get('source'), str)
+            or not isinstance(previous.get('steps'), dict)
+            or any(not isinstance(name, str) or value is not None and
+                   (type(value) not in (int, float) or not math.isfinite(value) or value < 0)
+                   for name, value in previous.get('steps', {}).items())):
+        previous = {}
+    rows = []
+    for name, own in sorted(current.items()):
+        old = previous.get('steps', {}).get(name)
+        rows.append(dict(step=name, own_cpu_s=own, previous_cpu_s=old,
+                         delta_cpu_s=own-old if own is not None and old is not None else None,
+                         previous_source=previous.get('source'),
+                         attribution='unattributed-context', verdict_effect='none'))
+    return rows
 
 
 def compile_comparison(current, prior, serialized):
@@ -807,6 +834,17 @@ def tier_summary(root, registry, worker_statuses):
     policy = declared['gate']
     baseline_path, baseline, changed = baseline_context(root, registry, policy)
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
+    step_cpu = {}
+    for name, *_ in fields:
+        own = cpu_from_log((root/f'.lane/gate-{name}.log').read_text().splitlines())
+        step_cpu[name] = sum(own) if all(value is not None for value in own) else None
+    if baseline is None:
+        try:
+            previous = json.loads((baseline_path.parent/'last-run.context').read_text())
+        except (FileNotFoundError, ValueError):
+            previous = {}
+        for row in step_cpu_context(step_cpu, previous):
+            print('GATE-STEP-CONTEXT '+json.dumps(dict(source=os.environ['PN_GATE_SOURCE'], **row), sort_keys=True), flush=True)
     groups = {name: tier['steps'] for name, tier in registry.tiers.items() if 'steps' in tier}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
     if Counter(name for group in groups.values() for name in group) != Counter(row[0] for row in fields):
@@ -901,7 +939,7 @@ def tier_summary(root, registry, worker_statuses):
                           capture_output=True, text=True, check=True).stdout.strip()
     from gate_resources import node_identity
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(),
-        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports,
+        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,
         previous_whole=baseline.get('whole') if baseline else None,

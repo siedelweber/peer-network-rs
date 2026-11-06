@@ -15,6 +15,8 @@ import sys
 import time
 import tomllib
 import uuid
+import copy
+from functools import lru_cache
 from decimal import Decimal
 
 from devperf import StructuralError, budgets, report
@@ -84,8 +86,16 @@ def write_workload_carrier(data):
     return header + ''.join('\n[[rows]]\n' + ''.join(key + ' = ' + value(item) + '\n' for key, item in row.items()) for row in data['rows'])
 
 
-def workload_declarations():
-    rows = read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+def workload_declarations(*, kinds=None):
+    # Content, not path, mtime or a producer digest, is the cache key. Every
+    # invocation rereads it; callers receive their own mutable projection.
+    rows = validated_workload_content(Path('docs/inputs/workload-benchmarks.toml').read_text())
+    return copy.deepcopy([row for row in rows if kinds is None or row['kind'] in kinds])
+
+
+@lru_cache(maxsize=1)
+def validated_workload_content(text):
+    rows = read_workload_carrier(text)['rows']
     if len({row['name'] for row in rows}) != len(rows):
         raise StructuralError('duplicate workload carrier identity')
     policies = [row for row in rows if row['kind'] == 'policy']

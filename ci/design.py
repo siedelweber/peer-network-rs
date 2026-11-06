@@ -411,7 +411,7 @@ def numeric_correspondence():
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from benchmarks import workload_declarations
-    workloads = {row['name']: row for row in workload_declarations()}
+    workloads = {row['name']: row for row in workload_declarations(kinds=('policy', 'grid'))}
     transport = Path('packages/interchange/tests/support/transport_workloads.rs').read_text()
     for field, pattern in [('chunk_bytes', r'payload\.chunks\((\d+)\)'),
                            ('payload_modulus', r'index % (\d+)'),

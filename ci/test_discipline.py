@@ -551,6 +551,32 @@ class HashCitations(unittest.TestCase):
             claims.add(lines[1])
             self.assertEqual(lines[2], "´test:integration:" + name.replace("_", "-") + "´")
 
+    def test_hash_indexed_lines(self):
+        """Per-file indexing preserves candidate spans and refuses an unresolved string after numeric samples.
+        ´claim:discipline:indexed-hash-scan-retains-refusals´
+        ´test:integration:test-hash-indexed-lines´
+        """
+        from hash_citations import occurrences
+        # Line context and immediate field context must not leak across lines.
+        text = 'samples = [123456, 123456, 123456]\ncommit 123456 123456\nplain 123456\nrev = "123456"\n'
+        self.assertEqual([match.group() for match in occurrences(text)], ['123456'] * 3)
+        self.assertEqual([(match.start(), match.group()) for match in occurrences(text)],
+                         [(text.index('commit') + 7, '123456'), (text.index('commit') + 14, '123456'),
+                          (text.index('rev = ') + 7, '123456')])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            value = 'f' * 40
+            rule = dict(family='fixture', group='test', measures='public identity', producer='fixture',
+                        establishment='resolvable', reader='public-git', commit=value,
+                        locator='https://github.com/example/engine/commit/'+value,
+                        definition='Exact public fixture locator', paths=['sample.json'])
+            table = dict(namespace='org.peer-network.ci.hash-citations', version=[1, 0, 0], rows=[rule])
+            path = root/'sample.json'
+            path.write_text(json.dumps(dict(identity=value, samples=[123456.25] * 100)))
+            self.assertEqual(audit(root, ['sample.json'], table)[0], [])
+            path.write_text(json.dumps(dict(identity=value, samples=[123456.25] * 100, note='e' * 40)))
+            self.assertTrue(any('unaccounted' in finding for finding in audit(root, ['sample.json'], table)[0]))
+
     def test_hash_accounting(self):
         """an uncovered value, a stale family and a reader establishment the checker cannot validate each fail the audit.
         ´claim:discipline:identity-occurrences-need-warrants´
