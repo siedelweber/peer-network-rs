@@ -522,9 +522,12 @@ class Processes(unittest.TestCase):
         for row in host:
             check_host(row)
         criterion = next(row for row in host if row['name'] == 'criterion 0.7.0')
-        self.assertFalse(criterion['built_for_host'])
+        self.assertTrue(criterion['built_for_host'])
         with self.assertRaises(AssertionError):
-            check_host(criterion | {'built_for_host': True})
+            check_host(criterion | {'built_for_host': False})
+        lock_only = next(row for row in host if not row['built_for_host'])
+        with self.assertRaises(AssertionError):
+            check_host(lock_only | {'built_for_host': True})
         with self.assertRaises(AssertionError):
             check_row(serde | {'features': [feature for feature in serde['features'] if feature != 'alloc']}, 'workspace')
 

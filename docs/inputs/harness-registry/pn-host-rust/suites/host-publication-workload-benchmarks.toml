@@ -1,0 +1,9 @@
+kind = "suite"
+name = "host-publication-workload-benchmarks"
+status = "active"
+runner = "benchmark"
+level = "integration"
+implementation = "pn-host-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["benchmark::publication-restore-2"]

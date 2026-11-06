@@ -29,14 +29,14 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "anes 0.1.6"
 version = "0.1.6"
 checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 licence = "MIT OR Apache-2.0"
 msrv = "not declared"
-features = []
+features = ["default"]
 build_time = "none"
 procedural_macros = []
 
@@ -302,7 +302,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "cast 0.3.0"
 version = "0.3.0"
@@ -354,33 +354,33 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "ciborium 0.2.2"
 version = "0.2.2"
 checksum = "42e69ffd6f0917f5c029256a24d0161db17cea3997d185db0d35926308770f0e"
 licence = "Apache-2.0"
 msrv = "1.58"
-features = []
+features = ["default", "std"]
 build_time = "none"
 procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "ciborium-io 0.2.2"
 version = "0.2.2"
 checksum = "05afea1e0a06c9be33d539b876f1ce3692f4afea2cb41f740e7743225ed1c757"
 licence = "Apache-2.0"
 msrv = "1.58"
-features = []
+features = ["alloc", "std"]
 build_time = "none"
 procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "ciborium-ll 0.2.2"
 version = "0.2.2"
@@ -523,7 +523,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "criterion 0.7.0"
 version = "0.7.0"
@@ -536,7 +536,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "criterion-plot 0.6.0"
 version = "0.6.0"
@@ -874,7 +874,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "half 2.7.1"
 version = "2.7.1"
@@ -1414,7 +1414,7 @@ version = "0.2.19"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 licence = "MIT OR Apache-2.0"
 msrv = "1.60"
-features = ["i128"]
+features = ["i128", "std"]
 build_time = "build script: build-script-build"
 procedural_macros = []
 
@@ -1472,7 +1472,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "oorandom 11.1.5"
 version = "11.1.5"
@@ -1927,14 +1927,14 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "regex 1.13.1"
 version = "1.13.1"
 checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
 licence = "MIT OR Apache-2.0"
 msrv = "1.65"
-features = []
+features = ["std"]
 build_time = "none"
 procedural_macros = []
 
@@ -1947,7 +1947,7 @@ version = "0.4.18"
 checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
 licence = "MIT OR Apache-2.0"
 msrv = "1.65"
-features = ["alloc", "dfa-build", "dfa-search", "nfa-thompson", "std", "syntax"]
+features = ["alloc", "dfa-build", "dfa-search", "meta", "nfa-pikevm", "nfa-thompson", "std", "syntax"]
 build_time = "none"
 procedural_macros = []
 
@@ -2005,7 +2005,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "same-file 1.0.6"
 version = "1.0.6"
@@ -2343,7 +2343,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "tinytemplate 1.2.1"
 version = "1.2.1"
@@ -2668,7 +2668,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "walkdir 2.5.0"
 version = "2.5.0"
@@ -2935,13 +2935,13 @@ version = "0.8.63"
 checksum = "e5fe1f8f1b06191a00962174c61aa5005e0bb391a6d80d07e24d115c01a92ed8"
 licence = "BSD-2-Clause OR Apache-2.0 OR MIT"
 msrv = "1.56.0"
-features = ["simd"]
+features = ["derive", "simd", "zerocopy-derive"]
 build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "zerocopy-derive 0.8.63"
 version = "0.8.63"

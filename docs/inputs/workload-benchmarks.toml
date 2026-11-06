@@ -92,6 +92,66 @@ control_variants = []
 
 [[rows]]
 kind = "grid"
+package = "pn-host"
+features = []
+implementation = "pn-host-rust"
+target = "workload-publication"
+correctness_case = "pn-host::public::publication::publication_codec_roundtrip"
+claim = "claim:publication:canonical-disclosure-roundtrip"
+name = "publication"
+grid = "B11"
+unit = "boundaries"
+sizes = [1, 2, 4, 8, 16, 32, 64, 128]
+variants = ["encode", "decode", "restore"]
+smoke_sizes = [2]
+smoke_variant = "restore"
+suite = "host-publication-workload-benchmarks"
+recipe = "Seed zero; one registered Actor and one Opinion at the first boundary, then two Opinions at each successor boundary, retaining two complete acts per boundary. A fixed synthetic burn of 1000 supports the declared fixture range. Public candidate, closure, schedule, compiler and publication constructors build every successor. Each boundary has a complete marker history and declared synthetic retained verifier, never cryptographic evidence."
+timed = "encode, decode, or decode followed by disclosures::restore, including allocations and owned output destruction"
+excluded = "constructor chain, admission, independent roundtrip controls and fresh per-iteration numeric context; internal restore contexts remain timed"
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+
+[[rows]]
+kind = "grid"
+package = "pn-host"
+features = []
+implementation = "pn-host-rust"
+target = "workload-publication"
+correctness_case = "pn-host::public::publication::publication_codec_roundtrip"
+claim = "claim:publication:canonical-disclosure-roundtrip"
+name = "publication-bytes"
+grid = "B12"
+unit = "provenance bytes per boundary"
+sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
+variants = ["encode", "decode"]
+recipe = "One admitted boundary; realization provenance is byte index modulo 251, bound by the fixture verifier before assembly. Authentication fields and mathematical causes stay unchanged."
+timed = "canonical publication encode or decode and owned output destruction"
+excluded = "valid package assembly, padding generation, byte/control preparation and per-iteration numeric context"
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 } }
+
+[[rows]]
+kind = "grid"
+package = "pn-host"
+features = []
+implementation = "pn-host-rust"
+name = "storage"
+grid = "B15"
+target = "workload-storage"
+unit = "versions per Rule key"
+sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256]
+variants = ["load", "audit"]
+smoke_sizes = [2]
+smoke_variant = "load"
+suite = "host-storage-workload-benchmarks"
+correctness_case = "pn-host::storage::tests::storage_contract"
+claim = "claim:history:atomic-effective-rows-preserve-earlier-verdicts"
+recipe = "One private PostgreSQL database per size, one Rule key, constructor-validated unsigned payloads and contiguous immutable successors. Repeat setup is idempotent. No other fixture uses these databases."
+timed = "current-thread runtime block_on of load_boundary or audit_history, including transaction, driver and returned output destruction"
+excluded = "service start/stop, runtime, secret configuration, connection, schema, population and correctness controls; schema and population walls retained separately"
+numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
+
+[[rows]]
+kind = "grid"
 name = "partition"
 unit = "complete acts"
 grid = "B2"

@@ -13,3 +13,4 @@ foreach row : local_inputs
 endforeach
 subdir('src')
 subdir('tests')
+subdir('benches')

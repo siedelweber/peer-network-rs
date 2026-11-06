@@ -156,7 +156,8 @@ class Correspondence(unittest.TestCase):
         for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements', 'observe-fixtures', 'workload-benchmarks'):
             shutil.copy(REPOSITORY / f'docs/inputs/{name}.toml', self.root / f'docs/inputs/{name}.toml')
         for name in ('packages/records/benches/workload-records.rs', 'packages/records/tests/common/workload_inputs.rs',
-                     'packages/interchange/benches/workload-transport.rs', 'packages/interchange/tests/support/transport_workloads.rs'):
+                     'packages/interchange/benches/workload-transport.rs', 'packages/interchange/tests/support/transport_workloads.rs',
+                     'packages/host/benches/workload-publication.rs', 'packages/host/benches/workload-storage.rs'):
             destination = self.root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPOSITORY / name, destination)

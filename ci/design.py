@@ -424,8 +424,8 @@ def numeric_correspondence():
     acts = Path('packages/records/tests/common/workload_inputs.rs').read_text()
     if int(re.search(r'workload-actor-\{\}", index % (\d+)', acts)[1]) != workloads['acts']['actors']:
         raise ValueError('workload Actor recipe differs')
-    for target in ('records', 'transport'):
-        package = 'records' if target == 'records' else 'interchange'
+    for target in ('records', 'transport', 'publication', 'storage'):
+        package = {'records': 'records', 'transport': 'interchange', 'publication': 'host', 'storage': 'host'}[target]
         source = Path(f'packages/{package}/benches/workload-{target}.rs').read_text()
         for field, pattern in [('samples', r'sample_size\((\d+)\)'), ('resamples', r'nresamples\((\d+)\)'),
                                ('warmup_ms', r'warm_up_time\(Duration::from_millis\(if mode == "full" \{ (\d+) \}'),

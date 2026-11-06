@@ -28,7 +28,7 @@ def workload_points(rows, mode):
     for row in rows:
         if row.get('kind') != 'grid':
             continue
-        if (row['package'], row['target']) not in (('pn-records', 'workload-records'), ('pn-interchange', 'workload-transport'), ('pn-graph', 'workload-graph'), ('pn-epoch', 'workload-epoch')):
+        if (row['package'], row['target']) not in (('pn-records', 'workload-records'), ('pn-interchange', 'workload-transport'), ('pn-graph', 'workload-graph'), ('pn-epoch', 'workload-epoch'), ('pn-host', 'workload-publication'), ('pn-host', 'workload-storage')):
             raise StructuralError('unknown workload target')
         for variant in row['variants']:
             for size in row['sizes'] if mode != 'smoke' else row.get('smoke_sizes', []):

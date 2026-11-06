@@ -576,6 +576,372 @@
       "work_multiplier": 16
     },
     {
+      "claim": "claim:publication:canonical-disclosure-roundtrip",
+      "correctness_case": "pn-host::public::publication::publication_codec_roundtrip",
+      "excluded": "constructor chain, admission, independent roundtrip controls and fresh per-iteration numeric context; internal restore contexts remain timed",
+      "features": [],
+      "grid": "B11",
+      "implementation": "pn-host-rust",
+      "kind": "grid",
+      "name": "publication",
+      "number_forms": {
+        "sizes": [
+          {
+            "exact": "1",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "8",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "32",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "32",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "128",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "128",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "smoke_sizes": [
+          {
+            "exact": "2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "smoke_sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-host",
+      "recipe": "Seed zero; one registered Actor and one Opinion at the first boundary, then two Opinions at each successor boundary, retaining two complete acts per boundary. A fixed synthetic burn of 1000 supports the declared fixture range. Public candidate, closure, schedule, compiler and publication constructors build every successor. Each boundary has a complete marker history and declared synthetic retained verifier, never cryptographic evidence.",
+      "sizes": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128
+      ],
+      "smoke_sizes": [
+        2
+      ],
+      "smoke_variant": "restore",
+      "suite": "host-publication-workload-benchmarks",
+      "target": "workload-publication",
+      "timed": "encode, decode, or decode followed by disclosures::restore, including allocations and owned output destruction",
+      "unit": "boundaries",
+      "variants": [
+        "encode",
+        "decode",
+        "restore"
+      ]
+    },
+    {
+      "claim": "claim:publication:canonical-disclosure-roundtrip",
+      "correctness_case": "pn-host::public::publication::publication_codec_roundtrip",
+      "excluded": "valid package assembly, padding generation, byte/control preparation and per-iteration numeric context",
+      "features": [],
+      "grid": "B12",
+      "implementation": "pn-host-rust",
+      "kind": "grid",
+      "name": "publication-bytes",
+      "number_forms": {
+        "sizes": [
+          {
+            "exact": "256",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "256",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "512",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "512",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1 024",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1 024",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2 048",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2 048",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4 096",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4 096",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "8 192",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8 192",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16 384",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16 384",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "32 768",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "32 768",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65 536",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65 536",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-host",
+      "recipe": "One admitted boundary; realization provenance is byte index modulo 251, bound by the fixture verifier before assembly. Authentication fields and mathematical causes stay unchanged.",
+      "sizes": [
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768,
+        65536
+      ],
+      "target": "workload-publication",
+      "timed": "canonical publication encode or decode and owned output destruction",
+      "unit": "provenance bytes per boundary",
+      "variants": [
+        "encode",
+        "decode"
+      ]
+    },
+    {
+      "claim": "claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+      "correctness_case": "pn-host::storage::tests::storage_contract",
+      "excluded": "service start/stop, runtime, secret configuration, connection, schema, population and correctness controls; schema and population walls retained separately",
+      "features": [],
+      "grid": "B15",
+      "implementation": "pn-host-rust",
+      "kind": "grid",
+      "name": "storage",
+      "number_forms": {
+        "sizes": [
+          {
+            "exact": "1",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "8",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "32",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "32",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "128",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "128",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "256",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "256",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "smoke_sizes": [
+          {
+            "exact": "2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "smoke_sizes": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "package": "pn-host",
+      "recipe": "One private PostgreSQL database per size, one Rule key, constructor-validated unsigned payloads and contiguous immutable successors. Repeat setup is idempotent. No other fixture uses these databases.",
+      "sizes": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "smoke_sizes": [
+        2
+      ],
+      "smoke_variant": "load",
+      "suite": "host-storage-workload-benchmarks",
+      "target": "workload-storage",
+      "timed": "current-thread runtime block_on of load_boundary or audit_history, including transaction, driver and returned output destruction",
+      "unit": "versions per Rule key",
+      "variants": [
+        "load",
+        "audit"
+      ]
+    },
+    {
       "claim": "claim:membership:workload-partition-inputs-retain-counts-and-cover",
       "control_variants": [],
       "correctness_case": "pn-graph::workload_correctness::partition_inputs",

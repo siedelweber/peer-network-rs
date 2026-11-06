@@ -185,7 +185,7 @@ def start(root):
             command([binary_directory()/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
         env = dict(os.environ, PGPASSWORD=password)
         command([binary_directory()/'createdb','-h',directory,'-p',port,'-U','private_role_fixture_731','private_database_fixture_731'],log,env)
-        for suffix in ('storage','storage-role','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-scaling','storage-tamper','storage-growth','storage-trace-initial','storage-trace-default','storage-trace-trace'):
+        for suffix in ('storage','storage-role','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-scaling','storage-tamper','storage-growth','storage-trace-initial','storage-trace-default','storage-trace-trace',*(f'workload-storage-{n}' for n in (1,2,4,8,16,32,64,128,256))):
             command([binary_directory()/'createdb','-h',directory,'-p',port,'-U','private_role_fixture_731','private_'+suffix.replace('-','_')+'_731'],log,env)
     base = dict(transport='unix',endpoint=str(socket_path(directory, port)),port=str(port),user='private_role_fixture_731',password=password,database='private_database_fixture_731')
     configurations = {
@@ -200,7 +200,7 @@ def start(root):
         'refused-port':dict(base,transport='tcp',endpoint='127.0.0.2'),
         'unreachable-host':dict(base,transport='tcp',endpoint='127.0.0.3'),
     }
-    configurations.update({suffix:dict(base,database='private_'+suffix.replace('-','_')+'_731') for suffix in ('storage','storage-role','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-scaling','storage-tamper','storage-growth','storage-trace-initial','storage-trace-default','storage-trace-trace')})
+    configurations.update({suffix:dict(base,database='private_'+suffix.replace('-','_')+'_731') for suffix in ('storage','storage-role','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-scaling','storage-tamper','storage-growth','storage-trace-initial','storage-trace-default','storage-trace-trace',*(f'workload-storage-{n}' for n in (1,2,4,8,16,32,64,128,256)))})
     for name, data in configurations.items():
         path = root/(name+'.json')
         path.write_text(json.dumps(data))
