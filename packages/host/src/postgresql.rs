@@ -77,22 +77,50 @@ fn real_cancellation() {
     runtime().block_on(async {
         let session = Session::connect(configuration("unix.json")).await.unwrap();
         let client = session.client();
-        let query = client.query_one("SELECT pg_sleep(30)", &[]);
+        let pid: i32 = client.query_one("SELECT pg_backend_pid()", &[]).await.unwrap().get(0);
+        let observer = Session::connect(configuration("unix.json")).await.unwrap();
+        let statement = "SELECT pg_sleep(30)";
+        let activity = "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid = $1 AND state = 'active' AND query = $2)";
+        assert!(
+            !observer
+                .client()
+                .query_one(activity, &[&pid, &statement])
+                .await
+                .unwrap()
+                .get::<_, bool>(0)
+        );
+        let query = client.query_one(statement, &[]);
         let cancellation = async {
-            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+            loop {
+                if observer
+                    .client()
+                    .query_one(activity, &[&pid, &statement])
+                    .await
+                    .unwrap()
+                    .get::<_, bool>(0)
+                {
+                    break;
+                }
+                // Back off between observations; elapsed time does not authorize cancellation.
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            }
             session.cancel().await.unwrap();
         };
         // Poll both without a runtime macro dependency.
         let mut query = Box::pin(query);
         let mut cancellation = Box::pin(cancellation);
         let mut cancelled = false;
-        let result = std::future::poll_fn(|cx| {
-            if !cancelled && cancellation.as_mut().poll(cx).is_ready() {
-                cancelled = true;
-            }
-            query.as_mut().poll(cx)
-        })
-        .await;
+        let result = tokio::time::timeout(
+            std::time::Duration::from_secs(10),
+            std::future::poll_fn(|cx| {
+                if !cancelled && cancellation.as_mut().poll(cx).is_ready() {
+                    cancelled = true;
+                }
+                query.as_mut().poll(cx)
+            }),
+        )
+        .await
+        .expect("real-cancellation: 10 s deadline to observe the active sleep and receive its cancellation result");
         assert!(cancelled);
         assert_eq!(
             result.unwrap_err().code(),

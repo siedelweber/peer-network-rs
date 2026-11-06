@@ -3240,7 +3240,7 @@
       "claim": "HOST::claim:host:cancellation-keeps-the-backend-capability-private",
       "before": "",
       "after": "Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "Re-reviewed the unchanged claim after replacing the query-start delay with a second-session pg_stat_activity observation, an initially inactive control and a 10 s observation/result deadline. The cancelled flag, QUERY_CANCELED cause and same-connection SELECT 17 recovery assertions remain. Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
       "operation": "pn-host::postgresql::real_transports",
