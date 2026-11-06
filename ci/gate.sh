@@ -51,12 +51,18 @@ gate_signal() {
 }
 trap 'gate_signal 143' TERM
 trap 'gate_signal 130' INT
-gate_started=$(date -u +%s.%N)
-export PN_BUILDGRAPH_RUN="${gate_started}-$$"
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
+quiet_window() {
+    gate_resource_sample ".lane/gate-quiet-$1-start.raw" "$resource_root"
+    sleep 5
+    gate_resource_sample ".lane/gate-quiet-$1-end.raw" "$resource_root"
+}
+gate_started=$(date -u +%s.%N)
+export PN_BUILDGRAPH_RUN="${gate_started}-$$"
 gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-start.raw
+quiet_window before
 : > .lane/gate-steps.tsv
 source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
@@ -146,6 +152,7 @@ fi
 printf 'STEP-SUMMARY %s\n' "${statuses[*]}"
 python3 -B ci/isolation.py target-sizes || failed=1
 python3 ci/discipline.py diagnostics
+quiet_window after
 gate_ended=$(date -u +%s.%N)
 gate_resource_sample .lane/gate-resource-end.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-end.raw

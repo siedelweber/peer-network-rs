@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Nonbinding raw samples. Epoch fields are Unix UTC seconds; kernel units are
 # retained verbatim and interpreted once by gate_resources.py at gate end.
+export GATE_RESOURCE_READER="${BASH_SOURCE[0]%/*}/gate_resources.py"
 gate_cgroup_root() {
     local hierarchy controllers relative candidate
     while IFS=: read -r hierarchy controllers relative; do
@@ -33,6 +34,8 @@ gate_resource_sample() {
                 printf 'unavailable\n'
             fi
         done
+        printf '[scope]\n'
+        python3 -B "$GATE_RESOURCE_READER" --scope "$root" "$proc"
         printf '[clock-ticks]\n'
         getconf CLK_TCK
     } > "$destination"

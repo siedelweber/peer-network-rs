@@ -48,7 +48,7 @@ class Admission(unittest.TestCase):
         """
         import tempfile
         from pathlib import Path
-        from gate_resources import raw_sample, joined, cpu_from_log, compact, context, seconds
+        from gate_resources import raw_sample, joined, cpu_from_log, compact, context, seconds, observed_scope
         import subprocess
         script=Path(__file__).resolve().with_name('gate_resources.sh')
         with tempfile.TemporaryDirectory() as directory:
@@ -62,6 +62,14 @@ class Admission(unittest.TestCase):
                 return raw_sample(output)
             proc=root/'proc'
             (proc/'pressure').mkdir(parents=True)
+            (proc/'self').mkdir()
+            (proc/'1').mkdir()
+            (proc/'2').mkdir()
+            (proc/'self/mountinfo').write_text(f'1 0 0:1 / {proc} rw - proc proc rw\n2 0 0:2 / {root} rw - cgroup2 cgroup rw\n')
+            (proc/'self/cgroup').write_text('0::/\n')
+            (proc/'1/cgroup').write_text('0::/\n')
+            (proc/'2/cgroup').write_text('0::/\n')
+            (root/'cgroup.procs').write_text('1\n2\n')
             (proc/'pressure/cpu').write_text('some avg10=9.0 avg60=8.0 avg300=7.0 total=1000\n')
             (proc/'stat').write_text('cpu 10 0 20 100 0 0 0 0 0 0\nbtime 123\n')
             (proc/'loadavg').write_text('2.0 3.0 4.0 1/2 99\n')
@@ -83,8 +91,15 @@ class Admission(unittest.TestCase):
             self.assertNotIn('cpu.pressure.some.avg10',delta)
             self.assertEqual(result['cgroup_pressure_fraction']['cpu.some'],0.1)
             self.assertIs(type(start['values']['cpu.pressure.some.total']),int)
-            self.assertEqual(context(result),(str(root),'gate-cgroup'))
-            self.assertEqual(context(result,str(root)),(str(root),'gate-cgroup'))
+            self.assertEqual(context(result),(str(root),'namespace-root-cgroup'))
+            self.assertEqual(context(result,str(root)),(str(root),'namespace-root-cgroup'))
+            from unittest.mock import patch
+            from gate_resources import node_identity
+            for scope in ('shared-or-unproven-cgroup', 'namespace-root-cgroup', 'hierarchy-unavailable-cgroup'):
+                with patch('gate_resources.observed_scope', return_value={'cgroup_scope':scope, 'pressure_source':'unavailable'}):
+                    machine=node_identity()
+                    self.assertEqual(machine['resource_scope'],scope)
+                    self.assertEqual(machine['pressure_scope'],'unavailable')
             self.assertEqual(result['node_scope'],'node-wide')
             self.assertEqual(result['node_pressure_fraction']['cpu.some'],0.2)
             self.assertEqual(result['node_busy_cores'],100/start['clock_ticks'])
@@ -92,7 +107,25 @@ class Admission(unittest.TestCase):
             self.assertEqual(result['node_deltas']['cpu.ticks.user'],200)
             line=compact(result)
             self.assertNotIn('scope=shared',line)
-            self.assertIn('cgroup_scope=gate-cgroup',line)
+            self.assertIn('cgroup_scope=namespace-root-cgroup',line)
+            self.assertNotIn('cgroup_scope=gate-cgroup',line)
+            (proc/'2/cgroup').write_text('0::/user.slice/other.scope\n')
+            (proc/'self/cgroup').write_text('0::/user.slice/own.scope\n')
+            shared=sample()
+            self.assertEqual(context(joined(shared,shared,2))[1], 'shared-or-unproven-cgroup')
+            self.assertNotIn('cgroup_scope=namespace-root-cgroup', compact(joined(shared,shared,2)))
+            (proc/'2/cgroup').unlink()
+            self.assertEqual(observed_scope(root,proc)['cgroup_scope'], 'shared-or-unproven-cgroup')
+            self.assertFalse(observed_scope(root,proc)['membership_available'])
+            (proc/'self/cgroup').write_text('0::/\n')
+            self.assertEqual(observed_scope(root,proc)['cgroup_scope'], 'namespace-root-cgroup', 'exiting members cannot change the hierarchy key')
+            self.assertFalse(observed_scope(root,proc)['membership_available'])
+            (proc/'self/cgroup').unlink()
+            self.assertEqual(observed_scope(root,proc)['cgroup_scope'], 'hierarchy-unavailable-cgroup')
+            (proc/'self/mountinfo').write_text(f'1 0 0:1 / {proc} rw - proc proc rw\n2 1 0:2 / {proc}/pressure rw - tmpfs tmpfs rw\n')
+            self.assertEqual(observed_scope(root,proc)['pressure_source'], 'unavailable')
+            untrusted=sample()
+            self.assertEqual(joined(untrusted,untrusted,2)['node_scope'], 'unavailable')
             self.assertIn('node_scope=node-wide',line)
             absent=copy.deepcopy(start);absent.pop('node_values')
             self.assertEqual(joined(absent,end,2)['node_scope'],'unavailable')

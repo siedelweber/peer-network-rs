@@ -706,14 +706,17 @@ def baseline_context(root, registry, policy=None):
 
 
 def quiet_baseline(candidate, policy=None):
-    """Every measured interval must meet the existing unresolved-load policy."""
+    """Passive boundaries qualify a baseline; in-gate pressure is diagnostic."""
     from gate_resources import node_stall
     limit = (policy or candidate)['load_unresolved_pressure_percent']/100
-    whole = candidate.get('whole', {})
-    pressures = [whole.get('stall') if whole.get('node_scope') == 'node-wide' else None]
-    pressures.extend(node_stall(row.get('resources', {}))
-                     for row in candidate['tiers'].values())
-    return all(isinstance(value, (int, float)) and 0 <= value <= limit for value in pressures)
+    windows = candidate.get('quiet_windows', {})
+    for phase in ('before', 'after'):
+        window = windows.get(phase, {})
+        value = node_stall(window)
+        if (window.get('wall_seconds', 0) < 5 or not isinstance(value, (int, float))
+                or not 0 <= value <= limit):
+            return False
+    return True
 
 
 def retain_baseline(root):
@@ -1004,6 +1007,7 @@ def wall_summary(root, status, interval=None):
     (root/'.lane/gate-wall.json').write_text(json.dumps(result, indent=2)+'\n')
     if pending:
         pending['whole'] = result
+        pending['quiet_windows'] = measured.get('quiet_windows', {})
         pending_path.write_text(json.dumps(pending)+'\n')
     fields = ' '.join(key+'='+(value if isinstance(value, str) else json.dumps(value, separators=(',', ':'))) for key, value in result.items() if key not in {'wall', 'status'})
     print(f'GATE-WALL WALL={wall:.6f}s verdict={"green" if status == 0 else "red"} '+fields, flush=True)

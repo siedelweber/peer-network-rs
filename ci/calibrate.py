@@ -160,12 +160,13 @@ def measure(directory, name, argv, env):
     end = time.time()
     cpu_end = resource.getrusage(resource.RUSAGE_CHILDREN)
     after = sample(path.with_suffix('.end.raw'))
+    resources = joined(before, after, end-start)
     context = dict(name=name, command=argv, status=result.returncode, start=start, end=end,
                    wall_s=end-start, load_start=load_start, load_end=os.getloadavg(),
                    own_user_s=cpu_end.ru_utime-cpu_start.ru_utime,
                    own_sys_s=cpu_end.ru_stime-cpu_start.ru_stime,
-                   cgroup_scope='gate-cgroup', load_scope='node-wide', interval_scope='calibration-suite',
-                   resources=joined(before, after, end-start))
+                   cgroup_scope=resources['cgroup_scope'], load_scope=resources['node_scope'], interval_scope='calibration-suite',
+                   resources=resources)
     path.with_suffix('.context.json').write_text(json.dumps(context, sort_keys=True)+'\n')
     print('CALIBRATION-SUITE '+json.dumps(context, sort_keys=True), flush=True)
     if result.returncode:

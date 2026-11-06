@@ -586,6 +586,9 @@ wait
         ´claim:devperf:baseline-follows-import-tree´
         ´test:integration:test-baseline-lineage´
         """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
         from build_graph import baseline_context, retain_baseline
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -601,7 +604,7 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed = baseline_context(root, registry)
                 self.assertIsNone(old)
-                candidate = dict(path=str(path), source='ancestor', tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
+                candidate = dict(path=str(path), source='ancestor', tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
@@ -619,12 +622,19 @@ wait
                 import copy
                 for scope in (None, 'gate-cgroup', 'shared'):
                     wrong=copy.deepcopy(candidate)
-                    wrong['whole']['node_scope']=scope
+                    wrong['quiet_windows']['before']['node_scope']=scope
                     self.assertFalse(quiet_baseline(wrong), 'own pressure cannot establish node quiet')
+                for phase in ('before','after'):
                     wrong=copy.deepcopy(candidate)
-                    wrong['tiers']={'fast':{'resources':{'node_scope':scope,'node_pressure_fraction':{'cpu.some':0}}}}
-                    self.assertFalse(quiet_baseline(wrong), 'every tier needs node evidence')
-                candidate['whole']['stall'] = .101
+                    wrong['quiet_windows'].pop(phase)
+                    self.assertFalse(quiet_baseline(wrong), 'both passive boundaries are required')
+                    wrong=copy.deepcopy(candidate)
+                    wrong['quiet_windows'][phase]['wall_seconds']=4.99
+                    self.assertFalse(quiet_baseline(wrong), 'a shortened window cannot qualify')
+                candidate['whole']['stall'] = .8
+                candidate['tiers'] = {'fast':{'resources':{'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.9}}}}
+                self.assertTrue(quiet_baseline(candidate), 'gate-created pressure does not disqualify passive quiet boundaries')
+                candidate['quiet_windows'] = windows(.101)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertEqual(path.read_bytes(), quiet_bytes)
@@ -633,11 +643,12 @@ wait
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
                 self.assertFalse(new_path.exists())
-                candidate['whole']['stall'] = .1
-                candidate['tiers'] = {'fast':{'resources':{'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.101}}}}
+                candidate['quiet_windows'] = windows(.1)
+                candidate['quiet_windows']['after']['node_pressure_fraction']['cpu.some'] = .101
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
-                self.assertFalse(new_path.exists(), 'a quiet whole cannot hide a loaded tier')
+                self.assertFalse(new_path.exists(), 'a quiet start cannot hide a loaded end')
+                candidate['quiet_windows'] = windows(.1)
                 candidate['tiers'] = {}
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
@@ -680,7 +691,7 @@ wait
             (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
                 path, _, _ = baseline_context(root, registry)
-                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                 retain_baseline(root)
                 _, retained, changed = baseline_context(root, registry)
                 self.assertEqual(retained['source'], original)
@@ -692,7 +703,7 @@ wait
                 other = git('-c', 'commit.gpgsign=false', 'commit-tree', other_tree, '-p', imported, input='unimported candidate\n')
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
                     other_path, _, _ = baseline_context(root, registry)
-                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                     retain_baseline(root)
                 self.assertNotEqual(path, other_path)
                 self.assertTrue(path.exists())
@@ -703,7 +714,7 @@ wait
                 # A rejected loaded import points only to a quiet ancestor tree.
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
                     loaded = dict(path=str(other_path), source=other, tree=other_tree, tiers={},
-                                  whole={'node_scope':'node-wide','stall':.101}, load_unresolved_pressure_percent=10,
+                                  quiet_windows=windows(.101), whole={'node_scope':'node-wide','stall':.101}, load_unresolved_pressure_percent=10,
                                   previous_baseline_tree=tree)
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(loaded))
                     retain_baseline(root)
