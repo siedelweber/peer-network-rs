@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::applied::Output",
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport/applied.rs",
+    "syntax": "# [doc = \" Two transported aggregates, never a source-target product matrix.\"] # [doc = \" Counters count visited support entries and allocated scalar slots.\"] # [doc = \" (´[ROOT-alg:design:transport]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Output { pub numerator : Vec < Interval > , pub denominator : Vec < Interval > , pub standing : Vec < Interval > , pub support_visits : usize , pub vector_slots : usize , pub row_slots : usize , }"
+  }
+}

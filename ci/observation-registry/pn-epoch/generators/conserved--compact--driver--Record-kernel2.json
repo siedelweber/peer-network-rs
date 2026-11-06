@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "conserved::compact::driver::Record",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact/driver.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "Generated traits retain only complete public original numerical declarations, checked certificates, deterministic counters and exact request keys; no secret material, subscriber or publication encoder is present."
+  }
+}

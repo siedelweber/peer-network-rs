@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::compact::Threshold",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact.rs",
+    "syntax": "# [doc = \" A threshold verdict uses certified bounds, never a comparison tolerance.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Threshold { Pass , Fail , Indecisive , }"
+  }
+}

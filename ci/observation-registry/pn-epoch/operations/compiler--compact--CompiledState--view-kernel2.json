@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler/compact.rs",
+    "item": "compiler::compact::CompiledState::view",
+    "owner": "EPOCH",
+    "signature": "fn view (& self) -> & CompiledView",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "exception",
+    "shape": "shape-epoch",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable access inherits the joined compiler operation.",
+      "witness": "EPOCH::claim:numerics:compact-solves-retain-certified-scope",
+      "boundary": "pn-epoch::packages/epoch/src/conserved/compact/driver.rs::conserved::compact::driver::solve",
+      "class_decision": "conserved-public-evaluation"
+    }
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::CompiledState::view",
+    "body": "{ & self . view }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/compiler/compact.rs",
+    "item": "compiler::compact::compile_final_state",
+    "owner": "EPOCH",
+    "signature": "fn compile_final_state (package : & VerifiedPackage , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::compile_final_state",
+    "body": "{ compile_source (CompiledSource :: Published (package . clone ()) , verifier , numeric , limits , maximum_products ,) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

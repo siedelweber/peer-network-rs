@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "support::compact::StandingSupport",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/support/compact.rs",
+    "syntax": "# [doc = \" Compact support retains extrema and source fractions, not reachable pairs.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StandingSupport { pub boundary : u64 , pub sources : BTreeMap < String , SourceEmission > , pub ranges : BTreeMap < String , ContributingRange > , pub depth : usize , pub support_visits : u64 , pub extrema_slots : usize , }"
+  }
+}

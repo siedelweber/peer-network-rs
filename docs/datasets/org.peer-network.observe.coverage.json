@@ -295,25 +295,25 @@
       "operations": 11
     },
     {
-      "exceptions": 21,
-      "generators": 111,
+      "exceptions": 24,
+      "generators": 124,
       "helpers": 0,
-      "instrumented": 54,
+      "instrumented": 66,
       "name": "pn-epoch",
       "number_forms": {
         "exceptions": {
-          "exact": "21",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "111",
+          "exact": "124",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "111",
+          "num": "124",
           "num_exact": true,
           "num_relation": "="
         },
@@ -326,18 +326,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "54",
+          "exact": "66",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "54",
+          "num": "66",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "75",
+          "exact": "90",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "75",
+          "num": "90",
           "num_exact": true,
           "num_relation": "="
         }
@@ -364,28 +364,28 @@
           "exact_digits": 32
         }
       },
-      "operations": 75
+      "operations": 90
     },
     {
-      "exceptions": 13,
-      "generators": 63,
+      "exceptions": 14,
+      "generators": 66,
       "helpers": 0,
-      "instrumented": 45,
+      "instrumented": 46,
       "name": "pn-graph",
       "number_forms": {
         "exceptions": {
-          "exact": "13",
+          "exact": "14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "14",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "63",
+          "exact": "66",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "63",
+          "num": "66",
           "num_exact": true,
           "num_relation": "="
         },
@@ -398,18 +398,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "45",
+          "exact": "46",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45",
+          "num": "46",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "58",
+          "exact": "60",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "58",
+          "num": "60",
           "num_exact": true,
           "num_relation": "="
         }
@@ -436,7 +436,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 58
+      "operations": 60
     },
     {
       "exceptions": 172,

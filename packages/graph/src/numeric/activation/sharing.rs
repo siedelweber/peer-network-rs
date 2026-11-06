@@ -198,6 +198,20 @@ fn key_work(input: &Request) -> Result<u64, Error> {
 }
 
 impl Session {
+    /// Release point-result memoization while retaining independently admitted forms and constants.
+    /// (´[ROOT-rule:design:evaluation-schedule]´)
+    /// Justified: Removing cached results cannot admit evidence or widen an operational cap.
+    /// # Errors
+    /// Refuses a legacy receiver whose evaluation schedule cannot be changed.
+    pub fn begin_pass(&mut self) -> Result<(), Error> {
+        if self.prepared.is_none() {
+            return Err(Error::Declaration);
+        }
+        self.retained.clear();
+        self.index.clear();
+        Ok(())
+    }
+
     /// Reduce the prepared receiver's remaining allowance before another map pass.
     /// (´[ROOT-rule:design:evaluation-schedule]´)
     /// Justified: This only narrows an operational cap; it admits no evidence or mathematical premise.

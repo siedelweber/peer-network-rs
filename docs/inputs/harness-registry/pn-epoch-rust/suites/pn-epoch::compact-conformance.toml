@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-epoch::compact-conformance"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::workload_correctness::compact_solve_agreement"]
+composition_reasons = { "pn-epoch::workload_correctness::compact_solve_agreement" = "Whole-procedure conformance composes independent legacy and compact compilation, fence checking, solve, complete replay and the one-map consumer, with separate revision, accounting and threshold refusal controls." }

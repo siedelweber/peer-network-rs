@@ -168,3 +168,7 @@ fn check_wall_range(wall: &str, procedure: &Procedure, limits: Limits) -> Result
     }
     Ok(())
 }
+
+/// Bind the explicitly compact compiler edition.
+/// (´def:compiler:solve-binding´)
+pub mod compact;

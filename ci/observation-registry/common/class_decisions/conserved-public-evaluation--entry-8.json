@@ -12,7 +12,23 @@
         "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
         "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay",
         "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::solve",
-        "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::replay"
+        "pn-epoch::packages/epoch/src/conserved/prepared.rs::conserved::prepared::replay",
+        "pn-graph::packages/graph/src/transport/applied.rs::transport::applied::evaluate",
+        "pn-epoch::packages/epoch/src/conserved/compact/driver.rs::conserved::compact::driver::solve",
+        "pn-epoch::packages/epoch/src/conserved/compact/driver.rs::conserved::compact::driver::replay",
+        "pn-epoch::packages/epoch/src/conserved/compact/map.rs::conserved::compact::map::<Factors < '_ , '_ > as pn_graph :: transport :: applied :: HopFactors>::at",
+        "pn-epoch::packages/epoch/src/conserved/compact.rs::conserved::compact::check_claim",
+        "pn-epoch::packages/epoch/src/fence/compact.rs::fence::compact::replay",
+        "pn-epoch::packages/epoch/src/fence/compact.rs::fence::compact::search",
+        "pn-epoch::packages/epoch/src/solve/compact.rs::solve::compact::bind_procedure",
+        "pn-epoch::packages/epoch/src/solve/compact.rs::solve::compact::BoundProcedure < '_ >::inputs",
+        "pn-epoch::packages/epoch/src/solve/compact.rs::solve::compact::BoundProcedure < '_ >::preflight",
+        "pn-epoch::packages/epoch/src/support/compact.rs::support::compact::compile_support",
+        "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::compile_final_state",
+        "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::compile_candidate",
+        "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::CompiledState::package",
+        "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::CompiledState::view",
+        "pn-epoch::packages/epoch/src/compiler/compact.rs::compiler::compact::compile_admitted"
       ]
     }
   }

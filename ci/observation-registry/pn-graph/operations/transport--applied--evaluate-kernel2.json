@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport/applied.rs",
+    "item": "transport::applied::evaluate",
+    "owner": "GRAPH",
+    "signature": "fn evaluate (input : & Input < '_ > , bits : u32 , maximum_cells : usize , b : & mut Budget , tilt : & mut impl HopFactors ,) -> Result < Output , Error >",
+    "claim": "ROOT::alg:design:transport",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/transport/applied.rs::transport::applied::evaluate",
+    "body": "{ validate (input , maximum_cells , b) ? ; let Input { rows , depth_mass , emission , counts , rates , } = * input ; let n = rows . len () ; let one = Rational :: parse (\"1\" , b) ? ; let nil = zero (b) ? ; let mut amount = Vec :: with_capacity (n) ; let mut count = Vec :: with_capacity (n) ; let mut numerator = Vec :: with_capacity (n) ; let mut denominator = Vec :: with_capacity (n) ; for ((source_count , source_rate) , fraction) in counts . iter () . zip (rates) . zip (emission) { let source_count = source_count . coarsen (bits , b) ? ; let source_rate = source_rate . coarsen (bits , b) ? ; let retained = Interval :: singleton (& one . sub (fraction . lower () , b) ? , b) ? . coarsen (bits , b) ? ; let fraction = fraction . coarsen (bits , b) ? ; let moving = source_count . mul (& fraction , bits , b) ? ; amount . push (moving . mul (& source_rate , bits , b) ?) ; count . push (moving) ; let held = source_count . mul (& retained , bits , b) ? ; numerator . push (held . mul (& source_rate , bits , b) ?) ; denominator . push (held) ; } let mut visits = 0usize ; let mut row_slots = 0usize ; for (depth , mass) in depth_mass . iter () . enumerate () { let factors = tilt . at (depth , b) ? ; if factors . len () != n || factors . iter () . any (| v | v . lower () . is_negative () || v . lower () . is_zero ()) { return Err (Error :: Indecisive) ; } let mut next_amount = vec ! [nil . clone () ; n] ; let mut next_count = vec ! [nil . clone () ; n] ; for (source , row) in rows . iter () . enumerate () { let mut weighted = Vec :: with_capacity (row . len ()) ; let mut sum = nil . clone () ; for (target , base) in row { let base = base . coarsen (bits , b) ? ; let value = if source == * target { base } else { base . mul (& factors [* target] . coarsen (bits , b) ? , bits , b) ? } ; sum = sum . add (& value , bits , b) ? ; weighted . push ((* target , value)) ; } row_slots = row_slots . max (weighted . len ()) ; for (target , value) in weighted { let probability = div (& value , & sum , bits , b) ? ; next_amount [target] = next_amount [target] . add (& amount [source] . mul (& probability , bits , b) ? , bits , b) ? ; next_count [target] = next_count [target] . add (& count [source] . mul (& probability , bits , b) ? , bits , b) ? ; visits = visits . checked_add (1) . ok_or (Error :: Scope) ? ; } } amount = next_amount ; count = next_count ; if ! mass . lower () . is_zero () { let mass = mass . coarsen (bits , b) ? ; for ((total , next) , (den , next_den)) in numerator . iter_mut () . zip (& amount) . zip (denominator . iter_mut () . zip (& count)) { * total = total . add (& next . mul (& mass , bits , b) ? , bits , b) ? ; * den = den . add (& next_den . mul (& mass , bits , b) ? , bits , b) ? ; } } } let standing = numerator . iter () . zip (& denominator) . map (| (a , d) | div (a , d , bits , b)) . collect :: < Result < _ , _ > > () ? ; Ok (Output { numerator , denominator , standing , support_visits : visits , vector_slots : n . checked_mul (10) . ok_or (Error :: Scope) ? , row_slots , }) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

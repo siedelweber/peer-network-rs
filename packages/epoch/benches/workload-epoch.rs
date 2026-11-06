@@ -26,7 +26,7 @@ impl Accepted for pn_epoch::compiler::CompiledState {
         true
     }
 }
-impl Accepted for pn_records::conserved::SolveRecord {
+impl Accepted for conserved::compact::records::SolveRecord {
     fn work_fields(&self, name: &str) -> String {
         if name.starts_with("B7-") {
             format!("work={} replay_work={}", self.work, self.work)
@@ -43,7 +43,7 @@ impl Accepted for pn_records::conserved::SolveRecord {
         true
     }
 }
-impl Accepted for conserved::prepared::Record {
+impl Accepted for conserved::compact::Record {
     fn accepted(&self) -> bool {
         true
     }
@@ -54,7 +54,7 @@ impl Accepted for conserved::prepared::Record {
             &self.production
         };
         format!(
-            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=prepared-rational-v1",
+            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=applied-dyadic-v2",
             self.solve.work_fields(name),
             a.setup,
             a.map_passes.iter().sum::<u64>(),
@@ -182,6 +182,7 @@ fn main() {
         .configure_from_args();
     let mut group = c.benchmark_group("workload-epoch");
     group.sampling_mode(SamplingMode::Flat);
+    compact_actors(&mut group, &output, &mode, seed);
     actors(&mut group, &output, &mode, seed);
     acts(&mut group, &output, &mode, seed);
     fences(&mut group, &output, &mode, seed);
@@ -202,23 +203,11 @@ fn append_metadata(output: &std::path::Path, name: &str, metadata: &str) {
     writeln!(artifact, "{metadata}").unwrap();
 }
 
-fn check_prepared(bound: &pn_epoch::solve::BoundProcedure<'_>, record: &conserved::prepared::Record) {
-    let checked = conserved::prepared::replay(bound, record).unwrap();
-    assert_eq!(
-        checked.solve.rounds.last().unwrap().standing,
-        record.solve.rounds.last().unwrap().standing
-    );
-}
-
 fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
     let ns = vec![2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128, 256];
     for n in ns {
         for shape in ["ring", "dense"] {
-            let names = [
-                format!("B3-compile-n{n}-{shape}"),
-                format!("B6-solve-n{n}-{shape}"),
-                format!("B7-replay-n{n}-{shape}"),
-            ];
+            let names = [format!("B3-compile-n{n}-{shape}")];
             if !names.iter().any(|n| selected(n)) {
                 continue;
             }
@@ -236,14 +225,10 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                 }
             };
             inputs::check_compilation(&input, &state);
-            let p = inputs::scaling_procedure(&state, 16);
-            let published = Published(p.clone());
-            let bound = bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
             let metadata = format!(
-                "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} {}",
+                "recipe=scaling-workloads/v2 seed={seed} {} construction_s={}",
                 inputs::dimensions(&input, &state),
-                start.elapsed().as_secs_f64(),
-                limits(&p)
+                start.elapsed().as_secs_f64()
             );
             if selected(&names[0]) {
                 measure(group, output, mode, &names[0], &metadata, inputs::numeric, |mut numeric| {
@@ -257,8 +242,57 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                     .map_err(Box::new)
                 });
             }
+        }
+    }
+}
+
+fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::compact::Record) {
+    let checked = conserved::compact::replay(bound, record).unwrap();
+    assert_eq!(
+        checked.solve.rounds.last().unwrap().standing,
+        record.solve.rounds.last().unwrap().standing
+    );
+}
+
+fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64) {
+    let ns = vec![2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128, 256];
+    for n in ns {
+        for shape in ["ring", "dense"] {
+            let names = [
+                format!("unused-compact-n{n}-{shape}"),
+                format!("B6-solve-n{n}-{shape}"),
+                format!("B7-replay-n{n}-{shape}"),
+            ];
+            if !names.iter().any(|n| selected(n)) {
+                continue;
+            }
+            let start = Instant::now();
+            let input = inputs::candidate(seed, n, None, shape, "pass");
+            let state = match pn_epoch::compiler::compact::compile_candidate(
+                &input.context,
+                &input.approval,
+                &mut inputs::numeric(),
+                Limits::default(),
+                inputs::PRODUCTS,
+            ) {
+                Ok(state) => state,
+                Err(error) => {
+                    for name in &names {
+                        if selected(name) {
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
+                        }
+                    }
+                    continue;
+                }
+            };
+            assert_eq!(state.view().ledger.counts.len(), input.n);
+            assert_eq!(state.view().ledger.debits.len(), input.m);
+            let p = inputs::compact_scaling_procedure(&state, 16);
+            let published = Published(p.clone());
+            let bound = pn_epoch::solve::compact::bind_procedure(&state, p.clone(), &published, Limits::default()).unwrap();
+            let metadata = compact_metadata(&input, &state, &p, seed, start.elapsed().as_secs_f64());
             if selected(&names[1]) || selected(&names[2]) {
-                let accepted = fence::search(&bound, None).unwrap();
+                let accepted = fence::compact::search(&bound, None).unwrap();
                 let produced = if selected(&names[1]) {
                     measure(
                         group,
@@ -267,20 +301,20 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                         &names[1],
                         &metadata,
                         || (),
-                        |()| conserved::prepared::solve(&bound, &accepted).map_err(Box::new),
+                        |()| conserved::compact::solve(&bound, &accepted).map_err(Box::new),
                     )
                 } else {
-                    Measurement(conserved::prepared::solve(&bound, &accepted).map_err(Box::new))
+                    Measurement(conserved::compact::solve(&bound, &accepted).map_err(Box::new))
                 };
                 // B7 consumes this exact B6 API result, never an independently generated case.
                 match produced.0 {
                     Ok(record) => {
-                        check_prepared(&bound, &record);
+                        check_compact(&bound, &record);
                         let metadata = format!(
                             "{metadata} M_solve={} M_replay={} {}",
                             input.m,
                             input.m,
-                            inputs::solve_counters(&record.solve)
+                            inputs::compact_counters(&record.solve)
                         );
                         if selected(&names[1]) {
                             append_metadata(output, &names[1], &metadata);
@@ -293,7 +327,7 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
                                 &names[2],
                                 &metadata,
                                 || (),
-                                |()| conserved::prepared::replay(&bound, &record).map_err(Box::new),
+                                |()| conserved::compact::replay(&bound, &record).map_err(Box::new),
                             );
                         }
                     }
@@ -516,5 +550,34 @@ fn limits(p: &pn_records::solve::Procedure) -> String {
     format!(
         "maximum_work={} maximum_solve_work={} maximum_replay_work={} maximum_iterations={} declared_precision={:?}",
         p.maximum_work, p.maximum_solve_work, p.maximum_replay_work, p.maximum_iterations, p.precision
+    )
+}
+
+fn compact_metadata(
+    input: &inputs::Candidate,
+    state: &pn_epoch::compiler::compact::CompiledState,
+    p: &pn_records::solve::Procedure,
+    seed: u64,
+    construction_s: f64,
+) -> String {
+    format!(
+        "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} {}",
+        format_args!(
+            "N={} M={} Z={} H={} cells={} products={} S=1",
+            input.n,
+            input.m,
+            state
+                .view()
+                .base
+                .rows
+                .values()
+                .map(std::collections::BTreeMap::len)
+                .sum::<usize>(),
+            state.view().support.depth,
+            state.view().cells.len(),
+            state.view().support.support_visits
+        ),
+        construction_s,
+        limits(p)
     )
 }

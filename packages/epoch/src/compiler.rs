@@ -246,3 +246,7 @@ pub fn compile_admitted(
         maximum_products,
     )
 }
+
+/// Version-two compilation without reachability materialization.
+/// (´def:compiler:joined-state´)
+pub mod compact;

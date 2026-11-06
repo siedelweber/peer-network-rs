@@ -184,3 +184,7 @@ pub fn exact_transport<A: ExactArithmetic>(
 /// Positive endpoint composition under separately checked scalar premises.
 /// (´[ROOT-alg:design:transport]´)
 pub mod enclosed;
+
+/// Bounded sparse-vector revision, without a materialized transport.
+/// (´[ROOT-alg:design:transport]´)
+pub mod applied;

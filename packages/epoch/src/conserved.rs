@@ -25,6 +25,8 @@ use std::collections::BTreeMap;
 pub enum Error {
     #[error("conserved solve declaration or frozen scope refused")]
     Scope,
+    #[error("applied transport: {0}")]
+    Applied(#[from] pn_graph::transport::applied::Error),
     #[error("mandatory replay Work differs from the independently measured count")]
     ReplayWork,
     #[error("map evidence or endpoint composition refused")]
@@ -222,3 +224,7 @@ pub fn replay(
     }
     Ok(checked)
 }
+
+/// Explicit applied-dyadic procedure revision.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+pub mod compact;

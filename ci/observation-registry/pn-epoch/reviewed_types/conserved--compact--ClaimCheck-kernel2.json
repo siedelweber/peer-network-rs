@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::compact::ClaimCheck",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact.rs",
+    "syntax": "# [doc = \" One-map evidence is separate from full iteration replay.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ClaimCheck { pub residual : records :: ResidualRound , pub thresholds : BTreeMap < String , Threshold > , pub work : u64 , }"
+  }
+}

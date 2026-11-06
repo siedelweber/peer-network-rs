@@ -6,4 +6,4 @@ level = "integration"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::workload_correctness::admission_inputs", "pn-epoch::workload_correctness::compiled_inputs", "pn-epoch::workload_correctness::fence_inputs", "pn-epoch::workload_correctness::prepared_solve_agreement", "pn-epoch::workload_correctness::scalar_inputs", "pn-epoch::workload_correctness::scaling_scalar_procedure", "pn-epoch::workload_correctness::solve_replay_inputs", "pn-epoch::workload_correctness::solve_resource_cause", "pn-epoch::workload_correctness::trial_inputs"]
+cases = ["pn-epoch::workload_correctness::admission_inputs", "pn-epoch::workload_correctness::compact_width_support", "pn-epoch::workload_correctness::compiled_inputs", "pn-epoch::workload_correctness::fence_inputs", "pn-epoch::workload_correctness::prepared_solve_agreement", "pn-epoch::workload_correctness::scalar_inputs", "pn-epoch::workload_correctness::scaling_scalar_procedure", "pn-epoch::workload_correctness::solve_replay_inputs", "pn-epoch::workload_correctness::solve_resource_cause", "pn-epoch::workload_correctness::trial_inputs"]

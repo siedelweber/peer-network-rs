@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/solve/compact.rs",
+    "item": "solve::compact::BoundProcedure < '_ >::preflight",
+    "owner": "EPOCH",
+    "signature": "fn preflight (& self) -> Result < () , ProcedureError >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/solve/compact.rs::solve::compact::BoundProcedure < '_ >::preflight",
+    "body": "{ if self . procedure . enclosure . is_none () { return Err (ProcedureError :: Unsupported) ; } pn_graph :: numeric :: preflight (& self . procedure) ? ; Ok (()) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

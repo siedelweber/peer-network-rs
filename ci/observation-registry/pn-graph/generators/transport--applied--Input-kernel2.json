@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "transport::applied::Input",
+    "kind": "derive",
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport/applied.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "Generated traits retain only complete public original numerical declarations, checked certificates, deterministic counters and exact request keys; no secret material, subscriber or publication encoder is present."
+  }
+}

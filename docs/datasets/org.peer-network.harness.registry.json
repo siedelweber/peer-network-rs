@@ -1868,6 +1868,22 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::workload_correctness::compact_solve_agreement"
+      ],
+      "composition_reasons": {
+        "pn-epoch::workload_correctness::compact_solve_agreement": "Whole-procedure conformance composes independent legacy and compact compilation, fence checking, solve, complete replay and the one-map consumer, with separate revision, accounting and threshold refusal controls."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-epoch::compact-conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-epoch::inputs::parameter_binding"
       ],
       "implementation": "pn-epoch-rust",
@@ -2209,6 +2225,7 @@
       "budget": "pure-suite",
       "cases": [
         "pn-epoch::workload_correctness::admission_inputs",
+        "pn-epoch::workload_correctness::compact_width_support",
         "pn-epoch::workload_correctness::compiled_inputs",
         "pn-epoch::workload_correctness::fence_inputs",
         "pn-epoch::workload_correctness::prepared_solve_agreement",
@@ -2567,6 +2584,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-graph::workload_correctness::applied_transport_agreement",
         "pn-graph::workload_correctness::partition_inputs",
         "pn-graph::workload_correctness::scaling_transport_oracle",
         "pn-graph::workload_correctness::transport_construction_refusals",

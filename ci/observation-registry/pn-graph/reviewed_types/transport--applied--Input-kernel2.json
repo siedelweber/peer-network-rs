@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::applied::Input",
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport/applied.rs",
+    "syntax": "# [doc = \" Borrowed immutable source vectors and sparse base, not hop products.\"] # [doc = \" (´[ROOT-alg:design:transport]´)\"] # [derive (Clone , Copy , Debug)] pub struct Input < 'a > { pub rows : & 'a Matrix < Interval > , pub depth_mass : & 'a [Interval] , pub emission : & 'a [Interval] , pub counts : & 'a [Interval] , pub rates : & 'a [Interval] , }"
+  }
+}

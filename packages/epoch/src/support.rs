@@ -292,3 +292,7 @@ fn contributing_ranges(
     }
     Ok(ranges)
 }
+
+/// Version-two compact contributing extrema.
+/// (´def:compiler:emission-support´)
+pub mod compact;

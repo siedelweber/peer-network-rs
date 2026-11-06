@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::compact::records::ResidualRound",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact/records.rs",
+    "syntax": "# [doc = \" One declared precision's complete proposal prefix and residual construction.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ResidualRound { pub proposals : Vec < MapRecord > , pub certified : MapRecord , pub residual : String , pub contraction : String , pub radius : String , pub standing : BTreeMap < String , Bounds > , pub candidate_work : u64 , pub work : u64 , }"
+  }
+}

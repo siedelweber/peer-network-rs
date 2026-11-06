@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "transport::applied::Error",
+    "package": "pn-graph",
+    "path": "packages/graph/src/transport/applied.rs",
+    "syntax": "# [doc = \" Scope and unresolved denominators remain distinct from resource exhaustion.\"] # [doc = \" (´[ROOT-alg:design:transport]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"invalid sparse transport premises or capacity\")] Scope , # [error (\"positive denominator not certified at the declared precision\")] Indecisive , # [error (\"bounded arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

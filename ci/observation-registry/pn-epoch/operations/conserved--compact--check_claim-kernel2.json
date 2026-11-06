@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact.rs",
+    "item": "conserved::compact::check_claim",
+    "owner": "EPOCH",
+    "signature": "fn check_claim (bound : & BoundProcedure < '_ > , accepted : & crate :: fence :: Search , point : & BTreeMap < String , String > , precision : u32 , thresholds : & BTreeMap < String , String > ,) -> Result < ClaimCheck , super :: Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/compact.rs::conserved::compact::check_claim",
+    "body": "{ use super :: Error ; use nrz_cas :: { Location , Rational , limits :: Budget } ; bound . preflight () ? ; let p = bound . inputs () . 1 ; let pn_records :: solve :: Precision :: AbsoluteWidthBits (sequence) = & p . precision else { return Err (Error :: Scope) ; } ; if ! sequence . contains (& precision) || thresholds . keys () . ne (point . keys ()) { return Err (Error :: Scope) ; } let rung = accepted . selected . as_deref () . ok_or (Error :: Scope) ? ; let contraction = fence :: fence (bound , & accepted . evidence , rung) ? ; let hull = hull (bound) ; let mut limits = p . enclosure . as_ref () . ok_or (Error :: Scope) ? . operation . clone () ; limits . work = p . maximum_replay_work ; let mut b = Budget :: new (limits) ? ; super :: point_in_hull (point , & hull , & mut b) ? ; let mut context = map :: Context :: new (bound , rung , precision , p . maximum_replay_work . checked_sub (b . usage () . work) . ok_or (Error :: Scope) ? ,) ? ; let image = context . run (point , p . maximum_replay_work . checked_sub (b . usage () . work) . ok_or (Error :: Scope) ? , None ,) ? ; b . work (image . work , Location :: new (\"one-map claimed equilibrium\")) ? ; let residual = residual :: assemble (image , & hull , & contraction , & mut b) ? ; let mut verdicts = BTreeMap :: new () ; for (actor , bound) in & residual . standing { let threshold = Rational :: parse (& thresholds [actor] , & mut b) ? ; let lo = Rational :: parse (& bound . lower , & mut b) ? ; let hi = Rational :: parse (& bound . upper , & mut b) ? ; let verdict = if ! lo . compare (& threshold , & mut b) ? . is_lt () { Threshold :: Pass } else if hi . compare (& threshold , & mut b) ? . is_lt () { Threshold :: Fail } else { Threshold :: Indecisive } ; verdicts . insert (actor . clone () , verdict) ; } Ok (ClaimCheck { residual , thresholds : verdicts , work : b . usage () . work , }) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::compact::map::StaticInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact/map.rs",
+    "syntax": "struct StaticInput { rows : Vec < BTreeMap < usize , Interval > > , vectors : TransportInput < Interval > , records : Vec < PrimitiveRecord > , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/compact/driver.rs",
+    "item": "conserved::compact::driver::solve",
+    "owner": "EPOCH",
+    "signature": "fn solve (bound : & BoundProcedure < '_ > , accepted : & crate :: fence :: Search) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/compact/driver.rs::conserved::compact::driver::solve",
+    "body": "{ let rung = accepted . selected . as_deref () . ok_or (Error :: Scope) ? ; let (mut result , production) = run (bound , & accepted . evidence , rung , None) ? ; let (checked , mandatory_replay) = run (bound , & result . fence , rung , Some (& result)) ? ; result . replay_work = checked . work ; Ok (Record { revision : \"applied-dyadic-v2\" . into () , solve : result , production , mandatory_replay , }) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The compact receiver retains only checked public history, source vectors, declared numerical procedures, exact request operands, certified outward bounds, structural counters and actual Work. Independent reconstruction admits no secret, subscriber choice or publication bytes. Complete callback arguments and results are numerical public data; the callback computes bound hop factors without external authority.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

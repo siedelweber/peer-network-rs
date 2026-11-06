@@ -219,3 +219,7 @@ pub fn search(bound: &BoundProcedure<'_>, interrupt_at: Option<u64>) -> Result<S
     }
     Ok(result)
 }
+
+/// Fence from two-buffer contributing extrema.
+/// (´def:compiler:fence-search´)
+pub mod compact;
