@@ -1,9 +1,29 @@
 //! One profiler per child test process; the reviewed dependency owns the allocator.
+#![feature(custom_test_frameworks, test)]
+#![test_runner(allocation_runner)]
+
+extern crate test;
+
 use std::fmt::Write as _;
 mod oracle;
 
 #[global_allocator]
 static ALLOCATOR: dhat::Alloc = dhat::Alloc;
+
+fn allocation_runner(tests: &[&test::TestDescAndFn]) {
+    if std::env::var_os("PN_WALLET_ALLOCATION_VECTOR").is_some() {
+        // A measurement child has no libtest runner thread. Its entire
+        // process-wide allocator window belongs to this synchronous case.
+        assert_eq!(tests.len(), 1);
+        let test::TestFn::StaticTestFn(case) = tests[0].testfn else {
+            panic!("allocation child requires its static case");
+        };
+        case().unwrap();
+    } else {
+        let status = test::test_main_env_args(tests);
+        assert_eq!(status, std::process::ExitCode::SUCCESS, "allocation test runner");
+    }
+}
 
 fn prefix(count: u16, witness: bool) -> Vec<u8> {
     let mut bytes = vec![2, 0, 0, 0, u8::from(witness), 253];
@@ -76,6 +96,7 @@ fn surjection_block() -> Vec<u8> {
 #[test]
 fn decoder_reservations() {
     let selected = std::env::var("PN_WALLET_ALLOCATION_VECTOR").ok();
+    let control = std::env::var("PN_WALLET_ALLOCATION_CONTROL").ok();
     let limits = pn_wallet::Limits {
         bytes: 4_000_000,
         items: 4096,
@@ -133,40 +154,79 @@ fn decoder_reservations() {
         if selected.as_deref() != Some(name) {
             continue;
         }
-        let mut limits = limits;
-        if matches!(name, "maximum-short" | "over-limit" | "hostile" | "maximum" | "nested") {
-            limits.items = 1024;
-        }
-        let envelope = 16 * bytes.len() + 15_360 * limits.items + 4_194_304;
-        let profiler = dhat::Profiler::builder().testing().build();
-        let success = if name.starts_with("block-") {
-            let decoded = pn_wallet::decode_block(&bytes, limits);
-            let success = decoded.is_ok();
-            drop(decoded);
-            success
-        } else {
-            let decoded = pn_wallet::decode_transaction(&bytes, limits);
-            let success = decoded.is_ok();
-            drop(decoded);
-            success
-        };
-        let stats = dhat::HeapStats::get();
-        let requested = usize::try_from(stats.total_bytes).unwrap();
-        let peak = stats.max_bytes;
-        let live = stats.curr_bytes;
-        drop(profiler);
-        assert_eq!(success, accepted, "{name}");
-        assert_eq!(live, 0, "{name}");
-        assert!(peak <= envelope && requested <= envelope, "{name}");
-        if !accepted {
-            assert_eq!(requested, 0, "{name}");
-        }
-        let mut row = String::new();
-        writeln!(&mut row, "{name},{requested},{peak},{live}").unwrap();
-        std::fs::create_dir_all("../../.lane").unwrap();
-        std::fs::write(format!("../../.lane/wallet-allocation-{name}.csv"), row).unwrap();
+        measure(name, &bytes, accepted, limits, control.as_deref());
     }
     if selected.is_none() {
+        for control in ["live", "envelope", "rejected"] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .env("PN_WALLET_ALLOCATION_VECTOR", "block-short")
+                .env("PN_WALLET_ALLOCATION_CONTROL", control)
+                .output()
+                .unwrap();
+            assert!(!output.status.success(), "allocation control {control} must refuse");
+            let error = String::from_utf8(output.stderr).unwrap();
+            assert!(error.contains(&format!("block-short: {control}")), "{error}");
+        }
         std::fs::write("../../.lane/wallet-allocation.csv", evidence).unwrap();
     }
+}
+
+fn measure(name: &str, bytes: &[u8], accepted: bool, limits: pn_wallet::Limits, control: Option<&str>) {
+    let mut limits = limits;
+    if matches!(name, "maximum-short" | "over-limit" | "hostile" | "maximum" | "nested") {
+        limits.items = 1024;
+    }
+    if control.is_some() {
+        assert_eq!(name, "block-short");
+        limits.items = 1;
+    }
+    let envelope = 16 * bytes.len() + 15_360 * limits.items + 4_194_304;
+    // Inspect outside the measurement window. A process-wide profiler is
+    // attributable only while this synchronous child is its sole thread.
+    assert_eq!(
+        std::fs::read_dir("/proc/self/task").unwrap().count(),
+        1,
+        "sole allocation thread"
+    );
+    let profiler = dhat::Profiler::builder().testing().build();
+    let retained = match control {
+        Some("live") => Some(std::hint::black_box(vec![0u8; 1])),
+        Some("envelope") => {
+            drop(std::hint::black_box(Vec::<u8>::with_capacity(envelope + 1)));
+            None
+        }
+        Some("rejected") => {
+            drop(std::hint::black_box(vec![0u8; 1]));
+            None
+        }
+        None => None,
+        Some(_) => panic!("unknown allocation control"),
+    };
+    let success = if name.starts_with("block-") {
+        let decoded = pn_wallet::decode_block(bytes, limits);
+        let success = decoded.is_ok();
+        drop(decoded);
+        success
+    } else {
+        let decoded = pn_wallet::decode_transaction(bytes, limits);
+        let success = decoded.is_ok();
+        drop(decoded);
+        success
+    };
+    let stats = dhat::HeapStats::get();
+    let requested = usize::try_from(stats.total_bytes).unwrap();
+    let peak = stats.max_bytes;
+    let live = stats.curr_bytes;
+    drop(profiler);
+    drop(retained);
+    assert_eq!(success, accepted, "{name}");
+    assert_eq!(live, 0, "{name}: live");
+    assert!(peak <= envelope && requested <= envelope, "{name}: envelope");
+    if !accepted {
+        assert_eq!(requested, 0, "{name}: rejected");
+    }
+    let mut row = String::new();
+    writeln!(&mut row, "{name},{requested},{peak},{live}").unwrap();
+    std::fs::create_dir_all("../../.lane").unwrap();
+    std::fs::write(format!("../../.lane/wallet-allocation-{name}.csv"), row).unwrap();
 }

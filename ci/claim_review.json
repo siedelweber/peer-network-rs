@@ -4890,7 +4890,7 @@
       "claim": "WALLET::claim:wallet:decoder-reservations-have-measured-bounds",
       "before": "",
       "after": "Claim: Per-vector allocator measurements cover hostile, maximum and over-limit counts, short payloads and nested witnesses; rejected prefixes allocate nothing in the adapter, and successful layouts stay below the declared requested-allocation envelope and release their measured live storage.",
-      "review": "Read separate child processes with one profiler each, complete drop before statistics, all five per-vector bounds and zero allocation for the rejected prefixes."
+      "review": "Read separate child processes with one profiler each and a direct synchronous runner that checks it is the sole thread before opening the process-wide allocation window. The decoder is not warmed. Complete drop before statistics, all per-vector bounds and zero allocation for rejected prefixes remain; three injected allocations must fail specifically at the live-zero, envelope and requested-zero guards."
     },
     {
       "operation": "pn-wallet::decoder::owned::owned_secrets",
