@@ -1,0 +1,10 @@
+kind = "suite"
+status = "active"
+budget = "pure-suite"
+implementation = "pn-epoch-rust"
+name = "pn-epoch::memoized-solve-conformance"
+runner = "nextest"
+tier = "extended"
+level = "integration"
+cases = ["pn-epoch::workload_correctness::memoized_solve_agreement"]
+composition_reasons = { "pn-epoch::workload_correctness::memoized_solve_agreement" = "Independent scalar cache replay or typed refusal control." }

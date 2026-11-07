@@ -43,10 +43,13 @@ impl Engine<'_> {
         } else {
             crate::numeric::evaluate(&policy, &query, None)?
         };
+        if let Some(fault) = &evidence.resource_fault {
+            return Err(Error::Resource(fault.clone()));
+        }
         self.arithmetic
             .budget
             .work(evidence.work, Location::new("verification scalar"))?;
-        if evidence.resource_fault.is_some() || evidence.attachment.is_none() {
+        if evidence.attachment.is_none() {
             return Err(Error::Declaration);
         }
         let value = evidence.bounds.clone().ok_or(Error::Declaration)?;

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/driver.rs",
+    "item": "conserved::memoized::driver::solve",
+    "owner": "EPOCH",
+    "signature": "fn solve (plan : super :: Plan , bound : & BoundProcedure < '_ > , accepted : & crate :: fence :: Search) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::solve",
+    "body": "{ let rung = accepted . selected . as_deref () . ok_or (Error :: Scope) ? ; let (mut result , production) = run (plan , bound , & accepted . evidence , rung , None) ? ; let (checked , mandatory_replay) = run (plan , bound , & result . fence , rung , Some (& result)) ? ; result . replay_work = checked . work ; Ok (Record { revision : \"memoized-dyadic-v4\" . into () , plan , solve : result , production , mandatory_replay , }) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

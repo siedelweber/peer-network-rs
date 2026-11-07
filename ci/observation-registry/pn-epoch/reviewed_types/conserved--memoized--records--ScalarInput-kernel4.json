@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::records::ScalarInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/records.rs",
+    "syntax": "# [doc = \" Activation and hop-power requests retain different original input theories.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum ScalarInput { Activation (pn_graph :: numeric :: activation :: Request) , Power { base : pn_records :: primitive :: Range , exponent : String , } , }"
+  }
+}

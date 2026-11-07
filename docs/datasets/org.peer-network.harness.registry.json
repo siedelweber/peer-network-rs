@@ -1933,6 +1933,38 @@
       "tier": "fast"
     },
     {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::conserved::memoized::map::memoized_key_scope"
+      ],
+      "composition_reasons": {
+        "pn-epoch::conserved::memoized::map::memoized_key_scope": "Independent scalar cache replay or typed refusal control."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-epoch::memoized-key-scope",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::workload_correctness::memoized_solve_agreement"
+      ],
+      "composition_reasons": {
+        "pn-epoch::workload_correctness::memoized_solve_agreement": "Independent scalar cache replay or typed refusal control."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-epoch::memoized-solve-conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
       "budget": "own-burn-suite",
       "case_budget": "own-burn-case",
       "case_span": true,
@@ -2614,6 +2646,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::numeric::verification_resource_cause"
+      ],
+      "composition_reasons": {
+        "pn-graph::numeric::verification_resource_cause": "Independent scalar cache replay or typed refusal control."
+      },
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-graph::verification-resource-cause",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",

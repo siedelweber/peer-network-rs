@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::Context",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "pub (super) struct Context < 'a , 'b > { plan : super :: Plan , bound : & 'a BoundProcedure < 'b > , rung : String , precision : u32 , actors : Vec < String > , wall : String , bleed : String , zero : bool , exponents : Vec < String > , receiver : numeric :: Prepared , memo : BTreeMap < Query , PrimitiveRecord > , cache : Cache , session : Option < Session > , static_input : Option < StaticInput > , initial_work : u64 , pub (super) setup_work : u64 , }"
+  }
+}

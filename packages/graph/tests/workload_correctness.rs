@@ -77,7 +77,7 @@ fn transport_construction_refusals() {
     inputs::enclosed(&inputs::transport(0, 2, true).unwrap()).unwrap();
 }
 
-/// Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch; insufficient denominator precision refuses.
+/// Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch, including unsorted rates and partial emission; insufficient denominator precision refuses.
 /// ´claim:numerics:applied-transport-retains-sparse-certified-scope´
 /// ´test:integration:applied-transport-agreement´
 #[test]
@@ -122,52 +122,62 @@ fn applied_transport_agreement() {
             let rates: Vec<_> = (1..=n)
                 .map(|i| Interval::singleton(&Rational::parse(&i.to_string(), &mut b).unwrap(), &mut b).unwrap())
                 .collect();
-            let input = TransportInput {
-                hops: vec![rows.clone(); h],
-                depth_mass: masses.clone(),
-                emission: counts.clone(),
-                counts: counts.clone(),
-                rates: rates.clone(),
-            };
-            let old = pn_graph::transport::enclosed::evaluate(&input, &mut b, n * n * (h + 3)).unwrap();
-            let fresh = pn_graph::transport::applied::evaluate(
-                &pn_graph::transport::applied::Input {
-                    rows: &rows,
-                    depth_mass: &masses,
-                    emission: &counts,
-                    counts: &counts,
-                    rates: &rates,
-                },
-                32,
-                z + 10 * n,
-                &mut b,
-                &mut UnitFactors(one.clone(), n),
-            )
-            .unwrap();
-            assert_eq!(fresh.support_visits, h * z);
-            assert_eq!(fresh.vector_slots, 10 * n);
-            assert!(fresh.row_slots <= n);
-            assert!(old.raw.iter().map(BTreeMap::len).sum::<usize>() > z);
-            for (a, c) in old.standing.iter().zip(&fresh.standing) {
-                assert!(!c.lower().compare(a.lower(), &mut b).unwrap().is_gt());
-                assert!(!c.upper().compare(a.upper(), &mut b).unwrap().is_lt());
-            }
-            assert!(
-                pn_graph::transport::applied::evaluate(
+            for partial in [false, true] {
+                let mut rates = rates.clone();
+                let emission = if partial {
+                    rates.rotate_left(1);
+                    assert!(rates[0].lower().compare(rates[n - 1].lower(), &mut b).unwrap().is_gt());
+                    vec![Interval::singleton(&Rational::parse("1/2", &mut b).unwrap(), &mut b).unwrap(); n]
+                } else {
+                    counts.clone()
+                };
+                let input = TransportInput {
+                    hops: vec![rows.clone(); h],
+                    depth_mass: masses.clone(),
+                    emission: emission.clone(),
+                    counts: counts.clone(),
+                    rates: rates.clone(),
+                };
+                let old = pn_graph::transport::enclosed::evaluate(&input, &mut b, n * n * (h + 3)).unwrap();
+                let fresh = pn_graph::transport::applied::evaluate(
                     &pn_graph::transport::applied::Input {
                         rows: &rows,
                         depth_mass: &masses,
-                        emission: &counts,
+                        emission: &emission,
                         counts: &counts,
-                        rates: &rates
+                        rates: &rates,
                     },
                     32,
-                    z + 10 * n - 1,
+                    z + 10 * n,
                     &mut b,
-                    &mut UnitFactors(one.clone(), n)
+                    &mut UnitFactors(one.clone(), n),
                 )
-                .is_err()
-            );
+                .unwrap();
+                assert_eq!(fresh.support_visits, h * z);
+                assert_eq!(fresh.vector_slots, 10 * n);
+                assert!(fresh.row_slots <= n);
+                assert!(old.raw.iter().map(BTreeMap::len).sum::<usize>() > z);
+                for (a, c) in old.standing.iter().zip(&fresh.standing) {
+                    assert!(!c.lower().compare(a.lower(), &mut b).unwrap().is_gt());
+                    assert!(!c.upper().compare(a.upper(), &mut b).unwrap().is_lt());
+                }
+                assert!(
+                    pn_graph::transport::applied::evaluate(
+                        &pn_graph::transport::applied::Input {
+                            rows: &rows,
+                            depth_mass: &masses,
+                            emission: &emission,
+                            counts: &counts,
+                            rates: &rates
+                        },
+                        32,
+                        z + 10 * n - 1,
+                        &mut b,
+                        &mut UnitFactors(one.clone(), n)
+                    )
+                    .is_err()
+                );
+            }
         }
     }
     applied_denominator_control(&one, &mut b);

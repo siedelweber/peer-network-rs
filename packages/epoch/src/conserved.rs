@@ -232,3 +232,6 @@ pub mod compact;
 /// Bounded activation revision three, explicitly selected by its caller.
 /// (´[ROOT-rule:design:evaluation-schedule]´)
 pub mod bounded;
+/// Previous-pass exact-key revision four, explicitly selected by its caller.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+pub mod memoized;

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::Cache",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "# [derive (Debug , Default)] struct Cache { previous : BTreeMap < Key , Cached > , current : BTreeMap < Key , Cached > , stats : MemoStats , }"
+  }
+}

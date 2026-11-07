@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::records::SolveRecord",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/records.rs",
+    "syntax": "# [doc = \" The rational proposal prefix and final certified map remain separately accounted.\"] # [doc = \" These carriers grant no authority until the frozen-package checker accepts them.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SolveRecord { pub fence : pn_records :: solve :: Evidence , pub rounds : Vec < ResidualRound > , pub work : u64 , # [doc = \" Actual cumulative Work charged to the mandatory solve replay budget.\"] # [doc = \" Fence validation retains its separate operation limits.\"] pub replay_work : u64 , }"
+  }
+}

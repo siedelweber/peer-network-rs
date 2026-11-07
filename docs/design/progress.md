@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 63 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 62 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 35 | 58 | 405 | 7 | 32 | 858 |
+| implementation | 1 356 | 35 | 58 | 406 | 7 | 32 | 857 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,7 +28,7 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 15 | 8 | 140 | 0 | 13 | 208 |
+| pn-epoch | 371 | 15 | 8 | 141 | 0 | 13 | 207 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
 | pn-host | 166 | 5 | 16 | 49 | 1 | 2 | 96 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
@@ -57,7 +57,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 557 | 199 |
+| ROOT (repository-wide) | 1 559 | 200 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -75,7 +75,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 9 | 27 | 56 | 0 | 5 | 1 |
-| unlinked | 1 484 | 22 | 20 | 282 | 13 | 21 | 1 160 |
+| unlinked | 1 484 | 22 | 20 | 283 | 13 | 21 | 1 159 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -86,7 +86,7 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 6 | 50 | 6 | 3 | 157 |
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
-| invariant check | 517 | 16 | 23 | 140 | 1 | 11 | 338 |
+| invariant check | 517 | 16 | 23 | 141 | 1 | 11 | 337 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
 | policy | 265 | 3 | 17 | 54 | 5 | 4 | 191 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
@@ -1000,8 +1000,8 @@
 | ``subsec:scalability:conserved-standing-work-model`` | none; none | unassigned | | | | |  | | |
 | ``def:scalability:conserved-standing-work-measures`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``prop:scalability:allocation-input-maintenance-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
-| ``prop:scalability:conserved-map-pass-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/implementation.md` `docs/design/questions.md` `docs/design/workload-benchmarks.md` `docs/inputs/design-questions.toml` `docs/templates/docs/design/implementation.md.j2` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
-| ``prop:scalability:standing-certificate-cost`` | pn-epoch; invariant check | designed | ``ROOT::rule:design:costs`` | | | |  | | |
+| ``prop:scalability:conserved-map-pass-cost`` | pn-epoch; invariant check | designed | ``ROOT::amend:design:memoized-solve`` | | | |  | | |
+| ``prop:scalability:standing-certificate-cost`` | pn-epoch; invariant check | designed | ``ROOT::amend:design:memoized-solve`` ``ROOT::rule:design:costs`` | | | |  | | |
 | ``thm:scalability:conserved-equilibrium-cost`` | pn-epoch; invariant check | designed | ``CONSTANTS::const.standing.worst_contraction`` | | | |  | | |
 | ``tbl:scalability:conserved-standing-work`` | pn-epoch; fixture | unassigned | | | | |  | | |
 | ``prop:scalability:conserved-standing-verifiability`` | pn-replay; invariant check | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::StaticInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "struct StaticInput { rows : Vec < BTreeMap < usize , Interval > > , vectors : TransportInput < Interval > , records : Vec < PrimitiveRecord > , }"
+  }
+}

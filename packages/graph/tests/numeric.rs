@@ -1852,3 +1852,44 @@ fn prepared_form_operands() {
         }))
     ));
 }
+
+/// Claim: Public box verification retains scalar Work exhaustion as a typed resource cause in both map entry points, while a malformed coordinate declaration remains Declaration.
+/// ´claim:numerics:box-verification-retains-resource-causes´
+/// ´test:integration:verification-resource-cause´
+#[test]
+fn verification_resource_cause() {
+    use pn_graph::numeric::{Error, verification};
+    let mut p = verification_policy();
+    p.enclosure.as_mut().unwrap().operation.work = 1_000_000;
+    let mut input = verification_reference();
+    input.sources.truncate(2);
+    for (i, source) in input.sources.iter_mut().enumerate() {
+        source.count = "1".into();
+        source.intercept = (i + 1).to_string();
+        source.slope = "0".into();
+    }
+    input.edges = vec![pn_records::conserved::VerificationEdge {
+        source: input.sources[0].name.clone(),
+        target: input.sources[1].name.clone(),
+        radicand: "1".into(),
+    }];
+    input.retention = "1".into();
+    input.shape = vec!["1".into()];
+    input.depth_mass = vec!["1".into()];
+    input.wall = range("1/2", "1/2");
+    input.strength = "1/8".into();
+    let candidate = vec![range("11/10", "11/10"); input.sources.len()];
+    let first = verification::evaluate_box(&p, &input, &candidate).unwrap_err();
+    let second = verification::two_map(&p, &input, &candidate).unwrap_err();
+    assert_eq!(first, second);
+    let Error::Resource(fault) = first else {
+        panic!("scalar fault was masked: {first:?}");
+    };
+    assert!(
+        matches!(fault.kind, nrz_cas::FaultKind::Exhausted { budget: nrz_cas::limits::BudgetKind::Work, limit, needed, .. } if needed > limit && limit <= 1_000_000)
+    );
+    assert_ne!(fault.operation, "");
+    let mut invalid = input.clone();
+    invalid.endpoint_bits = 0;
+    assert_eq!(verification::evaluate_box(&p, &invalid, &candidate), Err(Error::Declaration));
+}

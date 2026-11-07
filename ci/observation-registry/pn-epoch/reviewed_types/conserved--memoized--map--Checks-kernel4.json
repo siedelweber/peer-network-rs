@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::Checks",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "# [derive (Debug)] struct Checks < 'a > { plan : super :: Plan , cache : & 'a mut Cache , capacity : usize , bounded : Vec < ScalarRecord > , expected_bounded : Option < & 'a [ScalarRecord] > , policy : Procedure , supplied : Option < & 'a [PrimitiveRecord] > , records : Vec < PrimitiveRecord > , memo : & 'a mut BTreeMap < Query , PrimitiveRecord > , receiver : & 'a mut numeric :: Prepared , budget : Budget , }"
+  }
+}

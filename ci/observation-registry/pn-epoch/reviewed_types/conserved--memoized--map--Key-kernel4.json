@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::Key",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] struct Key { revision : & 'static str , plan : super :: Plan , precision : u32 , input : ScalarInput , }"
+  }
+}

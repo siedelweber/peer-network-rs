@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::driver::Accounting",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/driver.rs",
+    "syntax": "# [doc = \" Actual Work classified by purpose, never padded to an allowance.\"] # [doc = \" Setup, map execution, final checks and driver work are disjoint charged categories.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , Default , PartialEq , Eq)] pub struct Accounting { pub setup : u64 , pub driver_work : u64 , pub map_passes : Vec < u64 > , pub final_checks : Vec < u64 > , }"
+  }
+}

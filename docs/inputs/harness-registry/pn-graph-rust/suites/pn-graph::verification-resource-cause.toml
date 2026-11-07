@@ -1,0 +1,10 @@
+kind = "suite"
+status = "active"
+budget = "pure-suite"
+implementation = "pn-graph-rust"
+name = "pn-graph::verification-resource-cause"
+runner = "nextest"
+tier = "extended"
+level = "integration"
+cases = ["pn-graph::numeric::verification_resource_cause"]
+composition_reasons = { "pn-graph::numeric::verification_resource_cause" = "Independent scalar cache replay or typed refusal control." }

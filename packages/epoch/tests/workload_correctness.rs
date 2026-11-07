@@ -304,7 +304,7 @@ fn check_solve(s: &pn_epoch::compiler::CompiledState, p: &pn_records::solve::Pro
     ));
 }
 
-/// Claim: Compact revision two independently reproduces exact contributing extrema, certifies overlapping standing with revision one and checks a claimed point with one map; altered replay counts and undeclared precision refuse, and threshold straddles remain indecisive.
+/// Claim: Compact revision two independently reproduces exact contributing extrema, certifies overlapping standing with revision one and checks a claimed point with one map; altered replay counts and undeclared precision refuse, and threshold straddles remain indecisive, and thresholds above certified upper bounds fail.
 /// ´claim:numerics:compact-solves-retain-certified-scope´
 /// ´test:integration:compact-solve-agreement´
 #[test]
@@ -394,6 +394,7 @@ fn compact_solve_agreement() {
                 .collect();
             let check = compact::check_claim(&new_bound, &bf, &new.certified.point, 16, &middle).unwrap();
             assert!(check.thresholds.values().any(|v| *v == compact::Threshold::Indecisive));
+            fail_thresholds(&new_bound, &bf, new, &mut budget);
         }
         let mut bad = record.clone();
         bad.solve.replay_work += 1;
@@ -439,7 +440,7 @@ fn bounded_activation_solves() {
         let plan = bounded::Plan { working_precision: 32 };
         let result = bounded::solve(plan, &bound, &fence).unwrap();
         let checked = bounded::replay(plan, &bound, &result).unwrap();
-        assert!(inputs::bounded_counters(&result.solve).contains("K="));
+        assert!(bounded_counters(&result.solve).contains("K="));
         assert_eq!(checked.solve.rounds.len(), result.solve.rounds.len());
         for (a, b) in checked.solve.rounds.iter().zip(&result.solve.rounds) {
             assert_eq!(a.standing, b.standing);
@@ -736,4 +737,128 @@ fn compact_counters(r: &pn_epoch::conserved::compact::records::SolveRecord) -> S
         transcript.len(),
         r.rounds.iter().map(|r| &r.residual).collect::<Vec<_>>()
     )
+}
+
+/// Claim: Previous-pass memoization independently replays identical scalar evidence, reduces charged Work on two small histories, and refuses altered hit counters and revision substitutions.
+/// ´claim:numerics:memoized-solves-retain-exact-request-evidence´
+/// ´test:integration:memoized-solve-agreement´
+#[test]
+fn memoized_solve_agreement() {
+    use pn_epoch::{
+        compiler,
+        conserved::{bounded, memoized},
+        solve,
+    };
+    for (n, shape) in [(4, "ring"), (3, "dense")] {
+        let c = candidate(inputs::SEED, n, None, shape, "pass");
+        let state = compiler::compact::compile_candidate(
+            &c.context,
+            &c.approval,
+            &mut inputs::numeric(),
+            Limits::default(),
+            inputs::PRODUCTS,
+        )
+        .unwrap();
+        let p = inputs::compact_scaling_procedure(&state, 16);
+        let bound = solve::compact::bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+        let fence = pn_epoch::fence::compact::search(&bound, None).unwrap();
+        let old = bounded::solve(bounded::Plan { working_precision: 32 }, &bound, &fence).unwrap();
+        let plan = memoized::Plan { working_precision: 32 };
+        let fresh = memoized::solve(plan, &bound, &fence).unwrap();
+        assert!(inputs::memoized_counters(&fresh.solve).contains("K="));
+        let checked = memoized::replay(plan, &bound, &fresh).unwrap();
+        assert!(fresh.solve.work < old.solve.work);
+        if n == 4 {
+            assert!(
+                fresh
+                    .solve
+                    .rounds
+                    .iter()
+                    .flat_map(|r| &r.proposals)
+                    .any(|m| m.memo.previous_hits > 0)
+            );
+        }
+        for (a, b) in old.solve.rounds.iter().zip(&checked.solve.rounds) {
+            assert_eq!(a.standing, b.standing);
+            for (a, b) in a
+                .proposals
+                .iter()
+                .chain([&a.certified])
+                .zip(b.proposals.iter().chain([&b.certified]))
+            {
+                assert_eq!(a.image, b.image);
+                assert_eq!(a.bounded.len(), b.bounded.len());
+                for (a, b) in a.bounded.iter().zip(&b.bounded) {
+                    assert_eq!(format!("{:?}", a.input), format!("{:?}", b.input));
+                    assert_eq!(a.result, b.result);
+                    assert_eq!(a.work, b.work);
+                }
+                assert_eq!(b.memo.hits + b.memo.misses, u64::try_from(b.bounded.len()).unwrap());
+                assert!(b.memo.retained <= 3 * n);
+            }
+        }
+        if n == 3 {
+            let fallback_plan = memoized::Plan { working_precision: 16 };
+            let fallback = memoized::solve(fallback_plan, &bound, &fence).unwrap();
+            memoized::replay(fallback_plan, &bound, &fallback).unwrap();
+            assert!(fallback.solve.rounds.iter().any(|r| r.certified.primitives.len() > 2));
+        }
+        let mut bad = fresh.clone();
+        bad.solve.rounds[0].proposals[0].memo.hits += 1;
+        assert!(matches!(
+            memoized::replay(plan, &bound, &bad),
+            Err(pn_epoch::conserved::Error::Map)
+        ));
+        let mut bad = fresh.clone();
+        bad.revision = old.revision.clone();
+        assert!(matches!(
+            memoized::replay(plan, &bound, &bad),
+            Err(pn_epoch::conserved::Error::Scope)
+        ));
+        let mut bad = old.clone();
+        bad.revision = fresh.revision.clone();
+        assert!(matches!(
+            bounded::replay(bad.plan, &bound, &bad),
+            Err(pn_epoch::conserved::Error::Scope)
+        ));
+    }
+}
+
+fn bounded_counters(r: &pn_epoch::conserved::bounded::records::SolveRecord) -> String {
+    let k: usize = r.rounds.iter().map(|r| r.proposals.len()).sum();
+    let primitive_count: usize = r
+        .rounds
+        .iter()
+        .map(|r| r.certified.primitives.len() + r.proposals.iter().map(|p| p.primitives.len()).sum::<usize>())
+        .sum();
+    let transcript = format!("{r:?}");
+    format!(
+        "K={k} precision_rounds={} primitive_count={primitive_count} solve_work={} replay_work={} diagnostic_transcript_bytes={} retained_heap_bytes=unavailable-no-allocator-counter residuals={:?}",
+        r.rounds.len(),
+        r.work,
+        r.replay_work,
+        transcript.len(),
+        r.rounds.iter().map(|r| &r.residual).collect::<Vec<_>>()
+    )
+}
+
+fn fail_thresholds(
+    bound: &pn_epoch::solve::compact::BoundProcedure<'_>,
+    fence: &pn_epoch::fence::Search,
+    new: &pn_epoch::conserved::compact::records::ResidualRound,
+    budget: &mut nrz_cas::limits::Budget,
+) {
+    use nrz_cas::Rational;
+    use pn_epoch::conserved::compact;
+    let above = new
+        .standing
+        .iter()
+        .map(|(actor, r)| {
+            let upper = Rational::parse(&r.upper, budget).unwrap();
+            let one = Rational::parse("1", budget).unwrap();
+            (actor.clone(), upper.add(&one, budget).unwrap().exact_string(budget).unwrap())
+        })
+        .collect();
+    let check = compact::check_claim(bound, fence, &new.certified.point, 16, &above).unwrap();
+    assert!(check.thresholds.values().all(|v| *v == compact::Threshold::Fail));
 }

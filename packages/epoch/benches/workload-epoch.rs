@@ -26,7 +26,7 @@ impl Accepted for pn_epoch::compiler::CompiledState {
         true
     }
 }
-impl Accepted for conserved::bounded::records::SolveRecord {
+impl Accepted for conserved::memoized::records::SolveRecord {
     fn work_fields(&self, name: &str) -> String {
         if name.starts_with("B7-") {
             format!("work={} replay_work={}", self.work, self.work)
@@ -43,7 +43,7 @@ impl Accepted for conserved::bounded::records::SolveRecord {
         true
     }
 }
-impl Accepted for conserved::bounded::Record {
+impl Accepted for conserved::memoized::Record {
     fn accepted(&self) -> bool {
         true
     }
@@ -54,7 +54,7 @@ impl Accepted for conserved::bounded::Record {
             &self.production
         };
         format!(
-            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=bounded-activation-v3",
+            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=memoized-dyadic-v4",
             self.solve.work_fields(name),
             a.setup,
             a.map_passes.iter().sum::<u64>(),
@@ -246,8 +246,8 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
     }
 }
 
-fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::bounded::Record) {
-    let checked = conserved::bounded::replay(activation_plan(), bound, record).unwrap();
+fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::memoized::Record) {
+    let checked = conserved::memoized::replay(activation_plan(), bound, record).unwrap();
     assert_eq!(
         checked.solve.rounds.last().unwrap().standing,
         record.solve.rounds.last().unwrap().standing
@@ -279,7 +279,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                 Err(error) => {
                     for name in &names {
                         if selected(name) {
-                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/memoized-dyadic-v4 procedure_revision=memoized-dyadic-v4 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
                         }
                     }
                     continue;
@@ -301,10 +301,10 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                         &names[1],
                         &metadata,
                         || (),
-                        |()| conserved::bounded::solve(activation_plan(), &bound, &accepted).map_err(Box::new),
+                        |()| conserved::memoized::solve(activation_plan(), &bound, &accepted).map_err(Box::new),
                     )
                 } else {
-                    Measurement(conserved::bounded::solve(activation_plan(), &bound, &accepted).map_err(Box::new))
+                    Measurement(conserved::memoized::solve(activation_plan(), &bound, &accepted).map_err(Box::new))
                 };
                 // B7 consumes this exact B6 API result, never an independently generated case.
                 match produced.0 {
@@ -314,7 +314,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                             "{metadata} M_solve={} M_replay={} {}",
                             input.m,
                             input.m,
-                            inputs::bounded_counters(&record.solve)
+                            inputs::memoized_counters(&record.solve)
                         );
                         if selected(&names[1]) {
                             append_metadata(output, &names[1], &metadata);
@@ -327,7 +327,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                                 &names[2],
                                 &metadata,
                                 || (),
-                                |()| conserved::bounded::replay(activation_plan(), &bound, &record).map_err(Box::new),
+                                |()| conserved::memoized::replay(activation_plan(), &bound, &record).map_err(Box::new),
                             );
                         }
                     }
@@ -561,7 +561,7 @@ fn compact_metadata(
     construction_s: f64,
 ) -> String {
     format!(
-        "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} activation_plan={:?} {}",
+        "recipe=scaling-workloads/memoized-dyadic-v4 procedure_revision=memoized-dyadic-v4 seed={seed} {} construction_s={} procedure={p:?} activation_plan={:?} {}",
         format_args!(
             "N={} M={} Z={} H={} cells={} products={} S=1",
             input.n,
@@ -584,6 +584,6 @@ fn compact_metadata(
 }
 
 // Explicit fixture option selected from the kernel-3 scalar pilot; not a deployment default.
-fn activation_plan() -> conserved::bounded::Plan {
-    conserved::bounded::Plan { working_precision: 32 }
+fn activation_plan() -> conserved::memoized::Plan {
+    conserved::memoized::Plan { working_precision: 32 }
 }

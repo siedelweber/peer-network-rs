@@ -2539,6 +2539,14 @@
       "review": "Literal source fractions, Boolean matrices and rate extrema share no production support computation. The ledger is independently derived from public fixture markers; unchanged debits and balances and structural refusals bound the claim to pre-solve evidence."
     },
     {
+      "operation": "pn-epoch::workload_correctness::compact_solve_agreement",
+      "path": "packages/epoch/tests/workload_correctness.rs",
+      "claim": "EPOCH::claim:numerics:compact-solves-retain-certified-scope",
+      "before": "Claim: Compact revision two independently reproduces exact contributing extrema, certifies overlapping standing with revision one and checks a claimed point with one map; altered replay counts and undeclared precision refuse, and threshold straddles remain indecisive.",
+      "after": "Claim: Compact revision two independently reproduces exact contributing extrema, certifies overlapping standing with revision one and checks a claimed point with one map; altered replay counts and undeclared precision refuse, and threshold straddles remain indecisive, and thresholds above certified upper bounds fail.",
+      "review": "Read the distinct constructor-backed inputs and independent oracle assertions: the added upper-bound-plus-one thresholds must Fail in both histories."
+    },
+    {
       "operation": "pn-graph::formation::affinity_coordinates",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:affinity-requires-typed-complete-coordinates",
@@ -3193,6 +3201,14 @@
       "before": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
       "after": "Claim: Eight named title cases and their five replay variations execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
       "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
+    },
+    {
+      "operation": "pn-graph::workload_correctness::applied_transport_agreement",
+      "path": "packages/graph/tests/workload_correctness.rs",
+      "claim": "GRAPH::claim:numerics:applied-transport-retains-sparse-certified-scope",
+      "before": "Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch; insufficient denominator precision refuses.",
+      "after": "Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch, including unsorted rates and partial emission; insufficient denominator precision refuses.",
+      "review": "Read all eight chain/hub inputs: each size and topology reaches both full emission with ordered rates and half emission with rotated unsorted rates; independent matrix containment and sparse allocation controls remain."
     },
     {
       "operation": "pn-host::config::tests::secret_json_grammar",

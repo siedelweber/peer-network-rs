@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::map::Cached",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/map.rs",
+    "syntax": "# [derive (Clone , Debug)] struct Cached { scalar : ScalarRecord , exact : Option < PrimitiveRecord > , }"
+  }
+}

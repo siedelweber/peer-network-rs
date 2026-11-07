@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::records::MemoStats",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/records.rs",
+    "syntax": "# [doc = \" Exact request lookups in this pass, independently reproduced by replay.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , Default , PartialEq , Eq)] pub struct MemoStats { pub hits : u64 , pub previous_hits : u64 , pub misses : u64 , pub retained : usize , }"
+  }
+}

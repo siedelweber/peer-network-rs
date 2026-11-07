@@ -65,6 +65,21 @@ fn seconds(text: &str, key: &str) -> String {
         .find(|v| v.parse::<f64>().is_ok_and(|f| f.is_finite() && f >= 0.0))
         .map_or_else(|| "null".into(), str::to_owned)
 }
+fn identity(header: &str) -> String {
+    let revision = header
+        .split_whitespace()
+        .find_map(|value| value.strip_prefix("procedure_revision="));
+    let recipe = header.split_whitespace().find_map(|value| value.strip_prefix("recipe="));
+    if name().starts_with("solve-") || name().starts_with("replay-") {
+        assert_eq!(revision, Some("memoized-dyadic-v4"));
+        assert_eq!(recipe, Some("scaling-workloads/memoized-dyadic-v4"));
+    }
+    format!(
+        "{{\"procedure_revision\":{},\"recipe_edition\":{},",
+        revision.map_or_else(|| "null".into(), string),
+        recipe.map_or_else(|| "null".into(), string)
+    )
+}
 pub(super) fn finish(output: &Path, mode: &str) {
     let evidence = std::fs::read_to_string(output.join(format!("{}.txt", internal()))).unwrap();
     let header = evidence.lines().next().unwrap();
@@ -127,5 +142,6 @@ pub(super) fn finish(output: &Path, mode: &str) {
             .unwrap_or_else(|| "null".into()),
         string(&evidence)
     );
+    let receipt = identity(header) + receipt.strip_prefix('{').unwrap();
     std::fs::write(std::env::var_os("PN_BENCH_RECEIPT").unwrap(), receipt).unwrap();
 }

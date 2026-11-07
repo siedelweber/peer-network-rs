@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::Plan",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized.rs",
+    "syntax": "# [doc = \" Required working grid; no implicit deployment precision is selected.\"] # [doc = \" The original procedure's grid ceiling and end-to-end width remain binding.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Plan { pub working_precision : u32 , }"
+  }
+}
