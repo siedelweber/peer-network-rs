@@ -601,6 +601,52 @@ wait
             self.assertEqual(overrun_class(True, own, old, 0, new_build*2, old_build*2, [], policy,
                 compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
 
+        # The mixed benchmark step must remove only its no-run builds, not
+        # validation. Exercise the producer and its emitted accounting too.
+        import benchmarks
+        import contextlib
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'source.stdout.log').write_text('fixture-source\n')
+            (root/'target/gate').mkdir(parents=True)
+            command = ['cargo', 'bench', '-p', 'pn-interchange', '--bench', 'foundation',
+                       '--profile', 'gate', '--no-run']
+            def build(cpu):
+                rows = []
+                usage = [SimpleNamespace(ru_utime=3, ru_stime=2),
+                         SimpleNamespace(ru_utime=3+cpu, ru_stime=2)]
+                with patch.dict(os.environ, CARGO_TARGET_DIR=str(root/'target')), \
+                     patch.object(benchmarks.resource, 'getrusage', side_effect=usage), \
+                     patch.object(benchmarks, 'capture', return_value=(0, 7000)) as capture:
+                    self.assertEqual(benchmarks.capture_build(command, root, 'build', rows), (0,7000))
+                    capture.assert_called_once_with(command, root, 'build')
+                self.assertEqual(rows[0]['cargo_cpu_s'], cpu)
+                self.assertEqual(rows[0]['cargo_wall_s'], 7)
+                out, err = io.StringIO(), io.StringIO()
+                def run(records):
+                    records.extend(rows)
+                    return {'status':'passed'}, 0
+                with patch.object(benchmarks, 'run', side_effect=run), \
+                     patch.object(benchmarks.sys, 'argv', ['benchmarks.py']), \
+                     contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                    self.assertEqual(benchmarks.main(), 0)
+                self.assertEqual(json.loads(out.getvalue()), {'status':'passed'})
+                line, = err.getvalue().splitlines()
+                self.assertTrue(line.startswith('ISOLATION-COMPILE '))
+                measured = json.loads(line.removeprefix('ISOLATION-COMPILE '))
+                self.assertEqual(measured, rows[0])
+                return dict(wall=10, own_cpu_s=100+cpu, cargo_cpu_s=measured['cargo_cpu_s'],
+                            layouts={measured['owner']:measured['layout']}, partial=measured['cold_target'])
+            for current_build, previous_build in ((1,1), (53,1), (1,53), (53,53)):
+                current = {'benchmarks':build(current_build)}
+                prior = {'benchmarks':build(previous_build)}
+                own, old, _, omitted = compile_comparison(current, prior, ['test-build'])
+                self.assertEqual((own, old, omitted), (100,100,[]))
+                current['benchmarks']['own_cpu_s'] += 21
+                own, old, _, _ = compile_comparison(current, prior, ['test-build'])
+                self.assertEqual(overrun_class(True, own, old, 0, current_build, previous_build, [], policy,
+                    compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
+
 
     def test_baseline_lineage(self):
         """Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.

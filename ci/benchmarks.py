@@ -1,4 +1,4 @@
-"""Own every Criterion stream; stdout is one JSON result, stderr JSON diagnostics."""
+"""Own Criterion streams; stdout is one JSON result, stderr diagnostics and build accounting."""
 
 import contextlib
 import datetime
@@ -187,7 +187,7 @@ def resource_sample(path):
                     'benchmark-resource-sample', str(path)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
-def measured_workloads(mode, directory):
+def measured_workloads(mode, directory, compile_records):
     """Serial points have private outputs, per-point resources and nonbinding timings."""
     rows = workload_declarations(kinds=('policy', 'grid'))
     points = workload_points(rows, mode)
@@ -199,11 +199,9 @@ def measured_workloads(mode, directory):
                    '--no-run', '--locked', '--offline', '--message-format=json']
         if features:
             command += ['--features', ','.join(features)]
-        before = resource.getrusage(resource.RUSAGE_CHILDREN)
-        status, wall_ms = capture(command, directory, target + '-build')
-        after = resource.getrusage(resource.RUSAGE_CHILDREN)
+        status, wall_ms = capture_build(command, directory, target + '-build', compile_records)
         builds.append(dict(package=package, target=target, status=status, wall_ms=wall_ms,
-                           own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime))
+                           own_cpu_s=compile_records[-1]['cargo_cpu_s']))
         if status:
             return dict(status='failed', phase='build', builds=builds, points=[]), 1
         artifacts = [json.loads(line) for line in (directory/(target+'-build.stdout.log')).read_text().splitlines() if line.startswith('{')]
@@ -274,7 +272,28 @@ def capture(command, directory, name, environment=None, timeout=None):
     return status, (time.monotonic()-start)*1000
 
 
-def campaign(mode):
+def capture_build(command, directory, name, compile_records):
+    """Meter only the waited no-run Cargo child, never receipt or sample validation."""
+    if command[:2] != ['cargo', 'bench'] or '--no-run' not in command:
+        raise StructuralError('benchmark compile accounting requires a no-run build')
+    target = Path(os.environ.get('CARGO_TARGET_DIR', 'target')).resolve()
+    layout = json.dumps(dict(target=str(target), command=command,
+        environment={key: os.environ.get(key) for key in
+                     ('RUSTUP_TOOLCHAIN', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'CARGO_BUILD_TARGET')}), sort_keys=True)
+    cold = not (target/'gate').is_dir()
+    source = (directory/'source.stdout.log').read_text().strip()
+    before = resource.getrusage(resource.RUSAGE_CHILDREN)
+    status, wall_ms = capture(command, directory, name)
+    after = resource.getrusage(resource.RUSAGE_CHILDREN)
+    compile_records.append(dict(owner='benchmarks/'+command[command.index('-p')+1]+'/'+command[command.index('--bench')+1],
+        source=source, layout=layout, cold_target=cold, layout_changed=False,
+        cargo_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
+        cargo_wall_s=wall_ms/1000, cargo_and_run_cpu_s=0, calls=1,
+        scope='compile-only; shared gate target; waited no-run Cargo child'))
+    return status, wall_ms
+
+
+def campaign(mode, compile_records):
     directory = Path('.lane/benchmarks') / uuid.uuid4().hex
     directory.mkdir(parents=True)
     status, _ = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
@@ -295,7 +314,7 @@ def campaign(mode):
     (directory/'metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
     resource_sample(directory/'start.resources')
     start = time.monotonic()
-    summary, status = measured_workloads(mode, directory)
+    summary, status = measured_workloads(mode, directory, compile_records)
     wall = time.monotonic()-start
     resource_sample(directory/'end.resources')
     summary.update(artifact=str(directory), wall_s=wall, assessment='inconclusive',
@@ -305,7 +324,7 @@ def campaign(mode):
     return summary, status
 
 
-def run():
+def run(compile_records):
     registry = load_registry()
     workloads = tomllib.loads(Path('docs/inputs/harness-workloads.toml').read_text())['rows']
     if len({row['name'] for row in workloads}) != len(workloads) or not workloads:
@@ -339,8 +358,8 @@ def run():
     if cpu_info.exists():
         machine['cpu'] = next((line.split(':', 1)[1].strip() for line in cpu_info.read_text().splitlines() if line.startswith('model name')), machine['cpu'])
     (directory/'metadata.json').write_text(json.dumps(machine, indent=2)+'\n')
-    build_status, build_ms = capture(['cargo', 'bench', '-p', 'pn-interchange', '--bench', 'foundation',
-                                    '--profile', 'gate', '--no-run', '--locked', '--offline', '--message-format=json'], directory, 'build')
+    build_status, build_ms = capture_build(['cargo', 'bench', '-p', 'pn-interchange', '--bench', 'foundation',
+                                    '--profile', 'gate', '--no-run', '--locked', '--offline', '--message-format=json'], directory, 'build', compile_records)
     if build_status:
         return dict(status='failed', phase='build', artifact=str(directory), build_ms=build_ms), 1
     artifacts = [json.loads(line) for line in (directory/'build.stdout.log').read_text().splitlines() if line.startswith('{')]
@@ -379,7 +398,7 @@ def run():
         records.append(registry.join(record, source))
     records.append(registry.suite_event('foundation-benchmarks', (time.monotonic()-sample_started)*1000,
                                       'failed' if any(row['outcome'] == 'failed' for row in records) else 'passed', source))
-    additional, additional_status = measured_workloads('smoke', directory)
+    additional, additional_status = measured_workloads('smoke', directory, compile_records)
     (directory/'workload-smoke.json').write_text(json.dumps(additional, indent=2, allow_nan=False)+'\n')
     if additional_status:
         return dict(status='failed', phase='workload-smoke', artifact=str(directory)), 1
@@ -407,6 +426,7 @@ def run():
 
 
 def main():
+    compile_records = []
     try:
         if sys.stdout.isatty():
             print(json.dumps({'error': 'stdout terminal refused before benchmark effects'}), file=sys.stderr)
@@ -417,7 +437,7 @@ def main():
             return 2
         # Own any incidental Python output as well as both child streams.
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            summary, status = campaign(arguments[0][2:]) if arguments else run()
+            summary, status = campaign(arguments[0][2:], compile_records) if arguments else run(compile_records)
         print(json.dumps(summary, allow_nan=False), file=sys.stderr if status else sys.stdout)
         return status
     except BaseException as error:
@@ -425,6 +445,9 @@ def main():
         print(json.dumps({'error': str(error), 'exception': type(error).__name__,
                           'classification': 'structural' if structural else 'runtime'}), file=sys.stderr)
         return 2 if structural else 1
+    finally:
+        for row in compile_records:
+            print('ISOLATION-COMPILE '+json.dumps(row, allow_nan=False), file=sys.stderr, flush=True)
 
 
 if __name__ == '__main__':
