@@ -3,6 +3,7 @@ use super::*;
 static SERIAL: std::sync::Mutex<()> = std::sync::Mutex::new(());
 static OBSERVE_ERASE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static ERASED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub(super) static IDENTITY_CHECKS: AtomicUsize = AtomicUsize::new(0);
 
 pub(super) fn observe_erased(bytes: &[u8]) {
     if OBSERVE_ERASE.swap(false, Ordering::SeqCst) {
@@ -38,7 +39,7 @@ fn kernel_home() {
     let mut input = [0xa5; 32];
     let mut home = protection.import(&mut Staging::acquire(&mut input)).unwrap();
     assert_eq!(input, [0; 32]);
-    assert_eq!(&home.bytes()[..32], &[0xa5; 32]);
+    assert_eq!(&home.checked_bytes()[..32], &[0xa5; 32]);
     let address = home.pointer as usize;
     let mut handles = Vec::new();
     handles.push(home);
@@ -64,7 +65,7 @@ fn kernel_home() {
     for flag in ["lo", "dd", "dc"] {
         assert!(flags.split_whitespace().any(|value| value == flag), "{flags}");
     }
-    home.bytes().fill(0x5a);
+    home.checked_bytes().fill(0x5a);
     ERASED.store(false, Ordering::SeqCst);
     OBSERVE_ERASE.store(true, Ordering::SeqCst);
     drop(home);
@@ -183,7 +184,7 @@ fn namespace_identity() {
     assert_eq!(home.process.pid, std::process::id());
     assert!(!home.process.is_current());
     let refused = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        let _ = home.bytes();
+        let _ = home.checked_bytes();
     }));
     home.process = original;
     assert!(refused.is_err());
@@ -213,4 +214,101 @@ fn no_deref() {
     impl<T: ?Sized + std::ops::Deref> Ambiguous<u8> for T {}
     impl<T: ?Sized + std::ops::DerefMut> Ambiguous<u16> for T {}
     let _ = <Home as Ambiguous<_>>::probe;
+}
+
+/// Descriptor exhaustion in an isolated owning process cannot prevent one-check
+/// destruction from erasing the full mapping, releasing it and its reservation.
+/// ´claim:crypto:home-drop-survives-descriptor-exhaustion´
+/// ´test:unit:descriptor-exhaustion´
+#[test]
+fn descriptor_exhaustion() {
+    if std::env::var_os("PN_HOME_DESCRIPTOR_CHILD").is_none() {
+        let result = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::descriptor_exhaustion", "--nocapture"])
+            .env("PN_HOME_DESCRIPTOR_CHILD", "1")
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "{result:?}");
+        return;
+    }
+    let _serial = SERIAL.lock().unwrap();
+    let protection = protection();
+    let reserved = RESERVED.load(Ordering::SeqCst);
+    let locked = locked_kib();
+    let mut home = protection.generate(32).unwrap();
+    home.checked_bytes().fill(0xa5);
+    // read_dir temporarily opens one descriptor; retain the actual live set only.
+    let open: Vec<_> = std::fs::read_dir("/proc/self/fd")
+        .unwrap()
+        .map(|entry| entry.unwrap().file_name().to_str().unwrap().parse::<u64>().unwrap())
+        .collect();
+    let limit = open.into_iter().max().unwrap();
+    let original = rustix::process::getrlimit(Resource::Nofile);
+    rustix::process::setrlimit(
+        Resource::Nofile,
+        Rlimit {
+            current: Some(limit),
+            maximum: original.maximum,
+        },
+    )
+    .unwrap();
+    // Fill any holes below that limit; no descriptor at or above it can be opened.
+    let mut fillers = Vec::new();
+    let refused = loop {
+        match std::fs::File::open("/dev/null") {
+            Ok(file) => fillers.push(file),
+            Err(error) => break error,
+        }
+    };
+    assert_eq!(refused.raw_os_error(), Some(rustix::io::Errno::MFILE.raw_os_error()));
+    assert!(protection.process.is_current());
+    ERASED.store(false, Ordering::SeqCst);
+    OBSERVE_ERASE.store(true, Ordering::SeqCst);
+    let checks = IDENTITY_CHECKS.load(Ordering::SeqCst);
+    drop(home);
+    assert_eq!(IDENTITY_CHECKS.load(Ordering::SeqCst), checks + 1);
+    assert!(ERASED.load(Ordering::SeqCst));
+    assert_eq!(RESERVED.load(Ordering::SeqCst), reserved);
+    rustix::process::setrlimit(Resource::Nofile, original).unwrap();
+    drop(fillers);
+    assert_eq!(locked_kib(), locked);
+}
+
+/// A foreign PID with unchanged namespace and task handles refuses access and
+/// destruction; this isolates the same-namespace fork guard without executing fork.
+/// ´claim:crypto:home-foreign-pid-never-touches-mapping´
+/// ´test:unit:foreign-pid´
+#[test]
+fn foreign_pid() {
+    if std::env::var_os("PN_HOME_FOREIGN_CHILD").is_none() {
+        let result = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::foreign_pid", "--nocapture"])
+            .env("PN_HOME_FOREIGN_CHILD", "1")
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "{result:?}");
+        return;
+    }
+    let _serial = SERIAL.lock().unwrap();
+    let mut protection = protection();
+    let mut home = protection.generate(32).unwrap();
+    let reserved = RESERVED.load(Ordering::SeqCst);
+    let locked = locked_kib();
+    protection.process.pid ^= 1;
+    assert_eq!(protection.generate(32).unwrap_err(), Error::Process);
+    home.process.pid ^= 1;
+    assert!(
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _ = home.checked_bytes();
+        }))
+        .is_err()
+    );
+    ERASED.store(false, Ordering::SeqCst);
+    OBSERVE_ERASE.store(true, Ordering::SeqCst);
+    let checks = IDENTITY_CHECKS.load(Ordering::SeqCst);
+    drop(home);
+    assert_eq!(IDENTITY_CHECKS.load(Ordering::SeqCst), checks + 1);
+    assert!(!ERASED.load(Ordering::SeqCst));
+    assert_eq!(RESERVED.load(Ordering::SeqCst), reserved);
+    assert_eq!(locked_kib(), locked);
 }

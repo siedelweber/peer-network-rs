@@ -55,6 +55,8 @@ impl ProcessIdentity {
     }
 
     fn is_current(&self) -> bool {
+        #[cfg(test)]
+        tests::IDENTITY_CHECKS.fetch_add(1, Ordering::SeqCst);
         if self.pid != std::process::id() {
             return false;
         }
@@ -69,7 +71,7 @@ impl ProcessIdentity {
         }
         // Resolve through the retained proc directory, not a reusable PID path.
         // A fresh lookup cannot reuse a buffered proc read after the task exits.
-        std::fs::File::open(format!("/proc/self/fd/{}/stat", self.task.as_raw_fd())).is_ok()
+        std::fs::metadata(format!("/proc/self/fd/{}/stat", self.task.as_raw_fd())).is_ok()
     }
 }
 
@@ -233,7 +235,7 @@ impl Protection {
         }
         home.protect()?;
         home.lock()?;
-        fill(&mut home.bytes()[..size])?;
+        fill(&mut home.checked_bytes()[..size])?;
         Ok(home)
     }
 }
@@ -330,15 +332,20 @@ impl Home {
         Ok(())
     }
 
-    // Justified: The sole private byte view lends the owned initialized mapping for the duration of an exclusive borrow.
-    #[expect(unsafe_code, reason = "exclusive owned mapping bytes")]
-    fn bytes(&mut self) -> &mut [u8] {
+    // Justified: Operations establish the process identity before borrowing private mapping bytes.
+    fn checked_bytes(&mut self) -> &mut [u8] {
         assert!(
             self.process.is_current(),
             "mapping belongs to another process or identity is unavailable"
         );
+        self.bytes()
+    }
+
+    // Justified: The sole private byte view lends the owned initialized mapping after the caller's identity check.
+    #[expect(unsafe_code, reason = "exclusive owned mapping bytes")]
+    fn bytes(&mut self) -> &mut [u8] {
         assert!(!self.pointer.is_null());
-        // SAFETY: This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end.
+        // SAFETY: checked_bytes or Drop established this process as the owner before this private call, with no intervening fork or mapping invalidation. This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end.
         // (´[ROOT-cav:crypto:home-bytes]´)
         unsafe { std::slice::from_raw_parts_mut(self.pointer.cast(), self.len) }
     }

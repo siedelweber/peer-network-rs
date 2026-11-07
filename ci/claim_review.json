@@ -4652,6 +4652,22 @@
       "review": "A partial-fill error returns Entropy and releases the reservation; oversized import zeroes caller staging, zero length refuses, real OS acquisition succeeds, and a full declared mapping budget excludes a second allocation."
     },
     {
+      "operation": "pn-secret-home::tests::descriptor_exhaustion",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-drop-survives-descriptor-exhaustion",
+      "before": "",
+      "after": "Descriptor exhaustion in an isolated owning process cannot prevent one-check\ndestruction from erasing the full mapping, releasing it and its reservation.",
+      "review": "An isolated child lowers RLIMIT_NOFILE and exhausts every remaining descriptor slot, proves an open refuses EMFILE, then observes full-page erasure, reservation release and VmLck restoration. An identity-call counter requires exactly one check in Drop."
+    },
+    {
+      "operation": "pn-secret-home::tests::foreign_pid",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-foreign-pid-never-touches-mapping",
+      "before": "",
+      "after": "A foreign PID with unchanged namespace and task handles refuses access and\ndestruction; this isolates the same-namespace fork guard without executing fork.",
+      "review": "An isolated child substitutes only the recorded PID: acquisition refuses Process, checked byte access refuses, and Drop performs one check without erase, reservation decrement or unlocking. Existing equal-PID namespace and reaped-task controls remain. This does not claim an executed fork."
+    },
+    {
       "operation": "pn-secret-home::tests::kernel_home",
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:home-protections-and-erasure-are-observed",

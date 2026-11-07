@@ -26,7 +26,7 @@ path = "packages/secret-home/src/lib.rs"
 function = "bytes"
 label = "cav:crypto:home-bytes"
 expression = "std::slice::from_raw_parts_mut(self.pointer.cast(), self.len)"
-safety = "This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end."
+safety = "checked_bytes or Drop established this process as the owner before this private call, with no intervening fork or mapping invalidation. This owner's non-null live readable/writable anonymous mapping is zero-initialized. Its original length is within one allocation and isize::MAX. The exclusive self borrow bounds the slice lifetime and excludes other accesses; release requires that borrow to end."
 
 [[sites]]
 path = "packages/secret-home/src/lib.rs"

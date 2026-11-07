@@ -182,7 +182,7 @@
 | pn-records::public | active | public-surface | pn-records-rust | fast | 56 |
 | pn-secret-home::integration | active | integration | pn-secret-home-rust | fast | 1 |
 | pn-secret-home::public | active | public-surface | pn-secret-home-rust | fast | 1 |
-| pn-secret-home::unit | active | unit | pn-secret-home-rust | fast | 5 |
+| pn-secret-home::unit | active | unit | pn-secret-home-rust | fast | 7 |
 | pn-testkit | active | unit | pn-testkit-rust | fast | 4 |
 | pn-testkit::integration | active | integration | pn-testkit-rust | fast | 1 |
 | pn-testkit::public | active | public-surface | pn-testkit-rust | fast | 1 |
