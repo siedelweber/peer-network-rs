@@ -80,7 +80,8 @@ fn real_cancellation() {
         let pid: i32 = client.query_one("SELECT pg_backend_pid()", &[]).await.unwrap().get(0);
         let observer = Session::connect(configuration("unix.json")).await.unwrap();
         let statement = "SELECT pg_sleep(30)";
-        let activity = "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid = $1 AND state = 'active' AND query = $2)";
+        // Active alone also includes Parse; PgSleep proves Execute reached the sleep.
+        let activity = "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid = $1 AND state = 'active' AND query = $2 AND wait_event = 'PgSleep')";
         assert!(
             !observer
                 .client()

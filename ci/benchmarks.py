@@ -95,6 +95,29 @@ def workload_declarations(*, kinds=None):
 
 @lru_cache(maxsize=1)
 def validated_workload_content(text):
+    """Reuse this validator's own result only under complete byte equality."""
+    target = os.environ.get('CARGO_TARGET_DIR')
+    cache = Path(target)/'workload-validation.json' if target else None
+    checker = Path(__file__).read_text()
+    if cache is not None:
+        try:
+            saved = json.loads(cache.read_bytes())
+            if (set(saved) == {'text', 'checker', 'python', 'rows'}
+                    and saved['text'] == text and saved['checker'] == checker
+                    and saved['python'] == sys.version and isinstance(saved['rows'], list)):
+                return saved['rows']
+        except (OSError, ValueError, TypeError):
+            pass
+    rows = validate_workload_content(text)
+    if cache is not None:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        temporary = cache.with_name(cache.name+'.'+uuid.uuid4().hex+'.tmp')
+        temporary.write_text(json.dumps(dict(text=text, checker=checker, python=sys.version, rows=rows), allow_nan=False))
+        temporary.replace(cache)
+    return rows
+
+
+def validate_workload_content(text):
     rows = read_workload_carrier(text)['rows']
     if len({row['name'] for row in rows}) != len(rows):
         raise StructuralError('duplicate workload carrier identity')
@@ -166,7 +189,7 @@ def resource_sample(path):
 
 def measured_workloads(mode, directory):
     """Serial points have private outputs, per-point resources and nonbinding timings."""
-    rows = workload_declarations()
+    rows = workload_declarations(kinds=('policy', 'grid'))
     points = workload_points(rows, mode)
     targets = sorted({(point['package'], point['target'], tuple(point['features'])) for point in points})
     binaries = {}
@@ -264,7 +287,7 @@ def campaign(mode):
                     platform=platform.platform(), affinity=sorted(os.sched_getaffinity(0)),
                     machine=platform.node(), priority=os.getpriority(os.PRIO_PROCESS, 0),
                     lock_sha256=hashlib.sha256(Path('Cargo.lock').read_bytes()).hexdigest(),
-                    declarations=workload_declarations(),
+                    declarations=workload_declarations(kinds=('policy', 'grid')),
                     load=list(os.getloadavg()), utc=utc(), profile='gate',
                     allocation_measurement='transport decoder reservation counter only; otherwise unavailable',
                     memory_measurement='container cgroup readings; no per-point own peak measurement',
@@ -287,7 +310,7 @@ def run():
     workloads = tomllib.loads(Path('docs/inputs/harness-workloads.toml').read_text())['rows']
     if len({row['name'] for row in workloads}) != len(workloads) or not workloads:
         raise StructuralError('missing or duplicate benchmark workload')
-    grids = read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows']
+    grids = workload_declarations(kinds=('policy', 'grid'))
     registry.roster('benchmark', ['benchmark::'+row['name'] for row in workloads + workload_points(grids, 'smoke')])
     if any(row.get('correctness_case') not in registry.cases or not row.get('claim') for row in workloads + workload_points(grids, 'smoke')):
         raise StructuralError('benchmark lacks its registered correctness case or claim')
@@ -361,7 +384,7 @@ def run():
     if additional_status:
         return dict(status='failed', phase='workload-smoke', artifact=str(directory)), 1
     for point in additional['points']:
-        declaration = next(row for row in workload_points(read_workload_carrier(Path('docs/inputs/workload-benchmarks.toml').read_text())['rows'], 'smoke') if row['name'] == point['name'])
+        declaration = next(row for row in workload_points(grids, 'smoke') if row['name'] == point['name'])
         records.append(registry.join(dict(operation='benchmark::'+point['name'], source=source, configuration=CONFIGURATION,
                             implementation=declaration['implementation'], outcome=point['outcome'],
                             duration_ms=point['estimates']['mean']['point_estimate']/1_000_000,

@@ -846,8 +846,14 @@ def tier_summary(root, registry, worker_statuses):
             previous = json.loads((baseline_path.parent/'last-run.context').read_text())
         except (FileNotFoundError, ValueError):
             previous = {}
-        for row in step_cpu_context(step_cpu, previous):
-            print('GATE-STEP-CONTEXT '+json.dumps(dict(source=os.environ['PN_GATE_SOURCE'], **row), sort_keys=True), flush=True)
+    else:
+        previous = dict(source=baseline['source'], steps=baseline.get('step_cpu', {}))
+    for row in step_cpu_context(step_cpu, previous):
+        name = 'whole-tree-'+row['step']
+        if name in declared:
+            row.update(cpu_budget_s=declared[name]['budget_ms']/1000,
+                       budget=name, provisional=declared[name]['provisional'])
+        print('GATE-STEP-CONTEXT '+json.dumps(dict(source=os.environ['PN_GATE_SOURCE'], **row), sort_keys=True), flush=True)
     groups = {name: tier['steps'] for name, tier in registry.tiers.items() if 'steps' in tier}
     groups['finalize'] = registry.tiers['fast']['finalize_steps']
     if Counter(name for group in groups.values() for name in group) != Counter(row[0] for row in fields):

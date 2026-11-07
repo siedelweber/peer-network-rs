@@ -809,6 +809,33 @@ wait
             finding, = assess(dict(execution(101), operation='tier::fast', overrun_class=classification),
                 {'unit': {'budget_ms': 100, 'category': 'aggregate'}})
             self.assertEqual(finding['classification'], classification)
+        whole = {'unit': {'budget_ms': 100, 'category': 'aggregate', 'measurement': 'own-cpu'}}
+        with self.assertRaisesRegex(StructuralError, 'requires process-and-reaped-children CPU'):
+            assess(execution(101), whole)
+        self.assertEqual(assess(dict(execution(100), measurement='own-cpu', wall_ms=10000), whole), [])
+        finding, = assess(dict(execution(101), measurement='own-cpu', wall_ms=10000), whole)
+        self.assertEqual((finding['kind'], finding['classification'], finding['verdict_effect']),
+                         ('budget-excess', 'whole-tree-cpu-growth', 'none'))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'budgets.toml'
+            source = '''[[rows]]
+name = "whole-tree-probe"
+category = "aggregate"
+budget_ms = 100
+scope = "fixture CPU"
+reason = "fixture"
+measurement = "own-cpu"
+measured_cpu_ms = 80
+provisional = true
+measurement_source = "injected CPU"
+measurement_node = "fixture"
+'''
+            path.write_text(source)
+            self.assertEqual(budgets(path)['whole-tree-probe']['budget_ms'], 100)
+            for field in ('measurement = "own-cpu"', 'provisional = true', 'measured_cpu_ms = 80'):
+                path.write_text(source.replace(field, ''))
+                with self.assertRaisesRegex(StructuralError, 'whole-tree budget requires'):
+                    budgets(path)
 
     def test_version_mismatch(self):
         """An unreviewed stream version is refused before tests, preventing silent schema drift.

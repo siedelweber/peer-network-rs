@@ -36,6 +36,12 @@ def budgets(path):
             raise StructuralError('missing, duplicate or malformed budget declaration')
         if row.get('category') not in {'case', 'suite', 'aggregate', 'build'} or not row.get('scope') or not row.get('reason'):
             raise StructuralError(f'{name}: missing budget scope, category or reason')
+        if name.startswith('whole-tree-') and (
+                row.get('measurement') != 'own-cpu' or type(row.get('provisional')) is not bool
+                or not number(row.get('measured_cpu_ms')) or not 0 < row['measured_cpu_ms'] <= value
+                or not all(isinstance(row.get(key), str) and row[key]
+                           for key in ('measurement_source', 'measurement_node'))):
+            raise StructuralError('whole-tree budget requires measured CPU, source, node and provisional standing')
         result[name] = row
     if not result:
         raise StructuralError('missing budget declarations')
@@ -389,6 +395,8 @@ def assess(record, declared, registry=()):
     if 'utc' in record:
         utc(record['utc'])
     declaration = declared[record['budget']]
+    if declaration.get('measurement') == 'own-cpu' and record.get('measurement') != 'own-cpu':
+        raise StructuralError('whole-tree budget requires process-and-reaped-children CPU')
     threshold = declaration['budget_ms']
     admitted = [r for r in registry if r['name'] == record['operation'] and r['status'] == 'admitted']
     if len(admitted) > 1:
@@ -412,7 +420,7 @@ def assess(record, declared, registry=()):
         findings.append({**record, 'duration_ms': duration, 'kind': kind, 'budget_ms': threshold,
                          'baseline_ms': baseline, 'verdict_effect': 'none',
                          'admission': admitted[0]['label'] if admitted else None,
-                         'classification': record.get('overrun_class') or ('build-or-aggregate-misconfiguration' if declaration['category'] in
+                         'classification': record.get('overrun_class') or ('whole-tree-cpu-growth' if declaration.get('measurement') == 'own-cpu' else 'build-or-aggregate-misconfiguration' if declaration['category'] in
                          {'build', 'aggregate'} else 'performance')})
     return findings
 
@@ -486,6 +494,7 @@ def main():
     parser.add_argument('--input')
     parser.add_argument('--operation')
     parser.add_argument('--duration-s', type=float)
+    parser.add_argument('--own-cpu-log', type=Path)
     parser.add_argument('--outcome')
     parser.add_argument('--source', default='working tree')
     parser.add_argument('--budget', default='ordinary-check')
@@ -508,6 +517,16 @@ def main():
                             outcome=args.outcome, source=args.source, configuration='repository gate',
                             owner='foundation implementer', level='operation', suite='gate-operations',
                             implementation='repository-tools', tier='fast', applicable_budgets=[args.budget, 'gate'], utc=datetime.datetime.now(datetime.timezone.utc).isoformat().replace('+00:00', 'Z'))]
+        declared = budgets(args.budgets)
+        if not args.input and declared[args.budget].get('measurement') == 'own-cpu':
+            if args.input or args.own_cpu_log is None:
+                raise StructuralError('whole-tree budget requires its command CPU log')
+            from gate_resources import cpu_from_log
+            own = cpu_from_log(args.own_cpu_log.read_text().splitlines())
+            records[0].update(measurement='own-cpu', cpu_scope='process-and-reaped-children',
+                              budget_provisional=declared[args.budget]['provisional'],
+                              wall_ms=records[0]['duration_ms'],
+                              duration_ms=None if any(value is None for value in own) else sum(own)*1000)
         registry = tomllib.loads(Path(args.registry).read_text())['rows']
         if args.overrun_class:
             whole = args.operation == 'gate::whole' and args.budget == 'whole-gate'
@@ -516,7 +535,7 @@ def main():
             records[0]['overrun_class'] = args.overrun_class
             records[0]['tier'] = 'whole' if whole else args.operation.removeprefix('tier::')
             records[0]['applicable_budgets'] = [args.budget]
-        return report(records, budgets(args.budgets), args.findings, registry=registry)
+        return report(records, declared, args.findings, registry=registry)
     except (ValueError, KeyError, TypeError, OSError) as error:
         print(f'PERFORMANCE-STRUCTURAL-ERROR {error}', file=sys.stderr)
         return 2

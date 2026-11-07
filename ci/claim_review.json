@@ -1303,7 +1303,7 @@
       "claim": "DOCUMENTS::claim:render:repository-fixed-point",
       "before": "Claim: the committed datasets and documents are current in consecutive read-only checks.",
       "after": "Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.",
-      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+      "review": "The existing two full fixed-point passes remain. A private copy of the retained workload input and dataset first passes generation-check, then changing one digit of one retained sample produces exactly StaleDataset. The shared checkout and measured values remain untouched. Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
     },
     {
       "operation": "documents::integration::stale_rendering",
@@ -3240,7 +3240,7 @@
       "claim": "HOST::claim:host:cancellation-keeps-the-backend-capability-private",
       "before": "",
       "after": "Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.",
-      "review": "Re-reviewed the unchanged claim after replacing the query-start delay with a second-session pg_stat_activity observation, an initially inactive control and a 10 s observation/result deadline. The cancelled flag, QUERY_CANCELED cause and same-connection SELECT 17 recovery assertions remain. Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The observer now requires PgSleep as well as the session, active state and exact query: Parse cannot authorize cancellation. The unchanged deadline only fails; cancelled, QUERY_CANCELED and same-connection recovery assertions remain. Re-reviewed the unchanged claim after replacing the query-start delay with a second-session pg_stat_activity observation, an initially inactive control and a 10 s observation/result deadline. The cancelled flag, QUERY_CANCELED cause and same-connection SELECT 17 recovery assertions remain. Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
       "operation": "pn-host::postgresql::real_transports",

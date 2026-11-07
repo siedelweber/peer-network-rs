@@ -9155,6 +9155,246 @@
       },
       "reason": "The codec retains the complete malformed-field, variant, rational and canonical-byte refusal matrix.",
       "scope": "one pn-host::public::publication::refusals::publication_malformed_documents case"
+    },
+    {
+      "budget_ms": 36000,
+      "category": "aggregate",
+      "measured_cpu_ms": 29600,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Review round 159 T-001: near-quiet bench-graph-5 own CPU, CPU stall about 0.059.",
+      "name": "whole-tree-hash-citations",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "36 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "36 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "29 600",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "29 600",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": false,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Retained near-quiet hash audit CPU from review round 159; audited-byte growth did not explain its CPU.",
+      "scope": "process-and-reaped-children CPU for the complete hash-citations command"
+    },
+    {
+      "budget_ms": 18600,
+      "category": "aggregate",
+      "measured_cpu_ms": 15473,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Retained bridge lane gate context: maximum own CPU of the two reported adjacent runs; loaded, not a quiet calibration.",
+      "name": "whole-tree-build-graph",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "18 600",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "18 600",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "15 473",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 473",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Provisional: retained loaded bridge gate CPU, not a quiet calibration.",
+      "scope": "process-and-reaped-children CPU for the complete build-graph command"
+    },
+    {
+      "budget_ms": 15400,
+      "category": "aggregate",
+      "measured_cpu_ms": 12766,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Retained bridge lane gate context: maximum own CPU of the two reported adjacent runs; loaded, not a quiet calibration.",
+      "name": "whole-tree-claim-tests",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 400",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 400",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "12 766",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12 766",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Provisional: retained loaded bridge gate CPU, not a quiet calibration.",
+      "scope": "process-and-reaped-children CPU for the complete claim-tests command"
+    },
+    {
+      "budget_ms": 17700,
+      "category": "aggregate",
+      "measured_cpu_ms": 14710,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Retained bridge lane gate context: maximum own CPU of the two reported adjacent runs; loaded, not a quiet calibration.",
+      "name": "whole-tree-harness-tests",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "17 700",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "17 700",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "14 710",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "14 710",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Provisional: retained loaded bridge gate CPU, not a quiet calibration.",
+      "scope": "process-and-reaped-children CPU for the complete harness-tests command"
+    },
+    {
+      "budget_ms": 15600,
+      "category": "aggregate",
+      "measured_cpu_ms": 12963,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Retained bridge lane gate context: maximum own CPU of the two reported adjacent runs; loaded, not a quiet calibration.",
+      "name": "whole-tree-observation-tests",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 600",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 600",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "12 963",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12 963",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Provisional: retained loaded bridge gate CPU, not a quiet calibration.",
+      "scope": "process-and-reaped-children CPU for the complete observation-tests command"
+    },
+    {
+      "budget_ms": 21300,
+      "category": "aggregate",
+      "measured_cpu_ms": 17723,
+      "measurement": "own-cpu",
+      "measurement_node": "kranich",
+      "measurement_source": "Retained bridge lane gate context: maximum own CPU of the two reported adjacent runs; loaded, not a quiet calibration.",
+      "name": "whole-tree-testkit-tests",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "21 300",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "21 300",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "measured_cpu_ms": {
+          "exact": "17 723",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "17 723",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "measured_cpu_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Provisional: retained loaded bridge gate CPU, not a quiet calibration.",
+      "scope": "process-and-reaped-children CPU for the complete testkit-tests command"
     }
   ]
 }

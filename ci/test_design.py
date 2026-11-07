@@ -20,20 +20,23 @@ from design import PENDING_RENDERED_SPACING, PAPER_EDITION_FIXTURES, PAPER_TAG, 
 REPOSITORY = Path(__file__).resolve().parent.parent
 
 # Reuse the optimized interpreter. Each request executes the complete command
-# in a fresh module namespace and rereads the fixture tree. The workload reader
+# against its private fixture tree. The workload reader
 # may reuse validation only for identical content; mutations still cross the
 # real optimized boundary and changed content is checked afresh.
 CHECKER = r'''
-import contextlib, io, json, sys, traceback
+import contextlib, io, json, sys, traceback, os
 path = sys.argv[1]
 with open(path) as source:
     command = compile(source.read(), path, 'exec')
+namespace = {'__name__': 'correspondence_fixture', '__file__': path}
+exec(command, namespace)
 for request in sys.stdin:
+    os.chdir(json.loads(request))
     output, errors = io.StringIO(), io.StringIO()
     status = 0
     with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
         try:
-            exec(command, {'__name__': '__main__', '__file__': path})
+            namespace['main']()
         except SystemExit as error:
             status = error.code
         except Exception:
@@ -62,12 +65,17 @@ def compact_json_content(text):
 
 
 class Correspondence(unittest.TestCase):
+    checker = None
+
     def test_content_cache_refusals(self):
         """Identical bytes reuse parsing; private projections cannot poison it and changed sample inventory still refuses.
         ´claim:design:content-reuse-retains-sample-refusals´
         ´test:integration:test-content-cache-refusals´
         """
         import benchmarks
+        cache_scope = patch.dict(os.environ, CARGO_TARGET_DIR=str(self.root/'validation-cache'))
+        cache_scope.start()
+        self.addCleanup(cache_scope.stop)
         policy = dict(kind='policy', name='fixture', samples=10, warmup_ms=100, measurement_ms=1000,
                       resamples=1000, sampling='flat', seed=0, profile='gate', outcomes=['passed'])
         point = dict(kind='point', name='point', outcome='passed', scope='fixture', wall_s=1.0, own_cpu_s=1.0,
@@ -80,6 +88,8 @@ class Correspondence(unittest.TestCase):
             self.assertTrue(benchmarks.workload_declarations())
         self.assertEqual(benchmarks.validated_workload_content.cache_info().misses, 1)
         self.assertEqual(benchmarks.validated_workload_content.cache_info().hits, 1)
+        with patch.object(benchmarks.Path, 'read_text', return_value=original):
+            self.assertEqual([row['kind'] for row in benchmarks.workload_declarations(kinds=('policy', 'grid'))], ['policy'])
         changed = benchmarks.read_workload_carrier(original)
         point = next(row for row in changed['rows'] if row['kind'] == 'point' and row['outcome'] == 'passed')
         point['sample_times_ns'].pop()
@@ -87,6 +97,29 @@ class Correspondence(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'sample inventory'):
                 benchmarks.workload_declarations(kinds=('policy', 'grid'))
         self.assertNotEqual(compact_json_content('{"value":1}'), compact_json_content('{"value":2}'))
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, CARGO_TARGET_DIR=directory):
+            benchmarks.validated_workload_content.cache_clear()
+            expected = benchmarks.validated_workload_content(original)
+            benchmarks.validated_workload_content.cache_clear()
+            with patch.object(benchmarks, 'validate_workload_content', side_effect=AssertionError('unchanged evidence revalidated')):
+                self.assertEqual(benchmarks.validated_workload_content(original), expected)
+            benchmarks.validated_workload_content.cache_clear()
+            with self.assertRaisesRegex(ValueError, 'sample inventory'):
+                benchmarks.validated_workload_content(benchmarks.write_workload_carrier(changed))
+            cache = Path(directory)/'workload-validation.json'
+            saved = json.loads(cache.read_text())
+            saved['checker'] += '\n'
+            cache.write_text(json.dumps(saved))
+            benchmarks.validated_workload_content.cache_clear()
+            with patch.object(benchmarks, 'validate_workload_content', wraps=benchmarks.validate_workload_content) as validate_again:
+                self.assertEqual(benchmarks.validated_workload_content(original), expected)
+                validate_again.assert_called_once_with(original)
+        from design import paper_edition_mentions
+        paper_edition_mentions.cache_clear()
+        self.assertEqual(paper_edition_mentions('network-v0.31.1'), ((1, 'network-v0.31.1'),))
+        self.assertEqual(paper_edition_mentions('network-v0.31.1'), ((1, 'network-v0.31.1'),))
+        self.assertEqual(paper_edition_mentions.cache_info().hits, 1)
+        self.assertEqual(paper_edition_mentions('network-v0.31.0'), ((1, 'network-v0.31.0'),))
 
     def published_registry(self):
         import tomllib
@@ -206,21 +239,22 @@ class Correspondence(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPOSITORY / name, destination)
         git(self.root, 'add', '.')
-        self.checker = None
 
-    def close_checker(self):
-        self.checker.stdin.close()
-        self.checker.wait(timeout=10)
-        self.checker.stdout.close()
-        self.checker.stderr.close()
+    @classmethod
+    def close_checker(cls):
+        cls.checker.stdin.close()
+        cls.checker.wait(timeout=10)
+        cls.checker.stdout.close()
+        cls.checker.stderr.close()
+        cls.checker = None
 
     def check(self):
         command = [sys.executable, '-B', '-O', '-u', '-c', CHECKER, str(REPOSITORY / 'ci/design.py')]
         if self.checker is None:
-            self.checker = subprocess.Popen(command, cwd=self.root, stdin=subprocess.PIPE,
+            type(self).checker = subprocess.Popen(command, cwd=self.root, stdin=subprocess.PIPE,
                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            self.addCleanup(self.close_checker)
-        self.checker.stdin.write('check\n')
+            self.addClassCleanup(self.close_checker)
+        self.checker.stdin.write(json.dumps(str(self.root))+'\n')
         self.checker.stdin.flush()
         response = self.checker.stdout.readline()
         if not response:

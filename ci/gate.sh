@@ -105,9 +105,11 @@ run_step() {
     if [ "$name" = service-tests ]; then budget=service-gate; fi
     if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
+        hash-citations|build-graph|claim-tests|harness-tests|observation-tests|testkit-tests) budget="whole-tree-$name" ;;
         clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|host-observation-build|observation-parser) budget=incremental-build ;;
     esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
+        --own-cpu-log ".lane/gate-${name}.log" \
         --outcome "exit:$status" --source "$source_id" --budget "$budget" \
         --findings .lane/performance-findings.jsonl
     if [ "$?" -ne 0 ]; then failed=1; fi

@@ -7,6 +7,7 @@ import json
 import math
 import os
 from fractions import Fraction
+from functools import lru_cache
 from pathlib import Path
 import re
 import subprocess
@@ -68,14 +69,20 @@ def check_paper_editions(paths):
             binary += 1
             continue
         checked += 1
-        for number, line in enumerate(source.splitlines(), 1):
-            for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]+)?', line, re.IGNORECASE):
-                mentions += 1
-                if match.group().casefold() != PAPER_TAG.casefold():
-                    findings.append(f'{path}:{number}: stale paper edition {match.group()} (current {PAPER_TAG})')
+        for number, mention in paper_edition_mentions(source):
+            mentions += 1
+            if mention.casefold() != PAPER_TAG.casefold():
+                findings.append(f'{path}:{number}: stale paper edition {mention} (current {PAPER_TAG})')
     print(f'PAPER-EDITIONS files={checked} mentions={mentions} binary={binary} exempt={exempt} refused={len(findings)}')
     if findings:
         raise ValueError('\n'.join(findings))
+
+
+@lru_cache(maxsize=128)
+def paper_edition_mentions(source):
+    """Only identical bytes reuse lexical work; paths and the current tag remain checked."""
+    return tuple((number, match.group()) for number, line in enumerate(source.splitlines(), 1)
+                 for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]+)?', line, re.IGNORECASE))
 
 
 def bare_mint_pattern(labels):
@@ -592,10 +599,14 @@ def numeric_correspondence():
     print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived={derived} displays={len(projected)}')
 
 
-if __name__ == '__main__':
+def main():
     validate()
     numeric_correspondence()
     check_rendered_spacing(tracked_paths(), whole_tree=True, parent=parent_rendered_spacing())
     check_numeric_word_fragments([path for path in tracked_paths()
                                   if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md', 'adr/021-development-performance.md', 'adr/016-observability.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])
+
+
+if __name__ == '__main__':
+    main()

@@ -398,6 +398,34 @@ fn repository_fixed_point() -> Result<()> {
         );
         assert_eq!(documents::run(&root, Operation::Check)?.findings, Vec::<Finding>::new());
     }
+    retained_sample_refusal(&root)?;
+    Ok(())
+}
+
+fn retained_sample_refusal(root: &Path) -> Result<()> {
+    let directory = fixture()?;
+    let inputs = directory.path().join("docs/inputs");
+    let datasets = directory.path().join("docs/datasets");
+    let source = root.join("docs/inputs/workload-benchmarks.toml");
+    let input = inputs.join("workload-benchmarks.toml");
+    fs::copy(&source, &input)?;
+    fs::copy(
+        root.join("docs/datasets/org.peer-network.workload.benchmarks.json"),
+        datasets.join("org.peer-network.workload.benchmarks.json"),
+    )?;
+    assert_eq!(
+        documents::run(directory.path(), Operation::Generate { check: true })?.findings,
+        Vec::<Finding>::new()
+    );
+    let mut bytes = fs::read(&input)?;
+    let text = std::str::from_utf8(&bytes)?;
+    let start = text.find("sample_times_ns = [").ok_or("retained sample array")? + "sample_times_ns = [".len();
+    assert!(bytes[start].is_ascii_digit());
+    bytes[start] = if bytes[start] == b'1' { b'2' } else { b'1' };
+    fs::write(&input, bytes)?;
+    let changed = documents::run(directory.path(), Operation::Generate { check: true })?;
+    assert_eq!(changed.findings.len(), 1);
+    assert_eq!(changed.findings[0].kind, FindingKind::StaleDataset);
     Ok(())
 }
 
