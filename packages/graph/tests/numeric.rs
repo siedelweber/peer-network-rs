@@ -7,6 +7,8 @@ mod singleton_residual;
 pub mod pins;
 use pins::NumberId;
 
+#[path = "numeric/bounded.rs"]
+mod bounded;
 #[path = "numeric/controller.rs"]
 mod controller;
 #[path = "numeric/corpus.rs"]

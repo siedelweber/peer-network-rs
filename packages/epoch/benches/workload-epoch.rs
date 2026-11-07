@@ -26,7 +26,7 @@ impl Accepted for pn_epoch::compiler::CompiledState {
         true
     }
 }
-impl Accepted for conserved::compact::records::SolveRecord {
+impl Accepted for conserved::bounded::records::SolveRecord {
     fn work_fields(&self, name: &str) -> String {
         if name.starts_with("B7-") {
             format!("work={} replay_work={}", self.work, self.work)
@@ -43,7 +43,7 @@ impl Accepted for conserved::compact::records::SolveRecord {
         true
     }
 }
-impl Accepted for conserved::compact::Record {
+impl Accepted for conserved::bounded::Record {
     fn accepted(&self) -> bool {
         true
     }
@@ -54,7 +54,7 @@ impl Accepted for conserved::compact::Record {
             &self.production
         };
         format!(
-            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=applied-dyadic-v2",
+            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=bounded-activation-v3",
             self.solve.work_fields(name),
             a.setup,
             a.map_passes.iter().sum::<u64>(),
@@ -246,8 +246,8 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
     }
 }
 
-fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::compact::Record) {
-    let checked = conserved::compact::replay(bound, record).unwrap();
+fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::bounded::Record) {
+    let checked = conserved::bounded::replay(activation_plan(), bound, record).unwrap();
     assert_eq!(
         checked.solve.rounds.last().unwrap().standing,
         record.solve.rounds.last().unwrap().standing
@@ -301,10 +301,10 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                         &names[1],
                         &metadata,
                         || (),
-                        |()| conserved::compact::solve(&bound, &accepted).map_err(Box::new),
+                        |()| conserved::bounded::solve(activation_plan(), &bound, &accepted).map_err(Box::new),
                     )
                 } else {
-                    Measurement(conserved::compact::solve(&bound, &accepted).map_err(Box::new))
+                    Measurement(conserved::bounded::solve(activation_plan(), &bound, &accepted).map_err(Box::new))
                 };
                 // B7 consumes this exact B6 API result, never an independently generated case.
                 match produced.0 {
@@ -314,7 +314,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                             "{metadata} M_solve={} M_replay={} {}",
                             input.m,
                             input.m,
-                            inputs::compact_counters(&record.solve)
+                            inputs::bounded_counters(&record.solve)
                         );
                         if selected(&names[1]) {
                             append_metadata(output, &names[1], &metadata);
@@ -327,7 +327,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                                 &names[2],
                                 &metadata,
                                 || (),
-                                |()| conserved::compact::replay(&bound, &record).map_err(Box::new),
+                                |()| conserved::bounded::replay(activation_plan(), &bound, &record).map_err(Box::new),
                             );
                         }
                     }
@@ -561,7 +561,7 @@ fn compact_metadata(
     construction_s: f64,
 ) -> String {
     format!(
-        "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} {}",
+        "recipe=scaling-workloads/v2 seed={seed} {} construction_s={} procedure={p:?} activation_plan={:?} {}",
         format_args!(
             "N={} M={} Z={} H={} cells={} products={} S=1",
             input.n,
@@ -578,6 +578,12 @@ fn compact_metadata(
             state.view().support.support_visits
         ),
         construction_s,
+        activation_plan(),
         limits(p)
     )
+}
+
+// Explicit fixture option selected from the kernel-3 scalar pilot; not a deployment default.
+fn activation_plan() -> conserved::bounded::Plan {
+    conserved::bounded::Plan { working_precision: 32 }
 }

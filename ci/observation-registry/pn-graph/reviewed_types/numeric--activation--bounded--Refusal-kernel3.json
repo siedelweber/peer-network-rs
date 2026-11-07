@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::bounded::Refusal",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "syntax": "# [doc = \" A refused numerical plan supplies no approximate scalar authority.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Refusal { OutsideDomain , BelowNormalOperand , NonDyadicExponent , TargetNotCertifiable , }"
+  }
+}

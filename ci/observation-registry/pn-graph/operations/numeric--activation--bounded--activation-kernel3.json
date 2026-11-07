@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "item": "numeric::activation::bounded::activation",
+    "owner": "GRAPH",
+    "signature": "fn activation (input : & super :: Request , constants : & [Interval ; 2] , policy : & nrz_cas :: enclosure :: RefinementPolicy , operation_precision : u32 , b : & mut Budget ,) -> Result < Interval , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/bounded.rs::numeric::activation::bounded::activation",
+    "body": "{ if ! matches ! (input . quantity , super :: Quantity :: Responsive | super :: Quantity :: Clamped) { return Err (refused (Refusal :: OutsideDomain)) ; } let grid = policy . grid_ceiling ; if operation_precision > grid { return Err (refused (Refusal :: TargetNotCertifiable)) ; } let mut standing = Interval :: new (Rational :: parse (& input . standing . lower , b) ? , Rational :: parse (& input . standing . upper , b) ? , b ,) ? ; if standing . lower () . is_negative () { return Err (refused (Refusal :: OutsideDomain)) ; } normal (& standing , b) ? ; for value in constants { normal (value , b) ? ; } let wall = match (& input . wall , & input . wall_enclosure) { (Some (value) , None) => Some (Interval :: singleton (& Rational :: parse (value , b) ? , b) ?) , (None , Some (value)) => Some (Interval :: new (Rational :: parse (& value . lower , b) ? , Rational :: parse (& value . upper , b) ? , b ,) ?) , (None , None) => None , _ => return Err (refused (Refusal :: OutsideDomain)) , } ; if matches ! (input . quantity , super :: Quantity :: Clamped) != wall . is_some () { return Err (refused (Refusal :: OutsideDomain)) ; } if let Some (wall) = wall { if wall . lower () . is_zero () || wall . lower () . is_negative () { return Err (refused (Refusal :: OutsideDomain)) ; } normal (& wall , b) ? ; standing = standing . maximum (& wall , grid , b) ? ; } let one = scalar (1 , b) ? ; let reduced = standing . mul (& one . add (& standing , grid , b) ? . reciprocal (grid , b) ? , grid , b) ? ; domain (& reduced , 0 , 1 , b) ? ; let temperature = constants [0] . mul (& reduced , grid , b) ? ; let sigmoid = sigmoid (& temperature , operation_precision , grid , policy . term_ceiling , b) ? ; let hyperbolic = tanh (& reduced , operation_precision , grid , policy . term_ceiling , b) ? ; let bleed = Rational :: parse (& input . bleed_squared , b) ? ; if bleed . is_negative () || ! bleed . compare (& integer (1 , b) ? , b) ? . is_lt () { return Err (refused (Refusal :: OutsideDomain)) ; } let bleed = Interval :: singleton (& bleed , b) ? ; normal (& bleed , b) ? ; let leak = bleed . mul (& hyperbolic , grid , b) ? ; let radicand = hyperbolic . mul (& one . sub (& leak , grid , b) ? , grid , b) ? ; let unnormalized = sigmoid . mul (& square_root (& radicand , grid , b) ? , grid , b) ? ; if constants [1] . lower () . is_zero () || constants [1] . lower () . is_negative () { return Err (refused (Refusal :: OutsideDomain)) ; } let normalized = unnormalized . mul (& constants [1] . reciprocal (grid , b) ? , grid , b) ? ; domain (& normalized , 0 , 2 , b) ? ; let first = square_root (& normalized , grid , b) ? ; let result = square_root (& first , grid , b) ? ; if ! attained (& result , policy . precision , false , b) ? { return Err (refused (Refusal :: TargetNotCertifiable)) ; } Ok (result) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

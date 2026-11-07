@@ -228,3 +228,7 @@ pub fn replay(
 /// Explicit applied-dyadic procedure revision.
 /// (´[ROOT-rule:design:evaluation-schedule]´)
 pub mod compact;
+
+/// Bounded activation revision three, explicitly selected by its caller.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+pub mod bounded;

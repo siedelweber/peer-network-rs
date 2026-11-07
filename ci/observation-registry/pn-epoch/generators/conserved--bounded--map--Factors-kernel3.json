@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "conserved::bounded::map::Factors",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/map.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "conserved-public-evaluation",
+    "expansion_review": "Generated traits retain only complete public original numerical declarations, checked certificates, deterministic counters and exact request keys; no secret material, subscriber or publication encoder is present."
+  }
+}

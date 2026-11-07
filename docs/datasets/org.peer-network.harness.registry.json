@@ -1803,6 +1803,22 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::workload_correctness::bounded_activation_solves"
+      ],
+      "composition_reasons": {
+        "pn-epoch::workload_correctness::bounded_activation_solves": "Independent numerical oracle and complete procedure replay with typed refusal mutations."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-epoch::bounded-activation-conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-epoch::cells::cell_tables",
         "pn-epoch::cells::cell_incidence",
         "pn-epoch::cells::invitation_charges",
@@ -2255,6 +2271,24 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::numeric::bounded::bounded_activation_oracle",
+        "pn-graph::numeric::bounded::bounded_elementary_contracts"
+      ],
+      "composition_reasons": {
+        "pn-graph::numeric::bounded::bounded_activation_oracle": "Independent numerical oracle and complete procedure replay with typed refusal mutations.",
+        "pn-graph::numeric::bounded::bounded_elementary_contracts": "Independent numerical oracle and complete procedure replay with typed refusal mutations."
+      },
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-graph::bounded-activation-contracts",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
     },
     {
       "budget": "pure-suite",

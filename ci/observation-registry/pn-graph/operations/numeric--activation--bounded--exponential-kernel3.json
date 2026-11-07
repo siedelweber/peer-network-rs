@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "item": "numeric::activation::bounded::exponential",
+    "owner": "GRAPH",
+    "signature": "fn exponential (value : & Interval , precision : u32 , grid : u32 , terms : u32 , minus_one : bool , b : & mut Budget ,) -> Result < Interval , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/bounded.rs::numeric::activation::bounded::exponential",
+    "body": "{ domain (value , - 2 , 0 , b) ? ; let lower = exponential_endpoint (value . lower () , precision , grid , terms , minus_one , b) ? ; let upper = exponential_endpoint (value . upper () , precision , grid , terms , minus_one , b) ? ; Ok (Interval :: new (lower . lower () . clone () , upper . upper () . clone () , b) ?) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

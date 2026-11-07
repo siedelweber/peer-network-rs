@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numeric::activation::bounded::Error",
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "syntax": "# [doc = \" Resource exhaustion remains distinct from a fallback-eligible plan refusal.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"bounded activation plan: {0:?}\")] Refused (Refusal) , # [error (\"bounded activation arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "item": "numeric::activation::bounded::power",
+    "owner": "GRAPH",
+    "signature": "fn power (value : & Interval , exponent : & Rational , grid : u32 , b : & mut Budget) -> Result < Interval , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/bounded.rs::numeric::activation::bounded::power",
+    "body": "{ domain (value , 0 , 2 , b) ? ; if value . lower () . is_zero () { return Err (refused (Refusal :: OutsideDomain)) ; } let negative = exponent . is_negative () ; let magnitude = if negative { exponent . negated (b) ? } else { exponent . clone () } ; let (numerator , denominator) = magnitude . small_ratio (b) ? . ok_or_else (| | refused (Refusal :: TargetNotCertifiable)) ? ; if ! denominator . is_power_of_two () { return Err (refused (Refusal :: NonDyadicExponent)) ; } let mut base = value . clone () ; for _ in 0 .. denominator . trailing_zeros () { base = square_root (& base , grid , b) ? ; } let mut result = scalar (1 , b) ? ; let mut count = numerator ; while count > 0 { if count % 2 == 1 { result = result . mul (& base , grid , b) ? ; } count /= 2 ; if count != 0 { base = base . mul (& base , grid , b) ? ; } } if negative { if result . lower () . is_zero () { return Err (refused (Refusal :: TargetNotCertifiable)) ; } Ok (result . reciprocal (grid , b) ?) } else { Ok (result) } }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

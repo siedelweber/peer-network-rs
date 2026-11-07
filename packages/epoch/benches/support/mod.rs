@@ -339,7 +339,7 @@ pub fn compact_scaling_procedure(state: &compiler::compact::CompiledState, bits:
     p
 }
 
-pub fn compact_counters(r: &pn_epoch::conserved::compact::records::SolveRecord) -> String {
+pub fn bounded_counters(r: &pn_epoch::conserved::bounded::records::SolveRecord) -> String {
     let k: usize = r.rounds.iter().map(|r| r.proposals.len()).sum();
     let primitive_count: usize = r
         .rounds

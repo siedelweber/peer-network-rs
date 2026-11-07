@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/map.rs",
+    "item": "conserved::bounded::map::<Factors < '_ , '_ > as pn_graph :: transport :: applied :: HopFactors>::at",
+    "owner": "EPOCH",
+    "signature": "fn at (& mut self , depth : usize , b : & mut Budget) -> Result < Vec < Interval > , pn_graph :: transport :: applied :: Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/bounded/map.rs::conserved::bounded::map::<Factors < '_ , '_ > as pn_graph :: transport :: applied :: HopFactors>::at",
+    "body": "{ self . checks . memo . clear () ; let start = self . checks . budget . usage () . work ; let outside = b . usage () . work . checked_sub (start) . ok_or (pn_graph :: transport :: applied :: Error :: Scope) ? ; self . checks . policy . maximum_work = self . remaining . checked_sub (outside) . ok_or (pn_graph :: transport :: applied :: Error :: Scope) ? ; let result = if self . zero { Ok (self . values . to_vec ()) } else { powers (self . checks , self . values , & self . exponents [depth ..= depth]) . map (| mut v | v . remove (0)) } ; match result { Ok (values) => { b . work (self . checks . budget . usage () . work - start , Location :: new (\"prepared hop powers\")) ? ; Ok (values) } Err (e) => { self . error = Some (e) ; Err (pn_graph :: transport :: applied :: Error :: Scope) } } }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

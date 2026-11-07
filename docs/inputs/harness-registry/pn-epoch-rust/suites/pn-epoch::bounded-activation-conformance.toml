@@ -1,0 +1,10 @@
+kind = "suite"
+status = "active"
+level = "integration"
+budget = "pure-suite"
+implementation = "pn-epoch-rust"
+name = "pn-epoch::bounded-activation-conformance"
+runner = "nextest"
+tier = "extended"
+cases = ["pn-epoch::workload_correctness::bounded_activation_solves"]
+composition_reasons = { "pn-epoch::workload_correctness::bounded_activation_solves" = "Independent numerical oracle and complete procedure replay with typed refusal mutations." }

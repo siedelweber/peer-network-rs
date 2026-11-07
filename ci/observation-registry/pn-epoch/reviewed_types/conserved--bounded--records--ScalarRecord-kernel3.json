@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::bounded::records::ScalarRecord",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/records.rs",
+    "syntax": "# [doc = \" Original operands and the bounded plan's measured result, before any exact fallback.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ScalarRecord { pub input : ScalarInput , pub result : Result < nrz_cas :: enclosure :: Interval , pn_graph :: numeric :: activation :: bounded :: Refusal > , pub work : u64 , }"
+  }
+}

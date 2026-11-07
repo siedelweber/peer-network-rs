@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::bounded::map::Factors",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/map.rs",
+    "syntax": "# [derive (Debug)] struct Factors < 'a , 'b > { checks : & 'a mut Checks < 'b > , values : & 'a [Interval] , exponents : & 'a [String] , zero : bool , remaining : u64 , error : Option < Error > , }"
+  }
+}

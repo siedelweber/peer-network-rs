@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::bounded::records::MapRecord",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/records.rs",
+    "syntax": "# [doc = \" A map's original point, ordered scalar premises and outward dyadic composition.\"] # [doc = \" Work is the producer's consumption; replay measures its own independent consumption.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MapRecord { pub edition : pn_records :: DeclarationId , pub boundary : u64 , pub point : BTreeMap < String , String > , pub rung : String , pub precision : u32 , pub wall_enclosure : Option < pn_records :: primitive :: Range > , pub primitives : Vec < PrimitiveRecord > , pub bounded : Vec < ScalarRecord > , pub image : BTreeMap < String , Bounds > , pub transport : pn_graph :: transport :: applied :: Output , pub work : u64 , pub composition_work : u64 , }"
+  }
+}

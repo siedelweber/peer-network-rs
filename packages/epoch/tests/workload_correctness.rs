@@ -341,7 +341,7 @@ fn compact_solve_agreement() {
         let old_checked = prepared::replay(&old_bound, &old_record).unwrap();
         let record = compact::solve(&new_bound, &bf).unwrap();
         let checked = compact::replay(&new_bound, &record).unwrap();
-        assert!(inputs::compact_counters(&record.solve).contains("K="));
+        assert!(compact_counters(&record.solve).contains("K="));
         let limits = Limits {
             work: 100_000_000,
             ..Limits::default()
@@ -408,6 +408,166 @@ fn compact_solve_agreement() {
             Err(pn_epoch::conserved::Error::Scope)
         ));
     }
+}
+
+/// Claim: Bounded activation replay reconstructs its scalar results and Work and refuses a changed plan, revision or scalar result; independent revision-two residual enclosures overlap on the declared small fixtures.
+/// ´claim:numerics:bounded-activation-solves-replay´
+/// ´test:integration:bounded-activation-solves´
+#[test]
+fn bounded_activation_solves() {
+    use nrz_cas::{Rational, limits::Budget};
+    use pn_epoch::{
+        compiler,
+        conserved::{bounded, compact},
+        solve,
+    };
+    for (n, shape) in [(3, "dense"), (2, "ring")] {
+        let fixture = candidate(inputs::SEED, n, None, shape, "pass");
+        let state = compiler::compact::compile_candidate(
+            &fixture.context,
+            &fixture.approval,
+            &mut inputs::numeric(),
+            Limits::default(),
+            inputs::PRODUCTS,
+        )
+        .unwrap();
+        let procedure = inputs::compact_scaling_procedure(&state, 16);
+        let bound = solve::compact::bind_procedure(&state, procedure.clone(), &Published(procedure), Limits::default()).unwrap();
+        let fence = pn_epoch::fence::compact::search(&bound, None).unwrap();
+        let old = compact::solve(&bound, &fence).unwrap();
+        compact::replay(&bound, &old).unwrap();
+        let plan = bounded::Plan { working_precision: 32 };
+        let result = bounded::solve(plan, &bound, &fence).unwrap();
+        let checked = bounded::replay(plan, &bound, &result).unwrap();
+        assert!(inputs::bounded_counters(&result.solve).contains("K="));
+        assert_eq!(checked.solve.rounds.len(), result.solve.rounds.len());
+        for (a, b) in checked.solve.rounds.iter().zip(&result.solve.rounds) {
+            assert_eq!(a.standing, b.standing);
+            assert_eq!(a.residual, b.residual);
+            assert_eq!(a.radius, b.radius);
+            assert_eq!(a.certified.bounded, b.certified.bounded);
+            assert_eq!(a.proposals.len(), b.proposals.len());
+            for (a, b) in a.proposals.iter().zip(&b.proposals) {
+                assert_eq!(a.bounded, b.bounded);
+                assert_eq!(a.image, b.image);
+            }
+        }
+        assert_eq!(
+            result.solve.work,
+            result.production.setup
+                + result.production.driver_work
+                + result.production.map_passes.iter().sum::<u64>()
+                + result.production.final_checks.iter().sum::<u64>()
+        );
+        assert_eq!(
+            result.solve.replay_work,
+            result.mandatory_replay.setup
+                + result.mandatory_replay.driver_work
+                + result.mandatory_replay.map_passes.iter().sum::<u64>()
+                + result.mandatory_replay.final_checks.iter().sum::<u64>()
+        );
+        let mut budget = Budget::new(Limits::default()).unwrap();
+        for (a, b) in old.solve.rounds.iter().zip(&checked.solve.rounds) {
+            for (actor, a) in &a.standing {
+                let b = &b.standing[actor];
+                assert!(
+                    !Rational::parse(&a.lower, &mut budget)
+                        .unwrap()
+                        .compare(&Rational::parse(&b.upper, &mut budget).unwrap(), &mut budget)
+                        .unwrap()
+                        .is_gt()
+                );
+                assert!(
+                    !Rational::parse(&b.lower, &mut budget)
+                        .unwrap()
+                        .compare(&Rational::parse(&a.upper, &mut budget).unwrap(), &mut budget)
+                        .unwrap()
+                        .is_gt()
+                );
+            }
+        }
+        assert!(
+            result
+                .solve
+                .rounds
+                .iter()
+                .any(|r| r.certified.bounded.iter().any(|s| s.result.is_ok()))
+        );
+        bounded_refusals(&bound, &old, &result, &fence);
+        if n == 2 {
+            bounded_non_dyadic(&state);
+        }
+    }
+}
+fn bounded_non_dyadic(state: &pn_epoch::compiler::compact::CompiledState) {
+    use pn_epoch::{conserved::bounded, solve};
+    let mut procedure = inputs::compact_scaling_procedure(state, 16);
+    procedure.grid = vec!["1/3".into(), "0".into()];
+    let bound = solve::compact::bind_procedure(state, procedure.clone(), &Published(procedure), Limits::default()).unwrap();
+    let fence = pn_epoch::fence::compact::search(&bound, None).unwrap();
+    assert_eq!(fence.selected.as_deref(), Some("1/3"));
+    let plan = bounded::Plan { working_precision: 32 };
+    let record = bounded::solve(plan, &bound, &fence).unwrap();
+    bounded::replay(plan, &bound, &record).unwrap();
+    assert!(record.solve.rounds.iter().any(|r| {
+        r.certified
+            .bounded
+            .iter()
+            .any(|s| s.result == Err(pn_graph::numeric::activation::bounded::Refusal::NonDyadicExponent))
+    }));
+    assert!(record.solve.rounds.iter().any(|r| r.certified.primitives.iter().any(|s| {
+        s.query
+            .nodes
+            .iter()
+            .any(|n| matches!(n, pn_records::primitive::Node::PositivePower(_, exponent) if exponent == "1/3"))
+    })));
+}
+fn bounded_refusals(
+    bound: &pn_epoch::solve::compact::BoundProcedure<'_>,
+    old: &pn_epoch::conserved::compact::Record,
+    result: &pn_epoch::conserved::bounded::Record,
+    fence: &pn_epoch::fence::Search,
+) {
+    use pn_epoch::conserved::{bounded, compact};
+    let plan = result.plan;
+    let mut changed = result.clone();
+    changed.revision.clone_from(&old.revision);
+    assert!(matches!(
+        bounded::replay(plan, bound, &changed),
+        Err(pn_epoch::conserved::Error::Scope)
+    ));
+    let mut changed_old = old.clone();
+    changed_old.revision.clone_from(&result.revision);
+    assert!(matches!(
+        compact::replay(bound, &changed_old),
+        Err(pn_epoch::conserved::Error::Scope)
+    ));
+    assert!(matches!(
+        bounded::replay(bounded::Plan { working_precision: 48 }, bound, result),
+        Err(pn_epoch::conserved::Error::Scope)
+    ));
+    let mut changed = result.clone();
+    changed.solve.rounds[0].certified.bounded[0].work += 1;
+    assert!(matches!(
+        bounded::replay(plan, bound, &changed),
+        Err(pn_epoch::conserved::Error::Map)
+    ));
+    let mut changed = result.clone();
+    changed.solve.rounds[0].certified.bounded[0].result = Err(pn_graph::numeric::activation::bounded::Refusal::OutsideDomain);
+    assert!(matches!(
+        bounded::replay(plan, bound, &changed),
+        Err(pn_epoch::conserved::Error::Map)
+    ));
+    let fallback_plan = bounded::Plan { working_precision: 16 };
+    let fallback = bounded::solve(fallback_plan, bound, fence).unwrap();
+    bounded::replay(fallback_plan, bound, &fallback).unwrap();
+    assert!(fallback.solve.rounds.iter().any(|r| {
+        r.certified
+            .bounded
+            .iter()
+            .any(|s| s.result == Err(pn_graph::numeric::activation::bounded::Refusal::TargetNotCertifiable))
+    }));
+    assert!(fallback.solve.rounds.iter().any(|r| r.certified.primitives.len() > 2));
 }
 
 /// Claim: On explicit chain and hub support over a checked ledger, compact extrema equal the independent reachability oracle and visit only HZ edges with three N-sized buffers; one fewer permitted edge visit refuses.
@@ -558,4 +718,22 @@ fn scaling_procedure(state: &pn_epoch::compiler::CompiledState, bits: u32) -> pn
     e.operation.arithmetic_steps = 1_000_000_000;
     e.store = e.operation.clone();
     p
+}
+
+fn compact_counters(r: &pn_epoch::conserved::compact::records::SolveRecord) -> String {
+    let k: usize = r.rounds.iter().map(|r| r.proposals.len()).sum();
+    let primitive_count: usize = r
+        .rounds
+        .iter()
+        .map(|r| r.certified.primitives.len() + r.proposals.iter().map(|p| p.primitives.len()).sum::<usize>())
+        .sum();
+    let transcript = format!("{r:?}");
+    format!(
+        "K={k} precision_rounds={} primitive_count={primitive_count} solve_work={} replay_work={} diagnostic_transcript_bytes={} retained_heap_bytes=unavailable-no-allocator-counter residuals={:?}",
+        r.rounds.len(),
+        r.work,
+        r.replay_work,
+        transcript.len(),
+        r.rounds.iter().map(|r| &r.residual).collect::<Vec<_>>()
+    )
 }

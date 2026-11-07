@@ -1,0 +1,10 @@
+kind = "suite"
+status = "active"
+level = "integration"
+budget = "pure-suite"
+implementation = "pn-graph-rust"
+name = "pn-graph::bounded-activation-contracts"
+runner = "nextest"
+tier = "extended"
+cases = ["pn-graph::numeric::bounded::bounded_activation_oracle", "pn-graph::numeric::bounded::bounded_elementary_contracts"]
+composition_reasons = { "pn-graph::numeric::bounded::bounded_activation_oracle" = "Independent numerical oracle and complete procedure replay with typed refusal mutations.", "pn-graph::numeric::bounded::bounded_elementary_contracts" = "Independent numerical oracle and complete procedure replay with typed refusal mutations." }

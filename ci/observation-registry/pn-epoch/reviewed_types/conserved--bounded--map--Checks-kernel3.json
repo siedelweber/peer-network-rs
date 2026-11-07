@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::bounded::map::Checks",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/map.rs",
+    "syntax": "# [derive (Debug)] struct Checks < 'a > { plan : super :: Plan , bounded : Vec < ScalarRecord > , expected_bounded : Option < & 'a [ScalarRecord] > , policy : Procedure , supplied : Option < & 'a [PrimitiveRecord] > , records : Vec < PrimitiveRecord > , memo : & 'a mut BTreeMap < Query , PrimitiveRecord > , receiver : & 'a mut numeric :: Prepared , budget : Budget , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-graph",
+    "path": "packages/graph/src/numeric/activation/bounded.rs",
+    "item": "numeric::activation::bounded::square_root",
+    "owner": "GRAPH",
+    "signature": "fn square_root (value : & Interval , grid : u32 , b : & mut Budget) -> Result < Interval , Error >",
+    "claim": "ROOT::sig:design:graph",
+    "mode": "instrumented",
+    "shape": "shape-graph"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/numeric/activation/bounded.rs::numeric::activation::bounded::square_root",
+    "body": "{ domain (value , 0 , 2 , b) ? ; let lower = root_endpoint (value . lower () , grid , b) ? ; let upper = root_endpoint (value . upper () , grid , b) ? ; Ok (Interval :: new (lower . lower () . clone () , upper . upper () . clone () , b) ?) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

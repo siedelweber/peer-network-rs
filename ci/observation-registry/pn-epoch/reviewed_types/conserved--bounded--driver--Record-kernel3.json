@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::bounded::driver::Record",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/bounded/driver.rs",
+    "syntax": "# [doc = \" Explicit procedure revision, pinned by the API and checked on replay.\"] # [doc = \" No legacy record is silently upgraded or accepted as this procedure's record.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub revision : String , pub plan : super :: Plan , pub solve : SolveRecord , pub production : Accounting , pub mandatory_replay : Accounting , }"
+  }
+}
