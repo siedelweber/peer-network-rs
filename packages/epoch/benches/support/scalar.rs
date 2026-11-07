@@ -3,7 +3,10 @@ pub mod pins;
 use pins::NumberId as N;
 use pn_records::{primitive::Range, solve::Procedure};
 
-pub fn ridge(p: &Procedure, cap: u32) -> (Procedure, pn_records::ridge::Inputs, pn_records::ridge::Record) {
+pub fn ridge(
+    p: &Procedure,
+    cap: u32,
+) -> Result<(Procedure, pn_records::ridge::Inputs, pn_records::ridge::Record), pn_graph::numeric::ridge::Error> {
     let mut p = p.clone();
     let bits = u32::try_from(N::NumbersRidgeCertificatePrecision.integer()).unwrap();
     p.precision = pn_records::solve::Precision::AbsoluteWidthBits(vec![bits]);
@@ -29,8 +32,8 @@ pub fn ridge(p: &Procedure, cap: u32) -> (Procedure, pn_records::ridge::Inputs, 
         maximum_work: N::NumbersReferenceWorkCeiling.integer(),
         maximum_replay_work: N::NumbersReferenceWorkCeiling.integer(),
     };
-    let r = pn_graph::numeric::ridge::evaluate(&p, &input).unwrap();
-    (p, input, r)
+    let r = pn_graph::numeric::ridge::evaluate(&p, &input)?;
+    Ok((p, input, r))
 }
 pub fn rational(
     p: &Procedure,
@@ -64,7 +67,7 @@ pub fn rational(
     Ok((input, r))
 }
 pub fn check(p: &Procedure) {
-    let (p, i, r) = ridge(p, 1);
+    let (p, i, r) = ridge(p, 1).unwrap();
     let checked = pn_graph::numeric::ridge::replay(&p, &i, &r).unwrap();
     assert_eq!(checked.image(), r.image.as_ref());
     let mut bad = r.clone();

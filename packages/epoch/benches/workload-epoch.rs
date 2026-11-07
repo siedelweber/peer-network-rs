@@ -417,7 +417,13 @@ fn admissions(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
             }
             let input = inputs::candidate(seed, 2, Some(m), "self", outcome);
             let control = inputs::candidate(seed, 2, Some(m), "self", "pass");
-            let state = inputs::compile(&control).unwrap();
+            let state = match inputs::compile(&control) {
+                Ok(state) => state,
+                Err(error) => {
+                    std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/typed-construction-v3 seed={seed} M={m} outcome=REFUSED phase=control-construction refusal={error:?}\n")).unwrap();
+                    continue;
+                }
+            };
             let p = inputs::procedure(&state, 8);
             let plan = admission::FinalProcedure {
                 solve: p.clone(),
@@ -427,7 +433,7 @@ fn admissions(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
             let schedule = inputs::schedule(&input, if outcome == "policy" { "1000" } else { "2" });
             let published = Published(p);
             let metadata = format!(
-                "recipe=scaling-workloads/v2 seed={seed} M={m} N=2 S=1 intended={outcome} plan={plan:?} {}",
+                "recipe=scaling-workloads/typed-construction-v3 seed={seed} M={m} N=2 S=1 intended={outcome} plan={plan:?} {}",
                 limits(&plan.solve)
             );
             measure(group, output, mode, &name, &metadata, inputs::numeric, |numeric| {
@@ -496,9 +502,19 @@ fn scalars(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u6
             let state = inputs::compile(&input).unwrap();
             let p = inputs::procedure(&state, 16);
             inputs::scalar::check(&p);
-            let metadata = format!("recipe=scaling-workloads/v2 seed={seed} route={route} cap={cap}");
+            let metadata = format!("recipe=scaling-workloads/typed-construction-v3 seed={seed} route={route} cap={cap}");
             if route == "ridge" {
-                let (p, i, r) = inputs::scalar::ridge(&p, cap);
+                let (p, i, r) = match inputs::scalar::ridge(&p, cap) {
+                    Ok(produced) => produced,
+                    Err(error) => {
+                        std::fs::write(
+                            output.join(format!("{name}.txt")),
+                            format!("{metadata} outcome=REFUSED phase=transcript-construction refusal={error:?}\n"),
+                        )
+                        .unwrap();
+                        continue;
+                    }
+                };
                 measure(
                     group,
                     output,

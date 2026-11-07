@@ -3211,6 +3211,14 @@
       "review": "Read all eight chain/hub inputs: each size and topology reaches both full emission with ordered rates and half emission with rotated unsorted rates; independent matrix containment and sparse allocation controls remain."
     },
     {
+      "operation": "pn-graph::workload_correctness::transport_construction_refusals",
+      "path": "packages/graph/tests/workload_correctness.rs",
+      "claim": "GRAPH::claim:numerics:workload-transport-builders-retain-resource-causes",
+      "before": "Claim: The dense transport fixture builders return the original typed Work exhaustion instead of panicking at construction or interval conversion.",
+      "after": "Claim: The dense transport fixture builders return the original typed Work exhaustion instead of panicking at construction or interval conversion.",
+      "review": "The former default budget is passed explicitly to retain both original typed Work refusals. The separately sized constructor admits the largest dense fixture; operation and oracle ceilings are asserted unchanged."
+    },
+    {
       "operation": "pn-host::config::tests::secret_json_grammar",
       "path": "packages/host/src/config.rs",
       "claim": "HOST::claim:host:secret-json-has-one-field-interpretation",
@@ -3368,7 +3376,7 @@
       "claim": "HOST::claim:publication:canonical-disclosure-roundtrip",
       "before": "Claim: Canonical publication bytes retain the complete two-boundary disclosure and restore the same admitted package under a declared host-side fixture verifier; byte decoding alone conveys no admission or cryptographic authority.",
       "after": "Claim: Canonical publication bytes retain the complete two-boundary disclosure and restore the same admitted package under a declared host-side fixture verifier; byte decoding alone conveys no admission or cryptographic authority.",
-      "review": "Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
+      "review": "The benchmark decode-control helper is exercised on the same complete positive bytes and under an exhausted Work budget, requiring the decoder's original CanonicalNumber refusal. Read the independent positive control and the refusing mutation assertions. Scope is disclosure representation and the explicitly declared fixture verifier, never cryptographic validity or production deployment admission."
     },
     {
       "operation": "pn-host::public::publication::refusals::publication_malformed_documents",

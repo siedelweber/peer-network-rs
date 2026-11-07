@@ -326,7 +326,7 @@ fn successor(
     check: &mut Check,
     closed: &ClosedBoundary,
     led: &schedules::CheckedSchedule,
-) -> (Frame, ClosedBoundary, pn_epoch::compiler::CompiledState) {
+) -> Result<(Frame, ClosedBoundary, pn_epoch::compiler::CompiledState), String> {
     let mut frame = carrier.frames.last().unwrap().clone();
     let index = carrier.frames.len() + 1;
     let boundary = u64::try_from(index).unwrap();
@@ -341,26 +341,28 @@ fn successor(
         policy: frame.marker_policy.clone(),
         history: frame.marker_history.clone(),
     })
-    .unwrap();
+    .map_err(|error| format!("{error:?}"))?;
     let declarations = pn_records::validate_record(
         &[],
-        &pn_records::validate_history(&[], &[]).unwrap(),
+        &pn_records::validate_history(&[], &[]).map_err(|error| format!("{error:?}"))?,
         &carrier.causes.declarations,
     )
-    .unwrap();
-    let constants = pn_records::constants::bind_constants(&declarations, carrier.causes.editions.clone()).unwrap();
+    .map_err(|error| format!("{error:?}"))?;
+    let constants = pn_records::constants::bind_constants(&declarations, carrier.causes.editions.clone())
+        .map_err(|error| format!("{error:?}"))?;
     frame.parameters.boundary = boundary;
-    let inputs = pn_epoch::bind_inputs(&constants, frame.parameters.clone(), Limits::default()).unwrap();
+    let inputs =
+        pn_epoch::bind_inputs(&constants, frame.parameters.clone(), Limits::default()).map_err(|error| format!("{error:?}"))?;
     let mut context = numeric();
     let wall = context
         .literal(&led.record().publications.last().unwrap().effective.wall)
-        .unwrap();
-    let wall = context.computed(&wall).unwrap();
+        .map_err(|error| format!("{error:?}"))?;
+    let wall = context.computed(&wall).map_err(|error| format!("{error:?}"))?;
     let price = context
         .charged_price(&wall, &inputs.parameters().numeraire, Floor::RationalThreeThirtySevenths)
-        .unwrap();
+        .map_err(|error| format!("{error:?}"))?;
     let mut input = check.candidates.last().unwrap().clone();
-    input.causes.history = pn_records::validate_history(&carrier.causes.acts, &[]).unwrap();
+    input.causes.history = pn_records::validate_history(&carrier.causes.acts, &[]).map_err(|error| format!("{error:?}"))?;
     input.causes.markers = markers.clone();
     input.causes.inputs.push(inputs.clone());
     input.causes.prices.push(price.clone());
@@ -381,9 +383,9 @@ fn successor(
     input.closure.opened_at = closed.record().statement.determined_at;
     input.closure.determined_at = input.closure.opened_at + input.closure.policy.maximum_ticks;
     let causes = Causes(input.clone());
-    let candidate = package::verify_candidate(input.clone(), &causes, &causes).unwrap();
+    let candidate = package::verify_candidate(input.clone(), &causes, &causes).map_err(|error| format!("{error:?}"))?;
     frame.procedure = procedure(&candidate);
-    let partition = closure::partition(&candidate).unwrap();
+    let partition = closure::partition(&candidate).map_err(|error| format!("{error:?}"))?;
     let second = closure::close(
         &ClosureInput {
             candidate: &candidate,
@@ -396,8 +398,8 @@ fn successor(
         &Published(frame.procedure.solve.clone()),
         numeric(),
     )
-    .unwrap();
-    let admitted = run(&candidate, &frame.procedure, led).unwrap();
+    .map_err(|error| format!("{error:?}"))?;
+    let admitted = run(&candidate, &frame.procedure, led).map_err(|error| format!("{error:?}"))?;
     let state = pn_epoch::compiler::compile_admitted(
         &admitted,
         &RawVerifier,
@@ -405,12 +407,8 @@ fn successor(
         Limits::default(),
         frame.procedure.maximum_products,
     )
-    .unwrap();
-    check.candidates.push(input);
-    frame.sequence = check
-        .candidates
-        .last()
-        .unwrap()
+    .map_err(|error| format!("{error:?}"))?;
+    frame.sequence = input
         .causes
         .bindings
         .last()
@@ -419,30 +417,36 @@ fn successor(
         .iter()
         .map(|act| act.id().clone())
         .collect();
+    check.candidates.push(input);
     check.procedures.push(frame.procedure.solve.clone());
     let published = Published(frame.procedure.solve.clone());
-    let bound = bind_procedure(&state, frame.procedure.solve.clone(), &published, Limits::default()).unwrap();
-    let fence = pn_epoch::fence::search(&bound, None).unwrap();
-    frame.standing = pn_epoch::conserved::solve(&bound, &fence).unwrap();
+    let bound = bind_procedure(&state, frame.procedure.solve.clone(), &published, Limits::default())
+        .map_err(|error| format!("{error:?}"))?;
+    let fence = pn_epoch::fence::search(&bound, None).map_err(|error| format!("{error:?}"))?;
+    frame.standing = pn_epoch::conserved::solve(&bound, &fence).map_err(|error| format!("{error:?}"))?;
     frame.price = price.disclosure();
-    (frame, second, state)
+    Ok((frame, second, state))
 }
-pub(super) fn series(count: usize, bytes: usize) -> (publication::AdmittedPackage, Check) {
+pub(super) fn series(count: usize, bytes: usize) -> Result<(publication::AdmittedPackage, Check), String> {
     assert!(count > 0);
     let (mut closed, mut carrier, mut check) = fixture(bytes);
-    let mut admitted = publication::assemble(&closed, carrier.clone(), &check).unwrap();
+    let mut admitted = publication::assemble(&closed, carrier.clone(), &check).map_err(|error| format!("{error:?}"))?;
     let mut states = vec![];
     while carrier.frames.len() < count {
         states.push(
-            pn_epoch::compiler::compile_admitted(admitted.boundary(), &check, &mut numeric(), Limits::default(), 10_000).unwrap(),
+            pn_epoch::compiler::compile_admitted(admitted.boundary(), &check, &mut numeric(), Limits::default(), 10_000)
+                .map_err(|error| format!("{error:?}"))?,
         );
         let bound: Vec<_> = states
             .iter()
             .zip(&check.procedures)
-            .map(|(state, plan)| bind_procedure(state, plan.clone(), &check, Limits::default()).unwrap())
-            .collect();
+            .map(|(state, plan)| {
+                bind_procedure(state, plan.clone(), &check, Limits::default()).map_err(|error| format!("{error:?}"))
+            })
+            .collect::<Result<_, _>>()?;
         let old = &carrier.frames.last().unwrap().next;
-        let declaration = admission::declare_schedule(old.declaration.clone(), Limits::default()).unwrap();
+        let declaration =
+            admission::declare_schedule(old.declaration.clone(), Limits::default()).map_err(|error| format!("{error:?}"))?;
         let search = old.publications[0].proposal.search.clone();
         let boundaries: Vec<_> = bound
             .iter()
@@ -455,15 +459,17 @@ pub(super) fn series(count: usize, bytes: usize) -> (publication::AdmittedPackag
                 policy_floor: None,
             })
             .collect();
-        let led = schedules::replay(&declaration, &boundaries, None, Limits::default(), old).unwrap();
+        let led =
+            schedules::replay(&declaration, &boundaries, None, Limits::default(), old).map_err(|error| format!("{error:?}"))?;
         let boundary = u64::try_from(carrier.frames.len() + 1).unwrap();
         for position in 1..=2 {
             let mut next = act("Opinion", "a", (boundary - 1) * 2 + position, boundary);
             next.authoritative_position = position;
             carrier.causes.acts.push(next);
         }
-        let (mut frame, next_closed, state) = successor(&carrier, &mut check, &closed, &led);
-        let final_bound = bind_procedure(&state, frame.procedure.solve.clone(), &check, Limits::default()).unwrap();
+        let (mut frame, next_closed, state) = successor(&carrier, &mut check, &closed, &led)?;
+        let final_bound = bind_procedure(&state, frame.procedure.solve.clone(), &check, Limits::default())
+            .map_err(|error| format!("{error:?}"))?;
         let mut boundaries = boundaries;
         let index = u64::try_from(count.min(carrier.frames.len() + 1)).unwrap();
         boundaries.push(schedules::Boundary {
@@ -473,14 +479,15 @@ pub(super) fn series(count: usize, bytes: usize) -> (publication::AdmittedPackag
             effective_at: index + 1,
             policy_floor: None,
         });
-        frame.next = schedules::evaluate(&declaration, &boundaries, None, Limits::default()).unwrap();
+        frame.next =
+            schedules::evaluate(&declaration, &boundaries, None, Limits::default()).map_err(|error| format!("{error:?}"))?;
         frame.compiled = state.view().clone();
         frame.closure = next_closed.record().clone();
         carrier.frames.push(frame);
         closed = next_closed;
-        admitted = publication::assemble(&closed, carrier.clone(), &check).unwrap();
+        admitted = publication::assemble(&closed, carrier.clone(), &check).map_err(|error| format!("{error:?}"))?;
     }
     assert_eq!(admitted.carrier().frames.len(), count);
     assert_eq!(admitted.carrier().causes.acts.len(), count * 2);
-    (admitted, check)
+    Ok((admitted, check))
 }

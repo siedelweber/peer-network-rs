@@ -106,6 +106,13 @@ pub(super) fn finish(output: &Path, mode: &str) {
         )
     )
     .unwrap();
+    let recipe = header
+        .split_whitespace()
+        .find_map(|value| value.strip_prefix("recipe="))
+        .unwrap();
+    if name().starts_with("transport-") {
+        assert_eq!(recipe, "scaling-workloads/transport-construction-v3");
+    }
     let receipt = format!(
         "{{\"name\":{},\"size\":{},\"variant\":{},\"mode\":{},\"run\":{},\"correctness\":\"passed\",\"outcome\":{},\"reason\":{},\"dimensions\":{},\"setup_s\":{},\"setup_scope\":\"reported setup component; constructor then fresh-context when available; process wall retains all setup and correctness\",\"teardown_s\":null,\"teardown_scope\":\"owned output destruction is timed by Criterion; no separate teardown clock\",\"bit_lengths\":null,\"bit_lengths_reason\":\"not exposed by these public counters\",\"memory\":null,\"memory_reason\":\"no owned allocator counter; runner records container cgroup scope\",\"limits_and_evidence\":{} }}",
         string(&name()),
@@ -122,6 +129,11 @@ pub(super) fn finish(output: &Path, mode: &str) {
             .find(|v| v != "null")
             .unwrap_or_else(|| "null".into()),
         string(&evidence)
+    );
+    let receipt = format!(
+        "{{\"recipe_edition\":{},{}",
+        string(recipe),
+        receipt.strip_prefix('{').unwrap()
     );
     std::fs::write(std::env::var_os("PN_BENCH_RECEIPT").unwrap(), receipt).unwrap();
 }

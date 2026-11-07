@@ -99,7 +99,7 @@ fn transports(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
                     for interval in [false, true] {
                         let name = format!("B4-transport-n{n}-dense{dense}-enclosed{interval}");
                         if selected(&name) {
-                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/v2 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", setup.elapsed().as_secs_f64())).unwrap();
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/transport-construction-v3 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", setup.elapsed().as_secs_f64())).unwrap();
                         }
                     }
                     continue;
@@ -112,7 +112,7 @@ fn transports(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
                     continue;
                 }
                 if let Err(error) = &oracle {
-                    std::fs::write(output.join(format!("{name}.txt")),format!("recipe=scaling-workloads/v2 seed={seed} N={n} Z={} H=1 outcome=REFUSED phase=untimed-cross-oracle refusal={error:?} setup_s={}\n",if dense {n*n}else{2*n},setup.as_secs_f64())).unwrap();
+                    std::fs::write(output.join(format!("{name}.txt")),format!("recipe=scaling-workloads/transport-construction-v3 seed={seed} N={n} Z={} H=1 outcome=REFUSED phase=untimed-cross-oracle refusal={error:?} setup_s={}\n",if dense {n*n}else{2*n},setup.as_secs_f64())).unwrap();
                     continue;
                 }
                 let (elapsed, expected, work) = if interval {
@@ -129,7 +129,7 @@ fn transports(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed:
                     let elapsed = start.elapsed();
                     (elapsed, format!("{result:?}"), arithmetic.budget.usage().work - before)
                 };
-                std::fs::write(output.join(format!("{name}.txt")),format!("recipe=scaling-workloads/v2 seed={seed} N={n} Z={} H=1 maximum_cells={} work={work} oracle_work_limit={} setup_s={} pilot_operation_s={} outcome={expected}\n",if dense {n*n}else{2*n},inputs::CELLS,inputs::ORACLE_WORK,setup.as_secs_f64(),elapsed.as_secs_f64())).unwrap();
+                std::fs::write(output.join(format!("{name}.txt")),format!("recipe=scaling-workloads/transport-construction-v3 seed={seed} N={n} Z={} H=1 maximum_cells={} work={work} oracle_work_limit={} setup_s={} pilot_operation_s={} outcome={expected}\n",if dense {n*n}else{2*n},inputs::CELLS,inputs::ORACLE_WORK,setup.as_secs_f64(),elapsed.as_secs_f64())).unwrap();
                 if mode != "pilot" {
                     if interval {
                         group.bench_function(receipt::name(), |b| {

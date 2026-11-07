@@ -10,6 +10,15 @@ use std::collections::BTreeMap;
 
 pub const SEED: u64 = 0;
 pub const CELLS: usize = 1_000_000;
+// Twice the largest measured construction usage, rounded up independently.
+pub const CONSTRUCTION_WORK: u64 = 140_000_000;
+pub fn construction_limits() -> Limits {
+    Limits {
+        work: CONSTRUCTION_WORK,
+        arithmetic_steps: 5_000_000,
+        ..Limits::default()
+    }
+}
 // Oracle is independently bounded and excluded from operation measurements.
 pub fn operation_limits() -> Limits {
     Limits {
@@ -113,8 +122,11 @@ impl ExactArithmetic for Arithmetic {
     }
 }
 pub fn transport(seed: u64, n: usize, dense: bool) -> Result<TransportInput<Rational>, nrz_cas::Fault> {
-    let mut b = Budget::new(Limits::default())?;
-    let mut number = |v: u64| Rational::parse(&v.to_string(), &mut b);
+    let mut b = Budget::new(construction_limits())?;
+    transport_in(seed, n, dense, &mut b)
+}
+pub fn transport_in(seed: u64, n: usize, dense: bool, b: &mut Budget) -> Result<TransportInput<Rational>, nrz_cas::Fault> {
+    let mut number = |v: u64| Rational::parse(&v.to_string(), b);
     let mut rows = Vec::new();
     for i in 0..n {
         let mut row = BTreeMap::new();
@@ -136,8 +148,11 @@ pub fn transport(seed: u64, n: usize, dense: bool) -> Result<TransportInput<Rati
     })
 }
 pub fn enclosed(input: &TransportInput<Rational>) -> Result<TransportInput<Interval>, nrz_cas::Fault> {
-    let mut b = Budget::new(Limits::default())?;
-    let mut singleton = |v: &Rational| Interval::singleton(v, &mut b);
+    let mut b = Budget::new(construction_limits())?;
+    enclosed_in(input, &mut b)
+}
+pub fn enclosed_in(input: &TransportInput<Rational>, b: &mut Budget) -> Result<TransportInput<Interval>, nrz_cas::Fault> {
+    let mut singleton = |v: &Rational| Interval::singleton(v, b);
     Ok(TransportInput {
         hops: input
             .hops
@@ -166,18 +181,24 @@ pub fn check_transport(seed: u64, n: usize, dense: bool) -> Result<(), KernelErr
         &mut Budget::new(oracle_limits()).unwrap(),
         CELLS,
     )?;
-    let mut b = Budget::new(Limits::default()).unwrap();
+    let mut b = Budget::new(oracle_limits()).map_err(fault)?;
     for (i, (v, r)) in exact.standing.iter().zip(&range.standing).enumerate() {
-        assert_eq!(v.exact_string(&mut b).unwrap(), r.lower().exact_string(&mut b).unwrap());
-        assert_eq!(v.exact_string(&mut b).unwrap(), r.upper().exact_string(&mut b).unwrap());
+        assert_eq!(
+            v.exact_string(&mut b).map_err(fault)?,
+            r.lower().exact_string(&mut b).map_err(fault)?
+        );
+        assert_eq!(
+            v.exact_string(&mut b).map_err(fault)?,
+            r.upper().exact_string(&mut b).map_err(fault)?
+        );
         // Independent one-hop regular-graph oracle: each column has the same degree.
         let sources: Vec<_> = (0..n).filter(|j| dense || *j == i || (*j + 1) % n == i).collect();
         let sum: u64 = sources
             .iter()
             .map(|j| 2 + ((u64::try_from(*j).unwrap() + seed) % n as u64))
             .sum();
-        let oracle = Rational::parse(&format!("{sum}/{}", sources.len()), &mut b).unwrap();
-        assert_eq!(v.compare(&oracle, &mut b).unwrap(), std::cmp::Ordering::Equal);
+        let oracle = Rational::parse(&format!("{sum}/{}", sources.len()), &mut b).map_err(fault)?;
+        assert_eq!(v.compare(&oracle, &mut b).map_err(fault)?, std::cmp::Ordering::Equal);
     }
     assert_eq!(
         input.hops[0].iter().map(BTreeMap::len).sum::<usize>(),

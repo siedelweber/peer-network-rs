@@ -8,6 +8,8 @@ mod golden;
 mod mutations;
 #[path = "refusals.rs"]
 mod refusals;
+#[path = "../../../benches/support/control.rs"]
+mod workload;
 
 /// Claim: Canonical publication bytes retain the complete two-boundary disclosure and restore the same admitted package under a declared host-side fixture verifier; byte decoding alone conveys no admission or cryptographic authority.
 /// ´claim:publication:canonical-disclosure-roundtrip´
@@ -19,6 +21,17 @@ fn publication_codec_roundtrip() {
     let raw = admitted.disclosures();
     let bytes = pn_host::publication::encode(&raw, &mut base::numeric(), wire_limits()).unwrap();
     let decoded = decode_exact(&bytes);
+    assert_eq!(
+        workload::decode_control(&bytes, &raw, &mut base::numeric(), wire_limits()).unwrap(),
+        raw
+    );
+    let mut exhausted = wire_limits();
+    exhausted.work = 1;
+    let refusal = workload::decode_control(&bytes, &raw, &mut base::numeric(), exhausted);
+    assert!(
+        matches!(refusal, Err(pn_host::publication::Error::CanonicalNumber)),
+        "{refusal:?}"
+    );
     assert_eq!(decoded, raw);
     let mut shuffled = raw.clone();
     shuffled.causes.acts.reverse();

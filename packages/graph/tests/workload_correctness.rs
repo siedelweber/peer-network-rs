@@ -57,7 +57,8 @@ fn scaling_transport_oracle() {
 /// ´test:integration:transport-construction-refusals´
 #[test]
 fn transport_construction_refusals() {
-    let large = inputs::transport(0, 128, true).unwrap_err();
+    let mut budget = nrz_cas::limits::Budget::new(nrz_cas::limits::Limits::default()).unwrap();
+    let large = inputs::transport_in(0, 128, true, &mut budget).unwrap_err();
     assert!(matches!(
         large.kind,
         nrz_cas::FaultKind::Exhausted {
@@ -66,7 +67,8 @@ fn transport_construction_refusals() {
         }
     ));
     let input = inputs::transport(0, 64, true).unwrap();
-    let convert = inputs::enclosed(&input).unwrap_err();
+    let mut budget = nrz_cas::limits::Budget::new(nrz_cas::limits::Limits::default()).unwrap();
+    let convert = inputs::enclosed_in(&input, &mut budget).unwrap_err();
     assert!(matches!(
         convert.kind,
         nrz_cas::FaultKind::Exhausted {
@@ -75,6 +77,10 @@ fn transport_construction_refusals() {
         }
     ));
     inputs::enclosed(&inputs::transport(0, 2, true).unwrap()).unwrap();
+    let largest = inputs::transport(0, 256, true).unwrap();
+    assert_eq!(inputs::enclosed(&largest).unwrap().hops[0].len(), 256);
+    assert_eq!(inputs::operation_limits().work, 2_000_000_000);
+    assert_eq!(inputs::oracle_limits().work, 20_000_000_000);
 }
 
 /// Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch, including unsorted rates and partial emission; insufficient denominator precision refuses.

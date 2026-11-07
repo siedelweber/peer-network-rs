@@ -674,6 +674,7 @@
       },
       "package": "pn-host",
       "recipe": "Seed zero; one registered Actor and one Opinion at the first boundary, then two Opinions at each successor boundary, retaining two complete acts per boundary. A fixed synthetic burn of 1000 supports the declared fixture range. Public candidate, closure, schedule, compiler and publication constructors build every successor. Each boundary has a complete marker history and declared synthetic retained verifier, never cryptographic evidence.",
+      "recipe_edition": "publication-workloads/typed-refusals-v2",
       "sizes": [
         1,
         2,
@@ -791,6 +792,7 @@
       },
       "package": "pn-host",
       "recipe": "One admitted boundary; realization provenance is byte index modulo 251, bound by the fixture verifier before assembly. Authentication fields and mathematical causes stay unchanged.",
+      "recipe_edition": "publication-workloads/typed-refusals-v2",
       "sizes": [
         256,
         512,
@@ -1190,8 +1192,8 @@
         }
       },
       "package": "pn-graph",
-      "recipe": "Seed zero, constructor-backed B4 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate oracle Work 20,000,000,000 and operation Work 2,000,000,000 support the denser grid without coupling the exact operation to the former 2,000,000 enclosed oracle.",
-      "recipe_edition": "scaling-workloads/v2",
+      "recipe": "Seed zero, constructor-backed B4 recipe in packages/graph/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Construction has its own 140,000,000 Work and 5,000,000 arithmetic-step budget per builder, separate from measured operations. Largest dense N=256 construction measured 14,830,265 Work / 461,377 steps for rational inputs and 65,774,560 Work / 2,055,455 steps for interval conversion; limits are twice the larger counts rounded upward to ten-million Work and million steps. Separate oracle Work 20,000,000,000 and operation Work 2,000,000,000 support the denser grid without coupling the exact operation to the former 2,000,000 enclosed oracle.",
+      "recipe_edition": "scaling-workloads/transport-construction-v3",
       "sizes": [
         2,
         4,
@@ -2019,7 +2021,7 @@
       },
       "package": "pn-epoch",
       "recipe": "Seed zero, constructor-backed B8 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Successful validation varies M independently over eight sizes; the separate admit-controls grid retains the nine counterexamples.",
-      "recipe_edition": "scaling-workloads/v2",
+      "recipe_edition": "scaling-workloads/typed-construction-v3",
       "sizes": [
         4,
         8,
@@ -2362,7 +2364,7 @@
       },
       "package": "pn-epoch",
       "recipe": "Seed zero, constructor-backed B10 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Rational caps 1 and 2 are stopping controls, 4 remains an insufficient-width control, 5 and above are completion points. Ridge cap 1 is the unresolved-cover control.",
-      "recipe_edition": "scaling-workloads/v2",
+      "recipe_edition": "scaling-workloads/typed-construction-v3",
       "sizes": [
         1,
         2,
