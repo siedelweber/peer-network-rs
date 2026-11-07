@@ -29,7 +29,18 @@ fn publication_codec_roundtrip() {
     exhausted.work = 1;
     let refusal = workload::decode_control(&bytes, &raw, &mut base::numeric(), exhausted);
     assert!(
-        matches!(refusal, Err(pn_host::publication::Error::CanonicalNumber)),
+        matches!(
+            refusal,
+            Err(pn_host::publication::Error::Arithmetic(base::d::Fault {
+                kind: base::d::FaultKind::Exhausted {
+                    reason: base::d::Exhaustion::Limit,
+                    budget: base::d::limits::BudgetKind::Work,
+                    limit: 1,
+                    ..
+                },
+                ..
+            }))
+        ),
         "{refusal:?}"
     );
     assert_eq!(decoded, raw);

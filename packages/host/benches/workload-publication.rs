@@ -20,7 +20,7 @@ fn dimensions(name: &str, size: usize) -> (usize, usize) {
     }
 }
 
-const RECIPE: &str = "publication-workloads/typed-refusals-v2";
+const RECIPE: &str = "publication-workloads/typed-refusals-v3";
 
 fn refused(phase: &str, cause: &str, setup: Instant) {
     let receipt = serde_json::json!({

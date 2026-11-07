@@ -15,7 +15,10 @@ fn rational_value(text: &str, c: &mut Context<'_>) -> Result<Value, Error> {
 fn rational_text(v: &Value, c: &mut Context<'_>) -> Result<String, Error> {
     let (n, den) = <(String, String)>::read(v, c)?;
     let source = format!("{n}/{den}");
-    let value = d::Rational::parse(&source, &mut c.arithmetic).map_err(|_| Error::CanonicalNumber)?;
+    let value = d::Rational::parse(&source, &mut c.arithmetic).map_err(|fault| match fault.kind {
+        d::FaultKind::Invalid(d::InvalidCode::Literal | d::InvalidCode::ZeroDenominator) => Error::CanonicalNumber,
+        _ => Error::Arithmetic(fault),
+    })?;
     let exact = value.exact_string(&mut c.arithmetic).map_err(Error::Arithmetic)?;
     if rational_parts(&exact) != (n, den) {
         return Err(Error::CanonicalNumber);
@@ -42,7 +45,7 @@ impl Wire for d::enclosure::Interval {
     /// Justified: Private structural conversion inherits the complete public codec boundary; recording each nested field again would duplicate the same public disclosure.
     fn read(v: &Value, c: &mut Context<'_>) -> Result<Self, Error> {
         let (lo, hi) = Wire::read(v, c)?;
-        Self::new(lo, hi, &mut c.arithmetic).map_err(|_| Error::CanonicalNumber)
+        Self::new(lo, hi, &mut c.arithmetic).map_err(Error::Arithmetic)
     }
 }
 impl Wire for Literal {

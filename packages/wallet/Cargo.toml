@@ -30,3 +30,7 @@ pn-testkit.workspace = true
 
 [lints]
 workspace = true
+
+[[test]]
+name = "allocation"
+harness = false

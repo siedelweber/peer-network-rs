@@ -111,7 +111,7 @@ timed = "encode, decode, or decode followed by disclosures::restore, including a
 excluded = "constructor chain, admission, independent roundtrip controls and fresh per-iteration numeric context; internal restore contexts remain timed"
 numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 } }
 
-recipe_edition = "publication-workloads/typed-refusals-v2"
+recipe_edition = "publication-workloads/typed-refusals-v3"
 [[rows]]
 kind = "grid"
 package = "pn-host"
@@ -130,7 +130,7 @@ timed = "canonical publication encode or decode and owned output destruction"
 excluded = "valid package assembly, padding generation, byte/control preparation and per-iteration numeric context"
 numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 } }
 
-recipe_edition = "publication-workloads/typed-refusals-v2"
+recipe_edition = "publication-workloads/typed-refusals-v3"
 [[rows]]
 kind = "grid"
 package = "pn-host"

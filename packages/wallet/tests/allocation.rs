@@ -1,28 +1,77 @@
 //! One profiler per child test process; the reviewed dependency owns the allocator.
-#![feature(custom_test_frameworks, test)]
-#![test_runner(allocation_runner)]
-
-extern crate test;
-
 use std::fmt::Write as _;
 mod oracle;
 
 #[global_allocator]
 static ALLOCATOR: dhat::Alloc = dhat::Alloc;
 
-fn allocation_runner(tests: &[&test::TestDescAndFn]) {
-    if std::env::var_os("PN_WALLET_ALLOCATION_VECTOR").is_some() {
-        // A measurement child has no libtest runner thread. Its entire
-        // process-wide allocator window belongs to this synchronous case.
-        assert_eq!(tests.len(), 1);
-        let test::TestFn::StaticTestFn(case) = tests[0].testfn else {
-            panic!("allocation child requires its static case");
+// Keep the authored case visible to the source census, but emit a plain
+// synchronous function for this harness-free executable, not a libtest case.
+macro_rules! synchronous_case {
+    (@marker test) => {};
+    (@case [$($docs:tt)*] #[doc = $doc:literal] $($rest:tt)*) => {
+        synchronous_case!(@case [$($docs)* #[doc = $doc]] $($rest)*);
+    };
+    (@case [$($docs:tt)*] #[$marker:ident] fn $name:ident($($args:tt)*) $body:block) => {
+        synchronous_case!(@marker $marker);
+        $($docs)*
+        fn $name($($args)*) $body
+    };
+    ($($case:tt)*) => {
+        synchronous_case!(@case [] $($case)*);
+    };
+}
+
+fn main() {
+    let args: Vec<_> = std::env::args().skip(1).collect();
+    if args.first().map(String::as_str) == Some("--allocation-vector") {
+        assert!(args.len() == 2 || args.len() == 4, "allocation child arguments");
+        let control = if args.len() == 4 {
+            assert_eq!(args[2], "--allocation-control");
+            Some(args[3].as_str())
+        } else {
+            None
         };
-        case().unwrap();
-    } else {
-        let status = test::test_main_env_args(tests);
-        assert_eq!(status, std::process::ExitCode::SUCCESS, "allocation test runner");
+        decoder_reservations(Some(&args[1]), control);
+        return;
     }
+    // Nextest asks for the complete and ignored-only inventories separately,
+    // then invokes the selected case with --exact and --nocapture.
+    let mut list = false;
+    let mut ignored = false;
+    let mut exact = false;
+    let mut filters = Vec::new();
+    let mut args = args.iter();
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--list" => list = true,
+            "--ignored" => ignored = true,
+            "--exact" => exact = true,
+            "--nocapture" | "--include-ignored" => {}
+            "--format" => assert_eq!(args.next().map(String::as_str), Some("terse")),
+            value if !value.starts_with('-') => filters.push(value),
+            _ => panic!("unsupported allocation harness argument: {arg}"),
+        }
+    }
+    let name = "decoder_reservations";
+    let selected = !ignored
+        && (filters.is_empty()
+            || filters
+                .iter()
+                .any(|filter| if exact { name == *filter } else { name.contains(filter) }));
+    if list {
+        if selected {
+            list_case();
+        }
+    } else if selected {
+        decoder_reservations(None, None);
+    }
+}
+
+// Nextest discovery is the test harness protocol, not command result JSON.
+fn list_case() {
+    use std::io::Write as _;
+    writeln!(std::io::stdout().lock(), "decoder_reservations: test").unwrap();
 }
 
 fn prefix(count: u16, witness: bool) -> Vec<u8> {
@@ -90,13 +139,12 @@ fn surjection_block() -> Vec<u8> {
     block
 }
 
+synchronous_case! {
 /// Claim: Per-vector allocator measurements cover hostile, maximum and over-limit counts, short payloads and nested witnesses; rejected prefixes allocate nothing in the adapter, and successful layouts stay below the declared requested-allocation envelope and release their measured live storage.
-/// ´claim:wallet:decoder-reservations-have-measured-bounds´
-/// ´test:integration:decoder-reservations´
+#[doc = "´claim:wallet:decoder-reservations-have-measured-bounds´"]
+#[doc = "´test:integration:decoder-reservations´"]
 #[test]
-fn decoder_reservations() {
-    let selected = std::env::var("PN_WALLET_ALLOCATION_VECTOR").ok();
-    let control = std::env::var("PN_WALLET_ALLOCATION_CONTROL").ok();
+fn decoder_reservations(selected: Option<&str>, control: Option<&str>) {
     let limits = pn_wallet::Limits {
         bytes: 4_000_000,
         items: 4096,
@@ -139,11 +187,14 @@ fn decoder_reservations() {
         ("block-short", vec![0; 76], false),
     ];
     let mut evidence = String::from("vector,requested,peak,live\n");
+    assert!(
+        selected.is_none_or(|selected| rows.iter().any(|(name, _, _)| *name == selected)),
+        "unknown allocation vector"
+    );
     for (name, bytes, accepted) in rows {
         if selected.is_none() {
             let status = std::process::Command::new(std::env::current_exe().unwrap())
-                .args(["--exact", "decoder_reservations", "--nocapture"])
-                .env("PN_WALLET_ALLOCATION_VECTOR", name)
+                .args(["--allocation-vector", name])
                 .status()
                 .unwrap();
             assert!(status.success(), "allocation child {name}");
@@ -151,16 +202,15 @@ fn decoder_reservations() {
             evidence.push_str(&row);
             continue;
         }
-        if selected.as_deref() != Some(name) {
+        if selected != Some(name) {
             continue;
         }
-        measure(name, &bytes, accepted, limits, control.as_deref());
+        measure(name, &bytes, accepted, limits, control);
     }
     if selected.is_none() {
         for control in ["live", "envelope", "rejected"] {
             let output = std::process::Command::new(std::env::current_exe().unwrap())
-                .env("PN_WALLET_ALLOCATION_VECTOR", "block-short")
-                .env("PN_WALLET_ALLOCATION_CONTROL", control)
+                .args(["--allocation-vector", "block-short", "--allocation-control", control])
                 .output()
                 .unwrap();
             assert!(!output.status.success(), "allocation control {control} must refuse");
@@ -169,6 +219,8 @@ fn decoder_reservations() {
         }
         std::fs::write("../../.lane/wallet-allocation.csv", evidence).unwrap();
     }
+}
+
 }
 
 fn measure(name: &str, bytes: &[u8], accepted: bool, limits: pn_wallet::Limits, control: Option<&str>) {

@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/publication/scalars.rs::publication::scalars::<d :: enclosure :: Interval as Wire>::read",
-    "body": "{ let (lo , hi) = Wire :: read (v , c) ? ; Self :: new (lo , hi , & mut c . arithmetic) . map_err (| _ | Error :: CanonicalNumber) }",
+    "body": "{ let (lo , hi) = Wire :: read (v , c) ? ; Self :: new (lo , hi , & mut c . arithmetic) . map_err (Error :: Arithmetic) }",
     "class_decision": "host-publication-codec",
-    "item_premise": "Explicit structural mapping preserves the listed public fields and refuses unsupported shape or bounded arithmetic. It never grants admission; the enclosing codec records the complete input and result.",
+    "item_premise": "Explicit structural mapping preserves the listed public fields and retains the interval constructor's original arithmetic fault, including its resource cause, rather than classifying it as malformed spelling. It never grants admission or adds a secret-bearing field; the enclosing codec records the complete input and result.",
     "assessments": {
       "full_recording": "host-publication-codec",
       "secret_flow": "host-publication-codec",

@@ -868,6 +868,13 @@ class SourceDiscipline(unittest.TestCase):
         self.assertTrue(source_findings(path, 'pub fn emit() { println!("x"); }', 'printing'))
         self.assertTrue(source_findings(path, 'pub fn emit() { std::process::exit(1); }', 'printing'))
         self.assertTrue(source_findings(Path('src/lib.rs'), 'pub fn emit() { io::stdout(); }', 'printing'))
+        harness = Path('packages/wallet/tests/allocation.rs')
+        self.assertFalse(source_findings(harness, 'fn list_case() { std::io::stdout(); }', 'printing'))
+        self.assertTrue(source_findings(harness, 'fn measure() { std::io::stdout(); }', 'printing'))
+        self.assertTrue(source_findings(harness, 'fn list_case() { println!("x"); }', 'printing'))
+        self.assertTrue(source_findings(harness, 'fn list_case() { std::io::stderr(); }', 'printing'))
+        self.assertTrue(source_findings(harness, 'fn list_case() { std::process::exit(1); }', 'printing'))
+        self.assertTrue(source_findings(Path('src/lib.rs'), 'fn list_case() { std::io::stdout(); }', 'printing'))
 
     def test_printing(self):
         """direct calls, imported aliases and inactive printing all refuse.

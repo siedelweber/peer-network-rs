@@ -218,6 +218,9 @@ def source_findings(path, source, mode, forced_test=False):
                 "try_locked_stderr": r"io\s*::\s*stderr",
             },
             "packages/execwrap/src/lib.rs": {"run_observed": r"io\s*::\s*(?:stdout|stderr)"},
+            # The harness-free allocation target owns only nextest discovery,
+            # under amend:output:test-harness-protocol, outside its profiler.
+            "packages/wallet/tests/allocation.rs": {"list_case": r"std\s*::\s*io\s*::\s*stdout"},
         }
         for match in reversed(list(re.finditer(r"\bfn\s+(\w+)\b", code))):
             allowed = boundaries.get(path.as_posix(), {}).get(match.group(1))

@@ -674,7 +674,7 @@
       },
       "package": "pn-host",
       "recipe": "Seed zero; one registered Actor and one Opinion at the first boundary, then two Opinions at each successor boundary, retaining two complete acts per boundary. A fixed synthetic burn of 1000 supports the declared fixture range. Public candidate, closure, schedule, compiler and publication constructors build every successor. Each boundary has a complete marker history and declared synthetic retained verifier, never cryptographic evidence.",
-      "recipe_edition": "publication-workloads/typed-refusals-v2",
+      "recipe_edition": "publication-workloads/typed-refusals-v3",
       "sizes": [
         1,
         2,
@@ -792,7 +792,7 @@
       },
       "package": "pn-host",
       "recipe": "One admitted boundary; realization provenance is byte index modulo 251, bound by the fixture verifier before assembly. Authentication fields and mathematical causes stay unchanged.",
-      "recipe_edition": "publication-workloads/typed-refusals-v2",
+      "recipe_edition": "publication-workloads/typed-refusals-v3",
       "sizes": [
         256,
         512,

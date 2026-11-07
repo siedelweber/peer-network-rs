@@ -33,10 +33,21 @@ fn publication_malformed_documents() {
     controls += 1;
     let result = pn_host::publication::decode(&bytes, &mut base::numeric(), zero);
     assert!(
-        matches!(result, Err(Error::CanonicalNumber)),
+        matches!(
+            result,
+            Err(Error::Arithmetic(base::d::Fault {
+                kind: base::d::FaultKind::Exhausted {
+                    reason: base::d::Exhaustion::Limit,
+                    budget: base::d::limits::BudgetKind::Work,
+                    limit: 0,
+                    ..
+                },
+                ..
+            }))
+        ),
         "unexpected zero-work refusal: {result:?}"
     );
-    assert_eq!(controls, 26);
+    assert_eq!(controls, 27);
 }
 
 fn coordinates(document: &Document, count: &mut usize) {
@@ -98,7 +109,7 @@ fn shapes(document: &Document, count: &mut usize) {
 
 fn numbers(document: &Document, count: &mut usize) {
     let path = &[3, 0, 3, 0, 1];
-    for (n, d) in [("2", "8"), ("1", "0"), ("-1", "-4"), ("01", "4")] {
+    for (n, d) in [("2", "8"), ("1", "0"), ("-1", "-4"), ("01", "4"), ("not-a-number", "4")] {
         refuse!(
             count,
             changed(document, 8, path, at(document, 8, path)),
