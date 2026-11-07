@@ -43,9 +43,14 @@ trap 'python3 -B ci/wallet_elements.py stop-all --root "$PN_WALLET_TEST_ROOT"; p
 active_pid=
 gate_signal() {
     trap '' TERM INT
+    local cleanup_status=0
     if [ -n "$active_pid" ]; then
-        kill -TERM "$active_pid" 2>/dev/null || true
-        wait "$active_pid" 2>/dev/null || true
+        kill -s "$(($1 - 128))" "$active_pid" 2>/dev/null || true
+        wait "$active_pid" 2>/dev/null || cleanup_status=$?
+    fi
+    if [ "$cleanup_status" -ne 0 ] && [ "$cleanup_status" -ne "$1" ]; then
+        echo "GATE-CLEANUP-ERROR status=$cleanup_status requested=$1" >&2
+        exit 2
     fi
     exit "$1"
 }

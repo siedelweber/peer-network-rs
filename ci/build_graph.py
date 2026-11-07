@@ -142,24 +142,62 @@ def plan(root):
                    for name, command in roster(root))
 
 
-def cancellable(argv, *, kill_after=5, **kwargs):
+def reap_cancelled_children(*, grace=5, deadline=30, signal_child=os.kill):
+    """Drain this dedicated subreaper's children; elapsed time only escalates/refuses."""
+    started = time.monotonic()
+    while True:
+        try:
+            pid, _ = os.waitpid(-1, os.WNOHANG)
+        except ChildProcessError:
+            return
+        if pid:
+            continue
+        # Unreaped children cannot have their PIDs reused. This process owns no
+        # unrelated children; nested sessions orphaned by adapters are adopted.
+        children = [int(pid) for pid in Path(f'/proc/self/task/{os.getpid()}/children').read_text().split()]
+        elapsed = time.monotonic()-started
+        if elapsed >= deadline:
+            raise ValueError(f'cancelled command tree not reaped by {deadline}s deadline: {children}')
+        for pid in children:
+            try:
+                signal_child(pid, signal.SIGKILL if elapsed >= grace else signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        time.sleep(0.01)
+
+
+def become_child_subreaper():
+    """Linux adoption is confined to the dedicated step-supervisor process."""
+    import ctypes
+    libc = ctypes.CDLL(None, use_errno=True)
+    libc.prctl.argtypes = [ctypes.c_int, *([ctypes.c_ulong] * 4)]
+    libc.prctl.restype = ctypes.c_int
+    if libc.prctl(36, 1, 0, 0, 0) != 0:  # PR_SET_CHILD_SUBREAPER
+        raise ValueError('cannot establish command-tree subreaper: '+os.strerror(ctypes.get_errno()))
+
+
+def cancellable(argv, *, kill_after=5, reap_tree=False, **kwargs):
     """Forward termination through each adapter boundary and reap its child."""
     child = None
     pending = []
     def terminate(number, frame):
         if not pending:
             pending.extend((number, time.monotonic()))
-        if child is not None:
+        if child is not None and child.returncode is None:
             try:
                 os.killpg(child.pid, number)
             except ProcessLookupError:
                 pass
     old = {number: signal.signal(number, terminate) for number in (signal.SIGTERM, signal.SIGINT)}
     try:
+        if reap_tree:
+            become_child_subreaper()
         child = subprocess.Popen(argv, start_new_session=True, **kwargs)
         if pending:
             terminate(pending[0], None)
         while True:
+            if pending and reap_tree and time.monotonic()-pending[1] >= 35:
+                raise ValueError('cancelled command leader not reaped by 35s deadline')
             try:
                 output, errors = child.communicate(timeout=0.25)
                 break
@@ -167,6 +205,9 @@ def cancellable(argv, *, kill_after=5, **kwargs):
                 if pending and kill_after is not None and time.monotonic()-pending[1] >= kill_after:
                     try:os.killpg(child.pid, signal.SIGKILL)
                     except ProcessLookupError:pass
+        if pending and reap_tree:
+            elapsed = time.monotonic()-pending[1]
+            reap_cancelled_children(grace=max(0, 5-elapsed), deadline=max(0, 35-elapsed))
         return subprocess.CompletedProcess(argv, -pending[0] if pending else child.returncode, output, errors)
     finally:
         for number, handler in old.items():
@@ -1040,8 +1081,8 @@ def schedule(root):
         for child in children.values():
             try: os.killpg(child.pid, number)
             except ProcessLookupError: pass
-        for child in children.values(): child.wait()
-        raise SystemExit(128+number)
+        statuses = [child.wait() for child in children.values()]
+        raise SystemExit(2 if any(status not in (0, 128+number) for status in statuses) else 128+number)
     for number in (signal.SIGTERM, signal.SIGINT): signal.signal(number, terminate)
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
         while remaining or active:
@@ -1159,7 +1200,7 @@ def main():
     if args.action == 'finish':
         return finish(Path.cwd())
     if args.action == 'supervise':
-        result = cancellable(args.command)
+        result = cancellable(args.command, reap_tree=True)
         return 128-result.returncode if result.returncode < 0 else result.returncode
     if args.action == 'resource-lines':
         for line in Path(args.path).read_text().splitlines(keepends=True):

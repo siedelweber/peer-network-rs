@@ -286,9 +286,22 @@ def service_instances(case):
           scope='witness-self-and-waited-descendants; daemon-tick-snapshots-separate-before-stop'), sort_keys=True))
 
 
+def process_identity(pid):
+    try:
+        fields = Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()
+        return int(fields[19])
+    except FileNotFoundError:
+        return None
+
+
+def surviving_processes(identities):
+    return [pid for pid, start in identities.items() if process_identity(pid) == start]
+
+
 def interrupted_gate(case, repository):
     """Signal the actual entry trap while Ninja owns a blocked command."""
     import socket
+    import select
     checker=repository/'ci/build_graph.py'
     entry=(repository/'ci/gate.sh').read_text()
     traps=entry[entry.index("trap 'python3"):entry.index('gate_started=')]
@@ -297,7 +310,12 @@ def interrupted_gate(case, repository):
         root=Path(directory)
         listener=socket.socket(socket.AF_UNIX)
         listener.bind(str(root/'ready.sock'));listener.listen();listener.settimeout(30)
-        (root/'wait.py').write_text("import os,socket\ns=socket.socket(socket.AF_UNIX)\ns.connect(os.environ['READY_SOCKET'])\ns.sendall(b'R')\ns.recv(1)\n")
+        (root/'wait.py').write_text("import os,select,socket,subprocess,sys\n"
+            "code=\"import signal;signal.signal(signal.SIGTERM,signal.SIG_IGN);print('ready',flush=True);signal.pause()\"\n"
+            "escaped=subprocess.Popen([sys.executable,'-c',code],start_new_session=True,stdout=subprocess.PIPE)\n"
+            "assert select.select([escaped.stdout],[],[],10)[0], 'escaped child readiness deadline: 10s'\n"
+            "assert escaped.stdout.readline()==b'ready\\n'\n"
+            "s=socket.socket(socket.AF_UNIX)\ns.connect(os.environ['READY_SOCKET'])\ns.sendall(b'R')\ns.recv(1)\n")
         env=dict(os.environ,PN_BUILDGRAPH_RUN='interrupted-gate',READY_SOCKET=str(root/'ready.sock'),
                  PN_HOST_TEST_ROOT=str(root/'.lane/host'),PN_WALLET_TEST_ROOT=str(root/'.lane/wallet'))
         graph_tree(case,root,[('blocked','python3 -B wait.py')],set(),checker,env,['wait.py'])
@@ -312,6 +330,7 @@ def interrupted_gate(case, repository):
             child=subprocess.Popen(['bash','entry.sh'],cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             connection=None
             descendants={child.pid}
+            identities={}
             try:
                 connection,_=listener.accept();case.assertEqual(connection.recv(1),b'R')
                 # The socket handshake establishes that the actual command is
@@ -321,33 +340,51 @@ def interrupted_gate(case, repository):
                 for path in Path('/proc').glob('[0-9]*/stat'):
                     try:
                         fields=path.read_text().rsplit(')',1)[1].split()
-                        process_rows[int(path.parent.name)]=(int(fields[1]),fields[0])
+                        process_rows[int(path.parent.name)]=(int(fields[1]),fields[0],int(fields[19]))
                     except (OSError,ValueError,IndexError):pass
                 while True:
-                    expanded=descendants|{pid for pid,(parent,_) in process_rows.items() if parent in descendants}
+                    expanded=descendants|{pid for pid,(parent,_,_) in process_rows.items() if parent in descendants}
                     if expanded==descendants:break
                     descendants=expanded
+                identities={pid:process_rows[pid][2] for pid in descendants}
                 case.assertTrue(any('ninja' in Path(f'/proc/{pid}/comm').read_text() for pid in descendants))
                 child.send_signal(signal.SIGTERM)
-                status=child.wait(timeout=30)
+                status=child.wait(timeout=60)
                 case.assertEqual(status,143,(root/'entry.log').read_text())
                 connection.settimeout(5);case.assertEqual(connection.recv(1),b'')
                 for name in ('host','wallet'):
                     case.assertTrue((root/'.lane'/name/'cleaned').exists())
                     case.assertFalse((root/'.lane'/name/'alive').exists())
                 case.assertTrue((root/'.lane/sibling/alive').exists())
-                survivors=[]
-                for pid in descendants:
-                    path=Path(f'/proc/{pid}/stat')
-                    if path.exists():survivors.append((pid,path.read_text()))
+                survivors=surviving_processes(identities)
                 case.assertEqual(survivors,[])
-                print('RUNTIME-INTERRUPTION signal=SIGTERM inside=ninja status=143 roots=cleaned sibling=preserved descendants=0')
+                # A live owned child must fail the same absence check. Disabling
+                # signals proves that the drain deadline refuses, never succeeds.
+                from build_graph import reap_cancelled_children
+                left=subprocess.Popen(['python3','-c',"import sys;print('ready',flush=True);sys.stdin.read()"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+                try:
+                    case.assertTrue(select.select([left.stdout],[],[],10)[0], 'live child readiness deadline: 10s')
+                    case.assertEqual(left.stdout.readline(),b'ready\n')
+                    live={left.pid:process_identity(left.pid)}
+                    with case.assertRaises(AssertionError):case.assertEqual(surviving_processes(live),[])
+                    with case.assertRaisesRegex(ValueError,'not reaped by .* deadline'):
+                        reap_cancelled_children(grace=0,deadline=0.03,signal_child=lambda pid,number:None)
+                    case.assertIsNone(left.poll())
+                finally:
+                    left.kill();left.wait(timeout=10);left.stdin.close();left.stdout.close()
+                case.assertEqual(surviving_processes(live),[])
+                print('RUNTIME-INTERRUPTION signal=SIGTERM inside=ninja status=143 roots=cleaned sibling=preserved descendants=0 escaped-session=reaped live-descendant-control=refused deadline=refusal-only')
             finally:
+                for pid in surviving_processes(identities):
+                    try:
+                        fd=os.pidfd_open(pid)
+                        try:
+                            if process_identity(pid)==identities[pid]:signal.pidfd_send_signal(fd,signal.SIGKILL)
+                        finally:os.close(fd)
+                    except ProcessLookupError:pass
                 if child.poll() is None:
                     print((root/'entry.log').read_text(),flush=True)
-                    for pid in sorted(descendants,reverse=True):
-                        try:os.kill(pid,signal.SIGKILL)
-                        except ProcessLookupError:pass
+                    child.kill()
                     child.wait(timeout=5)
                 if connection is not None:connection.close()
                 listener.close()
