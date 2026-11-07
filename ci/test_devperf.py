@@ -495,7 +495,7 @@ wait
         self.assertEqual(classify(stall=0.1), 'high-stall')
         self.assertEqual(classify(own=121), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['packages/example/src/pins.rs']), 'rebuild')
-        self.assertEqual(classify(own=121, build=60, changed=['packages/example/src/pins.rs']), 'rebuild')
+        self.assertEqual(classify(own=120, build=60, changed=['packages/example/src/pins.rs']), 'rebuild')
         self.assertEqual(classify(own=150, build=60, changed=['packages/example/src/pins.rs']), 'growth')
         self.assertEqual(classify(own=121, build=61), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['Cargo.lock'], stall=0.1), 'high-stall')
@@ -553,9 +553,9 @@ wait
         ridge = dict(compile_wall_growth=10.52, excess=30, wall=150,
                      baseline_wall=120, baseline_stall=0)
         self.assertAlmostEqual((182.2-87.6)/(91.8-.94), 1.0411622276)
-        self.assertEqual(overrun_class(True, 182.2, 91.8, .0349, 87.6, .94,
+        self.assertEqual(overrun_class(True, 182.2-87.6, 91.8-.94, .0349, 87.6, .94,
             ['packages/records/src/ridge.rs'], policy, **ridge), 'rebuild')
-        self.assertEqual(overrun_class(True, 182.2, 91.8, .0349, 87.6, .94,
+        self.assertEqual(overrun_class(True, 182.2-87.6, 91.8-.94, .0349, 87.6, .94,
             ['packages/records/src/ridge.rs'], policy, **(ridge | dict(compile_wall_growth=0))), 'plain')
         # The ridge's fast compile-CPU pair, with a controlled wall boundary:
         # a changed case set withholds aggregate CPU, not this compile evidence.
@@ -575,7 +575,7 @@ wait
         # An added slow sleeper has printed CPU, but its wall is not compile
         # work. Removing that CPU cannot make aggregate walls comparable.
         own, old, comparable, _ = case_intersection(
-            ['common', 'sleeper'], ['common'], {'sleeper': 1}, {}, 151, 100)
+            ['common', 'sleeper'], ['common'], {'sleeper': 1}, {}, 151-90, 100-40)
         for growth, expected in ((1, 'plain'), (30, 'rebuild')):
             self.assertEqual(overrun_class(True, own, old, .01, 90, 40,
                 ['packages/example/src/lib.rs'], policy,
@@ -586,6 +586,20 @@ wait
             self.assertFalse(comparable)
             self.assertEqual(overrun_class(True, own, old, .01, 40, 40, [], policy,
                 **ridge, comparable_cases=comparable, comparable_wall=False), 'unclassified')
+        # Rebuilding either side, including an isolated owner's Cargo work,
+        # cannot change the comparable non-build CPU or conceal a regression.
+        def figures(build, isolated):
+            return {'test-build':dict(wall=build, own_cpu_s=build, layouts={}, partial=False),
+                    'case':dict(wall=10, own_cpu_s=100+isolated, cargo_cpu_s=isolated,
+                                layouts={'owner':'same'}, partial=False)}
+        for new_build, old_build in ((1,1), (238,1), (1,238), (238,238)):
+            current, prior = figures(new_build, new_build), figures(old_build, old_build)
+            own, old, _, omitted = compile_comparison(current, prior, ['test-build'])
+            self.assertEqual((own, old, omitted), (100,100,[]))
+            current['case']['own_cpu_s'] += 21
+            own, old, _, _ = compile_comparison(current, prior, ['test-build'])
+            self.assertEqual(overrun_class(True, own, old, 0, new_build*2, old_build*2, [], policy,
+                compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
 
 
     def test_baseline_lineage(self):
@@ -733,6 +747,21 @@ wait
                     marker = other_path.with_suffix('.skipped.json')
                     marker.write_text(json.dumps({'previous_tree': 'f'*40}))
                     self.assertIsNone(baseline_context(root, registry)[1], 'an unrelated predecessor must refuse')
+                # Quiet boundaries alone cannot replace the quieter whole run.
+                quiet_bytes = path.read_bytes()
+                loaded['quiet_windows'] = windows()
+                loaded['whole']['stall'] = .276
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(loaded))
+                retain_baseline(root)
+                self.assertFalse(other_path.exists(), 'a noisier candidate must not replace the admitted baseline')
+                self.assertEqual(path.read_bytes(), quiet_bytes)
+                with patch.dict(os.environ, PN_IMPORT_BASE=other):
+                    self.assertEqual(baseline_context(root, registry)[1]['source'], original)
+                    # Migrate selection over a historical, already admitted
+                    # noisier file without deleting its retained evidence.
+                    other_path.write_text(json.dumps(loaded))
+                    self.assertEqual(baseline_context(root, registry)[1]['source'], original)
+                    self.assertTrue(other_path.exists())
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 

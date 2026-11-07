@@ -644,10 +644,10 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
     if comparable_cases and comparable_wall and wall*stall >= excess and wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
     margin = 1+policy['cpu_growth_percent']/100
-    noncompile = (comparable_cases and None not in (own, baseline, build_cpu, old_build_cpu)
-                  and own >= build_cpu and baseline >= old_build_cpu)
-    remaining = own-build_cpu if noncompile else None
-    old_remaining = baseline-old_build_cpu if noncompile else None
+    # Comparable CPU has already excluded matched compilation on both sides.
+    noncompile = comparable_cases and own is not None and baseline is not None
+    remaining = own if noncompile else None
+    old_remaining = baseline if noncompile else None
     if (changed and build_cpu is not None and old_build_cpu is not None
             and build_cpu > old_build_cpu*margin
             and compile_wall_growth is not None and excess is not None
@@ -659,8 +659,6 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     # Pressure can inflate CPU as well as wall. Without a quiet measurement,
     # the remainder is not attributable to plain work or owned growth.
     if stall > policy['load_unresolved_pressure_percent']/100: return 'load-unresolved'
-    if changed and noncompile:
-        own, baseline = remaining, old_remaining
     if own <= baseline*margin: return 'plain'
     return 'growth'
 
@@ -701,14 +699,18 @@ def baseline_context(root, registry, policy=None):
     if legacy.exists(): candidates.append(legacy)
     comparisons = {}
     if base_tree and not base_tree.returncode:
-        # Only an explicitly skipped import may lead back to an older quiet
-        # baseline. Verify that tree in the import's public ancestry.
+        # Follow retained as well as skipped imports, verifying every predecessor
+        # in public ancestry. An older, quieter baseline must remain selectable.
         cursor = base_tree.stdout.strip()
         visited = set()
         while cursor not in visited:
             visited.add(cursor)
             try:
-                previous = json.loads((directory/(cursor+'.skipped.json')).read_text())['previous_tree']
+                retained = directory/(cursor+'.json')
+                if retained.exists():
+                    previous = json.loads(retained.read_text()).get('previous_baseline_tree')
+                else:
+                    previous = json.loads((directory/(cursor+'.skipped.json')).read_text())['previous_tree']
             except (FileNotFoundError, KeyError, ValueError):
                 break
             if not previous: break
@@ -737,18 +739,29 @@ def baseline_context(root, registry, policy=None):
                 if ancestor.returncode: continue
                 comparison = value['source']
                 value['match'] = 'ancestor'
+            if baseline is not None and baseline_stall(value) >= baseline_stall(baseline):
+                continue
             baseline = value
             diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
             changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
-            break
         except (FileNotFoundError, ValueError, KeyError):
             continue
     return path, baseline, changed
 
 
+def baseline_stall(candidate):
+    """Only observed, finite node-wide whole-gate pressure can rank baselines."""
+    whole = candidate.get('whole', {})
+    value = whole.get('stall')
+    return value if (whole.get('node_scope') == 'node-wide' and type(value) in (int, float)
+                     and math.isfinite(value) and 0 <= value < 1) else None
+
+
 def quiet_baseline(candidate, policy=None):
-    """Passive boundaries qualify a baseline; in-gate pressure is diagnostic."""
+    """Passive boundaries admit; observed whole-gate pressure orders replacements."""
     from gate_resources import node_stall
+    if baseline_stall(candidate) is None:
+        return False
     limit = (policy or candidate)['load_unresolved_pressure_percent']/100
     windows = candidate.get('quiet_windows', {})
     for phase in ('before', 'after'):
@@ -775,13 +788,25 @@ def retain_baseline(root):
         print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
     retain_step_context(path.parent, candidate)
-    if not quiet_baseline(candidate):
+    prior = []
+    for prior_path in (path, path.parent/(str(candidate.get('previous_baseline_tree'))+'.json')):
+        try:
+            value = json.loads(prior_path.read_text())
+            if quiet_baseline(value):
+                prior.append(value)
+        except (FileNotFoundError, ValueError):
+            pass
+    previous_best = min(prior, key=baseline_stall) if prior else None
+    reason = ('load-unresolved' if not quiet_baseline(candidate) else
+              'higher-whole-gate-stall' if previous_best is not None and
+              baseline_stall(candidate) > baseline_stall(previous_best) else None)
+    if reason:
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')
         temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
         temporary.replace(skipped)
-        print('GATE-BASELINE retained=false reason=load-unresolved previous_tree='+str(candidate.get('previous_baseline_tree')))
+        print('GATE-BASELINE retained=false reason='+reason+' previous_tree='+str(candidate.get('previous_baseline_tree')))
         return
     candidate['quiet'] = True
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
@@ -818,13 +843,17 @@ def step_cpu_context(current, previous):
 
 
 def compile_comparison(current, prior, serialized):
-    """Compare like steps; parallel isolated builds cannot explain serial wall."""
+    """Compare non-build CPU symmetrically; keep serialized build wall separate."""
+    def remaining(name, row):
+        own = row.get('own_cpu_s')
+        build = row.get('cargo_cpu_s') if row.get('layouts') else own if name in serialized else 0
+        return own-build if own is not None and build is not None and 0 <= build <= own else None
     comparable = [name for name, row in current.items() if name in prior and
                   not row.get('partial') and not prior[name].get('partial') and
-                  row.get('own_cpu_s') is not None and prior[name].get('own_cpu_s') is not None and
+                  remaining(name, row) is not None and remaining(name, prior[name]) is not None and
                   row.get('layouts') == prior[name].get('layouts')]
-    own = sum(current[name]['own_cpu_s'] for name in comparable) if comparable else None
-    old = sum(prior[name]['own_cpu_s'] for name in comparable) if comparable else None
+    own = sum(remaining(name, current[name]) for name in comparable) if comparable else None
+    old = sum(remaining(name, prior[name]) for name in comparable) if comparable else None
     serial = [name for name in comparable if name in serialized]
     growth = sum(current[name]['wall']-prior[name]['wall'] for name in serial) if serial else None
     return own, old, growth, sorted(set(current)-set(comparable))

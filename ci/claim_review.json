@@ -95,7 +95,7 @@
       "claim": "ROOT::claim:devperf:baseline-follows-import-tree",
       "before": "",
       "after": "Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.",
-      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts. The additional controls require byte-identical preservation of a quieter baseline when quiet boundary windows surround a noisier whole run, and recover it through an ancestry-validated retained predecessor chain without deleting the historical noisier file."
     },
     {
       "operation": "ci::test_devperf.Performance.test_calibration_identity",
@@ -135,7 +135,7 @@
       "claim": "ROOT::claim:devperf:rebuild-requires-compile-cpu-and-wall",
       "before": "",
       "after": "Rebuild classification requires comparable compile CPU growth and positive serialized wall growth, with either excess coverage or stable comparable non-compile work; changed case sets retain compile evidence but not aggregate comparisons, and load alone cannot establish rebuild work.",
-      "review": "Read the retained wall, pressure, exact-margin and symmetric cold-owner controls. The ridge extended fixture now separates comparable compile CPU from remaining work; a second exact assertion retains genuine non-compile growth. The changed-case controls retain compile attribution before refusing aggregate attribution, with the recorded fast compile-CPU pair and an explicitly controlled covering-wall boundary."
+      "review": "Read the retained wall, pressure, exact-margin and symmetric cold-owner controls. The ridge extended fixture now separates comparable compile CPU from remaining work; a second exact assertion retains genuine non-compile growth. The changed-case controls retain compile attribution before refusing aggregate attribution, with the recorded fast compile-CPU pair and an explicitly controlled covering-wall boundary. Matched serialized and isolated build CPU is removed symmetrically before comparison, whether compilation occurs on the candidate, the baseline or both. A separate increase in program CPU must still classify as growth in every placement."
     },
     {
       "operation": "ci::test_devperf.Performance.test_target_retention",

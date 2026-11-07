@@ -9162,7 +9162,7 @@
       "measured_cpu_ms": 29600,
       "measurement": "own-cpu",
       "measurement_node": "kranich",
-      "measurement_source": "Review round 159 T-001: near-quiet bench-graph-5 own CPU, CPU stall about 0.059.",
+      "measurement_source": "Gate log named by rec:devperf:hash-audit-gate-log: bench-graph-5 import, hash-citations STEP own CPU; historical tree.",
       "name": "whole-tree-hash-citations",
       "number_forms": {
         "budget_ms": {
@@ -9192,8 +9192,8 @@
           "exact_digits": 32
         }
       },
-      "provisional": false,
-      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Retained near-quiet hash audit CPU from review round 159; audited-byte growth did not explain its CPU.",
+      "provisional": true,
+      "reason": "Per-step CPU warning with a growth margin; wall remains separately reported. Historical gate-log CPU is not a current-tree calibration. Keep this value provisional until a near-quiet current-tree gate measures the audit; loaded runs cannot settle it.",
       "scope": "process-and-reaped-children CPU for the complete hash-citations command"
     },
     {
