@@ -193,6 +193,7 @@ fn spawn_failure_records_public_program() {
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, [] as [u8; 0]);
 
+    complete_capture(&output.stderr);
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains(secret), "public program missing from diagnostics: {stderr}");
 
@@ -214,6 +215,7 @@ fn spawn_failure_records_public_url() {
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, [] as [u8; 0]);
 
+    complete_capture(&output.stderr);
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
         stderr.contains(program),
@@ -288,6 +290,7 @@ fn public_child_arguments_are_observed() {
     assert!(output.status.success());
 
     let stdout = String::from_utf8_lossy(&output.stdout);
+    complete_capture(&output.stderr);
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(!stdout.contains(secret), "secret leaked to stdout");
     assert!(stderr.contains(secret), "public argument missing from diagnostics");
@@ -320,6 +323,7 @@ fn public_child_urls_are_observed() {
     assert!(output.status.success());
 
     assert_eq!(output.stdout, [] as [u8; 0]);
+    complete_capture(&output.stderr);
     assert!(String::from_utf8_lossy(&output.stderr).contains(url));
 }
 
@@ -486,6 +490,7 @@ fn spawn_failure_emits_json_diagnostics() {
     assert_eq!(output.status.code(), Some(1));
     assert!(output.stdout.is_empty(), "stdout must stay empty");
 
+    complete_capture(&output.stderr);
     let stderr = String::from_utf8(output.stderr).expect("stderr is text");
     let mut saw_json = false;
     for line in stderr.lines() {
@@ -497,6 +502,29 @@ fn spawn_failure_emits_json_diagnostics() {
         assert!(value.is_object());
     }
     assert!(saw_json, "expected at least one JSON diagnostic");
+}
+
+fn complete_capture(stderr: &[u8]) {
+    let records: Vec<serde_json::Value> = std::str::from_utf8(stderr)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let statuses: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
+    assert_eq!(statuses.len(), 1, "OBSERVATION-CAPTURE-INCOMPLETE: final status");
+    let status = statuses[0];
+    for field in ["lost_records", "undelivered_records", "in_flight_records", "drain_timeouts"] {
+        assert_eq!(status[field], 0, "OBSERVATION-CAPTURE-INCOMPLETE: {field}: {status}");
+    }
+    assert_eq!(
+        status["attempted_records"], status["delivered_records"],
+        "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+    );
+    assert_eq!(
+        status["delivered_records"].as_u64().unwrap(),
+        u64::try_from(records.len() - 1).unwrap(),
+        "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+    );
 }
 
 /// Claim: The same binary child result, including NUL and invalid UTF-8, has identical stdout and exit with observation enabled and disabled; enabled metering retains those bytes and the returned status.
@@ -514,11 +542,12 @@ fn observation_preserves_child_results() {
     let unavailable: serde_json::Value = serde_json::from_slice(&disabled.stderr).unwrap();
     assert_eq!(unavailable["availability"], "disabled");
     assert_eq!(unavailable["measurements"], "unavailable");
-    let records: Vec<serde_json::Value> = String::from_utf8(enabled.stderr)
+    let records: Vec<serde_json::Value> = std::str::from_utf8(&enabled.stderr)
         .unwrap()
         .lines()
         .map(|line| serde_json::from_str(line).unwrap())
         .collect();
+    complete_capture(&enabled.stderr);
     let bytes: Vec<u8> = records
         .iter()
         .filter(|r| r["event_kind"] == "progress")

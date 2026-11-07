@@ -223,6 +223,26 @@ fn observations() {
             .output()
             .unwrap();
         assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        let records: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        let statuses: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
+        assert_eq!(statuses.len(), 1, "OBSERVATION-CAPTURE-INCOMPLETE: final status");
+        let status = statuses[0];
+        for field in ["lost_records", "undelivered_records", "in_flight_records", "drain_timeouts"] {
+            assert_eq!(status[field], 0, "OBSERVATION-CAPTURE-INCOMPLETE: {field}: {status}");
+        }
+        assert_eq!(
+            status["attempted_records"], status["delivered_records"],
+            "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+        );
+        assert_eq!(
+            status["delivered_records"].as_u64().unwrap(),
+            u64::try_from(records.len() - 1).unwrap(),
+            "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+        );
         let mut captured = String::from_utf8(output.stderr).unwrap();
         captured.push_str(&String::from_utf8(output.stdout).unwrap());
         if artifact.exists() {

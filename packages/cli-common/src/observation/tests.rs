@@ -1143,10 +1143,11 @@ fn recursive_observation() {
     let (observation, _, capture) = fixture();
     let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
     tracing::subscriber::with_default(subscriber, || tracing::info!(payload=?Recursive(&observation)));
-    let rows = records(&observation, &capture);
+    // This is a loss-accounting control, not a complete-content witness.
+    let rows = drained_records_with_loss(&observation, &capture);
+    assert!(observation.lost.load(Ordering::Relaxed) > 0);
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0]["fields"]["payload"], json!({"atom":"complete-public-field"}));
-    assert!(observation.lost.load(Ordering::Relaxed) > 0);
 }
 
 /// Claim: Dropping a polled but unfinished asynchronous operation closes its metering as cancelled, while no completion result is fabricated from the clock.
@@ -1289,6 +1290,11 @@ fn deep_payload_delivery() {
     observation.flush_sender.send(done).unwrap();
     observation.sender.send(Message::Wake).unwrap();
     drained.recv_timeout(Duration::from_secs(30)).unwrap();
+    assert_eq!(
+        observation.lost.load(Ordering::Relaxed),
+        0,
+        "OBSERVATION-CAPTURE-INCOMPLETE: lost records"
+    );
     let row: Value = serde_json::from_slice(&capture.0.lock().unwrap()).unwrap();
     let mut current = row["payload"].clone();
     let mut depth = 0;
@@ -1332,12 +1338,41 @@ fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
 fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     if observation.closing.load(Ordering::Acquire) {
         // These callers have returned from guard destruction and its final status write.
-        captured_records(capture)
+        let rows = captured_records(capture);
+        let statuses: Vec<_> = rows.iter().filter(|row| row["kind"] == "observation_status").collect();
+        assert_eq!(statuses.len(), 1, "OBSERVATION-CAPTURE-INCOMPLETE: final status");
+        for field in ["lost_records", "undelivered_records", "in_flight_records", "drain_timeouts"] {
+            assert_eq!(statuses[0][field], 0, "OBSERVATION-CAPTURE-INCOMPLETE: {field}");
+        }
+        assert_eq!(
+            statuses[0]["attempted_records"], statuses[0]["delivered_records"],
+            "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+        );
+        assert_eq!(
+            statuses[0]["delivered_records"].as_u64().unwrap(),
+            u64::try_from(rows.len() - 1).unwrap(),
+            "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+        );
+        rows
     } else {
         drained_records(observation, capture)
     }
 }
 fn drained_records(observation: &Observation, capture: &Capture) -> Vec<Value> {
+    let rows = drained_records_with_loss(observation, capture);
+    assert_eq!(
+        observation.lost.load(Ordering::Relaxed),
+        0,
+        "OBSERVATION-CAPTURE-INCOMPLETE: lost records"
+    );
+    assert_eq!(
+        observation.attempted.load(Ordering::Relaxed),
+        observation.delivered.load(Ordering::Relaxed),
+        "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+    );
+    rows
+}
+fn drained_records_with_loss(observation: &Observation, capture: &Capture) -> Vec<Value> {
     // Inspect only after the delivery thread acknowledges the requested drain.
     // The production flush deadline is not evidence that this buffer is ready.
     let (done, drained) = mpsc::sync_channel(1);
@@ -1641,11 +1676,15 @@ fn filtered_accounting() {
 /// ´test:unit:bounded-loss´
 #[test]
 fn bounded_loss() {
-    let (observation, _, _) = fixture();
+    let (observation, _, capture) = fixture();
     observation.queued_bytes.store(CAPTURE_LIMIT as u64, Ordering::Relaxed);
     observation.emit(json!({"payload":"public"}));
     assert_eq!(observation.lost.load(Ordering::Relaxed), 1);
     observation.queued_bytes.store(0, Ordering::Relaxed);
+    let refused = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| records(&observation, &capture)));
+    let failure = refused.expect_err("lost record must refuse complete-content inspection");
+    let diagnostic = failure.downcast_ref::<String>().unwrap();
+    assert!(diagnostic.contains("OBSERVATION-CAPTURE-INCOMPLETE: lost records"));
     let (sender, receiver) = mpsc::sync_channel(1);
     let mut bounded = observation.clone();
     bounded.sender = sender;

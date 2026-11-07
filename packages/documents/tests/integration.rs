@@ -985,6 +985,29 @@ fn terminal_refusal() -> Result<()> {
     Ok(())
 }
 
+fn complete_capture(stderr: &[u8]) -> Result<Vec<serde_json::Value>> {
+    let records: Vec<serde_json::Value> = std::str::from_utf8(stderr)?
+        .lines()
+        .map(serde_json::from_str)
+        .collect::<std::result::Result<_, _>>()?;
+    let statuses: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
+    assert_eq!(statuses.len(), 1, "OBSERVATION-CAPTURE-INCOMPLETE: final status");
+    let status = statuses[0];
+    for field in ["lost_records", "undelivered_records", "in_flight_records", "drain_timeouts"] {
+        assert_eq!(status[field], 0, "OBSERVATION-CAPTURE-INCOMPLETE: {field}: {status}");
+    }
+    assert_eq!(
+        status["attempted_records"], status["delivered_records"],
+        "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+    );
+    assert_eq!(
+        status["delivered_records"].as_u64().unwrap(),
+        u64::try_from(records.len() - 1).unwrap(),
+        "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+    );
+    Ok(records)
+}
+
 fn invoke(root: &Path, operation: &str) -> Result<std::process::Output> {
     Ok(Command::new(env!("CARGO_BIN_EXE_documents"))
         .arg("--root")
@@ -1005,10 +1028,7 @@ fn clean_result() -> Result<()> {
     let report: serde_json::Value = serde_json::from_slice(&output.stdout)?;
     assert!(report.is_object());
     assert_eq!(report["findings"], serde_json::json!([]));
-    let records: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)?
-        .lines()
-        .map(serde_json::from_str)
-        .collect::<std::result::Result<_, _>>()?;
+    let records = complete_capture(&output.stderr)?;
     assert!(records.iter().any(|record| record["kind"] == "metric_summary"));
     assert!(
         records
@@ -1052,10 +1072,7 @@ fn runtime_error() -> Result<()> {
     let output = invoke(directory.path(), "check")?;
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, b"");
-    let records: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)?
-        .lines()
-        .map(serde_json::from_str)
-        .collect::<std::result::Result<_, _>>()?;
+    let records = complete_capture(&output.stderr)?;
     let errors: Vec<_> = records.iter().filter(|record| record["level"] == "ERROR").collect();
     assert_eq!(errors.len(), 1);
     assert!(errors[0].to_string().contains("docs/inputs/items.toml"));
@@ -1075,6 +1092,7 @@ fn empty_root() -> Result<()> {
         let output = invoke(directory.path(), "check")?;
         assert_eq!(output.status.code(), Some(1));
         assert_eq!(output.stdout, b"");
+        complete_capture(&output.stderr)?;
         assert!(String::from_utf8(output.stderr)?.contains("docs/templates"));
     }
     Ok(())
@@ -1355,6 +1373,7 @@ fn git_required() -> Result<()> {
         .arg("check")
         .output()?;
     assert_eq!(output.status.code(), Some(1));
+    complete_capture(&output.stderr)?;
     assert!(String::from_utf8(output.stderr)?.contains("git ls-files unavailable"));
     Ok(())
 }

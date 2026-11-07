@@ -88,7 +88,30 @@ def compare(argv, mode, env, deadline=60, injected=False):
     witness(argv,status,time.monotonic()-started,b''.join(stderr),injected)
     if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
     if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
+    if not injected and mode != 'disabled': complete_capture(b''.join(stderr))
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
+
+
+def complete_capture(stderr):
+    """Refuse incomplete evidence before any enabled-stream content assertion."""
+    try:
+        rows = [json.loads(line) for line in stderr.splitlines()]
+    except (ValueError, UnicodeError) as error:
+        raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: malformed stream') from error
+    if any(not isinstance(row, dict) for row in rows):
+        raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: non-record stream')
+    statuses = [row for row in rows if row.get('kind') == 'observation_status']
+    if len(statuses) != 1:
+        raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: final status missing or repeated')
+    status = statuses[0]
+    fields = ('lost_records', 'undelivered_records', 'in_flight_records', 'drain_timeouts')
+    if any(status.get(field) != 0 for field in fields):
+        raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: ' + json.dumps(status, sort_keys=True))
+    try:
+        reconcile_publication(status, len(rows) - 1)
+    except (AssertionError, KeyError) as error:
+        raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: ' + str(error)) from error
+    return rows
 
 
 def expanded(value):
@@ -693,6 +716,28 @@ class Processes(unittest.TestCase):
                 with self.assertRaisesRegex(AssertionError,'deadline exceeded'):compare(['fixture'],'trace',{},injected=True)
             self.assertTrue(process.killed)
 
+        # A present marker cannot authorize content checks on an incomplete run.
+        marker = dict(kind='span_envelope', process_id=7, value='CompiledState')
+        status = dict(kind='observation_status', process_id=7, level='trace',
+                      attempted_records=1, delivered_records=1, lost_records=0,
+                      undelivered_records=0, in_flight_records=0, drain_timeouts=0)
+        for field in (None, 'lost_records', 'undelivered_records', 'in_flight_records', 'drain_timeouts'):
+            changed = status if field is None else status | {field: 1}
+            if field in ('lost_records', 'undelivered_records', 'in_flight_records'):
+                changed = changed | {'attempted_records': 2}
+            evidence = b''.join(json.dumps(row).encode() + b'\n' for row in (marker, changed))
+            process = Process(evidence)
+            # Preserve the actual compare -> completeness path; suppress only ledger I/O.
+            with patch('subprocess.Popen', return_value=process), patch(__name__ + '.witness'):
+                if field is None:
+                    self.assertIn(b'CompiledState', compare(['fixture'], 'trace', {}).stderr)
+                else:
+                    with self.assertRaisesRegex(AssertionError, 'OBSERVATION-CAPTURE-INCOMPLETE'):
+                        compare(['fixture'], 'trace', {})
+        for rows in ([], [marker], [marker, status, status], [status]):
+            with self.assertRaisesRegex(AssertionError, 'OBSERVATION-CAPTURE-INCOMPLETE'):
+                complete_capture(b'\n'.join(json.dumps(row).encode() for row in rows))
+
     def test_four_mode_results(self):
         """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.
         ´claim:discipline:four-observation-modes-preserve-command-results´
@@ -759,7 +804,7 @@ class Processes(unittest.TestCase):
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 document_runs[level]=(result.returncode,result.stdout)
                 (artifact/("documents-"+level+".jsonl")).write_bytes(result.stderr)
-                rows=[json.loads(line) for line in result.stderr.splitlines()]
+                rows=complete_capture(result.stderr)
                 summary=expanded(next(row["metrics"] for row in rows if row.get("kind")=="metric_summary"))
                 document_outcomes[level]=distribution(summary)
             self.assertEqual(document_runs["default"],document_runs["trace"])

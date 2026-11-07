@@ -547,6 +547,16 @@ fn commitment_trace_privacy() {
         assert_eq!(status[0]["lost_records"], 0, "{level}/{recipe}: {}", status[0]);
         assert_eq!(status[0]["undelivered_records"], 0);
         assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
+        assert_eq!(status[0]["in_flight_records"], 0, "OBSERVATION-CAPTURE-INCOMPLETE: in flight");
+        assert_eq!(
+            status[0]["drain_timeouts"], 0,
+            "OBSERVATION-CAPTURE-INCOMPLETE: drain timeout"
+        );
+        assert_eq!(
+            status[0]["delivered_records"].as_u64().unwrap(),
+            u64::try_from(records.len() - 1).unwrap(),
+            "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+        );
         let metrics = records.iter().find(|row| row["kind"] == "metric_summary").unwrap();
         let started = metrics["metrics"]["instruments"]
             .as_array()
