@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "conserved::memoized::Revision",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)] enum Revision { Legacy , Domain , }"
+  }
+}

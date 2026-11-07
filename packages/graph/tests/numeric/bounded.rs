@@ -210,7 +210,7 @@ fn roots(b: &mut Budget) {
         let power = bounded::power(&value, &Rational::parse("1/4", b).unwrap(), 32, b).unwrap();
         assert!(!power.lower().pow(4, b).unwrap().compare(value.lower(), b).unwrap().is_gt());
         assert!(!power.upper().pow(4, b).unwrap().compare(value.upper(), b).unwrap().is_lt());
-        let reciprocal = bounded::power(&value, &Rational::parse("-1/4", b).unwrap(), 32, b).unwrap();
+        let reciprocal = bounded::legacy_power(&value, &Rational::parse("-1/4", b).unwrap(), 32, b).unwrap();
         let one = Rational::parse("1", b).unwrap();
         assert!(
             !reciprocal
@@ -277,4 +277,56 @@ fn refusals(b: &mut Budget) {
             ..
         }))
     ));
+}
+
+/// Claim: Strict bounded powers refuse zero, negative and above-one exponents as `OutsideDomain` with certified exact fallbacks, while one and a small positive dyadic exponent remain admitted.
+/// ´claim:numerics:bounded-power-refuses-outside-contract´
+/// ´test:integration:bounded-power-domain´
+#[test]
+fn bounded_power_domain() {
+    let p = procedure(48);
+    let mut b = Budget::new(p.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    let base = interval("1/16", "1/16", &mut b);
+    for (exponent, expected) in [("2", "1/256"), ("0", "1"), ("-1/2", "4")] {
+        let result = bounded::power(&base, &Rational::parse(exponent, &mut b).unwrap(), 32, &mut b);
+        assert!(matches!(
+            result,
+            Err(bounded::Error::Refused(bounded::Refusal::OutsideDomain))
+        ));
+        let query = Query {
+            coordinates: vec![Range {
+                lower: "1/16".into(),
+                upper: "1/16".into(),
+            }],
+            nodes: vec![Node::Coordinate(0), Node::PositivePower(0, exponent.into())],
+            target: 1,
+            goal: Goal::Width,
+        };
+        let exact = pn_graph::numeric::evaluate(&p, &query, None).unwrap();
+        assert!(exact.resource_fault.is_none());
+        let checked = pn_graph::numeric::replay(&p, &query, exact.attachment.as_ref().unwrap(), None).unwrap();
+        assert_eq!(exact.bounds, checked.bounds);
+        assert!(
+            exact
+                .bounds
+                .unwrap()
+                .contains(&interval(expected, expected, &mut b), &mut b)
+                .unwrap()
+        );
+    }
+    for exponent in ["1/8", "1"] {
+        let result = bounded::power(&base, &Rational::parse(exponent, &mut b).unwrap(), 32, &mut b).unwrap();
+        let query = Query {
+            coordinates: vec![Range {
+                lower: "1/16".into(),
+                upper: "1/16".into(),
+            }],
+            nodes: vec![Node::Coordinate(0), Node::PositivePower(0, exponent.into())],
+            target: 1,
+            goal: Goal::Width,
+        };
+        let exact = pn_graph::numeric::evaluate(&p, &query, None).unwrap();
+        assert!(exact.resource_fault.is_none());
+        assert!(result.contains(exact.bounds.as_ref().unwrap(), &mut b).unwrap());
+    }
 }

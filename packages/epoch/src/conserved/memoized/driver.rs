@@ -45,12 +45,38 @@ pub struct Record {
     ret
 )]
 pub fn solve(plan: super::Plan, bound: &BoundProcedure<'_>, accepted: &crate::fence::Search) -> Result<Record, Error> {
+    solve_revision(super::Revision::Legacy, plan, bound, accepted)
+}
+
+/// Execute the strict bounded-power contract, with exact fallback, as revision five.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+/// # Errors
+/// Refuses invalid original premises, exhausted limits and evidence disagreement.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "conserved::memoized::driver::domain_solve"
+    ),
+    ret
+)]
+pub fn domain_solve(plan: super::Plan, bound: &BoundProcedure<'_>, accepted: &crate::fence::Search) -> Result<Record, Error> {
+    solve_revision(super::Revision::Domain, plan, bound, accepted)
+}
+fn solve_revision(
+    revision: super::Revision,
+    plan: super::Plan,
+    bound: &BoundProcedure<'_>,
+    accepted: &crate::fence::Search,
+) -> Result<Record, Error> {
     let rung = accepted.selected.as_deref().ok_or(Error::Scope)?;
-    let (mut result, production) = run(plan, bound, &accepted.evidence, rung, None)?;
-    let (checked, mandatory_replay) = run(plan, bound, &result.fence, rung, Some(&result))?;
+    let (mut result, production) = run(revision, plan, bound, &accepted.evidence, rung, None)?;
+    let (checked, mandatory_replay) = run(revision, plan, bound, &result.fence, rung, Some(&result))?;
     result.replay_work = checked.work;
     Ok(Record {
-        revision: "memoized-dyadic-v4".into(),
+        revision: revision.name().into(),
         plan,
         solve: result,
         production,
@@ -73,11 +99,37 @@ pub fn solve(plan: super::Plan, bound: &BoundProcedure<'_>, accepted: &crate::fe
     ret
 )]
 pub fn replay(plan: super::Plan, bound: &BoundProcedure<'_>, supplied: &Record) -> Result<Record, Error> {
-    if supplied.revision != "memoized-dyadic-v4" || supplied.plan != plan {
+    replay_revision(super::Revision::Legacy, plan, bound, supplied)
+}
+
+/// Independently replay revision five; revision four remains a separate entry.
+/// (´[ROOT-rule:design:evaluation-schedule]´)
+/// # Errors
+/// Refuses revision substitution, changed inputs or evidence and accounting disagreement.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "conserved::memoized::driver::domain_replay"
+    ),
+    ret
+)]
+pub fn domain_replay(plan: super::Plan, bound: &BoundProcedure<'_>, supplied: &Record) -> Result<Record, Error> {
+    replay_revision(super::Revision::Domain, plan, bound, supplied)
+}
+fn replay_revision(
+    revision: super::Revision,
+    plan: super::Plan,
+    bound: &BoundProcedure<'_>,
+    supplied: &Record,
+) -> Result<Record, Error> {
+    if supplied.revision != revision.name() || supplied.plan != plan {
         return Err(Error::Scope);
     }
     let rung = &supplied.solve.rounds.first().ok_or(Error::Scope)?.certified.rung;
-    let (checked, accounting) = run(plan, bound, &supplied.solve.fence, rung, Some(&supplied.solve))?;
+    let (checked, accounting) = run(revision, plan, bound, &supplied.solve.fence, rung, Some(&supplied.solve))?;
     if checked.work != supplied.solve.replay_work || accounting != supplied.mandatory_replay {
         return Err(Error::ReplayWork);
     }
@@ -104,7 +156,7 @@ fn compare_round(supplied: &ResidualRound, result: &ResidualRound) -> Result<(),
 }
 
 fn round(
-    context: (super::Plan, &BoundProcedure<'_>),
+    context: (super::Revision, super::Plan, &BoundProcedure<'_>),
     rung: &str,
     precision: u32,
     contraction: &Rational,
@@ -112,16 +164,12 @@ fn round(
     b: &mut Budget,
     accounting: &mut Accounting,
 ) -> Result<ResidualRound, Error> {
-    let (plan, bound) = context;
+    let (revision, plan, bound) = context;
     let p = bound.inputs().1;
     if precision < 2 {
         return Err(Error::Scope);
     }
-    let allowance = if supplied.is_some() {
-        p.maximum_replay_work
-    } else {
-        p.maximum_solve_work
-    };
+    let allowance = work_allowance(p, supplied.is_some());
     let start = b.usage().work;
     let hull = super::hull(bound);
     let grid = residual::grid(
@@ -141,6 +189,7 @@ fn round(
         None
     } else {
         Some(map::Context::new(
+            revision,
             plan,
             bound,
             rung,
@@ -188,6 +237,7 @@ fn round(
         return Err(Error::Scope);
     }
     let mut final_context = map::Context::new(
+        revision,
         plan,
         bound,
         rung,
@@ -213,7 +263,8 @@ fn round(
     Ok(result)
 }
 
-pub(super) fn run(
+fn run(
+    revision: super::Revision,
     plan: super::Plan,
     bound: &BoundProcedure<'_>,
     accepted: &Evidence,
@@ -250,7 +301,7 @@ pub(super) fn run(
     for (index, precision) in sequence.iter().enumerate() {
         let given = supplied.map(|s| s.rounds.get(index).ok_or(Error::Scope)).transpose()?;
         rounds.push(round(
-            (plan, bound),
+            (revision, plan, bound),
             rung,
             *precision,
             &contraction,
@@ -276,4 +327,8 @@ pub(super) fn run(
         },
         accounting,
     ))
+}
+
+fn work_allowance(p: &pn_records::solve::Procedure, replay: bool) -> u64 {
+    if replay { p.maximum_replay_work } else { p.maximum_solve_work }
 }

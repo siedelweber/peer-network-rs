@@ -133,7 +133,7 @@ fn applied_transport_agreement() {
                 let emission = if partial {
                     rates.rotate_left(1);
                     assert!(rates[0].lower().compare(rates[n - 1].lower(), &mut b).unwrap().is_gt());
-                    vec![Interval::singleton(&Rational::parse("1/2", &mut b).unwrap(), &mut b).unwrap(); n]
+                    partial_emissions(n, &mut b)
                 } else {
                     counts.clone()
                 };
@@ -221,4 +221,13 @@ impl pn_graph::transport::applied::HopFactors for UnitFactors {
     ) -> Result<Vec<nrz_cas::enclosure::Interval>, pn_graph::transport::applied::Error> {
         Ok(vec![self.0.clone(); self.1])
     }
+}
+
+fn partial_emissions(n: usize, b: &mut nrz_cas::limits::Budget) -> Vec<nrz_cas::enclosure::Interval> {
+    (1..=n)
+        .map(|i| {
+            nrz_cas::enclosure::Interval::singleton(&nrz_cas::Rational::parse(&format!("{i}/{}", 2 * n + 1), b).unwrap(), b)
+                .unwrap()
+        })
+        .collect()
 }

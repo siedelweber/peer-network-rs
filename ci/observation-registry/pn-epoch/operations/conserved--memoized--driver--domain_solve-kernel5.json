@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/conserved/memoized/driver.rs",
+    "item": "conserved::memoized::driver::domain_solve",
+    "owner": "EPOCH",
+    "signature": "fn domain_solve (plan : super :: Plan , bound : & BoundProcedure < '_ > , accepted : & crate :: fence :: Search) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:epoch",
+    "mode": "instrumented",
+    "shape": "shape-epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::domain_solve",
+    "body": "{ solve_revision (super :: Revision :: Domain , plan , bound , accepted) }",
+    "class_decision": "conserved-public-evaluation",
+    "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
+    "assessments": {
+      "full_recording": "conserved-public-evaluation",
+      "secret_flow": "conserved-public-evaluation",
+      "exposure_consumers": "conserved-public-evaluation"
+    }
+  }
+}

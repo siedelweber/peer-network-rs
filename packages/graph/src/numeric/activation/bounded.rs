@@ -253,10 +253,10 @@ pub fn tanh(value: &Interval, precision: u32, grid: u32, terms: u32, b: &mut Bud
     Ok(Interval::new(endpoints[0].lower().clone(), endpoints[1].upper().clone(), b)?)
 }
 
-/// Exact dyadic exponents use repeated roots, integer powering and signed inversion.
+/// Bounded dyadic powers admit exactly positive exponents no greater than one.
 /// (´def:numerics:activation´)
 /// # Errors
-/// Refuses a nonpositive base, unsupported exponent, operand domain or resources.
+/// Refuses exponents outside (0, 1], unsupported operands and exhausted resources.
 #[tracing::instrument(
     name = "sig:design:graph",
     fields(
@@ -268,6 +268,28 @@ pub fn tanh(value: &Interval, precision: u32, grid: u32, terms: u32, b: &mut Bud
     ret
 )]
 pub fn power(value: &Interval, exponent: &Rational, grid: u32, b: &mut Budget) -> Result<Interval, Error> {
+    if exponent.is_zero() || exponent.is_negative() || exponent.compare(&Rational::parse("1", b)?, b)?.is_gt() {
+        return Err(refused(Refusal::OutsideDomain));
+    }
+    legacy_power(value, exponent, grid, b)
+}
+
+/// Frozen revision-three/four dyadic powers, including their wider exponent domain.
+/// This entry exists only to reproduce recorded legacy evidence and Work.
+/// (´def:numerics:activation´)
+/// # Errors
+/// Refuses a nonpositive base, unsupported exponent, operand domain or resources.
+#[tracing::instrument(
+    name = "sig:design:graph",
+    fields(
+        execution_owner = "GRAPH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:graph",
+        source_item = "numeric::activation::bounded::legacy_power"
+    ),
+    ret
+)]
+pub fn legacy_power(value: &Interval, exponent: &Rational, grid: u32, b: &mut Budget) -> Result<Interval, Error> {
     domain(value, 0, 2, b)?;
     if value.lower().is_zero() {
         return Err(refused(Refusal::OutsideDomain));

@@ -2547,6 +2547,22 @@
       "review": "Read the distinct constructor-backed inputs and independent oracle assertions: the added upper-bound-plus-one thresholds must Fail in both histories."
     },
     {
+      "operation": "pn-epoch::workload_correctness::domain_solve_agreement",
+      "path": "packages/epoch/tests/workload_correctness.rs",
+      "claim": "EPOCH::claim:numerics:domain-solves-retain-versioned-fallback",
+      "before": "",
+      "after": "Claim: Revision five retains independent replay and certified images under its strict power domain, records zero-exponent exact fallback, and refuses substitutions with revision four in both directions.",
+      "review": "Two constructor-backed histories differ in zero versus positive shape. Nonzero rung is asserted; zero powers retain OutsideDomain, the exact fallback certifies the same image, and both revision substitutions refuse."
+    },
+    {
+      "operation": "pn-epoch::workload_correctness::memoized_solve_agreement",
+      "path": "packages/epoch/tests/workload_correctness.rs",
+      "claim": "EPOCH::claim:numerics:memoized-solves-retain-exact-request-evidence",
+      "before": "Claim: Previous-pass memoization independently replays identical scalar evidence, reduces charged Work on two small histories, and refuses altered hit counters and revision substitutions.",
+      "after": "Claim: Previous-pass memoization independently replays identical scalar evidence, reduces charged Work on two small histories, and refuses altered hit counters and revision substitutions.",
+      "review": "Two distinct histories and a third 16-bit plan compare independent v3 and v4 exact primitive bounds, outcome and attachment, as well as bounded records. Scratch mutation evidence is reported separately."
+    },
+    {
       "operation": "pn-graph::formation::affinity_coordinates",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:affinity-requires-typed-complete-coordinates",
@@ -2939,6 +2955,14 @@
       "review": "Fifteen distinct formula requests cover one below-wall anchor, four box placements for values and generalized gains, a one-third applied exponent, a zero exponent, changed-wall replay, and three invalid-domain requests. Independent brackets check value endpoints and responsive gains; below-wall value and zero gain are exact branch controls. Interruption has no verdict. A separate policy with only the output ceiling reduced to one MiB retains an explicit no-bound OutputBytes exhaustion. No smooth derivative or wall inversion is admitted."
     },
     {
+      "operation": "pn-graph::numeric::bounded::bounded_power_domain",
+      "path": "packages/graph/tests/numeric/bounded.rs",
+      "claim": "GRAPH::claim:numerics:bounded-power-refuses-outside-contract",
+      "before": "",
+      "after": "Claim: Strict bounded powers refuse zero, negative and above-one exponents as `OutsideDomain` with certified exact fallbacks, while one and a small positive dyadic exponent remain admitted.",
+      "review": "Five unsorted exponent inputs: three exact typed domain refusals followed by independently replayed exact enclosures, and two admitted positive exponents."
+    },
+    {
       "operation": "pn-graph::numeric::controller::controller_branches",
       "path": "packages/graph/tests/numeric/controller.rs",
       "claim": "GRAPH::claim:numerics:controller-branches-retain-ordered-comparisons",
@@ -3208,7 +3232,7 @@
       "claim": "GRAPH::claim:numerics:applied-transport-retains-sparse-certified-scope",
       "before": "Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch; insufficient denominator precision refuses.",
       "after": "Claim: Applied sparse chains and hubs enclose the independent exact matrix oracle with H times Z support visits and linear scratch, including unsorted rates and partial emission; insufficient denominator precision refuses.",
-      "review": "Read all eight chain/hub inputs: each size and topology reaches both full emission with ordered rates and half emission with rotated unsorted rates; independent matrix containment and sparse allocation controls remain."
+      "review": "Eight distinct chain/hub inputs reach full and source-distinct partial emissions i/(2n+1) with rotated unsorted rates. None equals one-half; swapping retained and emitted fractions must change the independently certified standing."
     },
     {
       "operation": "pn-graph::workload_correctness::transport_construction_refusals",

@@ -122,6 +122,7 @@ impl Checks<'_> {
     }
 }
 
+// Validated rung and shape are nonnegative: legacy powers are non-decreasing, including exponent zero.
 fn powers(checks: &mut Checks<'_>, values: &[Interval], exponents: &[String]) -> Result<Vec<Vec<Interval>>, Error> {
     let mut result = Vec::new();
     for exponent in exponents {
@@ -148,7 +149,8 @@ fn powers(checks: &mut Checks<'_>, values: &[Interval], exponents: &[String]) ->
                 let start = checks.budget.usage().work;
                 let operand = Interval::singleton(endpoint, &mut checks.budget)?;
                 let exponent_value = Rational::parse(exponent, &mut checks.budget)?;
-                let attempted = bounded::power(&operand, &exponent_value, checks.plan.working_precision, &mut checks.budget);
+                let attempted =
+                    bounded::legacy_power(&operand, &exponent_value, checks.plan.working_precision, &mut checks.budget);
                 endpoints.push(if let Some(value) = checks.bounded_result(input, start, attempted)? {
                     value
                 } else {

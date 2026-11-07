@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::replay",
-    "body": "{ if supplied . revision != \"memoized-dyadic-v4\" || supplied . plan != plan { return Err (Error :: Scope) ; } let rung = & supplied . solve . rounds . first () . ok_or (Error :: Scope) ? . certified . rung ; let (checked , accounting) = run (plan , bound , & supplied . solve . fence , rung , Some (& supplied . solve)) ? ; if checked . work != supplied . solve . replay_work || accounting != supplied . mandatory_replay { return Err (Error :: ReplayWork) ; } Ok (Record { revision : supplied . revision . clone () , plan , solve : checked , production : supplied . production . clone () , mandatory_replay : accounting , }) }",
+    "body": "{ replay_revision (super :: Revision :: Legacy , plan , bound , supplied) }",
     "class_decision": "conserved-public-evaluation",
     "item_premise": "The bounded receiver retains public original numerical operands, the explicitly selected working grid, outward intervals or typed refusals, and charged Work. Independent replay admits constant premises and recomputes the entire scalar evidence. Arguments, results and ledger state are numerical public data with no secret, subscriber choice or publication encoder.",
     "assessments": {

@@ -44,6 +44,7 @@ impl Cache {
 
 #[derive(Debug)]
 struct Checks<'a> {
+    revision: super::Revision,
     plan: super::Plan,
     cache: &'a mut Cache,
     capacity: usize,
@@ -60,7 +61,7 @@ impl Checks<'_> {
     fn key(&mut self, input: &ScalarInput) -> Result<Key, Error> {
         let precision = self.policy.enclosure.as_ref().ok_or(Error::Scope)?.refinement.precision;
         let key = Key {
-            revision: "memoized-dyadic-v4",
+            revision: self.revision.name(),
             plan: self.plan,
             precision,
             input: input.clone(),
@@ -214,6 +215,7 @@ impl Checks<'_> {
     }
 }
 
+// Admitted v5 exponents are positive and at most one. Exact fallbacks use validated nonnegative rung × shape, so every row remains non-decreasing (zero is constant).
 fn powers(checks: &mut Checks<'_>, values: &[Interval], exponents: &[String]) -> Result<Vec<Vec<Interval>>, Error> {
     let mut result = Vec::new();
     for exponent in exponents {
@@ -245,7 +247,11 @@ fn powers(checks: &mut Checks<'_>, values: &[Interval], exponents: &[String]) ->
                 let start = checks.budget.usage().work;
                 let operand = Interval::singleton(endpoint, &mut checks.budget)?;
                 let exponent_value = Rational::parse(exponent, &mut checks.budget)?;
-                let attempted = bounded::power(&operand, &exponent_value, checks.plan.working_precision, &mut checks.budget);
+                let evaluate = match checks.revision {
+                    super::Revision::Legacy => bounded::legacy_power,
+                    super::Revision::Domain => bounded::power,
+                };
+                let attempted = evaluate(&operand, &exponent_value, checks.plan.working_precision, &mut checks.budget);
                 if let Some(value) = checks.bounded_result(input, start, attempted)? {
                     checks.save(key, None)?;
                     endpoints.push(value);
@@ -482,6 +488,7 @@ struct StaticInput {
 }
 
 pub(super) struct Context<'a, 'b> {
+    revision: super::Revision,
     plan: super::Plan,
     bound: &'a BoundProcedure<'b>,
     rung: String,
@@ -502,6 +509,7 @@ pub(super) struct Context<'a, 'b> {
 
 impl<'a, 'b> Context<'a, 'b> {
     pub(super) fn new(
+        revision: super::Revision,
         plan: super::Plan,
         bound: &'a BoundProcedure<'b>,
         rung: &str,
@@ -535,6 +543,7 @@ impl<'a, 'b> Context<'a, 'b> {
 
         let initial_work = budget.usage().work;
         Ok(Self {
+            revision,
             plan,
             bound,
             rung: rung.into(),
@@ -583,6 +592,7 @@ impl<'a, 'b> Context<'a, 'b> {
         }
         let prior_setup = self.receiver.setup_work();
         let mut checks = Checks {
+            revision: self.revision,
             plan: self.plan,
             cache: &mut self.cache,
             capacity: capacity(point.len(), self.exponents.len())?,

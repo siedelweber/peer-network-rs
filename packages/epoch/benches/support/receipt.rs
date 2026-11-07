@@ -71,8 +71,8 @@ fn identity(header: &str) -> String {
         .find_map(|value| value.strip_prefix("procedure_revision="));
     let recipe = header.split_whitespace().find_map(|value| value.strip_prefix("recipe="));
     if name().starts_with("solve-") || name().starts_with("replay-") {
-        assert_eq!(revision, Some("memoized-dyadic-v4"));
-        assert_eq!(recipe, Some("scaling-workloads/memoized-dyadic-v4"));
+        assert_eq!(revision, Some("domain-dyadic-v5"));
+        assert_eq!(recipe, Some("scaling-workloads/domain-dyadic-v5"));
     }
     format!(
         "{{\"procedure_revision\":{},\"recipe_edition\":{},",

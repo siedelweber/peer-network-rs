@@ -54,7 +54,7 @@ impl Accepted for conserved::memoized::Record {
             &self.production
         };
         format!(
-            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=memoized-dyadic-v4",
+            "{} setup_work={} map_work={} final_check_work={} driver_work={} procedure_revision=domain-dyadic-v5",
             self.solve.work_fields(name),
             a.setup,
             a.map_passes.iter().sum::<u64>(),
@@ -247,7 +247,7 @@ fn actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, seed: u64
 }
 
 fn check_compact(bound: &pn_epoch::solve::compact::BoundProcedure<'_>, record: &conserved::memoized::Record) {
-    let checked = conserved::memoized::replay(activation_plan(), bound, record).unwrap();
+    let checked = conserved::memoized::domain_replay(activation_plan(), bound, record).unwrap();
     assert_eq!(
         checked.solve.rounds.last().unwrap().standing,
         record.solve.rounds.last().unwrap().standing
@@ -279,7 +279,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                 Err(error) => {
                     for name in &names {
                         if selected(name) {
-                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/memoized-dyadic-v4 procedure_revision=memoized-dyadic-v4 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
+                            std::fs::write(output.join(format!("{name}.txt")), format!("recipe=scaling-workloads/domain-dyadic-v5 procedure_revision=domain-dyadic-v5 seed={seed} N={n} outcome=REFUSED phase=construction refusal={error:?} setup_s={}\n", start.elapsed().as_secs_f64())).unwrap();
                         }
                     }
                     continue;
@@ -301,10 +301,10 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                         &names[1],
                         &metadata,
                         || (),
-                        |()| conserved::memoized::solve(activation_plan(), &bound, &accepted).map_err(Box::new),
+                        |()| conserved::memoized::domain_solve(activation_plan(), &bound, &accepted).map_err(Box::new),
                     )
                 } else {
-                    Measurement(conserved::memoized::solve(activation_plan(), &bound, &accepted).map_err(Box::new))
+                    Measurement(conserved::memoized::domain_solve(activation_plan(), &bound, &accepted).map_err(Box::new))
                 };
                 // B7 consumes this exact B6 API result, never an independently generated case.
                 match produced.0 {
@@ -327,7 +327,7 @@ fn compact_actors(group: &mut Bench<'_>, output: &std::path::Path, mode: &str, s
                                 &names[2],
                                 &metadata,
                                 || (),
-                                |()| conserved::memoized::replay(activation_plan(), &bound, &record).map_err(Box::new),
+                                |()| conserved::memoized::domain_replay(activation_plan(), &bound, &record).map_err(Box::new),
                             );
                         }
                     }
@@ -577,7 +577,7 @@ fn compact_metadata(
     construction_s: f64,
 ) -> String {
     format!(
-        "recipe=scaling-workloads/memoized-dyadic-v4 procedure_revision=memoized-dyadic-v4 seed={seed} {} construction_s={} procedure={p:?} activation_plan={:?} {}",
+        "recipe=scaling-workloads/domain-dyadic-v5 procedure_revision=domain-dyadic-v5 seed={seed} {} construction_s={} procedure={p:?} activation_plan={:?} {}",
         format_args!(
             "N={} M={} Z={} H={} cells={} products={} S=1",
             input.n,

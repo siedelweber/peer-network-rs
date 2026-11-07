@@ -802,6 +802,8 @@ fn memoized_solve_agreement() {
             let fallback = memoized::solve(fallback_plan, &bound, &fence).unwrap();
             memoized::replay(fallback_plan, &bound, &fallback).unwrap();
             assert!(fallback.solve.rounds.iter().any(|r| r.certified.primitives.len() > 2));
+            let old_fallback = bounded::solve(bounded::Plan { working_precision: 16 }, &bound, &fence).unwrap();
+            assert_fallback_equivalence(&old_fallback.solve, &fallback.solve);
         }
         let mut bad = fresh.clone();
         bad.solve.rounds[0].proposals[0].memo.hits += 1;
@@ -861,4 +863,98 @@ fn fail_thresholds(
         .collect();
     let check = compact::check_claim(bound, fence, &new.certified.point, 16, &above).unwrap();
     assert!(check.thresholds.values().all(|v| *v == compact::Threshold::Fail));
+}
+
+/// Claim: Revision five retains independent replay and certified images under its strict power domain, records zero-exponent exact fallback, and refuses substitutions with revision four in both directions.
+/// ´claim:numerics:domain-solves-retain-versioned-fallback´
+/// ´test:integration:domain-solve-agreement´
+#[test]
+fn domain_solve_agreement() {
+    use pn_epoch::{compiler, conserved::memoized, solve};
+    for zero in [false, true] {
+        let c = candidate(inputs::SEED, 2, None, "ring", "pass");
+        let state = compiler::compact::compile_candidate(
+            &c.context,
+            &c.approval,
+            &mut inputs::numeric(),
+            Limits::default(),
+            inputs::PRODUCTS,
+        )
+        .unwrap();
+        let mut p = inputs::compact_scaling_procedure(&state, 16);
+        if zero {
+            p.fence.as_mut().unwrap().shape.fill("zero".into());
+        }
+        let bound = solve::compact::bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+        let fence = pn_epoch::fence::compact::search(&bound, None).unwrap();
+        assert_ne!(fence.selected.as_deref(), Some("0"));
+        let plan = memoized::Plan { working_precision: 32 };
+        let old = memoized::solve(plan, &bound, &fence).unwrap();
+        let fresh = memoized::domain_solve(plan, &bound, &fence).unwrap();
+        memoized::replay(plan, &bound, &old).unwrap();
+        memoized::domain_replay(plan, &bound, &fresh).unwrap();
+        assert!(matches!(
+            memoized::replay(plan, &bound, &fresh),
+            Err(pn_epoch::conserved::Error::Scope)
+        ));
+        assert!(matches!(
+            memoized::domain_replay(plan, &bound, &old),
+            Err(pn_epoch::conserved::Error::Scope)
+        ));
+        assert_ne!(fresh.solve.work, old.solve.work);
+        assert_eq!(old.solve.rounds.len(), fresh.solve.rounds.len());
+        let mut refusals = 0;
+        for (old, new) in old.solve.rounds.iter().zip(&fresh.solve.rounds) {
+            assert_eq!(old.standing, new.standing);
+            for (a, b) in old
+                .proposals
+                .iter()
+                .chain([&old.certified])
+                .zip(new.proposals.iter().chain([&new.certified]))
+            {
+                assert_eq!(a.image, b.image);
+                for scalar in &b.bounded {
+                    if let memoized::records::ScalarInput::Power { exponent, .. } = &scalar.input {
+                        if zero {
+                            assert_eq!(exponent, "0");
+                            assert_eq!(
+                                scalar.result,
+                                Err(pn_graph::numeric::activation::bounded::Refusal::OutsideDomain)
+                            );
+                            refusals += 1;
+                        } else {
+                            assert!(scalar.result.is_ok());
+                        }
+                    }
+                }
+            }
+        }
+        if zero {
+            assert!(refusals > 0);
+        }
+    }
+}
+
+fn assert_fallback_equivalence(
+    old_fallback: &pn_epoch::conserved::bounded::records::SolveRecord,
+    fallback: &pn_epoch::conserved::memoized::records::SolveRecord,
+) {
+    assert_eq!(old_fallback.rounds.len(), fallback.rounds.len());
+    for (a, b) in old_fallback.rounds.iter().zip(&fallback.rounds) {
+        assert_eq!(a.proposals.len(), b.proposals.len());
+        for (a, b) in a
+            .proposals
+            .iter()
+            .chain([&a.certified])
+            .zip(b.proposals.iter().chain([&b.certified]))
+        {
+            assert_eq!(a.primitives.len(), b.primitives.len());
+            for (a, b) in a.primitives.iter().zip(&b.primitives) {
+                assert_eq!(a.query, b.query);
+                assert_eq!(a.evidence.bounds, b.evidence.bounds);
+                assert_eq!(a.evidence.outcome, b.evidence.outcome);
+                assert_eq!(a.evidence.attachment, b.evidence.attachment);
+            }
+        }
+    }
 }

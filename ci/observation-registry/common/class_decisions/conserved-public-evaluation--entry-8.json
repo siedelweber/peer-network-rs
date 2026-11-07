@@ -40,7 +40,9 @@
         "pn-graph::packages/graph/src/transport/enclosed.rs::transport::enclosed::evaluate",
         "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::solve",
         "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::replay",
-        "pn-epoch::packages/epoch/src/conserved/memoized/map.rs::conserved::memoized::map::<Factors < '_ , '_ > as pn_graph :: transport :: applied :: HopFactors>::at"
+        "pn-epoch::packages/epoch/src/conserved/memoized/map.rs::conserved::memoized::map::<Factors < '_ , '_ > as pn_graph :: transport :: applied :: HopFactors>::at",
+        "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::domain_solve",
+        "pn-epoch::packages/epoch/src/conserved/memoized/driver.rs::conserved::memoized::driver::domain_replay"
       ]
     }
   }

@@ -1900,6 +1900,22 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::workload_correctness::domain_solve_agreement"
+      ],
+      "composition_reasons": {
+        "pn-epoch::workload_correctness::domain_solve_agreement": "Independent exact fallback and versioned replay controls."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-epoch::domain-solve-conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-epoch::inputs::parameter_binding"
       ],
       "implementation": "pn-epoch-rust",
@@ -2318,6 +2334,22 @@
       "kind": "suite",
       "level": "integration",
       "name": "pn-graph::bounded-activation-contracts",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::numeric::bounded::bounded_power_domain"
+      ],
+      "composition_reasons": {
+        "pn-graph::numeric::bounded::bounded_power_domain": "Independent exact fallback and versioned replay controls."
+      },
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-graph::bounded-power-domain",
       "runner": "nextest",
       "status": "active",
       "tier": "extended"
