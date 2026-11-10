@@ -554,6 +554,14 @@
       "review": "A valid fixture in Cargo's cache cannot satisfy the missing declared input; the refusal names provisioning. A wrong response refuses before installation, a changed installed archive refuses at read despite the valid cached copy, unrelated files are ignored, and a successful offline read with network access forbidden and the Cargo copy removed still succeeds. The fixture also refuses an in-tree archive directory. These are local transport/read controls, not a registry availability claim."
     },
     {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_authentication_encoding_values",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:authentication-encoding-values-independent",
+      "before": "",
+      "after": "Claim: Canonical authentication golden values and four role messages match independent Python framing and SHA-256, and an altered message is refused by the comparison.",
+      "review": "Read the independent fixture and refusing branches: encoding, role framing and supplied-value correspondence are established without signature or authority claims."
+    },
+    {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_authentication_values",
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:authentication-values-have-independent-byte-checks",
@@ -1648,6 +1656,30 @@
       "before": "typesetter preserves arbitrary bytes.",
       "after": "Claim: Raw stdout and stderr preserve invalid UTF-8, NUL, control bytes and a 64 `KiB` payload exactly, protecting binary child output.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::canonical_header_material",
+      "path": "packages/act-authentication/tests/encoding.rs",
+      "claim": "ACTAUTH::claim:authentication:canonical-header-material",
+      "before": "",
+      "after": "Independent canonical bytes round trip through typed parts without repair.\nFive distinct fixtures reach the operations in deliberately unsorted order.",
+      "review": "Read the independent fixture and refusing branches: encoding, role framing and supplied-value correspondence are established without signature or authority claims."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::header_comparison",
+      "path": "packages/act-authentication/tests/encoding.rs",
+      "claim": "ACTAUTH::claim:authentication:header-comparison-refuses-each-field",
+      "before": "",
+      "after": "Every independently compared field has a distinct refusal; no residue is\nomitted when the original parts and retained disclosure are compared.",
+      "review": "Read the independent fixture and refusing branches: encoding, role framing and supplied-value correspondence are established without signature or authority claims."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::role_messages",
+      "path": "packages/act-authentication/tests/encoding.rs",
+      "claim": "ACTAUTH::claim:authentication:role-messages-match-golden-values",
+      "before": "",
+      "after": "All four recipe outputs agree with independent framing and SHA-256, including\npublication marker values rather than storage projections or encoded strings.",
+      "review": "Read the independent fixture and refusing branches: encoding, role framing and supplied-value correspondence are established without signature or authority claims."
     },
     {
       "operation": "pn-act-authentication::public::asset_identifiers",

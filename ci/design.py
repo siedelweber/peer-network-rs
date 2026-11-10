@@ -283,7 +283,7 @@ def validate():
 
     # Claim: nine responsibility rows form an acyclic prerequisite graph and eleven slices retain their declared order.
     crates = data('crates')
-    expected = ['pn-act-authentication', 'pn-records', 'pn-act-profile', 'pn-graph', 'pn-epoch', 'pn-readouts', 'pn-host', 'pn-replay', 'pn-verification']
+    expected = ['pn-records', 'pn-act-profile', 'pn-act-authentication', 'pn-graph', 'pn-epoch', 'pn-readouts', 'pn-host', 'pn-replay', 'pn-verification']
     if not ([row['name'] for row in crates] == expected):
         raise ValueError('crate roster')
     known = {'pn-interchange'}
@@ -374,7 +374,7 @@ REFRESHED_CONSTANTS_PIN = '03aa866e0fabcf333b197ade3dc5022acf3eaa8101eab9f20c177
 RELEASE_QUESTIONS_PIN = 'e15ab3d56900f3e696b1733cc32f1aa0b9491bb793cbddc7b13b0b9bd6c584e7'
 
 
-CRATES_PIN = 'dd48fbee5604f9251e448126f61c18566c02ef2e67900ab2a1d75075fd9578d9'
+CRATES_PIN = 'bed338b467a73299cd0bab328c1b3ccbf897d37fdfa58942b4f3bf7108d21b22'
 BITES_PIN = '4aab518d05cca8b32125ca373de36eacb1ee45873e27943699f5dbeb69d228c9'
 QUESTIONS_PIN = '1aa56833a069fca9ea47fa9e902241033faed3670689a649e7fc577423eafa95'
 

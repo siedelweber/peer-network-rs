@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "messages::RetirementMessage",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/messages.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "kind": "derive",
+    "class_decision": "authentication-public",
+    "expansion_review": "Generated cloning, equality, Debug and error formatting operate on public canonical values and typed refusals only; no secret or cryptographic operation is generated."
+  }
+}

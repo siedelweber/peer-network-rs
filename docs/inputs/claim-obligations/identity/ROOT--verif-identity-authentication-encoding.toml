@@ -1,0 +1,14 @@
+name = "ROOT::verif:identity:authentication-encoding"
+witnessed_labels = []
+case_census = ["canonical bytes and typed parts", "edition and noncanonical refusal", "independent role-specific messages", "distinct field comparisons"]
+path = "adr/006-identity-adjudication.md"
+status = "scoped-supported"
+claims = ["ACTAUTH::claim:authentication:canonical-header-material", "ACTAUTH::claim:authentication:role-messages-match-golden-values", "ACTAUTH::claim:authentication:header-comparison-refuses-each-field", "ROOT::claim:discipline:authentication-encoding-values-independent"]
+realizers = []
+hold = ""
+owner = "Authentication public encoding implementation"
+missing = "Signature verification, authority membership and production signing remain held."
+closing_condition = "Execute canonical, independent message and field comparison controls."
+closing_step = "Before public authentication verification"
+premises = "The public marker encoding and admitted immutable framing determine the messages; cryptographic binding retains its collision assumption."
+evidence_paragraph = "ACTAUTH::rec:authentication:encoding-evidence"

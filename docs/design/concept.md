@@ -30,11 +30,11 @@
 
 **Definition (Responsibility map)** · `def:vision:responsibility-map` The following responsibilities retain the homes named by (`dec:decomposition:crates`). These are the adopted map's names and purposes, not new implementation boundaries; the design must explain how they satisfy this concept and record any disagreement before changing the map.
 
-**Definition (pn-act-authentication)** · `def:vision:pn-act-authentication` Public author-token recipes and candidate fixed-message verification operations; no complete act or chain verdict (`dec:decomposition:crates`).
-
 **Definition (pn-records)** · `def:vision:pn-records` Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants (`dec:decomposition:crates`).
 
 **Definition (pn-act-profile)** · `def:vision:pn-act-profile` Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency (`dec:decomposition:crates`).
+
+**Definition (pn-act-authentication)** · `def:vision:pn-act-authentication` Public token recipes, canonical authentication values, role-specific messages and candidate fixed-message verification operations; no complete act or chain verdict (`dec:decomposition:crates`).
 
 **Definition (pn-graph)** · `def:vision:pn-graph` Structural formation, shared graph algebra and title folds (`dec:decomposition:crates`).
 

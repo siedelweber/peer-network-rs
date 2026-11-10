@@ -208,6 +208,18 @@
         {
           "owner": "WALLET",
           "target": "ACTAUTH"
+        },
+        {
+          "owner": "ACTAUTH",
+          "target": "ACTPROFILE"
+        },
+        {
+          "owner": "ACTAUTH",
+          "target": "INTERCHANGE"
+        },
+        {
+          "owner": "ACTAUTH",
+          "target": "RECORDS"
         }
       ],
       "name": "declaration",

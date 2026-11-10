@@ -1149,3 +1149,14 @@ commit = "51fa529297d8cd862bbf782bb8f69969dd6df34b"
 patch_id = "2d4dce685f9962a3a73e2636c8a74cdfcb879087"
 definition = "The host pilot and full campaign measured a clean checkout of this exact public commit with a private target. The stable patch-id is recomputed from that imported implementation commit, not from a lane tree."
 paths = ["ci/hash-citation-families.toml", "docs/inputs/workload-benchmarks.toml", "docs/datasets/org.peer-network.workload.benchmarks.json", "docs/design/workload-benchmarks.md"]
+
+[[rows]]
+family = "authentication-encoding-fixtures"
+group = "public authentication encoding evidence"
+measures = "Canonical public bytes and independently recomputed recipe messages"
+producer = "Independent Python canonical encoder and hashlib"
+establishment = "defined"
+reader = "authentication-encoding-fixtures"
+source = "packages/act-authentication/tests/encoding-golden.json"
+definition = "The reader independently recomputes every retained canonical value and message before admitting their exact public fixture spellings. Supplied signature bytes are operands, not valid signatures."
+paths = ["packages/act-authentication/tests/encoding-golden.json"]

@@ -168,3 +168,17 @@ pub fn key_script(script: &[u8]) -> Option<KeyHash> {
     bytes.copy_from_slice(&script[7..]);
     Some(KeyHash(bytes))
 }
+
+mod body;
+
+mod encoding;
+pub use encoding::{
+    AUTHENTICATION_EDITION, AuthenticationMaterial, EncodingError, HeaderParts, VerifiedHeader, compare_act, compare_header,
+    decode_header, decode_material, encode_header, encode_material,
+};
+
+mod messages;
+pub use messages::{
+    ApprovalMessage, MarkerValue, ProposalMessage, RetirementMessage, SealMessage, approval_message, marker_value,
+    proposal_message, retirement_message, seal_message,
+};

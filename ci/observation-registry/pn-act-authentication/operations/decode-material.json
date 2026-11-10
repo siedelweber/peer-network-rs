@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "item": "encoding::decode_material",
+    "signature": "fn decode_material (input : & [u8] , edition : & str) -> Result < AuthenticationMaterial , EncodingError >",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:encoding",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/encoding.rs::encoding::decode_material",
+    "class_decision": "authentication-public",
+    "body": "{ if edition != AUTHENTICATION_EDITION { return Err (EncodingError :: Edition) ; } let value = canonical (input) ? ; let [e , run , actor_key , host_identity , host_key] = items (& value) ? else { return Err (EncodingError :: Shape) ; } ; if string (e) ? != edition { return Err (EncodingError :: Edition) ; } let result = AuthenticationMaterial { run : fixed (run) ? , actor_key : fixed (actor_key) ? , host_identity : string (host_identity) ? . into () , host_key : fixed (host_key) ? , } ; if ! host (& result . host_identity) { return Err (EncodingError :: Shape) ; } Ok (result) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+  }
+}

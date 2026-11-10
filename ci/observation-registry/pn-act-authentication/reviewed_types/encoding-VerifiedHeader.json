@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encoding::VerifiedHeader",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "syntax": "# [doc = \" Decoded parts beside the exact supplied canonical bytes. (´def:authentication:encoding´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerifiedHeader { parts : HeaderParts , bytes : Vec < u8 > , }"
+  }
+}

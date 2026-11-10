@@ -2,7 +2,7 @@
   "section": "assessments",
   "value": {
     "status": "reviewer-confirmed",
-    "premises": "Read the byte recipes, wrappers and private backend. Full Debug records only public bytes, points and content-free refusal variants; no private input, signing operation or entropy source is reached. The native validity candidate remains subject to independent cryptographic integration review.",
+    "premises": "Read the byte recipes, wrappers and private backend. Full Debug records only public bytes, points and content-free refusal variants; no private input, signing operation or entropy source is reached. The native validity candidate remains subject to independent cryptographic integration review. The encoding operations’ arguments and results are public locators, byte encodings, proposal parts or canonical values, recorded in full through ordinary Debug. The encoding functions derive public digests, encode and strictly decode values, or compare fields; no curve parser, signature operation, chain authority or secret access is present. Independent daemon identifiers and Python canonical bytes and hashes constrain the results. The encoding negative probe is ACTAUTH::claim:authentication:canonical-header-material.",
     "negative_probe": "ACTAUTH::claim:authentication:signature-binds-key-and-message"
   },
   "name": "authentication-public"

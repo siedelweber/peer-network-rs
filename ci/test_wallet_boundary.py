@@ -37,6 +37,19 @@ class WalletBoundary(unittest.TestCase):
         with self.assertRaises(ValueError):
             authentication_crypto.check_sources({'packages/act-authentication/src/other.rs': source})
 
+    def test_authentication_encoding_values(self):
+        """Claim: Canonical authentication golden values and four role messages match independent Python framing and SHA-256, and an altered message is refused by the comparison.
+        ´claim:discipline:authentication-encoding-values-independent´
+        ´test:integration:test-authentication-encoding-values´
+        """
+        from authentication_encoding_vectors import check, vectors
+        value = check()
+        self.assertEqual(value, vectors())
+        changed = copy.deepcopy(value)
+        changed['rows'][0]['messages'][1] = '00' * 32
+        with self.assertRaisesRegex(ValueError, "golden values differ"):
+            check(changed)
+
     def test_authentication_values(self):
         """Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs the daemon asset identifiers, and changed key or asset digests are refused.
         ´claim:discipline:authentication-values-have-independent-byte-checks´

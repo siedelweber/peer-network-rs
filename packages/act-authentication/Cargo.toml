@@ -9,6 +9,10 @@ version.workspace = true
 
 [dependencies]
 secp256k1-zkp = { version = "=0.11.2", default-features = false, features = ["std"] }
+
+pn-interchange = { path = "../interchange" }
+pn-records = { path = "../records" }
+pn-act-profile = { path = "../act-profile" }
 sha2.workspace = true
 tracing.workspace = true
 thiserror.workspace = true

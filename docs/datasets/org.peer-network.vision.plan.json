@@ -8,9 +8,9 @@
   "rows": [
     {
       "crates": [
-        "pn-act-authentication",
         "pn-records",
         "pn-act-profile",
+        "pn-act-authentication",
         "pn-graph",
         "pn-epoch",
         "pn-readouts",

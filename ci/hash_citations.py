@@ -288,8 +288,11 @@ def establish(root, rule):
         values.add(hashlib.sha256(publication.read_bytes()).hexdigest())
         values.update(hex(number) for number in (reference.ORDER, *reference.GENERATOR))
         return lambda candidate, _line: candidate in values
-    if kind == "authentication-fixtures" and standing == "defined":
-        from authentication_vectors import check
+    if kind in {"authentication-fixtures", "authentication-encoding-fixtures"} and standing == "defined":
+        if kind == "authentication-encoding-fixtures":
+            from authentication_encoding_vectors import check
+        else:
+            from authentication_vectors import check
         value = json.loads(relative_file(root, rule['source']).read_text())
         check(value)
         # Public daemon transaction bytes and their supplied locator fields are

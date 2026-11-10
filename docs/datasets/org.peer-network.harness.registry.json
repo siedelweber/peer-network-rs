@@ -791,7 +791,8 @@
         "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance",
         "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports",
         "ci::test_wallet_boundary.WalletBoundary.test_case_census",
-        "ci::test_wallet_boundary.WalletBoundary.test_confinement"
+        "ci::test_wallet_boundary.WalletBoundary.test_confinement",
+        "ci::test_wallet_boundary.WalletBoundary.test_authentication_encoding_values"
       ],
       "implementation": "pn-wallet-rust",
       "kind": "suite",
@@ -1675,6 +1676,21 @@
       "kind": "suite",
       "level": "unit",
       "name": "pn-act-authentication",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-act-authentication::encoding::canonical_header_material",
+        "pn-act-authentication::encoding::role_messages",
+        "pn-act-authentication::encoding::header_comparison"
+      ],
+      "implementation": "pn-act-authentication-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-act-authentication::encoding",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

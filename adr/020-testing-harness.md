@@ -34,7 +34,7 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). The support step re-declares the 73 cli-common and 25 execwrap internal-module cases as unit, and adds external public-surface witnesses under tests/; internal access is not public-surface evidence. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`). Levels and tiers have separate common fragments; each implementation and each suite has its own fragment in that implementation domain. The shared index-scoped reader merges by kind and exact name, preserving case sequences and overrides within a suite, before the global roster and reference checks. Equal duplicate entries refuse with both origins. Service selection projects only its selected case and referenced declarations from this same aggregate, so an unrelated fragment cannot invalidate a retained pass; the shared loader code remains a fingerprint input.
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 183 suites and 19 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 184 suites and 19 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
@@ -51,7 +51,7 @@
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_testkit | active | unit | ci-python | fast | 11 |
-| ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 10 |
+| ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 11 |
 | cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
@@ -94,6 +94,7 @@
 | planned-replay | held | held | none | service | 0 |
 | planned-storage | held | held | none | service | 0 |
 | pn-act-authentication | active | unit | pn-act-authentication-rust | fast | 2 |
+| pn-act-authentication::encoding | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-authentication::public | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-authentication::signatures | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |

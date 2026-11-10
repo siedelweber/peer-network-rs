@@ -8,9 +8,9 @@
 
 | Crate | Responsibility | Paper surfaces |
 | --- | --- | --- |
-| pn-act-authentication | Public author-token recipes and candidate fixed-message verification operations; no complete act or chain verdict | |
 | pn-records | Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants | ``def:graph:act-identifier`` ``def:graph:act-edge-projection`` ``def:comparator:burn-interface`` |
 | pn-act-profile | Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency | ``def:graph:proposal-pre-commitment`` ``def:graph:verified-act`` ``def:graph:ordering-fraud-proof`` |
+| pn-act-authentication | Public token recipes, canonical authentication values, role-specific messages and candidate fixed-message verification operations; no complete act or chain verdict | |
 | pn-graph | Structural formation, shared graph algebra and title folds | ``post:nodes:canonical-tensor-pipeline`` ``thm:graph:epoch-title-fold`` |
 | pn-epoch | Compile and certify one final epoch state and its admission result | ``alg:epoch:conserved-standing-computation`` ``post:epoch:final-act-sequence-write-rule`` |
 | pn-readouts | Expose published standing/title and optional exact raw views to terminal consumers | ``def:graph:raw-traversal-snapshot`` ``rem:network:taxonomy-subtleties`` |
@@ -20,11 +20,14 @@
 
 **Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The host directly depends on epoch to encode its untrusted publication disclosures and pass them to its consumer; the codec has no direct graph dependency. The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
 
-- pn-act-authentication
 - pn-records
 - pn-act-profile
   - pn-records
   - pn-interchange
+- pn-act-authentication
+  - pn-interchange
+  - pn-records
+  - pn-act-profile
 - pn-graph
   - pn-records
 - pn-epoch
@@ -263,4 +266,4 @@
 
 **Amendment (Released title and marker evidence)** · `amend:decomposition:title-marker-evidence` network-v0.31.1 settles party derivation and authorization under ``def:graph:settlement-parties`` and ``itm:graph:settlement-recognition-authorization``. The graph lane’s bite-4 follow-up owns (`verif:design:settlement-party-cases`); bite 5 inherits that title reading for recipients, with its Invitation hold closed and Invitations netting in cells under ``lem:epoch:authored-vouch-withdrawable``. pn-records retains title-certificate fault inputs and pn-verification recomputes the fold in bite 4; pn-epoch checks accepted tentative/final agreement in bite 5; host bite 8 publishes and monitors every boundary, and bite 9 reproduces it offline under (`verif:design:title-certificate-cases`). Records’ bite-2 burn surface distinguishes accumulators and epoch markers; pn-epoch’s bite-5 ledger and bite-7 closure join closed epochs to markers under (`verif:design:marker-registration-cases`). Host and deployment bite 8 own the finality-breach halt and published re-anchor or follow decision under (`verif:design:finality-breach-cases`), with offline bite 9 and integrated bite 11 evidence. These are implementation and deployment obligations, not implemented by the release refresh; package boundaries and bite order remain unchanged.
 
-**Amendment (Public authentication evidence)** · `amend:decomposition:act-authentication` pn-act-authentication owns the public fixed-size carriers, strict qualification and key scripts, signing-key byte hash and initial-asset locator derivation. The pure recipes use the already admitted RustCrypto sha2, tracing and thiserror crates; serde_json is test-only. The public verification candidate adds only the pinned secp256k1-zkp re-export edge under (`amend:crypto:public-verification-admission`), with no feature-union change. pn-wallet adds the shared-carrier edge and interprets a decoded transaction with supplied token prevouts. No secret-home, records or act-profile edge is added; no base-library call is needed for the byte recipes; the later signature and signing surfaces remain under (`dec:design:authentication-owner`) and their operation admission. This is the created public subset of that owner, not admission of its planned private operations.
+**Amendment (Public authentication evidence)** · `amend:decomposition:act-authentication` pn-act-authentication owns the public fixed-size carriers, strict qualification and key scripts, signing-key byte hash and initial-asset locator derivation. The pure recipes use the already admitted RustCrypto sha2, tracing and thiserror crates; serde_json is test-only. Canonical authentication encoding adds the planned pn-interchange, pn-records and pn-act-profile edges for the single canonical codec and the existing public act carriers and recipe identifiers. The public verification candidate adds only the pinned secp256k1-zkp re-export edge under (`amend:crypto:public-verification-admission`), with no feature-union change. pn-wallet adds the shared-carrier edge and interprets a decoded transaction with supplied token prevouts. No direct base-library or secret-home edge is added by these pure operations; the later signature and signing surfaces remain under (`dec:design:authentication-owner`) and their operation admission. This is the created public subset of that owner, not admission of its planned private operations.

@@ -1667,6 +1667,9 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 name = "pn-act-authentication"
 version = "0.1.0"
 dependencies = [
+ "pn-act-profile",
+ "pn-interchange",
+ "pn-records",
  "secp256k1-zkp",
  "serde_json",
  "sha2",

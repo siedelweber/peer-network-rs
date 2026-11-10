@@ -8,12 +8,6 @@
   "rows": [
     {
       "dependencies": [],
-      "name": "pn-act-authentication",
-      "responsibility": "Public author-token recipes and candidate fixed-message verification operations; no complete act or chain verdict",
-      "surfaces": []
-    },
-    {
-      "dependencies": [],
       "name": "pn-records",
       "responsibility": "Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants",
       "surfaces": [
@@ -34,6 +28,16 @@
         "def:graph:verified-act",
         "def:graph:ordering-fraud-proof"
       ]
+    },
+    {
+      "dependencies": [
+        "pn-interchange",
+        "pn-records",
+        "pn-act-profile"
+      ],
+      "name": "pn-act-authentication",
+      "responsibility": "Public token recipes, canonical authentication values, role-specific messages and candidate fixed-message verification operations; no complete act or chain verdict",
+      "surfaces": []
     },
     {
       "dependencies": [

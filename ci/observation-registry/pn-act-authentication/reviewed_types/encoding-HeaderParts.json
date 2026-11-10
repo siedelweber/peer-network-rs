@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encoding::HeaderParts",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "syntax": "# [doc = \" Original authored values and retained public commitments. (´def:authentication:encoding´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HeaderParts { pub body : ProposalBody , pub commitments : ActCommitments , pub actor_signature : [u8 ; 64] , pub content_edition : String , pub dependency_edition : String , }"
+  }
+}

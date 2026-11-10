@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encoding::AuthenticationMaterial",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "syntax": "# [doc = \" Public disclosed keys; these bytes are not parsed curve points. (´def:authentication:encoding´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationMaterial { pub run : [u8 ; 32] , pub actor_key : [u8 ; 32] , pub host_identity : String , pub host_key : [u8 ; 32] , }"
+  }
+}

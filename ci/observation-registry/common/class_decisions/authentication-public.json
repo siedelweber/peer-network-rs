@@ -3,7 +3,7 @@
   "value": {
     "name": "authentication-public",
     "status": "reviewer-confirmed",
-    "premises": "Public byte recipes and fixed-message verification record complete arguments and results. Parsed keys are public points, not secret carriers; the closed private backend supplies only parsing and verification with fixed preallocated context storage. No chain or complete act verdict is inferred.",
+    "premises": "Public byte recipes and fixed-message verification record complete arguments and results. Parsed keys are public points, not secret carriers; the closed private backend supplies only parsing and verification with fixed preallocated context storage. No chain or complete act verdict is inferred. The encoding operations’ arguments and results are public locators, byte encodings, proposal parts or canonical values, recorded in full through ordinary Debug. The encoding functions derive public digests, encode and strictly decode values, or compare fields; no curve parser, signature operation, chain authority or secret access is present. Independent daemon identifiers and Python canonical bytes and hashes constrain the results.",
     "membership": {
       "labelled_package": "pn-act-authentication"
     }

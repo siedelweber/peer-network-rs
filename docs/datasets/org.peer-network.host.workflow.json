@@ -274,7 +274,7 @@
     },
     {
       "category": "hold",
-      "evidence": "public token byte recipes and conditional transaction fixtures under verif:identity:token-fixtures; public parsing and fixed-message verification evidence under verif:crypto:public-verification-fixtures awaits independent review; canonical frames and complete signature fixture verification remain before services; 8-d2 chain evidence, 8-h token wallet, 8-e retirement/retry/salt reservations; admitted operations, independent retry review and nine counted exit classes with fault-tolerance evidence",
+      "evidence": "public token byte recipes and conditional transaction fixtures under verif:identity:token-fixtures; public parsing and fixed-message verification evidence under verif:crypto:public-verification-fixtures awaits independent review; canonical header, material, four messages and act comparison under verif:identity:authentication-encoding; signature fixture verification remains before services; 8-d2 chain evidence, 8-h token wallet, 8-e retirement/retry/salt reservations; admitted operations, independent retry review and nine counted exit classes with fault-tolerance evidence",
       "hold": "open:identity:act-production-concealment",
       "name": "8-f",
       "owner": "lane/design with independent crypto reviewer and lane/graph verifier hand-off",

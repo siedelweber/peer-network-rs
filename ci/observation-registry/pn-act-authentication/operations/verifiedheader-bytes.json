@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "item": "encoding::VerifiedHeader::bytes",
+    "signature": "fn bytes (& self) -> & [u8]",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:encoding",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/encoding.rs::encoding::VerifiedHeader::bytes",
+    "class_decision": "authentication-public",
+    "body": "{ & self . bytes }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+  }
+}

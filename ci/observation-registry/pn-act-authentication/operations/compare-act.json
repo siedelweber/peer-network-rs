@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "item": "encoding::compare_act",
+    "signature": "fn compare_act (header : & VerifiedHeader , act : & pn_records :: CandidateAct) -> Result < () , EncodingError >",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:encoding",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/encoding.rs::encoding::compare_act",
+    "class_decision": "authentication-public",
+    "body": "{ let disclosure = & act . authentication_evidence ; let expected = HeaderParts { body : ProposalBody { id : act . id . clone () , body : act . body . clone () , legs : act . legs . clone () , protocol_references : act . protocol_references . clone () , content : header . parts . body . content , dependency : header . parts . body . dependency , } , commitments : act . commitments . clone () . ok_or (EncodingError :: Proposal) ? , actor_signature : disclosure . actor_proposal_signature . as_slice () . try_into () . map_err (| _ | EncodingError :: ActorSignature) ? , content_edition : disclosure . content_edition . clone () , dependency_edition : disclosure . dependency_edition . clone () , } ; compare_header (header , & expected , disclosure) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+  }
+}

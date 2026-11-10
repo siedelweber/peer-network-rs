@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "encoding::AuthenticationMaterial",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/encoding.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "kind": "derive",
+    "class_decision": "authentication-public",
+    "expansion_review": "Generated cloning, equality, Debug and error formatting operate on public canonical values and typed refusals only; no secret or cryptographic operation is generated."
+  }
+}
