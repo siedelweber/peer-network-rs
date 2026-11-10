@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-host::admitted-carrier"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-host-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-host::admitted_carrier_tests::admitted_carrier_bytes"]
+composition_reasons = { "pn-host::admitted_carrier_tests::admitted_carrier_bytes" = "The complete admitted publication fixture and independently restored variants exercise selected projections and complete-content equality together; this is required composition evidence beside the publication restoration matrices." }

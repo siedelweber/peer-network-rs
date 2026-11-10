@@ -2745,6 +2745,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "doctest::packages/host/src/admitted_result.rs - admitted_result::AdmittedEpoch [example 1]",
         "doctest::packages/host/src/lib.rs - Session [example 1]",
         "doctest::packages/host/src/config.rs - config::Configuration [example 1]",
         "doctest::packages/host/src/config.rs - config::Configuration [example 2]"
@@ -2756,6 +2757,35 @@
       "runner": "doctest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::admitted_carrier_tests::admitted_carrier_bytes"
+      ],
+      "composition_reasons": {
+        "pn-host::admitted_carrier_tests::admitted_carrier_bytes": "The complete admitted publication fixture and independently restored variants exercise selected projections and complete-content equality together; this is required composition evidence beside the publication restoration matrices."
+      },
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-host::admitted-carrier",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "postgresql-suite",
+      "cases": [
+        "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held"
+      ],
+      "implementation": "pn-host-memory-and-postgresql",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-host::admitted-carrier-held",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
     },
     {
       "budget": "pure-suite",

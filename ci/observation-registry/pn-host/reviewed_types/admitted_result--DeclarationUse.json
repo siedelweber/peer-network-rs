@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::DeclarationUse",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" A complete expected immutable version and the coordinate at which it was selected.\"] # [doc = \" (´[ROOT-amend:storage:admitted-correspondence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DeclarationUse { pub selected_at : u64 , pub version : Version , }"
+  }
+}

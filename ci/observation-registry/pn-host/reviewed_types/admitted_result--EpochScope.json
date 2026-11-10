@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::EpochScope",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" A sequence's structural identity, independent of marker display names.\"] # [doc = \" (´[ROOT-amend:storage:admitted-event]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct EpochScope { pub history : String , pub policy_identity : String , pub policy_edition : String , pub sequence : String , }"
+  }
+}

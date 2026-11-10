@@ -5,6 +5,8 @@ use pn_interchange::Value;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 
+pub use crate::admitted_result::{AdmittedEpoch, CarrierError, DebitKey, DebitVintage, DeclarationUse, EpochKey, EpochScope};
+
 /// Permanent public payload recipe, distinct from the disclosure commitment domain.
 /// (´def:host:effective-storage´)
 pub const PAYLOAD_RECIPE: &str = "pn-host/storage-payload/v1";
@@ -122,7 +124,7 @@ pub struct Payload {
     digest: [u8; 32],
     disclosure: Option<[u8; 32]>,
 }
-fn digest(recipe: &str, bytes: &[u8]) -> [u8; 32] {
+pub(crate) fn digest(recipe: &str, bytes: &[u8]) -> [u8; 32] {
     let mut state = Sha256::new();
     state.update(recipe.as_bytes());
     state.update([0]);
@@ -160,7 +162,7 @@ fn verify_payload(family: Family, bytes: &[u8], disclosure: Option<&[u8]>) -> Re
     Ok(())
 }
 impl Payload {
-    fn encoded(family: Family, value: Value, disclosure: Option<[u8; 32]>) -> Result<Self, StorageError> {
+    pub(crate) fn encoded(family: Family, value: Value, disclosure: Option<[u8; 32]>) -> Result<Self, StorageError> {
         let bytes = encoding::array([encoding::text(PAYLOAD_RECIPE), encoding::text(family.name()), value]).to_canonical_bytes();
         if bytes.len() > MAX_PACKAGE {
             return classified(Err(StorageError::Representation));
@@ -302,15 +304,8 @@ pub struct Boundary {
     pub rows: Vec<EffectiveRow>,
 }
 
-/// No epoch result is admitted by bite 2; bite 5 supplies the ledger/result carrier.
-/// The eventual transaction exposes input references, debit evidence and result
-/// together or none, with structural-event idempotence before retrying debits.
-/// (´open:host:admitted-epoch-result´)
-#[derive(Debug)]
-pub enum AdmittedEpoch {}
-
 type History = BTreeMap<(Family, String), Vec<EffectiveRow>>;
-fn check(version: &Version) -> Result<(), StorageError> {
+pub(crate) fn check(version: &Version) -> Result<(), StorageError> {
     if version.key.is_empty()
         || version.edition.is_empty()
         || version.key.len() > 1024

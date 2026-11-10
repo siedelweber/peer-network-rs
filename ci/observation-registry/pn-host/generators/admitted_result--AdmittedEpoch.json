@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "admitted_result::AdmittedEpoch",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "host-admitted-carrier",
+    "expansion_review": "Derived Clone, Debug, equality and ordering expose only the complete public structural fields. They neither acquire secrets nor perform I/O or create an admitted package. Carrier constructor and accessor spans cover these values."
+  }
+}

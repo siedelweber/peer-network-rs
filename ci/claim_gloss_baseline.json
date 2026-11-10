@@ -594,6 +594,8 @@
     "pn-graph::workload_correctness::transport_construction_refusals": "Claim: The dense transport fixture builders return the original typed Work exhaustion instead of panicking at construction or interval conversion.",
     "pn-graph::workload_correctness::transport_inputs": "Claim: Singleton endpoint transport agrees with exact transport and an independent regular-column mean, while a zero cell ceiling refuses.",
     "pn-graph::workload_correctness::workload_title_inputs": "Claim: Generated title histories retain exact act counts and alternating owners; a wrong-party handshake binds no transfer.",
+    "pn-host::admitted_carrier_tests::admitted_carrier_bytes": "",
+    "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held": "",
     "pn-host::config::tests::secret_json_grammar": "",
     "pn-host::postgresql::connection_loss_and_drop": "",
     "pn-host::postgresql::outbound_refusal": "",

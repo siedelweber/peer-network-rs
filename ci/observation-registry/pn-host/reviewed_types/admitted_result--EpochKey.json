@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::EpochKey",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" The admitted sequence and terminal marker index identify one storage event.\"] # [doc = \" (´[ROOT-amend:storage:admitted-event]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct EpochKey { pub scope : EpochScope , pub boundary : u64 , }"
+  }
+}

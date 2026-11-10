@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::CarrierError",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" A carrier refuses representation without changing the admitted package.\"] # [doc = \" (´amend:host:admitted-storage-carrier´)\"] # [derive (Debug)] pub enum CarrierError { Encoding (crate :: publication :: Error) , Storage (StorageError) , Representation , Correspondence , }"
+  }
+}

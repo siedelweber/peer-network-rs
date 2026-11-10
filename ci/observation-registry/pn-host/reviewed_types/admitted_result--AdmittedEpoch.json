@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::AdmittedEpoch",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" Immutable admitted-result input; decoding bytes cannot construct this capability.\"] # [doc = \" (´amend:host:admitted-storage-carrier´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn from_decoded(value: pn_epoch::publication::disclosures::Disclosure,\"] # [doc = \"     numeric: &mut pn_records::numerics::NumericContext,\"] # [doc = \"     limits: pn_epoch::publication::disclosures::Limits) {\"] # [doc = \"     pn_host::storage::AdmittedEpoch::from_package(&value, numeric, limits);\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Debug)] pub struct AdmittedEpoch { bytes : Vec < u8 > , event : EpochKey , declarations : Vec < DeclarationUse > , debits : Vec < DebitVintage > , }"
+  }
+}

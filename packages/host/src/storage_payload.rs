@@ -173,6 +173,9 @@ fn marker(value: &Marker) -> Value {
 }
 pub(crate) fn disclosure(value: &burn::ValidatedMarkerHistory) -> Value {
     let (history, policy_input, burn) = value.disclosure();
+    disclosure_parts(history, policy_input, burn)
+}
+pub(crate) fn disclosure_parts(history: &burn::HistoryInput, policy_input: &PolicyInput, burn: &BurnInput) -> Value {
     // Presentation order is not history order. Validation guarantees unique
     // record identities and disclosed positions; retain every candidate.
     let mut records: Vec<_> = history.records.iter().collect();

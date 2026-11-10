@@ -1,6 +1,10 @@
 //! Secret-terminating transport under (´[ROOT-dec:storage:secret-shim]´).
 //! Persistence remains disabled pending independent integration review.
 
+#[cfg(test)]
+#[path = "storage/admitted_tests.rs"]
+mod admitted_carrier_tests;
+mod admitted_result;
 mod config;
 pub mod publication;
 mod scram;

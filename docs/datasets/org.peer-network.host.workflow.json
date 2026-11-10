@@ -266,11 +266,11 @@
     },
     {
       "category": "hold",
-      "evidence": "preview:design:storage-cuts orders the carrier/shared-memory contract, PostgreSQL transaction and public-input rebuild; each requires executed atomicity, full-equality retry, immutable debit, concurrent history, privilege and uncertainty witnesses; no executable opens a store",
+      "evidence": "HOST::verif:history:admitted-carrier checks admitted-only canonical projections, selected uses, debit vintages, complete-content equality and the held PostgreSQL operation; preview:design:storage-cuts still requires the memory transaction, atomicity and retry, concurrent history, privilege, uncertainty and rebuild witnesses; no executable opens a store",
       "hold": "open:host:admitted-epoch-result",
       "name": "8-e",
       "owner": "lane/design",
-      "scope": "atomic persistence: realization designed; implementation and review held"
+      "scope": "atomic persistence: immutable carrier implemented; memory transaction, PostgreSQL, rebuild and review held"
     },
     {
       "category": "hold",

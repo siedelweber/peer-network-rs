@@ -3243,6 +3243,22 @@
       "review": "The former default budget is passed explicitly to retain both original typed Work refusals. The separately sized constructor admits the largest dense fixture; operation and oracle ceilings are asserted unchanged."
     },
     {
+      "operation": "pn-host::admitted_carrier_tests::admitted_carrier_bytes",
+      "path": "packages/host/src/storage/admitted_tests.rs",
+      "claim": "HOST::claim:history:admitted-carrier-preserves-exact-projections",
+      "before": "",
+      "after": "Claim: Admitted-only carrier construction preserves canonical package bytes, the structural event, all selected version projections and immutable debit vintages, and distinguishes complete content from event identity without selecting unused declarations.",
+      "review": "Read the admitted two-boundary fixture, canonical-byte and event field equality, six-family complete payload comparisons, terminal versus writing coordinates, every debit, unsorted restoration, unused/future declarations and same-key content inequality. The runtime mutants independently fail the latter two assertions. The compile-fail constructor test refuses a decoded disclosure."
+    },
+    {
+      "operation": "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held",
+      "path": "packages/host/src/storage/admitted_tests.rs",
+      "claim": "HOST::claim:history:admitted-carrier-keeps-postgresql-held",
+      "before": "",
+      "after": "Claim: A real admitted carrier does not activate PostgreSQL epoch persistence; the existing operation refuses `EpochResultHeld`.",
+      "review": "Read construction from the real admitted fixture and the exact EpochResultHeld result from PostgresStore opened through the supported secret-terminating PostgreSQL fixture. No epoch write is enabled."
+    },
+    {
       "operation": "pn-host::config::tests::secret_json_grammar",
       "path": "packages/host/src/config.rs",
       "claim": "HOST::claim:host:secret-json-has-one-field-interpretation",

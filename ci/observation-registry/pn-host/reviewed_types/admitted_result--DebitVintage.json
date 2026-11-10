@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::DebitVintage",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" Exact writing vintage and its existing canonical publication item.\"] # [doc = \" (´[ROOT-amend:storage:admitted-debits]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DebitVintage { pub key : DebitKey , pub disclosure : disclosures :: Debit , pub bytes : Vec < u8 > , }"
+  }
+}

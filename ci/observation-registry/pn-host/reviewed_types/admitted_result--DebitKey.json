@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::DebitKey",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "# [doc = \" One complete act's immutable debit identity within its admitted sequence.\"] # [doc = \" (´[ROOT-amend:storage:admitted-debits]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct DebitKey { pub scope : EpochScope , pub act : pn_records :: ActId , }"
+  }
+}

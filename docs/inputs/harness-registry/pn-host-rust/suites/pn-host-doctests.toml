@@ -6,4 +6,4 @@ level = "doctest"
 implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["doctest::packages/host/src/lib.rs - Session [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 2]"]
+cases = ["doctest::packages/host/src/admitted_result.rs - admitted_result::AdmittedEpoch [example 1]", "doctest::packages/host/src/lib.rs - Session [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 1]", "doctest::packages/host/src/config.rs - config::Configuration [example 2]"]

@@ -103,6 +103,24 @@
     },
     {
       "claims": [
+        "HOST::claim:history:admitted-carrier-keeps-postgresql-held",
+        "HOST::claim:history:admitted-carrier-preserves-exact-projections"
+      ],
+      "closing_condition": "Carrier projections, unused-declaration and complete-content controls pass; the real PostgreSQL operation remains held.",
+      "closing_step": "Bite 8-e-memory carrier portion.",
+      "evidence_paragraph": "HOST::verif:history:admitted-carrier",
+      "hold": "",
+      "missing": "Outside scope: memory and PostgreSQL transactions, historical reads, concurrency, durability, privileges, rebuild and independent re-admission.",
+      "name": "HOST::verif:history:admitted-carrier",
+      "owner": "Host storage implementer",
+      "path": "packages/host/README.md",
+      "premises": "The host publication fixture supplies already-admitted public packages under its declared verifier. Carrier projection conveys no new authentication, finality or persistence authority.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
         "HOST::claim:publication:canonical-disclosure-roundtrip",
         "HOST::claim:publication:independent-structural-bytes",

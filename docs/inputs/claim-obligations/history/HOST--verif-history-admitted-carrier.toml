@@ -1,0 +1,13 @@
+name = "HOST::verif:history:admitted-carrier"
+witnessed_labels = []
+path = "packages/host/README.md"
+status = "scoped-supported"
+claims = ["HOST::claim:history:admitted-carrier-keeps-postgresql-held", "HOST::claim:history:admitted-carrier-preserves-exact-projections"]
+realizers = []
+premises = "The host publication fixture supplies already-admitted public packages under its declared verifier. Carrier projection conveys no new authentication, finality or persistence authority."
+evidence_paragraph = "HOST::verif:history:admitted-carrier"
+hold = ""
+owner = "Host storage implementer"
+missing = "Outside scope: memory and PostgreSQL transactions, historical reads, concurrency, durability, privileges, rebuild and independent re-admission."
+closing_condition = "Carrier projections, unused-declaration and complete-content controls pass; the real PostgreSQL operation remains held."
+closing_step = "Bite 8-e-memory carrier portion."

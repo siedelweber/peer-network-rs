@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "item": "admitted_result::AdmittedEpoch::bytes",
+    "owner": "HOST",
+    "signature": "fn bytes (& self) -> & [u8]",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::bytes",
+    "body": "{ & self . bytes }",
+    "class_decision": "host-admitted-carrier",
+    "item_premise": "The carrier projects an already admitted public package into complete canonical bytes, typed declaration uses and immutable debit vintages. These values and typed encoding or storage refusals contain no Session, credential or secret carrier. Projection performs no I/O and grants no admission or persistence authority. Public operations record their complete arguments and results; private projection and key helpers inherit those boundaries. No computation reads observation.",
+    "assessments": {
+      "full_recording": "admitted-carrier-full_recording",
+      "secret_flow": "admitted-carrier-secret_flow",
+      "exposure_consumers": "admitted-carrier-exposure_consumers"
+    }
+  }
+}

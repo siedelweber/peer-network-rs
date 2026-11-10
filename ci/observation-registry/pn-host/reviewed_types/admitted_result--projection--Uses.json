@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::projection::Uses",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result.rs",
+    "syntax": "struct Uses < 'a > { package : & 'a AdmittedPackage , document : & 'a Document , event : & 'a EpochKey , rows : Vec < DeclarationUse > , }"
+  }
+}
