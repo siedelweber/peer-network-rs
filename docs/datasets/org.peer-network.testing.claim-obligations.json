@@ -243,6 +243,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
+      "closing_step": "Protected signing and durable recovery cuts",
+      "hold": "ROOT::open:identity:act-production-concealment",
+      "missing": "Operation-specific custody, randomization, entropy and counted-exit evidence",
+      "name": "ROOT::dec:crypto:authentication-custody",
+      "owner": "Secret integration implementer and independent cryptographic reviewer",
+      "path": "adr/023-cryptographic-base.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification.",
       "closing_step": "First signing or verifying slice, before operation enablement",
       "hold": "ROOT::open:crypto:dependency-admission",
@@ -373,6 +386,19 @@
       "missing": "Reviewed ordinary claim citations and scoped premises for dec:design:admission",
       "name": "ROOT::dec:design:admission",
       "owner": "Domain implementer and repository reviewer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
+      "closing_step": "Public verification and graph adapter cuts",
+      "hold": "ROOT::open:identity:act-production-concealment",
+      "missing": "Created package, reviewed locked edges and exact-act-bound verifier hand-off",
+      "name": "ROOT::dec:design:authentication-owner",
+      "owner": "Authentication package implementer and graph hand-off reviewer",
       "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held",
@@ -729,6 +755,32 @@
       "premises": "The complete current roster declares every case and level; controlled omissions refuse structurally. The public-surface layout amendment bounds the present package witnesses; future packages require their own levels.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
+      "closing_step": "Public verification cut",
+      "hold": "ROOT::open:identity:act-production-concealment",
+      "missing": "Run-selected host authority and self-nominated-host refusal controls",
+      "name": "ROOT::dec:identity:authentication-host",
+      "owner": "Public verification implementer and independent authentication reviewer",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
+      "closing_step": "Public verification cut",
+      "hold": "ROOT::open:identity:act-production-concealment",
+      "missing": "Independent public key-binding, alias, wrong-key and immutable-target controls",
+      "name": "ROOT::dec:identity:authentication-keys",
+      "owner": "Public verification implementer and independent authentication reviewer",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {
@@ -2433,6 +2485,19 @@
       "premises": "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
+      "closing_step": "End-to-end authentication review",
+      "hold": "ROOT::open:identity:act-production-concealment",
+      "missing": "Conformance, robustness, fault tolerance and test-quality evidence for each admitted secret boundary",
+      "name": "ROOT::req:crypto:authentication-custody-evidence",
+      "owner": "Secret integration implementer and independent cryptographic reviewer",
+      "path": "adr/023-cryptographic-base.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {

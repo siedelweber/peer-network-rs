@@ -274,7 +274,7 @@
     },
     {
       "category": "hold",
-      "evidence": "admitted dependency and exact signature operations, Actor retry-state review, secret containers and counted exits, durable salt reservation, entropy/rollback/exhaustion and removal witnesses",
+      "evidence": "decided key binding and signed recipes; public verification before 8-e; admitted operations, independent Actor retry-state review, counted secret exits, and 8-e-backed retry and salt reservations with entropy/rollback/exhaustion and removal witnesses",
       "hold": "open:identity:act-production-concealment",
       "name": "8-f",
       "owner": "lane/design with independent crypto reviewer and lane/graph verifier hand-off",

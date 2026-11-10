@@ -1,0 +1,11 @@
+name = "ROOT::dec:crypto:authentication-custody"
+witnessed_labels = []
+path = "adr/023-cryptographic-base.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:act-production-concealment"
+owner = "Secret integration implementer and independent cryptographic reviewer"
+missing = "Operation-specific custody, randomization, entropy and counted-exit evidence"
+closing_condition = "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded."
+closing_step = "Protected signing and durable recovery cuts"

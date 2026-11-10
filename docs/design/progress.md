@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 35 | 58 | 406 | 7 | 32 | 857 |
+| implementation | 1 356 | 35 | 56 | 408 | 7 | 32 | 857 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -32,7 +32,7 @@
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
 | pn-host | 166 | 5 | 16 | 49 | 1 | 2 | 96 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 218 | 2 | 11 | 74 | 1 | 7 | 131 |
+| pn-records | 218 | 2 | 9 | 76 | 1 | 7 | 131 |
 | pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
 | pn-verification | 281 | 8 | 9 | 69 | 4 | 6 | 195 |
 
@@ -57,7 +57,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 562 | 200 |
+| ROOT (repository-wide) | 1 586 | 202 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -75,7 +75,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 9 | 27 | 56 | 0 | 5 | 1 |
-| unlinked | 1 484 | 22 | 20 | 283 | 13 | 21 | 1 159 |
+| unlinked | 1 484 | 22 | 18 | 285 | 13 | 21 | 1 159 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -86,9 +86,9 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 6 | 50 | 6 | 3 | 157 |
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
-| invariant check | 517 | 16 | 23 | 141 | 1 | 11 | 337 |
+| invariant check | 517 | 16 | 22 | 142 | 1 | 11 | 337 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 17 | 54 | 5 | 4 | 191 |
+| policy | 265 | 3 | 16 | 55 | 5 | 4 | 191 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 1 | 5 | 51 | 0 | 5 | 35 |
 
@@ -519,11 +519,11 @@
 | ``def:graph:act-dependency-tombstone`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``rem:graph:authentication-realization-out-of-scope`` | pn-host; policy | held | ``ROOT::dec:crypto:base-library`` ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
 | ``def:graph:proposal-pre-commitment`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
-| ``def:graph:verified-act`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>| 3, 4 | | |
-| ``def:graph:approval-witness`` | pn-records; invariant check | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:design:publication-field-inventory`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | ``ROOT::alg:design:closure-registration``; delegation to the declared approval verifier<br>|
+| ``def:graph:verified-act`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::def:identity:verified-header-name`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>| 3, 4 | | |
+| ``def:graph:approval-witness`` | pn-records; invariant check | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::amend:design:publication-field-inventory`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | ``ROOT::alg:design:closure-registration``; delegation to the declared approval verifier<br>|
 | ``def:graph:ordering-fraud-proof`` | pn-records; certificate | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
 | ``post:graph:ordering-accountability`` | pn-host; policy | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:authoritative-history-carrier`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
-| ``post:graph:act-authentication-requirements`` | pn-records; policy | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::dec:crypto:base-library`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``post:graph:act-authentication-requirements`` | pn-records; policy | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::dec:crypto:base-library`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
 | ``itm:graph:act-authentication-requirements-authorship`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-proposal-integrity`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-transparency`` | pn-records; policy | unassigned | | | | |  | | |
@@ -1805,7 +1805,7 @@
 | ``def:graph:parent-placement-fault`` | pn-records; type | held | ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``def:graph:stamp-fault`` | pn-records; type | held | ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``prop:graph:act-time-finite`` | pn-verification; invariant check | held | ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
-| ``rem:graph:act-time-is-summary`` | pn-records; invariant check | held | ``RECORDS::amend:acts:retained-finalization-time`` ``ROOT::open:design:dependency-opening-recipe`` | | | ``RECORDS::amend:acts:retained-finalization-time``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
+| ``rem:graph:act-time-is-summary`` | pn-records; invariant check | held | ``RECORDS::amend:acts:retained-finalization-time`` ``ROOT::open:design:dependency-opening-recipe`` | | | ``RECORDS::amend:acts:retained-finalization-time``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:identity:act-production-concealment``<br>|  | | |
 | ``rem:graph:cross-epoch-precedence`` | pn-records; invariant check | designed (attention only) | ``ROOT::open:design:cross-epoch-order`` | | | |  | | |
 | ``rem:graph:order-of-record-is-position`` | pn-records; invariant check | designed | ``RECORDS::def:acts:dependencies`` ``ROOT::open:design:cross-epoch-order`` | | | |  | | |
 | ``ver:boundary:act-time-recomputation`` | pn-verification; fixture | designed | ``CONSTANTS::act_time_fixture`` ``CONSTANTS::result.act_time.alpha_epoch`` ``CONSTANTS::result.act_time.alpha_position`` ``CONSTANTS::result.act_time.alpha_published`` ``CONSTANTS::result.act_time.alpha_recomputed`` ``CONSTANTS::result.act_time.beta_epoch`` ``CONSTANTS::result.act_time.beta_position`` ``CONSTANTS::result.act_time.beta_published`` ``CONSTANTS::result.act_time.beta_recomputed`` ``CONSTANTS::result.act_time.delta_epoch`` ``CONSTANTS::result.act_time.delta_position`` ``CONSTANTS::result.act_time.delta_published`` ``CONSTANTS::result.act_time.delta_recomputed`` ``CONSTANTS::result.act_time.dependency_fault_count`` ``CONSTANTS::result.act_time.epsilon_epoch`` ``CONSTANTS::result.act_time.epsilon_position`` ``CONSTANTS::result.act_time.epsilon_published`` ``CONSTANTS::result.act_time.epsilon_recomputed`` ``CONSTANTS::result.act_time.eta_epoch`` ``CONSTANTS::result.act_time.eta_position`` ``CONSTANTS::result.act_time.eta_published`` ``CONSTANTS::result.act_time.eta_recomputed`` ``CONSTANTS::result.act_time.gamma_epoch`` ``CONSTANTS::result.act_time.gamma_position`` ``CONSTANTS::result.act_time.gamma_published`` ``CONSTANTS::result.act_time.gamma_recomputed`` ``CONSTANTS::result.act_time.mismatch_count`` ``CONSTANTS::result.act_time.parent_fault_count`` ``CONSTANTS::result.act_time.zeta_epoch`` ``CONSTANTS::result.act_time.zeta_position`` ``CONSTANTS::result.act_time.zeta_published`` ``CONSTANTS::result.act_time.zeta_recomputed`` ``ROOT::obs:inventory:constants`` | | | |  | | |

@@ -7042,11 +7042,13 @@
       ],
       "records": [
         "RECORDS::def:acts:authentication-disclosure",
+        "ROOT::alg:design:authentication-handoff",
         "ROOT::alg:design:formation",
         "ROOT::amend:decomposition:act-profile",
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:identity:act-concealment",
-        "ROOT::amend:identity:act-proposal-admission"
+        "ROOT::amend:identity:act-proposal-admission",
+        "ROOT::def:identity:verified-header-name"
       ],
       "routes": [],
       "status": "designed",
@@ -7085,10 +7087,11 @@
       ],
       "records": [
         "RECORDS::def:acts:authentication-disclosure",
+        "ROOT::alg:design:authentication-handoff",
         "ROOT::amend:design:publication-field-inventory"
       ],
       "routes": [],
-      "status": "held",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -7191,11 +7194,12 @@
       ],
       "records": [
         "RECORDS::def:acts:authentication-disclosure",
+        "ROOT::alg:design:authentication-handoff",
         "ROOT::amend:design:act-envelope-field-inventory",
         "ROOT::dec:crypto:base-library"
       ],
       "routes": [],
-      "status": "held",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -33607,6 +33611,10 @@
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::open:design:dependency-opening-recipe"
         }
       ],
       "kind": "invariant check",
@@ -35211,23 +35219,23 @@
     },
     {
       "category": "total",
-      "designed": 406,
-      "held": 58,
+      "designed": 408,
+      "held": 56,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "406",
+          "exact": "408",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "406",
+          "num": "408",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "58",
+          "exact": "56",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "58",
+          "num": "56",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35904,23 +35912,23 @@
     },
     {
       "category": "crate",
-      "designed": 74,
-      "held": 11,
+      "designed": 76,
+      "held": 9,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "74",
+          "exact": "76",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "74",
+          "num": "76",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "11",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36696,23 +36704,23 @@
     },
     {
       "category": "kind",
-      "designed": 141,
-      "held": 23,
+      "designed": 142,
+      "held": 22,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "142",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "142",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "23",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36894,23 +36902,23 @@
     },
     {
       "category": "kind",
-      "designed": 54,
-      "held": 17,
+      "designed": 55,
+      "held": 16,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "54",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "54",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "17",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38280,23 +38288,23 @@
     },
     {
       "category": "bite",
-      "designed": 283,
-      "held": 20,
+      "designed": 285,
+      "held": 18,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "283",
+          "exact": "285",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "283",
+          "num": "285",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "20",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38889,22 +38897,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 200,
+      "exact_citing": 202,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "200",
+          "exact": "202",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "200",
+          "num": "202",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 562",
+          "exact": "1 586",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 562",
+          "num": "1 586",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38919,7 +38927,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1562
+      "total": 1586
     },
     {
       "category": "record-coverage",

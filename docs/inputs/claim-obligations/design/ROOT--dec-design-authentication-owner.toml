@@ -1,0 +1,11 @@
+name = "ROOT::dec:design:authentication-owner"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:act-production-concealment"
+owner = "Authentication package implementer and graph hand-off reviewer"
+missing = "Created package, reviewed locked edges and exact-act-bound verifier hand-off"
+closing_condition = "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded."
+closing_step = "Public verification and graph adapter cuts"

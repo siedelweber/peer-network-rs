@@ -1,0 +1,11 @@
+name = "ROOT::dec:identity:authentication-keys"
+witnessed_labels = []
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:act-production-concealment"
+owner = "Public verification implementer and independent authentication reviewer"
+missing = "Independent public key-binding, alias, wrong-key and immutable-target controls"
+closing_condition = "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded."
+closing_step = "Public verification cut"
