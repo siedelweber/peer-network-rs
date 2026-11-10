@@ -2789,6 +2789,22 @@
     },
     {
       "budget": "pure-suite",
+      "cases": [
+        "pn-host::storage::admitted::tests::admitted_memory_contract"
+      ],
+      "composition_reasons": {
+        "pn-host::storage::admitted::tests::admitted_memory_contract": "The shared admitted storage contract composes public restoration, all six history families and every transaction write boundary in one process so the expensive validated fixture is shared."
+      },
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::admitted-memory",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
       "case_budget_reasons": {
         "pn-host::postgresql::real_cancellation": "Real PostgreSQL cancellation retains the deliberate query-start wait, cancellation delivery and subsequent connection usability.",
         "pn-host::postgresql::relay_throughput": "The public relay throughput fixture retains its complete framed transfer and server result checks."

@@ -3475,6 +3475,14 @@
       "review": "Read each bounded append and length assignment, including refused growth leaving length unchanged; this fixture never borrows protected bytes."
     },
     {
+      "operation": "pn-host::storage::admitted::tests::admitted_memory_contract",
+      "path": "packages/host/src/storage/admitted/tests.rs",
+      "claim": "HOST::claim:history:admitted-memory-transaction-is-atomic",
+      "before": "",
+      "after": "Claim: The memory admitted transaction checks every selected family, commits all staged relations together, recognizes complete retries without writes, preserves debit vintages and refuses history changes that invalidate selected uses.",
+      "review": "The shared contract compares full logical snapshots, checks all six selected families and exact causes, enumerates every concrete staged write, observes zero retry writes and unchanged vintages, and checks refusing and successful history successors. The two runtime mutants violate partial visibility and no-write retry respectively. PostgreSQL conformance remains held."
+    },
+    {
       "operation": "pn-host::storage::tests::storage_competing_writers",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:competing-successors-serialize",

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "item": "storage::admitted::MemoryStore::commit_admitted_epoch",
+    "owner": "HOST",
+    "signature": "fn commit_admitted_epoch (& mut self , input : & AdmittedEpoch) -> Result < bool , StorageError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::commit_admitted_epoch",
+    "body": "{ let result = self . commit_epoch_inner (input , & mut | _ | Ok (())) ; classified (result) }",
+    "class_decision": "host-storage",
+    "item_premise": "The memory transaction accepts only an admitted carrier, checks public selections and immutable vintages, and publishes a complete candidate or a fieldless refusal. All memory fields contain public package bytes and projections, never a Session or secret; full arguments and results are recorded and no computation reads observation. PostgreSQL writes and independent re-admission remain held.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

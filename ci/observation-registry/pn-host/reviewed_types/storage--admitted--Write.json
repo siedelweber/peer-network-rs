@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::Write",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)] pub (super) enum Write { Result , PackageChunk (usize) , Reference (usize) , Debit (DebitKey) , DebitChunk (DebitKey , usize) , Membership (usize) , }"
+  }
+}

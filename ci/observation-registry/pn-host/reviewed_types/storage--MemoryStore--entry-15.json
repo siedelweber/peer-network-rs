@@ -4,6 +4,6 @@
     "item": "storage::MemoryStore",
     "package": "pn-host",
     "path": "packages/host/src/storage.rs",
-    "syntax": "# [doc = \" Functional fast substitute for the same append-only storage contract.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Debug , Default)] pub struct MemoryStore { history : History , }"
+    "syntax": "# [doc = \" Functional fast substitute for the same append-only storage contract.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Debug , Default)] pub struct MemoryStore { history : History , admitted : admitted :: State , }"
   }
 }

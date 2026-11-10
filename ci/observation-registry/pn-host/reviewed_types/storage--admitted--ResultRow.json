@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::ResultRow",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)] struct ResultRow { predecessor : Option < EpochKey > , bytes : usize , chunk_count : usize , reference_count : usize , debit_count : usize , chunks : Vec < Vec < u8 > > , references : Vec < DeclarationUse > , membership : Vec < DebitKey > , bindings : Vec < pn_epoch :: publication :: disclosures :: Binding > , markers : Vec < pn_epoch :: publication :: disclosures :: Marker > , }"
+  }
+}

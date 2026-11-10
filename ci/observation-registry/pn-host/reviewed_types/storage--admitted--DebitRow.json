@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::DebitRow",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)] struct DebitRow { bytes : usize , chunk_count : usize , chunks : Vec < Vec < u8 > > , }"
+  }
+}

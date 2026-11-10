@@ -1,0 +1,13 @@
+name = "HOST::verif:history:admitted-memory"
+witnessed_labels = []
+path = "packages/host/README.md"
+status = "scoped-supported"
+claims = ["HOST::claim:history:admitted-memory-transaction-is-atomic"]
+realizers = []
+premises = "The public host fixture supplies admitted packages; the memory adapter exercises the shared contract roster without a server or durability claim."
+evidence_paragraph = "HOST::verif:history:admitted-memory"
+hold = ""
+owner = "Host storage implementer"
+missing = "Outside scope: bounded admitted reads, PostgreSQL transaction, real-session concurrency, durability, privileges, commit uncertainty, rebuild and independent re-admission."
+closing_condition = "Every reference refusal and staged-write boundary, complete retry, vintage and selected-use guard control passes; runtime mutants fail."
+closing_step = "Bite 8-e-memory transaction portion."

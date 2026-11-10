@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-host::admitted-memory"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-host-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-host::storage::admitted::tests::admitted_memory_contract"]
+composition_reasons = { "pn-host::storage::admitted::tests::admitted_memory_contract" = "The shared admitted storage contract composes public restoration, all six history families and every transaction write boundary in one process so the expensive validated fixture is shared." }

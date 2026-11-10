@@ -312,9 +312,18 @@ pub struct AdmittedEpoch {
     event: EpochKey,
     declarations: Vec<DeclarationUse>,
     debits: Vec<DebitVintage>,
+    bindings: Vec<disclosures::Binding>,
+    markers: Vec<disclosures::Marker>,
 }
 
 impl AdmittedEpoch {
+    /// Borrow public succession projections under the producing carrier boundary.
+    /// (´amend:host:admitted-storage-carrier´)
+    /// Justified: Immutable private projection access inherits carrier construction and storage commit recording.
+    pub(crate) fn prefix(&self) -> (&[disclosures::Binding], &[disclosures::Marker]) {
+        (&self.bindings, &self.markers)
+    }
+
     /// Retain the canonical public package without changing its admission.
     /// (´amend:host:admitted-storage-carrier´)
     /// # Errors
@@ -363,6 +372,21 @@ impl AdmittedEpoch {
             event,
             declarations,
             debits,
+            bindings: disclosure
+                .frames
+                .last()
+                .ok_or(CarrierError::Correspondence)?
+                .closure
+                .bindings
+                .clone(),
+            markers: disclosure
+                .frames
+                .last()
+                .ok_or(CarrierError::Correspondence)?
+                .closure
+                .markers
+                .markers
+                .clone(),
         })
     }
 

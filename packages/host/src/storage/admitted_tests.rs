@@ -3,6 +3,28 @@ mod base;
 #[path = "../../tests/public/publication/fixture.rs"]
 mod fixture;
 
+fn shared_fixture() -> &'static (base::publication::AdmittedPackage, fixture::Check) {
+    static FIXTURE: std::sync::OnceLock<(base::publication::AdmittedPackage, fixture::Check)> = std::sync::OnceLock::new();
+    FIXTURE.get_or_init(fixture::complete)
+}
+
+pub(crate) fn shared_carrier() -> &'static crate::storage::AdmittedEpoch {
+    static CARRIER: std::sync::OnceLock<crate::storage::AdmittedEpoch> = std::sync::OnceLock::new();
+    CARRIER
+        .get_or_init(|| crate::storage::AdmittedEpoch::from_package(&shared_fixture().0, &mut base::numeric(), limits()).unwrap())
+}
+
+pub(crate) fn first_carrier() -> &'static crate::storage::AdmittedEpoch {
+    static FIRST: std::sync::OnceLock<crate::storage::AdmittedEpoch> = std::sync::OnceLock::new();
+    FIRST.get_or_init(|| {
+        let (package, verifier) = shared_fixture();
+        let mut disclosure = package.disclosures();
+        disclosure.frames.truncate(1);
+        let first = base::d::restore(disclosure, verifier).unwrap();
+        crate::storage::AdmittedEpoch::from_package(&first, &mut base::numeric(), limits()).unwrap()
+    })
+}
+
 fn limits() -> base::Limits {
     base::Limits {
         work: 100_000_000,
@@ -16,8 +38,8 @@ fn limits() -> base::Limits {
 /// ´test:unit:admitted-carrier-bytes´
 #[test]
 fn admitted_carrier_bytes() {
-    let (package, verifier) = fixture::complete();
-    let carrier = crate::admitted_result::AdmittedEpoch::from_package(&package, &mut base::numeric(), limits()).unwrap();
+    let (package, verifier) = shared_fixture();
+    let carrier = shared_carrier();
     let expected = crate::publication::encode(&package.disclosures(), &mut base::numeric(), limits()).unwrap();
     assert_eq!(carrier.bytes(), expected);
     let marker = &package.boundary().candidate().input().causes.bindings.last().unwrap().marker;
@@ -46,13 +68,13 @@ fn admitted_carrier_bytes() {
         "multi-act fixture must remain nontrivial"
     );
     assert!(package.carrier().frames[1].sequence.is_empty(), "the second epoch is empty");
-    assert_declarations(&carrier, &package, &verifier);
-    assert_debits(&carrier, &package);
+    assert_declarations(carrier, package, verifier);
+    assert_debits(carrier, package);
 
     let mut raw = package.disclosures();
     raw.causes.acts.reverse();
     raw.causes.declarations.reverse();
-    let reordered = base::d::restore(raw.clone(), &verifier).unwrap();
+    let reordered = base::d::restore(raw.clone(), verifier).unwrap();
     let reordered = crate::admitted_result::AdmittedEpoch::from_package(&reordered, &mut base::numeric(), limits()).unwrap();
     assert!(
         carrier.same_content(&reordered),
@@ -90,7 +112,7 @@ fn admitted_carrier_bytes() {
         !raw.causes.declarations.windows(2).all(|pair| pair[0].id < pair[1].id),
         "input reaches restoration unsorted"
     );
-    let different = base::d::restore(raw, &verifier).unwrap();
+    let different = base::d::restore(raw, verifier).unwrap();
     let different = crate::admitted_result::AdmittedEpoch::from_package(&different, &mut base::numeric(), limits()).unwrap();
     assert_eq!(
         carrier.event(),
@@ -111,7 +133,7 @@ fn admitted_carrier_bytes() {
     let mut tiny = limits();
     tiny.work = 1;
     assert!(matches!(
-        crate::admitted_result::AdmittedEpoch::from_package(&package, &mut base::numeric(), tiny),
+        crate::admitted_result::AdmittedEpoch::from_package(package, &mut base::numeric(), tiny),
         Err(crate::admitted_result::CarrierError::Encoding(
             crate::publication::Error::Arithmetic(_)
         ))
@@ -324,8 +346,7 @@ fn assert_debits(carrier: &crate::admitted_result::AdmittedEpoch, package: &base
 /// ´test:unit:admitted-carrier-postgresql-held´
 #[test]
 fn admitted_carrier_postgresql_held() {
-    let (package, _) = fixture::complete();
-    let carrier = crate::admitted_result::AdmittedEpoch::from_package(&package, &mut base::numeric(), limits()).unwrap();
+    let carrier = shared_carrier();
     let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
     let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage.json")).unwrap();
     let configuration = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
@@ -337,8 +358,29 @@ fn admitted_carrier_postgresql_held() {
             let session = crate::Session::connect(configuration).await.unwrap();
             let mut store = crate::storage::PostgresStore::open_store(session).await.unwrap();
             assert_eq!(
-                store.commit_admitted_epoch(&carrier).await,
+                store.commit_admitted_epoch(carrier).await,
                 Err(crate::storage::StorageError::EpochResultHeld)
             );
         });
+}
+
+pub(crate) fn conflicting_carrier() -> crate::storage::AdmittedEpoch {
+    let (package, verifier) = shared_fixture();
+    let mut raw = package.disclosures();
+    raw.frames.truncate(1);
+    raw.causes.declarations.insert(
+        0,
+        base::Declaration {
+            id: base::DeclarationId {
+                namespace: "unused".into(),
+                name: "conflict".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: base::DeclarationContent::Opaque,
+        },
+    );
+    let admitted = base::d::restore(raw, verifier).unwrap();
+    crate::storage::AdmittedEpoch::from_package(&admitted, &mut base::numeric(), limits()).unwrap()
 }

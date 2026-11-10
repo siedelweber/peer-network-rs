@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::admitted::DebitRow",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Derived public-value equality, cloning and debug contain only canonical admitted bytes, selected public versions, typed keys and staging counts. No Session or secret is retained in the memory transaction; the commit span records the full boundary."
+  }
+}

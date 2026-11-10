@@ -19,7 +19,8 @@
         "pn-host::packages/host/src/storage.rs::storage::PostgresStore::load_boundary",
         "pn-host::packages/host/src/storage.rs::storage::PostgresStore::audit_history",
         "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
-        "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history"
+        "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history",
+        "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::commit_admitted_epoch"
       ]
     }
   }

@@ -58,6 +58,12 @@ pub enum StorageError {
     Injected,
     CommitUnknown,
     EpochResultHeld,
+    MissingSelectedVersion,
+    SelectedContentMismatch,
+    SelectedVersionNotEffective,
+    EpochConflict,
+    DebitConflict,
+    HistoricalSelectionConflict,
 }
 
 fn classified<T>(result: Result<T, StorageError>) -> Result<T, StorageError> {
@@ -304,6 +310,8 @@ pub struct Boundary {
     pub rows: Vec<EffectiveRow>,
 }
 
+mod admitted;
+
 type History = BTreeMap<(Family, String), Vec<EffectiveRow>>;
 pub(crate) fn check(version: &Version) -> Result<(), StorageError> {
     if version.key.is_empty()
@@ -398,6 +406,7 @@ fn verify_row(row: &EffectiveRow) -> Result<(), StorageError> {
 #[derive(Debug, Default)]
 pub struct MemoryStore {
     history: History,
+    admitted: admitted::State,
 }
 impl MemoryStore {
     /// Append closure and successor as one functional replacement.
@@ -420,7 +429,14 @@ impl MemoryStore {
         if let Some(rows) = self.history.get(&key) {
             next.insert(key.clone(), rows.clone());
         }
-        let result = classified(append(&mut next, version, predecessor));
+        let result = classified(append(&mut next, version, predecessor).and_then(|changed| {
+            let mut candidate = self.history.clone();
+            if let Some(rows) = next.get(&key) {
+                candidate.insert(key.clone(), rows.clone());
+            }
+            self.admitted.guard(&candidate)?;
+            Ok(changed)
+        }));
         if result.is_ok()
             && let Some(rows) = next.remove(&key)
         {
