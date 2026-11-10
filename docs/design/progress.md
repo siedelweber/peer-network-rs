@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Exact inventory labels in other tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 62 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 61 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 35 | 56 | 408 | 7 | 32 | 857 |
+| implementation | 1 356 | 35 | 55 | 410 | 7 | 32 | 856 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -30,9 +30,9 @@
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 | pn-epoch | 371 | 15 | 8 | 141 | 0 | 13 | 207 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
-| pn-host | 166 | 5 | 16 | 49 | 1 | 2 | 96 |
+| pn-host | 166 | 5 | 15 | 50 | 1 | 2 | 96 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 218 | 2 | 9 | 76 | 1 | 7 | 131 |
+| pn-records | 218 | 2 | 9 | 77 | 1 | 7 | 130 |
 | pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
 | pn-verification | 281 | 8 | 9 | 69 | 4 | 6 | 195 |
 
@@ -57,7 +57,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 586 | 202 |
+| ROOT (repository-wide) | 1 601 | 203 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -72,10 +72,10 @@
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 1 | 0 |
-| 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
+| 9 | 11 | 1 | 3 | 7 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
-| 11 | 93 | 9 | 27 | 56 | 0 | 5 | 1 |
-| unlinked | 1 484 | 22 | 18 | 285 | 13 | 21 | 1 159 |
+| 11 | 93 | 9 | 26 | 57 | 0 | 5 | 1 |
+| unlinked | 1 484 | 22 | 18 | 286 | 13 | 21 | 1 158 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -88,7 +88,7 @@
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
 | invariant check | 517 | 16 | 22 | 142 | 1 | 11 | 337 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 16 | 55 | 5 | 4 | 191 |
+| policy | 265 | 3 | 15 | 57 | 5 | 4 | 190 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 1 | 5 | 51 | 0 | 5 | 35 |
 
@@ -517,7 +517,7 @@
 | ``case:graph:act-dependency-projection-full`` | pn-records; serialization | unassigned | | | | |  | | |
 | ``case:graph:act-dependency-projection-tombstoned`` | pn-records; serialization | unassigned | | | | |  | | |
 | ``def:graph:act-dependency-tombstone`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
-| ``rem:graph:authentication-realization-out-of-scope`` | pn-host; policy | held | ``ROOT::dec:crypto:base-library`` ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
+| ``rem:graph:authentication-realization-out-of-scope`` | pn-host; policy | designed | ``ROOT::amend:identity:key-retirement`` ``ROOT::dec:crypto:base-library`` ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | |
 | ``def:graph:proposal-pre-commitment`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
 | ``def:graph:verified-act`` | pn-records; type | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::def:identity:verified-header-name`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>| 3, 4 | | |
 | ``def:graph:approval-witness`` | pn-records; invariant check | designed | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::amend:design:publication-field-inventory`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | ``ROOT::alg:design:closure-registration``; delegation to the declared approval verifier<br>|
@@ -676,8 +676,8 @@
 | ``itm:nodes:raw-self-edge-properties-temporal-ceiling`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``subsec:nodes:archetype-fingerprints`` | pn-readouts; invariant check | unassigned | | | | |  | | |
 | ``tbl:nodes:archetype-fingerprints`` | pn-records; type | designed | ``GRAPH::tab:formation:registration-census`` | | | |  | | |
-| ``rem:nodes:edge-census-normative`` | pn-records; policy | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
-| ``tbl:nodes:act-payload-schema`` | pn-records; serialization | designed | ``GRAPH::tab:formation:payload-census`` | | | |  | | |
+| ``rem:nodes:edge-census-normative`` | pn-records; policy | designed | ``ROOT::amend:identity:key-retirement`` | | | |  | | |
+| ``tbl:nodes:act-payload-schema`` | pn-records; serialization | designed | ``GRAPH::tab:formation:payload-census`` ``ROOT::amend:identity:key-retirement`` | | | |  | | |
 | ``prop:nodes:structural-edge-properties`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``prop:nodes:structural-edge-properties:floor`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``prop:nodes:structural-edge-properties:upper`` | pn-graph; invariant check | unassigned | | | | |  | | |
