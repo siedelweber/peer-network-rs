@@ -6960,6 +6960,10 @@
       "label": "rem:graph:authentication-realization-out-of-scope",
       "portions": [
         {
+          "clause": "Premise only: authentication realization is a deployment concern",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
           "clause": "Premise only: authentication realization belongs to the deployment",
           "record": "ROOT::amend:identity:key-retirement"
         }
@@ -31825,7 +31829,12 @@
       ],
       "kind": "invariant check",
       "label": "post:deployment:public-object-replay",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: a locator cannot substitute for replay",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32223,7 +32232,12 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:canonical-encoding",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the deployment selects the byte encoding",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32242,7 +32256,12 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:canonical-replay",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: identical public inputs and procedure must reproduce verdicts",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32877,13 +32896,20 @@
       "crate": "pn-host",
       "elsewhere": [
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/design/implementation.md",
         "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
+        "docs/inputs/design-questions.toml",
+        "docs/templates/docs/design/implementation.md.j2"
       ],
       "holds": [],
       "kind": "serialization",
       "label": "subsec:deployment:canonical-standing-encoding",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: serialization is a deployment concern",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -32911,7 +32937,12 @@
       ],
       "kind": "serialization",
       "label": "post:deployment:canonical-standing-publication",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: publication requires complete versioned deterministic bytes",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -38961,10 +38992,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 616",
+          "exact": "1 621",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 616",
+          "num": "1 621",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38979,7 +39010,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1616
+      "total": 1621
     },
     {
       "category": "record-coverage",
