@@ -13,12 +13,12 @@
   "review": {
     "operation": "pn-act-authentication::packages/act-authentication/src/lib.rs::signing_key_hash",
     "class_decision": "authentication-public",
-    "body": "{ let key : & [u8 ; 32] = bytes . try_into () . map_err (| _ | RecipeError :: KeyLength) ? ; let mut hash = Sha256 :: new () ; hash . update (b\"pn-act-authentication/signing-key-hash/v1\\0\") ; hash . update (key) ; Ok (KeyHash (hash . finalize () . into ())) }",
+    "body": "{ # [cfg (test)] verification :: tests :: visit (verification :: tests :: Stage :: Hash) ; let key : & [u8 ; 32] = bytes . try_into () . map_err (| _ | RecipeError :: KeyLength) ? ; let mut hash = Sha256 :: new () ; hash . update (b\"pn-act-authentication/signing-key-hash/v1\\0\") ; hash . update (key) ; Ok (KeyHash (hash . finalize () . into ())) }",
     "assessments": {
       "full_recording": "authentication-public",
       "secret_flow": "authentication-public",
       "exposure_consumers": "authentication-public"
     },
-    "item_premise": "Public bounded input and result are recorded. The byte recipe establishes only its digest or canonical layout."
+    "item_premise": "Every argument and result is public and recorded in full. The byte recipes claim only their derivations; parsing precedes membership hashing, fixed message/signature lengths precede native verification, and no chain or complete act verdict is produced."
   }
 }

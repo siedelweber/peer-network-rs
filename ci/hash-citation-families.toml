@@ -2,6 +2,28 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "authentication-signature-publication"
+group = "public verification golden values"
+measures = "Published operands and expected results, malformed point operands and the independent equation constants"
+producer = "BIP-340 publication and independent Python integer reconstruction"
+establishment = "defined"
+reader = "authentication-signature-fixtures"
+definition = "The reader verifies the unchanged publication digest and every published equation result before accounting its operands, including published demonstration secrets, as public fixture bytes. It independently checks malformed-point classes. The named curve order and generator are the integer equation parameters, not content identities."
+paths = ["packages/act-authentication/tests/bip340.csv", "packages/act-authentication/tests/malformed-points.json", "packages/act-authentication/src/verification/tests.rs", "ci/authentication_bip340.py"]
+
+[[rows]]
+family = "authentication-signature-publication-revision"
+group = "public verification golden values"
+measures = "Public BIP-340 vector publication revision"
+producer = "Git"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/bitcoin/bips/commit/200f9b26fe0a2f235a2af8b30c4be9f12f6bc9cb"
+commit = "200f9b26fe0a2f235a2af8b30c4be9f12f6bc9cb"
+definition = "The public revision locates the unchanged nineteen-row CSV checked independently by the publication reader."
+paths = ["ci/hash-citation-families.toml", "ci/authentication_bip340.py", "packages/act-authentication/README.md", "docs/templates/packages/act-authentication/README.md.j2"]
+
+[[rows]]
 family = "authentication-public-fixtures"
 group = "conditional public token evidence"
 measures = "Daemon transaction bytes, supplied public locators and independently checked asset and key digests"

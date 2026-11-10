@@ -30,11 +30,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-act-authentication"
-operations = 4
-instrumented = 4
+operations = 9
+instrumented = 9
 exceptions = 0
 helpers = 0
-generators = 4
+generators = 7
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "pn-act-profile"

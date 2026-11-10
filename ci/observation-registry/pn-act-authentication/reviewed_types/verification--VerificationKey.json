@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "verification::VerificationKey",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/verification.rs",
+    "syntax": "# [doc = \" A parsed x-only point; there is no constructor from an unchecked carrier.\"] # [doc = \" (´def:authentication:verification-admission´)\"] # [derive (Clone , Copy , Debug)] pub struct VerificationKey (backend :: Key) ;"
+  }
+}

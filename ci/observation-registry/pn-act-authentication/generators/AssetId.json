@@ -7,6 +7,6 @@
     "path": "packages/act-authentication/src/lib.rs",
     "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
     "class_decision": "authentication-public",
-    "expansion_review": "The generated Clone, Copy, Debug, equality and error formatting operate only on public byte carriers, inventory limits and content-free refusals; no secret or encoding implementation is generated."
+    "expansion_review": "Clone and Copy copy public point storage; Debug records it in full. The key wrappers derive no binding equality, ordering, hash or serialization. Error formatting and byte-carrier comparisons are local public operations. No signing, secret, entropy or native equality call is generated."
   }
 }

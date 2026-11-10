@@ -782,6 +782,7 @@
         "ci::test_wallet_boundary.WalletBoundary.test_dependency_features": "calibrated-wallet-boundary-dependency-features-case"
       },
       "cases": [
+        "ci::test_wallet_boundary.WalletBoundary.test_authentication_verification_admission",
         "ci::test_wallet_boundary.WalletBoundary.test_authentication_values",
         "ci::test_wallet_boundary.WalletBoundary.test_archive_provisioning",
         "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",
@@ -1667,6 +1668,20 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-act-authentication::verification::tests::membership_order",
+        "pn-act-authentication::verification::tests::verification_length_order"
+      ],
+      "implementation": "pn-act-authentication-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-act-authentication",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-act-authentication::public::asset_identifiers",
         "pn-act-authentication::public::key_declarations",
         "pn-act-authentication::public::qualification"
@@ -1675,6 +1690,21 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-act-authentication::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-act-authentication::signatures::published_signatures",
+        "pn-act-authentication::signatures::signature_association",
+        "pn-act-authentication::signatures::malformed_points"
+      ],
+      "implementation": "pn-act-authentication-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-act-authentication::signatures",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

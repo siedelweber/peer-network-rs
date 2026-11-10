@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "verification::backend::Key",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/verification/backend.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)] pub (super) struct Key (secp256k1_zkp :: XOnlyPublicKey) ;"
+  }
+}

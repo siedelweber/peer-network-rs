@@ -278,6 +278,16 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "authentication-signature-fixtures" and standing == "defined":
+        import authentication_bip340 as reference
+        reference.check(root)
+        directory = root/'packages/act-authentication/tests'
+        publication = directory/'bip340.csv'
+        values = {match.group() for path in (publication, directory/'malformed-points.json')
+                  for match in occurrences(path.read_text())}
+        values.add(hashlib.sha256(publication.read_bytes()).hexdigest())
+        values.update(hex(number) for number in (reference.ORDER, *reference.GENERATOR))
+        return lambda candidate, _line: candidate in values
     if kind == "authentication-fixtures" and standing == "defined":
         from authentication_vectors import check
         value = json.loads(relative_file(root, rule['source']).read_text())

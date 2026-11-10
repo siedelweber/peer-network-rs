@@ -562,6 +562,14 @@
       "review": "Read independent hashlib, prime-derived SHA-256 compression and raw-byte comparisons. Mutated key and asset digests are refused even when the latter is changed in both retained daemon fields. No daemon or Rust implementation is called by this check."
     },
     {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_authentication_verification_admission",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:authentication-verification-admission-is-reproduced",
+      "before": "",
+      "after": "Claim: The authentication source admits only its listed binding items and path, rejecting alternatives; independent Python equations agree with every publication row. Actual artifact reproduction belongs to the codec artifact controls.",
+      "review": "Read the independent Python equation checks for all nineteen rows, source-inventory mutation refusals and actual artifact reproduction through the previously admitted wallet checkers. This is finite integration evidence awaiting independent cryptographic review."
+    },
+    {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_case_census",
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:wallet-census-refuses-missing-evidence",
@@ -1664,6 +1672,46 @@
       "before": "",
       "after": "The qualification retains the run and big-endian input index; all alternate\npushes, flags, versions, truncations and trailing bytes qualify nothing.",
       "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-act-authentication::signatures::malformed_points",
+      "path": "packages/act-authentication/tests/signatures.rs",
+      "claim": "ACTAUTH::claim:authentication:malformed-x-only-points-refuse",
+      "before": "",
+      "after": "Zero has no curve lift, the field prime and larger x encodings are out of\nfield, and shorter or longer encodings are length errors. The wrapper does\nnot invent a finer native invalid-point class.",
+      "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
+    },
+    {
+      "operation": "pn-act-authentication::signatures::published_signatures",
+      "path": "packages/act-authentication/tests/signatures.rs",
+      "claim": "ACTAUTH::claim:authentication:published-signatures-have-fixed-message-admission",
+      "before": "",
+      "after": "The unchanged nineteen-row publication is admitted at its original message\nlength: all fifteen 32-byte rows agree with BIP-340, and the four other valid\nrows refuse by message length. No row is padded or rehashed.",
+      "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
+    },
+    {
+      "operation": "pn-act-authentication::signatures::signature_association",
+      "path": "packages/act-authentication/tests/signatures.rs",
+      "claim": "ACTAUTH::claim:authentication:signature-binds-key-and-message",
+      "before": "",
+      "after": "A valid signature is bound to its key and digest, and each boundary exposes\nthe package's typed, content-free refusal instead of binding diagnostics.",
+      "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
+    },
+    {
+      "operation": "pn-act-authentication::verification::tests::membership_order",
+      "path": "packages/act-authentication/src/verification/tests.rs",
+      "claim": "ACTAUTH::claim:authentication:membership-parses-before-hashing",
+      "before": "",
+      "after": "Invalid disclosed points and lengths reach no hash or verifier; valid membership\ncomputes the existing digest only after point parsing. The counters sit at the\ncalled boundaries, not at the caller's proposed ordering.",
+      "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
+    },
+    {
+      "operation": "pn-act-authentication::verification::tests::verification_length_order",
+      "path": "packages/act-authentication/src/verification/tests.rs",
+      "claim": "ACTAUTH::claim:authentication:length-admission-precedes-native-verification",
+      "before": "",
+      "after": "Message length is checked before signature length and all native calls.\nIn particular a long valid-prefix message is not truncated, and a short\nmessage is not hashed to the digest signed by the publication vector.",
+      "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
     },
     {
       "operation": "pn-act-profile::tests::commitment_trace_privacy",

@@ -19,6 +19,6 @@
       "secret_flow": "authentication-public",
       "exposure_consumers": "authentication-public"
     },
-    "item_premise": "Public bounded input and result are recorded. The byte recipe establishes only its digest or canonical layout."
+    "item_premise": "Every argument and result is public and recorded in full. The byte recipes claim only their derivations; parsing precedes membership hashing, fixed message/signature lengths precede native verification, and no chain or complete act verdict is produced."
   }
 }

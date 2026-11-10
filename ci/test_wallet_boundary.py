@@ -12,6 +12,31 @@ import os
 
 
 class WalletBoundary(unittest.TestCase):
+    def test_authentication_verification_admission(self):
+        """Claim: The authentication source admits only its listed binding items and path, rejecting alternatives; independent Python equations agree with every publication row. Actual artifact reproduction belongs to the codec artifact controls.
+        ´claim:discipline:authentication-verification-admission-is-reproduced´
+        ´test:integration:test-authentication-verification-admission´
+        """
+        import authentication_crypto
+        import authentication_bip340
+        self.assertEqual(authentication_bip340.check(), dict(publication_rows=19, malformed_points=5, valid=9))
+        from hash_citations import establish
+        import csv
+        reader = establish(Path('.'), dict(reader='authentication-signature-fixtures', establishment='defined'))
+        with Path('packages/act-authentication/tests/bip340.csv').open() as publication:
+            public_key = next(csv.DictReader(publication))['public key']
+        self.assertTrue(reader(public_key, ''))
+        self.assertFalse(reader('unaccounted', ''))
+        source = Path(authentication_crypto.BACKEND).read_text()
+        authentication_crypto.check_sources({authentication_crypto.BACKEND: source})
+        for changed in (source.replace('preallocated_verification_only', 'new'),
+                        source.replace('verify_schnorr', 'sign_schnorr'),
+                        source + '\nuse secp256k1_zkp as hidden;\n'):
+            with self.assertRaises(ValueError):
+                authentication_crypto.check_sources({authentication_crypto.BACKEND: changed})
+        with self.assertRaises(ValueError):
+            authentication_crypto.check_sources({'packages/act-authentication/src/other.rs': source})
+
     def test_authentication_values(self):
         """Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs the daemon asset identifiers, and changed key or asset digests are refused.
         ´claim:discipline:authentication-values-have-independent-byte-checks´

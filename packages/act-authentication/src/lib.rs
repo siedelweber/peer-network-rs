@@ -1,6 +1,9 @@
 //! Public byte recipes and fixed-size author-token carriers.
-//! These operations establish neither key validity nor chain truth.
+//! Byte recipes establish neither key validity nor chain truth; the verification
+//! module separately parses keys and checks fixed-message signatures.
 //! (´def:authentication:public-evidence´)
+
+pub mod verification;
 
 use sha2::{Digest, Sha256};
 
@@ -49,6 +52,8 @@ pub enum RecipeError {
     ret
 )]
 pub fn signing_key_hash(bytes: &[u8]) -> Result<KeyHash, RecipeError> {
+    #[cfg(test)]
+    verification::tests::visit(verification::tests::Stage::Hash);
     let key: &[u8; 32] = bytes.try_into().map_err(|_| RecipeError::KeyLength)?;
     let mut hash = Sha256::new();
     hash.update(b"pn-act-authentication/signing-key-hash/v1\0");

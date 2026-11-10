@@ -3,7 +3,7 @@
   "value": {
     "name": "authentication-public",
     "status": "reviewer-confirmed",
-    "premises": "All arguments and results are public fixed-width encodings, external locators or tagged scripts. Complete input and result recording exposes no secret carrier. No curve parser, signature operation, chain authority or secret access is present.",
+    "premises": "Public byte recipes and fixed-message verification record complete arguments and results. Parsed keys are public points, not secret carriers; the closed private backend supplies only parsing and verification with fixed preallocated context storage. No chain or complete act verdict is inferred.",
     "membership": {
       "labelled_package": "pn-act-authentication"
     }

@@ -1,0 +1,30 @@
+{
+  "source": "Independent integer field and square-root checks in ci/authentication_bip340.py; no native binding.",
+  "cases": [
+    {
+      "name": "not-on-curve",
+      "encoding": "0000000000000000000000000000000000000000000000000000000000000000",
+      "class": "invalid-point"
+    },
+    {
+      "name": "field-prime",
+      "encoding": "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f",
+      "class": "invalid-point"
+    },
+    {
+      "name": "above-prime",
+      "encoding": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "class": "invalid-point"
+    },
+    {
+      "name": "short",
+      "encoding": "00000000000000000000000000000000000000000000000000000000000000",
+      "class": "length"
+    },
+    {
+      "name": "long",
+      "encoding": "000000000000000000000000000000000000000000000000000000000000000000",
+      "class": "length"
+    }
+  ]
+}

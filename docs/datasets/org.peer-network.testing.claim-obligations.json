@@ -3044,6 +3044,38 @@
       "witnessed_labels": []
     },
     {
+      "case_census": [
+        "publication validity at all lengths",
+        "wrapper admission at exactly 32 bytes",
+        "invalid x-only points",
+        "key and message association",
+        "parse before hash and lengths before native work",
+        "artifact and reachable-item reproduction"
+      ],
+      "claims": [
+        "ROOT::claim:discipline:wallet-codec-pins-match-review",
+        "ROOT::claim:discipline:wallet-codec-provenance-matches-build",
+        "ACTAUTH::claim:authentication:published-signatures-have-fixed-message-admission",
+        "ACTAUTH::claim:authentication:signature-binds-key-and-message",
+        "ACTAUTH::claim:authentication:malformed-x-only-points-refuse",
+        "ACTAUTH::claim:authentication:membership-parses-before-hashing",
+        "ACTAUTH::claim:authentication:length-admission-precedes-native-verification",
+        "ROOT::claim:discipline:authentication-verification-admission-is-reproduced"
+      ],
+      "closing_condition": "Execute independent publication equations, wrapper refusals, ordering controls and artifact checks.",
+      "closing_step": "Before public signature fixture verification",
+      "evidence_paragraph": "ACTAUTH::rec:authentication:signature-fixtures",
+      "hold": "",
+      "missing": "Independent cryptographic integration review and complete signed-object verification remain held.",
+      "name": "ROOT::verif:crypto:public-verification-fixtures",
+      "owner": "Authentication public operation implementer",
+      "path": "adr/023-cryptographic-base.md",
+      "premises": "Pinned trusted library and compiler; public golden values are independent of the wrapper.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
       "claims": [
         "SECRETHOME::claim:crypto:home-protections-and-erasure-are-observed",
         "SECRETHOME::claim:crypto:home-acquisition-failures-erase-and-refuse",

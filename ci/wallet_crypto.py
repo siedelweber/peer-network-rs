@@ -238,8 +238,8 @@ def check_record(record, channel):
         raise ValueError('codec record omits the pinned compiler')
 
 
-def build_artifacts(root):
-    output = subprocess.run(['cargo', 'build', '--offline', '--locked', '--profile', 'gate', '-p', 'pn-wallet',
+def build_artifacts(root, package='pn-wallet'):
+    output = subprocess.run(['cargo', 'build', '--offline', '--locked', '--profile', 'gate', '-p', package,
                              '--message-format=json'], cwd=root, capture_output=True, text=True, check=True).stdout
     artifacts = {}
     for line in output.splitlines():
@@ -281,6 +281,8 @@ def check(root=Path('.')):
         check_provenance(package, (entry['manifest']/'depend/secp256k1-HEAD-revision.txt').read_text())
         check_modules(package, archive_symbols((entry['out_dir']/spec['library']).read_bytes()))
         check_compiler(package, entry['rlib'].read_bytes(), version, commit)
+    from authentication_crypto import check_artifacts
+    check_artifacts(root, version, commit)
     print(f'WALLET-CODEC-ARTIFACTS packages={len(packages)} snapshots={len(SNAPSHOTS)} compiler="{version}"')
     return True
 

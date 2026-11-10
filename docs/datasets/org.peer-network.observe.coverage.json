@@ -224,9 +224,9 @@
     },
     {
       "exceptions": 0,
-      "generators": 4,
+      "generators": 7,
       "helpers": 0,
-      "instrumented": 4,
+      "instrumented": 9,
       "name": "pn-act-authentication",
       "number_forms": {
         "exceptions": {
@@ -238,10 +238,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "4",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -254,18 +254,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "4",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "4",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         }
@@ -292,7 +292,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 4
+      "operations": 9
     },
     {
       "exceptions": 3,

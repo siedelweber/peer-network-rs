@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "verification::VerificationError",
+    "kind": "derive",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/verification.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "authentication-public",
+    "expansion_review": "Clone and Copy copy public point storage; Debug records it in full. The key wrappers derive no binding equality, ordering, hash or serialization. Error formatting and byte-carrier comparisons are local public operations. No signing, secret, entropy or native equality call is generated."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "verification::VerificationError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/verification.rs",
+    "syntax": "# [doc = \" Public verification refusal; no payload or binding error is retained.\"] # [doc = \" (´def:authentication:verification-admission´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum VerificationError { # [error (\"verification key must contain exactly 32 bytes\")] KeyLength , # [error (\"verification key is not an x-only point\")] InvalidKey , # [error (\"verification message must contain exactly 32 bytes\")] MessageLength , # [error (\"verification signature must contain exactly 64 bytes\")] SignatureLength , # [error (\"verification context exceeds fixed storage\")] ContextCapacity , # [error (\"signature verification failed\")] InvalidSignature , }"
+  }
+}

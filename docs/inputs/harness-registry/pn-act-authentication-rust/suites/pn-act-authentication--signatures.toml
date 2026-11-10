@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-act-authentication::signatures"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-act-authentication-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-act-authentication::signatures::published_signatures", "pn-act-authentication::signatures::signature_association", "pn-act-authentication::signatures::malformed_points"]

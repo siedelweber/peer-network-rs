@@ -2,8 +2,8 @@
   "section": "assessments",
   "value": {
     "status": "reviewer-confirmed",
-    "premises": "Read the four pure functions and their carriers: only public byte encodings and content-free errors flow through ordinary Debug. Independent daemon identifiers and hashlib values constrain the published results; malformed lengths and scripts refuse locally. No private input is accepted or published.",
-    "negative_probe": "ACTAUTH::claim:authentication:key-hashes-and-scripts-match-independent-values"
+    "premises": "Read the byte recipes, wrappers and private backend. Full Debug records only public bytes, points and content-free refusal variants; no private input, signing operation or entropy source is reached. The native validity candidate remains subject to independent cryptographic integration review.",
+    "negative_probe": "ACTAUTH::claim:authentication:signature-binds-key-and-message"
   },
   "name": "authentication-public"
 }

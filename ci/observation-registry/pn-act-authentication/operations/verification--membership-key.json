@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/verification.rs",
+    "item": "verification::membership_key",
+    "owner": "ACTAUTH",
+    "signature": "fn membership_key (bytes : & [u8]) -> Result < (VerificationKey , crate :: KeyHash) , VerificationError >",
+    "claim": "ACTAUTH::def:authentication:verification-admission",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/verification.rs::verification::membership_key",
+    "class_decision": "authentication-public",
+    "body": "{ let key = VerificationKey :: parse (bytes) ? ; let digest = crate :: signing_key_hash (bytes) . map_err (| _ | VerificationError :: KeyLength) ? ; Ok ((key , digest)) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Every argument and result is public and recorded in full. The byte recipes claim only their derivations; parsing precedes membership hashing, fixed message/signature lengths precede native verification, and no chain or complete act verdict is produced."
+  }
+}

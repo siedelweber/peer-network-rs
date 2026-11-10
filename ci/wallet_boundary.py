@@ -183,6 +183,10 @@ def check(root=Path('.')):
             name = path.relative_to(root.resolve()).as_posix()
             if re.search(r'\binclude\s*!', source):
                 raise ValueError('codec confinement requires reviewed include expansion: '+name)
+            if name == 'packages/act-authentication/src/verification/backend.rs':
+                from authentication_crypto import check_sources
+                check_sources({name: original})
+                continue
             if name == ADAPTER:
                 if re.search(r'\bpub(?:\s*\([^)]*\))?\s+(?:use|extern\s+crate)\b', source):
                     raise ValueError('adapter re-export is not admitted')
