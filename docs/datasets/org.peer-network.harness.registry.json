@@ -1985,6 +1985,22 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::test_support::tests::ridge_fixture_restores"
+      ],
+      "composition_reasons": {
+        "pn-epoch::test_support::tests::ridge_fixture_restores": "The fixture composes ridge production, two-boundary closure, standing and schedule generation with independent public restoration and a charge-evidence refusal."
+      },
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::fixture-disclosures",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-epoch::inputs::parameter_binding"
       ],
       "implementation": "pn-epoch-rust",
@@ -2870,6 +2886,22 @@
       "kind": "suite",
       "level": "integration",
       "name": "pn-host::admitted-memory",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::storage::declaration_census::admitted_declaration_census"
+      ],
+      "composition_reasons": {
+        "pn-host::storage::declaration_census::admitted_declaration_census": "The independent census composes epoch-owned ridge evidence, public restoration, canonical decoding and complete storage payload correspondence over historical boundaries."
+      },
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-host::declaration-census",
       "runner": "nextest",
       "status": "active",
       "tier": "extended"

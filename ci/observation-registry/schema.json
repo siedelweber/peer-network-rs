@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "configuration": "seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration",
+  "configuration": "seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records/epoch test-support are outside this production configuration",
   "fields": {
     "operations": [
       "body",

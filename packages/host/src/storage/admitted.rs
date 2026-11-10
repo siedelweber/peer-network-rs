@@ -4,6 +4,8 @@ use super::{
     AdmittedEpoch, DebitKey, DeclarationUse, EpochKey, History, MAX_PACKAGE, MemoryStore, StorageError, TransactionMeter,
     classified, verify_row,
 };
+mod staging;
+use staging::{Mutation, Stage};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
@@ -414,7 +416,7 @@ impl MemoryStore {
             };
         }
         let predecessor = self.admitted.validate(&self.history, input)?;
-        let mut next = self.admitted.clone();
+        let mut next = Stage::new(&self.admitted, input.event());
         let mut meter = TransactionMeter::new();
         let package_chunks = chunks(input.bytes());
         let row = ResultRow {
@@ -429,19 +431,15 @@ impl MemoryStore {
             bindings: input.prefix().0.to_vec(),
             markers: input.prefix().1.to_vec(),
         };
-        next.results.insert(input.event().clone(), row);
-        boundary(Write::Result)?;
-        let row = next.results.get_mut(input.event()).ok_or(StorageError::CorruptHistory)?;
-        for (i, chunk) in package_chunks.into_iter().enumerate() {
-            row.chunks.push(chunk);
-            boundary(Write::PackageChunk(i))?;
+        next.write(Mutation::Result(row), boundary)?;
+        for chunk in package_chunks {
+            next.write(Mutation::PackageChunk(chunk), boundary)?;
         }
-        for (i, reference) in input.declarations().iter().enumerate() {
-            row.references.push(reference.clone());
-            boundary(Write::Reference(i))?;
+        for reference in input.declarations() {
+            next.write(Mutation::Reference(reference.clone()), boundary)?;
         }
         for vintage in input.debits() {
-            if next.debits.contains_key(&vintage.key) {
+            if self.admitted.debits.contains_key(&vintage.key) {
                 continue;
             }
             let parts = chunks(&vintage.bytes);
@@ -450,23 +448,15 @@ impl MemoryStore {
                 chunk_count: parts.len(),
                 chunks: Vec::new(),
             };
-            next.debits.insert(vintage.key.clone(), row);
-            boundary(Write::Debit(vintage.key.clone()))?;
-            let row = next.debits.get_mut(&vintage.key).ok_or(StorageError::CorruptHistory)?;
-            for (i, chunk) in parts.into_iter().enumerate() {
-                row.chunks.push(chunk);
-                boundary(Write::DebitChunk(vintage.key.clone(), i))?;
+            next.write(Mutation::Debit(vintage.key.clone(), row), boundary)?;
+            for chunk in parts {
+                next.write(Mutation::DebitChunk(vintage.key.clone(), chunk), boundary)?;
             }
         }
-        let row = next.results.get_mut(input.event()).ok_or(StorageError::CorruptHistory)?;
-        for (i, vintage) in input.debits().iter().enumerate() {
-            row.membership.push(vintage.key.clone());
-            boundary(Write::Membership(i))?;
+        for vintage in input.debits() {
+            next.write(Mutation::Membership(vintage.key.clone()), boundary)?;
         }
-        if !next.equal(next.results.get(input.event()).ok_or(StorageError::CorruptHistory)?, input)? {
-            return Err(StorageError::CorruptHistory);
-        }
-        self.admitted = next;
+        next.publish(&mut self.admitted, input)?;
         meter.commit();
         Ok(true)
     }

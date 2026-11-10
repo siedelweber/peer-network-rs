@@ -183,6 +183,16 @@ class WorkspaceChecks(unittest.TestCase):
                 self.assertNotIn('other-vendor',command)
                 self.assertIn('new-tool',command)
                 self.assertNotIn('external',command)
+        metadata['workspace_members'].append('epoch')
+        metadata['packages'].append({'id':'epoch','name':'pn-epoch'})
+        for status in [0, 7]:
+            with patch('sys.argv',['discipline.py','minimal']), patch('discipline.subprocess.run') as run:
+                run.side_effect=[subprocess.CompletedProcess([],0,json.dumps(metadata)),
+                                 subprocess.CompletedProcess([],0),subprocess.CompletedProcess([],status)]
+                self.assertEqual(main(),status)
+                self.assertEqual(run.call_args_list[2].args[0],
+                                 ['cargo','check','--offline','--locked','--profile','gate','-p','pn-epoch',
+                                  '--lib','--no-default-features','--features','test-support'])
 
 
 class HashCitations(unittest.TestCase):

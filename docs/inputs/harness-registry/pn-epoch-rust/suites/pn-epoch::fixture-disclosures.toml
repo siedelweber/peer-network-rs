@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-epoch::fixture-disclosures"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-epoch::test_support::tests::ridge_fixture_restores"]
+composition_reasons = { "pn-epoch::test_support::tests::ridge_fixture_restores" = "The fixture composes ridge production, two-boundary closure, standing and schedule generation with independent public restoration and a charge-evidence refusal." }

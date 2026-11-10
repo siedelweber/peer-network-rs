@@ -318,6 +318,13 @@ fn disclose_frame(frame: &Frame) -> Boundary {
     }
 }
 
+/// Fixture projection carries assertions only; restoration still grants authority.
+/// (´def:admission:test-support´)
+#[cfg(feature = "test-support")]
+pub(crate) fn fixture_frame(frame: &Frame) -> Boundary {
+    disclose_frame(frame)
+}
+
 impl super::AdmittedPackage {
     /// Copy every admitted section into constructible, untrusted semantic disclosures.
     /// (´rule:admission:publication-disclosures´)

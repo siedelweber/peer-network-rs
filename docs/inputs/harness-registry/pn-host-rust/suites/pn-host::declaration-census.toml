@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-host::declaration-census"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-host-rust"
+tier = "extended"
+budget = "pure-suite"
+cases = ["pn-host::storage::declaration_census::admitted_declaration_census"]
+composition_reasons = { "pn-host::storage::declaration_census::admitted_declaration_census" = "The independent census composes epoch-owned ridge evidence, public restoration, canonical decoding and complete storage payload correspondence over historical boundaries." }

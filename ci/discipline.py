@@ -563,13 +563,21 @@ def main():
     if mode in {"minimal", "rustdoc"}:
         command = ["cargo", "check" if mode == "minimal" else "doc"]
         vendors = {name for _, name in vendor_members(pathlib.Path.cwd())}
-        for package in workspace_packages():
+        packages = workspace_packages()
+        for package in packages:
             # regexml retains its upstream feature and documentation policy.
             if package["name"] not in vendors:
                 command.extend(["-p", package["name"]])
         command.extend(["--no-default-features" if mode == "minimal" else "--no-deps", "--locked"])
         command.extend(["--profile", "gate"])
-        return subprocess.run(command).returncode
+        result = subprocess.run(command).returncode
+        if result or mode != "minimal" or not any(p["name"] == "pn-epoch" for p in packages):
+            return result
+        # The fixture producer is optional library code, not a test-only cfg.
+        # Check its isolated feature build in addition to the production build.
+        return subprocess.run(["cargo", "check", "--offline", "--locked", "--profile", "gate",
+                               "-p", "pn-epoch", "--lib", "--no-default-features",
+                               "--features", "test-support"]).returncode
     if mode == "build-policy":
         validate_build_policy(pathlib.Path.cwd())
         return 0

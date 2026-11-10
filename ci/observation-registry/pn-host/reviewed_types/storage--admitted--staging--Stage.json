@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::staging::Stage",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted/staging.rs",
+    "syntax": "pub (super) struct Stage { state : State , event : EpochKey , }"
+  }
+}

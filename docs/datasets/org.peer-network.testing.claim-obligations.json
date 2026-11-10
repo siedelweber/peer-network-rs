@@ -69,6 +69,23 @@
     },
     {
       "claims": [
+        "EPOCH::claim:admission:test-support-restores-ridge-disclosures"
+      ],
+      "closing_condition": "Both disclosed boundaries restore and the changed ridge query refuses.",
+      "closing_step": "Epoch test-support fixture surface.",
+      "evidence_paragraph": "EPOCH::verif:admission:test-support",
+      "hold": "",
+      "missing": "Outside scope: chain authenticity, cryptographic verification and host storage census.",
+      "name": "EPOCH::verif:admission:test-support",
+      "owner": "Epoch fixture implementer",
+      "path": "packages/epoch/README.md",
+      "premises": "Finite epoch-owned ridge fixture, synthetic public verifiers and unchanged production restoration.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"
       ],
       "closing_condition": "The declared exact identity and refusal controls pass.",
@@ -103,6 +120,7 @@
     },
     {
       "claims": [
+        "HOST::claim:history:admitted-declaration-census-covers-nested-references",
         "HOST::claim:history:admitted-carrier-keeps-postgresql-held",
         "HOST::claim:history:admitted-carrier-preserves-exact-projections"
       ],

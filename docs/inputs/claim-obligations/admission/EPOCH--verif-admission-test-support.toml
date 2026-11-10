@@ -1,0 +1,13 @@
+name = "EPOCH::verif:admission:test-support"
+witnessed_labels = []
+path = "packages/epoch/README.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:admission:test-support-restores-ridge-disclosures"]
+realizers = []
+premises = "Finite epoch-owned ridge fixture, synthetic public verifiers and unchanged production restoration."
+evidence_paragraph = "EPOCH::verif:admission:test-support"
+hold = ""
+owner = "Epoch fixture implementer"
+missing = "Outside scope: chain authenticity, cryptographic verification and host storage census."
+closing_condition = "Both disclosed boundaries restore and the changed ridge query refuses."
+closing_step = "Epoch test-support fixture surface."

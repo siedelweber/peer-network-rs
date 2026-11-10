@@ -7,6 +7,10 @@ license.workspace = true
 publish = false
 version.workspace = true
 
+[features]
+default = []
+test-support = ["pn-records/test-support"]
+
 [dependencies]
 pn-records = { path = "../records" }
 pn-graph = { path = "../graph" }

@@ -899,3 +899,6 @@ async fn read(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod declaration_census;

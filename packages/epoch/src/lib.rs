@@ -270,3 +270,8 @@ pub mod real_base;
 /// Effective schedules over frozen completed epochs.
 /// (´[ROOT-alg:design:effective-schedules]´)
 pub mod schedules;
+
+/// Development-only public disclosures; consumers must restore them independently.
+/// (´def:admission:test-support´)
+#[cfg(feature = "test-support")]
+pub mod test_support;

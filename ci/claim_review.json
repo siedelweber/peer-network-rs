@@ -2651,6 +2651,14 @@
       "review": "Literal source fractions, Boolean matrices and rate extrema share no production support computation. The ledger is independently derived from public fixture markers; unchanged debits and balances and structural refusals bound the claim to pre-solve evidence."
     },
     {
+      "operation": "pn-epoch::test_support::tests::ridge_fixture_restores",
+      "path": "packages/epoch/src/test_support.rs",
+      "claim": "EPOCH::claim:admission:test-support-restores-ridge-disclosures",
+      "before": "",
+      "after": "Claim: The development builder supplies untrusted two-boundary ridge disclosures whose prices, retained final gates and schedule survive independent public restoration; a changed ridge query is refused.",
+      "review": "Read the actual ridge evaluator and charge replay, the nonempty boundary and empty successor, positive public restoration with full disclosure equality, and the changed-query refusal. The empty successor intentionally has no final-gate standing record. The synthetic verifier grants no deployment authenticity."
+    },
+    {
       "operation": "pn-epoch::workload_correctness::compact_solve_agreement",
       "path": "packages/epoch/tests/workload_correctness.rs",
       "claim": "EPOCH::claim:numerics:compact-solves-retain-certified-scope",
@@ -3601,6 +3609,14 @@
       "before": "",
       "after": "Claim: Retained admitted memory reads preserve historical bytes, selections and vintages, refuse corrupt counts, and enforce explicit reconstruction bounds before each allocation and row visit.",
       "review": "The generic read roster compares complete retained values against two admitted inputs, before and after later publications and declarations, checks scope and opening/closing boundaries, exact and below-exact reconstruction budgets, and ten corruption variants per event. The instrumented fetch and allocation seams witness order; current-selection, late-bound and ignored-count runtime mutants fail. This is functional memory evidence, not PostgreSQL or re-admission."
+    },
+    {
+      "operation": "pn-host::storage::declaration_census::admitted_declaration_census",
+      "path": "packages/host/src/storage/declaration_census.rs",
+      "claim": "HOST::claim:history:admitted-declaration-census-covers-nested-references",
+      "before": "",
+      "after": "Claim: A decoded ridge-bearing public package independently enumerates every declaration-selection branch and compares all six storage families coordinate by coordinate with the admitted carrier, without treating unselected causes as selections.",
+      "review": "Read the decoded-disclosure census independently of the projection: typed selection coordinates are enumerated before joining complete public declarations, constants and four observation families. Every nested branch has a positive hit assertion. All six coordinate fields and complete payloads are compared, with public constructors for observation payloads. The ridge fixture is restored through public admission."
     },
     {
       "operation": "pn-host::storage::tests::storage_competing_writers",
