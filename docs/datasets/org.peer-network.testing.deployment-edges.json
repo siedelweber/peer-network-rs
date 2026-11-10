@@ -133,6 +133,13 @@
       "target": "subsec:deployment:realization-obligations"
     },
     {
+      "conditional_on": "",
+      "reason": "The integration roadmap carries the public body field and exact bindings, not a concealment guarantee.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:token-authentication",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
       "conditional_on": "case:deployment:concealment-entropy-client-generated",
       "reason": "The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
       "relation": "relies",
@@ -211,6 +218,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "The binding selects the designed edition while preserving identity; it asserts no private entropy.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:author-token-binding",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The seal authenticates the declared bytes and role, not the truth of host entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:host-seal",
@@ -218,10 +232,31 @@
     },
     {
       "conditional_on": "",
+      "reason": "The retirement rule uses the signed body field and unchanged identity, not proposal concealment.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:key-retirement",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The signature admission selects the exact proposal recipe, not its conditional concealment assurance.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:proposal-signature",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The signature admission uses the fixed message and signer restriction, not a concealment or entropy guarantee.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:proposal-signature",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "Shared-key separation uses the framed body and edition, not an entropy guarantee.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:shared-key-messages",
+      "target": "ROOT::amend:identity:act-proposal-admission"
     },
     {
       "conditional_on": "",
@@ -278,6 +313,13 @@
       "relation": "realizes",
       "source": "ROOT::dec:design:policy-schedules",
       "target": "subsec:deployment:transparency-of-protocol-formulas"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The public run configuration selects an edition, not its private concealment premise.",
+      "relation": "realizes",
+      "source": "ROOT::dec:devnet:elements",
+      "target": "ROOT::amend:identity:act-proposal-admission"
     },
     {
       "conditional_on": "",
@@ -397,6 +439,13 @@
       "relation": "realizes",
       "source": "ROOT::rule:design:build-relative-work",
       "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "Public reconstruction reads the structural field without claiming the private opening or its entropy.",
+      "relation": "realizes",
+      "source": "ROOT::rule:devnet:author-public-evidence",
+      "target": "ROOT::amend:identity:act-proposal-admission"
     },
     {
       "conditional_on": "",

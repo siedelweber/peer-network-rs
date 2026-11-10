@@ -3410,7 +3410,12 @@
       ],
       "kind": "type",
       "label": "def:graph:identifier-algebra",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: grounded and minted identities use those fixed atoms",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -3502,7 +3507,12 @@
       ],
       "kind": "type",
       "label": "def:graph:act-identifier",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: act identity is author, local sequence and family",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -3601,7 +3611,12 @@
       "holds": [],
       "kind": "type",
       "label": "def:graph:node-taxonomy",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: grounded identity does not rebind",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -6964,8 +6979,8 @@
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
-          "clause": "Premise only: authentication realization belongs to the deployment",
-          "record": "ROOT::amend:identity:key-retirement"
+          "clause": "Premise only: authentication serialization and key management are deployment concerns",
+          "record": "ROOT::amend:identity:act-proposal-admission"
         }
       ],
       "record_granular": 0,
@@ -6996,7 +7011,12 @@
       ],
       "kind": "type",
       "label": "def:graph:proposal-pre-commitment",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the proposal commits its Actor-chosen body before host fields",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 1,
       "record_routes": [
         {
@@ -7296,11 +7316,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-projection-binding",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: removal preserves immutable binding",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -10012,21 +10040,14 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [
-        "adr/006-identity-adjudication.md",
         "docs/datasets/org.peer-network.design.questions.json",
         "docs/design/questions.md",
-        "docs/inputs/design-questions.toml",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+        "docs/inputs/design-questions.toml"
       ],
       "holds": [],
       "kind": "policy",
       "label": "rem:nodes:edge-census-normative",
-      "portions": [
-        {
-          "clause": "Premise only: the existing family census excludes a retirement act",
-          "record": "ROOT::amend:identity:key-retirement"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -10042,12 +10063,7 @@
       "holds": [],
       "kind": "serialization",
       "label": "tbl:nodes:act-payload-schema",
-      "portions": [
-        {
-          "clause": "Premise only: payload meanings exclude a retirement side effect",
-          "record": "ROOT::amend:identity:key-retirement"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -35842,10 +35858,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "62",
+          "exact": "63",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "63",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35856,7 +35872,7 @@
           "exact_digits": 32
         }
       },
-      "total": 62
+      "total": 63
     },
     {
       "category": "total",
