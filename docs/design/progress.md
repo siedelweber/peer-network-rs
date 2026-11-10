@@ -48,7 +48,7 @@
 | pn-act-profile | 11 | 0 |
 | pn-epoch | 51 | 19 |
 | pn-graph | 76 | 34 |
-| pn-host | 23 | 0 |
+| pn-host | 24 | 0 |
 | pn-interchange | 26 | 0 |
 | pn-readouts | 0 | 0 |
 | pn-records | 51 | 19 |
@@ -57,7 +57,7 @@
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 602 | 204 |
+| ROOT (repository-wide) | 1 613 | 204 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
