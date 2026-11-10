@@ -54,9 +54,9 @@
 | client | clientBurnNew | mutation | run, request, prepared authenticated binding, asset, amount and fee policy | new-account destruction stage; no inferred admission |
 | client | clientBurnExisting | mutation | run, request, existing binding, asset, amount and fee policy | fresh destruction stage, including gift funding; no transferred old burn |
 | client | clientRecover | mutation | original run and request | authoritative recovered stage or unknown effect |
-| client | clientPrepareAct | mutation | public intent and secret custody capability supplied outside public variables | prepared proposal status or unsupported custody |
-| client | clientApproveAct | mutation | exact verified act and original custody request | approval and submission stage after all equality and opening checks |
-| client | clientRecoverAct | query | original Actor and request | retained proposal, approval or publication stage; no replacement identity |
+| client | clientPrepareAct | mutation | selected run, author and unused public slot, intended act, and private custody capability outside public variables | prepared proposal status or unsupported custody |
+| client | clientApproveAct | mutation | exact verified act and current original proposal in private working custody | approval and submission stage after all equality and opening checks |
+| client | clientRecoverAct | query | selected run and author, known slot if available, and complete authenticated public history | public winning act and placement, unspent-at-prefix slot for a fresh attempt, or unavailable evidence; no recovered pending state |
 | control | start | mutation | private typed bootstrap context outside public variables | listener start outcome through local executor |
 | control | inspect | query | authenticated local selection | bounded operational state |
 | control | administer | mutation | explicit allow-listed local operation | durable administration outcome or unsupported |

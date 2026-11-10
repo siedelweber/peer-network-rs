@@ -140,6 +140,13 @@
       "target": "ROOT::amend:identity:act-proposal-admission"
     },
     {
+      "conditional_on": "",
+      "reason": "The review obligations retain the fresh-entropy requirement without claiming that the requirement establishes unpredictability.",
+      "relation": "realizes",
+      "source": "ROOT::amend:harness:authentication-review-needs",
+      "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
       "conditional_on": "case:deployment:concealment-entropy-client-generated",
       "reason": "The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
       "relation": "relies",
@@ -264,6 +271,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:shared-key-messages",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The storage prerequisite names allocation and custody duties; their private-state assurance remains held.",
+      "relation": "realizes",
+      "source": "ROOT::amend:storage:authentication-prerequisite",
+      "target": "ROOT::amend:identity:act-concealment"
     },
     {
       "conditional_on": "",
@@ -432,6 +446,13 @@
       "relation": "realizes",
       "source": "ROOT::req:vision:policy-schedules",
       "target": "subsec:deployment:transparency-of-protocol-formulas"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The planned exit follows retained-projection custody requirements; no production custody evidence is supplied.",
+      "relation": "realizes",
+      "source": "ROOT::rule:crypto:retry-private-exit",
+      "target": "ROOT::amend:identity:act-concealment"
     },
     {
       "conditional_on": "",

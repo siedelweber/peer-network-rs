@@ -3511,6 +3511,10 @@
         {
           "clause": "Premise only: act identity is author, local sequence and family",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Premise only: the Actor chooses a unique author-local sequence before submission",
+          "record": "ROOT::amend:identity:act-stops"
         }
       ],
       "record_granular": 0,
@@ -7105,6 +7109,10 @@
         {
           "clause": "delegation to the declared approval verifier",
           "record": "ROOT::alg:design:closure-registration"
+        },
+        {
+          "clause": "Premise only: approval binds one realization but promises no final-set membership",
+          "record": "ROOT::amend:harness:actor-retry-proposal"
         }
       ],
       "record_granular": 1,
@@ -7139,7 +7147,12 @@
       ],
       "kind": "certificate",
       "label": "def:graph:ordering-fraud-proof",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the named proof opens a dependency projection and proves a placement violation",
+          "record": "ROOT::amend:identity:act-stops"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -7252,11 +7265,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/020-testing-harness.md",
+        "docs/templates/adr/020-testing-harness.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-proposal-integrity",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: substitution of the approved proposal is detectable",
+          "record": "ROOT::amend:harness:actor-retry-proposal"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -7300,11 +7321,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/020-testing-harness.md",
+        "docs/templates/adr/020-testing-harness.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-unity",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: both projections share one approved parent act",
+          "record": "ROOT::amend:harness:actor-retry-proposal"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -7340,11 +7369,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-ordering",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: dependency violations are publicly provable without rewriting history",
+          "record": "ROOT::amend:identity:act-stops"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -33099,17 +33136,20 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/020-testing-harness.md",
+        "docs/templates/adr/020-testing-harness.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-secret-derived",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: secret derivation is permitted under a published entropy rule",
+          "record": "ROOT::amend:harness:authentication-review-needs"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35858,10 +35898,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "63",
+          "exact": "67",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "63",
+          "num": "67",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35872,7 +35912,7 @@
           "exact_digits": 32
         }
       },
-      "total": 63
+      "total": 67
     },
     {
       "category": "total",
@@ -39047,10 +39087,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "65",
+          "exact": "64",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "65",
+          "num": "64",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39061,7 +39101,7 @@
           "exact_digits": 32
         }
       },
-      "total": 65
+      "total": 64
     },
     {
       "category": "record-coverage",
