@@ -14,8 +14,8 @@
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:portion-citations-cannot-design",
       "before": "",
-      "after": "Claim: A declared paper portion retains its clause as attention without lifting a held or unassigned statement, while an independent plain citation still designs it and malformed or unknown portions refuse.",
-      "review": "Constructed tracker rows distinguish attention from full-statement design, retain held precedence and refuse invalid portion syntax and targets."
+      "after": "Claim: A declared paper portion or premise retains its clause as attention without lifting a held or unassigned statement, while an independent plain citation still designs it and malformed or unknown attention citations refuse.",
+      "review": "Read both attention syntaxes and their controls: portions and premises preserve held or unassigned status even beside executed claims; independent plain occurrences still design the statement, and malformed or unknown attention targets refuse."
     },
     {
       "operation": "ci::test_claims.Evidence.test_python_exhibits",

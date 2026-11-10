@@ -6958,17 +6958,21 @@
       ],
       "kind": "policy",
       "label": "rem:graph:authentication-realization-out-of-scope",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: authentication realization belongs to the deployment",
+          "record": "ROOT::amend:identity:key-retirement"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:key-retirement",
         "ROOT::dec:crypto:base-library",
         "ROOT::dec:design:replay",
         "ROOT::req:vision:replay"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -10003,18 +10007,27 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/datasets/org.peer-network.design.questions.json",
+        "docs/design/questions.md",
+        "docs/inputs/design-questions.toml",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:nodes:edge-census-normative",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the existing family census excludes a retirement act",
+          "record": "ROOT::amend:identity:key-retirement"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::amend:identity:key-retirement"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -10025,12 +10038,16 @@
       "holds": [],
       "kind": "serialization",
       "label": "tbl:nodes:act-payload-schema",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: payload meanings exclude a retirement side effect",
+          "record": "ROOT::amend:identity:key-retirement"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "GRAPH::tab:formation:payload-census",
-        "ROOT::amend:identity:key-retirement"
+        "GRAPH::tab:formation:payload-census"
       ],
       "routes": [],
       "status": "designed",
@@ -35202,10 +35219,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "61",
+          "exact": "62",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "61",
+          "num": "62",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35216,27 +35233,27 @@
           "exact_digits": 32
         }
       },
-      "total": 61
+      "total": 62
     },
     {
       "category": "total",
-      "designed": 410,
-      "held": 55,
+      "designed": 408,
+      "held": 56,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "410",
+          "exact": "408",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "410",
+          "num": "408",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "55",
+          "exact": "56",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "55",
+          "num": "56",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35273,10 +35290,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "856",
+          "exact": "857",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "856",
+          "num": "857",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35315,7 +35332,7 @@
       "record_granular": 32,
       "tentative": 7,
       "total": 1356,
-      "unassigned": 856
+      "unassigned": 857
     },
     {
       "category": "total",
@@ -35715,23 +35732,23 @@
     },
     {
       "category": "crate",
-      "designed": 50,
-      "held": 15,
+      "designed": 49,
+      "held": 16,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "50",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "50",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "15",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35913,15 +35930,15 @@
     },
     {
       "category": "crate",
-      "designed": 77,
+      "designed": 76,
       "held": 9,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "77",
+          "exact": "76",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "77",
+          "num": "76",
           "num_exact": true,
           "num_relation": "="
         },
@@ -35966,10 +35983,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "130",
+          "exact": "131",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "130",
+          "num": "131",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36008,7 +36025,7 @@
       "record_granular": 7,
       "tentative": 1,
       "total": 218,
-      "unassigned": 130
+      "unassigned": 131
     },
     {
       "category": "crate",
@@ -36903,23 +36920,23 @@
     },
     {
       "category": "kind",
-      "designed": 57,
-      "held": 15,
+      "designed": 55,
+      "held": 16,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "57",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "15",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36956,10 +36973,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "190",
+          "exact": "191",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "190",
+          "num": "191",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36998,7 +37015,7 @@
       "record_granular": 4,
       "tentative": 5,
       "total": 265,
-      "unassigned": 190
+      "unassigned": 191
     },
     {
       "category": "kind",
@@ -37992,23 +38009,23 @@
     },
     {
       "category": "bite",
-      "designed": 7,
-      "held": 3,
+      "designed": 6,
+      "held": 4,
       "name": "9",
       "number_forms": {
         "designed": {
-          "exact": "7",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38190,23 +38207,23 @@
     },
     {
       "category": "bite",
-      "designed": 57,
-      "held": 26,
+      "designed": 56,
+      "held": 27,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "57",
+          "exact": "56",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "56",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "26",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38289,15 +38306,15 @@
     },
     {
       "category": "bite",
-      "designed": 286,
+      "designed": 285,
       "held": 18,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "286",
+          "exact": "285",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "286",
+          "num": "285",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38342,10 +38359,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 158",
+          "exact": "1 159",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 158",
+          "num": "1 159",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38384,7 +38401,7 @@
       "record_granular": 21,
       "tentative": 13,
       "total": 1484,
-      "unassigned": 1158
+      "unassigned": 1159
     },
     {
       "category": "record-coverage",
@@ -38932,14 +38949,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 204,
+      "exact_citing": 203,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "204",
+          "exact": "203",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "204",
+          "num": "203",
           "num_exact": true,
           "num_relation": "="
         },

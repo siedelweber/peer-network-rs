@@ -396,11 +396,11 @@ def tracker_sentences(text):
 
 
 def tracker_portions(text):
-    """Read explicitly bounded attention, retaining its covered clause."""
-    pattern = r'portion\{``([^`\n{}]+)``; ([^{}\n]+)\}'
+    """Read explicit partial-design or premise attention, retaining its clause."""
+    pattern = r'(?:portion|premise)\{``([^`\n{}]+)``; ([^{}\n]+)\}'
     matches = list(re.finditer(pattern, text))
-    if 'portion{' in re.sub(pattern, '', text):
-        raise StructuralError('malformed paper portion citation')
+    if re.search(r'(?:portion|premise)\{', re.sub(pattern, '', text)):
+        raise StructuralError('malformed paper portion or premise citation')
     if any(not match[2].strip() for match in matches):
         raise StructuralError('empty paper portion clause')
     return matches
@@ -458,7 +458,8 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), 
         for match in tracker_portions(record['text']):
             if match[1] not in labels:
                 raise StructuralError('unknown paper portion label: '+match[1])
-            portions[match[1]].append(dict(record=name, clause=match[2].strip()))
+            clause = ('Premise only: ' if match[0].startswith('premise{') else '') + match[2].strip()
+            portions[match[1]].append(dict(record=name, clause=clause))
         for label in paper & labels:
             mentions[label].add(name)
     for constant in constants:

@@ -186,7 +186,7 @@ class Evidence(unittest.TestCase):
             enforce_entry([row],True,paragraphs={label:dict(citations=set())})
 
     def test_portion_citations(self):
-        """Claim: A declared paper portion retains its clause as attention without lifting a held or unassigned statement, while an independent plain citation still designs it and malformed or unknown portions refuse.
+        """Claim: A declared paper portion or premise retains its clause as attention without lifting a held or unassigned statement, while an independent plain citation still designs it and malformed or unknown attention citations refuse.
         ´claim:testing:portion-citations-cannot-design´
         ´test:integration:test-portion-citations´
         """
@@ -226,6 +226,26 @@ class Evidence(unittest.TestCase):
         self.assertEqual(designed['record_routes'], [dict(kind='record', record=record, scope=scope)])
         for malformed in ('portion{``'+label+'``}', 'portion{``'+label+'``; }',
                           'portion{``def:testing:absent``; local admission}'):
+            with self.subTest(malformed=malformed), self.assertRaises(StructuralError):
+                tracker_rows(inventory, {record: dict(text=malformed, citations=set())}, evidence, [])
+        premise = 'Rely on premise{``'+label+'``; the consumer needs this, e.g. ordering} with ``claim:testing:fixture``.'
+        for support in (evidence, executed):
+            records = {record: dict(text=premise, citations=set())}
+            row = tracker_rows(inventory, records, support, [])[0]
+            self.assertEqual(row['status'], 'unassigned')
+            self.assertEqual(row['records'], [])
+            self.assertEqual(row['routes'], [])
+            self.assertEqual(row['record_routes'], [])
+            self.assertEqual(row['portions'], [dict(record=record, clause='Premise only: the consumer needs this, e.g. ordering')])
+            self.assertEqual(list(tracker_sentences(premise)), [premise])
+            records[hold] = dict(text='``'+label+'``', citations=set())
+            held_support = deepcopy(support)
+            held_support['obligations'].append(dict(name=hold, status='held', claims=[], hold=hold))
+            self.assertEqual(tracker_rows(inventory, records, held_support, [])[0]['status'], 'held')
+            records[record]['text'] += ' Independently design ``'+label+'``.'
+            self.assertEqual(tracker_rows(inventory, records, held_support, [])[0]['status'], 'designed')
+        for malformed in ('premise{``'+label+'``}', 'premise{``'+label+'``; }',
+                          'premise{``def:testing:absent``; assumed ordering}'):
             with self.subTest(malformed=malformed), self.assertRaises(StructuralError):
                 tracker_rows(inventory, {record: dict(text=malformed, citations=set())}, evidence, [])
 
