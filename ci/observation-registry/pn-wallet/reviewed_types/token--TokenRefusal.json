@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::TokenRefusal",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" Typed resource or supplied-evidence refusal, not a chain verdict.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum TokenRefusal { Limits , Inputs , Outputs , Script , Witness , Declarations , Allocation , SuppliedInput , }"
+  }
+}

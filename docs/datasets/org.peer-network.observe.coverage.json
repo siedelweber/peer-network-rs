@@ -223,6 +223,78 @@
       "operations": 12
     },
     {
+      "exceptions": 0,
+      "generators": 4,
+      "helpers": 0,
+      "instrumented": 4,
+      "name": "pn-act-authentication",
+      "number_forms": {
+        "exceptions": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "generators": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "helpers": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "instrumented": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "operations": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exceptions": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "generators": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "helpers": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "instrumented": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "operations": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "operations": 4
+    },
+    {
       "exceptions": 3,
       "generators": 6,
       "helpers": 0,
@@ -728,9 +800,9 @@
     },
     {
       "exceptions": 23,
-      "generators": 21,
+      "generators": 27,
       "helpers": 0,
-      "instrumented": 6,
+      "instrumented": 7,
       "name": "pn-wallet",
       "number_forms": {
         "exceptions": {
@@ -742,10 +814,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "21",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
@@ -758,18 +830,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "6",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "29",
+          "exact": "30",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "29",
+          "num": "30",
           "num_exact": true,
           "num_relation": "="
         }
@@ -796,7 +868,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 29
+      "operations": 30
     }
   ]
 }

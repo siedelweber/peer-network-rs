@@ -3789,6 +3789,37 @@
       "witnessed_labels": []
     },
     {
+      "case_census": [
+        "daemon asset identifiers",
+        "opaque key digest and canonical scripts",
+        "local qualification and shared declarations",
+        "supported spend type bytes",
+        "bounds before reservation"
+      ],
+      "claims": [
+        "ROOT::claim:discipline:authentication-values-have-independent-byte-checks",
+        "ACTAUTH::claim:authentication:asset-identifiers-match-daemon",
+        "ACTAUTH::claim:authentication:key-hashes-and-scripts-match-independent-values",
+        "ACTAUTH::claim:authentication:qualification-is-one-canonical-script",
+        "WALLET::claim:wallet:token-qualification-is-local",
+        "WALLET::claim:wallet:token-inventories-precede-reservation",
+        "WALLET::claim:wallet:token-spend-commitment-is-per-input",
+        "WALLET::claim:wallet:shared-declarations-follow-only-qualified-tokens"
+      ],
+      "closing_condition": "Execute the finite recipe, canonical encoding, per-token and reservation controls.",
+      "closing_step": "Before public signature fixture verification",
+      "evidence_paragraph": "WALLET::rec:wallet:token-evidence",
+      "hold": "",
+      "missing": "Signature verification and complete chain evidence remain held.",
+      "name": "ROOT::verif:identity:token-fixtures",
+      "owner": "Authentication public fixture implementation",
+      "path": "adr/006-identity-adjudication.md",
+      "premises": "Daemon-generated values and independent hashlib key digests; supplied prevouts and consensus validity remain premises.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
       "claims": [
         "DOCUMENTS::claim:render:paired-census",
         "DOCUMENTS::claim:render:registry-relation",

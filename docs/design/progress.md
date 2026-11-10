@@ -45,6 +45,7 @@
 | cli-common | 17 | 0 |
 | documents | 10 | 0 |
 | execwrap | 62 | 0 |
+| pn-act-authentication | 4 | 0 |
 | pn-act-profile | 11 | 0 |
 | pn-epoch | 51 | 19 |
 | pn-graph | 76 | 34 |
@@ -56,8 +57,8 @@
 | pn-secret-home | 3 | 0 |
 | pn-testkit | 17 | 0 |
 | pn-verification | 7 | 0 |
-| pn-wallet | 41 | 0 |
-| ROOT (repository-wide) | 1 613 | 204 |
+| pn-wallet | 44 | 0 |
+| ROOT (repository-wide) | 1 616 | 204 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

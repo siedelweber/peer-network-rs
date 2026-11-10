@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "KeyHash",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [doc = \" A declared key digest, not a parsed verification key.\"] # [doc = \" (´def:authentication:public-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct KeyHash (pub [u8 ; 32]) ;"
+  }
+}

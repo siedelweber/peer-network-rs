@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::TokenLimits",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" Finite inventory and reservation ceilings, checked before allocation.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Copy , Debug)] pub struct TokenLimits { pub inputs : usize , pub outputs : usize , pub declarations : usize , pub script : usize , pub witness : usize , pub allocation : usize , }"
+  }
+}

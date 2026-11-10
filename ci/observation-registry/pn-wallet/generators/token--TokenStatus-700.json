@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "token::TokenStatus",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "The generated Clone, Copy, Debug, equality and error formatting operate only on public byte carriers, inventory limits and content-free refusals; no secret or encoding implementation is generated."
+  }
+}

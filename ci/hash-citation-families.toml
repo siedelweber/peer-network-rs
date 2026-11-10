@@ -2,6 +2,27 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "authentication-public-fixtures"
+group = "conditional public token evidence"
+measures = "Daemon transaction bytes, supplied public locators and independently checked asset and key digests"
+producer = "Declared Elements daemon and independent Python reconstruction"
+establishment = "defined"
+reader = "authentication-fixtures"
+source = "packages/act-authentication/tests/golden.json"
+definition = "The retained transaction and decoder fields are public fixture operands, not chain-inclusion evidence. The reader reconstructs the key hashes and scripts with hashlib and the initial asset identifiers with an independent compression implementation before admitting these exact fixture values. Supplied prevouts remain conditional evidence."
+paths = ["packages/act-authentication/tests/golden.json"]
+
+[[rows]]
+family = "authentication-layout-literals"
+group = "public authentication byte recipes"
+measures = "Protocol bytes, SHA-256 initialization words and flags, not identities"
+producer = "Admitted byte recipes"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls; no bare content identity is admitted."
+paths = ["packages/act-authentication/**/*.rs", "ci/authentication_vectors.py"]
+
+[[rows]]
 family = "secret-home-fixture-bytes"
 group = "first-party secret-home witnesses"
 measures = "Public byte patterns for import, erasure and constant-diagnostic controls"

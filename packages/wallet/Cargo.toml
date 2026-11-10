@@ -12,6 +12,7 @@ default = []
 fuzzing = []
 
 [dependencies]
+pn-act-authentication = { path = "../act-authentication" }
 elements = { version = "=0.27.0", default-features = false }
 tracing.workspace = true
 secrecy.workspace = true

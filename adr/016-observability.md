@@ -76,6 +76,7 @@
 | cli-common | 113 | 30 | 80 | 3 | 42 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
+| pn-act-authentication | 4 | 4 | 0 | 0 | 4 |
 | pn-act-profile | 11 | 8 | 3 | 0 | 6 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
@@ -83,7 +84,7 @@
 | pn-interchange | 156 | 120 | 35 | 1 | 93 |
 | pn-records | 118 | 46 | 72 | 0 | 156 |
 | pn-secret-home | 9 | 3 | 6 | 0 | 1 |
-| pn-wallet | 29 | 6 | 23 | 0 | 21 |
+| pn-wallet | 30 | 7 | 23 | 0 | 27 |
 
 
 **Amendment (Foundation observation scope)** · `amend:observe:foundation-evidence` The obligation register now attaches source-matched execution evidence for the implemented portions of (`gate:observe:foundation`) and (`gate:design:observability-foundation`) to the package-owned foundation observation evidence paragraph. Package claim citations remain in that register, where the linter permits their ownership direction; Python exhibits remain checked by the evidence join. Mechanical coverage, source-bound semantic admission, controlled local export and four-mode result comparisons support the current four-package surface. Real PostgreSQL and Elements services remain owned by the service implementer for the provisioning slice; domain suites by each domain implementer for the assigned domain bite; client harnesses and actual exporter transport admission by the client implementer for the client slice. Scoped support is not unrestricted gate closure.

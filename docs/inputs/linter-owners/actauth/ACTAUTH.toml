@@ -1,0 +1,4 @@
+name = "ACTAUTH"
+position = 15
+partitions = [{ position = 19, value = { name = "act-authentication-package", owner = "ACTAUTH", pattern = '%s"packages/act-authentication/" *VCHAR' } }]
+may_cite = [{ position = 48, value = { owner = "ACTAUTH", target = "ROOT" } }]

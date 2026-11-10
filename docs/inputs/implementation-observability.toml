@@ -2,6 +2,12 @@ namespace = "org.peer-network.design.implementation-observability"
 version = [1, 0, 0]
 
 [[rows]]
+name = "pn-act-authentication"
+labels = ["amend:decomposition:act-authentication"]
+operations = "derive external asset identifiers, hash opaque key encodings and decode canonical qualification and key scripts"
+metrics = "Common operation and refusal counts and inclusive elapsed seconds; complete public inputs and results are traced. No secret, signature verdict or chain authority is observed."
+
+[[rows]]
 name = "pn-records"
 labels = ["sig:design:records"]
 operations = "validate-record, resolve-public-reference, assemble-boundary-inputs, select-effective-declaration"

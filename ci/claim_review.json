@@ -554,6 +554,14 @@
       "review": "A valid fixture in Cargo's cache cannot satisfy the missing declared input; the refusal names provisioning. A wrong response refuses before installation, a changed installed archive refuses at read despite the valid cached copy, unrelated files are ignored, and a successful offline read with network access forbidden and the Cargo copy removed still succeeds. The fixture also refuses an in-tree archive directory. These are local transport/read controls, not a registry availability claim."
     },
     {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_authentication_values",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:authentication-values-have-independent-byte-checks",
+      "before": "",
+      "after": "Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs the daemon asset identifiers, and changed key or asset digests are refused.",
+      "review": "Read independent hashlib, prime-derived SHA-256 compression and raw-byte comparisons. Mutated key and asset digests are refused even when the latter is changed in both retained daemon fields. No daemon or Rust implementation is called by this check."
+    },
+    {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_case_census",
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:wallet-census-refuses-missing-evidence",
@@ -1632,6 +1640,30 @@
       "before": "typesetter preserves arbitrary bytes.",
       "after": "Claim: Raw stdout and stderr preserve invalid UTF-8, NUL, control bytes and a 64 `KiB` payload exactly, protecting binary child output.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "pn-act-authentication::public::asset_identifiers",
+      "path": "packages/act-authentication/tests/public.rs",
+      "claim": "ACTAUTH::claim:authentication:asset-identifiers-match-daemon",
+      "before": "",
+      "after": "Three daemon-issued identifiers agree in display order with independent\n`RustCrypto` compression; reversing the input or output fails these values.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-act-authentication::public::key_declarations",
+      "path": "packages/act-authentication/tests/public.rs",
+      "claim": "ACTAUTH::claim:authentication:key-hashes-and-scripts-match-independent-values",
+      "before": "",
+      "after": "Opaque bytes, including invalid curve encodings, hash as Python hashlib\nrecords; only length is refused here. Every script byte is significant.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-act-authentication::public::qualification",
+      "path": "packages/act-authentication/tests/public.rs",
+      "claim": "ACTAUTH::claim:authentication:qualification-is-one-canonical-script",
+      "before": "",
+      "after": "The qualification retains the run and big-endian input index; all alternate\npushes, flags, versions, truncations and trailing bytes qualify nothing.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
     },
     {
       "operation": "pn-act-profile::tests::commitment_trace_privacy",
@@ -5227,6 +5259,38 @@
       "before": "",
       "after": "Claim: A replacement above the highest pinned event changes only pending evidence, even at or below the pinning cutoff, and evidence left on the replaced branch is refused as stale; a replacement of the floor block, or a chain shorter than its height, is a realization fault that retains the pinned total and is returned for every later observation.",
       "review": "Read the pure carrier over synthetic active-chain hashes: the asserted successor counts, pinned totals, retained floor, stale, alias, unavailable and overflow refusals, and the sticky fault. No marker recognition, accepted set, snapshot or signature verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::token::tests::multiple_tokens",
+      "path": "packages/wallet/src/token/tests.rs",
+      "claim": "WALLET::claim:wallet:shared-declarations-follow-only-qualified-tokens",
+      "before": "",
+      "after": "Unsorted distinct issuance inputs qualify independently; the unmarked asset\nreceives no declarations, while duplicate hashes still consume the ceiling.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::token::tests::token_limits",
+      "path": "packages/wallet/src/token/tests.rs",
+      "claim": "WALLET::claim:wallet:token-inventories-precede-reservation",
+      "before": "",
+      "after": "Exact inventories admit; one-below declarations and allocation refuse before\nthe reserve site. Counts are audited at that site, not inferred from errors.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::token::tests::token_qualification",
+      "path": "packages/wallet/src/token/tests.rs",
+      "claim": "WALLET::claim:wallet:token-qualification-is-local",
+      "before": "",
+      "after": "Daemon issuance qualifies only under its run, unique marker and exact unit.\nUnrelated issuance and malformed tagged outputs do not inherit authority.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::token::tests::token_spends",
+      "path": "packages/wallet/src/token/tests.rs",
+      "claim": "WALLET::claim:wallet:token-spend-commitment-is-per-input",
+      "before": "",
+      "after": "Only supplied token inputs with all-output commitments receive declarations;\na nonconforming co-mover is unsupported independently, not a shared failure.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
     },
     {
       "operation": "pn-wallet::wire::wire_compatibility",

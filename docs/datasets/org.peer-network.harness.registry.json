@@ -62,6 +62,13 @@
       "name": "execwrap-rust"
     },
     {
+      "contract": "public token byte recipes",
+      "edition": "authentication-public-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-act-authentication-rust"
+    },
+    {
       "contract": "typed commitment comparison and supplied-opening replay",
       "edition": "0.1",
       "evidence": "pure",
@@ -775,6 +782,7 @@
         "ci::test_wallet_boundary.WalletBoundary.test_dependency_features": "calibrated-wallet-boundary-dependency-features-case"
       },
       "cases": [
+        "ci::test_wallet_boundary.WalletBoundary.test_authentication_values",
         "ci::test_wallet_boundary.WalletBoundary.test_archive_provisioning",
         "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",
         "ci::test_wallet_boundary.WalletBoundary.test_dependency_features",
@@ -1655,6 +1663,21 @@
       "reason": "The carrier SCD2 contract runs in pn-host::storage. The epoch implementer supplies admitted results in bite 5; the host implementer integrates commit-admitted-epoch in bite 8; the verification implementer supplies integrated property/corpus reach in bite 11.",
       "status": "held",
       "tier": "service"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-act-authentication::public::asset_identifiers",
+        "pn-act-authentication::public::key_declarations",
+        "pn-act-authentication::public::qualification"
+      ],
+      "implementation": "pn-act-authentication-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-act-authentication::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     },
     {
       "budget": "pure-suite",
@@ -4239,6 +4262,10 @@
         "pn-wallet::rpc_http::tests::acquisition_cases": "calibrated-wallet-rpc-http-acquisition-cases-case"
       },
       "cases": [
+        "pn-wallet::token::tests::multiple_tokens",
+        "pn-wallet::token::tests::token_qualification",
+        "pn-wallet::token::tests::token_limits",
+        "pn-wallet::token::tests::token_spends",
         "pn-wallet::decoder::owned::owned_secrets",
         "pn-wallet::decoder::tests::global_context_initialization",
         "pn-wallet::rpc::tests::attempts_and_holds",

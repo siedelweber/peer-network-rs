@@ -1,0 +1,11 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "authentication-public",
+    "status": "reviewer-confirmed",
+    "premises": "All arguments and results are public fixed-width encodings, external locators or tagged scripts. Complete input and result recording exposes no secret carrier. No curve parser, signature operation, chain authority or secret access is present.",
+    "membership": {
+      "labelled_package": "pn-act-authentication"
+    }
+  }
+}

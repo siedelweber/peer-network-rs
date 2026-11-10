@@ -32,7 +32,8 @@
         },
         {
           "dependencies": [
-            "reviewed Elements RPC client"
+            "reviewed Elements RPC client",
+            "pn-act-authentication"
           ],
           "name": "pn-wallet",
           "optional": [],

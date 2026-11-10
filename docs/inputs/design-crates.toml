@@ -2,6 +2,7 @@ namespace = "org.peer-network.design.crates"
 version = [1, 0, 0]
 
 rows = [
+  { name = "pn-act-authentication", responsibility = "Pure public author-token byte recipes and fixed-size carriers; no signature or chain verdict", dependencies = [], surfaces = [] },
   { name = "pn-records", responsibility = "Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants", dependencies = [], surfaces = ["def:graph:act-identifier", "def:graph:act-edge-projection", "def:comparator:burn-interface"] },
   { name = "pn-act-profile", responsibility = "Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency", dependencies = ["pn-records", "pn-interchange"], surfaces = ["def:graph:proposal-pre-commitment", "def:graph:verified-act", "def:graph:ordering-fraud-proof"] },
   { name = "pn-graph", responsibility = "Structural formation, shared graph algebra and title folds", dependencies = ["pn-records"], surfaces = ["post:nodes:canonical-tensor-pipeline", "thm:graph:epoch-title-fold"] },

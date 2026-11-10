@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "item": "key_script",
+    "owner": "ACTAUTH",
+    "signature": "fn key_script (script : & [u8]) -> Option < KeyHash >",
+    "claim": "ROOT::rule:devnet:author-key-output",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/lib.rs::key_script",
+    "class_decision": "authentication-public",
+    "body": "{ let script : & [u8 ; 39] = script . try_into () . ok () ? ; if script [.. 7] != * b\"\\x6a\\x25PNAK\\x01\" { return None ; } let mut bytes = [0 ; 32] ; bytes . copy_from_slice (& script [7 ..]) ; Some (KeyHash (bytes)) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Public bounded input and result are recorded. The byte recipe establishes only its digest or canonical layout."
+  }
+}

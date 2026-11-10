@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::TokenStatus",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" Whether shared declarations apply to this token under the supplied evidence.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum TokenStatus { Qualified , Moved , Unsupported , }"
+  }
+}

@@ -400,3 +400,10 @@ area = "crypto"
 stake = "A movable, observable or unlocked secret allocation defeats the declared ownership boundary."
 register = "SECRETHOME::sec:home:crypto"
 contract = "SECRETHOME::sec:home:crypto"
+
+[[rows]]
+owner = "ACTAUTH"
+area = "authentication"
+stake = "Incorrect public byte recipes or script interpretation can attach authority to the wrong author."
+register = "ACTAUTH::sec:authentication:area-authentication"
+contract = "ACTAUTH::def:authentication:public-evidence"

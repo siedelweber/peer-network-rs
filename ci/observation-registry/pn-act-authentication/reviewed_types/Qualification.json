@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Qualification",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [doc = \" A syntactically canonical qualification, before issuance validation.\"] # [doc = \" (´def:authentication:public-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct Qualification { pub run : [u8 ; 32] , pub input : u32 , }"
+  }
+}

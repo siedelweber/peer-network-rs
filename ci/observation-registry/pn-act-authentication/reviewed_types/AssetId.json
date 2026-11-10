@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "AssetId",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [doc = \" An Elements asset identifier, in displayed hexadecimal byte order.\"] # [doc = \" Consensus encodings reverse these bytes. (´def:authentication:public-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct AssetId (pub [u8 ; 32]) ;"
+  }
+}

@@ -404,6 +404,13 @@
       "owner": "SECRETHOME",
       "register": "SECRETHOME::sec:home:crypto",
       "stake": "A movable, observable or unlocked secret allocation defeats the declared ownership boundary."
+    },
+    {
+      "area": "authentication",
+      "contract": "ACTAUTH::def:authentication:public-evidence",
+      "owner": "ACTAUTH",
+      "register": "ACTAUTH::sec:authentication:area-authentication",
+      "stake": "Incorrect public byte recipes or script interpretation can attach authority to the wrong author."
     }
   ]
 }

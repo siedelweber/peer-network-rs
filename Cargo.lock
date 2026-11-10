@@ -1664,6 +1664,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 
 [[package]]
+name = "pn-act-authentication"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
 name = "pn-act-profile"
 version = "0.1.0"
 dependencies = [
@@ -1800,6 +1810,7 @@ dependencies = [
  "http-body-util",
  "hyper",
  "hyper-util",
+ "pn-act-authentication",
  "pn-testkit",
  "secrecy",
  "serde",

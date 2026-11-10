@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Read the four pure functions and their carriers: only public byte encodings and content-free errors flow through ordinary Debug. Independent daemon identifiers and hashlib values constrain the published results; malformed lengths and scripts refuse locally. No private input is accepted or published.",
+    "negative_probe": "ACTAUTH::claim:authentication:key-hashes-and-scripts-match-independent-values"
+  },
+  "name": "authentication-public"
+}

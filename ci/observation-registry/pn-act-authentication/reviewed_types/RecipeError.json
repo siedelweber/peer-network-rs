@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "RecipeError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [doc = \" Public recipe input refusal. (´def:authentication:public-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecipeError { # [error (\"key encoding must contain exactly 32 bytes\")] KeyLength , # [error (\"issuance prevout index contains a reserved flag\")] PrevoutIndex , }"
+  }
+}

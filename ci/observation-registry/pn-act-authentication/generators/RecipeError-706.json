@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "RecipeError",
+    "kind": "derive",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "authentication-public",
+    "expansion_review": "The generated Clone, Copy, Debug, equality and error formatting operate only on public byte carriers, inventory limits and content-free refusals; no secret or encoding implementation is generated."
+  }
+}

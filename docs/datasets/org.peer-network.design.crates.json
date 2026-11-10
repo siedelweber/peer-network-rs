@@ -8,6 +8,12 @@
   "rows": [
     {
       "dependencies": [],
+      "name": "pn-act-authentication",
+      "responsibility": "Pure public author-token byte recipes and fixed-size carriers; no signature or chain verdict",
+      "surfaces": []
+    },
+    {
+      "dependencies": [],
       "name": "pn-records",
       "responsibility": "Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants",
       "surfaces": [

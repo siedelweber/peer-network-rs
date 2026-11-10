@@ -4,10 +4,11 @@
 
 **Setup (Context)** · `setup:decomposition:context` A crate boundary needs a mathematical responsibility and a public input or output that can be reviewed independently. The statement inventory (`reg:inventory:overview`) assigns proposed homes without turning unresolved paper claims into implementation promises. Crate boundaries, dependency edges, encodings and bite order are engineering judgements adopted here; paper labels remain owned by the paper.
 
-**Decision (Crates)** · `dec:decomposition:crates` The eight registered crates divide by computational responsibility, including the shared act profile under (`amend:decomposition:act-profile`). Records precede computation, publication has its own encoding boundary, and replay consumes public package bytes independently of the host's cached results. Independent replay orchestration does not claim an independently implemented numerical proof kernel. No domain crate is introduced by this record.
+**Decision (Crates)** · `dec:decomposition:crates` The nine registered crates divide by computational responsibility, including the shared act profile under (`amend:decomposition:act-profile`). Records precede computation, publication has its own encoding boundary, and replay consumes public package bytes independently of the host's cached results. Independent replay orchestration does not claim an independently implemented numerical proof kernel. No domain crate is introduced by this record.
 
 | Crate | Responsibility | Paper surfaces |
 | --- | --- | --- |
+| pn-act-authentication | Pure public author-token byte recipes and fixed-size carriers; no signature or chain verdict | |
 | pn-records | Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants | ``def:graph:act-identifier`` ``def:graph:act-edge-projection`` ``def:comparator:burn-interface`` |
 | pn-act-profile | Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency | ``def:graph:proposal-pre-commitment`` ``def:graph:verified-act`` ``def:graph:ordering-fraud-proof`` |
 | pn-graph | Structural formation, shared graph algebra and title folds | ``post:nodes:canonical-tensor-pipeline`` ``thm:graph:epoch-title-fold`` |
@@ -19,6 +20,7 @@
 
 **Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The host directly depends on epoch to encode its untrusted publication disclosures and pass them to its consumer; the codec has no direct graph dependency. The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
 
+- pn-act-authentication
 - pn-records
 - pn-act-profile
   - pn-records
@@ -61,6 +63,7 @@
   - pn-readouts (optional)
 - pn-wallet
   - reviewed Elements RPC client
+  - pn-act-authentication
 - pn-client
   - pn-wallet
   - pn-records
@@ -111,7 +114,7 @@
 | Infrastructure crate | Role | Direct prerequisites | Optional prerequisites |
 | --- | --- | --- | --- |
 | pn | Node schema, service and lifecycle | pn-host, pn-records, pn-interchange | pn-readouts |
-| pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client | None |
+| pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client, pn-act-authentication | None |
 | pn-client | GraphQL node counterpart and client workflows | pn-wallet, pn-records, pn-interchange, pn-act-profile | None |
 | pn-command | Node and client JSON command presentation | pn-client, pn, cli-common | None |
 | pn-testkit | Development-only generic runners, models and mocks; no production imports | None | None |
@@ -259,3 +262,5 @@
 **Amendment (Shared act profile)** · `amend:decomposition:act-profile` pn-act-profile sits above pn-records and pn-interchange and below pn-host, pn-replay, pn-verification and the planned pn-client. It owns the pure canonical act profile, the proposal and projection commitment recipes, and the supplied-opening comparison of ``def:graph:proposal-pre-commitment``, the commitment formulas of ``def:graph:verified-act`` and ``def:graph:ordering-fraud-proof`` at network-v0.31.1. Formation remains in pn-graph; salt generation and custody remain in pn-host. The Actor computes its proposal through the shared package without depending on the host or graph. pn-records owns the retained P, C_Y and C_D residues as distinct typed opaque recipe identifiers and 32-byte values, including when the dependency projection is tombstoned; pn-act-profile computes and interprets them. This direction preserves records' codec independence and the acyclic graph. The package has no host, database, network, random-generation or signature dependency. A matching opening establishes equality against supplied recorded bytes, not their authenticity. Namespace allocation, external envelopes, production entropy and custody, and signature and anchor authentication remain held separately.
 
 **Amendment (Released title and marker evidence)** · `amend:decomposition:title-marker-evidence` network-v0.31.1 settles party derivation and authorization under ``def:graph:settlement-parties`` and ``itm:graph:settlement-recognition-authorization``. The graph lane’s bite-4 follow-up owns (`verif:design:settlement-party-cases`); bite 5 inherits that title reading for recipients, with its Invitation hold closed and Invitations netting in cells under ``lem:epoch:authored-vouch-withdrawable``. pn-records retains title-certificate fault inputs and pn-verification recomputes the fold in bite 4; pn-epoch checks accepted tentative/final agreement in bite 5; host bite 8 publishes and monitors every boundary, and bite 9 reproduces it offline under (`verif:design:title-certificate-cases`). Records’ bite-2 burn surface distinguishes accumulators and epoch markers; pn-epoch’s bite-5 ledger and bite-7 closure join closed epochs to markers under (`verif:design:marker-registration-cases`). Host and deployment bite 8 own the finality-breach halt and published re-anchor or follow decision under (`verif:design:finality-breach-cases`), with offline bite 9 and integrated bite 11 evidence. These are implementation and deployment obligations, not implemented by the release refresh; package boundaries and bite order remain unchanged.
+
+**Amendment (Public authentication evidence)** · `amend:decomposition:act-authentication` pn-act-authentication owns the public fixed-size carriers, strict qualification and key scripts, signing-key byte hash and initial-asset locator derivation. It depends only on the already admitted RustCrypto sha2, tracing and thiserror crates; serde_json is test-only. pn-wallet adds the shared-carrier edge and interprets a decoded transaction with supplied token prevouts. No base-library, secret-home, records or act-profile edge is needed for these pure operations; the later signature and signing surfaces remain under (`dec:design:authentication-owner`) and their operation admission. This is the created public subset of that owner, not admission of its planned private operations.

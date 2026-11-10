@@ -19,3 +19,4 @@ pub use settlement::{Evidence, Observation, PINNING_SUCCESSORS, Pending, Settlem
 #[cfg(feature = "fuzzing")]
 #[doc(hidden)]
 pub use decoder::codec_verdict;
+pub mod token;

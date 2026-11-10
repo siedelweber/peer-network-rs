@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::TransactionTokenEvidence",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" Shared declarations apply exactly to the qualified and moved effects.\"] # [doc = \" Duplicate declarations remain counted and retained; history membership may\"] # [doc = \" deduplicate them. Neither this result nor its supplied inputs prove inclusion.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TransactionTokenEvidence { pub declarations : Vec < KeyHash > , pub tokens : Vec < TokenEffect > , }"
+  }
+}

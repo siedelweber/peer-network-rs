@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-act-authentication-rust"
+evidence = "pure"
+contract = "public token byte recipes"
+edition = "authentication-public-1"

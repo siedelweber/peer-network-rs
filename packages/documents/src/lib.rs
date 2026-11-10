@@ -410,6 +410,7 @@ fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
                 | "packages/epoch/README.md"
                 | "packages/act-profile/README.md"
                 | "packages/secret-home/README.md"
+                | "packages/act-authentication/README.md"
                 | ".linter/environments.toml"
                 | ".linter/owners.toml"
                 | ".linter/policies.toml"

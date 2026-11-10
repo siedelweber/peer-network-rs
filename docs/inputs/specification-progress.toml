@@ -1759,6 +1759,7 @@ rows = [
   { category = "record-coverage", name = "cli-common", total = 17, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "documents", total = 10, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "execwrap", total = 62, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
+  { category = "record-coverage", name = "pn-act-authentication", total = 4, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-act-profile", total = 11, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-epoch", total = 51, exact_citing = 19, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-graph", total = 76, exact_citing = 34, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
@@ -1770,7 +1771,7 @@ rows = [
   { category = "record-coverage", name = "pn-secret-home", total = 3, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-testkit", total = 17, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-verification", total = 7, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
-  { category = "record-coverage", name = "pn-wallet", total = 41, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
-  { category = "record-coverage", name = "ROOT (repository-wide)", total = 1613, exact_citing = 204, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
+  { category = "record-coverage", name = "pn-wallet", total = 44, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
+  { category = "record-coverage", name = "ROOT (repository-wide)", total = 1616, exact_citing = 204, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "CONSTANTS (named carrier)", total = 2833, exact_citing = 2688, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
 ]

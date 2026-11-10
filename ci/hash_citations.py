@@ -278,6 +278,24 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "authentication-fixtures" and standing == "defined":
+        from authentication_vectors import check
+        value = json.loads(relative_file(root, rule['source']).read_text())
+        check(value)
+        # Public daemon transaction bytes and their supplied locator fields are
+        # fixture inputs, not a claim of chain inclusion. Declared key and asset
+        # digests are independently recomputed before admitting these fixtures.
+        def strings(node):
+            if isinstance(node, str):
+                yield node
+            elif isinstance(node, list):
+                for child in node:
+                    yield from strings(child)
+            elif isinstance(node, dict):
+                for child in node.values():
+                    yield from strings(child)
+        values = {match.group() for text in strings(value) for match in occurrences(text)}
+        return lambda candidate, _line: candidate in values
     if kind in {'vendor-content', 'vendor-archive'} and standing == 'recomputable':
         from discipline import vendor_packages
         from wallet_crypto import check_vendor_contents

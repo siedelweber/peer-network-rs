@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::SuppliedTokenInput",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" A caller's claim that an input spends a previously qualified token unit.\"] # [doc = \" The history verifier must authenticate this asset, amount and locking script\"] # [doc = \" against the actual spent output. This carrier establishes none of them.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Copy , Debug)] pub struct SuppliedTokenInput < 'a > { pub input : usize , pub asset : AssetId , pub amount : u64 , pub locking_script : & 'a [u8] , }"
+  }
+}

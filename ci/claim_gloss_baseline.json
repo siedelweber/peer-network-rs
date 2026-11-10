@@ -185,6 +185,7 @@
     "ci::test_testkit.SupportGuard.test_workload_results": "Declared grids enumerate once, and missing, substituted, stale or correctness-failed results cannot become measurements; timing does not decide success.",
     "ci::test_testkit.SupportGuard.test_workload_wall_bound": "A declared point deadline reaches the child invocation; expiration returns status 124 and other failures retain their status.",
     "ci::test_wallet_boundary.WalletBoundary.test_archive_provisioning": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_authentication_values": "",
     "ci::test_wallet_boundary.WalletBoundary.test_case_census": "",
     "ci::test_wallet_boundary.WalletBoundary.test_codec_pins": "",
     "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance": "",
@@ -381,6 +382,9 @@
     "execwrap::tests::two_routes_to_one_log_are_refused_because_they_would_interleave": "two routes to one log are refused because they would interleave.",
     "execwrap::tests::typesetter_passes_data_through": "typesetter passes data through.",
     "execwrap::tests::typesetter_preserves_arbitrary_bytes": "typesetter preserves arbitrary bytes.",
+    "pn-act-authentication::public::asset_identifiers": "",
+    "pn-act-authentication::public::key_declarations": "",
+    "pn-act-authentication::public::qualification": "",
     "pn-act-profile::tests::commitment_trace_privacy": "Claim: Complete traced commitment computations retain the three fixed residues without emitting the nonce, salts, payload, dependency list or private pre-digests.",
     "pn-act-profile::tests::fixed_recipes_and_controls": "",
     "pn-act-profile::tests::opened_replay": "",
@@ -1301,6 +1305,10 @@
     "pn-wallet::settlement::tests::outpoint_once": "",
     "pn-wallet::settlement::tests::pinning_depth": "",
     "pn-wallet::settlement::tests::replacement_floor": "",
+    "pn-wallet::token::tests::multiple_tokens": "",
+    "pn-wallet::token::tests::token_limits": "",
+    "pn-wallet::token::tests::token_qualification": "",
+    "pn-wallet::token::tests::token_spends": "",
     "pn-wallet::wire::wire_compatibility": ""
   }
 }

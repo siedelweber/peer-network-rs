@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "item": "initial_asset_id",
+    "owner": "ACTAUTH",
+    "signature": "fn initial_asset_id (display_txid : [u8 ; 32] , index : u32 , contract : [u8 ; 32]) -> Result < AssetId , RecipeError >",
+    "claim": "ROOT::amend:identity:author-asset-recipe",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/lib.rs::initial_asset_id",
+    "class_decision": "authentication-public",
+    "body": "{ if index & 0xc000_0000 != 0 { return Err (RecipeError :: PrevoutIndex) ; } let mut prevout = [0_u8 ; 36] ; let mut consensus_txid = display_txid ; consensus_txid . reverse () ; prevout [.. 32] . copy_from_slice (& consensus_txid) ; prevout [32 ..] . copy_from_slice (& index . to_le_bytes ()) ; let hash = Sha256 :: digest (Sha256 :: digest (prevout)) ; let entropy = midpoint (hash . into () , contract) ; let mut asset = midpoint (entropy , [0 ; 32]) ; asset . reverse () ; Ok (AssetId (asset)) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Public bounded input and result are recorded. The byte recipe establishes only its digest or canonical layout."
+  }
+}

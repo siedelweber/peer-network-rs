@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::TokenEffect",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [doc = \" One independently interpreted token; unsupported paths receive no keys.\"] # [doc = \" (´def:wallet:token-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct TokenEffect { pub asset : AssetId , pub input : usize , pub status : TokenStatus , }"
+  }
+}

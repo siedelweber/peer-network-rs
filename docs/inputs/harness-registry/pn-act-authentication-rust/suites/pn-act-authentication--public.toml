@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-act-authentication::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-act-authentication-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-act-authentication::public::asset_identifiers", "pn-act-authentication::public::key_declarations", "pn-act-authentication::public::qualification"]
