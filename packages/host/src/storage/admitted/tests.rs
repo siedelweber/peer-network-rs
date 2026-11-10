@@ -10,8 +10,22 @@ trait Contract: Sized {
     fn public_commit(&mut self, input: &AdmittedEpoch) -> Result<bool, StorageError>;
     fn append(&mut self, version: Version, predecessor: Option<&Predecessor>) -> Result<bool, StorageError>;
     fn commit(&mut self, input: &AdmittedEpoch, stop: Option<usize>) -> (Result<bool, StorageError>, Vec<Write>);
+    fn read(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError>;
+    fn as_of(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError>;
+    fn measured_read(&self, key: &EpochKey, budget: ReadBudget) -> (Result<Option<EpochRead<'_>>, StorageError>, ReadMeter);
 }
 impl Contract for MemoryStore {
+    fn read(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError> {
+        self.read_admitted_epoch(key, budget)
+    }
+    fn as_of(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError> {
+        self.read_admitted_as_of(key, budget)
+    }
+    fn measured_read(&self, key: &EpochKey, budget: ReadBudget) -> (Result<Option<EpochRead<'_>>, StorageError>, ReadMeter) {
+        let mut meter = ReadMeter::default();
+        let result = self.read_epoch_inner(key, budget, &mut meter);
+        (result, meter)
+    }
     fn public_commit(&mut self, input: &AdmittedEpoch) -> Result<bool, StorageError> {
         self.commit_admitted_epoch(input)
     }
@@ -22,6 +36,7 @@ impl Contract for MemoryStore {
         "memory"
     }
     fn snapshot(&self) -> (History, State) {
+        // Test-only complete logical state, not the bounded public read.
         (self.history.clone(), self.admitted.clone())
     }
     fn append(&mut self, version: Version, predecessor: Option<&Predecessor>) -> Result<bool, StorageError> {
@@ -249,4 +264,228 @@ fn reference_refusals<A: Contract>(first: &AdmittedEpoch) {
     }
     assert_eq!(families.len(), 6);
     assert_eq!(refusal_count, 24);
+}
+
+/// Claim: Retained admitted memory reads preserve historical bytes, selections and vintages, refuse corrupt counts, and enforce explicit reconstruction bounds before each allocation and row visit.
+/// ´claim:history:admitted-reads-preserve-bounded-history´
+/// ´test:unit:admitted-memory-reads´
+#[test]
+fn admitted_memory_reads() {
+    read_conformance::<MemoryStore>();
+}
+
+fn assert_retained<A: Contract>(store: &A, input: &AdmittedEpoch) {
+    let budget = ReadBudget {
+        bytes: usize::MAX,
+        rows: usize::MAX,
+    };
+    for read in [store.read(input.event(), budget), store.as_of(input.event(), budget)] {
+        let read = read
+            .unwrap_or_else(|cause| panic!("{} historical read refused: {cause:?}", store.implementation()))
+            .unwrap();
+        assert_eq!(
+            read.event.as_ref(),
+            input.event(),
+            "{} retained event",
+            store.implementation()
+        );
+        assert_eq!(read.bytes, input.bytes(), "{} historical bytes", store.implementation());
+        assert_eq!(
+            read.references.as_ref(),
+            input.declarations(),
+            "{} historical selections",
+            store.implementation()
+        );
+        assert_eq!(
+            read.debits.len(),
+            input.debits().len(),
+            "{} vintage count",
+            store.implementation()
+        );
+        for (actual, expected) in read.debits.iter().zip(input.debits()) {
+            assert_eq!(actual.key.as_ref(), &expected.key, "{} vintage key", store.implementation());
+            assert_eq!(actual.bytes, expected.bytes, "{} vintage bytes", store.implementation());
+        }
+    }
+}
+
+fn read_conformance<A: Contract>() {
+    let first = crate::admitted_carrier_tests::first_carrier();
+    let later = crate::admitted_carrier_tests::shared_carrier();
+    let mut store = seeded::<A>(first);
+    assert_eq!(store.public_commit(first), Ok(true));
+    assert_retained(&store, first);
+    read_limits(&store, first);
+    corrupt_counts::<A>(&store, first);
+    // Reverse declaration order reaches append unsorted; no sorting shortcut.
+    for use_ in later.declarations().iter().rev() {
+        let snapshot = store.snapshot();
+        let prior = snapshot
+            .0
+            .get(&(use_.version.family, use_.version.key.clone()))
+            .and_then(|v| v.last())
+            .filter(|row| row.version.edition != use_.version.edition)
+            .map(|row| Predecessor {
+                edition: row.version.edition.clone(),
+                closes_at: use_.version.opens_at,
+            });
+        assert!(store.append(use_.version.clone(), prior.as_ref()).is_ok());
+    }
+    assert_eq!(store.public_commit(later), Ok(true));
+    assert_retained(&store, first);
+    assert_retained(&store, later);
+    read_limits(&store, later);
+    corrupt_counts::<A>(&store, later);
+    let reference = first
+        .declarations()
+        .iter()
+        .find(|u| u.version.family == Family::Rule)
+        .unwrap();
+    let mut successor = reference.version.clone();
+    successor.opens_at = later.event().boundary + 1;
+    successor.edition = "read-future".into();
+    successor.payload = Some(crate::storage::Payload::rule(&pn_interchange::Value::Bool(true)).unwrap());
+    let prior = Predecessor {
+        edition: reference.version.edition.clone(),
+        closes_at: successor.opens_at,
+    };
+    assert_eq!(store.append(successor, Some(&prior)), Ok(true));
+    assert_retained(&store, first);
+    assert_retained(&store, later);
+    read_boundaries(&store, first, later);
+}
+
+fn read_boundaries<A: Contract>(store: &A, first: &AdmittedEpoch, later: &AdmittedEpoch) {
+    let budget = ReadBudget {
+        bytes: usize::MAX,
+        rows: usize::MAX,
+    };
+    let mut key = first.event().clone();
+    key.boundary = 0;
+    assert_eq!(
+        store.as_of(&key, budget),
+        Ok(None),
+        "{} before opening",
+        store.implementation()
+    );
+    for (at, expected) in [
+        (first.event().boundary, first),
+        (later.event().boundary, later),
+        (later.event().boundary + 1, later),
+    ] {
+        key.boundary = at;
+        let read = store.as_of(&key, budget).unwrap().unwrap();
+        assert_eq!(
+            read.event.as_ref(),
+            expected.event(),
+            "{} as-of boundary {at}",
+            store.implementation()
+        );
+        assert_eq!(
+            read.predecessor.as_deref(),
+            if expected.event() == first.event() {
+                None
+            } else {
+                Some(first.event())
+            }
+        );
+    }
+    assert_eq!(
+        store.read(&key, budget),
+        Ok(None),
+        "{} no synthesized event",
+        store.implementation()
+    );
+    key.scope.history.push_str("-absent");
+    assert_eq!(
+        store.as_of(&key, budget),
+        Ok(None),
+        "{} scope isolation",
+        store.implementation()
+    );
+}
+
+fn read_limits<A: Contract>(store: &A, input: &AdmittedEpoch) {
+    let (expected, used) = store.measured_read(
+        input.event(),
+        ReadBudget {
+            bytes: usize::MAX,
+            rows: usize::MAX,
+        },
+    );
+    assert!(expected.as_ref().unwrap().is_some());
+    let exact = ReadBudget {
+        bytes: used.allocated,
+        rows: used.visited,
+    };
+    assert_eq!(
+        store.read(input.event(), exact),
+        expected,
+        "{} exact budget",
+        store.implementation()
+    );
+    for budget in [
+        ReadBudget {
+            bytes: exact.bytes - 1,
+            ..exact
+        },
+        ReadBudget {
+            rows: exact.rows - 1,
+            ..exact
+        },
+        ReadBudget { rows: 0, ..exact },
+        ReadBudget { bytes: 0, ..exact },
+    ] {
+        let (result, meter) = store.measured_read(input.event(), budget);
+        assert_eq!(
+            result,
+            Err(StorageError::ReadLimit),
+            "{} under-budget cause",
+            store.implementation()
+        );
+        assert!(
+            meter.allocated <= budget.bytes,
+            "{} allocation crossed budget",
+            store.implementation()
+        );
+        assert!(meter.visited <= budget.rows, "{} walk crossed budget", store.implementation());
+    }
+}
+
+fn corrupt_counts<A: Contract>(store: &A, input: &AdmittedEpoch) {
+    for kind in 0..10 {
+        let (history, mut state) = store.snapshot();
+        let row = state.results.get_mut(input.event()).unwrap();
+        match kind {
+            0 => row.bytes += 1,
+            1 => row.chunk_count += 1,
+            2 => row.reference_count += 1,
+            3 => row.debit_count += 1,
+            4 => state.debits.values_mut().next().unwrap().bytes += 1,
+            5 => state.debits.values_mut().next().unwrap().chunk_count += 1,
+            6 => row.chunks[0].clear(),
+            7 => {
+                state.debits.remove(&row.membership[0]);
+            }
+            8 => row.references.swap(0, 1),
+            _ => row.membership[1] = row.membership[0].clone(),
+        }
+        let broken = A::from_snapshot((history, state));
+        let budget = ReadBudget {
+            bytes: usize::MAX,
+            rows: usize::MAX,
+        };
+        assert_eq!(
+            broken.read(input.event(), budget),
+            Err(StorageError::CorruptHistory),
+            "{} corrupt count {kind}",
+            broken.implementation()
+        );
+        assert_eq!(
+            broken.as_of(input.event(), budget),
+            Err(StorageError::CorruptHistory),
+            "{} corrupt as-of count {kind}",
+            broken.implementation()
+        );
+    }
 }

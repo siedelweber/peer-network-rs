@@ -138,6 +138,23 @@
     },
     {
       "claims": [
+        "HOST::claim:history:admitted-reads-preserve-bounded-history"
+      ],
+      "closing_condition": "Historical values, exact read boundaries, pre-operation limits and corrupt-count refusals pass; the three runtime mutants fail.",
+      "closing_step": "Bite 8-e-memory retained reads.",
+      "evidence_paragraph": "HOST::verif:history:admitted-reads",
+      "hold": "",
+      "missing": "Outside scope: PostgreSQL, real-session concurrency, durability, privileges, commit uncertainty, public rebuild and independent re-admission.",
+      "name": "HOST::verif:history:admitted-reads",
+      "owner": "Host storage implementer",
+      "path": "packages/host/README.md",
+      "premises": "The memory adapter supplies immutable admitted values and a test-only corruption and metering seam; shared publication fixtures are restored through the public verifier.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "HOST::claim:publication:authentication-fields-are-untrusted-bytes",
         "HOST::claim:publication:canonical-disclosure-roundtrip",
         "HOST::claim:publication:independent-structural-bytes",

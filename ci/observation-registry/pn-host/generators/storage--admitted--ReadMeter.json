@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::admitted::ReadMeter",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Default)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The retained read and its explicit counters contain public keys, canonical package/debit buffers and selected declaration values only. Cow projections borrow immutable public storage or own those same values. Default counters start at zero. No Session or secret is retained or exposed."
+  }
+}

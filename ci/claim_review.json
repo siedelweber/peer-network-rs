@@ -3483,6 +3483,14 @@
       "review": "The shared contract compares full logical snapshots, checks all six selected families and exact causes, enumerates every concrete staged write, observes zero retry writes and unchanged vintages, and checks refusing and successful history successors. The two runtime mutants violate partial visibility and no-write retry respectively. PostgreSQL conformance remains held."
     },
     {
+      "operation": "pn-host::storage::admitted::tests::admitted_memory_reads",
+      "path": "packages/host/src/storage/admitted/tests.rs",
+      "claim": "HOST::claim:history:admitted-reads-preserve-bounded-history",
+      "before": "",
+      "after": "Claim: Retained admitted memory reads preserve historical bytes, selections and vintages, refuse corrupt counts, and enforce explicit reconstruction bounds before each allocation and row visit.",
+      "review": "The generic read roster compares complete retained values against two admitted inputs, before and after later publications and declarations, checks scope and opening/closing boundaries, exact and below-exact reconstruction budgets, and ten corruption variants per event. The instrumented fetch and allocation seams witness order; current-selection, late-bound and ignored-count runtime mutants fail. This is functional memory evidence, not PostgreSQL or re-admission."
+    },
+    {
       "operation": "pn-host::storage::tests::storage_competing_writers",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:competing-successors-serialize",

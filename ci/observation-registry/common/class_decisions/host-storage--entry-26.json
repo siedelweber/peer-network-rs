@@ -20,7 +20,9 @@
         "pn-host::packages/host/src/storage.rs::storage::PostgresStore::audit_history",
         "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
         "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history",
-        "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::commit_admitted_epoch"
+        "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::commit_admitted_epoch",
+        "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::read_admitted_epoch",
+        "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::read_admitted_as_of"
       ]
     }
   }

@@ -2790,10 +2790,12 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::storage::admitted::tests::admitted_memory_reads",
         "pn-host::storage::admitted::tests::admitted_memory_contract"
       ],
       "composition_reasons": {
-        "pn-host::storage::admitted::tests::admitted_memory_contract": "The shared admitted storage contract composes public restoration, all six history families and every transaction write boundary in one process so the expensive validated fixture is shared."
+        "pn-host::storage::admitted::tests::admitted_memory_contract": "The shared admitted storage contract composes public restoration, all six history families and every transaction write boundary in one process so the expensive validated fixture is shared.",
+        "pn-host::storage::admitted::tests::admitted_memory_reads": "The retained read roster composes admitted restoration and six-family memory history with later publications and corruption controls, sharing the validated fixture in one process."
       },
       "implementation": "pn-host-rust",
       "kind": "suite",

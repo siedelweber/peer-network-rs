@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::ReadBudget",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [doc = \" Explicit reconstruction limits; no production allowance is implied.\"] # [doc = \" Bytes bound cumulative requested heap bytes for reconstruction, rows bound fetched rows.\"] # [doc = \" Index lookup and observation are outside reconstruction accounting.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ReadBudget { pub bytes : usize , pub rows : usize , }"
+  }
+}

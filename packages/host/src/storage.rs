@@ -64,6 +64,7 @@ pub enum StorageError {
     EpochConflict,
     DebitConflict,
     HistoricalSelectionConflict,
+    ReadLimit,
 }
 
 fn classified<T>(result: Result<T, StorageError>) -> Result<T, StorageError> {
@@ -311,6 +312,7 @@ pub struct Boundary {
 }
 
 mod admitted;
+pub use admitted::{EpochRead, ReadBudget, RetainedDebit};
 
 type History = BTreeMap<(Family, String), Vec<EffectiveRow>>;
 pub(crate) fn check(version: &Version) -> Result<(), StorageError> {

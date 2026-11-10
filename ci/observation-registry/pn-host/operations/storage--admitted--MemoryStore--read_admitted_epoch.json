@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "item": "storage::admitted::MemoryStore::read_admitted_epoch",
+    "owner": "HOST",
+    "signature": "fn read_admitted_epoch (& self , key : & EpochKey , budget : ReadBudget) -> Result < Option < EpochRead < '_ > > , StorageError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/admitted.rs::storage::admitted::MemoryStore::read_admitted_epoch",
+    "body": "{ let result = self . read_epoch_inner (key , budget , & mut ReadMeter :: default ()) ; classified (result) }",
+    "class_decision": "host-storage",
+    "item_premise": "The memory read receives a public event/scope and explicit reconstruction budget, observes one immutable store borrow, and returns retained public projections or a fieldless classified refusal. Full arguments/results contain no Session or secret; borrowed keys/selections and reconstructed byte buffers grant no new admission. Observation does not influence the result. PostgreSQL and re-admission remain held.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

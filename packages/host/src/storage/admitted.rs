@@ -4,7 +4,96 @@ use super::{
     AdmittedEpoch, DebitKey, DeclarationUse, EpochKey, History, MAX_PACKAGE, MemoryStore, StorageError, TransactionMeter,
     classified, verify_row,
 };
+use std::borrow::Cow;
 use std::collections::BTreeMap;
+
+/// Explicit reconstruction limits; no production allowance is implied.
+/// Bytes bound cumulative requested heap bytes for reconstruction, rows bound fetched rows.
+/// Index lookup and observation are outside reconstruction accounting.
+/// (´[ROOT-amend:storage:admitted-reads]´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ReadBudget {
+    pub bytes: usize,
+    pub rows: usize,
+}
+
+/// Retained public debit encoding, not a newly checked numerical value.
+/// (´[ROOT-amend:storage:admitted-reads]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RetainedDebit<'a> {
+    pub key: Cow<'a, DebitKey>,
+    pub bytes: Vec<u8>,
+}
+
+/// A retained read is public evidence, never an admitted capability.
+/// Memory borrows immutable identities and selections; another store may own them.
+/// (´[ROOT-amend:storage:admitted-reads]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct EpochRead<'a> {
+    pub event: Cow<'a, EpochKey>,
+    pub predecessor: Option<Cow<'a, EpochKey>>,
+    pub bytes: Vec<u8>,
+    pub references: Cow<'a, [DeclarationUse]>,
+    pub debits: Vec<RetainedDebit<'a>>,
+}
+
+#[derive(Default)]
+struct ReadMeter {
+    rows: usize,
+    bytes: usize,
+    visited: usize,
+    allocated: usize,
+}
+impl ReadMeter {
+    fn row<T>(&mut self, limit: ReadBudget, fetch: impl FnOnce() -> T) -> Result<T, StorageError> {
+        self.rows = self.rows.checked_add(1).ok_or(StorageError::ReadLimit)?;
+        if self.rows > limit.rows {
+            return Err(StorageError::ReadLimit);
+        }
+        self.visited += 1;
+        Ok(fetch())
+    }
+    fn allocation(&mut self, bytes: usize, limit: ReadBudget) -> Result<(), StorageError> {
+        self.bytes = self.bytes.checked_add(bytes).ok_or(StorageError::ReadLimit)?;
+        if self.bytes > limit.bytes {
+            return Err(StorageError::ReadLimit);
+        }
+        self.allocated += bytes;
+        Ok(())
+    }
+}
+
+fn read_chunks(
+    parts: &[Vec<u8>],
+    count: usize,
+    bytes: usize,
+    budget: ReadBudget,
+    meter: &mut ReadMeter,
+) -> Result<Vec<u8>, StorageError> {
+    if count != parts.len() || bytes == 0 || bytes.div_ceil(MAX_PACKAGE) != count {
+        return Err(StorageError::CorruptHistory);
+    }
+    if count > budget.rows.saturating_sub(meter.rows) || bytes > budget.bytes.saturating_sub(meter.bytes) {
+        return Err(StorageError::ReadLimit);
+    }
+    meter.allocation(bytes, budget)?;
+    let mut output = Vec::with_capacity(bytes);
+    for (index, part) in parts.iter().enumerate() {
+        let part = meter.row(budget, || part)?;
+        if part.is_empty()
+            || part.len() > MAX_PACKAGE
+            || (index + 1 < count && part.len() != MAX_PACKAGE)
+            || part.len() > bytes.saturating_sub(output.len())
+        {
+            return Err(StorageError::CorruptHistory);
+        }
+        output.extend_from_slice(part);
+    }
+    if output.len() != bytes {
+        return Err(StorageError::CorruptHistory);
+    }
+    Ok(output)
+}
 
 fn selected(history: &History, uses: &[DeclarationUse]) -> Result<(), StorageError> {
     for use_ in uses {
@@ -140,6 +229,160 @@ impl State {
     }
 }
 impl MemoryStore {
+    /// Read one retained event without decoding or re-admitting its package.
+    /// (´[ROOT-amend:storage:admitted-reads]´)
+    /// # Errors
+    /// Refuses reconstruction beyond the explicit budget, or inconsistent retained rows.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::admitted::MemoryStore::read_admitted_epoch"
+        ),
+        ret
+    )]
+    pub fn read_admitted_epoch(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError> {
+        let result = self.read_epoch_inner(key, budget, &mut ReadMeter::default());
+        classified(result)
+    }
+
+    fn read_epoch_inner(
+        &self,
+        key: &EpochKey,
+        budget: ReadBudget,
+        meter: &mut ReadMeter,
+    ) -> Result<Option<EpochRead<'_>>, StorageError> {
+        let Some((event, row)) = self.admitted.results.get_key_value(key) else {
+            return Ok(None);
+        };
+        let row = meter.row(budget, || row)?;
+        let valid_predecessor = match &row.predecessor {
+            None => event.boundary == 1,
+            Some(prior) => {
+                prior.scope == event.scope
+                    && prior.boundary.checked_add(1) == Some(event.boundary)
+                    && self.admitted.results.contains_key(prior)
+            }
+        };
+        if !valid_predecessor {
+            return Err(StorageError::CorruptHistory);
+        }
+        if row.references.len() != row.reference_count
+            || row.membership.len() != row.debit_count
+            || row.chunks.len() != row.chunk_count
+        {
+            return Err(StorageError::CorruptHistory);
+        }
+        let minimum_rows = row
+            .reference_count
+            .checked_add(row.debit_count)
+            .and_then(|n| n.checked_add(row.chunk_count))
+            .ok_or(StorageError::CorruptHistory)?;
+        if minimum_rows > budget.rows.saturating_sub(meter.rows) || row.bytes > budget.bytes.saturating_sub(meter.bytes) {
+            return Err(StorageError::ReadLimit);
+        }
+        let bytes = read_chunks(&row.chunks, row.chunk_count, row.bytes, budget, meter)?;
+        let mut previous = None;
+        for reference in &row.references {
+            let reference = meter.row(budget, || reference)?;
+            let expected = &reference.version;
+            let ordinal = (expected.family, &expected.key, &expected.edition, reference.selected_at);
+            if previous.is_some_and(|prior| prior >= ordinal) {
+                return Err(StorageError::CorruptHistory);
+            }
+            previous = Some(ordinal);
+            meter.allocation(expected.key.len(), budget)?;
+            let versions = self
+                .history
+                .get(&(expected.family, expected.key.clone()))
+                .ok_or(StorageError::CorruptHistory)?;
+            // The stored opening coordinate locates the immutable version, not
+            // the latest declaration. Effective histories are ordered by opening.
+            let mut found = None;
+            let mut low = 0;
+            let mut high = versions.len();
+            while low < high {
+                let middle = low + (high - low) / 2;
+                let candidate = meter.row(budget, || &versions[middle])?;
+                match candidate.version.opens_at.cmp(&expected.opens_at) {
+                    std::cmp::Ordering::Less => low = middle + 1,
+                    std::cmp::Ordering::Greater => high = middle,
+                    std::cmp::Ordering::Equal => {
+                        found = Some(candidate);
+                        break;
+                    }
+                }
+            }
+            let actual = found.ok_or(StorageError::CorruptHistory)?;
+            if actual.version != *expected
+                || actual.version.opens_at > reference.selected_at
+                || actual.closes_at.is_some_and(|end| reference.selected_at >= end)
+            {
+                return Err(StorageError::CorruptHistory);
+            }
+            // Expected payloads came from the admitted carrier and cannot be
+            // mutated through the public store. Equality checks all bytes; the
+            // original digest is checked without allocating a decoded value.
+            let payload = actual.version.payload.as_ref().ok_or(StorageError::CorruptHistory)?;
+            if payload.digest != super::digest(super::PAYLOAD_RECIPE, &payload.bytes) {
+                return Err(StorageError::CorruptHistory);
+            }
+        }
+        let capacity = row
+            .debit_count
+            .checked_mul(std::mem::size_of::<RetainedDebit<'_>>())
+            .ok_or(StorageError::CorruptHistory)?;
+        meter.allocation(capacity, budget)?;
+        let mut debits = Vec::with_capacity(row.debit_count);
+        let mut previous = None;
+        for key in &row.membership {
+            let key = meter.row(budget, || key)?;
+            if key.scope != event.scope || previous.is_some_and(|prior| prior >= key) {
+                return Err(StorageError::CorruptHistory);
+            }
+            previous = Some(key);
+            let debit = meter
+                .row(budget, || self.admitted.debits.get(key))?
+                .ok_or(StorageError::CorruptHistory)?;
+            let bytes = read_chunks(&debit.chunks, debit.chunk_count, debit.bytes, budget, meter)?;
+            debits.push(RetainedDebit {
+                key: Cow::Borrowed(key),
+                bytes,
+            });
+        }
+        Ok(Some(EpochRead {
+            event: Cow::Borrowed(event),
+            predecessor: row.predecessor.as_ref().map(Cow::Borrowed),
+            bytes,
+            references: Cow::Borrowed(&row.references),
+            debits,
+        }))
+    }
+
+    /// Read the last retained event at or before the requested boundary in one scope.
+    /// (´[ROOT-amend:storage:admitted-reads]´)
+    /// # Errors
+    /// Refuses reconstruction beyond the explicit budget, or inconsistent retained rows.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::admitted::MemoryStore::read_admitted_as_of"
+        ),
+        ret
+    )]
+    pub fn read_admitted_as_of(&self, key: &EpochKey, budget: ReadBudget) -> Result<Option<EpochRead<'_>>, StorageError> {
+        let result = match self.admitted.results.range(..=key).next_back() {
+            Some((event, _)) if event.scope == key.scope => self.read_epoch_inner(event, budget, &mut ReadMeter::default()),
+            _ => Ok(None),
+        };
+        classified(result)
+    }
+
     /// Commit one complete admitted event, or recognize an equal retry without writes.
     /// (´[ROOT-amend:storage:admitted-transaction]´)
     /// # Errors

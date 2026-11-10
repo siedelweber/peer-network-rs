@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::ReadMeter",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [derive (Default)] struct ReadMeter { rows : usize , bytes : usize , visited : usize , allocated : usize , }"
+  }
+}

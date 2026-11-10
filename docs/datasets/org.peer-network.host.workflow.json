@@ -266,11 +266,11 @@
     },
     {
       "category": "hold",
-      "evidence": "HOST::verif:history:admitted-carrier checks admitted-only canonical projections, selected uses, debit vintages, complete-content equality and the held PostgreSQL operation; HOST::verif:history:admitted-memory checks functional atomicity, complete retry, immutable vintages and the selected-use guard; preview:design:storage-cuts still requires bounded reads, real-session concurrency, privilege, uncertainty and rebuild witnesses; no executable opens a store",
+      "evidence": "HOST::verif:history:admitted-carrier checks admitted-only canonical projections, selected uses, debit vintages, complete-content equality and the held PostgreSQL operation; HOST::verif:history:admitted-memory checks functional atomicity, complete retry, immutable vintages and the selected-use guard; HOST::verif:history:admitted-reads checks retained historical bytes, selected identities, vintages, bounds and corrupt counts; preview:design:storage-cuts still requires PostgreSQL, real-session concurrency, durability, privilege, uncertainty and rebuild witnesses; no executable opens a store",
       "hold": "open:host:admitted-epoch-result",
       "name": "8-e",
       "owner": "lane/design",
-      "scope": "atomic persistence: carrier and memory transaction implemented; bounded reads, PostgreSQL, rebuild and review held"
+      "scope": "atomic persistence: carrier, memory transaction and bounded reads implemented; PostgreSQL, rebuild and review held"
     },
     {
       "category": "hold",

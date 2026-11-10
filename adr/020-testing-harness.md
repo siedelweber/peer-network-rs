@@ -153,7 +153,7 @@
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 4 |
 | pn-host::admitted-carrier | active | unit | pn-host-rust | extended | 1 |
 | pn-host::admitted-carrier-held | active | unit | pn-host-memory-and-postgresql | service | 1 |
-| pn-host::admitted-memory | active | integration | pn-host-rust | extended | 1 |
+| pn-host::admitted-memory | active | integration | pn-host-rust | extended | 2 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
 | pn-host::public | active | public-surface | pn-host-rust | fast | 14 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |

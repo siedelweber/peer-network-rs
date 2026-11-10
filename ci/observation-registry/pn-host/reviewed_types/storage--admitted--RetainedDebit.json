@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::RetainedDebit",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [doc = \" Retained public debit encoding, not a newly checked numerical value.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RetainedDebit < 'a > { pub key : Cow < 'a , DebitKey > , pub bytes : Vec < u8 > , }"
+  }
+}

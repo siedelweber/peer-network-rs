@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::admitted::EpochRead",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/admitted.rs",
+    "syntax": "# [doc = \" A retained read is public evidence, never an admitted capability.\"] # [doc = \" Memory borrows immutable identities and selections; another store may own them.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EpochRead < 'a > { pub event : Cow < 'a , EpochKey > , pub predecessor : Option < Cow < 'a , EpochKey > > , pub bytes : Vec < u8 > , pub references : Cow < 'a , [DeclarationUse] > , pub debits : Vec < RetainedDebit < 'a > > , }"
+  }
+}
