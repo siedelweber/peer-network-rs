@@ -313,6 +313,15 @@ wait
             self.assertIn('nested_target=host-observation-runtime', output.getvalue())
             self.assertTrue((target/'host-observation-runtime/gate/dependency').exists())
             self.assertIn('scope=reported-not-profile-ceiling', output.getvalue())
+            for name in ('lint-combined', 'lint-required', 'lint-nursery'):
+                (target/name/'gate').mkdir(parents=True)
+                (target/name/'.rustc_info.json').write_text('{}')
+                (target/name/'gate/dependency').write_bytes(b'x'*8192)
+            with redirect_stdout(output):
+                self.assertTrue(bound_target(target, 1, 'fixture'), 'lint targets must count inside the shared ceiling')
+            for name in ('lint-combined', 'lint-required', 'lint-nursery'):
+                self.assertFalse((target/name/'gate').exists())
+                self.assertTrue((target/name/'.rustc_info.json').exists())
             log = target/'meter.jsonl'
             with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
                 for command in ('build', 'check', 'run', 'test'):

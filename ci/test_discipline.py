@@ -1153,6 +1153,8 @@ class SourceDiscipline(unittest.TestCase):
             print(f'NURSERY-WITNESS-FINDINGS={count}')
             required, _ = run_clippy(root)
             self.assertEqual(required.returncode, 0, required.stderr)
+            self.assertIn('clippy::missing_const_for_fn', required.stdout)
+            self.assertIn('"level":"warning"', required.stdout.replace(' ', ''))
             repeated, repeated_count = run_clippy(root, advisory=True)
             self.assertEqual(repeated.returncode, 0, repeated.stderr)
             self.assertGreaterEqual(repeated_count, 1)
@@ -1166,6 +1168,18 @@ class SourceDiscipline(unittest.TestCase):
                          if json.loads(line).get('reason') == 'compiler-artifact']
             self.assertTrue(artifacts)
             self.assertTrue(all(row['fresh'] for row in artifacts), 'required lint cache must survive the advisory invocation')
+            real_run = subprocess.run
+            def no_second_compiler(command, *args, **kwargs):
+                if command[:2] == ['cargo', 'clippy']:
+                    self.fail('the two gate collectors must consume one compiler invocation')
+                return real_run(command, *args, **kwargs)
+            with patch('discipline.pathlib.Path.cwd', return_value=root), patch.dict(os.environ, PN_BUILDGRAPH_RUN='fixture', PN_GATE_SOURCE='fixture'):
+                first, _ = run_clippy(root)
+                with patch('discipline.subprocess.run', side_effect=no_second_compiler):
+                    shared, shared_count = run_clippy(root, advisory=True)
+                self.assertEqual(shared.returncode, first.returncode)
+                self.assertGreaterEqual(shared_count, 1)
+                self.assertNotIn('compiler-artifact', shared.stdout, 'sharing findings must not duplicate compile receipts')
             source = root/'src/lib.rs'
             source.write_text('pub fn candidate(value: u32) -> u32 { let unused = value; value + 1 }\n')
             refused, _ = run_clippy(root)

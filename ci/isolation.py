@@ -47,10 +47,13 @@ def bound_target(target, ceiling, owner):
     # Cargo puts root metadata in each independent target, not in a triple.
     nested = [path for path in target.iterdir() if path.is_dir()
               and (path/'.rustc_info.json').is_file()] if target.exists() else []
+    # Lint caches, including retired split caches, share the gate's ceiling.
+    lints = [target/name for name in ('lint-combined', 'lint-required', 'lint-nursery') if (target/name).is_dir()]
+    profiles.extend(path/name for path in lints for name in names)
     triples = [path for path in target.iterdir() if path.is_dir() and path.name not in (*names, 'isolation')
-               and path not in nested and any((path/name/'.fingerprint').is_dir() for name in names)] if target.exists() else []
+               and path not in nested and path not in lints and any((path/name/'.fingerprint').is_dir() for name in names)] if target.exists() else []
     profiles.extend(path/name for path in triples for name in names)
-    other = [path for path in target.iterdir() if path.is_dir() and path.name not in names and path not in triples] if target.exists() else []
+    other = [path for path in target.iterdir() if path.is_dir() and path.name not in names and path not in triples and path not in lints] if target.exists() else []
     for path in sorted(other):
         kind = 'nested_target' if path in nested else 'outside_profiles'
         print(f'TARGET-DIRS owner={owner} {kind}={path.name} bytes={allocated([path])} scope=reported-not-profile-ceiling path={path}', flush=True)
@@ -64,7 +67,7 @@ def bound_target(target, ceiling, owner):
             for profile in profiles:
                 if profile.exists(): shutil.rmtree(profile)
             after = 0
-    for path in sorted(triples):
+    for path in sorted(triples+lints):
         print(f'TARGET-DIRS owner={owner} target_layout={path.name} bytes={allocated([path])} scope=profiles-bounded-metadata-reported path={path}', flush=True)
     print(f'TARGET-DIRS owner={owner} before_bytes={before} after_bytes={after} ceiling_bytes={ceiling} path={target}', flush=True)
     return before > after

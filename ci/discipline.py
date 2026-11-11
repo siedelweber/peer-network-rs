@@ -469,21 +469,40 @@ def run_clippy(root, advisory=False):
     for _, package in vendor_members(root):
         command.extend(["--exclude", package])
     command.extend(["--all-targets", "--no-deps", "--locked", "--message-format=json"])
-    # Distinct lint arguments must not alternately invalidate one Cargo cache.
+    # Both reporting roles consume one compiler configuration and one target.
     target = pathlib.Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()
-    target = target/('lint-nursery' if advisory else 'lint-required')
+    target = target/'lint-combined'
     target.mkdir(parents=True, exist_ok=True)
-    from isolation import bound_target, cache_policy
-    policy = cache_policy(root)
-    if policy:
-        bound_target(target, policy['owner_target_ceiling_bytes'], target.name)
     command.extend(['--target-dir', str(target)])
-    if advisory:
-        command.extend(["--", "-W", "warnings", "-W", "clippy::nursery"])
-    else:
-        command.extend(["--", "-D", "warnings"])
-    result = subprocess.run(command, cwd=root, capture_output=True, text=True)
+    command.extend(["--", "-D", "warnings", "--force-warn", "clippy::nursery"])
     pathlib.Path(".lane").mkdir(exist_ok=True)
+    # The two gate adapters may arrive concurrently. Only this invocation's
+    # nonce permits reuse; standalone and mutable compiler fixtures never reuse.
+    nonce = os.environ.get('PN_BUILDGRAPH_RUN') if root.resolve() == pathlib.Path.cwd().resolve() else None
+    import fcntl
+    import resource
+    from isolation import allocated
+    (root/'.lane').mkdir(exist_ok=True)
+    with (root/'.lane/lint-pass.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        receipt = root/'.lane/lint-pass.json'
+        retained = json.loads(receipt.read_text()) if nonce and receipt.exists() else {}
+        identity = [nonce, os.environ.get('PN_GATE_SOURCE'), str(root.resolve()), command]
+        if nonce and retained.get('identity') == identity:
+            result = subprocess.CompletedProcess(command, retained['status'], retained['stdout'], '')
+            print('LINT-PASS reused=true compiled_cpu_s=0')
+        else:
+            start = time.monotonic()
+            before = resource.getrusage(resource.RUSAGE_CHILDREN)
+            result = subprocess.run(command, cwd=root, capture_output=True, text=True)
+            after = resource.getrusage(resource.RUSAGE_CHILDREN)
+            print(f'LINT-PASS reused=false wall_s={time.monotonic()-start:.6f} own_cpu_s={after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime:.6f}')
+            if nonce:
+                # Replayed diagnostics must not replay compilation receipts.
+                diagnostics = ''.join(line+'\n' for line in result.stdout.splitlines()
+                                      if json.loads(line).get('reason') == 'compiler-message')
+                receipt.write_text(json.dumps(dict(identity=identity, status=result.returncode, stdout=diagnostics)))
+        print(f'LINT-TARGET bytes={allocated([target])} scope=shared-profile-ceiling path={target}')
     pathlib.Path(".lane/" + ("nursery" if advisory else "clippy") + "-diagnostics.jsonl").write_text(result.stdout)
     count = 0
     for line in result.stdout.splitlines():
