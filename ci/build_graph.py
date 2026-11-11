@@ -743,7 +743,7 @@ def baseline_context(root, registry, policy=None):
                 if ancestor.returncode: continue
                 comparison = value['source']
                 value['match'] = 'ancestor'
-            if baseline is not None and baseline_rank(value) >= baseline_rank(baseline):
+            if baseline is not None and not baseline_replacement(value, baseline)[0]:
                 continue
             baseline = value
             diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
@@ -777,9 +777,45 @@ def baseline_replacement(candidate, previous):
         return True, 'warm-replaces-cold-or-provisional'
     if retained == 'warm' and current != 'warm':
         return False, 'retained-warm-cache'
+    if current == retained == 'warm' and candidate.get('provisional', False) and not previous.get('provisional', True):
+        return False, 'retained-confirmed-warm-cache'
+    if current == retained == 'warm':
+        decision = warm_peer_replacement(candidate, previous)
+        if decision is not None:
+            return decision
     if baseline_stall(candidate) > baseline_stall(previous):
         return False, 'higher-whole-gate-stall'
     return True, 'no-higher-whole-gate-stall'
+
+
+def warm_peer_replacement(candidate, previous):
+    """Pressure orders like work only when it does not contradict wall and CPU."""
+    def cases(value):
+        return {name:(row.get('selected_cases'), row.get('non_comparable_steps', []))
+                for name, row in value.get('tiers', {}).items()}
+    if not cases(candidate) or cases(candidate) != cases(previous):
+        return None
+    a, b = candidate.get('whole', {}), previous.get('whole', {})
+    if any(type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
+           for row in (a,b) for key in ('wall', 'comparable_cpu_s')):
+        return None
+    quieter = baseline_stall(candidate) < baseline_stall(previous)
+    noisier = baseline_stall(candidate) > baseline_stall(previous)
+    if quieter and a['wall'] > b['wall']:
+        return False, ('stall-cost-disagreement-retained-faster' if a['comparable_cpu_s'] > b['comparable_cpu_s']
+                       else 'stall-wall-disagreement-unresolved')
+    if noisier and a['wall'] < b['wall']:
+        return (True, 'stall-cost-disagreement-candidate-faster') if a['comparable_cpu_s'] < b['comparable_cpu_s'] else (False, 'stall-wall-disagreement-unresolved')
+    return None
+
+
+def preferred_baseline(candidates):
+    """Apply the same measured peer decision to lineage and retained files."""
+    best = None
+    for candidate in candidates:
+        if baseline_replacement(candidate, best)[0]:
+            best = candidate
+    return best
 
 
 def quiet_baseline(candidate, policy=None):
@@ -821,7 +857,7 @@ def retain_baseline(root):
                 prior.append(value)
         except (FileNotFoundError, ValueError):
             pass
-    previous_best = min(prior, key=baseline_rank) if prior else None
+    previous_best = preferred_baseline(prior)
     accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
     candidate_cache = candidate.get('cache', {}).get('state', 'unknown')
     retained_cache = previous_best.get('cache', {}).get('state', 'unknown') if previous_best else 'unavailable'

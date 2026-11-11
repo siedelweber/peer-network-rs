@@ -708,6 +708,26 @@ wait
         self.assertEqual(baseline_replacement(recorded('unknown', .001), warm), (False, 'retained-warm-cache'))
         self.assertLess(baseline_rank(warm), baseline_rank(cold))
         self.assertLess(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
+        slow, fast = recorded('warm', .102), recorded('warm', .147)
+        for value, wall, cpu in ((slow,218.0,1177.5),(fast,204.7,1093.8)):
+            value['whole'].update(wall=wall, comparable_cpu_s=cpu)
+            value['tiers'] = {'fast':dict(selected_cases=['same-case'], non_comparable_steps=[])}
+        self.assertEqual(baseline_replacement(fast, slow), (True, 'stall-cost-disagreement-candidate-faster'),
+                         'faster and cheaper warm evidence must replace quieter slower evidence')
+        self.assertEqual(baseline_replacement(slow, fast), (False, 'stall-cost-disagreement-retained-faster'),
+                         'quieter slower and costlier evidence must not replace faster warm evidence')
+        from build_graph import preferred_baseline
+        for values in ([slow,fast],[fast,slow]):
+            self.assertIs(preferred_baseline(values), fast)
+        quiet_fast = copy.deepcopy(slow);quiet_fast['whole']['wall'] = 200
+        self.assertEqual(baseline_replacement(quiet_fast,fast), (True,'no-higher-whole-gate-stall'))
+        unresolved = copy.deepcopy(slow);unresolved['whole']['comparable_cpu_s'] = 1000
+        self.assertEqual(baseline_replacement(unresolved,fast), (False,'stall-wall-disagreement-unresolved'))
+        self.assertEqual(baseline_replacement(fast,unresolved), (False,'stall-wall-disagreement-unresolved'))
+        different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
+        self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
+        unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
+        self.assertEqual(baseline_replacement(unavailable,slow), (False,'higher-whole-gate-stall'))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             run = root/'.lane/tier-tests'
@@ -752,7 +772,6 @@ wait
                     self.assertIsNone(foreign_baseline)
                 self.assertEqual(path.read_bytes(), quiet_bytes)
                 from build_graph import quiet_baseline
-                import copy
                 for scope in (None, 'gate-cgroup', 'shared'):
                     wrong=copy.deepcopy(candidate)
                     wrong['quiet_windows']['before']['node_scope']=scope
