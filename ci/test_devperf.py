@@ -41,7 +41,11 @@ class Performance(unittest.TestCase):
         ´claim:devperf:loaded-step-context-is-nonverdict´
         ´test:integration:test-loaded-step-context´
         """
-        from build_graph import retain_baseline, retain_step_context, step_cpu_context
+        from build_graph import retain_baseline, retain_step_context, step_cpu_context, step_context_key
+        identity=dict(configuration='same',lineage='same',node='same',accounting='old')
+        self.assertEqual(step_context_key(identity), step_context_key(dict(identity,accounting='new')), 'gross CPU context must survive an accounting recipe change')
+        for key in ('configuration','lineage','node'):
+            self.assertNotEqual(step_context_key(identity), step_context_key(dict(identity,**{key:'other'})))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             prior = dict(source='previous', step_cpu={'design-tests': 52.0, 'gone': 2.0}, quiet=False)
@@ -58,12 +62,12 @@ class Performance(unittest.TestCase):
             retain_step_context(root, dict(source='current', step_cpu={'design-tests': 20.0}))
             self.assertEqual(json.loads((root/'last-run.context').read_text())['source'], 'current')
             (root/'.lane').mkdir()
-            candidate = dict(source='loaded', path=str(root/'quiet.json'), step_cpu={'design-tests': 30.0})
+            candidate = dict(source='loaded', path=str(root/'quiet.json'), context_directory=str(root/'context'), step_cpu={'design-tests': 30.0})
             (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
             with patch('build_graph.evidence_statuses', return_value={}), patch('build_graph.quiet_baseline', return_value=False):
                 retain_baseline(root)
             self.assertFalse((root/'quiet.json').exists())
-            self.assertEqual(json.loads((root/'last-run.context').read_text())['steps'], {'design-tests': 30.0})
+            self.assertEqual(json.loads((root/'context/last-run.context').read_text())['steps'], {'design-tests': 30.0})
 
     def test_calibration_identity(self):
         """A measured function retains exact standing through unrelated edits, while a changed or missing body becomes pending under its owner without changing its allowance.
@@ -381,7 +385,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -841,7 +845,7 @@ wait
             registry = SimpleNamespace(tiers={'fast': {'jobs': 8}})
             good = SimpleNamespace(returncode=0, stdout='compiler identity')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
-                path, old, changed = baseline_context(root, registry)
+                path, old, changed, context = baseline_context(root, registry)
                 self.assertIsNone(old)
                 candidate = dict(path=str(path), source='ancestor', tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
@@ -854,7 +858,7 @@ wait
                 for key, value in (('cpu_models',['another CPU']), ('allowed_cpus',node['allowed_cpus']+1),
                                    ('pressure_scope','container-cgroup'), ('resource_scope','shared-cgroup')):
                     with patch('gate_resources.node_identity', return_value=dict(node, **{key:value})):
-                        foreign_path, foreign_baseline, _ = baseline_context(root, registry)
+                        foreign_path, foreign_baseline, _, _ = baseline_context(root, registry)
                     self.assertNotEqual(foreign_path.parent, path.parent)
                     self.assertIsNone(foreign_baseline)
                 self.assertEqual(path.read_bytes(), quiet_bytes)
@@ -895,7 +899,7 @@ wait
                 new_path.unlink()
 
                 with patch('build_graph.subprocess.run', side_effect=[good, good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
-                    same_path, old, changed = baseline_context(root, registry)
+                    same_path, old, changed, context = baseline_context(root, registry)
                 self.assertEqual(path, same_path)
                 self.assertEqual(old['source'], 'ancestor')
                 self.assertEqual(changed, ['packages/example/src/pins.rs', 'packages/example/src/pins.toml', 'vendor/example/data.bin'])
@@ -929,10 +933,10 @@ wait
             (root/'.lane/harness-benchmarks.jsonl').write_text('')
             (root/'.lane/claim-evidence.json').write_text('{"obligations":[]}')
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE=current, PN_IMPORT_BASE=imported, PN_GATE_LINEAGE='main'):
-                path, _, _ = baseline_context(root, registry)
+                path, _, _, _ = baseline_context(root, registry)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(path), source=original, tree=tree, tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                 retain_baseline(root)
-                _, retained, changed = baseline_context(root, registry)
+                _, retained, changed, _ = baseline_context(root, registry)
                 self.assertEqual(retained['source'], original)
                 self.assertEqual(retained['match'], 'import-base-tree')
                 self.assertEqual(changed, [])
@@ -941,7 +945,7 @@ wait
                 other_tree = git('write-tree')
                 other = git('-c', 'commit.gpgsign=false', 'commit-tree', other_tree, '-p', imported, input='unimported candidate\n')
                 with patch.dict(os.environ, PN_GATE_SOURCE=other):
-                    other_path, _, _ = baseline_context(root, registry)
+                    other_path, _, _, _ = baseline_context(root, registry)
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(other_path), source=other, tree=other_tree, tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)))
                     retain_baseline(root)
                 self.assertNotEqual(path, other_path)
@@ -965,7 +969,7 @@ wait
                     retain_baseline(root)
                     self.assertFalse(other_path.exists())
                 with patch.dict(os.environ, PN_IMPORT_BASE=other):
-                    _, previous, _ = baseline_context(root, registry)
+                    _, previous, _, _ = baseline_context(root, registry)
                     self.assertEqual(previous['source'], original)
                     self.assertEqual(previous['match'], 'previous-quiet-import-tree')
                     marker = other_path.with_suffix('.skipped.json')

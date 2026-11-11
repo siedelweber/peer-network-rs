@@ -685,6 +685,12 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     return 'growth'
 
 
+def step_context_key(identity):
+    """Gross CPU context keeps every compatibility dimension except accounting."""
+    context = {key:value for key,value in identity.items() if key != 'accounting'}
+    return hashlib.sha256(json.dumps(context, sort_keys=True).encode()).hexdigest()
+
+
 def baseline_context(root, registry, policy=None):
     """A retained target compares only the same runner configuration and lineage."""
     from harness import CONFIGURATION
@@ -789,7 +795,8 @@ def baseline_context(root, registry, policy=None):
         diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
         changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
         baseline['selection_peers'] = [dict(value) for value, _ in eligible]
-    return path, baseline, changed
+    context = Path(os.environ['CARGO_TARGET_DIR'])/'gate-step-context'/step_context_key(identity)
+    return path, baseline, changed, context
 
 
 def baseline_stall(candidate):
@@ -899,7 +906,7 @@ def retain_baseline(root):
             print('GATE-STATUS-CHANGE '+json.dumps(change, sort_keys=True))
         print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
-    retain_step_context(path.parent, candidate)
+    retain_step_context(Path(candidate.pop('context_directory', str(path.parent))), candidate)
     prior = [value for value in candidate.pop('previous_peers', []) if quiet_baseline(value)]
     for prior_path in (path, path.parent/(str(candidate.get('previous_baseline_tree'))+'.json')):
         try:
@@ -953,6 +960,7 @@ def retain_baseline(root):
 
 def retain_step_context(directory, candidate):
     """Keep observational context independently of quiet verdict baselines."""
+    directory.mkdir(parents=True, exist_ok=True)
     path = directory/'last-run.context'
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(json.dumps(dict(source=candidate['source'], steps=candidate.get('step_cpu', {})))+'\n')
@@ -1076,7 +1084,7 @@ def tier_summary(root, registry, worker_statuses):
     from gate_resources import cpu_from_log, raw_sample, joined, compact
     declared = budgets(root/'docs/inputs/devperf-budgets.toml')
     policy = declared['gate']
-    baseline_path, baseline, changed = baseline_context(root, registry, policy)
+    baseline_path, baseline, changed, context_directory = baseline_context(root, registry, policy)
     fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
     step_cpu = {}
     for name, *_ in fields:
@@ -1084,7 +1092,11 @@ def tier_summary(root, registry, worker_statuses):
         step_cpu[name] = sum(own) if all(value is not None for value in own) else None
     if baseline is None:
         try:
-            previous = json.loads((baseline_path.parent/'last-run.context').read_text())
+            context_path = context_directory/'last-run.context'
+            if not context_path.exists():
+                # First use migrates the pre-split context of this same identity.
+                context_path = baseline_path.parent/'last-run.context'
+            previous = json.loads(context_path.read_text())
         except (FileNotFoundError, ValueError):
             previous = {}
     else:
@@ -1211,7 +1223,7 @@ def tier_summary(root, registry, worker_statuses):
     from harness import build_cache_state
     cache = build_cache_state(root, os.environ['PN_GATE_SOURCE'], os.environ.get('PN_BUILDGRAPH_RUN'))
     print('GATE-CACHE '+json.dumps(cache, sort_keys=True), flush=True)
-    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
+    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), context_directory=str(context_directory), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,
