@@ -361,7 +361,12 @@ wait
         ´test:integration:test-tier-overrun´
         """
         from contextlib import redirect_stdout
-        from build_graph import tier_summary
+        from build_graph import tier_summary, tier_wall_ownership
+        gap = tier_wall_ownership(139.5, [(80,132.6),(0,50)])
+        self.assertAlmostEqual(gap['step_wall_sum_s'],102.6)
+        self.assertAlmostEqual(gap['unowned_wall_s'],36.9, msg='unowned tier wall must remain visible')
+        overlap = tier_wall_ownership(10, [(4,9),(1,6),(2,3)])
+        self.assertEqual(overlap, dict(step_wall_sum_s=11,step_wall_union_s=8,unowned_wall_s=2), 'overlapping steps cannot erase unowned wall')
         tiers = {name: dict(steps=[name], invocation_budget='fixture')
                  for name in ('fast', 'service', 'reference-certificate', 'extended')}
         tiers['fast']['finalize_steps'] = ['finalize']
@@ -411,6 +416,8 @@ wait
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
                     self.assertIn('over_budget='+str(expected).lower(), output.getvalue())
                     self.assertIn('own_user_s=1 own_sys_s=0', output.getvalue())
+                    self.assertIn('unowned_wall_s=0.000000',output.getvalue())
+                    self.assertEqual(measured['fast']['step_wall_sum_s'],wall)
                     fast = next(line for line in output.getvalue().splitlines() if line.startswith('GATE-TIER tier=fast '))
                     self.assertIn('over_budget='+str(expected).lower(), fast)
                     self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)

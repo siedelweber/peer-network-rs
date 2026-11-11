@@ -1079,6 +1079,22 @@ def case_producer_tier(registry, groups, row):
     return tiers[0]
 
 
+def tier_wall_ownership(wall, intervals):
+    """Subtract the interval union, not overlapping step durations, from wall."""
+    ordered = sorted(intervals)
+    total = sum(end-start for start,end in ordered)
+    covered = 0.0
+    previous = None
+    for start,end in ordered:
+        if end < start:
+            raise ValueError('step ends before it starts')
+        covered += max(0, end-max(start, previous if previous is not None else start))
+        previous = max(end, previous if previous is not None else end)
+    if covered > wall+.000001:
+        raise ValueError('step interval union exceeds the tier wall')
+    return dict(step_wall_sum_s=total, step_wall_union_s=covered, unowned_wall_s=max(0.0,wall-covered))
+
+
 def tier_summary(root, registry, worker_statuses):
     from devperf import budgets
     from gate_resources import cpu_from_log, raw_sample, joined, compact
@@ -1141,7 +1157,8 @@ def tier_summary(root, registry, worker_statuses):
         budget = registry.tiers[tier]['invocation_budget'] if tier != 'finalize' else None
         status = int(any(int(row[1]) or worker_statuses[row[0]] for row in selected_rows))
         measurement = joined(start, end, wall)
-        reports[tier] = dict(wall=wall, started=start['epoch_seconds'], ended=end['epoch_seconds'], status=status,
+        ownership = tier_wall_ownership(wall, [(float(row[2]),float(row[3])) for row in selected_rows])
+        reports[tier] = dict(**ownership, wall=wall, started=start['epoch_seconds'], ended=end['epoch_seconds'], status=status,
             budget=budget, own_user_s=own[0], own_sys_s=own[1], steps=names, resources=measurement)
         limit = declared[budget]['budget_ms']/1000 if budget else None
         excess = max(0.0, wall-limit) if limit is not None else None
@@ -1208,7 +1225,7 @@ def tier_summary(root, registry, worker_statuses):
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
+        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
