@@ -463,6 +463,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This describes the held format, without asserting portable Work accounting.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:refinement",
+      "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "Public reconstruction reads the structural field without claiming the private opening or its entropy.",
       "relation": "realizes",
       "source": "ROOT::rule:devnet:author-public-evidence",

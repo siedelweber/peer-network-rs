@@ -3025,7 +3025,12 @@
       ],
       "kind": "type",
       "label": "post:network:host-contract",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: private solver state may not select a different result",
+          "record": "ROOT::open:design:replay-paper-contract"
+        }
+      ],
       "record_granular": 1,
       "record_routes": [
         {
@@ -12074,7 +12079,12 @@
       ],
       "kind": "certificate",
       "label": "def:epoch:tilt-backoff-grid",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the accepted rung is the greatest one the declared procedure proves passing",
+          "record": "ROOT::open:design:replay-paper-contract"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -12122,7 +12132,16 @@
       ],
       "kind": "certificate",
       "label": "rem:epoch:certificate-failure-versus-indecisive-enclosure",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: a certificate failure is a proof and indecision is not",
+          "record": "ROOT::amend:design:rung-proof-contract"
+        },
+        {
+          "clause": "Premise only: the text requires every replayer to reach the same verdicts",
+          "record": "ROOT::open:design:replay-paper-contract"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -12768,7 +12787,12 @@
       "holds": [],
       "kind": "invariant check",
       "label": "prop:epoch:no-tilt-anchor",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the zero rung certifies exactly",
+          "record": "ROOT::amend:design:rung-proof-contract"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -13755,11 +13779,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/implementation.md",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "prop:epoch:epoch-replay-determinism",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the accepted rung is among the derivation's determined outputs",
+          "record": "ROOT::open:design:replay-paper-contract"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -21869,7 +21901,12 @@
       ],
       "kind": "function",
       "label": "def:dynamics:conserved-standing-certificate",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the evaluated fence is valid exactly at or below unity after margin",
+          "record": "ROOT::amend:design:rung-proof-contract"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [
         {
@@ -32577,6 +32614,10 @@
         {
           "clause": "Premise only: identical public inputs and procedure must reproduce verdicts",
           "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
+          "clause": "Premise only: the tagged condition requires identical replay verdicts; no cross-build realization is claimed here",
+          "record": "ROOT::rule:design:refinement"
         }
       ],
       "record_granular": 0,
@@ -32585,8 +32626,7 @@
         "ROOT::amend:decomposition:deployment-evidence",
         "ROOT::amend:design:applied-dyadic-solve",
         "ROOT::amend:design:host-operational-declaration",
-        "ROOT::model:design:storage-history",
-        "ROOT::rule:design:refinement"
+        "ROOT::model:design:storage-history"
       ],
       "routes": [],
       "status": "designed",
@@ -35921,10 +35961,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "68",
+          "exact": "69",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "68",
+          "num": "69",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35935,7 +35975,7 @@
           "exact_digits": 32
         }
       },
-      "total": 68
+      "total": 69
     },
     {
       "category": "total",
@@ -39672,22 +39712,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 203,
+      "exact_citing": 202,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "203",
+          "exact": "202",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "203",
+          "num": "202",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 659",
+          "exact": "1 664",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 659",
+          "num": "1 664",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39702,7 +39742,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1659
+      "total": 1664
     },
     {
       "category": "record-coverage",
