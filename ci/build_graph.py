@@ -745,6 +745,24 @@ def baseline_context(root, registry, policy=None):
             candidates.append(candidate)
             comparisons[candidate] = matches[0]
             cursor = previous
+    # A frontier member can matter to a later choice without having won an
+    # earlier choice. Keep every admitted run, validating its public ancestry.
+    peers = sorted((directory/'peers').glob('*.json'))
+    if base_tree and not base_tree.returncode:
+        history = subprocess.run(['git', 'log', '--format=%H %T', base], cwd=root,
+                                 capture_output=True, text=True, check=True).stdout.splitlines() if peers else []
+        history = {line.split()[-1]:line.split()[0] for line in history}
+        for peer in peers:
+            try:
+                comparison = history.get(json.loads(peer.read_text()).get('tree'))
+                if comparison:
+                    candidates.append(peer)
+                    comparisons[peer] = comparison
+            except (OSError, ValueError):
+                continue
+    else:
+        candidates.extend(peers)
+    eligible = []
     for candidate in candidates:
         try:
             value = json.loads(candidate.read_text())
@@ -762,13 +780,15 @@ def baseline_context(root, registry, policy=None):
                 if ancestor.returncode: continue
                 comparison = value['source']
                 value['match'] = 'ancestor'
-            if baseline is not None and not baseline_replacement(value, baseline)[0]:
-                continue
-            baseline = value
-            diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
-            changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
+            eligible.append((value, comparison))
         except (FileNotFoundError, ValueError, KeyError):
             continue
+    baseline = preferred_baseline([value for value, _ in eligible])
+    if baseline is not None:
+        comparison = next(comparison for value, comparison in eligible if value is baseline)
+        diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
+        changed = [name for name in diff.stdout.splitlines() if name in ('Cargo.lock', 'Cargo.toml') or name.endswith('/Cargo.toml') or name.startswith(('packages/', 'vendor/'))]
+        baseline['selection_peers'] = [dict(value) for value, _ in eligible]
     return path, baseline, changed
 
 
@@ -807,34 +827,46 @@ def baseline_replacement(candidate, previous):
     return True, 'no-higher-whole-gate-stall'
 
 
+def peer_domain(value):
+    """Only the same recorded case and step domain admits cost dominance."""
+    return {name:(row.get('selected_cases'), row.get('case_steps'), row.get('steps'), row.get('non_comparable_steps', []))
+            for name, row in value.get('tiers', {}).items()}
+
+
+def peer_cost(value):
+    row = value.get('whole', {})
+    keys = ('wall', 'comparable_cpu_s')
+    if any(type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0 for key in keys):
+        return None
+    return tuple(row[key] for key in keys)
+
+
+def dominates(a, b):
+    x, y = peer_cost(a), peer_cost(b)
+    return (bool(peer_domain(a)) and peer_domain(a) == peer_domain(b) and x is not None and y is not None
+            and all(left <= right for left, right in zip(x,y)) and any(left < right for left, right in zip(x,y)))
+
+
 def warm_peer_replacement(candidate, previous):
-    """Pressure orders like work only when it does not contradict wall and CPU."""
-    def cases(value):
-        return {name:(row.get('selected_cases'), row.get('case_steps'), row.get('steps'), row.get('non_comparable_steps', []))
-                for name, row in value.get('tiers', {}).items()}
-    if not cases(candidate) or cases(candidate) != cases(previous):
+    """The pair uses the same frontier selection as a larger available set."""
+    if not peer_domain(candidate) or peer_domain(candidate) != peer_domain(previous) or peer_cost(candidate) is None or peer_cost(previous) is None:
         return None
-    a, b = candidate.get('whole', {}), previous.get('whole', {})
-    if any(type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
-           for row in (a,b) for key in ('wall', 'comparable_cpu_s')):
-        return None
-    quieter = baseline_stall(candidate) < baseline_stall(previous)
-    noisier = baseline_stall(candidate) > baseline_stall(previous)
-    if quieter and a['wall'] > b['wall']:
-        return False, ('stall-cost-disagreement-retained-faster' if a['comparable_cpu_s'] > b['comparable_cpu_s']
-                       else 'stall-wall-disagreement-unresolved')
-    if noisier and a['wall'] < b['wall']:
-        return (True, 'stall-cost-disagreement-candidate-faster') if a['comparable_cpu_s'] < b['comparable_cpu_s'] else (False, 'stall-wall-disagreement-unresolved')
-    return None
+    selected = preferred_baseline([previous, candidate])
+    reason = ('warm-peer-dominance' if dominates(candidate,previous) or dominates(previous,candidate)
+              else 'warm-peer-frontier-stall')
+    return selected is candidate, reason
 
 
 def preferred_baseline(candidates):
-    """Apply the same measured peer decision to lineage and retained files."""
-    best = None
-    for candidate in candidates:
-        if baseline_replacement(candidate, best)[0]:
-            best = candidate
-    return best
+    """Cache rank, same-domain cost frontier, then stall and stable tie breaks."""
+    if not candidates:
+        return None
+    rank = min(baseline_rank(value)[:2] for value in candidates)
+    peers = [value for value in candidates if baseline_rank(value)[:2] == rank]
+    if not rank[0]:
+        peers = [value for value in peers if not any(dominates(other, value) for other in peers)]
+    return min(peers, key=lambda value:(baseline_stall(value), peer_cost(value) or (float('inf'),float('inf')),
+                                      value.get('source',''), value.get('tree',''), json.dumps(value,sort_keys=True)))
 
 
 def quiet_baseline(candidate, policy=None):
@@ -868,7 +900,7 @@ def retain_baseline(root):
         print(f'GATE-STATUS-CHANGES count={len(changes)}')
     path.parent.mkdir(parents=True, exist_ok=True)
     retain_step_context(path.parent, candidate)
-    prior = []
+    prior = [value for value in candidate.pop('previous_peers', []) if quiet_baseline(value)]
     for prior_path in (path, path.parent/(str(candidate.get('previous_baseline_tree'))+'.json')):
         try:
             value = json.loads(prior_path.read_text())
@@ -876,10 +908,32 @@ def retain_baseline(root):
                 prior.append(value)
         except (FileNotFoundError, ValueError):
             pass
+    for peer in (path.parent/'peers').glob('*.json'):
+        try:
+            value = json.loads(peer.read_text())
+            if candidate.get('tree') is not None and value.get('tree') == candidate['tree'] and quiet_baseline(value):
+                prior.append(value)
+        except (OSError, ValueError):
+            continue
     previous_best = preferred_baseline(prior)
+    candidate['provisional'] = False
     accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
+    if quiet_baseline(candidate) and prior:
+        selected = preferred_baseline([*prior, candidate])
+        accepted = selected is candidate
+        if not accepted:
+            previous_best = selected
+        if candidate.get('cache', {}).get('state') == 'warm' and all(value.get('cache', {}).get('state') == 'warm' and not value.get('provisional', True) for value in prior):
+            reason = 'warm-peer-set-selected' if accepted else 'warm-peer-set-retained'
     candidate_cache = candidate.get('cache', {}).get('state', 'unknown')
     retained_cache = previous_best.get('cache', {}).get('state', 'unknown') if previous_best else 'unavailable'
+    if quiet_baseline(candidate) and candidate.get('tree'):
+        archive = path.parent/'peers'
+        archive.mkdir(exist_ok=True)
+        record = dict(candidate, provisional=previous_best is None, quiet=True)
+        temporary = archive/(uuid.uuid4().hex+'.tmp')
+        temporary.write_text(json.dumps(record, sort_keys=True)+'\n')
+        temporary.replace(temporary.with_suffix('.json'))
     if not accepted:
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')
@@ -1161,6 +1215,7 @@ def tier_summary(root, registry, worker_statuses):
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,
+        previous_peers=baseline.get('selection_peers', []) if baseline else [],
         previous_whole=baseline.get('whole') if baseline else None,
         previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 

@@ -777,18 +777,40 @@ wait
         for value, wall, cpu in ((slow,218.0,1177.5),(fast,204.7,1093.8)):
             value['whole'].update(wall=wall, comparable_cpu_s=cpu)
             value['tiers'] = {'fast':dict(selected_cases=['same-case'], non_comparable_steps=[])}
-        self.assertEqual(baseline_replacement(fast, slow), (True, 'stall-cost-disagreement-candidate-faster'),
+        self.assertEqual(baseline_replacement(fast, slow), (True, 'warm-peer-dominance'),
                          'faster and cheaper warm evidence must replace quieter slower evidence')
-        self.assertEqual(baseline_replacement(slow, fast), (False, 'stall-cost-disagreement-retained-faster'),
+        self.assertEqual(baseline_replacement(slow, fast), (False, 'warm-peer-dominance'),
                          'quieter slower and costlier evidence must not replace faster warm evidence')
         from build_graph import preferred_baseline
         for values in ([slow,fast],[fast,slow]):
             self.assertIs(preferred_baseline(values), fast)
         quiet_fast = copy.deepcopy(slow);quiet_fast['whole']['wall'] = 200
-        self.assertEqual(baseline_replacement(quiet_fast,fast), (True,'no-higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(quiet_fast,fast), (True,'warm-peer-frontier-stall'))
         unresolved = copy.deepcopy(slow);unresolved['whole']['comparable_cpu_s'] = 1000
-        self.assertEqual(baseline_replacement(unresolved,fast), (False,'stall-wall-disagreement-unresolved'))
-        self.assertEqual(baseline_replacement(fast,unresolved), (False,'stall-wall-disagreement-unresolved'))
+        self.assertEqual(baseline_replacement(unresolved,fast), (True,'warm-peer-frontier-stall'))
+        self.assertEqual(baseline_replacement(fast,unresolved), (False,'warm-peer-frontier-stall'))
+        tied = copy.deepcopy(slow); tied['whole']['stall'] = fast['whole']['stall']
+        self.assertEqual(baseline_replacement(tied,fast), (False,'warm-peer-dominance'), 'equal stall cannot prefer slower and costlier evidence')
+        import itertools
+        peers=[]
+        for source, stall, wall, cpu in [('A',.10,210,1000),('B',.05,205,1100),('C',.20,200,1050)]:
+            value=copy.deepcopy(fast);value['source']=source
+            value['whole'].update(stall=stall,wall=wall,comparable_cpu_s=cpu)
+            peers.append(value)
+        for permutation in itertools.permutations(peers):
+            self.assertIs(preferred_baseline(permutation), peers[0], 'the full cost frontier must precede stall, independently of enumeration')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'.lane').mkdir()
+            incumbent = dict(peers[0],tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
+            path = root/'same.json';path.write_text(json.dumps(incumbent))
+            original = path.read_bytes()
+            with patch('build_graph.evidence_statuses',return_value={}):
+                for value in (peers[2],peers[1]):
+                    candidate = dict(value,path=str(path),tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                    retain_baseline(root)
+                    self.assertEqual(path.read_bytes(),original,'a nonselected frontier member must still constrain the next candidate')
+            self.assertEqual(len(list((root/'peers').glob('*.json'))),2)
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
         self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
@@ -926,6 +948,12 @@ wait
                 self.assertTrue(path.exists())
                 self.assertEqual(baseline_context(root, registry)[1]['source'], original)
                 other_path.unlink()
+                with patch.dict(os.environ, PN_IMPORT_BASE=other):
+                    self.assertIsNotNone(baseline_context(root, registry)[1], 'eligible archived evidence survives removal of the selected file')
+                # The remaining controls isolate the legacy predecessor route;
+                # archives have independently passed ancestry selection above.
+                for archived in (path.parent/'peers').glob('*.json'):
+                    archived.unlink()
                 with patch.dict(os.environ, PN_IMPORT_BASE=other):
                     self.assertIsNone(baseline_context(root, registry)[1], 'a mismatched tree must refuse the comparison')
                 # A rejected loaded import points only to a quiet ancestor tree.
