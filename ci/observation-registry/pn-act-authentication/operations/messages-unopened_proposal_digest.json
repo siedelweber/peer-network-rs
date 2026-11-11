@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/messages.rs",
+    "item": "messages::unopened_proposal_digest",
+    "signature": "fn unopened_proposal_digest (proposal : & ProposalCommitment) -> Result < UnestablishedProposalDigest , EncodingError >",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:messages",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/messages.rs::messages::unopened_proposal_digest",
+    "class_decision": "authentication-public",
+    "body": "{ if proposal . recipe != pn_act_profile :: PROPOSAL_RECIPE { return Err (EncodingError :: Recipe) ; } Ok (UnestablishedProposalDigest (proposal . bytes)) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Public body encodings and computed public commitments record all arguments and results. Secret openings remain owned carriers; only the existing profile recipe publishes its final residue. Unopened digests establish no proposal relation."
+  }
+}

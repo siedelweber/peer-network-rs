@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "ComputedProposalCommitment::as_recorded",
+    "owner": "ACTPROFILE",
+    "signature": "fn as_recorded (& self) -> & ProposalCommitment",
+    "claim": "ACTPROFILE::def:profile:recipes",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::ComputedProposalCommitment::as_recorded",
+    "body": "{ & self . 0 }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Public body encodings and computed public commitments record all arguments and results. Secret openings remain owned carriers; only the existing profile recipe publishes its final residue. Unopened digests establish no proposal relation.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

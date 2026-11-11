@@ -1,9 +1,5 @@
 """Reproduce the wallet's admitted pins for the authentication edge; no duplicate pins."""
-import json
-from pathlib import Path
 import re
-import subprocess
-import tomllib
 import wallet_crypto
 import wallet_boundary
 
@@ -29,6 +25,15 @@ def check_sources(sources):
             continue
         if re.search(r'\b(?:use|extern|unsafe|macro_rules)\b|\bas\b', code):
             raise ValueError('authentication backend alias or escape')
+        if re.search(r'>\s*::', code):
+            raise ValueError('authentication qualified type call')
+        calls = {re.sub(r'\s+', '', call) for call in
+                 re.findall(r'\b(?:[A-Za-z_]\w*\s*::\s*)+[A-Za-z_]\w*\s*(?=\()', code)}
+        # Attribute instrumentation and test-only stage witnesses are not binding calls.
+        if calls - ITEMS - {'super::tests::visit', 'tracing::instrument'}:
+            raise ValueError('authentication unlisted qualified call')
+        if re.search(r'::\s*<', code):
+            raise ValueError('authentication turbofish call')
         paths = set(re.findall(r'\bsecp256k1_zkp::[A-Za-z0-9_:]+', code))
         if paths != ITEMS:
             raise ValueError('authentication admitted binding items differ')
@@ -46,26 +51,6 @@ def check_sources(sources):
         raise ValueError('authentication backend missing')
 
 
-def check(root=Path('.')):
-    root = root.resolve()
-    check_sources({p.relative_to(root).as_posix(): p.read_text()
-                   for p in (root/'packages/act-authentication/src').rglob('*.rs')})
-    wallet_boundary.check_features(root)
-    channel, commit = wallet_crypto.reviewed_compiler(root)
-    wallet_crypto.check_channel(tomllib.loads((root/'rust-toolchain.toml').read_text())['toolchain']['channel'], channel)
-    answer = lambda flag: subprocess.check_output(['rustc', flag], cwd=root, text=True).strip()
-    wallet_crypto.check_answering(answer('-vV'), commit)
-    version = answer('-V')
-    tree = subprocess.check_output(['cargo', 'tree', '--offline', '--locked', '-p', 'pn-act-authentication',
-                                   '--edges', 'normal,build', '--prefix', 'none', '--format', '{p}', '--no-dedupe'], cwd=root, text=True)
-    packages = set(re.findall(r'^([^\s]+) v([^\s]+)', tree, re.M))
-    rows = [dict(row, name=row['name'].split()[0]) for name in ('wallet', 'host')
-            for row in tomllib.loads((root/f'docs/inputs/{name}-dependencies.toml').read_text())['rows']]
-    wallet_crypto.check_checksums(tomllib.loads((root/'Cargo.lock').read_text()), rows, packages, root)
-    check_artifacts(root, version, commit)
-    return dict(packages=len(packages), binding_items=sorted(ITEMS), method='verify_schnorr', compiler=version)
-
-
 def check_artifacts(root, version, commit):
     """Bind this package's actual sys artifacts to the existing wallet records."""
     artifacts = wallet_crypto.build_artifacts(root, 'pn-act-authentication')
@@ -76,7 +61,3 @@ def check_artifacts(root, version, commit):
         wallet_crypto.check_provenance(name, (entry['manifest']/'depend/secp256k1-HEAD-revision.txt').read_text())
         wallet_crypto.check_modules(name, wallet_crypto.archive_symbols((entry['out_dir']/spec['library']).read_bytes()))
         wallet_crypto.check_compiler(name, entry['rlib'].read_bytes(), version, commit)
-
-
-if __name__ == '__main__':
-    print(json.dumps(check(), sort_keys=True))

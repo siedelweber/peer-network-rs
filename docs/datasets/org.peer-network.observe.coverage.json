@@ -224,9 +224,9 @@
     },
     {
       "exceptions": 0,
-      "generators": 16,
+      "generators": 15,
       "helpers": 0,
-      "instrumented": 26,
+      "instrumented": 25,
       "name": "pn-act-authentication",
       "number_forms": {
         "exceptions": {
@@ -238,10 +238,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "16",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         },
@@ -254,18 +254,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "26",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "26",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         }
@@ -292,13 +292,13 @@
           "exact_digits": 32
         }
       },
-      "operations": 26
+      "operations": 25
     },
     {
       "exceptions": 3,
-      "generators": 6,
+      "generators": 7,
       "helpers": 0,
-      "instrumented": 8,
+      "instrumented": 12,
       "name": "pn-act-profile",
       "number_forms": {
         "exceptions": {
@@ -310,10 +310,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "6",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -326,18 +326,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "8",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "11",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         }
@@ -364,7 +364,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 11
+      "operations": 15
     },
     {
       "exceptions": 24,

@@ -4,7 +4,7 @@
     "package": "pn-act-authentication",
     "path": "packages/act-authentication/src/messages.rs",
     "item": "messages::seal_message",
-    "signature": "fn seal_message (run : & [u8 ; 32] , host_identity : & str , header : & VerifiedHeader) -> SealMessage",
+    "signature": "fn seal_message (run : & [u8 ; 32] , host_identity : & str , header : & VerifiedHeader) -> Result < SealMessage , EncodingError >",
     "owner": "ACTAUTH",
     "claim": "ACTAUTH::def:authentication:messages",
     "shape": "shape-wallet",
@@ -13,7 +13,7 @@
   "review": {
     "operation": "pn-act-authentication::packages/act-authentication/src/messages.rs::messages::seal_message",
     "class_decision": "authentication-public",
-    "body": "{ SealMessage (framed (\"pn-act-authentication/host-seal/v1\" , \"PN-verified-act-v1\" , vec ! [bytes (run) , text (host_identity) , bytes (header . bytes ())] ,)) }",
+    "body": "{ if ! crate :: encoding :: host (host_identity) { return Err (EncodingError :: Shape) ; } Ok (SealMessage (framed (\"pn-act-authentication/host-seal/v1\" , \"PN-verified-act-v1\" , vec ! [bytes (run) , text (host_identity) , bytes (header . bytes ())] ,))) }",
     "assessments": {
       "full_recording": "authentication-public",
       "secret_flow": "authentication-public",

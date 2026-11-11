@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/projection.rs",
+    "item": "projection::body_from_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_from_projection (value : & Value) -> Result < ProposalBody , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:body",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/projection.rs::projection::body_from_projection",
+    "body": "{ if value . canonical_len () > 1_048_576 { return Err (ProfileError :: Bound) ; } let [identity , layout , legs , quantities , license , parents , protocols , settlement , content , dependency ,] = items (value) ? else { return Err (ProfileError :: Representation) ; } ; let identity = id (identity) ? ; let layout = match string (layout) ? { \"binary\" => Layout :: Binary , \"paired\" => Layout :: Paired , _ => return Err (ProfileError :: Representation) , } ; if items (legs) ? . len () > 2 || items (quantities) ? . len () > 6 || items (parents) ? . len () > 1024 || ! items (protocols) ? . is_empty () { return Err (ProfileError :: Bound) ; } let legs = items (legs) ? . iter () . map (| v | { let [role , source , target] = items (v) ? else { return Err (ProfileError :: Representation) ; } ; Ok (CandidateLeg { id : EdgeId { act : identity . clone () , role : rrole (role) ? , } , source : rref (source) ? , target : rref (target) ? , removal : None , }) }) . collect :: < Result < Vec < _ > , _ > > () ? ; let quantities = items (quantities) ? . iter () . map (| v | { let [name , value , unit , vintage] = items (v) ? else { return Err (ProfileError :: Representation) ; } ; Ok ((string (name) ? . into () , Quantity { value : signed (value) ? , unit : string (unit) ? . into () , vintage : unsigned (vintage) ? , } ,)) }) . collect :: < Result < Vec < _ > , _ > > () ? ; let (license , settlement) = qualifiers (license , settlement) ? ; let result = ProposalBody { id : identity , body : StructuralBody { layout , quantities , license , settlement , asserted_parents : items (parents) ? . iter () . map (id) . collect :: < Result < _ , _ > > () ? , } , legs , protocol_references : Vec :: new () , content : match string (content) ? { \"full-empty\" => ContentRequest :: FullEmpty , \"full\" => ContentRequest :: Full , \"reduced\" => ContentRequest :: Reduced , _ => return Err (ProfileError :: Representation) , } , dependency : match string (dependency) ? { \"full-empty\" => DependencyRequest :: FullEmpty , \"full\" => DependencyRequest :: Full , \"tombstoned\" => DependencyRequest :: Tombstoned , _ => return Err (ProfileError :: Representation) , } , } ; if body_projection (& result) ? != * value { return Err (ProfileError :: Representation) ; } Ok (result) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Public body encodings and computed public commitments record all arguments and results. Secret openings remain owned carriers; only the existing profile recipe publishes its final residue. Unopened digests establish no proposal relation.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

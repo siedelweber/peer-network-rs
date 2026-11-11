@@ -1,6 +1,5 @@
 use pn_act_authentication::*;
 use pn_interchange::{Array, Map, Value};
-use pn_records::burn::{AcceptedSet, Marker};
 use std::collections::BTreeSet;
 
 fn hex(text: &str) -> Vec<u8> {
@@ -17,20 +16,27 @@ fn corpus() -> serde_json::Value {
 fn field(row: &serde_json::Value, name: &str) -> Vec<u8> {
     hex(row[name].as_str().unwrap())
 }
-fn super_marker() -> Marker {
-    Marker {
-        name: "m".into(),
-        history: "h".into(),
-        policy_identity: "policy".into(),
-        policy_edition: "1".into(),
-        sequence: "sequence".into(),
-        index: 1,
-        history_position: 10,
-        predecessor: Some(0),
-        lineage: BTreeSet::new(),
-        accepted: AcceptedSet::CompleteList(BTreeSet::new()),
-        initial_snapshot: None,
-    }
+fn computed(row: &serde_json::Value, body: &pn_act_profile::ProposalBody) -> pn_act_profile::ComputedProposalCommitment {
+    let dependencies = row["dependencies"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|id| pn_records::ActId {
+            author: id[1].as_str().unwrap().into(),
+            sequence: id[2].as_u64().unwrap(),
+            family: id[3].as_str().unwrap().into(),
+        })
+        .collect();
+    pn_act_profile::computed_proposal_commitment(
+        body,
+        &field(row, "nonce").into(),
+        &field(row, "payload").into(),
+        &Box::new(pn_act_profile::DependencyIds(dependencies)).into(),
+    )
+    .unwrap()
+}
+fn role_type<T: 'static>(_: &T) -> std::any::TypeId {
+    std::any::TypeId::of::<T>()
 }
 fn change_header(input: &[u8], key: u64, value: &Value) -> Vec<u8> {
     let Value::Map(m) = Value::from_canonical_bytes(input).unwrap() else {
@@ -54,6 +60,7 @@ fn change_header(input: &[u8], key: u64, value: &Value) -> Vec<u8> {
 
 /// Independent canonical bytes round trip through typed parts without repair.
 /// Five distinct fixtures reach the operations in deliberately unsorted order.
+/// Their decoded bodies and retained openings recompute P through the profile encoder.
 /// ´claim:authentication:canonical-header-material´
 /// ´test:integration:canonical-header-material´
 #[test]
@@ -64,6 +71,30 @@ fn canonical_header_material() {
         let header = decode_header(&bytes).unwrap();
         assert_eq!(encode_header(header.parts()).unwrap(), header);
         assert_eq!(header.bytes(), bytes);
+        let dependencies = row["dependencies"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|id| pn_records::ActId {
+                author: id[1].as_str().unwrap().into(),
+                sequence: id[2].as_u64().unwrap(),
+                family: id[3].as_str().unwrap().into(),
+            })
+            .collect();
+        let proposal = pn_act_profile::proposal_commitment(
+            &header.parts().body,
+            &field(row, "nonce").into(),
+            &field(row, "payload").into(),
+            &Box::new(pn_act_profile::DependencyIds(dependencies)).into(),
+        )
+        .unwrap();
+        assert_eq!(
+            proposal,
+            header.parts().commitments.proposal,
+            "profile commitment binds golden body"
+        );
+        let projected = pn_act_profile::body_projection(&header.parts().body).unwrap();
+        assert_eq!(pn_act_profile::body_from_projection(&projected).unwrap(), header.parts().body);
         let material_bytes = field(row, "material");
         let material = decode_material(&material_bytes, AUTHENTICATION_EDITION).unwrap();
         assert_eq!(encode_material(&material).unwrap(), material_bytes);
@@ -131,8 +162,9 @@ fn canonical_header_material() {
     }
 }
 
-/// All four recipe outputs agree with independent framing and SHA-256, including
-/// publication marker values rather than storage projections or encoded strings.
+/// Three recipe outputs agree with independent framing and SHA-256; only a
+/// profile-computed commitment produces a proposal role. An unopened seal digest
+/// remains a different type and establishes no proposal relation.
 /// ´claim:authentication:role-messages-match-golden-values´
 /// ´test:integration:role-messages´
 #[test]
@@ -143,84 +175,55 @@ fn role_messages() {
         let header = decode_header(&field(row, "header")).unwrap();
         let run: [u8; 32] = field(row, "run").try_into().unwrap();
         let host = row["host"].as_str().unwrap();
-        let author = row["author"].as_str().unwrap();
         let seal: [u8; 64] = field(row, "seal").try_into().unwrap();
-        let transaction: [u8; 32] = field(row, "transaction").try_into().unwrap();
-        let marker = marker_value(&field(row, "marker"), &super_marker()).unwrap();
+        assert_eq!(seal_message(&run, "wrong-host", &header), Err(EncodingError::Shape));
+        assert_eq!(
+            approval_message(&run, "wrong-host", &header, &seal),
+            Err(EncodingError::Shape)
+        );
+        let computed_message = proposal_message(&computed(row, &header.parts().body));
         let actual = [
-            *proposal_message(&header.parts().commitments.proposal).unwrap().bytes(),
-            *seal_message(&run, host, &header).bytes(),
-            *approval_message(&run, host, &header, &seal).bytes(),
-            *retirement_message(&run, author, &marker, 1, &transaction).bytes(),
+            *computed_message.bytes(),
+            *seal_message(&run, host, &header).unwrap().bytes(),
+            *approval_message(&run, host, &header, &seal).unwrap().bytes(),
         ];
         for (message, expected) in actual.iter().zip(row["messages"].as_array().unwrap()) {
             assert_eq!(message.as_slice(), hex(expected.as_str().unwrap()));
             assert!(seen.insert(*message));
         }
-        let host2 = host.replace("0a", "0b");
-        assert_ne!(seal_message(&run, host, &header), seal_message(&run, &host2, &header));
+        let supplied_seal = pn_records::commitments::ProposalCommitment {
+            recipe: pn_act_profile::PROPOSAL_RECIPE.into(),
+            bytes: *seal_message(&run, host, &header).unwrap().bytes(),
+        };
+        let unopened = unopened_proposal_digest(&supplied_seal).unwrap();
+        assert_eq!(unopened.bytes(), &supplied_seal.bytes);
         assert_ne!(
-            approval_message(&run, host, &header, &seal),
-            approval_message(&run, &host2, &header, &seal)
+            role_type(&unopened),
+            role_type(&computed_message),
+            "unopened seal digest is not a proposal message"
         );
+        let host2 = host.replace("0a", "0b");
         let mut parts2 = header.parts().clone();
         parts2.actor_signature[0] ^= 1;
         let header2 = encode_header(&parts2).unwrap();
-        assert_ne!(seal_message(&run, host, &header), seal_message(&run, host, &header2));
-        assert_ne!(
-            approval_message(&run, host, &header, &seal),
-            approval_message(&run, host, &header2, &seal)
-        );
-        let mut proposal2 = parts2.commitments.proposal.clone();
-        proposal2.bytes[0] ^= 1;
-        assert_ne!(proposal_message(&parts2.commitments.proposal), proposal_message(&proposal2));
-        let mut marker2 = super_marker();
-        marker2.name.push('x');
-        let mut marker_bytes = field(row, "marker");
-        let Value::Array(a) = Value::from_canonical_bytes(&marker_bytes).unwrap() else {
-            panic!("marker")
-        };
-        let mut values = a.into_vec();
-        values[0] = Value::Text("mx".to_owned().into());
-        marker_bytes = Value::Array(Array::new(values)).to_canonical_bytes();
-        let marker2 = marker_value(&marker_bytes, &marker2).unwrap();
-        assert_ne!(
-            retirement_message(&run, author, &marker, 1, &transaction),
-            retirement_message(&run, author, &marker2, 1, &transaction)
-        );
         let mut run2 = run;
         run2[0] ^= 1;
-        assert_ne!(
-            retirement_message(&run, author, &marker, 1, &transaction),
-            retirement_message(&run2, author, &marker, 1, &transaction)
-        );
-        assert_ne!(seal_message(&run, host, &header), seal_message(&run2, host, &header));
-        assert_ne!(
-            approval_message(&run, host, &header, &seal),
-            approval_message(&run2, host, &header, &seal)
-        );
+        for (r, h, v) in [
+            (&run2, host, &header),
+            (&run, host2.as_str(), &header),
+            (&run, host, &header2),
+        ] {
+            assert_ne!(seal_message(&run, host, &header), seal_message(r, h, v));
+            assert_ne!(approval_message(&run, host, &header, &seal), approval_message(r, h, v, &seal));
+        }
         let mut seal2 = seal;
         seal2[0] ^= 1;
         assert_ne!(
             approval_message(&run, host, &header, &seal),
             approval_message(&run, host, &header, &seal2)
         );
-        assert_ne!(
-            retirement_message(&run, author, &marker, 1, &transaction),
-            retirement_message(&run, &format!("{author}0"), &marker, 1, &transaction)
-        );
-        assert_ne!(
-            retirement_message(&run, author, &marker, 1, &transaction),
-            retirement_message(&run, author, &marker, 2, &transaction)
-        );
-        let mut tx2 = transaction;
-        tx2[0] ^= 1;
-        assert_ne!(
-            retirement_message(&run, author, &marker, 1, &transaction),
-            retirement_message(&run, author, &marker, 1, &tx2)
-        );
     }
-    assert_eq!(seen.len(), 20);
+    assert_eq!(seen.len(), 15);
 }
 
 /// Every independently compared field has a distinct refusal; no residue is
@@ -288,7 +291,7 @@ fn header_comparison() {
         assert_eq!(compare_header(&header, &changed, &disclosure), Err(expected));
     }
     for (field, expected) in [
-        (4, EncodingError::Canonical),
+        (4, EncodingError::HeaderBytes),
         (0, EncodingError::Proposal),
         (6, EncodingError::Shape),
         (2, EncodingError::ContentEdition),

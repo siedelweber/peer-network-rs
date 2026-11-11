@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "item": "body_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_projection (input : & ProposalBody) -> Result < Value , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:body",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/lib.rs::body_projection",
+    "body": "{ let ProposalBody { id , body , legs , protocol_references , content , dependency , } = input ; let StructuralBody { settlement , license , asserted_parents , layout , quantities , } = body ; if ! valid_id (id) || ! protocol_references . is_empty () { return Err (ProfileError :: Representation) ; } let (shape , coordinates) = schema (& id . family) . ok_or (ProfileError :: Representation) ? ; if * layout != shape || asserted_parents . len () > 1024 || quantities . len () > 6 { return Err (ProfileError :: Bound) ; } if asserted_parents . iter () . any (| parent | ! valid_id (parent) || parent == id) || asserted_parents . windows (2) . any (| p | p [0] >= p [1]) { return Err (ProfileError :: Representation) ; } let roles : & [Role] = match layout { Layout :: Binary => & [Role :: Binary] , Layout :: Paired => & [Role :: A , Role :: T] , } ; if legs . len () != roles . len () || legs . iter () . zip (roles) . any (| (leg , role) | leg . id . act != * id || leg . id . role != * role || leg . removal . is_some ()) { return Err (ProfileError :: Representation) ; } if legs [0] . source != (PublicReference :: Named { namespace : \"addr\" . into () , name : id . author . clone () , }) || (* layout == Layout :: Paired && legs [0] . target != legs [1] . source) { return Err (ProfileError :: Representation) ; } let values = quantities_projection (quantities , coordinates) ? ; let license = license_projection (id , legs , license . as_ref ()) ? ; let settlement = match (id . family . as_str () , settlement) { (\"Accept\" , Some (pn_records :: SettlementReferences :: Accept { settles })) if valid_id (settles) => { array ([text (\"Accept\") , identifier (settles)]) } (\"Ratify\" , Some (pn_records :: SettlementReferences :: Ratify { settles , accepts })) if valid_id (settles) && valid_id (accepts) => { array ([text (\"Ratify\") , identifier (settles) , identifier (accepts)]) } (\"Accept\" | \"Ratify\" , _) => return Err (ProfileError :: Representation) , (_ , None) => Value :: Null , _ => return Err (ProfileError :: Representation) , } ; let legs = legs . iter () . map (| leg | { Ok (array ([text (role (leg . id . role)) , reference (& leg . source) ? , reference (& leg . target) ? ,])) }) . collect :: < Result < Vec < _ > , ProfileError > > () ? ; let value = array ([identifier (id) , text (match layout { Layout :: Binary => \"binary\" , Layout :: Paired => \"paired\" , }) , array (legs) , values , license , array (asserted_parents . iter () . map (identifier)) , array ([]) , settlement , text (match content { ContentRequest :: FullEmpty => \"full-empty\" , ContentRequest :: Full => \"full\" , ContentRequest :: Reduced => \"reduced\" , }) , text (match dependency { DependencyRequest :: FullEmpty => \"full-empty\" , DependencyRequest :: Full => \"full\" , DependencyRequest :: Tombstoned => \"tombstoned\" , }) ,]) ; if value . canonical_len () > 1_048_576 { return Err (ProfileError :: Bound) ; } Ok (value) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Public body encodings and computed public commitments record all arguments and results. Secret openings remain owned carriers; only the existing profile recipe publishes its final residue. Unopened digests establish no proposal relation.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

@@ -4,7 +4,7 @@
     "package": "pn-act-authentication",
     "path": "packages/act-authentication/src/messages.rs",
     "item": "messages::proposal_message",
-    "signature": "fn proposal_message (proposal : & ProposalCommitment) -> Result < ProposalMessage , EncodingError >",
+    "signature": "fn proposal_message (proposal : & pn_act_profile :: ComputedProposalCommitment) -> ProposalMessage",
     "owner": "ACTAUTH",
     "claim": "ACTAUTH::def:authentication:messages",
     "shape": "shape-wallet",
@@ -13,7 +13,7 @@
   "review": {
     "operation": "pn-act-authentication::packages/act-authentication/src/messages.rs::messages::proposal_message",
     "class_decision": "authentication-public",
-    "body": "{ if proposal . recipe != pn_act_profile :: PROPOSAL_RECIPE { return Err (EncodingError :: Recipe) ; } Ok (ProposalMessage (proposal . bytes)) }",
+    "body": "{ ProposalMessage (proposal . as_recorded () . bytes) }",
     "assessments": {
       "full_recording": "authentication-public",
       "secret_flow": "authentication-public",

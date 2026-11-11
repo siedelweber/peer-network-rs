@@ -31,14 +31,18 @@ class WalletBoundary(unittest.TestCase):
         authentication_crypto.check_sources({authentication_crypto.BACKEND: source})
         for changed in (source.replace('preallocated_verification_only', 'new'),
                         source.replace('verify_schnorr', 'sign_schnorr'),
-                        source + '\nuse secp256k1_zkp as hidden;\n'):
+                        source + '\nuse secp256k1_zkp as hidden;\n',
+                        source + '\nPartialEq::eq(&key.0, &key.0);\n',
+                        source + '\nstd::cmp::PartialEq::eq(&key.0, &key.0);\n',
+                        source + '\n<secp256k1_zkp::XOnlyPublicKey>::serialize(&key.0);\n',
+                        source + '\nkey.escape::<u8>();\n'):
             with self.assertRaises(ValueError):
                 authentication_crypto.check_sources({authentication_crypto.BACKEND: changed})
         with self.assertRaises(ValueError):
             authentication_crypto.check_sources({'packages/act-authentication/src/other.rs': source})
 
     def test_authentication_encoding_values(self):
-        """Claim: Canonical authentication golden values and four role messages match independent Python framing and SHA-256, and an altered message is refused by the comparison.
+        """Claim: Canonical authentication golden values and three role messages match independent Python framing and SHA-256, and an altered message is refused by the comparison.
         ´claim:discipline:authentication-encoding-values-independent´
         ´test:integration:test-authentication-encoding-values´
         """

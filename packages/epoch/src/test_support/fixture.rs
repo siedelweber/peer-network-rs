@@ -1,13 +1,13 @@
 use super::base::{
     BTreeSet, Carrier, Causes, ClosedBoundary, ClosureInput, Declaration, DeclarationContent, DeclarationId, FinalProcedure,
-    Floor, Frame, Limits, NumericPolicy, OpeningKind, Position, Precision, Published, Range, RawVerifier, RegistrationVerifier,
-    ValidatedAct, admission, bind_procedure, burn, closure, compiled, constants_fixture, d, fence_procedure, numeric, package,
-    positions, procedure, publication, run, schedule, schedules, self_acts,
+    Floor, Frame, Limits, NumericPolicy, OpeningKind, Position, Precision, Published, Range, RegistrationVerifier,
+    UnconditionalApprovalRemovalVerifier, ValidatedAct, admission, bind_procedure, burn, closure, compiled, constants_fixture, d,
+    fence_procedure, numeric, package, positions, procedure, publication, run, schedule, schedules, self_acts,
 };
 use pn_graph::numeric::ridge as kernel;
 use pn_records::ridge::ChargeEvidence;
 /// Finite synthetic verifier paired with the epoch-owned disclosure fixture.
-/// It is not a deployment authentication verifier.
+/// It accepts every approval and removal; it is not a deployment authentication verifier.
 /// (´def:admission:test-support´)
 #[derive(Debug)]
 pub struct Check {
@@ -29,10 +29,10 @@ impl burn::PublicVerifier for Check {
 }
 impl RegistrationVerifier for Check {
     fn approval(&self, act: &ValidatedAct) -> bool {
-        RawVerifier.approval(act)
+        UnconditionalApprovalRemovalVerifier.approval(act)
     }
     fn removal(&self, act: &ValidatedAct, kind: OpeningKind, position: Position) -> bool {
-        RawVerifier.removal(act, kind, position)
+        UnconditionalApprovalRemovalVerifier.removal(act, kind, position)
     }
 }
 impl package::CandidateVerifier for Check {
@@ -301,14 +301,14 @@ fn fixture(evidence: &ChargeEvidence) -> (ClosedBoundary, Carrier, Check, crate:
             previous: None,
         },
         &plan,
-        &RawVerifier,
+        &UnconditionalApprovalRemovalVerifier,
         &Published(plan.solve.clone()),
         numeric(),
     )
     .unwrap();
     let state = crate::compiler::compile_admitted(
         &admitted,
-        &RawVerifier,
+        &UnconditionalApprovalRemovalVerifier,
         &mut numeric(),
         Limits::default(),
         plan.maximum_products,
@@ -415,7 +415,7 @@ fn successor(
             previous: Some(closed),
         },
         &frame.procedure,
-        &RawVerifier,
+        &UnconditionalApprovalRemovalVerifier,
         &Published(frame.procedure.solve.clone()),
         numeric(),
     )
@@ -423,7 +423,7 @@ fn successor(
     let admitted = run(&candidate, &frame.procedure, led).unwrap();
     let state = crate::compiler::compile_admitted(
         &admitted,
-        &RawVerifier,
+        &UnconditionalApprovalRemovalVerifier,
         &mut numeric(),
         Limits::default(),
         frame.procedure.maximum_products,

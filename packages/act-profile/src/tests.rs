@@ -564,7 +564,7 @@ fn commitment_trace_privacy() {
             .iter()
             .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
             .unwrap();
-        assert_eq!(started["counter"], 1);
+        assert_eq!(started["counter"], if recipe == "proposal" { 2 } else { 1 });
         decode += decode_started.elapsed();
     }
     capture_timing(

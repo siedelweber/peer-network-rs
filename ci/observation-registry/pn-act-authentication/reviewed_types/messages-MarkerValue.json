@@ -1,9 +1,0 @@
-{
-  "section": "reviewed_types",
-  "value": {
-    "item": "messages::MarkerValue",
-    "package": "pn-act-authentication",
-    "path": "packages/act-authentication/src/messages.rs",
-    "syntax": "# [doc = \" Exact public marker value checked against its decoded carrier. This establishes\"] # [doc = \" representation only, not recognition, settlement or chain inclusion.\"] # [doc = \" (´def:authentication:messages´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MarkerValue (Value) ;"
-  }
-}

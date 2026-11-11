@@ -2,6 +2,9 @@
 //! No matching result authenticates its anchor or generates entropy.
 //! (´def:profile:scope´)
 
+mod projection;
+pub use projection::body_from_projection;
+
 use pn_interchange::{Array, Bytes, SecretValue, Text, Value};
 use pn_records::commitments::{ContentCommitment, DependencyCommitment, ProposalCommitment};
 use pn_records::{ActId, CandidateLeg, Layout, PublicReference, Role, StructuralBody};
@@ -325,7 +328,21 @@ fn license_projection(
     Ok(license)
 }
 
-fn body_projection(input: &ProposalBody) -> Result<Value, ProfileError> {
+/// Encode the public version-one proposal body through its sole admitted projection.
+/// # Errors
+/// Refuses unsupported shapes and the profile's component and byte bounds.
+/// (´def:profile:body´)
+#[tracing::instrument(
+    name = "def:profile:body",
+    fields(
+        execution_owner = "ACTPROFILE",
+        claim_owner = "ACTPROFILE",
+        claim_label = "def:profile:body",
+        source_item = "body_projection"
+    ),
+    ret
+)]
+pub fn body_projection(input: &ProposalBody) -> Result<Value, ProfileError> {
     let ProposalBody {
         id,
         body,
@@ -486,6 +503,55 @@ pub fn proposal_commitment(
         recipe: PROPOSAL_RECIPE.into(),
         bytes: publish(&result)?,
     })
+}
+
+/// Proposal digest produced by this profile from its body and private openings.
+/// The private field admits no supplied digest, and makes no entropy claim.
+/// (´def:profile:recipes´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComputedProposalCommitment(ProposalCommitment);
+impl ComputedProposalCommitment {
+    /// Borrow the public commitment for recording; provenance is not retained by a copy.
+    /// (´def:profile:recipes´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "def:profile:recipes",
+        fields(
+            execution_owner = "ACTPROFILE",
+            claim_owner = "ACTPROFILE",
+            claim_label = "def:profile:recipes",
+            source_item = "ComputedProposalCommitment::as_recorded"
+        ),
+        ret
+    )]
+    pub fn as_recorded(&self) -> &ProposalCommitment {
+        &self.0
+    }
+}
+
+/// Compute P and retain the fact that the profile computed it from these openings.
+/// # Errors
+/// Preserves the proposal recipe's representation and bound refusals.
+/// # Panics
+/// Panics only if an i64 does not fit the wider interchange integer domain.
+/// (´def:profile:recipes´)
+#[tracing::instrument(
+    name = "amend:decomposition:act-profile",
+    fields(
+        execution_owner = "ACTPROFILE",
+        claim_owner = "ROOT",
+        claim_label = "amend:decomposition:act-profile",
+        source_item = "computed_proposal_commitment"
+    ),
+    ret
+)]
+pub fn computed_proposal_commitment(
+    body: &ProposalBody,
+    nonce: &SecretSlice<u8>,
+    payload: &SecretSlice<u8>,
+    list: &SecretBox<DependencyIds>,
+) -> Result<ComputedProposalCommitment, ProfileError> {
+    proposal_commitment(body, nonce, payload, list).map(ComputedProposalCommitment)
 }
 
 /// Compute the content residue from supplied private opening material.

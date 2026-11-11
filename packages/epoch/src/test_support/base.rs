@@ -16,8 +16,8 @@ pub(super) use pn_records::{
 pub(super) use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Debug)]
-pub(super) struct RawVerifier;
-impl RegistrationVerifier for RawVerifier {
+pub(super) struct UnconditionalApprovalRemovalVerifier;
+impl RegistrationVerifier for UnconditionalApprovalRemovalVerifier {
     fn approval(&self, _: &ValidatedAct) -> bool {
         true
     }
@@ -251,7 +251,14 @@ impl package::ClosureVerifier for Causes {
 }
 
 pub(super) fn compiled(context: &package::CandidateContext) -> crate::compiler::CompiledState {
-    crate::compiler::compile_candidate(context, &RawVerifier, &mut numeric(), Limits::default(), 10_000_u64).unwrap()
+    crate::compiler::compile_candidate(
+        context,
+        &UnconditionalApprovalRemovalVerifier,
+        &mut numeric(),
+        Limits::default(),
+        10_000_u64,
+    )
+    .unwrap()
 }
 pub(super) fn procedure(context: &package::CandidateContext) -> FinalProcedure {
     let state = compiled(context);
@@ -308,7 +315,7 @@ pub(super) fn run(
         context,
         led_schedule,
         plan,
-        &RawVerifier,
+        &UnconditionalApprovalRemovalVerifier,
         &Published(plan.solve.clone()),
         numeric(),
     )

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ComputedProposalCommitment",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/lib.rs",
+    "syntax": "# [doc = \" Proposal digest produced by this profile from its body and private openings.\"] # [doc = \" The private field admits no supplied digest, and makes no entropy claim.\"] # [doc = \" (´def:profile:recipes´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ComputedProposalCommitment (ProposalCommitment) ;"
+  }
+}

@@ -60,11 +60,9 @@ def vectors():
         header = canonical({0:'org.peer-network.test.verified-act',1:[1,0,0],2:body,3:[PROPOSAL,proposal],4:signature,5:[CONTENT,content],6:[DEPENDENCY,dependency],7:'1',8:'1'})
         host = 'pn-host-bip340-v1/' + bytes([10]).hex()*32
         material = canonical([EDITION,run,key,host,bytes([10])*32])
-        marker = ['m','h','policy','1','sequence','1','10','0',[],[0,[]],None]
         seal = bytes([15])*64
-        transaction = bytes([16])*32
-        messages = [proposal,frame('pn-act-authentication/host-seal/v1','PN-verified-act-v1',[run,host,header]),frame('pn-act-authentication/actor-approval/v1','PN-act-approval-v1',[run,host,header,seal]),frame('pn-act-authentication/key-retirement/v1','PN-key-retirement-v1',[EDITION,run,author,marker,1,transaction])]
-        rows.append(dict(case=case,header=header.hex(),material=material.hex(),marker=canonical(marker).hex(),messages=[m.hex() for m in messages],run=run.hex(),author=author,host=host,seal=seal.hex(),transaction=transaction.hex()))
+        messages = [proposal,frame('pn-act-authentication/host-seal/v1','PN-verified-act-v1',[run,host,header]),frame('pn-act-authentication/actor-approval/v1','PN-act-approval-v1',[run,host,header,seal])]
+        rows.append(dict(nonce=nonce.hex(),payload=payload.hex(),dependencies=deps,case=case,header=header.hex(),material=material.hex(),messages=[m.hex() for m in messages],run=run.hex(),author=author,host=host,seal=seal.hex()))
     return dict(source='Python standard-library hashlib and independent canonical CBOR; primitive encoding reused from ci/storage_vectors.py; supplied nonce, salts and signatures are deterministic fixture bytes, not authentication evidence', rows=rows)
 
 def check(value=None):

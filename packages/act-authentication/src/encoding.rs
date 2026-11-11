@@ -14,6 +14,8 @@ const BYTE_LIMIT: usize = 2_097_152;
 pub enum EncodingError {
     #[error("noncanonical encoding")]
     Canonical,
+    #[error("verified header bytes differ")]
+    HeaderBytes,
     #[error("representation bound exceeded")]
     Bound,
     #[error("unsupported authentication edition")]
@@ -146,7 +148,7 @@ fn header_value(parts: &HeaderParts) -> Result<Value, EncodingError> {
     if proposal.recipe != PROPOSAL_RECIPE || content.recipe != CONTENT_RECIPE || dependency.recipe != DEPENDENCY_RECIPE {
         return Err(EncodingError::Recipe);
     }
-    let body = crate::body::body_projection(&parts.body).map_err(|_| EncodingError::Body)?;
+    let body = pn_act_profile::body_projection(&parts.body).map_err(|_| EncodingError::Body)?;
     let fields = [
         text(HEADER_NAMESPACE),
         array([Value::Unsigned(1), Value::Unsigned(0), Value::Unsigned(0)]),
@@ -226,7 +228,7 @@ pub fn decode_header(input: &[u8]) -> Result<VerifiedHeader, EncodingError> {
         return Err(EncodingError::Edition);
     }
     let parts = HeaderParts {
-        body: crate::body::decode(f(2)).map_err(|_| EncodingError::Body)?,
+        body: pn_act_profile::body_from_projection(f(2)).map_err(|_| EncodingError::Body)?,
         commitments: ActCommitments {
             proposal: ProposalCommitment {
                 recipe: PROPOSAL_RECIPE.into(),
@@ -262,7 +264,7 @@ pub struct AuthenticationMaterial {
     pub host_identity: String,
     pub host_key: [u8; 32],
 }
-fn host(identity: &str) -> bool {
+pub(crate) fn host(identity: &str) -> bool {
     identity
         .strip_prefix("pn-host-bip340-v1/")
         .is_some_and(|s| s.len() == 64 && s.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
@@ -381,7 +383,7 @@ pub fn compare_header(
         return Err(EncodingError::DependencyEdition);
     }
     if header.bytes != disclosure.verified_header {
-        return Err(EncodingError::Canonical);
+        return Err(EncodingError::HeaderBytes);
     }
     decode_material(&disclosure.public_verification_material, &disclosure.authentication_edition)?;
     Ok(())

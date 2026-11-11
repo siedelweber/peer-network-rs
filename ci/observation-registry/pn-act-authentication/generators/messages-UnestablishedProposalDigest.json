@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "messages::UnestablishedProposalDigest",
+    "kind": "derive",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/messages.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "authentication-public",
+    "expansion_review": "Clone and Copy copy only the public 32-byte digest. Debug records those bytes in full; PartialEq and Eq compare the local byte array. No point validity, proposal relation, binding operation, secret or entropy is introduced."
+  }
+}

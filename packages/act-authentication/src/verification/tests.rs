@@ -60,6 +60,8 @@ fn verification_length_order() {
         .split(',')
         .nth(5)
         .unwrap());
+    assert_eq!(key.verify(&[0; 63], &[0; 31]), Err(VerificationError::MessageLength));
+    assert_eq!(take(), []);
     for length in [100, 0, 33, 1, 17, 31] {
         assert_eq!(
             key.verify(&signature, &vec![0; length]),

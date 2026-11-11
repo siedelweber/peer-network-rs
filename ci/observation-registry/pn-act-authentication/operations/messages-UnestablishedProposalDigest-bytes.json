@@ -3,7 +3,7 @@
   "value": {
     "package": "pn-act-authentication",
     "path": "packages/act-authentication/src/messages.rs",
-    "item": "messages::RetirementMessage::bytes",
+    "item": "messages::UnestablishedProposalDigest::bytes",
     "signature": "fn bytes (& self) -> & [u8 ; 32]",
     "owner": "ACTAUTH",
     "claim": "ACTAUTH::def:authentication:messages",
@@ -11,7 +11,7 @@
     "mode": "instrumented"
   },
   "review": {
-    "operation": "pn-act-authentication::packages/act-authentication/src/messages.rs::messages::RetirementMessage::bytes",
+    "operation": "pn-act-authentication::packages/act-authentication/src/messages.rs::messages::UnestablishedProposalDigest::bytes",
     "class_decision": "authentication-public",
     "body": "{ & self . 0 }",
     "assessments": {
@@ -19,6 +19,6 @@
       "secret_flow": "authentication-public",
       "exposure_consumers": "authentication-public"
     },
-    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+    "item_premise": "Public body encodings and computed public commitments record all arguments and results. Secret openings remain owned carriers; only the existing profile recipe publishes its final residue. Unopened digests establish no proposal relation."
   }
 }

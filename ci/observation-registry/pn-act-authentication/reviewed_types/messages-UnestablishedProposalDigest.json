@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "messages::UnestablishedProposalDigest",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/messages.rs",
+    "syntax": "# [doc = \" Unopened public digest, with no established relation to a proposal body.\"] # [doc = \" A verifier may verify a signature over these bytes, but must separately check\"] # [doc = \" the proposal recipe against openings before claiming a proposal relation.\"] # [doc = \" (´def:authentication:messages´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct UnestablishedProposalDigest ([u8 ; 32]) ;"
+  }
+}

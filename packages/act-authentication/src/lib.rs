@@ -35,6 +35,8 @@ pub enum RecipeError {
 }
 
 /// Hash exactly 32 opaque bytes, without parsing a curve point.
+/// This is raw recipe recomputation, not membership computation; use
+/// `membership_key` before a membership comparison.
 /// Membership and signature verification must parse the key before use.
 /// (´[ROOT-amend:identity:signing-key-hash]´)
 ///
@@ -169,8 +171,6 @@ pub fn key_script(script: &[u8]) -> Option<KeyHash> {
     Some(KeyHash(bytes))
 }
 
-mod body;
-
 mod encoding;
 pub use encoding::{
     AUTHENTICATION_EDITION, AuthenticationMaterial, EncodingError, HeaderParts, VerifiedHeader, compare_act, compare_header,
@@ -179,6 +179,6 @@ pub use encoding::{
 
 mod messages;
 pub use messages::{
-    ApprovalMessage, MarkerValue, ProposalMessage, RetirementMessage, SealMessage, approval_message, marker_value,
-    proposal_message, retirement_message, seal_message,
+    ApprovalMessage, ProposalMessage, SealMessage, UnestablishedProposalDigest, approval_message, proposal_message, seal_message,
+    unopened_proposal_digest,
 };
