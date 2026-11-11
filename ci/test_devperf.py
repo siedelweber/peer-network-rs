@@ -675,6 +675,7 @@ wait
         self.assertEqual(baseline_replacement(recorded('warm', .09), warm), (False, 'higher-whole-gate-stall'))
         self.assertEqual(baseline_replacement(warm, None), (True, 'first-compatible-run-provisional'))
         self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (True, 'warm-replaces-cold-or-provisional'))
+        self.assertEqual(baseline_replacement(recorded('unknown', .001), warm), (False, 'retained-warm-cache'))
         self.assertLess(baseline_rank(warm), baseline_rank(cold))
         self.assertLess(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
         with tempfile.TemporaryDirectory() as directory:
@@ -843,6 +844,27 @@ wait
                     other_path.write_text(json.dumps(loaded))
                     self.assertEqual(baseline_context(root, registry)[1]['source'], original)
                     self.assertTrue(other_path.exists())
+                import contextlib
+                # A quieter unknown or provisional predecessor cannot undo
+                # cache-aware selection in ancestry or among prior files.
+                for old_cache in ('unknown', 'warm'):
+                    older=json.loads(quiet_bytes)
+                    older.update(cache={'state':old_cache}, provisional=True)
+                    older['whole']['stall']=.001
+                    path.write_text(json.dumps(older))
+                    newer=dict(loaded, cache={'state':'warm'}, provisional=False)
+                    other_path.write_text(json.dumps(newer))
+                    retained_bytes=other_path.read_bytes()
+                    with patch.dict(os.environ, PN_IMPORT_BASE=other):
+                        self.assertEqual(baseline_context(root, registry)[1]['source'], other,
+                                         'lineage must prefer confirmed warm over quieter predecessor')
+                    candidate=dict(newer, whole={'node_scope':'node-wide','stall':.3})
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                    output=io.StringIO()
+                    with contextlib.redirect_stdout(output): retain_baseline(root)
+                    self.assertEqual(other_path.read_bytes(),retained_bytes,
+                                     'prior-file selection must retain confirmed warm before stall')
+                    self.assertIn('retained_provisional=false',output.getvalue())
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 
