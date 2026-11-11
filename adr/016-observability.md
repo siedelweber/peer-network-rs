@@ -76,7 +76,7 @@
 | cli-common | 113 | 30 | 80 | 3 | 42 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn-act-authentication | 25 | 25 | 0 | 0 | 15 |
+| pn-act-authentication | 25 | 25 | 0 | 0 | 16 |
 | pn-act-profile | 15 | 12 | 3 | 0 | 7 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |

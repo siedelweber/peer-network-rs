@@ -38,11 +38,25 @@ fn fixture() -> (TransactionFields, AssetId, AssetId, [u8; 32]) {
     let row = &rows["assets"][0];
     let tx = decode_transaction(&hex(row["transaction"].as_str().unwrap()), decoder_limits()).unwrap();
     (
-        tx.fields().clone(),
+        version_two(tx.fields().clone()),
         AssetId(hex(rows["fee_asset"].as_str().unwrap()).try_into().unwrap()),
         AssetId(hex(row["asset"].as_str().unwrap()).try_into().unwrap()),
         hex(row["run"].as_str().unwrap()).try_into().unwrap(),
     )
+}
+
+fn version_two(mut fields: TransactionFields) -> TransactionFields {
+    for output in &mut fields.outputs {
+        if output.script.starts_with(b"\x6a\x2aPNAT\x01") {
+            let index = usize::try_from(u32::from_be_bytes(output.script[39..43].try_into().unwrap())).unwrap();
+            let mut script = b"\x6a\x4aPNAT\x02".to_vec();
+            script.extend(&output.script[7..39]);
+            script.extend(&fields.inputs[index].outpoint);
+            script.push(0);
+            output.script = script;
+        }
+    }
+    fields
 }
 
 fn sized(bytes: &[u8], target: &mut Vec<u8>) {
@@ -90,7 +104,7 @@ fn key_output(fields: &TransactionFields, byte: u8) -> Output {
     let mut output = fields
         .outputs
         .iter()
-        .find(|o| qualification_script(&o.script).is_some())
+        .find(|o| qualification_script(&o.script).is_ok())
         .unwrap()
         .clone();
     output.script = b"\x6a\x25PNAK\x01".to_vec();
@@ -117,13 +131,35 @@ fn token_qualification() {
     );
     assert_eq!(value.declarations, []);
     assert_eq!(
+        qualifies(&fields.inputs[0], &fields.outputs, [9; 32], fee),
+        Err(QualificationRefusal::Run)
+    );
+    let mut duplicate = fields.outputs.clone();
+    duplicate.extend(fields.outputs.clone());
+    assert_eq!(
+        qualifies(&fields.inputs[0], &duplicate, run, fee),
+        Err(QualificationRefusal::Duplicate)
+    );
+    let mut absent = fields.inputs[0].clone();
+    absent.has_issuance = false;
+    assert_eq!(
+        qualifies(&absent, &fields.outputs, run, fee),
+        Err(QualificationRefusal::NoIssuance)
+    );
+    absent.has_issuance = true;
+    absent.outpoint[0] ^= 1;
+    assert_eq!(
+        qualifies(&absent, &fields.outputs, run, fee),
+        Err(QualificationRefusal::Missing)
+    );
+    assert_eq!(
         transaction_token_evidence(&tx, &[], [9; 32], fee, limits()).unwrap().tokens,
         []
     );
     let marker = fields
         .outputs
         .iter()
-        .position(|o| qualification_script(&o.script).is_some())
+        .position(|o| qualification_script(&o.script).is_ok())
         .unwrap();
     for mutation in [2, 0, 5, 4, 1, 3] {
         let mut changed = fields.clone();
@@ -322,15 +358,15 @@ fn multiple_tokens() {
     for (input, ordinal) in [2, 0, 1].into_iter().enumerate() {
         let row = &rows["assets"][ordinal];
         let tx = decode_transaction(&hex(row["transaction"].as_str().unwrap()), decoder_limits()).unwrap();
-        fields.inputs.push(tx.fields().inputs[0].clone());
-        for output in &tx.fields().outputs {
+        let adapted = version_two(tx.fields().clone());
+        fields.inputs.push(adapted.inputs[0].clone());
+        for output in &adapted.outputs {
             let mut output = output.clone();
-            if qualification_script(&output.script).is_some() {
+            if qualification_script(&output.script).is_ok() {
                 if input == 2 {
                     continue;
                 }
                 output.script[7..39].copy_from_slice(&run);
-                output.script[39..43].copy_from_slice(&u32::try_from(input).unwrap().to_be_bytes());
             }
             fields.outputs.push(output);
         }

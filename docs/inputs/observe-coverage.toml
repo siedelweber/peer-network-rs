@@ -34,7 +34,7 @@ operations = 25
 instrumented = 25
 exceptions = 0
 helpers = 0
-generators = 15
+generators = 16
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "pn-act-profile"

@@ -5,7 +5,7 @@
     "path": "packages/act-authentication/src/lib.rs",
     "item": "qualification_script",
     "owner": "ACTAUTH",
-    "signature": "fn qualification_script (script : & [u8]) -> Option < Qualification >",
+    "signature": "fn qualification_script (script : & [u8]) -> Result < Qualification , QualificationRefusal >",
     "claim": "ROOT::rule:devnet:author-token",
     "shape": "shape-wallet",
     "mode": "instrumented"
@@ -13,7 +13,7 @@
   "review": {
     "operation": "pn-act-authentication::packages/act-authentication/src/lib.rs::qualification_script",
     "class_decision": "authentication-public",
-    "body": "{ let script : & [u8 ; 44] = script . try_into () . ok () ? ; if script [.. 7] != * b\"\\x6a\\x2aPNAT\\x01\" || script [43] != 0 { return None ; } let mut run = [0 ; 32] ; run . copy_from_slice (& script [7 .. 39]) ; Some (Qualification { run , input : u32 :: from_be_bytes (script [39 .. 43] . try_into () . ok () ?) , }) }",
+    "body": "{ if script . get (2 .. 6) == Some (b\"PNAT\") && script . get (6) . is_some_and (| version | * version != 2) { return Err (QualificationRefusal :: Version) ; } let script : & [u8 ; 76] = script . try_into () . map_err (| _ | QualificationRefusal :: Length) ? ; if script [.. 2] != [0x6a , 0x4a] { return Err (QualificationRefusal :: Push) ; } if script [2 .. 6] != * b\"PNAT\" { return Err (QualificationRefusal :: Tag) ; } if script [75] != 0 { return Err (QualificationRefusal :: Flags) ; } let mut run = [0 ; 32] ; run . copy_from_slice (& script [7 .. 39]) ; let mut prevout = [0 ; 36] ; prevout . copy_from_slice (& script [39 .. 75]) ; Ok (Qualification { run , prevout }) }",
     "assessments": {
       "full_recording": "authentication-public",
       "secret_flow": "authentication-public",

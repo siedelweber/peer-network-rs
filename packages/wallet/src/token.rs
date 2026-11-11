@@ -1,7 +1,7 @@
 //! Conditional evidence for one transaction, never a chain-history verdict.
 //! (´def:wallet:token-evidence´)
 
-use pn_act_authentication::{AssetId, KeyHash, initial_asset_id, key_script, qualification_script};
+use pn_act_authentication::{AssetId, KeyHash, QualificationRefusal, initial_asset_id, key_script, qualification_script};
 
 use crate::{Input, Output, Transaction};
 
@@ -141,15 +141,7 @@ pub fn transaction_token_evidence(
         }
     }
     for (index, input) in fields.inputs.iter().enumerate() {
-        let markers = fields
-            .outputs
-            .iter()
-            .filter(|output| {
-                tagged_output(output, fee_asset)
-                    && qualification_script(&output.script).is_some_and(|q| q.run == run && usize::try_from(q.input) == Ok(index))
-            })
-            .count();
-        if markers == 1
+        if qualifies(input, &fields.outputs, run, fee_asset).is_ok()
             && let Some(asset) = issued_asset(input)
             && unit_output(&fields.outputs, asset)
         {
@@ -177,6 +169,32 @@ pub fn transaction_token_evidence(
         });
     }
     Ok(result)
+}
+
+fn qualifies(input: &Input, outputs: &[Output], run: [u8; 32], fee_asset: AssetId) -> Result<(), QualificationRefusal> {
+    if !input.has_issuance {
+        return Err(QualificationRefusal::NoIssuance);
+    }
+    let mut count = 0;
+    let mut other_run = false;
+    for output in outputs {
+        if tagged_output(output, fee_asset)
+            && let Ok(marker) = qualification_script(&output.script)
+            && marker.prevout.as_slice() == input.outpoint
+        {
+            if marker.run == run {
+                count += 1;
+            } else {
+                other_run = true;
+            }
+        }
+    }
+    match count {
+        0 if other_run => Err(QualificationRefusal::Run),
+        0 => Err(QualificationRefusal::Missing),
+        1 => Ok(()),
+        _ => Err(QualificationRefusal::Duplicate),
+    }
 }
 
 fn preflight(

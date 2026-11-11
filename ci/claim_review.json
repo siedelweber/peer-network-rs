@@ -1710,8 +1710,8 @@
       "path": "packages/act-authentication/tests/public.rs",
       "claim": "ACTAUTH::claim:authentication:qualification-is-one-canonical-script",
       "before": "",
-      "after": "The qualification retains the run and big-endian input index; all alternate\npushes, flags, versions, truncations and trailing bytes qualify nothing.",
-      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+      "after": "The qualification retains the run and consensus prevout unchanged; malformed\npushes, flags, versions and lengths have distinct typed refusals.",
+      "review": "Read the exact version-two script, opaque prevout byte equality and distinct refusal assertions; no chain or signature validity is inferred."
     },
     {
       "operation": "pn-act-authentication::signatures::malformed_points",

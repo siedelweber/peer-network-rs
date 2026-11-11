@@ -22,7 +22,23 @@ pub struct KeyHash(pub [u8; 32]);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Qualification {
     pub run: [u8; 32],
-    pub input: u32,
+    pub prevout: [u8; 36],
+}
+
+/// Why a supplied qualification does not qualify an issuance.
+/// These refusals never invalidate unrelated outputs or inputs.
+/// (´def:authentication:public-evidence´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum QualificationRefusal {
+    Version,
+    Length,
+    Push,
+    Tag,
+    Flags,
+    Run,
+    NoIssuance,
+    Duplicate,
+    Missing,
 }
 
 /// Public recipe input refusal. (´def:authentication:public-evidence´)
@@ -120,8 +136,10 @@ fn midpoint(left: [u8; 32], right: [u8; 32]) -> [u8; 32] {
 
 /// Decode the exact PNAT script; output asset/value/nonce and issuance are
 /// separate obligations. Every other script qualifies nothing.
+///
+/// # Errors
+/// Distinguishes unsupported versions, lengths, push forms, tags and flags.
 /// (´[ROOT-rule:devnet:author-token]´)
-#[must_use]
 #[tracing::instrument(
     name = "rule:devnet:author-token",
     fields(
@@ -133,17 +151,25 @@ fn midpoint(left: [u8; 32], right: [u8; 32]) -> [u8; 32] {
     ),
     ret
 )]
-pub fn qualification_script(script: &[u8]) -> Option<Qualification> {
-    let script: &[u8; 44] = script.try_into().ok()?;
-    if script[..7] != *b"\x6a\x2aPNAT\x01" || script[43] != 0 {
-        return None;
+pub fn qualification_script(script: &[u8]) -> Result<Qualification, QualificationRefusal> {
+    if script.get(2..6) == Some(b"PNAT") && script.get(6).is_some_and(|version| *version != 2) {
+        return Err(QualificationRefusal::Version);
+    }
+    let script: &[u8; 76] = script.try_into().map_err(|_| QualificationRefusal::Length)?;
+    if script[..2] != [0x6a, 0x4a] {
+        return Err(QualificationRefusal::Push);
+    }
+    if script[2..6] != *b"PNAT" {
+        return Err(QualificationRefusal::Tag);
+    }
+    if script[75] != 0 {
+        return Err(QualificationRefusal::Flags);
     }
     let mut run = [0; 32];
     run.copy_from_slice(&script[7..39]);
-    Some(Qualification {
-        run,
-        input: u32::from_be_bytes(script[39..43].try_into().ok()?),
-    })
+    let mut prevout = [0; 36];
+    prevout.copy_from_slice(&script[39..75]);
+    Ok(Qualification { run, prevout })
 }
 
 /// Decode the exact PNAK script; output asset/value/nonce are separate

@@ -1,5 +1,5 @@
 use pn_act_authentication::{
-    AssetId, KeyHash, RecipeError, initial_asset_id, key_script, qualification_script, signing_key_hash,
+    AssetId, KeyHash, QualificationRefusal, RecipeError, initial_asset_id, key_script, qualification_script, signing_key_hash,
 };
 
 fn hex(text: &str) -> Vec<u8> {
@@ -63,27 +63,40 @@ fn key_declarations() {
     }
 }
 
-/// The qualification retains the run and big-endian input index; all alternate
-/// pushes, flags, versions, truncations and trailing bytes qualify nothing.
+/// The qualification retains the run and consensus prevout unchanged; malformed
+/// pushes, flags, versions and lengths have distinct typed refusals.
 /// ´claim:authentication:qualification-is-one-canonical-script´
 /// ´test:integration:qualification´
 #[test]
 fn qualification() {
-    let mut script = b"\x6a\x2aPNAT\x01".to_vec();
-    script.extend([7; 32]);
-    script.extend(0x0102_0304_u32.to_be_bytes());
+    let mut script = b"\x6a\x4aPNAT\x02".to_vec();
+    let run = std::array::from_fn::<_, 32, _>(|i| u8::try_from(i).unwrap());
+    let mut prevout = [9; 36];
+    prevout[32..].copy_from_slice(&0x0102_0304_u32.to_le_bytes());
+    script.extend(run);
+    script.extend(prevout);
     script.push(0);
     let value = qualification_script(&script).unwrap();
-    assert_eq!(value.run, [7; 32]);
-    assert_eq!(value.input, 0x0102_0304);
-    for at in [43, 6, 1, 0, 5] {
+    assert_eq!(value.run, run);
+    assert_eq!(value.prevout, prevout);
+    for (at, refusal) in [
+        (75, QualificationRefusal::Flags),
+        (6, QualificationRefusal::Version),
+        (1, QualificationRefusal::Push),
+        (0, QualificationRefusal::Push),
+        (5, QualificationRefusal::Tag),
+    ] {
         let mut bad = script.clone();
         bad[at] ^= 1;
-        assert_eq!(qualification_script(&bad), None);
+        assert_eq!(qualification_script(&bad), Err(refusal));
     }
-    for end in [43, 7, 0] {
-        assert_eq!(qualification_script(&script[..end]), None);
+    for end in [75, 7, 0] {
+        assert_eq!(qualification_script(&script[..end]), Err(QualificationRefusal::Length));
     }
     script.push(0);
-    assert_eq!(qualification_script(&script), None);
+    assert_eq!(qualification_script(&script), Err(QualificationRefusal::Length));
+    let mut old = b"\x6a\x2aPNAT\x01".to_vec();
+    old.extend([7; 32]);
+    old.extend([0; 5]);
+    assert_eq!(qualification_script(&old), Err(QualificationRefusal::Version));
 }

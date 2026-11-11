@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "QualificationRefusal",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/lib.rs",
+    "syntax": "# [doc = \" Why a supplied qualification does not qualify an issuance.\"] # [doc = \" These refusals never invalidate unrelated outputs or inputs.\"] # [doc = \" (´def:authentication:public-evidence´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum QualificationRefusal { Version , Length , Push , Tag , Flags , Run , NoIssuance , Duplicate , Missing , }"
+  }
+}

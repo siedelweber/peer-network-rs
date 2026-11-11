@@ -224,7 +224,7 @@
     },
     {
       "exceptions": 0,
-      "generators": 15,
+      "generators": 16,
       "helpers": 0,
       "instrumented": 25,
       "name": "pn-act-authentication",
@@ -238,10 +238,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "15",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
