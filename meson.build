@@ -45,7 +45,7 @@ gate_steps = [
   ['cargo-config', 'python3 ci/discipline.py cargo-config', 'build-policy'],
   ['vendor-set', 'python3 ci/discipline.py vendor-set', 'cargo-config'],
   ['member-lints', 'python3 ci/discipline.py members', 'vendor-set'],
-  ['design-correspondence', 'python3 -B ci/design.py', 'member-lints'],
+  ['design-correspondence', 'python3 -B ci/design.py && python3 -B ci/deployment_claims.py', 'member-lints'],
   ['design-tests', 'python3 -B ci/run_ci.py test_design', 'design-correspondence'],
   ['linter', '"$LINTER_BIN" check --root .', 'design-tests'],
   ['token', 'python3 ci/discipline.py token', 'linter'],

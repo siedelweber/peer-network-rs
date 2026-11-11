@@ -300,6 +300,10 @@ def generate(action):
         if result.returncode:
             print(result.stdout)
             return result.returncode
+        if action == 'generate':
+            projection = cancellable([sys.executable, '-B', 'ci/deployment_claims.py', 'generate'], cwd=tree)
+            if projection.returncode:
+                return projection.returncode
         result = cancellable([built_executable(result.stdout), action], cwd=tree,
                              env=os.environ | {'CARGO_TARGET_DIR':str(target)})
         if result.returncode:

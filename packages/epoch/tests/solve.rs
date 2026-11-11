@@ -4409,7 +4409,7 @@ fn act_switch() {
 }
 
 /// Claim: The finite standing witness set in the standing-witness join, the joined compiler prerequisite, and the compiled-conservation and transport witnesses retain their scoped premises, bounds and refusals at each declared fixture, policy and precision. Preserve means this finite evidence join, not invariance; the standing negative-probe index excludes universal split invariance, burn monotonicity, own recovery, act direction, contraction-only sign, purpose inference, unrestricted strategic completion, individual-standing conservation, unconditional rehabilitation, guild-funded recovery, randomized consumer guarantees, unbounded families, real-chain integration and deployment authentication.
-/// Scope and exclusions: (´[ROOT-rec:design:standing-witness-join]´) and (´[ROOT-cav:design:standing-negative-probe-index]´).
+/// Scope and exclusions: realizes{(´[ROOT-rec:design:standing-witness-join]´); the finite supplied-input evidence join} and realizes{(´[ROOT-cav:design:standing-negative-probe-index]´); the explicit exclusions from this finite claim}.
 /// This site replays the self-only compiled anchor and exact transport; companion sites supply the other members of the required execution join.
 /// ´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´
 /// ´test:integration:standing-scope´

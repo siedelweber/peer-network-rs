@@ -14,6 +14,9 @@
       "name": "public-inputs"
     },
     {
+      "conformance": [
+        "realizes{``subsec:deployment:realization-obligations``; The requirement trace names the public disclosure portion of the imported burn boundary.}"
+      ],
       "labels": [
         "def:comparator:burn-interface",
         "subsec:deployment:realization-obligations",
@@ -107,6 +110,9 @@
       "name": "admission"
     },
     {
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; The requirement trace names declared schedules and formula identities, not elapsed-time truth.}"
+      ],
       "labels": [
         "def:epoch:safety-threshold",
         "def:epoch:policy-floor",
@@ -146,6 +152,9 @@
       "name": "replay"
     },
     {
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; The requirement trace names published effective constants and formula editions.}"
+      ],
       "labels": [
         "subsec:deployment:transparency-of-protocol-formulas",
         "rem:verification:numerical-rounding"

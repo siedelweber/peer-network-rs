@@ -204,6 +204,13 @@ class Evidence(unittest.TestCase):
         self.assertEqual(row['routes'], [])
         self.assertEqual(row['portions'], [dict(record=record, clause='local admission, e.g. ordering')])
         self.assertEqual(list(tracker_sentences(text)), [text])
+        for form in ('relies', 'realizes'):
+            marked = form+'{``'+label+'``; the precisely named part}'
+            projected = tracker_rows(inventory, {record: dict(text=marked, citations=set())}, evidence, [])[0]
+            self.assertEqual(projected['status'], 'unassigned')
+            self.assertEqual(projected['records'], [])
+            self.assertEqual(projected['routes'], [])
+            self.assertEqual(list(tracker_sentences(marked)), [marked])
         partial[hold] = dict(text='``'+label+'``', citations=set())
         held = dict(claims=[], obligations=[dict(name=hold, status='held', claims=[], hold=hold)])
         attention = tracker_rows(inventory, {hold: dict(text=text, citations=set())}, held, [])[0]
@@ -540,7 +547,7 @@ class Evidence(unittest.TestCase):
         from claims import registrations
         from precheck import commands
         stages = dict(commands(Path('/prepared'), '/deployed/linter'))
-        self.assertEqual(set(stages), {'census', 'linter', 'claims', 'observations', 'datasets', 'documents'})
+        self.assertEqual(set(stages), {'census', 'deployment-claims', 'linter', 'claims', 'observations', 'datasets', 'documents'})
         self.assertEqual(stages['claims'][-2:], ['ci/claims.py', 'registration'])
         self.assertEqual(stages['linter'], ['/deployed/linter', 'check', '--root', '.'])
         self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', '--check'])

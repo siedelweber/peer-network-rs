@@ -1676,7 +1676,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-accepted-records",
       "label_source": "explicit",
-      "statement": "At each accepted boundary publish the final write and edge sets, the dependent-set partition obtained by merging overlapping principal closures against prior finalized history, realized size, closure cause and attested boundary timestamp."
+      "statement": "At each accepted boundary publish the final write and edge sets, the dependent-set partition obtained by merging overlapping principal closures against prior finalized history, realized size, closure cause and asserted boundary timestamp."
     },
     {
       "chapter": "03 Network",
@@ -1764,7 +1764,7 @@
       "kind": "policy",
       "label": "rem:network:durations-no-glyph",
       "label_source": "explicit",
-      "statement": "Publish duration policy, closure cause and attested timestamp without inventing a formula-derived clock."
+      "statement": "Publish duration policy, closure cause and asserted timestamp without inventing a formula-derived clock."
     },
     {
       "chapter": "03 Network",
@@ -15299,6 +15299,11 @@
     {
       "chapter": "G Frontiers",
       "citable": true,
+      "conformance": [
+        "relies{``cond:deployment:boundary-search-evidence``; The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.}",
+        "relies{``amend:testing:standing-work-envelopes``; The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.}",
+        "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"
+      ],
       "crate": "pn-host",
       "current_at": "network-v0.31.1",
       "environment": "remark",

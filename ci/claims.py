@@ -395,9 +395,21 @@ def tracker_sentences(text):
         yield text[start:]
 
 
+def conformance_marks(text):
+    """Read explicit reliance and claimed-part relations, including claim docs."""
+    pattern = r'(relies|realizes)\{(?P<open>\()?(?P<quote>``|´)(?P<label>[^`´\n{}]+)(?P=quote)(?(open)\)); (?P<reason>[^{}\n]+)\}'
+    matches = list(re.finditer(pattern, text))
+    if re.search(r'(?:relies|realizes)\{', re.sub(pattern, '', text)):
+        raise StructuralError('malformed conformance citation')
+    if any(not match['reason'].strip() or not match['label'].strip() for match in matches):
+        raise StructuralError('empty conformance citation')
+    return matches
+
+
 def tracker_portions(text):
     """Read explicit partial-design or premise attention, retaining its clause."""
-    pattern = r'(?:portion|premise)\{``([^`\n{}]+)``; ([^{}\n]+)\}'
+    conformance_marks(text)
+    pattern = r'(?:portion|premise|relies|realizes)\{``([^`\n{}]+)``; ([^{}\n]+)\}'
     matches = list(re.finditer(pattern, text))
     if re.search(r'(?:portion|premise)\{', re.sub(pattern, '', text)):
         raise StructuralError('malformed paper portion or premise citation')
@@ -457,8 +469,15 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), 
         paper.update(tracker_paper(record['text']))
         for match in tracker_portions(record['text']):
             if match[1] not in labels:
+                if match[0].startswith(('relies{', 'realizes{')):
+                    # Repository targets are resolved by the conformance join;
+                    # they are not paper realization or attention rows.
+                    continue
                 raise StructuralError('unknown paper portion label: '+match[1])
-            clause = ('Premise only: ' if match[0].startswith('premise{') else '') + match[2].strip()
+            prefix = next((prefix for form, prefix in (('premise{', 'Premise only: '),
+                          ('relies{', 'Conformance reliance: '), ('realizes{', 'Claimed part: '))
+                           if match[0].startswith(form)), '')
+            clause = prefix + match[2].strip()
             portions[match[1]].append(dict(record=name, clause=clause))
         for label in paper & labels:
             mentions[label].add(name)

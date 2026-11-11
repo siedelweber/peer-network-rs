@@ -31515,7 +31515,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "app:deployment",
@@ -31531,7 +31535,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:public-availability",
@@ -31547,7 +31555,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-streaming",
@@ -31563,7 +31575,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-api-polling",
@@ -31579,7 +31595,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-snapshot-delta",
@@ -31595,7 +31615,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gossip",
@@ -31611,7 +31635,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gated-access",
@@ -31627,7 +31655,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-through-creator",
@@ -31643,7 +31675,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-around-creator",
@@ -31660,8 +31696,13 @@
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [
+        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/questions.md",
+        "docs/inputs/deployment-claims.toml",
+        "docs/inputs/deployment-edges.toml",
         "docs/inputs/design-questions.toml"
       ],
       "holds": [],
@@ -31679,7 +31720,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-linearization",
@@ -31695,7 +31740,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-cluster-closure",
@@ -31711,7 +31760,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-bft-finality",
@@ -31727,7 +31780,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-gossip-stability",
@@ -31743,7 +31800,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-disagreement",
@@ -31783,7 +31844,12 @@
       "holds": [],
       "kind": "invariant check",
       "label": "subsec:deployment:immutability",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Stored editions and retained bytes preserve earlier supplied history; they do not prove absence of an undisclosed alternative history.",
+          "record": "ROOT::model:design:storage-history"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -31797,7 +31863,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:immutability-mutable-records",
@@ -31849,7 +31919,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:feed-reproducibility",
@@ -31865,7 +31939,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-closed-form",
@@ -31881,7 +31959,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-public-model",
@@ -31897,7 +31979,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-consensus-ranking",
@@ -31913,7 +31999,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-opaque-model",
@@ -31929,7 +32019,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:device-local",
@@ -31945,7 +32039,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-four",
@@ -31961,7 +32059,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-three",
@@ -31977,7 +32079,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-six",
@@ -31993,7 +32099,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-server-assisted",
@@ -32034,7 +32144,24 @@
       ],
       "kind": "policy",
       "label": "subsec:deployment:transparency-of-protocol-formulas",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Effective edition lookup and locked overrides are determined by the supplied history.",
+          "record": "ROOT::dec:design:constants"
+        },
+        {
+          "clause": "Claimed part: The exact boundary-sequence model checks published schedules and controller arithmetic, not plant performance.",
+          "record": "ROOT::dec:design:policy-schedules"
+        },
+        {
+          "clause": "Claimed part: The requirement trace names published effective constants and formula editions.",
+          "record": "ROOT::req:vision:constants"
+        },
+        {
+          "clause": "Claimed part: The requirement trace names declared schedules and formula identities, not elapsed-time truth.",
+          "record": "ROOT::req:vision:policy-schedules"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32055,7 +32182,12 @@
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-edition-fixed",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The selected constants edition is resolved from its published identity and effective boundary.",
+          "record": "RECORDS::def:declarations:constants-edition"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32069,7 +32201,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-scheduled-vote",
@@ -32085,7 +32221,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-time-locked",
@@ -32113,7 +32253,12 @@
       ],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-silent-tuning",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.",
+          "record": "ROOT::dec:design:constants"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32127,7 +32272,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:calibration-declarations",
@@ -32147,7 +32296,12 @@
       "holds": [],
       "kind": "policy",
       "label": "post:deployment:calibration-declarations",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32194,7 +32348,20 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:wall-calibration",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "Claimed part: This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.",
+          "record": "ROOT::open:design:wall-performance"
+        },
+        {
+          "clause": "Claimed part: This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
+          "record": "ROOT::open:vision:deployment-profile"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32214,7 +32381,56 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:boundary-policy",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "The existence and contents of the declared window are fixed by the public record; actual freeze compliance is a separate clause.",
+          "record": "ROOT::amend:testing:boundary-policy-adaptation"
+        },
+        {
+          "clause": "Record order does not attest a duration or message delivery.",
+          "record": "ROOT::amend:testing:boundary-policy-announcement"
+        },
+        {
+          "clause": "A target is an operator declaration, not an availability measurement.",
+          "record": "ROOT::amend:testing:boundary-policy-availability"
+        },
+        {
+          "clause": "The denial of an admission right to an unwritten candidate clarifies the publication duty rather than adding a deployment obligation.",
+          "record": "ROOT::amend:testing:boundary-policy-closure"
+        },
+        {
+          "clause": "A host timestamp has no external attestation in this paper edition.",
+          "record": "ROOT::amend:testing:boundary-policy-durations"
+        },
+        {
+          "clause": "An unseen trigger cannot be reconstructed from an accepted result.",
+          "record": "ROOT::amend:testing:boundary-policy-fallback"
+        },
+        {
+          "clause": "The schedule and certified floor are public mathematical inputs.",
+          "record": "ROOT::amend:testing:boundary-policy-floor"
+        },
+        {
+          "clause": "An unanchored timestamp cannot prove that no retarget occurred during a physical interval.",
+          "record": "ROOT::amend:testing:boundary-policy-freeze"
+        },
+        {
+          "clause": "Accepted epochs do not reveal every attempted set.",
+          "record": "ROOT::amend:testing:boundary-policy-search"
+        },
+        {
+          "clause": "Both integers are fixed by the declared record.",
+          "record": "ROOT::amend:testing:boundary-policy-target-size"
+        },
+        {
+          "clause": "A duration measurement is not attested by the record.",
+          "record": "ROOT::amend:testing:boundary-policy-timeout"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32279,7 +32495,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:centralized-monitoring",
@@ -32299,7 +32519,16 @@
       "holds": [],
       "kind": "policy",
       "label": "post:deployment:centralized-monitoring",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        },
+        {
+          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32314,7 +32543,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:certificate-monitoring",
@@ -32330,7 +32563,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:emission-experience",
@@ -32350,7 +32587,16 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:controller-performance",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.",
+          "record": "ROOT::open:design:wall-performance"
+        },
+        {
+          "clause": "Claimed part: This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
+          "record": "ROOT::open:vision:deployment-profile"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32366,7 +32612,15 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "ci/test_design.py",
+        "docs/datasets/org.peer-network.host.profile.json",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
+        "docs/inputs/deployment-claims.toml",
+        "docs/inputs/deployment-edges.toml",
+        "docs/inputs/host-profile.toml",
         "docs/templates/docs/design/implementation.md.j2"
       ],
       "holds": [],
@@ -32374,8 +32628,40 @@
       "label": "cond:deployment:standing-work",
       "portions": [
         {
+          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
           "clause": "fixture Work and validation walls, with deployment workload evidence pending",
           "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "A complete accepted package permits the check; unpublished trials do not supply the inputs to it.",
+          "record": "ROOT::amend:testing:standing-work-complete-projection"
+        },
+        {
+          "clause": "Recomputing a percentile does not validate acquisition or an omitted population.",
+          "record": "ROOT::amend:testing:standing-work-envelopes"
+        },
+        {
+          "clause": "A retained residual certificate can be checked separately, but it does not attest how the run obtained it.",
+          "record": "ROOT::amend:testing:standing-work-execution"
+        },
+        {
+          "clause": "This sentence explains the purpose of measurement evidence for the evaluation frontier; it imposes no additional duty.",
+          "record": "ROOT::amend:testing:standing-work-frontier"
+        },
+        {
+          "clause": "The record contains an assertion about the machine, not an independent machine observation.",
+          "record": "ROOT::amend:testing:standing-work-limiting-load"
+        },
+        {
+          "clause": "Publishing a process does not prove that it was carried out.",
+          "record": "ROOT::amend:testing:standing-work-review"
+        },
+        {
+          "clause": "Only supplied complete inputs determine these structural quantities.",
+          "record": "ROOT::amend:testing:standing-work-structure"
         }
       ],
       "record_granular": 0,
@@ -32393,7 +32679,12 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:cadence-maturity",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This scope hold names unassigned publication and comparison duties without asserting measured terminal performance.",
+          "record": "ROOT::open:inventory:deployment-terminal-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32407,7 +32698,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "subsec:deployment:calibration-evidence",
@@ -32427,7 +32722,12 @@
       "holds": [],
       "kind": "fixture",
       "label": "post:deployment:calibration-evidence",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32442,8 +32742,13 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
+        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/questions.md",
+        "docs/inputs/deployment-claims.toml",
+        "docs/inputs/deployment-edges.toml",
         "docs/inputs/design-questions.toml"
       ],
       "holds": [],
@@ -32465,7 +32770,12 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:payload-cache-envelope",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This scope hold names unassigned publication and comparison duties without asserting measured terminal performance.",
+          "record": "ROOT::open:inventory:deployment-terminal-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32480,13 +32790,24 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.host.profile.json",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
+        "docs/inputs/deployment-claims.toml",
+        "docs/inputs/deployment-edges.toml",
+        "docs/inputs/host-profile.toml",
         "docs/templates/docs/design/implementation.md.j2"
       ],
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:boundary-search-evidence",
       "portions": [
+        {
+          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
         {
           "clause": "finite validation comparisons, with candidate search and availability evidence pending",
           "record": "ROOT::amend:design:host-operational-declaration"
@@ -32507,7 +32828,12 @@
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:terminal-regression",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This scope hold names unassigned publication and comparison duties without asserting measured terminal performance.",
+          "record": "ROOT::open:inventory:deployment-terminal-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32521,7 +32847,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:complete-act-conformance",
@@ -32537,7 +32867,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "subsec:deployment:sufficiency",
@@ -32553,7 +32887,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-minimal-record",
@@ -32569,7 +32907,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-precomputed-record",
@@ -32585,7 +32927,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-redundant-record",
@@ -32601,7 +32947,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-proprietary-fields",
@@ -32621,7 +32971,20 @@
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:concealment-entropy",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "clause": "Claimed part: The operator salt and content format is specified here; the particular excluded entropy premise is named separately.",
+          "record": "ROOT::amend:identity:act-content-admission"
+        },
+        {
+          "clause": "Claimed part: The Actor nonce and proposal format is specified here; the particular excluded entropy premise is named separately.",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32641,7 +33004,16 @@
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-operator-generated",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "clause": "Conformance reliance: Content hiding depends on actual host salt entropy and custody.",
+          "record": "ROOT::amend:identity:act-content-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32659,7 +33031,16 @@
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-client-generated",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "clause": "Conformance reliance: Proposal hiding depends on actual Actor nonce entropy and private handling.",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -32673,7 +33054,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-secret-derived",
@@ -32689,7 +33074,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-unassigned-custody",
@@ -32756,7 +33145,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-formal-compiler",
@@ -32772,7 +33165,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-equivalent-compiler",
@@ -32895,9 +33292,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
+        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/design/implementation.md",
         "docs/design/questions.md",
+        "docs/inputs/deployment-claims.toml",
         "docs/inputs/design-questions.toml",
         "docs/templates/docs/design/implementation.md.j2"
       ],
@@ -32958,7 +33358,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:terminal-centrality-certificates",
@@ -32974,7 +33378,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-tree-samples",
@@ -32990,7 +33398,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-selective-reveal",
@@ -33006,7 +33418,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-auditor",
@@ -33022,7 +33438,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-scalar-only",
@@ -33038,7 +33458,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:can-enrichment-insulation",
@@ -33054,7 +33478,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-frobenius",
@@ -33070,7 +33498,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-standing-scaled",
@@ -33086,7 +33518,11 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-path-corrected",
@@ -33102,7 +33538,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:completeness",
@@ -33118,7 +33558,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-written-specification",
@@ -33134,7 +33578,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-source-implementation",
@@ -33150,7 +33598,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-formal-specification",
@@ -33166,7 +33618,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-constants",
@@ -33182,7 +33638,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-promotion",
@@ -33198,7 +33658,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-epoch",
@@ -33214,7 +33678,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-masks",
@@ -33230,7 +33698,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-can",
@@ -33246,7 +33718,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-epoch",
@@ -33262,7 +33738,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-parity",
@@ -33318,7 +33798,28 @@
       ],
       "kind": "policy",
       "label": "subsec:deployment:realization-obligations",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The carrier retains and validates disclosed audit evidence under its explicit verifier premises, without asserting external finality.",
+          "record": "EPOCH::rule:admission:semantic-carrier"
+        },
+        {
+          "clause": "Claimed part: The inventory specifies named public audit fields, not their external truth.",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "clause": "Claimed part: Only the required realization disclosures are carried; external economic and settlement assurance is explicitly not established.",
+          "record": "ROOT::cav:devnet:assurance"
+        },
+        {
+          "clause": "Claimed part: The finite-history oracle compares supplied disclosures and recognition; external destruction and settlement remain an explicit hold.",
+          "record": "ROOT::dec:design:burn-boundary"
+        },
+        {
+          "clause": "Claimed part: The requirement trace names the public disclosure portion of the imported burn boundary.",
+          "record": "ROOT::req:vision:burn-boundary"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -33336,7 +33837,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-pointer",
@@ -33352,7 +33857,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-mirror",
@@ -33368,7 +33877,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-snapshot",
@@ -33390,7 +33903,12 @@
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-withheld-evidence",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: Missing required disclosures are detectable publication failures; their external acquisition truth is not proved.",
+          "record": "ROOT::model:design:burn"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -33416,7 +33934,12 @@
       ],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-occlusion",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.",
+          "record": "ROOT::dec:design:burn-boundary"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -34129,7 +34652,12 @@
       ],
       "kind": "policy",
       "label": "cond:deployment:title-certificate-monitoring",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The finite witness recomputes a published title and the declared mismatch response, not continuous monitoring or actual review performance.",
+          "record": "ROOT::verif:design:title-certificate-cases"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -34152,7 +34680,12 @@
       ],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-finality-breach-reanchor",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.",
+          "record": "ROOT::verif:design:finality-breach-cases"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -34175,7 +34708,12 @@
       ],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-finality-breach-follow",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.",
+          "record": "ROOT::verif:design:finality-breach-cases"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -35250,10 +35788,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "62",
+          "exact": "127",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "127",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35264,7 +35802,7 @@
           "exact_digits": 32
         }
       },
-      "total": 62
+      "total": 127
     },
     {
       "category": "total",
@@ -38992,10 +39530,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 626",
+          "exact": "1 659",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 626",
+          "num": "1 659",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39010,7 +39548,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1626
+      "total": 1659
     },
     {
       "category": "record-coverage",

@@ -37,6 +37,7 @@
     "ci::test_design.Correspondence.test_rendered_continuations": "Rendered paragraphs and list items refuse continuation lines while separate blocks, table rows, fenced code and front matter retain their Markdown boundaries.",
     "ci::test_design.Correspondence.test_rendered_spacing": "First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception.",
     "ci::test_design.Correspondence.test_tracked_prose_boundaries": "tracked first-party documents and templates refuse bare paper labels while vendored members remain excluded.",
+    "ci::test_design.DeploymentClaims.test_conditional_closure": "Missing conditional marks and omitted dependencies refuse even when every local witness route resolves.",
     "ci::test_devperf.Performance.test_admitted_budget": "Admission changes only the warning threshold; an excess still preserves a failing predicate.",
     "ci::test_devperf.Performance.test_baseline_lineage": "",
     "ci::test_devperf.Performance.test_budget_category": "Declared categories keep build/aggregate configuration findings distinct from case/suite performance findings.",

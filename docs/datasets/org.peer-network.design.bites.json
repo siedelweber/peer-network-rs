@@ -18,6 +18,9 @@
       "slice": "pn-records: identities and accepted act/edge envelopes"
     },
     {
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; The bite assigns typed declared constants and override checks rather than elapsed-time notice guarantees.}"
+      ],
       "dependency": "Study judgment: follows the basic record types; may instead precede the act slice; blocked numeric-library and real-debit decisions must be settled before accepted ledger values are encoded.",
       "labels": [
         "def:comparator:burn-interface",

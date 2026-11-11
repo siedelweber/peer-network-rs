@@ -59,6 +59,9 @@
     {
       "ambiguity": "The four-object interface coexists with settlement-depth, provenance and conditional operator-bound publication requirements. (def:comparator:burn-interface) (post:comparator:burn-primitive) (subsec:deployment:realization-obligations)",
       "class": "DEFECT",
+      "conformance": [
+        "realizes{``subsec:deployment:realization-obligations``; This boundary correction requires complete public disclosures rather than another mathematical input.}"
+      ],
       "id": "Q06",
       "instruction": "Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:burn-operator-audit-bound`` introduces a fifth computational input until the boundary wording is corrected.",
       "reading": "Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
@@ -98,6 +101,9 @@
     {
       "ambiguity": "Order-sensitive standing prose coexists with epoch-set determinism and permutation-invariance claims. (subsec:deployment:final-epoch-state-agreement) (rem:graph:host-ordering-discretion) (post:epoch:standing-epoch-set-determinism) (ver:standing:epoch-permutation-invariance)",
       "class": "DEFECT",
+      "conformance": [
+        "realizes{``subsec:deployment:final-epoch-state-agreement``; The correction concerns deterministic standing for fixed accepted membership and inputs, not distributed convergence.}"
+      ],
       "id": "Q10",
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
@@ -198,6 +204,9 @@
     {
       "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (cond:deployment:wall-calibration) (rem:epoch:shared-burn-snapshot-rationale)",
       "class": "DEFECT",
+      "conformance": [
+        "realizes{``cond:deployment:wall-calibration``; The correction concerns exact floor declaration and comparisons, not economic calibration truth.}"
+      ],
       "id": "Q20",
       "instruction": "Certify ``cond:epoch:safety-declared-floor`` against the declared floor's exact defining object: enclosure refinement or rejection for the exact ridge, exact comparison with $3/37$ where the representation permits it. The wall remains computed, subject to the host contract's enclosure discipline. Publish the representation and comparison procedure, preserve one consummated debit vintage per epoch, and keep the declaration fixed; a change is public and structural with regenerated evidence, never a host-policy choice.",
       "reading": "Study judgment: Treat the next-threshold rule as a required calibration decision, including zero width and rapid width growth, not a free host choice.",
@@ -307,6 +316,9 @@
     {
       "ambiguity": "A calibration frontier allows inverse-temperature changes despite the locked beta constant and beta-dependent tensor formulas. (cond:deployment:parameter-comparisons) (def:graph:sentiment-slice) (ax:epoch:thermodynamic-boundary)",
       "class": "DEFECT",
+      "conformance": [
+        "realizes{``cond:deployment:parameter-comparisons``; The correction preserves the locked formula edition and explicit hypothetical comparison inputs, not empirical acquisition.}"
+      ],
       "id": "Q31",
       "instruction": "Your locked-beta reading is safe. Do not expose the proposed sweep as a deployment override or assert beta-independent tensors.",
       "reading": "Study judgment: Treat beta as locked for this edition and do not implement the proposed sweep as a deployment override.",
@@ -327,6 +339,9 @@
     {
       "ambiguity": "Some declared constants have no cited label and result entries cite two labels absent from the supplied paper. (subsec:deployment:transparency-of-protocol-formulas) (rem:verification:certificate-reproducibility)",
       "class": "DEFECT",
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; The correction preserves exact defining citations and detects unresolved references, not physical notice delivery.}"
+      ],
       "id": "Q33",
       "instruction": "Your preservation of empty and dangling citations is safe and useful evidence. Keep the exact identifiers above in the correspondence audit and do not treat a similarly named label as an authorized replacement.",
       "reading": "Study judgment: Preserve empty and dangling citations exactly; ask for citations under the public-formula and fixture obligations, without substituting similarly named labels.",

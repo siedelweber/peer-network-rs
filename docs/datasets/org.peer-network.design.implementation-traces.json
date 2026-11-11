@@ -25,6 +25,10 @@
     },
     {
       "cases": "Exercise missing samples, history finality under the published settlement depth and assumptions, equality to pinned amounts at or below that depth, provenance, denomination and terms, separate event costs, applicable operator proof or explained absence, and empty pre-opening capacity. Accept positive unit costs below one. Challenge nonempty genesis acceptance and opening credit from lineage alone, skipped or duplicate successors, changed policy, copied markers without lineage, unavailable openings, invalid or out-of-lineage acceptance, dropped predecessors, duplicate destruction aliases and changed addresses; include delayed acceptance and an empty accepted increment. Distinguish market repricing from unit recoinage and reject unit-cost multiplication of action-denominated quantities while accepting numeraire-converted burn quantities.",
+      "conformance": [
+        "realizes{``subsec:deployment:realization-obligations``; The finite-history oracle compares supplied disclosures and recognition; external destruction and settlement remain an explicit hold.}",
+        "realizes{``case:deployment:realization-obligations-occlusion``; The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.}"
+      ],
       "decision": "dec:design:burn-boundary",
       "fixture": "burn-disclosures",
       "hold": "External destruction and settlement assurance remain deployment obligations.",
@@ -231,6 +235,9 @@
     },
     {
       "cases": "Both chartered floors, exact ridge comparison, zero width, empty live domain, deadband equality, capped upward/downward steps, recoinage, fixed-ledger numeraire change and a next epoch wider than its predecessor.",
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; The exact boundary-sequence model checks published schedules and controller arithmetic, not plant performance.}"
+      ],
       "decision": "dec:design:policy-schedules",
       "fixture": "wall-controller-cases",
       "hold": "Deployment declarations and verified marker evidence remain required; economics and controller performance remain open, while the marker-bound settlement postulate establishes accepted-snapshot consistency for readers of the same recognized marker, without compulsory or timed acceptance.",
@@ -300,6 +307,10 @@
     },
     {
       "cases": "Locked override, late announcement, exact literal mismatch and computed constant with an uncertified decimal.",
+      "conformance": [
+        "realizes{``subsec:deployment:transparency-of-protocol-formulas``; Effective edition lookup and locked overrides are determined by the supplied history.}",
+        "realizes{``case:deployment:transparency-of-protocol-formulas-silent-tuning``; The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.}"
+      ],
       "decision": "dec:design:constants",
       "fixture": "effective-edition-cases",
       "hold": "Dependency versions and numerical constant witnesses require review before use.",

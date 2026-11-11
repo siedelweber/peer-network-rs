@@ -19,6 +19,84 @@ from design import PENDING_RENDERED_SPACING, PAPER_EDITION_FIXTURES, PAPER_TAG, 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 
+class DeploymentClaims(unittest.TestCase):
+    def test_conditional_closure(self):
+        """Missing conditional marks and omitted dependencies refuse even when every local witness route resolves.
+        ´claim:design:deployment-claims-require-conditional-closure´
+        ´test:integration:test-conditional-closure´
+        """
+        from deployment_claims import Refusal, project, compare_edges, source_units, validate
+        from claims import conformance_marks, StructuralError
+        statement = dict(kind='statement', name='cond:deployment:standing-work',
+                         paper_tag='network-v0.31.1', classification='split',
+                         included='Accepted counts.', excluded='Clock truth.',
+                         reason='Counts follow from inputs; clocks do not.',
+                         witness_route='rec:testing:fixture-route', evidence_status='scope-only')
+        target = statement['name']
+        rows = [statement]
+        validate(rows, {target}, {'rec:testing:fixture-route'})
+        for field, value, diagnostic in (
+                ('witness_route', '', 'missing witness route'),
+                ('paper_tag', 'unknown', 'paper edition'),
+                ('extra', 'unknown', 'unknown or missing field')):
+            with self.subTest(field=field), self.assertRaisesRegex(Refusal, diagnostic):
+                validate([{**statement, field: value}], {target}, {'rec:testing:fixture-route'})
+        with self.assertRaisesRegex(Refusal, 'inventory differs'):
+            validate(rows, set(), {'rec:testing:fixture-route'})
+        units = [('ROOT::rule:fixture:a', 'relies{``'+target+'``; runtime acquisition}', 'ROOT', {target}),
+                 ('ROOT::rule:fixture:b', 'relies{``rule:fixture:a``; its runtime premise}', 'ROOT', {'ROOT::rule:fixture:a'}),
+                 ('ROOT::rule:fixture:c', 'realizes{``rule:fixture:a``; only its published inputs}', 'ROOT', {'ROOT::rule:fixture:a'})]
+        edges, conditional = project(rows, units)
+        self.assertEqual(conditional['ROOT::rule:fixture:a'], [target])
+        self.assertEqual(conditional['ROOT::rule:fixture:b'], [target])
+        self.assertNotIn('ROOT::rule:fixture:c', conditional)
+        # An ordinary edge cannot propagate even when its target is conditional.
+        with self.assertRaisesRegex(Refusal, 'unmarked deployment edge: ROOT::rule:fixture:b'):
+            project(rows, [units[0], ('ROOT::rule:fixture:b', 'ordinary citation', 'ROOT', {'ROOT::rule:fixture:a'})])
+        cycle = units + [('ROOT::rule:fixture:a', 'relies{``rule:fixture:b``; the same premise}', 'ROOT', {'ROOT::rule:fixture:b'})]
+        self.assertEqual(project(rows, cycle)[1], conditional)
+        for removed in range(len(edges)):
+            with self.subTest(removed=removed), self.assertRaisesRegex(Refusal, 'missing or changed deployment edge'):
+                compare_edges(edges, edges[:removed]+edges[removed+1:])
+        with self.assertRaisesRegex(Refusal, 'stale deployment edge:'):
+            compare_edges([], edges)
+        compare_edges(edges, edges)
+        with self.assertRaisesRegex(Refusal, 'unmarked deployment edge:'):
+            project(rows, [('ROOT::rule:fixture:a', 'Unmarked '+target, 'ROOT', {target})])
+        for bad in ('relies{``x``; }', 'realizes{``x``; broken', 'relies{´x``; mismatch}'):
+            with self.subTest(bad=bad), self.assertRaises(StructuralError):
+                conformance_marks(bad)
+        self.assertEqual(conformance_marks('premise{``'+target+'``; attention}'), [])
+        excluded = {**statement, 'classification': 'not-claimed', 'included': '', 'witness_route': ''}
+        with self.assertRaisesRegex(Refusal, 'claimed-part citation has no claimed part'):
+            project([excluded], [('ROOT::rule:fixture:a', 'realizes{``'+target+'``; absent part}', 'ROOT', {target})])
+        self.assertEqual(len(conformance_marks('realizes{(´[ROOT-rule:fixture:a]´); supplied values}')), 1)
+        with self.assertRaises(StructuralError):
+            conformance_marks('realizes{(´[ROOT-rule:fixture:a]´; unclosed parentheses}')
+        # The claim uses the real acute syntax. A conditional target must not disappear.
+        site = dict(language='rust', owner='HOST', function='probe', operation='probe',
+                    doc='Only published values are checked. (´[ROOT-rule:fixture:a]´)\n'
+                        'realizes{´[ROOT-rule:fixture:a]´; published values only}\n'
+                        '´claim:fixture:probe´\n´test:unit:probe´')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'docs/inputs').mkdir(parents=True)
+            (root/'README.md').write_text('**Rule (Fixture)** · `rule:fixture:a` relies{``'+target+'``; runtime acquisition}\n')
+            with patch('source_sites.census', return_value=[site]), patch('registry_fragments.read', return_value={'rows': []}):
+                observed, _ = source_units(root, rows)
+            claim_units = [u for u in observed if u[0] == 'HOST::claim:fixture:probe']
+            self.assertEqual(len(claim_units), 1)
+            self.assertIn('ROOT::rule:fixture:a', claim_units[0][3])
+            projected, conditions = project(rows, observed)
+            self.assertNotIn('HOST::claim:fixture:probe', conditions)
+            self.assertTrue(any(e['source']=='HOST::claim:fixture:probe' for e in projected))
+            site['doc'] = site['doc'].replace('realizes{´[ROOT-rule:fixture:a]´; published values only}\n', '')
+            with patch('source_sites.census', return_value=[site]), patch('registry_fragments.read', return_value={'rows': []}):
+                changed, _ = source_units(root, rows)
+            with self.assertRaisesRegex(Refusal, 'unmarked deployment edge: HOST::claim:fixture:probe'):
+                project(rows, changed)
+
+
 # Reuse the optimized interpreter. Each request executes the complete command
 # against its private fixture tree. The workload reader
 # may reuse validation only for identical content; mutations still cross the

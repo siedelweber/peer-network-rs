@@ -437,6 +437,7 @@
         "ci::test_design.Correspondence.test_tracked_prose_boundaries": "calibrated-design-tracked-prose-boundaries-case"
       },
       "cases": [
+        "ci::test_design.DeploymentClaims.test_conditional_closure",
         "ci::test_design.Correspondence.test_content_cache_refusals",
         "ci::test_design.Correspondence.test_rendered_continuations",
         "ci::test_design.Correspondence.test_rendered_spacing",

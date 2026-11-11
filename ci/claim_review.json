@@ -90,6 +90,14 @@
       "review": "A three-commit fixture shows the final parent accepting an earlier addition while the explicit import base refuses it; invalid bases and ceiling growth refuse, while retirement passes. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
+      "operation": "ci::test_design.DeploymentClaims.test_conditional_closure",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:deployment-claims-require-conditional-closure",
+      "before": "Missing conditional marks and omitted dependencies refuse even when every local witness route resolves.",
+      "after": "Missing conditional marks and omitted dependencies refuse even when every local witness route resolves.",
+      "review": "Explicit reliance alone propagates through the direct, transitive and cyclic controls. Claimed-part citations do not. Removing a mark or a generated edge and retaining a stale edge each refuses by source and target. A real acute-syntax claim-doc fixture proves claim-site edges are collected and cannot disappear when their mark is removed. Scope and premises are unchanged; this is structural evidence, not semantic classification."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_baseline_lineage",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:baseline-follows-import-tree",

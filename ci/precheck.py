@@ -74,6 +74,7 @@ def commands(target, linter):
     """Keep checks at their gate entry points, including their refusal diagnostics."""
     return (
         ('census', [sys.executable, '-B', 'ci/build_graph.py', 'gate']),
+        ('deployment-claims', [sys.executable, '-B', 'ci/deployment_claims.py']),
         ('linter', [linter, 'check', '--root', '.']),
         ('claims', [sys.executable, '-B', 'ci/claims.py', 'registration']),
         ('observations', [sys.executable, '-B', 'ci/observe.py', '--census-binary', str(target/'gate/examples/observe_census')]),
@@ -87,7 +88,7 @@ def main():
     parser.add_argument('--prepare-checkers', action='store_true', help='explicit build preparation; not a registration pre-check')
     parser.add_argument('--run-checker', choices=CHECKERS, help='gate build-and-check route')
     parser.add_argument('checker_args', nargs=argparse.REMAINDER)
-    parser.add_argument('--only', choices=('census', 'linter', 'claims', 'observations', 'datasets', 'documents'),
+    parser.add_argument('--only', choices=('census', 'deployment-claims', 'linter', 'claims', 'observations', 'datasets', 'documents'),
                         help='run one named stage; not a complete pre-check')
     args = parser.parse_args()
     started = time.time()
