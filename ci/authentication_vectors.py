@@ -116,32 +116,31 @@ def check(value):
         digest = hashlib.sha256(b'pn-act-authentication/signing-key-hash/v1\0' + key).hexdigest()
         if row['digest'] != digest or row['script'] != b'\x6a\x25PNAK\x01'.hex() + digest:
             raise ValueError('key digest or script differs')
-    for row in value['assets']:
-        if row.get('marker_version') == 2:
-            check_version_two(row, value['fee_asset'])
-            continue
-        wire = bytes.fromhex(row['transaction'])
-        if wire[4:6] != bytes([1, 1]) or wire[42] != 0:
-            raise ValueError('fixture transaction header differs')
-        if wire[79:111].hex() != row['contract'] or bytes.fromhex(row['contract_rpc'])[::-1].hex() != row['contract']:
-            raise ValueError('contract byte order differs')
-        marker = b'\x6a\x2aPNAT\x01'.hex() + row['run'] + '0000000000'
-        matches = [output for output in row['decoded']['vout'] if output['scriptPubKey']['hex'] == marker]
-        if len(matches) != 1 or matches[0]['value'] != 0 or matches[0]['asset'] != value['fee_asset']:
-            raise ValueError('qualification script differs')
-        if row['decoded']['vin'][0]['issuance']['asset'] != row['asset']:
-            raise ValueError('daemon identifier differs')
-        prevout = bytes.fromhex(row['prevout'])[::-1] + row['vout'].to_bytes(4, 'little')
-        if wire[6:38] != prevout[:32] or int.from_bytes(wire[38:42], 'little') != row['vout'] | 0x80000000:
-            raise ValueError('issuance prevout differs')
-        digest = hashlib.sha256(hashlib.sha256(prevout).digest()).digest()
-        asset = midpoint(midpoint(digest, bytes.fromhex(row['contract'])), bytes(32))[::-1].hex()
-        if asset != row['asset']:
-            raise ValueError('independent asset identifier differs')
+    for row in value['assets'] + value.get('legacy_version_one', []):
+        parts = transaction_parts(row['transaction'])
+        txid = hashlib.sha256(hashlib.sha256(parts['base']).digest()).digest()[::-1].hex()
+        if row['txid'] != txid: raise ValueError('transaction identifier differs')
+        for name in ['reordered_transaction'] if 'reordered_transaction' in row else []:
+            other = transaction_parts(row[name])
+            other_id = hashlib.sha256(hashlib.sha256(other['base']).digest()).digest()[::-1].hex()
+            if row['reordered_txid'] != other_id: raise ValueError('reordered transaction identifier differs')
+        issued = [i for i, part in enumerate(parts['inputs']) if part['issuance'] is not None]
+        if [r['vin'] for r in row['issuance_results']] != issued: raise ValueError('issuance inventory differs')
+        for result in row['issuance_results']:
+            part = parts['inputs'][result['vin']]
+            digest = hashlib.sha256(hashlib.sha256(part['prevout']).digest()).digest()
+            issuance = part['issuance']
+            if issuance['nonce'] != bytes(32): raise ValueError('fixture is not initial issuance')
+            entropy = midpoint(digest, issuance['contract'])
+            asset = midpoint(entropy, bytes(32))
+            token = midpoint(entropy, bytes([1])+bytes(31))
+            for name, expected in [('entropy',entropy),('asset',asset),('token',token)]:
+                if result[name] != expected[::-1].hex(): raise ValueError('independent '+name+' differs')
+        check_qualification(row, value['fee_asset'])
     return len(value['assets']), len(value['keys'])
 
 
-def check_version_two(row, fee_asset):
+def check_qualification(row, fee_asset):
     parts = transaction_parts(row['transaction'])
     prevout = bytes.fromhex(row['prevout'])[::-1] + row['vout'].to_bytes(4,'little')
     inputs = [i for i in parts['inputs'] if i['prevout'] == prevout]
@@ -150,11 +149,23 @@ def check_version_two(row, fee_asset):
     if contract.hex() != row['contract'] or contract[::-1].hex() != row['contract_rpc']: raise ValueError('contract differs')
     digest = hashlib.sha256(hashlib.sha256(prevout).digest()).digest()
     if midpoint(midpoint(digest,contract),bytes(32))[::-1].hex() != row['asset']: raise ValueError('asset differs')
-    marker = b'\x6a\x4aPNAT\x02' + bytes.fromhex(row['run']) + prevout + b'\0'
+    version = row.get('marker_version', 1)
+    marker = (b'\x6a\x4aPNAT\x02' + bytes.fromhex(row['run']) + prevout + b'\0' if version == 2 else b'\x6a\x2aPNAT\x01' + bytes.fromhex(row['run']) + bytes(5))
     matches = [o for o in parts['outputs'] if o['script']==marker]
     if len(matches)!=1 or matches[0]['asset']!=b'\1'+bytes.fromhex(fee_asset)[::-1] or matches[0]['amount']!=b'\1'+bytes(8) or matches[0]['nonce']!=b'\0': raise ValueError('marker differs')
-    if bytes.fromhex(row['run']) == bytes.fromhex(row['run'])[::-1]: raise ValueError('palindromic run')
+    if version == 2 and bytes.fromhex(row['run']) == bytes.fromhex(row['run'])[::-1]: raise ValueError('palindromic run')
     if 'reordered_transaction' in row and parts['reordered'].hex()!=row['reordered_transaction']: raise ValueError('reorder differs')
+
+
+def compact_fixture(value):
+    """Retain consumed daemon identifiers; discard duplicate decoded RPC fields."""
+    for row in value['assets'] + value.get('legacy_version_one', []):
+        if 'issuance_results' not in row:
+            row['issuance_results'] = [dict(vin=i,entropy=v['issuance']['assetEntropy'],asset=v['issuance']['asset'],token=v['issuance']['token']) for i,v in enumerate(row['decoded']['vin']) if 'issuance' in v]
+        row.pop('decoded', None)
+    value['byte_orders'] = dict(prevout='display transaction id; reversed once into the marker',vout='integer output index; four little-endian consensus bytes in the marker',contract='consensus raw contract',contract_rpc='RPC display contract',run='opaque bytes; never reversed',txid='display transaction id',reordered_txid='display transaction id',entropy='daemon display; reverse of SHA-256 midstate bytes',asset='display asset identifier',token='display reissuance-token identifier')
+    value['unrecomputed_inputs'] = 'Daemon version and help text, supplied funding prevouts and fee asset, raw transaction witnesses and witness programs are public fixture inputs. No signature, chain inclusion or origin is established by this reader. Entropy, asset and token identifiers and both transaction identifiers are independently recomputed.'
+    return value
 
 
 def generate():
@@ -224,7 +235,7 @@ def main():
     parser.add_argument('--generate', type=Path, required=True)
     args = parser.parse_args()
     try:
-        value = generate()
+        value = compact_fixture(generate())
         check(value)
         args.generate.parent.mkdir(parents=True, exist_ok=True)
         args.generate.write_text(json.dumps(value, indent=2) + '\n')

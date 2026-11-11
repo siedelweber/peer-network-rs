@@ -55,7 +55,7 @@ class WalletBoundary(unittest.TestCase):
             check(changed)
 
     def test_authentication_values(self):
-        """Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs the daemon asset identifiers, and changed key or asset digests are refused.
+        """Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs every retained daemon entropy, asset and token identifier, transaction identifiers are recomputed from raw bytes, and altered digests are refused.
         ´claim:discipline:authentication-values-have-independent-byte-checks´
         ´test:integration:test-authentication-values´
         """
@@ -68,8 +68,21 @@ class WalletBoundary(unittest.TestCase):
             check(changed)
         changed = copy.deepcopy(value)
         changed['assets'][0]['asset'] = '00' * 32
-        changed['assets'][0]['decoded']['vin'][0]['issuance']['asset'] = '00' * 32
-        with self.assertRaisesRegex(ValueError, 'independent asset identifier differs'):
+        with self.assertRaisesRegex(ValueError, 'asset differs'):
+            check(changed)
+        for corpus in ['legacy_version_one', 'assets']:
+            for name in ['token', 'asset', 'entropy']:
+                changed = copy.deepcopy(value)
+                changed[corpus][0]['issuance_results'][0][name] = '00' * 32
+                with self.assertRaisesRegex(ValueError, 'independent '+name+' differs'):
+                    check(changed)
+            changed = copy.deepcopy(value)
+            changed[corpus][0]['txid'] = '00' * 32
+            with self.assertRaisesRegex(ValueError, 'transaction identifier differs'):
+                check(changed)
+        changed = copy.deepcopy(value)
+        changed['assets'][1]['reordered_txid'] = '00' * 32
+        with self.assertRaisesRegex(ValueError, 'reordered transaction identifier differs'):
             check(changed)
 
     def test_archive_provisioning(self):

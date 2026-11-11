@@ -31,7 +31,7 @@ producer = "Declared Elements daemon and independent Python reconstruction"
 establishment = "defined"
 reader = "authentication-fixtures"
 source = "packages/act-authentication/tests/golden.json"
-definition = "The retained transaction and decoder fields are public fixture operands, not chain-inclusion evidence. The reader reconstructs the key hashes and scripts with hashlib and the initial asset identifiers with an independent compression implementation before admitting these exact fixture values. Supplied prevouts remain conditional evidence."
+definition = "The retained raw transactions, witness signatures and witness programs, funding prevouts, fee asset, daemon version and help text are declared unrecomputed public fixture inputs, not chain-inclusion evidence. The reader reconstructs key hashes and scripts with hashlib, transaction identifiers from independently decoded non-witness bytes, and every retained issuance entropy, asset and token identifier with an independent compression implementation. Duplicate decoded daemon fields are absent. Supplied prevouts remain conditional evidence."
 paths = ["packages/act-authentication/tests/golden.json"]
 
 [[rows]]

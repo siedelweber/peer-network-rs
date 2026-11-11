@@ -574,8 +574,8 @@
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:authentication-values-have-independent-byte-checks",
       "before": "",
-      "after": "Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs the daemon asset identifiers, and changed key or asset digests are refused.",
-      "review": "Read independent hashlib, prime-derived SHA-256 compression and raw-byte comparisons. Mutated key and asset digests are refused even when the latter is changed in both retained daemon fields. No daemon or Rust implementation is called by this check."
+      "after": "Claim: The committed public key digests and tagged scripts match independent hashlib reconstruction, raw contract bytes match their explicit RPC conversion, an independent SHA-256 compression reconstructs every retained daemon entropy, asset and token identifier, transaction identifiers are recomputed from raw bytes, and altered digests are refused.",
+      "review": "Read independent hashlib, prime-derived SHA-256 compression and raw-byte comparisons. Mutated key, asset, entropy, token and transaction identifiers are refused for current and legacy fixtures; reordered transaction identifiers have their own probe. No daemon or Rust implementation is called by this check."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_authentication_verification_admission",

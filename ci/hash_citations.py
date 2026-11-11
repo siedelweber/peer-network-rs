@@ -297,7 +297,8 @@ def establish(root, rule):
         check(value)
         # Public daemon transaction bytes and their supplied locator fields are
         # fixture inputs, not a claim of chain inclusion. Declared key and asset
-        # digests are independently recomputed before admitting these fixtures.
+        # digests, issuance entropy/token identifiers and transaction identifiers
+        # are independently recomputed before admitting these fixtures.
         def strings(node):
             if isinstance(node, str):
                 yield node
