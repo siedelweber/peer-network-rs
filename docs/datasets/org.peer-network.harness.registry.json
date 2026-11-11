@@ -2854,7 +2854,7 @@
       },
       "implementation": "pn-host-rust",
       "kind": "suite",
-      "level": "unit",
+      "level": "integration",
       "name": "pn-host::admitted-carrier",
       "runner": "nextest",
       "status": "active",
@@ -2862,12 +2862,18 @@
     },
     {
       "budget": "postgresql-suite",
+      "case_budget_reasons": {
+        "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held": "Public admission constructs the carrier before a real PostgreSQL session verifies the held storage operation."
+      },
+      "case_budgets": {
+        "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held": "real-case"
+      },
       "cases": [
         "pn-host::admitted_carrier_tests::admitted_carrier_postgresql_held"
       ],
       "implementation": "pn-host-memory-and-postgresql",
       "kind": "suite",
-      "level": "unit",
+      "level": "integration",
       "name": "pn-host::admitted-carrier-held",
       "runner": "nextest",
       "status": "active",

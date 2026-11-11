@@ -622,6 +622,14 @@ wait
             self.assertEqual(omitted, [])
         unmetered = {'claim-tests':{k:v for k,v in first['claim-tests'].items() if k != 'setup_cpu_s'}}
         self.assertEqual(compile_comparison(first, unmetered, [])[3], ['claim-tests'])
+        # Recorded serial tracker pair on one tree. The residual 2.089 CPU
+        # seconds is observed variation, not a budget or a load attribution.
+        first = {'tests':dict(wall=29.210007, own_cpu_s=27.405551, cargo_cpu_s=0,
+                             setup_cpu_s=17.998947, layouts={}, partial=False)}
+        second = {'tests':dict(first['tests'], wall=8.767859, own_cpu_s=7.486846, setup_cpu_s=.169108)}
+        for left, right in ((first,second),(second,first)):
+            own, old, _, _ = compile_comparison(left, right, [])
+            self.assertLessEqual(abs(own-old), 2.089, 'recorded tracker setup must not become program growth')
         from isolation import setup_receipt
         from build_graph import setup_accounting
         with tempfile.TemporaryDirectory() as directory:
