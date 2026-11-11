@@ -673,6 +673,7 @@ def baseline_context(root, registry, policy=None):
     from gate_resources import node_identity
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
     identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers, node=node_identity(),
+        accounting='own-cpu-minus-build-and-isolation-setup/producing-step/v1',
         profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
         toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
         runtime=dict(python=sys.version, machine=os.uname().machine, flags=os.environ.get('RUSTFLAGS'),
@@ -791,7 +792,7 @@ def baseline_replacement(candidate, previous):
 def warm_peer_replacement(candidate, previous):
     """Pressure orders like work only when it does not contradict wall and CPU."""
     def cases(value):
-        return {name:(row.get('selected_cases'), row.get('non_comparable_steps', []))
+        return {name:(row.get('selected_cases'), row.get('case_steps'), row.get('steps'), row.get('non_comparable_steps', []))
                 for name, row in value.get('tiers', {}).items()}
     if not cases(candidate) or cases(candidate) != cases(previous):
         return None
@@ -933,12 +934,15 @@ def setup_accounting(path, source, run, step):
                 type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
                 for key in ('wall', 'own_user_s', 'own_sys_s')):
             raise ValueError('invalid isolation setup receipt: '+step)
+    setup = [row for row in rows if row.get('source') == source]
+    fixture = [row for row in rows if row.get('source') != source]
     cases = {}
-    for row in rows:
+    for row in setup:
         if row.get('case'):
             cases[row['case']] = cases.get(row['case'], 0)+row['own_user_s']+row['own_sys_s']
-    return dict(setup_cpu_s=sum(row['own_user_s']+row['own_sys_s'] for row in rows),
-                setup_wall_s=sum(row['wall'] for row in rows), setup_calls=len(rows), setup_case_cpu_s=cases)
+    return dict(setup_cpu_s=sum(row['own_user_s']+row['own_sys_s'] for row in setup),
+                setup_wall_s=sum(row['wall'] for row in setup), setup_calls=len(setup), setup_case_cpu_s=cases,
+                fixture_git_cpu_s=sum(row['own_user_s']+row['own_sys_s'] for row in fixture))
 
 
 def status_changes(current, previous):
@@ -985,6 +989,16 @@ def evidence_statuses(root):
     return dict(case=cases, obligation={row['name']:row['status'] for row in evidence['obligations']})
 
 
+def case_producer_tier(registry, groups, row):
+    """CPU belongs to the executing step even if a case's declared tier differs."""
+    if row.get('step') != registry.producing_step(row['operation']):
+        raise ValueError('case producing step differs: '+row['operation'])
+    tiers = [tier for tier, steps in groups.items() if row['step'] in steps]
+    if len(tiers) != 1:
+        raise ValueError('case producing step has no unique accounting tier: '+row['operation'])
+    return tiers[0]
+
+
 def tier_summary(root, registry, worker_statuses):
     from devperf import budgets
     from gate_resources import cpu_from_log, raw_sample, joined, compact
@@ -1025,13 +1039,12 @@ def tier_summary(root, registry, worker_statuses):
         for line in path.read_text().splitlines():
             row = json.loads(line)
             if row.get('scope') == 'case' and row.get('outcome') != 'held' and not row.get('retained'):
-                if row.get('step') != registry.producing_step(row['operation']):
-                    raise ValueError('case producing step differs: '+row['operation'])
-                case_steps.setdefault(row['tier'], {})[row['operation']] = row['step']
-                selected_cases.setdefault(row['tier'], []).append(row['operation'])
+                producing_tier = case_producer_tier(registry, groups, row)
+                case_steps[producing_tier][row['operation']] = row['step']
+                selected_cases[producing_tier].append(row['operation'])
                 cpu = (row.get('own_user_s'), row.get('own_sys_s'))
                 valid = all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 for value in cpu)
-                case_costs.setdefault(row['tier'], {})[row['operation']] = sum(cpu) if valid else None
+                case_costs[producing_tier][row['operation']] = sum(cpu) if valid else None
     for tier, names in groups.items():
         selected_rows = [row for row in fields if row[0] in names]
         first = min(selected_rows, key=lambda row: float(row[2]))

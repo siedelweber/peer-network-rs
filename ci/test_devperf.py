@@ -567,6 +567,16 @@ wait
         self.assertEqual(overrun_class(True, None, None, .0349, 531.9, 111.2,
             ['packages/records/src/ridge.rs'], policy, **ridge, comparable_cases=False), 'unclassified')
         from build_graph import case_intersection
+        from build_graph import case_producer_tier
+        producer = SimpleNamespace(producing_step=lambda _: 'wallet-conformance')
+        groups = {'fast':['tests'], 'service':['wallet-conformance']}
+        receipt = dict(operation='fixture', tier='fast', step='wallet-conformance')
+        self.assertEqual(case_producer_tier(producer, groups, receipt), 'service',
+                         'case CPU follows its producing step, not its declared suite tier')
+        with self.assertRaisesRegex(ValueError, 'producing step differs'):
+            case_producer_tier(producer, groups, dict(receipt, step='tests'))
+        with self.assertRaisesRegex(ValueError, 'no unique accounting tier'):
+            case_producer_tier(producer, {'fast':['tests']}, receipt)
         own, old, comparable, evidence = case_intersection(
             ['common', 'new'], ['common', 'retained'], {'new': 80}, {'retained': 20}, 180, 120)
         self.assertEqual((own, old, comparable), (100, 100, True))
@@ -636,13 +646,18 @@ wait
             path = Path(directory)/'setup.jsonl'
             with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source',
                             PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='run', PN_GATE_CASE='ci::fixture.case'), patch('builtins.print'):
-                setup_receipt(dict(owner='nested-tracker', source='fixture-source', action='fetch',
+                setup_receipt(dict(owner='nested-tracker', source='gate-source', action='fetch',
                                    wall=3, own_user_s=8.2, own_sys_s=1, status=0))
             self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
-                             dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1, setup_case_cpu_s={'ci::fixture.case':9.2}))
+                             dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1, setup_case_cpu_s={'ci::fixture.case':9.2}, fixture_git_cpu_s=0))
             with self.assertRaisesRegex(ValueError, 'stale isolation setup receipt'):
                 setup_accounting(path, 'gate-source', 'other-run', 'tests')
-            data = json.loads(path.read_text());data['own_user_s'] = -1
+            data = json.loads(path.read_text());data['source'] = 'synthetic-fixture-commit'
+            path.write_text(json.dumps(data)+'\n')
+            self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
+                             dict(setup_cpu_s=0, setup_wall_s=0, setup_calls=0, setup_case_cpu_s={}, fixture_git_cpu_s=9.2),
+                             'synthetic fixture Git remains program work')
+            data['own_user_s'] = -1
             path.write_text(json.dumps(data)+'\n')
             with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
                 setup_accounting(path, 'gate-source', 'run', 'tests')
