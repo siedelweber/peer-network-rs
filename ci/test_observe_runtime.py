@@ -94,20 +94,16 @@ def compare(argv, mode, env, deadline=60, injected=False):
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
 
 
-def evidence_bound(status, evidence=True):
+def evidence_bound(status):
     """Check total attempts conservatively against ordinary slots before content use."""
-    if evidence:
-        fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
-        bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
-    else:
-        numbers=json.loads(Path('docs/datasets/org.peer-network.numbers.json').read_text())['rows']
-        bound=next(row['value'] for row in numbers if row['id']=='num:numbers:observe-queue-record-capacity')
-    print(f'OBSERVATION-EVIDENCE attempted={status["attempted_records"]} bound={bound} sink={"evidence" if evidence else "production"}')
+    fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
+    bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
+    print(f'OBSERVATION-EVIDENCE attempted={status["attempted_records"]} bound={bound} sink=evidence')
     if status['attempted_records'] > bound:
         raise AssertionError('complete-evidence record bound exceeded')
 
 
-def complete_capture(stderr, evidence=True):
+def complete_capture(stderr):
     """Refuse incomplete evidence before any enabled-stream content assertion."""
     try:
         rows = [json.loads(line) for line in stderr.splitlines()]
@@ -119,7 +115,7 @@ def complete_capture(stderr, evidence=True):
     if len(statuses) != 1:
         raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: final status missing or repeated')
     status = statuses[0]
-    evidence_bound(status, evidence)
+    evidence_bound(status)
     fields = ('lost_records', 'undelivered_records', 'in_flight_records', 'drain_timeouts')
     if any(status.get(field) != 0 for field in fields):
         raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: ' + json.dumps(status, sort_keys=True))
