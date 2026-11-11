@@ -103,7 +103,7 @@
       "claim": "ROOT::claim:devperf:baseline-follows-import-tree",
       "before": "",
       "after": "Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.",
-      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts. The additional controls require byte-identical preservation of a quieter baseline when quiet boundary windows surround a noisier whole run, and recover it through an ancestry-validated retained predecessor chain without deleting the historical noisier file."
+      "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts. The additional controls require byte-identical preservation of a quieter baseline when quiet boundary windows surround a noisier whole run, and recover it through an ancestry-validated retained predecessor chain without deleting the historical noisier file. Cache controls additionally distinguish cold then warm, warm then cold, quieter and noisier warm candidates, first-key provisional retention, and stale build receipts. Warm evidence supersedes cold or provisional evidence before stall orders peers; claim scope and premises stay unchanged."
     },
     {
       "operation": "ci::test_devperf.Performance.test_calibration_identity",

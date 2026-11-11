@@ -657,6 +657,34 @@ wait
             return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
                     for phase in ('before', 'after')}
         from build_graph import baseline_context, retain_baseline
+        from build_graph import baseline_replacement, baseline_rank
+        from harness import build_cache_state, CONFIGURATION
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional,
+                        whole=dict(node_scope='node-wide', stall=stall))
+        cold, warm = recorded('cold', .060), recorded('warm', .081)
+        self.assertEqual(baseline_replacement(warm, cold), (True, 'warm-replaces-cold-or-provisional'))
+        self.assertEqual(baseline_replacement(cold, warm), (False, 'retained-warm-cache'))
+        self.assertEqual(baseline_replacement(recorded('warm', .05), warm), (True, 'no-higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(recorded('warm', .09), warm), (False, 'higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(warm, None), (True, 'first-compatible-run-provisional'))
+        self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (True, 'warm-replaces-cold-or-provisional'))
+        self.assertLess(baseline_rank(warm), baseline_rank(cold))
+        self.assertLess(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            run = root/'.lane/tier-tests'
+            run.mkdir(parents=True)
+            manifest = dict(source='source', configuration=CONFIGURATION, run='invocation',
+                            records=[dict(operation='build', outcome='exit:0')])
+            (run/'manifest.json').write_text(json.dumps(manifest))
+            for log, expected in [('   Compiling example v1.0\n    Finished `gate` profile [optimized]\n', 'cold'),
+                                  ('    Finished `gate` profile [optimized]\n', 'warm'),
+                                  (chr(27)+'[32m    Finished `gate` profile [optimized]'+chr(27)+'[0m\n', 'warm'), ('', 'unknown')]:
+                (run/'build.stderr').write_text(log)
+                self.assertEqual(build_cache_state(root, 'source', 'invocation')['state'], expected)
+                self.assertEqual(build_cache_state(root, 'other', 'invocation')['state'], 'unknown')
+                self.assertEqual(build_cache_state(root, 'source', 'other')['state'], 'unknown')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 1\n')
@@ -676,6 +704,7 @@ wait
                 retain_baseline(root)
                 self.assertFalse(list(path.parent.glob('*.tmp')))
                 quiet_bytes = path.read_bytes()
+                self.assertTrue(json.loads(quiet_bytes)['provisional'], 'first compatible retention is provisional')
                 from gate_resources import node_identity
                 node = node_identity()
                 for key, value in (('cpu_models',['another CPU']), ('allowed_cpus',node['allowed_cpus']+1),

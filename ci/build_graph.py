@@ -739,7 +739,7 @@ def baseline_context(root, registry, policy=None):
                 if ancestor.returncode: continue
                 comparison = value['source']
                 value['match'] = 'ancestor'
-            if baseline is not None and baseline_stall(value) >= baseline_stall(baseline):
+            if baseline is not None and baseline_rank(value) >= baseline_rank(baseline):
                 continue
             baseline = value
             diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
@@ -755,6 +755,27 @@ def baseline_stall(candidate):
     value = whole.get('stall')
     return value if (whole.get('node_scope') == 'node-wide' and type(value) in (int, float)
                      and math.isfinite(value) and 0 <= value < 1) else None
+
+
+def baseline_rank(candidate):
+    """Warm evidence precedes cold or unclassified evidence; stall orders peers."""
+    warm = candidate.get('cache', {}).get('state') == 'warm'
+    return (not warm, warm and candidate.get('provisional', True), baseline_stall(candidate))
+
+
+def baseline_replacement(candidate, previous):
+    """Quiet admission is checked separately from cache-aware replacement."""
+    if previous is None:
+        return True, 'first-compatible-run-provisional'
+    current = candidate.get('cache', {}).get('state', 'unknown')
+    retained = previous.get('cache', {}).get('state', 'unknown')
+    if current == 'warm' and (retained != 'warm' or previous.get('provisional', True)):
+        return True, 'warm-replaces-cold-or-provisional'
+    if retained == 'warm' and current != 'warm':
+        return False, 'retained-warm-cache'
+    if baseline_stall(candidate) > baseline_stall(previous):
+        return False, 'higher-whole-gate-stall'
+    return True, 'no-higher-whole-gate-stall'
 
 
 def quiet_baseline(candidate, policy=None):
@@ -796,24 +817,25 @@ def retain_baseline(root):
                 prior.append(value)
         except (FileNotFoundError, ValueError):
             pass
-    previous_best = min(prior, key=baseline_stall) if prior else None
-    reason = ('load-unresolved' if not quiet_baseline(candidate) else
-              'higher-whole-gate-stall' if previous_best is not None and
-              baseline_stall(candidate) > baseline_stall(previous_best) else None)
-    if reason:
+    previous_best = min(prior, key=baseline_rank) if prior else None
+    accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
+    candidate_cache = candidate.get('cache', {}).get('state', 'unknown')
+    retained_cache = previous_best.get('cache', {}).get('state', 'unknown') if previous_best else 'unavailable'
+    if not accepted:
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')
         temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
         temporary.replace(skipped)
-        print('GATE-BASELINE retained=false reason='+reason+' previous_tree='+str(candidate.get('previous_baseline_tree')))
+        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' previous_tree='+str(candidate.get('previous_baseline_tree')))
         return
     candidate['quiet'] = True
+    candidate['provisional'] = previous_best is None
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
     temporary.replace(path)
     path.with_suffix('.skipped.json').unlink(missing_ok=True)
-    print('GATE-BASELINE retained=true source='+candidate['source'])
+    print('GATE-BASELINE retained=true source='+candidate['source']+' candidate_cache='+candidate_cache+' retained_cache='+candidate_cache+' previous_cache='+retained_cache+' reason='+reason+' provisional='+str(candidate['provisional']).lower())
 
 
 def retain_step_context(directory, candidate):
@@ -1017,7 +1039,10 @@ def tier_summary(root, registry, worker_statuses):
     tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
                           capture_output=True, text=True, check=True).stdout.strip()
     from gate_resources import node_identity
-    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(),
+    from harness import build_cache_state
+    cache = build_cache_state(root, os.environ['PN_GATE_SOURCE'], os.environ.get('PN_BUILDGRAPH_RUN'))
+    print('GATE-CACHE '+json.dumps(cache, sort_keys=True), flush=True)
+    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,

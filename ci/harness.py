@@ -16,6 +16,26 @@ CONFIGURATION = 'foundation-fast/gate/default-features+pn-epoch/test-support+pn-
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def build_cache_state(root, source, invocation):
+    """Classify the primary no-run build from its invocation-bound Cargo receipt."""
+    import re
+    run = root/'.lane/tier-tests'
+    try:
+        manifest = json.loads((run/'manifest.json').read_text())
+        text = (run/'build.stderr').read_text()
+        text = re.sub(chr(27)+r'\[[0-9;]*m', '', text)  # ASCII ESC introduces SGR.
+        build = [row for row in manifest['records'] if row['operation'] == 'build']
+        if (manifest['source'] != source or manifest['configuration'] != CONFIGURATION
+                or manifest['run'] != invocation or len(build) != 1
+                or build[0]['outcome'] != 'exit:0'
+                or not re.search(r'^\s*Finished .*profile ', text, re.M)):
+            return dict(state='unknown', compiled=None)
+        compiled = re.findall(r'^\s*Compiling (.+)$', text, re.M)
+        return dict(state='cold' if compiled else 'warm', compiled=compiled)
+    except (OSError, ValueError, KeyError, TypeError):
+        return dict(state='unknown', compiled=None)
+
+
 def source_id():
     started = time.monotonic()
     result = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
