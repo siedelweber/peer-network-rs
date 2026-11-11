@@ -84,14 +84,20 @@ def decisions(source, text, owner, known):
 
 def source_units(root, rows):
     """Read paragraph, actual claim documentation and data-row decisions."""
-    from claims import prose, site_claim, qualify
+    from claims import prose, site_claim, qualify, conformance_marks
     from source_sites import census
     from registry_fragments import read, indexed, ROOTS
     paragraphs, _ = prose(root)
     known = {r['name'] for r in rows}
-    pattern = re.compile(r'(?<![a-z0-9:.-])(?:[a-z][a-z0-9-]*:){2}[a-z0-9.-]+(?![a-z0-9:.-])')
+    # Every conditional record has an outgoing reliance, including transitive
+    # ones. Other records cannot require a mark and need not open large carriers.
+    candidates = {source for source, row in paragraphs.items()
+                  if any(mark[1] == 'relies' for mark in conformance_marks(row['text']))}
+    label = r'(?:[a-z][a-z0-9-]*:){2}[a-z0-9.-]+'
+    pattern = re.compile(r'\[[A-Z]+-'+label+r'\]|[A-Z]+::'+label+r'|(?<![a-z0-9:.-])'+label+r'(?![a-z0-9:.-])')
     def mentions(text):
-        return {m[0] for m in pattern.finditer(text) if m[0] in known}
+        cited = {m[0] if m[0] in known or '::' in m[0] else qualify(m[0], 'ROOT') for m in pattern.finditer(text)}
+        return cited & (known | candidates)
     def strings(value):
         if isinstance(value, str):
             yield value
@@ -206,6 +212,19 @@ def compare_edges(expected, actual):
             raise Refusal('stale deployment edge: '+row['source']+' -> '+row['target']+'; run '+COMMAND)
 
 
+def reviewed_claims(root, conditional):
+    """A changed claim or condition requires an explicit review, not a new count."""
+    from claims import read_register
+    review = read_register(root/'ci/claim_review.json', 'sites')
+    if 'conditional_claims' not in review:
+        raise Refusal('missing reviewed conditional claims: ci/claim_review.json')
+    actual = {name: values for name, values in sorted(conditional.items()) if '::claim:' in name}
+    print('DEPLOYMENT-CONDITIONAL-CLAIMS '+json.dumps(actual, sort_keys=True))
+    if review['conditional_claims'] != actual:
+        raise Refusal('conditional claim review differs: expected '+json.dumps(review['conditional_claims'], sort_keys=True)
+                      +' actual '+json.dumps(actual, sort_keys=True)+'; review ci/claim_review.json conditions')
+
+
 def check(root=Path('.'), generate=False):
     """Validate source decisions and emit or compare their derived carrier."""
     root = Path(root)
@@ -217,6 +236,7 @@ def check(root=Path('.'), generate=False):
     inventory = tomllib.loads((root/'docs/inputs/design-inventory.toml').read_text())['rows']
     validate(rows, {r['label'] for r in inventory if ':deployment' in r['label']}, mints)
     edges, conditional = project(rows, units)
+    reviewed_claims(root, conditional)
     path = root/'docs/inputs/deployment-edges.toml'
     text = carrier_bytes(edges)
     if generate:

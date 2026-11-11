@@ -7,7 +7,7 @@
   ],
   "rows": [
     {
-      "contents": "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, closure cause and attested timestamp.",
+      "contents": "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, closure cause and asserted timestamp.",
       "key": 2,
       "name": "accepted-records"
     },

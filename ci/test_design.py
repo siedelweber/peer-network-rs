@@ -95,6 +95,118 @@ class DeploymentClaims(unittest.TestCase):
                 changed, _ = source_units(root, rows)
             with self.assertRaisesRegex(Refusal, 'unmarked deployment edge: HOST::claim:fixture:probe'):
                 project(rows, changed)
+        self.deployment_refusals(statement, units)
+        self.deployment_readers(statement)
+        self.deployment_fixed_point(statement, units)
+
+    def deployment_refusals(self, statement, units):
+        from deployment_claims import Refusal, validate, project
+        from claims import conformance_marks, StructuralError
+        target = statement['name']
+        labels = {'rec:testing:fixture-route'}
+        cases = [
+            ([statement, statement], 'deployment duplicate'),
+            ([dict(statement, reason=3)], 'fields must be strings'),
+            ([dict(statement, reason='two\nlines')], 'single-line fields'),
+            ([dict(statement, classification='other')], 'classification or paper edition'),
+            ([dict(statement, evidence_status='executed')], 'scope is not execution evidence'),
+            ([dict(statement, classification='claimed')], 'excluded part differs from class'),
+            ([dict(statement, classification='non-obligation')], 'not-claimed row has a claimed part'),
+            ([statement, dict(statement, kind='clause', name='amend:testing:clause', parent='absent')], 'unresolved clause parent'),
+        ]
+        for rows, reason in cases:
+            with self.subTest(reason=reason), self.assertRaisesRegex(Refusal, reason):
+                validate(rows, {target}, labels)
+        with self.assertRaisesRegex(StructuralError, 'empty conformance citation'):
+            conformance_marks('relies{``x``;   }')
+        with self.assertRaisesRegex(Refusal, 'reliance has no excluded premise'):
+            project([dict(statement, classification='claimed', excluded='')], units[:1])
+        with self.assertRaisesRegex(Refusal, 'unresolved deployment edge'):
+            project([statement], [('ROOT::rule:fixture:x', 'realizes{``rule:fixture:absent``; values}', 'ROOT', set())])
+
+    def deployment_readers(self, statement):
+        from deployment_claims import Refusal, source_units, project
+        from registry_fragments import ROOTS
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'docs/inputs').mkdir(parents=True)
+            (root/'README.md').write_text('**Rule (Fixture)** · `rule:fixture:a` relies{``'+statement['name']+'``; acquisition}\n')
+            registry = root/ROOTS['harness-registry']
+            registry.mkdir(parents=True)
+            fragment = registry/'fixture.json'
+            input_path = root/'docs/inputs/fixture.toml'
+            for kind in ('input', 'registry', 'obligation'):
+                for marked in (True, False):
+                    citation = 'realizes{``rule:fixture:a``; supplied values}' if marked else 'ROOT::rule:fixture:a'
+                    fragment.write_text(json.dumps(dict(name='probe', basis=citation if kind=='registry' else '')))
+                    input_path.write_text('namespace="fixture"\nrows=[{name="probe", basis='+json.dumps(citation if kind=='input' else '')+'}]\n')
+                    def read(_root, family):
+                        if family == 'claim-obligations':
+                            return {'rows': [dict(name='ROOT::verif:fixture:probe', realizers=[], claims=[], basis=citation)] if kind=='obligation' else []}
+                        return {'suites': [json.loads(fragment.read_text())]}
+                    with patch('source_sites.census', return_value=[]), patch('registry_fragments.read', side_effect=read), patch('registry_fragments.indexed', return_value={'probe':fragment}):
+                        units, _ = source_units(root, [statement])
+                    source = {'input':'input:fixture:probe', 'registry':'input:harness-registry:suites:probe', 'obligation':'ROOT::verif:fixture:probe'}[kind]
+                    self.assertIn(source, {u[0] for u in units})
+                    if marked:
+                        self.assertNotIn(source, project([statement], units)[1])
+                    else:
+                        with self.subTest(kind=kind), self.assertRaisesRegex(Refusal, 'unmarked deployment edge: '+source):
+                            project([statement], units)
+
+    def deployment_fixed_point(self, statement, units):
+        from deployment_claims import Refusal, check, project, NAMESPACE, EDGE_NAMESPACE, reviewed_claims
+        from claims import register_form
+        from contextlib import redirect_stdout
+        import io
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'docs/inputs').mkdir(parents=True)
+            (root/'docs/datasets').mkdir()
+            (root/'ci').mkdir()
+            review = root/'ci/claim_review.json'
+            review.write_text(register_form(json.dumps(dict(schema=1, sites=[])), 'sites')[2])
+            with self.assertRaisesRegex(Refusal, 'missing reviewed conditional claims'):
+                reviewed_claims(root, {})
+            def write_review(values):
+                review.write_text(register_form(json.dumps(dict(schema=1, sites=[], conditional_claims=values)), 'sites')[2])
+            write_review({})
+            actual = {'HOST::claim:fixture:probe': [statement['name']]}
+            with self.assertRaisesRegex(Refusal, 'conditional claim review differs:.*HOST::claim:fixture:probe'):
+                reviewed_claims(root, actual)
+            write_review(actual)
+            output = io.StringIO()
+            with redirect_stdout(output): reviewed_claims(root, actual)
+            self.assertIn('HOST::claim:fixture:probe', output.getvalue())
+            for changed in ({}, {'HOST::claim:fixture:probe':['cond:deployment:other']}):
+                with self.assertRaisesRegex(Refusal, 'conditional claim review differs'):
+                    reviewed_claims(root, changed)
+            write_review({})
+            carrier = root/'docs/inputs/deployment-claims.toml'
+            text = 'namespace='+json.dumps(NAMESPACE)+'\nversion=[1,0,0]\nrows=[{'+','.join(k+'='+json.dumps(v) for k,v in statement.items())+'}]\n'
+            carrier.write_text(text)
+            (root/'docs/inputs/design-inventory.toml').write_text('rows=[{label='+json.dumps(statement['name'])+'}]')
+            for namespace, rows in ((NAMESPACE,[statement]), (EDGE_NAMESPACE,project([statement],units)[0])):
+                (root/'docs/datasets'/f'{namespace}.json').write_text(json.dumps(dict(rows=rows)))
+            with patch('deployment_claims.source_units', return_value=(units, {'rec:testing:fixture-route'})):
+                carrier.write_text(text.replace('version=[1,0,0]', 'version=[2,0,0]'))
+                with self.assertRaisesRegex(Refusal, 'deployment envelope differs'): check(root)
+                carrier.write_text(text)
+                with self.assertRaisesRegex(Refusal, 'missing deployment projection'): check(root)
+                check(root, generate=True)
+                check(root)
+                projection = root/'docs/inputs/deployment-edges.toml'
+                original = projection.read_text()
+                projection.write_text(original+'\n')
+                with self.assertRaisesRegex(Refusal, 'noncanonical deployment projection'): check(root)
+                projection.write_text(original)
+                for namespace in (NAMESPACE, EDGE_NAMESPACE):
+                    dataset = root/'docs/datasets'/f'{namespace}.json'
+                    original_dataset = dataset.read_text()
+                    dataset.write_text('{"rows":[]}')
+                    with self.subTest(namespace=namespace), self.assertRaisesRegex(Refusal, 'stale '+namespace): check(root)
+                    dataset.write_text(original_dataset)
+                check(root)
 
 
 # Reuse the optimized interpreter. Each request executes the complete command

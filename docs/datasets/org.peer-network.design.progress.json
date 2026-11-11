@@ -31514,12 +31514,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-verification",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-verification",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "app:deployment",
@@ -31534,12 +31535,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:public-availability",
@@ -31554,12 +31556,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-streaming",
@@ -31574,12 +31577,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-api-polling",
@@ -31594,12 +31598,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-snapshot-delta",
@@ -31614,12 +31619,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gossip",
@@ -31634,12 +31640,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gated-access",
@@ -31654,12 +31661,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-through-creator",
@@ -31674,12 +31682,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-around-creator",
@@ -31696,12 +31705,9 @@
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [
-        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/questions.md",
-        "docs/inputs/deployment-claims.toml",
         "docs/inputs/deployment-edges.toml",
         "docs/inputs/design-questions.toml"
       ],
@@ -31719,12 +31725,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-linearization",
@@ -31739,12 +31746,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-cluster-closure",
@@ -31759,12 +31767,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-bft-finality",
@@ -31779,12 +31788,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-gossip-stability",
@@ -31799,12 +31809,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-disagreement",
@@ -31862,12 +31873,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-records",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-records",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:immutability-mutable-records",
@@ -31918,12 +31930,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:feed-reproducibility",
@@ -31938,12 +31951,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-closed-form",
@@ -31958,12 +31972,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-public-model",
@@ -31978,12 +31993,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-consensus-ranking",
@@ -31998,12 +32014,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-opaque-model",
@@ -32018,12 +32035,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:device-local",
@@ -32038,12 +32056,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-four",
@@ -32058,12 +32077,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-three",
@@ -32078,12 +32098,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-six",
@@ -32098,12 +32119,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-server-assisted",
@@ -32200,12 +32222,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-scheduled-vote",
@@ -32220,12 +32243,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-time-locked",
@@ -32271,12 +32295,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:calibration-declarations",
@@ -32494,12 +32519,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:centralized-monitoring",
@@ -32542,12 +32568,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:certificate-monitoring",
@@ -32562,12 +32589,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:emission-experience",
@@ -32697,12 +32725,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-verification",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-verification",
+      "elsewhere": [],
       "holds": [],
       "kind": "fixture",
       "label": "subsec:deployment:calibration-evidence",
@@ -32742,12 +32771,9 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
-        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/questions.md",
-        "docs/inputs/deployment-claims.toml",
         "docs/inputs/deployment-edges.toml",
         "docs/inputs/design-questions.toml"
       ],
@@ -32792,10 +32818,8 @@
       "elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.host.profile.json",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
-        "docs/inputs/deployment-claims.toml",
         "docs/inputs/deployment-edges.toml",
         "docs/inputs/host-profile.toml",
         "docs/templates/docs/design/implementation.md.j2"
@@ -32846,12 +32870,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-verification",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-verification",
+      "elsewhere": [],
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:complete-act-conformance",
@@ -32866,12 +32891,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "subsec:deployment:sufficiency",
@@ -32886,12 +32912,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-minimal-record",
@@ -32906,12 +32933,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-precomputed-record",
@@ -32926,12 +32954,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-redundant-record",
@@ -32946,12 +32975,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-proprietary-fields",
@@ -33053,12 +33083,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-secret-derived",
@@ -33073,12 +33104,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-unassigned-custody",
@@ -33144,12 +33176,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-formal-compiler",
@@ -33164,12 +33197,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-replay",
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-equivalent-compiler",
@@ -33292,12 +33326,9 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
-        "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.design.questions.json",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/design/implementation.md",
         "docs/design/questions.md",
-        "docs/inputs/deployment-claims.toml",
         "docs/inputs/design-questions.toml",
         "docs/templates/docs/design/implementation.md.j2"
       ],
@@ -33357,12 +33388,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:terminal-centrality-certificates",
@@ -33377,12 +33409,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-tree-samples",
@@ -33397,12 +33430,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-selective-reveal",
@@ -33417,12 +33451,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-auditor",
@@ -33437,12 +33472,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-scalar-only",
@@ -33457,12 +33493,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:can-enrichment-insulation",
@@ -33477,12 +33514,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-frobenius",
@@ -33497,12 +33535,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-standing-scaled",
@@ -33517,12 +33556,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "none",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "none",
+      "elsewhere": [],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-path-corrected",
@@ -33537,12 +33577,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:completeness",
@@ -33557,12 +33598,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-written-specification",
@@ -33577,12 +33619,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-source-implementation",
@@ -33597,12 +33640,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-formal-specification",
@@ -33617,12 +33661,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-constants",
@@ -33637,12 +33682,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-promotion",
@@ -33657,12 +33703,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-missing-epoch",
@@ -33677,12 +33724,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-masks",
@@ -33697,12 +33745,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-can",
@@ -33717,12 +33766,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-epoch",
@@ -33737,12 +33787,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-parity",
@@ -33836,12 +33887,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-pointer",
@@ -33856,12 +33908,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-mirror",
@@ -33876,12 +33929,13 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
+      "classification_elsewhere": [
         "adr/017-claim-based-testing.md",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
+      "crate": "pn-host",
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-snapshot",
@@ -35788,10 +35842,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "127",
+          "exact": "62",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "127",
+          "num": "62",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35802,7 +35856,7 @@
           "exact_digits": 32
         }
       },
-      "total": 127
+      "total": 62
     },
     {
       "category": "total",
@@ -38971,6 +39025,27 @@
       "tentative": 13,
       "total": 1484,
       "unassigned": 1159
+    },
+    {
+      "category": "classification-identities",
+      "name": "exact-elsewhere",
+      "number_forms": {
+        "total": {
+          "exact": "65",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "65",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "total": 65
     },
     {
       "category": "record-coverage",

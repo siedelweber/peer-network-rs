@@ -197,7 +197,7 @@
       "cases": "Overlapping principal closures sharing a parent, interleaved blocks, missing parent, target/minimum and maximum-duration closures. Require the common recognized final marker independently of dependent-act closure; act order alone cannot supply the burn snapshot.",
       "decision": "dec:design:final-membership",
       "fixture": "closure-partition-cases",
-      "hold": "Earliest host determination is attested boundary evidence; replay cannot reconstruct unwritten demand.",
+      "hold": "Earliest host determination is asserted boundary evidence; replay cannot reconstruct unwritten demand.",
       "labels": [
         "def:network:write",
         "post:epoch:final-act-sequence-closure",

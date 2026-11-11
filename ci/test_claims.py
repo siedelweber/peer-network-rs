@@ -415,6 +415,22 @@ class Evidence(unittest.TestCase):
                 self.assertEqual(tracker_elsewhere(root, unassigned), {})
             with patch('build_graph.tracked', return_value=['docs/design/inventory.md', 'docs/design/progress.md']):
                 self.assertEqual(tracker_elsewhere(root, unassigned), {})
+            (root/'docs/inputs').mkdir(parents=True)
+            (root/'docs/datasets').mkdir()
+            (root/'adr').mkdir()
+            carrier = root/'docs/inputs/deployment-claims.toml'
+            carrier.write_text('rows=[{name="def:testing:fixture", reason="Scope only"}]')
+            dataset = root/'docs/datasets/org.peer-network.testing.deployment-claims.json'
+            dataset.write_text('{"rows":[{"name":"def:testing:fixture"}]}')
+            rendered = root/'adr/017-claim-based-testing.md'
+            rendered.write_text('| ``def:testing:fixture`` | scope only |\n')
+            paths = [str(p.relative_to(root)) for p in (carrier,dataset,rendered)]
+            with patch('build_graph.tracked', return_value=paths):
+                self.assertEqual(tracker_elsewhere(root, unassigned), {})
+                self.assertEqual(tracker_elsewhere(root, unassigned, classification=True), {'def:testing:fixture': sorted(paths)})
+                rendered.write_text(rendered.read_text()+'An independent mention: ``def:testing:fixture``.\n')
+                self.assertEqual(tracker_elsewhere(root, unassigned), {'def:testing:fixture': [str(rendered.relative_to(root))]})
+                self.assertEqual(tracker_elsewhere(root, unassigned, classification=True), {})
         from claims import tracker_changes
         old = dict(category='statement', **carried)
         new = dict(old, records=['ROOT::alg:testing:other'], bites=[3])

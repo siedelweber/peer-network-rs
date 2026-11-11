@@ -81,7 +81,8 @@ def unique_members(pairs):
 def register_form(text, field):
     """Validate without discarding content, then build the one permitted form."""
     data = json.loads(text, object_pairs_hook=unique_members)
-    if not isinstance(data, dict) or set(data) != {'schema', field} or type(data['schema']) is not int or data['schema'] != 1:
+    allowed = ({'schema', field}, {'schema', field, 'conditional_claims'}) if field == 'sites' else ({'schema', field},)
+    if not isinstance(data, dict) or set(data) not in allowed or type(data['schema']) is not int or data['schema'] != 1:
         raise StructuralError('register root requires schema 1 and '+field)
     if field == 'sites':
         if not isinstance(data[field], list):
@@ -113,6 +114,15 @@ def register_form(text, field):
             raise StructuralError('register glosses must map keys to strings')
         ordered = dict(sorted(data[field].items()))
     canonical = {'schema': 1, field: ordered}
+    if 'conditional_claims' in data:
+        conditions = data['conditional_claims']
+        if not isinstance(conditions, dict) or any(
+                not isinstance(name, str) or not re.fullmatch(r'[A-Z]+::claim:[a-z0-9-]+:[a-z0-9.-]+', name)
+                or not isinstance(values, list) or not values
+                or any(not isinstance(value, str) or not value for value in values)
+                or len(values) != len(set(values)) for name, values in conditions.items()):
+            raise StructuralError('conditional claim review requires names and nonempty distinct conditions')
+        canonical['conditional_claims'] = {name: sorted(values) for name, values in sorted(conditions.items())}
     return data, canonical, json.dumps(canonical, ensure_ascii=False, indent=2, allow_nan=False)+'\n'
 
 
@@ -590,11 +600,14 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), 
 
 
 
-def tracker_elsewhere(root, rows):
+def tracker_elsewhere(root, rows, classification=False):
     """Count exact labels outside the admitted mention carriers, never substrings."""
     from build_graph import tracked
     labels = {row['label'] for row in rows if row['status'] == 'unassigned'}
     found = defaultdict(set)
+    identities = defaultdict(set)
+    declaration = root/'docs/inputs/deployment-claims.toml'
+    classified = {r['name'] for r in tomllib.loads(declaration.read_text())['rows']} if declaration.exists() else set()
     if not labels:
         return {}
     excluded = {'docs/inputs/design-inventory.toml', 'docs/inputs/specification-progress.toml',
@@ -609,10 +622,25 @@ def tracker_elsewhere(root, rows):
             text = (root/name).read_text()
         except UnicodeError:
             continue
+        if name in {'docs/inputs/deployment-claims.toml', 'docs/datasets/org.peer-network.testing.deployment-claims.json',
+                    'adr/017-claim-based-testing.md'}:
+            def identity(match):
+                label = match[1]
+                if label in classified & labels:
+                    identities[label].add(name)
+                    return ''
+                return match[0]
+            if name.endswith('.toml'):
+                text = re.sub(r'\bname\s*=\s*"([a-z0-9:.-]+)"', identity, text)
+            elif name.endswith('.json'):
+                text = re.sub(r'"name"\s*:\s*"([a-z0-9:.-]+)"', identity, text)
+            else:
+                text = re.sub(r'^\| ``([a-z0-9:.-]+)`` \|', identity, text, flags=re.M)
         text = re.sub(r'\[PAPER-([^\]\n]+)\]', r'\1', text).replace('PAPER::', '')
         for label in set(token.findall(text)) & labels:
             found[label].add(name)
-    return {label: sorted(paths) for label, paths in sorted(found.items())}
+    selected = {label: paths for label, paths in identities.items() if label not in found} if classification else found
+    return {label: sorted(paths) for label, paths in sorted(selected.items())}
 
 
 def tracker_changes(before, after, fields=None):
@@ -756,8 +784,11 @@ def tracker_input(root, evidence):
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
                         tracker_witnesses(root, evidence.get('sites')))
     elsewhere = tracker_elsewhere(root, rows)
+    classifications = tracker_elsewhere(root, rows, classification=True)
     for row in rows:
         row['elsewhere'] = elsewhere.get(row['label'], [])
+        if row['label'] in classifications:
+            row['classification_elsewhere'] = classifications[row['label']]
     obligation_routes = {route['scope'] for row in rows for route in row['routes'] if route['kind'] == 'obligation'}
     summaries = [dict(category='obligation-support', name=r['name'], claim_count=len(r['claims']),
                       numeric_display={'claim_count': dict(display='exact', exact_digits=32)})
@@ -789,6 +820,8 @@ def tracker_input(root, evidence):
                                   **{status: counts[status] for status in ('realized', 'held', 'designed', 'unassigned')},
                                   numeric_display={field: dict(display='exact', exact_digits=32)
                                                    for field in ('total', 'realized', 'held', 'designed', 'unassigned', 'tentative', 'record_granular')}))
+    summaries.append(dict(category='classification-identities', name='exact-elsewhere', total=len(classifications),
+                          numeric_display={'total': dict(display='exact', exact_digits=32)}))
     summaries.extend(tracker_record_coverage(root, rows, paragraphs, read('design-constants.toml')))
     def value(item):
         if isinstance(item, str): return json.dumps(item, ensure_ascii=False)

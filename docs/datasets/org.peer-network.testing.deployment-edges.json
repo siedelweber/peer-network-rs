@@ -203,9 +203,9 @@
       "target": "ROOT::amend:identity:authentication-recipe-gate"
     },
     {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated,case:deployment:concealment-entropy-operator-generated,subsec:deployment:concealment-entropy",
-      "reason": "The retained Y/D concealment claim is expressly conditional on its private entropy and custody premises.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "The gate declares no hidden field and identifies the existing Y/D claim without taking its entropy or custody premise.",
+      "relation": "realizes",
       "source": "ROOT::amend:identity:authentication-recipe-gate",
       "target": "ROOT::amend:identity:act-concealment"
     },
