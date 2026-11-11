@@ -84,6 +84,9 @@ run_step() {
     local name=$1
     shift
     local status started ended wall
+    local PN_GATE_STEP="$name" PN_GATE_SETUP_LOG="$PWD/.lane/gate-${name}-setup.jsonl" PN_GATE_SETUP_SOURCE="$source_id"
+    export PN_GATE_STEP PN_GATE_SETUP_LOG PN_GATE_SETUP_SOURCE
+    : > "$PN_GATE_SETUP_LOG"
     gate_resource_sample ".lane/gate-${name}-resource-start.raw" "$resource_root" 2>/dev/null || true
     started=$(date -u +%s.%N)
     python3 -B ci/build_graph.py supervise bash -c 'TIMEFORMAT="OWN-TIME user=%U sys=%S"; time "$@"' gate-command "$@" > ".lane/gate-${name}.log" 2>&1 &

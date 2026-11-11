@@ -358,10 +358,11 @@ wait
             lane = root/'.lane'
             lane.mkdir()
             for wall, expected, cold, old_cold, old_stall in ((1, False, False, False, .2), (1, False, False, True, .2), (2, False, True, False, .2), (3, True, True, False, .2), (3, True, False, False, .2), (3, True, False, False, .9)):
-                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
+                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, setup_cpu_s=0, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
+                    (lane/f'gate-{name}-setup.jsonl').write_text('')
                     (lane/f'gate-{name}.log').write_text('\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
                 for status, changed_selection in ((0, False), (1, False), (0, True), (0, 'rebuild')):
                     if changed_selection:
@@ -371,7 +372,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -532,10 +533,10 @@ wait
         self.assertEqual(status_changes({'case':{'same':'passed'}}, {'case':{'same':'passed'}}), [])
         self.assertEqual(overrun_class(False, None, None, None, None, None, [], policy), 'within-budget')
         from build_graph import compile_comparison
-        cold = dict(wall=100, own_cpu_s=315, layouts={'owner':'old'}, partial=True)
-        old = {'test-build':dict(wall=3.8, own_cpu_s=103.153, layouts={}, partial=False), 'isolated':cold}
-        current = {'test-build':dict(wall=64.3, own_cpu_s=407.389, layouts={}, partial=False),
-                   'isolated':dict(cold, own_cpu_s=10, layouts={'owner':'new'}, partial=False)}
+        cold = dict(wall=100, own_cpu_s=315, setup_cpu_s=0, layouts={'owner':'old'}, partial=True)
+        old = {'test-build':dict(wall=3.8, own_cpu_s=103.153, setup_cpu_s=0, layouts={}, partial=False), 'isolated':cold}
+        current = {'test-build':dict(wall=64.3, own_cpu_s=407.389, setup_cpu_s=0, layouts={}, partial=False),
+                   'isolated':dict(cold, own_cpu_s=10, setup_cpu_s=0, layouts={'owner':'new'}, partial=False)}
         own, baseline, growth, omitted = compile_comparison(current, old, ['test-build'])
         self.assertEqual(omitted, ['isolated'])
         self.assertAlmostEqual(growth, 60.5)
@@ -589,9 +590,9 @@ wait
         # Rebuilding either side, including an isolated owner's Cargo work,
         # cannot change the comparable non-build CPU or conceal a regression.
         def figures(build, isolated):
-            return {'test-build':dict(wall=build, own_cpu_s=build, layouts={}, partial=False),
+            return {'test-build':dict(wall=build, own_cpu_s=build, setup_cpu_s=0, layouts={}, partial=False),
                     'case':dict(wall=10, own_cpu_s=100+isolated, cargo_cpu_s=isolated,
-                                layouts={'owner':'same'}, partial=False)}
+                                setup_cpu_s=0, layouts={'owner':'same'}, partial=False)}
         for new_build, old_build in ((1,1), (238,1), (1,238), (238,238)):
             current, prior = figures(new_build, new_build), figures(old_build, old_build)
             own, old, _, omitted = compile_comparison(current, prior, ['test-build'])
@@ -600,6 +601,35 @@ wait
             own, old, _, _ = compile_comparison(current, prior, ['test-build'])
             self.assertEqual(overrun_class(True, own, old, 0, new_build*2, old_build*2, [], policy,
                 compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
+
+        # Recorded first/second-run claim-tests totals: 12.5 versus 3.3.
+        # Fetch CPU was not retained historically; the 9.2 difference is a
+        # controlled attribution, not a recovered measurement of that fetch.
+        first = {'claim-tests':dict(wall=5, own_cpu_s=12.5, cargo_cpu_s=0,
+                                   setup_cpu_s=9.2, layouts={}, partial=False)}
+        second = {'claim-tests':dict(first['claim-tests'], own_cpu_s=3.3, setup_cpu_s=0)}
+        for left, right in ((first,second),(second,first)):
+            own, old, _, omitted = compile_comparison(left, right, [])
+            self.assertAlmostEqual(own, old, places=10, msg='setup must not become program growth')
+            self.assertEqual(omitted, [])
+        unmetered = {'claim-tests':{k:v for k,v in first['claim-tests'].items() if k != 'setup_cpu_s'}}
+        self.assertEqual(compile_comparison(first, unmetered, [])[3], ['claim-tests'])
+        from isolation import setup_receipt
+        from build_graph import setup_accounting
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'setup.jsonl'
+            with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source',
+                            PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='run'), patch('builtins.print'):
+                setup_receipt(dict(owner='nested-tracker', source='fixture-source', action='fetch',
+                                   wall=3, own_user_s=8.2, own_sys_s=1, status=0))
+            self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
+                             dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1))
+            with self.assertRaisesRegex(ValueError, 'stale isolation setup receipt'):
+                setup_accounting(path, 'gate-source', 'other-run', 'tests')
+            data = json.loads(path.read_text());data['own_user_s'] = -1
+            path.write_text(json.dumps(data)+'\n')
+            with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
+                setup_accounting(path, 'gate-source', 'run', 'tests')
 
         # The mixed benchmark step must remove only its no-run builds, not
         # validation. Exercise the producer and its emitted accounting too.
@@ -636,7 +666,7 @@ wait
                 measured = json.loads(line.removeprefix('ISOLATION-COMPILE '))
                 self.assertEqual(measured, rows[0])
                 return dict(wall=10, own_cpu_s=100+cpu, cargo_cpu_s=measured['cargo_cpu_s'],
-                            layouts={measured['owner']:measured['layout']}, partial=measured['cold_target'])
+                            setup_cpu_s=0, layouts={measured['owner']:measured['layout']}, partial=measured['cold_target'])
             for current_build, previous_build in ((1,1), (53,1), (1,53), (53,53)):
                 current = {'benchmarks':build(current_build)}
                 prior = {'benchmarks':build(previous_build)}

@@ -873,7 +873,9 @@ def compile_comparison(current, prior, serialized):
     def remaining(name, row):
         own = row.get('own_cpu_s')
         build = row.get('cargo_cpu_s') if row.get('layouts') else own if name in serialized else 0
-        return own-build if own is not None and build is not None and 0 <= build <= own else None
+        setup = row.get('setup_cpu_s')
+        return own-build-setup if (own is not None and build is not None and setup is not None
+                                  and 0 <= build and 0 <= setup and build+setup <= own) else None
     comparable = [name for name, row in current.items() if name in prior and
                   not row.get('partial') and not prior[name].get('partial') and
                   remaining(name, row) is not None and remaining(name, prior[name]) is not None and
@@ -883,6 +885,20 @@ def compile_comparison(current, prior, serialized):
     serial = [name for name in comparable if name in serialized]
     growth = sum(current[name]['wall']-prior[name]['wall'] for name in serial) if serial else None
     return own, old, growth, sorted(set(current)-set(comparable))
+
+
+def setup_accounting(path, source, run, step):
+    """Join current invocation receipts; old unmetered setup is unavailable."""
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    for row in rows:
+        if row.get('run') != run or row.get('step') != step or row.get('gate_source') != source:
+            raise ValueError('stale isolation setup receipt: '+step)
+        if row.get('action') not in {'clone', 'fetch', 'checkout', 'clean'} or any(
+                type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
+                for key in ('wall', 'own_user_s', 'own_sys_s')):
+            raise ValueError('invalid isolation setup receipt: '+step)
+    return dict(setup_cpu_s=sum(row['own_user_s']+row['own_sys_s'] for row in rows),
+                setup_wall_s=sum(row['wall'] for row in rows), setup_calls=len(rows))
 
 
 def status_changes(current, previous):
@@ -995,6 +1011,10 @@ def tier_summary(root, registry, worker_statuses):
                 cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
                 layouts={value['owner']:value['layout'] for value in isolated},
                 partial=any(value.get('cold_target') or value.get('layout_changed') for value in isolated))
+            setup = setup_accounting(root/f'.lane/gate-{row[0]}-setup.jsonl', os.environ['PN_GATE_SOURCE'],
+                                     os.environ['PN_BUILDGRAPH_RUN'], row[0])
+            step_figures[row[0]].update(setup)
+            print('GATE-SETUP '+json.dumps(dict(step=row[0], **setup), sort_keys=True), flush=True)
         build_cpu = sum(row['cargo_cpu_s'] for row in step_figures.values())
         build_cpu += sum(row['own_cpu_s'] for name, row in step_figures.items() if name in policy['rebuild_steps'] and not row['layouts'] and row['own_cpu_s'] is not None)
         prior = baseline['tiers'].get(tier, {}) if baseline else {}
@@ -1010,6 +1030,8 @@ def tier_summary(root, registry, worker_statuses):
                        and (row['layouts'] or name in policy['rebuild_steps']))
         comparable_build = compile_cpu(step_figures) if comparable_cpu is not None else None
         comparable_old_build = compile_cpu(prior.get('step_figures', {})) if comparable_old is not None else None
+        comparable_setup = sum(row['setup_cpu_s'] for name, row in step_figures.items() if name not in omitted) if comparable_cpu is not None else None
+        comparable_old_setup = sum(row['setup_cpu_s'] for name, row in prior.get('step_figures', {}).items() if name in step_figures and name not in omitted) if comparable_old is not None else None
         intersection = dict(added=[], removed=[], own_removed_s=0, baseline_removed_s=0)
         if not comparable_cases and not omitted:
             comparable_cpu, comparable_old, comparable_cases, intersection = case_intersection(
@@ -1026,12 +1048,13 @@ def tier_summary(root, registry, worker_statuses):
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             selected_cases=cases, case_costs=case_costs[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
+            comparable_setup_cpu_s=comparable_setup, baseline_comparable_setup_cpu_s=comparable_old_setup,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} '
+        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
@@ -1108,6 +1131,7 @@ def wall_summary(root, status, interval=None):
         baseline_source=fast.get('baseline_source'), baseline_match=fast.get('baseline_match'),
         comparable_cpu_s=current_cpu, baseline_comparable_cpu_s=prior_cpu,
         comparable_build_cpu_s=current_build, baseline_comparable_build_cpu_s=prior_build,
+        comparable_setup_cpu_s=total('comparable_setup_cpu_s'), baseline_comparable_setup_cpu_s=total('baseline_comparable_setup_cpu_s'),
         compile_wall_growth_s=growth, changed_build_inputs=changed,
         started=measured['start']['epoch_seconds'], ended=measured['end']['epoch_seconds'])
     (root/'.lane/gate-wall.json').write_text(json.dumps(result, indent=2)+'\n')

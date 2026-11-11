@@ -186,6 +186,18 @@ def import_base(root, source, base):
     return commit
 
 
+def setup_receipt(row):
+    """Retain waited Git CPU even when a nested witness captures its stdout."""
+    print('ISOLATION-GIT '+json.dumps(row, sort_keys=True), flush=True)
+    destination = os.environ.get('PN_GATE_SETUP_LOG')
+    if destination:
+        row = dict(row, gate_source=os.environ['PN_GATE_SETUP_SOURCE'],
+                   run=os.environ['PN_BUILDGRAPH_RUN'], step=os.environ['PN_GATE_STEP'])
+        with Path(destination).open('a') as output:
+            fcntl.flock(output, fcntl.LOCK_EX)
+            output.write(json.dumps(row)+'\n')
+
+
 @contextmanager
 def workspace(root, name, source):
     """Retain owned build products, but bind every invocation to commit objects."""
@@ -216,8 +228,12 @@ def workspace(root, name, source):
                      ['git', '-C', str(tree), 'clean', '--quiet', '-fdx']]
         for argv in commands:
             started = time.monotonic()
+            cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
             result = cancellable(argv)
-            print(f'ISOLATION-GIT owner={name} action={argv[-1]} wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
+            used = resource.getrusage(resource.RUSAGE_CHILDREN)
+            setup_receipt(dict(owner=name, source=source, action=argv[1] if argv[1] != '-C' else argv[3],
+                wall=time.monotonic()-started, own_user_s=used.ru_utime-cpu.ru_utime,
+                own_sys_s=used.ru_stime-cpu.ru_stime, status=result.returncode))
             if result.returncode:
                 raise ValueError('commit-scoped checkout failed')
         for argv, expected in ((['rev-parse', 'HEAD'], source), (['status', '--porcelain', '--untracked-files=no'], '')):
