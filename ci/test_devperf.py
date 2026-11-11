@@ -408,8 +408,25 @@ wait
         ´test:integration:test-whole-gate-warning´
         """
         from contextlib import redirect_stdout
-        from build_graph import wall_summary
+        from build_graph import wall_summary, declare_run
         from devperf import whole_gate_declaration
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.dict(os.environ, {}, clear=True), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with self.assertRaisesRegex(ValueError, 'PN_GATE_PLAN must declare'):
+                    declare_run(root)
+            for plan in ('one-run', 'warm-after-cold-first', 'refresh-first', 'refresh-second', 'warm-after-cold-second'):
+                output = io.StringIO()
+                with patch.dict(os.environ, PN_GATE_PLAN=plan, PN_GATE_FIRST_CACHE='cold'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')), redirect_stdout(output):
+                    declared_run = declare_run(root)
+                self.assertTrue(output.getvalue().startswith('GATE-DECLARED plan='+plan+' '))
+                self.assertEqual(json.loads((root/'.lane/gate-declaration.json').read_text()), declared_run)
+            for cache in ('warm', 'unknown', 'unavailable'):
+                with patch.dict(os.environ, PN_GATE_PLAN='warm-after-cold-second', PN_GATE_FIRST_CACHE=cache), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                    with self.assertRaisesRegex(ValueError, 'first observed cache to be cold'):
+                        declare_run(root)
+            entry = (Path(__file__).parent/'gate.sh').read_text()
+            self.assertLess(entry.index('build_graph.py declare'), entry.index('TMPDIR'))
         campaign = dict(label='campaign:devperf:whole-gate-mixed', warmup_commit='a'*40, source_commit='b'*40,
                         discarded_warmup_ms=2000, rebuild_wall_ms=1200, warm_walls_ms=[1000, 1100, 1150],
                         multiplier=1.25, round_ms=50, sample_choice='maximum-of-rebuild-and-three-warm', configuration='fixture')

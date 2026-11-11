@@ -634,6 +634,27 @@ def delegate(root, step):
     return result['status']
 
 
+def declare_run(root):
+    """Record the invoker's plan before any gate work or outcome exists."""
+    from datetime import datetime, timezone
+    plan = os.environ.get('PN_GATE_PLAN')
+    if plan not in {'one-run', 'warm-after-cold-first', 'warm-after-cold-second', 'refresh-first', 'refresh-second'}:
+        raise ValueError('PN_GATE_PLAN must declare one-run, warm-after-cold-first/second or refresh-first/second')
+    first_cache = os.environ.get('PN_GATE_FIRST_CACHE', 'unavailable')
+    if plan == 'warm-after-cold-second' and first_cache != 'cold':
+        raise ValueError('warm-after-cold-second requires the first observed cache to be cold')
+    source = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+    declared = dict(plan=plan, at=datetime.now(timezone.utc).isoformat(), source=source, first_cache=first_cache)
+    print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
+    lane = root/'.lane'
+    lane.mkdir(exist_ok=True)
+    path = lane/'gate-declaration.json'
+    temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+    temporary.write_text(json.dumps(declared, sort_keys=True)+'\n')
+    temporary.replace(path)
+    return declared
+
+
 def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None, comparable_cases=True, comparable_wall=True, cache_state=None):
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
@@ -1305,6 +1326,7 @@ def main():
     audit.add_argument('--graph', required=True)
     audit.add_argument('--report', required=True)
     sub.add_parser('gate')
+    sub.add_parser('declare')
     sub.add_parser('bind-inputs')
     sub.add_parser('check-inputs')
     sub.add_parser('plan')
@@ -1329,6 +1351,9 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'declare':
+        declare_run(Path.cwd())
+        return 0
     if args.action == 'bind-inputs':
         bind_inputs(Path.cwd())
         return 0

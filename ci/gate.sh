@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Run every foundation check and report one final verdict.
 set -u
+if [ "${1:-}" != --gate-target-locked ]; then
+    python3 -B ci/build_graph.py declare || exit 2
+fi
 if [ -z "${TMPDIR:-}" ] || [ ! -d "$TMPDIR" ]; then
     echo "GATE-STRUCTURAL-ERROR: TMPDIR must name an existing caller-provided temporary directory" >&2
     exit 2
