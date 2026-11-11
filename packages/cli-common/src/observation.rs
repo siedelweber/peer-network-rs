@@ -468,6 +468,10 @@ impl Observation {
         Self::with_delivery(writer, clock, bridge, QUEUE_RECORDS, false)
     }
 
+    fn reserved(ordinary: usize, production: usize, evidence: bool) -> (SyncSender<Value>, mpsc::Receiver<Value>) {
+        mpsc::sync_channel(if evidence { ordinary } else { production })
+    }
+
     fn with_delivery(
         writer: impl Write + Send + 'static,
         clock: Arc<dyn Clock>,
@@ -482,9 +486,9 @@ impl Observation {
             (None, None)
         };
         let (sender, receiver) = mpsc::sync_channel(queue_records);
-        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Value>(SUMMARY_RECORDS);
+        let (summary_sender, summary_receiver) = Self::reserved(queue_records, SUMMARY_RECORDS, hold_until_flush);
         let (flush_sender, flush_receiver) = mpsc::sync_channel::<SyncSender<()>>(1);
-        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Value>(DIAGNOSTIC_RECORDS);
+        let (diagnostic_sender, diagnostic_receiver) = Self::reserved(queue_records, DIAGNOSTIC_RECORDS, hold_until_flush);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
         let loss_causes = Arc::new(LossCauses::default());

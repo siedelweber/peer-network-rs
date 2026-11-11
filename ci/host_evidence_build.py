@@ -8,7 +8,8 @@ from host_statements import check
 check()
 
 result = subprocess.run(['cargo', 'test', '--offline', '--locked', '--profile', 'gate',
-                         '-p', 'pn-host', '--lib', '--no-run', '--message-format=json'],
+                         '-p', 'pn-host', '--features', 'cli-common/observation-test-hook',
+                         '--lib', '--no-run', '--message-format=json'],
                         capture_output=True, check=False)
 sys.stderr.buffer.write(result.stderr)
 if result.returncode:

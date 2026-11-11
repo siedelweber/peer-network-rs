@@ -16,7 +16,7 @@ import io
 import contextlib
 from unittest.mock import patch
 
-from test_observe_runtime import expanded, distribution, witness
+from test_observe_runtime import expanded, distribution, witness, evidence_bound
 
 
 # The fixture and its displayed administrative bound share the registry input.
@@ -83,9 +83,10 @@ def capture_complete(status):
     return status['lost_records']==0 and status['undelivered_records']==0 and status['in_flight_records']==0, accounting
 
 
-def traced_capture(test, command, env, level, validate, attempts=CAPTURE_ATTEMPTS, prefix='storage'):
-    """The child writes observations to a file, so its delivery never waits on this reader; a capture that still
-    counts loss is retaken, at most three times. Every attempt is checked and reported before selection."""
+def traced_capture(test, command, env, level, validate, attempts=1, prefix='storage'):
+    """The child writes observations to a file, so its delivery never waits on this reader; complete evidence uses the held-writer sink and unexpected loss refuses immediately.
+    Only an explicit loss-injecting control requests multiple attempts."""
+    env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
     for attempt in range(1,attempts+1):
         sink=Path(f'.lane/{prefix}-{level}.stderr.jsonl')
         started=time.monotonic()
@@ -98,6 +99,7 @@ def traced_capture(test, command, env, level, validate, attempts=CAPTURE_ATTEMPT
         rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
         status=next(row for row in rows if row.get('kind')=='observation_status')
         validate(result,rows)
+        evidence_bound(status)
         complete,accounting=capture_complete(status)
         if complete:
             return result,rows,status,wall
@@ -169,7 +171,7 @@ def storage_retake_control(test, command, env, validate, statements):
                 undelivered_records=row['undelivered_records'],loss_causes=row['loss_causes']),findings,warnings=io.StringIO())
         observe(argv,status,wall,stderr,injected=injected)
     with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=observed):
-        _,rows,status,_=traced_capture(test,command,env,'trace',validate,prefix='storage-retake-control')
+        _,rows,status,_=traced_capture(test,command,env,'trace',validate,prefix='storage-retake-control',attempts=CAPTURE_ATTEMPTS)
     test.assertGreaterEqual(len(calls),2)
     test.assertLessEqual(len(calls),3)
     test.assertTrue(all(argv==command for argv in calls))
@@ -184,7 +186,7 @@ def storage_retake_control(test, command, env, validate, statements):
     print(f'STORAGE-RETAKE-CONTROL injected=capture-discard attempts={len(calls)} statements={len(statements)} catalogue=present finding=retained')
 
 
-def sentinel_control(test, command, env, found, prefix, attempts=CAPTURE_ATTEMPTS):
+def sentinel_control(test, command, env, found, prefix, attempts=1):
     """A positive control reads its child's trace from a file, as every capture does, and selects its evidence
     by the capture's own accounting. An attempt in which the sentinel is found detects it whatever its loss, since
     a delivered record proves the value reached observation; a complete attempt without it is a detection failure;
@@ -192,6 +194,7 @@ def sentinel_control(test, command, env, found, prefix, attempts=CAPTURE_ATTEMPT
     lost, and is reported and retaken as an independent child. Inconclusive attempts in all three report their
     counted loss, never a missing detection."""
     accounting=None
+    env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
     for attempt in range(1,attempts+1):
         sink=Path(f'.lane/{prefix}.stderr.jsonl')
         started=time.monotonic()
@@ -203,7 +206,10 @@ def sentinel_control(test, command, env, found, prefix, attempts=CAPTURE_ATTEMPT
         test.assertEqual(result.returncode,0,stderr.decode())
         rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
         status=next(row for row in rows if row.get('kind')=='observation_status')
+        evidence_bound(status)
         complete,accounting=capture_complete(status)
+        if attempts == 1 and not complete:
+            test.fail(f'{prefix}: incomplete evidence capture: {accounting}')
         if found(rows):
             return rows,attempt,wall
         if complete:
@@ -235,11 +241,11 @@ def sentinel_selection(test):
             return subprocess.CompletedProcess(argv,0,stdout=b'',stderr=b'')
         with patch('subprocess.run',side_effect=child),patch.object(module,'witness'),contextlib.redirect_stdout(io.StringIO()):
             if failure is None:
-                _,attempt,_=sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection')
+                _,attempt,_=sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection',attempts=CAPTURE_ATTEMPTS)
                 test.assertEqual(attempt,expected_calls,name)
             else:
                 with test.assertRaisesRegex(AssertionError,failure):
-                    sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection')
+                    sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection',attempts=CAPTURE_ATTEMPTS)
         test.assertEqual(len(calls),expected_calls,name)
     print('SENTINEL-SELECTION lossy-then-complete=detected lossy-with-value=detected complete-without=not-detected lossy-thrice=inconclusive-loss')
 
@@ -260,6 +266,7 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
     carries=lambda rows:private_occurs(value,decoded_content(rows))
     prepared=None
     accounting=None
+    env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
     for preparation in range(1,preparations+1):
         sink=Path(f'.lane/{prefix}-preparation.stderr.jsonl')
         started=time.monotonic()
@@ -271,6 +278,7 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
         test.assertEqual(result.returncode,0,raw.decode())
         rows=[json.loads(line) for line in raw.splitlines()]
         status=next(row for row in rows if row.get('kind')=='observation_status')
+        evidence_bound(status)
         complete,accounting=capture_complete(status)
         carrying={index for index,row in enumerate(rows) if row.get('kind')!='observation_status' and carries([expanded(row)])}
         if carrying:
@@ -302,7 +310,7 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
         if len(calls)>1:
             observe(argv,status,wall,stderr)
     with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=observed):
-        _,attempt,_=sentinel_control(test,command,env,carries,prefix)
+        _,attempt,_=sentinel_control(test,command,env,carries,prefix,attempts=CAPTURE_ATTEMPTS)
     test.assertGreaterEqual(attempt,2,'the capture that lost its carrying records must be inconclusive')
     test.assertEqual(len(calls),attempt)
     test.assertTrue(all(argv==command for argv in calls))
@@ -442,8 +450,8 @@ def capture_regressions(test, prefix):
             with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch.object(module,'sentinel_retake_control'), patch.object(module,'sentinel_selection'), patch.object(module,'forced_loss_cases'), patch.object(module,'retake_counting_cases'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
                 operation=getattr(HostRuntime(method),method)
                 if fault=='recovery':
-                    operation()
-                    test.assertEqual(len(trace_attempts),2)
+                    with test.assertRaisesRegex(AssertionError,'no complete trace capture in 1 attempts'):operation()
+                    test.assertEqual(len(trace_attempts),1)
                 else:
                     message='7 != 0' if fault=='exit' else ('public result differs' if fault=='result' else ('binary private reachability' if fault=='binary' else 'private fixture content'))
                     with test.assertRaisesRegex(AssertionError,message):operation()
@@ -459,7 +467,7 @@ def capture_regressions(test, prefix):
                 lines=[line for line in transcript.getvalue().splitlines() if line.startswith('OBSERVATION-WITNESS ') and 'status=7 ' in line]
                 test.assertEqual(len(lines),1)
                 test.assertRegex(lines[0],r'delivered=\d+ lost=1 ')
-    print(f'CAPTURE-REGRESSIONS surface={prefix} whole-test=True private=refused binary=refused result=refused recovered-loss=finding failed-child=exit:7-finding-and-refusal')
+    print(f'CAPTURE-REGRESSIONS surface={prefix} whole-test=True private=refused binary=refused result=refused unexpected-loss=refused failed-child=exit:7-finding-and-refusal')
 
 
 class HostRuntime(unittest.TestCase):
@@ -522,7 +530,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition uses one bounded evidence capture and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -690,7 +698,7 @@ class HostRuntime(unittest.TestCase):
             manifest.write_bytes(original)
 
     def test_public_transport(self):
-        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal, and acquisition takes at most three attempts.
+        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal, and acquisition uses one bounded evidence capture; unexpected loss refuses without a retake.
         ´claim:discipline:host-transport-observation-retains-the-secret-boundary´
         ´test:integration:test-public-transport´
         """
@@ -735,7 +743,7 @@ class HostRuntime(unittest.TestCase):
         print(flush=True)
 
     def test_sensitive_result_control(self):
-        """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and a capture that counts loss without the role is retaken as inconclusive.
+        """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and unexpected counted loss refuses as incomplete evidence.
         ´claim:discipline:result-row-control-detects-private-metadata´
         ´test:integration:test-sensitive-result-control´
         """
@@ -748,7 +756,7 @@ class HostRuntime(unittest.TestCase):
         print(f'HOST-SENSITIVE-CONTROL status=detected path=DataRow attempt={attempt} wall_seconds={wall:.6f}')
 
     def test_binary_reachability_control(self):
-        """Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability; its file-captured trace counts as a miss only when complete, and a capture that counts loss without both is retaken as inconclusive.
+        """Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability; its file-captured trace counts as a miss only when complete, and unexpected counted loss refuses as incomplete evidence.
         ´claim:discipline:binary-endpoint-results-are-detected´
         ´test:integration:test-binary-reachability-control´
         """

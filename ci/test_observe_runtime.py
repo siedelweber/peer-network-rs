@@ -53,7 +53,7 @@ def run(argv, **kwargs):
 def compare(argv, mode, env, deadline=60, injected=False):
     """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
-    if not injected and mode == 'trace':
+    if not injected and mode != 'disabled':
         env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
     process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
                              env={key:value for key,value in env.items() if key!='PN_TEST_OBSERVATION_RENDEZVOUS'})
@@ -91,17 +91,23 @@ def compare(argv, mode, env, deadline=60, injected=False):
     if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
     if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
     if not injected and mode != 'disabled': complete_capture(b''.join(stderr))
-    if not injected and mode == 'trace':
-        rows=[json.loads(line) for line in b''.join(stderr).splitlines()]
-        capture_status=next(row for row in rows if row.get('kind')=='observation_status')
-        fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
-        bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
-        if capture_status['attempted_records'] > bound:
-            raise AssertionError('complete-evidence record bound exceeded')
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
 
 
-def complete_capture(stderr):
+def evidence_bound(status, evidence=True):
+    """Check total attempts conservatively against ordinary slots before content use."""
+    if evidence:
+        fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
+        bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
+    else:
+        numbers=json.loads(Path('docs/datasets/org.peer-network.numbers.json').read_text())['rows']
+        bound=next(row['value'] for row in numbers if row['id']=='num:numbers:observe-queue-record-capacity')
+    print(f'OBSERVATION-EVIDENCE attempted={status["attempted_records"]} bound={bound} sink={"evidence" if evidence else "production"}')
+    if status['attempted_records'] > bound:
+        raise AssertionError('complete-evidence record bound exceeded')
+
+
+def complete_capture(stderr, evidence=True):
     """Refuse incomplete evidence before any enabled-stream content assertion."""
     try:
         rows = [json.loads(line) for line in stderr.splitlines()]
@@ -113,6 +119,7 @@ def complete_capture(stderr):
     if len(statuses) != 1:
         raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: final status missing or repeated')
     status = statuses[0]
+    evidence_bound(status, evidence)
     fields = ('lost_records', 'undelivered_records', 'in_flight_records', 'drain_timeouts')
     if any(status.get(field) != 0 for field in fields):
         raise AssertionError('OBSERVATION-CAPTURE-INCOMPLETE: ' + json.dumps(status, sort_keys=True))
@@ -743,6 +750,13 @@ class Processes(unittest.TestCase):
                 else:
                     with self.assertRaisesRegex(AssertionError, 'OBSERVATION-CAPTURE-INCOMPLETE'):
                         compare(['fixture'], 'trace', {})
+        fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
+        bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
+        evidence_bound(status | {'attempted_records':bound})
+        over_bound = [marker] * (bound + 1) + [status | {
+            'attempted_records':bound+1, 'delivered_records':bound+1}]
+        with self.assertRaisesRegex(AssertionError, 'complete-evidence record bound exceeded'):
+            complete_capture(b'\n'.join(json.dumps(row).encode() for row in over_bound))
         for rows in ([], [marker], [marker, status, status], [status]):
             with self.assertRaisesRegex(AssertionError, 'OBSERVATION-CAPTURE-INCOMPLETE'):
                 complete_capture(b'\n'.join(json.dumps(row).encode() for row in rows))
@@ -809,7 +823,7 @@ class Processes(unittest.TestCase):
             document_runs={}
             document_outcomes={}
             for level in ("default","trace"):
-                result=run([str(target/"documents"),"check"],cwd=root,env=env | {"PN_OBSERVE_LEVEL":level})
+                result=run([str(target/"documents"),"check"],cwd=root,env=env | {"PN_OBSERVE_LEVEL":level, "PN_OBSERVE_COMPLETE_EVIDENCE":"1"})
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 document_runs[level]=(result.returncode,result.stdout)
                 (artifact/("documents-"+level+".jsonl")).write_bytes(result.stderr)

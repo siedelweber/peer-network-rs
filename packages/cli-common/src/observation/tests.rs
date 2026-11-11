@@ -629,10 +629,11 @@ fn trace_burst_capacity() {
     assert_eq!(status["lost_records"], 0);
     assert_eq!(status["delivered_records"], rows.len() - 1);
 
-    complete_evidence_burst(&fixtures);
+    complete_evidence_burst(&fixtures, "trace");
+    complete_evidence_burst(&fixtures, "diagnostic");
 }
 
-fn complete_evidence_burst(fixtures: &Value) {
+fn complete_evidence_burst(fixtures: &Value, kind: &str) {
     let capture = Capture::default();
     let mut evidence = Observation::with_delivery(
         capture.clone(),
@@ -657,7 +658,7 @@ fn complete_evidence_burst(fixtures: &Value) {
     );
     evidence.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     for index in 0..bound {
-        evidence.emit(json!({"kind":"trace","public":index}));
+        evidence.emit(json!({"kind":kind,"public":index}));
     }
     assert_eq!(
         evidence.delivered.load(Ordering::Relaxed),
