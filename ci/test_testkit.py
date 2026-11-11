@@ -195,16 +195,26 @@ class SupportGuard(unittest.TestCase):
         ´claim:harness:development-only-support´
         ´test:integration:test-support-edges´
         """
+        def fixture(packages, development):
+            metadata = dict(packages=packages, workspace_root='/fixture', workspace_members=[])
+            classes = {}
+            for package in packages:
+                name = package['name']
+                package.update(id=name, manifest_path='/fixture/packages/'+name+'/Cargo.toml')
+                metadata['workspace_members'].append(name)
+                classes[name] = {feature: 'development-only' if (name, feature) in development else 'production'
+                                 for feature in package.get('features', {})}
+            return metadata, classes
         for kind in (None, 'build', 'dev'):
             metadata = {'packages': [{'name': 'consumer', 'dependencies': [
                 {'name': 'pn-testkit', 'rename': 'helper', 'kind': kind}]}]}
+            metadata, classes = fixture(metadata['packages'], set())
             if kind == 'dev':
-                validate(metadata)
+                validate(metadata, classes)
             else:
                 with self.assertRaisesRegex(StructuralError, 'normal/build'):
-                    validate(metadata)
-        from testkit_guard import DEVELOPMENT_FEATURES
-        for provider, feature in (('pn-epoch','test-support'), ('pn-records','test-support'), ('cli-common','observation-test-hook')):
+                    validate(metadata, classes)
+        for provider, feature in (('pn-epoch','test-support'), ('pn-records','test-support'), ('cli-common','observation-test-hook'), ('pn-wallet','fuzzing')):
             for kind in (None, 'build', 'dev'):
                 for route in ('explicit', 'default', 'forwarded', 'optional-forwarded', 'indirect'):
                     dependency = dict(name=provider, rename='helper', kind=kind, features=[])
@@ -215,19 +225,30 @@ class SupportGuard(unittest.TestCase):
                     if route == 'forwarded': consumer['features']['fixture'] = ['helper/'+feature]
                     if route == 'optional-forwarded': consumer['features']['fixture'] = ['helper?/'+feature]
                     if route == 'indirect': dependency['features'] = ['alias']
-                    metadata = {'packages': [consumer, dict(name=provider, dependencies=[], features=features)]}
+                    metadata, classes = fixture([consumer, dict(name=provider, dependencies=[], features=features)], {(provider, feature)})
                     if kind == 'dev':
-                        validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
+                        validate(metadata, classes)
                     else:
                         with self.assertRaisesRegex(StructuralError, feature+' normal/build'):
-                            validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
+                            validate(metadata, classes)
                 dependency['features'] = []
                 consumer['features'] = {'test-support': ['helper/'+feature]}
                 features.pop('default', None)
-                validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
+                metadata, classes = fixture(metadata['packages'], {(provider, feature), ('consumer', 'test-support')})
+                validate(metadata, classes)
                 if kind != 'dev':
+                    classes['consumer']['test-support'] = 'production'
                     with self.assertRaisesRegex(StructuralError, feature+' normal/build'):
-                        validate(metadata)  # A conventional spelling is not a declaration.
+                        validate(metadata, classes)
+        metadata, classes = fixture([dict(name='consumer', dependencies=[], features={'future-support': []})], set())
+        del classes['consumer']['future-support']
+        with self.assertRaisesRegex(StructuralError, 'unclassified feature: consumer/future-support'):
+            validate(metadata, classes)
+        classes['consumer']['future-support'] = 'development-only'
+        validate(metadata, classes)
+        del metadata['packages'][0]['features']['future-support']
+        with self.assertRaisesRegex(StructuralError, 'absent classified feature: consumer/future-support'):
+            validate(metadata, classes)
 
 
 class PropertyDeclarations(unittest.TestCase):
