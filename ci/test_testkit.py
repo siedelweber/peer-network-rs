@@ -203,27 +203,31 @@ class SupportGuard(unittest.TestCase):
             else:
                 with self.assertRaisesRegex(StructuralError, 'normal/build'):
                     validate(metadata)
-        for provider in ('pn-epoch', 'pn-records'):
+        from testkit_guard import DEVELOPMENT_FEATURES
+        for provider, feature in (('pn-epoch','test-support'), ('pn-records','test-support'), ('cli-common','observation-test-hook')):
             for kind in (None, 'build', 'dev'):
                 for route in ('explicit', 'default', 'forwarded', 'optional-forwarded', 'indirect'):
                     dependency = dict(name=provider, rename='helper', kind=kind, features=[])
                     consumer = dict(name='consumer', dependencies=[dependency], features={})
-                    features = {'test-support': [], 'alias': ['test-support']}
-                    if route == 'explicit': dependency['features'] = ['test-support']
-                    if route == 'default': features['default'] = ['test-support']
-                    if route == 'forwarded': consumer['features']['fixture'] = ['helper/test-support']
-                    if route == 'optional-forwarded': consumer['features']['fixture'] = ['helper?/test-support']
+                    features = {feature: [], 'alias': [feature]}
+                    if route == 'explicit': dependency['features'] = [feature]
+                    if route == 'default': features['default'] = [feature]
+                    if route == 'forwarded': consumer['features']['fixture'] = ['helper/'+feature]
+                    if route == 'optional-forwarded': consumer['features']['fixture'] = ['helper?/'+feature]
                     if route == 'indirect': dependency['features'] = ['alias']
                     metadata = {'packages': [consumer, dict(name=provider, dependencies=[], features=features)]}
                     if kind == 'dev':
-                        validate(metadata)
+                        validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
                     else:
-                        with self.assertRaisesRegex(StructuralError, 'test-support normal/build'):
-                            validate(metadata)
+                        with self.assertRaisesRegex(StructuralError, feature+' normal/build'):
+                            validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
                 dependency['features'] = []
-                consumer['features'] = {'test-support': ['helper/test-support']}
+                consumer['features'] = {'test-support': ['helper/'+feature]}
                 features.pop('default', None)
-                validate(metadata)
+                validate(metadata, DEVELOPMENT_FEATURES | {'consumer':frozenset({'test-support'})})
+                if kind != 'dev':
+                    with self.assertRaisesRegex(StructuralError, feature+' normal/build'):
+                        validate(metadata)  # A conventional spelling is not a declaration.
 
 
 class PropertyDeclarations(unittest.TestCase):
