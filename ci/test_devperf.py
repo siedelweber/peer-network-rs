@@ -391,7 +391,7 @@ wait
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                         self.assertEqual(measured[name]['baseline_stall'], old_stall)
                         if wall == 3 and not cold:
-                            self.assertEqual(measured[name]['classification'], ('rebuild' if rebuilding else 'unclassified') if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
+                            self.assertEqual(measured[name]['classification'], ('rebuild' if rebuilding else 'load-unresolved') if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
@@ -442,7 +442,7 @@ wait
                 pending = dict(source='fixture', tiers={'fast':figures}, previous_whole={'wall':2, 'stall':.1, 'own_user_s':1, 'own_sys_s':.1})
                 (lane/'gate-baseline.json').write_text(json.dumps(pending))
                 output = io.StringIO()
-                with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
+                with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
                     self.assertEqual(wall_summary(root, status), 0)
                 result = json.loads((lane/'gate-wall.json').read_text())
                 self.assertEqual(result['status'], status)
@@ -458,7 +458,7 @@ wait
                 self.assertNotIn('previous_whole', retained)
                 self.assertIn('exit:'+str(status), run.call_args.args[0])
             (lane/'gate-resources.json').unlink()
-            with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(io.StringIO()):
+            with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(io.StringIO()):
                 self.assertEqual(wall_summary(root, 0, (1, 2.2)), 0)
             unavailable = json.loads((lane/'gate-wall.json').read_text())
             self.assertIsNone(unavailable['own_user_s'])
@@ -662,6 +662,12 @@ wait
         def recorded(cache, stall, provisional=False):
             return dict(cache=dict(state=cache), provisional=provisional,
                         whole=dict(node_scope='node-wide', stall=stall))
+        from build_graph import overrun_class
+        policy={'cpu_growth_percent':10,'load_unresolved_pressure_percent':10}
+        args=(True,None,None,.8,None,None,[],policy)
+        self.assertEqual(overrun_class(*args, cache_state='cold'), 'cold-cache')
+        self.assertEqual(overrun_class(*args, cache_state='warm'), 'load-unresolved')
+        self.assertEqual(overrun_class(False,*args[1:], cache_state='cold'), 'within-budget')
         cold, warm = recorded('cold', .060), recorded('warm', .081)
         self.assertEqual(baseline_replacement(warm, cold), (True, 'warm-replaces-cold-or-provisional'))
         self.assertEqual(baseline_replacement(cold, warm), (False, 'retained-warm-cache'))

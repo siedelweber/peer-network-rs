@@ -634,11 +634,15 @@ def delegate(root, step):
     return result['status']
 
 
-def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None, comparable_cases=True, comparable_wall=True):
+def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None, comparable_cases=True, comparable_wall=True, cache_state=None):
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
+    if cache_state == 'cold': return 'cold-cache'
+    unresolved = (type(stall) in (int, float) and 0 <= stall < 1
+                  and stall > policy['load_unresolved_pressure_percent']/100)
+    fallback = 'load-unresolved' if unresolved else 'unclassified'
     if stall is None: return 'unclassified'
-    if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return 'unclassified'
+    if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return fallback
     # Remove the baseline's stall before projecting its work into this interval.
     # A pressure fraction is context, not an attribution of CPU to this tier.
     if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
@@ -655,7 +659,7 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
             and (compile_wall_growth >= excess or
                  (comparable_wall and noncompile and remaining <= old_remaining*margin))):
         return 'rebuild'
-    if not comparable_cases or own is None or baseline is None: return 'unclassified'
+    if not comparable_cases or own is None or baseline is None: return fallback
     # Pressure can inflate CPU as well as wall. Without a quiet measurement,
     # the remainder is not attributable to plain work or owned growth.
     if stall > policy['load_unresolved_pressure_percent']/100: return 'load-unresolved'
@@ -827,7 +831,7 @@ def retain_baseline(root):
         temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
         temporary.replace(skipped)
-        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' previous_tree='+str(candidate.get('previous_baseline_tree')))
+        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+str(previous_best.get('provisional', True) if previous_best else None).lower()+' previous_tree='+str(candidate.get('previous_baseline_tree')))
         return
     candidate['quiet'] = True
     candidate['provisional'] = previous_best is None
@@ -1094,6 +1098,7 @@ def wall_summary(root, status, interval=None):
     excess = max(0.0, wall-limit)
     classification = overrun_class(excess > 0, current_cpu, prior_cpu, stall, current_build, prior_build, changed, policy,
         compile_wall_growth=growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
+        cache_state=pending.get('cache', {}).get('state'),
         comparable_cases=bool(tiers) and all(row.get('comparable_cases') for row in tiers.values()),
         comparable_wall=bool(tiers) and all(row.get('comparable_wall', row.get('comparable_cases')) for row in tiers.values()))
     fast = tiers.get('fast', {})

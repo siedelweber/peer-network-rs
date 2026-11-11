@@ -498,7 +498,7 @@ def main():
     parser.add_argument('--outcome')
     parser.add_argument('--source', default='working tree')
     parser.add_argument('--budget', default='ordinary-check')
-    parser.add_argument('--overrun-class', choices=['within-budget', 'unclassified', 'high-stall', 'load-unresolved', 'rebuild', 'plain', 'growth'])
+    parser.add_argument('--overrun-class', choices=['within-budget', 'unclassified', 'high-stall', 'load-unresolved', 'cold-cache', 'rebuild', 'plain', 'growth'])
     parser.add_argument('--findings')
     parser.add_argument('--ledger', type=Path)
     parser.add_argument('--registry', default='docs/inputs/devperf-registry.toml')
