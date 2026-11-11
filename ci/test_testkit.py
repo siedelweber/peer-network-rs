@@ -203,6 +203,27 @@ class SupportGuard(unittest.TestCase):
             else:
                 with self.assertRaisesRegex(StructuralError, 'normal/build'):
                     validate(metadata)
+        for provider in ('pn-epoch', 'pn-records'):
+            for kind in (None, 'build', 'dev'):
+                for route in ('explicit', 'default', 'forwarded', 'optional-forwarded', 'indirect'):
+                    dependency = dict(name=provider, rename='helper', kind=kind, features=[])
+                    consumer = dict(name='consumer', dependencies=[dependency], features={})
+                    features = {'test-support': [], 'alias': ['test-support']}
+                    if route == 'explicit': dependency['features'] = ['test-support']
+                    if route == 'default': features['default'] = ['test-support']
+                    if route == 'forwarded': consumer['features']['fixture'] = ['helper/test-support']
+                    if route == 'optional-forwarded': consumer['features']['fixture'] = ['helper?/test-support']
+                    if route == 'indirect': dependency['features'] = ['alias']
+                    metadata = {'packages': [consumer, dict(name=provider, dependencies=[], features=features)]}
+                    if kind == 'dev':
+                        validate(metadata)
+                    else:
+                        with self.assertRaisesRegex(StructuralError, 'test-support normal/build'):
+                            validate(metadata)
+                dependency['features'] = []
+                consumer['features'] = {'test-support': ['helper/test-support']}
+                features.pop('default', None)
+                validate(metadata)
 
 
 class PropertyDeclarations(unittest.TestCase):

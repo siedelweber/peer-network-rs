@@ -10,10 +10,35 @@ from devperf import StructuralError
 
 
 def validate(metadata):
+    support = {package['name']: package.get('features', {}) for package in metadata['packages']
+               if 'test-support' in package.get('features', {})}
+    def expanded(features, requested):
+        pending = list(requested)
+        reached = set()
+        while pending:
+            feature = pending.pop()
+            if feature not in reached:
+                reached.add(feature)
+                pending.extend(features.get(feature, []))
+        return reached
     for package in metadata['packages']:
         for dependency in package['dependencies']:
             if dependency['name'] == 'pn-testkit' and dependency.get('kind') != 'dev':
                 raise StructuralError(f"{package['name']}: pn-testkit normal/build dependency forbidden")
+            if dependency.get('kind') == 'dev' or dependency['name'] not in support:
+                continue
+            requested = list(dependency.get('features', []))
+            if dependency.get('uses_default_features', True): requested.append('default')
+            alias = dependency.get('rename') or dependency['name']
+            # Any production feature may be selected. The provider's own
+            # development-only test-support branch is checked at its consumers.
+            for name, features in package.get('features', {}).items():
+                if name == 'test-support': continue
+                for feature in expanded(package['features'], features):
+                    for prefix in (alias+'/', alias+'?/'):
+                        if feature.startswith(prefix): requested.append(feature[len(prefix):])
+            if 'test-support' in expanded(support[dependency['name']], requested):
+                raise StructuralError(f"{package['name']}: {dependency['name']}/test-support normal/build feature forbidden")
 
 
 def main():
@@ -28,7 +53,7 @@ def main():
             packages = [package for package in metadata['packages'] if package['name'] == declaration['name'] and package['version'] == declaration['version']]
             if len(packages) != 1 or packages[0].get('license') != declaration['license'] or features[packages[0]['id']] != sorted(declaration['features']):
                 raise StructuralError('dependency review differs: '+declaration['name'])
-        print('TESTKIT-GUARD production edges exclude pn-testkit')
+        print('TESTKIT-GUARD production edges exclude pn-testkit and test-support features')
         return 0
     except (ValueError, KeyError, subprocess.CalledProcessError) as error:
         print(f'TESTKIT-STRUCTURAL-ERROR {error}', file=sys.stderr)
