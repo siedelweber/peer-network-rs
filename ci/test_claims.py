@@ -428,9 +428,11 @@ class Evidence(unittest.TestCase):
             with patch('build_graph.tracked', return_value=paths):
                 self.assertEqual(tracker_elsewhere(root, unassigned), {})
                 self.assertEqual(tracker_elsewhere(root, unassigned, classification=True), {'def:testing:fixture': sorted(paths)})
+                self.assertEqual(tracker_elsewhere(root, unassigned, both=True), ({}, {'def:testing:fixture': sorted(paths)}))
                 rendered.write_text(rendered.read_text()+'An independent mention: ``def:testing:fixture``.\n')
                 self.assertEqual(tracker_elsewhere(root, unassigned), {'def:testing:fixture': [str(rendered.relative_to(root))]})
                 self.assertEqual(tracker_elsewhere(root, unassigned, classification=True), {})
+                self.assertEqual(tracker_elsewhere(root, unassigned, both=True), ({'def:testing:fixture': [str(rendered.relative_to(root))]}, {}))
         from claims import tracker_changes
         old = dict(category='statement', **carried)
         new = dict(old, records=['ROOT::alg:testing:other'], bites=[3])

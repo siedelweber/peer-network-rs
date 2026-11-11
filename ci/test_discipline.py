@@ -1151,6 +1151,26 @@ class SourceDiscipline(unittest.TestCase):
             self.assertGreaterEqual(count, 1)
             self.assertIn('clippy::missing_const_for_fn', result.stdout)
             print(f'NURSERY-WITNESS-FINDINGS={count}')
+            required, _ = run_clippy(root)
+            self.assertEqual(required.returncode, 0, required.stderr)
+            repeated, repeated_count = run_clippy(root, advisory=True)
+            self.assertEqual(repeated.returncode, 0, repeated.stderr)
+            self.assertGreaterEqual(repeated_count, 1)
+            artifacts = [json.loads(line) for line in repeated.stdout.splitlines()
+                         if json.loads(line).get('reason') == 'compiler-artifact']
+            self.assertTrue(artifacts)
+            self.assertTrue(all(row['fresh'] for row in artifacts), 'advisory lint cache must survive the required invocation')
+            required, _ = run_clippy(root)
+            self.assertEqual(required.returncode, 0, required.stderr)
+            artifacts = [json.loads(line) for line in required.stdout.splitlines()
+                         if json.loads(line).get('reason') == 'compiler-artifact']
+            self.assertTrue(artifacts)
+            self.assertTrue(all(row['fresh'] for row in artifacts), 'required lint cache must survive the advisory invocation')
+            source = root/'src/lib.rs'
+            source.write_text('pub fn candidate(value: u32) -> u32 { let unused = value; value + 1 }\n')
+            refused, _ = run_clippy(root)
+            self.assertNotEqual(refused.returncode, 0, 'a non-nursery warning must remain a required failure')
+            self.assertIn('unused_variables', refused.stdout)
 
 
 if __name__ == '__main__':

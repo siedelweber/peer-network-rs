@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+sys.dont_write_bytecode = True
 import time
 import tomllib
 
@@ -468,6 +469,15 @@ def run_clippy(root, advisory=False):
     for _, package in vendor_members(root):
         command.extend(["--exclude", package])
     command.extend(["--all-targets", "--no-deps", "--locked", "--message-format=json"])
+    # Distinct lint arguments must not alternately invalidate one Cargo cache.
+    target = pathlib.Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()
+    target = target/('lint-nursery' if advisory else 'lint-required')
+    target.mkdir(parents=True, exist_ok=True)
+    from isolation import bound_target, cache_policy
+    policy = cache_policy(root)
+    if policy:
+        bound_target(target, policy['owner_target_ceiling_bytes'], target.name)
+    command.extend(['--target-dir', str(target)])
     if advisory:
         command.extend(["--", "-W", "warnings", "-W", "clippy::nursery"])
     else:

@@ -600,7 +600,7 @@ def tracker_rows(inventory, paragraphs, evidence, bites, constants=(), plan=(), 
 
 
 
-def tracker_elsewhere(root, rows, classification=False):
+def tracker_elsewhere(root, rows, classification=False, both=False):
     """Count exact labels outside the admitted mention carriers, never substrings."""
     from build_graph import tracked
     labels = {row['label'] for row in rows if row['status'] == 'unassigned'}
@@ -609,7 +609,7 @@ def tracker_elsewhere(root, rows, classification=False):
     declaration = root/'docs/inputs/deployment-claims.toml'
     classified = {r['name'] for r in tomllib.loads(declaration.read_text())['rows']} if declaration.exists() else set()
     if not labels:
-        return {}
+        return ({}, {}) if both else {}
     excluded = {'docs/inputs/design-inventory.toml', 'docs/inputs/specification-progress.toml',
                 'docs/datasets/org.peer-network.design.inventory.json',
                 'docs/datasets/org.peer-network.design.progress.json', 'docs/design/progress.md',
@@ -639,8 +639,9 @@ def tracker_elsewhere(root, rows, classification=False):
         text = re.sub(r'\[PAPER-([^\]\n]+)\]', r'\1', text).replace('PAPER::', '')
         for label in set(token.findall(text)) & labels:
             found[label].add(name)
-    selected = {label: paths for label, paths in identities.items() if label not in found} if classification else found
-    return {label: sorted(paths) for label, paths in sorted(selected.items())}
+    gaps = {label: sorted(paths) for label, paths in sorted(found.items())}
+    classification_only = {label: sorted(paths) for label, paths in sorted(identities.items()) if label not in found}
+    return (gaps, classification_only) if both else classification_only if classification else gaps
 
 
 def tracker_changes(before, after, fields=None):
@@ -783,8 +784,7 @@ def tracker_input(root, evidence):
     rows = tracker_rows(read('design-inventory.toml'), paragraphs, evidence,
                         read('implementation-bites.toml'), read('design-constants.toml'), read('design-bites.toml'),
                         tracker_witnesses(root, evidence.get('sites')))
-    elsewhere = tracker_elsewhere(root, rows)
-    classifications = tracker_elsewhere(root, rows, classification=True)
+    elsewhere, classifications = tracker_elsewhere(root, rows, both=True)
     for row in rows:
         row['elsewhere'] = elsewhere.get(row['label'], [])
         if row['label'] in classifications:
