@@ -443,7 +443,7 @@ assert (root/'payload').read_text() == 'committed'
             data = rows(runner='ci', case=operation)
             data[-1].update(name='ci::fixture', case_budgets={operation: 'integration'},
                             case_budget_reasons={operation: 'Retained fixture work.'})
-            registry = Registry(data, declarations())
+            registry = Registry(data, declarations(), producer_steps={operation.removeprefix('ci::').split('.')[0]: 'fixture-step'})
             case = unittest.FunctionTestCase(lambda: None)
             case.id = lambda: operation.removeprefix('ci::')
             suite = unittest.TestSuite([case])
@@ -752,11 +752,16 @@ assert (root/'payload').read_text() == 'committed'
         extended = rows(runner='ci')
         extended[-1]['tier'] = 'extended'
         extended.append(dict(kind='tier', name='extended', status='active', invocation_budget='extended-gate'))
-        registry = Registry(extended, dict(declarations(), **{'extended-gate':dict(budget_ms=120000, category='aggregate')}))
+        registry = Registry(extended, dict(declarations(), **{'extended-gate':dict(budget_ms=120000, category='aggregate')}), producer_steps={'example::case': 'fixture-step'})
         record = result(registry)
         self.assertEqual((record['tier'], record['budget'], record['level']), ('extended', 'unit', 'unit'))
         self.assertEqual(record['applicable_budgets'], ['unit', 'pure-suite', 'extended-gate'])
         self.assertEqual(registry.matrix([record], 'current')[0]['status'], 'passed')
+        self.assertEqual(record['step'], 'fixture-step')
+        with self.assertRaisesRegex(StructuralError, 'misreported step'):
+            registry.matrix([dict(record, step='another-step')], 'current')
+        with self.assertRaisesRegex(StructuralError, 'lacks producing step'):
+            registry.matrix([{k:v for k,v in record.items() if k != 'step'}], 'current')
         for records in ([], [record, record]):
             with self.assertRaisesRegex(StructuralError, 'dropped or duplicate'):
                 registry.matrix(records, 'current')

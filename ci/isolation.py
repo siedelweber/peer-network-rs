@@ -188,6 +188,10 @@ def import_base(root, source, base):
 
 def setup_receipt(row):
     """Retain waited Git CPU even when a nested witness captures its stdout."""
+    case = os.environ.get('PN_GATE_CASE')
+    if os.environ.get('NEXTEST_TEST_NAME'):
+        case = os.environ['NEXTEST_BINARY_ID']+'::'+os.environ['NEXTEST_TEST_NAME']
+    row = dict(row, case=case)
     print('ISOLATION-GIT '+json.dumps(row, sort_keys=True), flush=True)
     destination = os.environ.get('PN_GATE_SETUP_LOG')
     if destination:

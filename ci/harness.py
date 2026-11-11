@@ -44,7 +44,8 @@ def source_id():
 
 
 class Registry:
-    def __init__(self, rows, declared, properties=None):
+    def __init__(self, rows, declared, properties=None, producer_steps=None):
+        self.producer_steps = producer_steps
         self.properties = properties or {}
         self.levels = {}
         self.implementations = {}
@@ -172,6 +173,33 @@ class Registry:
         budget = self.tiers[tier].get('invocation_budget')
         return [budget] if budget and tier != 'fast' else ['test-command', 'gate']
 
+    def producing_step(self, name):
+        """Join the runner to the declared gate command, not the receipt's claim."""
+        suite = self.cases[name]
+        runner = suite['runner']
+        if runner == 'contract':
+            return self.producing_step(suite['parent_case'])
+        if runner == 'benchmark':
+            return 'benchmarks'
+        if runner in {'nextest', 'doctest'}:
+            return {'extended': 'extended-tests', 'service': 'service-tests',
+                    'reference-certificate': 'reference-certificates'}.get(suite['tier'], 'tests')
+        if self.producer_steps is None:
+            import shlex
+            from build_graph import roster
+            self.producer_steps = {}
+            for step, command in roster(ROOT):
+                argv = shlex.split(command)
+                if 'ci/run_ci.py' in argv:
+                    module = argv[argv.index('ci/run_ci.py')+1]
+                    if module in self.producer_steps:
+                        raise StructuralError('ambiguous case producing step: '+module)
+                    self.producer_steps[module] = step
+        module = name.removeprefix('ci::').split('.')[0]
+        if module not in self.producer_steps:
+            raise StructuralError('unregistered case producing step: '+name)
+        return self.producer_steps[module]
+
     def join(self, record, source, configuration=CONFIGURATION):
         from properties import validate
         validate(record, self.properties)
@@ -181,7 +209,7 @@ class Registry:
         suite = self.cases[name]
         implementation = self.implementations[suite['implementation']]
         budget = self.case_budget(name)
-        fields = dict(source=source, configuration=configuration, level=suite['level'],
+        fields = dict(source=source, configuration=configuration, level=suite['level'], step=self.producing_step(name),
                       suite=suite['name'], implementation=suite['implementation'], tier=suite['tier'],
                       evidence=implementation['evidence'], budget=budget,
                       applicable_budgets=[budget, suite['budget'], *self.aggregate_budgets(suite['tier'])])
@@ -216,6 +244,8 @@ class Registry:
         cases = [r for r in records if r.get('scope') == 'case']
         if len(cases) != len(self.cases) or {r['operation'] for r in cases} != set(self.cases):
             raise StructuralError('dropped or duplicate suite case')
+        if any('step' not in row for row in cases):
+            raise StructuralError('case receipt lacks producing step')
         joined = [self.join(r, source) for r in cases]
         from build_graph_evidence import held_service, retained_service
         if any(r.get('retained') and not retained_service(r, Path.cwd()) for r in joined):

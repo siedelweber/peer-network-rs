@@ -571,6 +571,14 @@ wait
             ['common', 'new'], ['common', 'retained'], {'new': 80}, {'retained': 20}, 180, 120)
         self.assertEqual((own, old, comparable), (100, 100, True))
         self.assertEqual(evidence, dict(added=['new'], removed=['retained'], own_removed_s=80, baseline_removed_s=20))
+        for owner, expected in (('matched', True), ('omitted', False), (None, False)):
+            for adding in (True, False):
+                current, previous = (['common', 'new'], ['common']) if adding else (['common'], ['common', 'new'])
+                own_value, old_value = (180, 100) if adding else (100, 180)
+                a, b, valid, _ = case_intersection(current, previous, {'new':80}, {'new':80}, own_value, old_value,
+                    steps={'new':owner}, old_steps={'new':owner}, omitted=['omitted'])
+                self.assertEqual(valid, expected, 'exclusive case must belong to a comparable step')
+                self.assertEqual((a,b), (100,100) if expected else (None,None))
         self.assertEqual(overrun_class(True, own, old, .01, 40, 40, [], policy,
             **ridge, comparable_cases=comparable, comparable_wall=False), 'plain')
         # An added slow sleeper has printed CPU, but its wall is not compile
@@ -619,11 +627,11 @@ wait
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'setup.jsonl'
             with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source',
-                            PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='run'), patch('builtins.print'):
+                            PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='run', PN_GATE_CASE='ci::fixture.case'), patch('builtins.print'):
                 setup_receipt(dict(owner='nested-tracker', source='fixture-source', action='fetch',
                                    wall=3, own_user_s=8.2, own_sys_s=1, status=0))
             self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
-                             dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1))
+                             dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1, setup_case_cpu_s={'ci::fixture.case':9.2}))
             with self.assertRaisesRegex(ValueError, 'stale isolation setup receipt'):
                 setup_accounting(path, 'gate-source', 'other-run', 'tests')
             data = json.loads(path.read_text());data['own_user_s'] = -1

@@ -933,8 +933,12 @@ def setup_accounting(path, source, run, step):
                 type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
                 for key in ('wall', 'own_user_s', 'own_sys_s')):
             raise ValueError('invalid isolation setup receipt: '+step)
+    cases = {}
+    for row in rows:
+        if row.get('case'):
+            cases[row['case']] = cases.get(row['case'], 0)+row['own_user_s']+row['own_sys_s']
     return dict(setup_cpu_s=sum(row['own_user_s']+row['own_sys_s'] for row in rows),
-                setup_wall_s=sum(row['wall'] for row in rows), setup_calls=len(rows))
+                setup_wall_s=sum(row['wall'] for row in rows), setup_calls=len(rows), setup_case_cpu_s=cases)
 
 
 def status_changes(current, previous):
@@ -945,11 +949,14 @@ def status_changes(current, previous):
             if current.get(kind, {}).get(name) != previous.get(kind, {}).get(name)]
 
 
-def case_intersection(cases, previous, costs, old_costs, own, old):
+def case_intersection(cases, previous, costs, old_costs, own, old, *, steps=None, old_steps=None, omitted=()):
     """Remove only printed exclusive-case CPU; missing evidence is unavailable."""
     added, removed = sorted(set(cases)-set(previous)), sorted(set(previous)-set(cases))
     if not added and not removed:
         return own, old, True, dict(added=[], removed=[], own_removed_s=0, baseline_removed_s=0)
+    if omitted and (any((steps or {}).get(name) is None or steps[name] in omitted for name in added)
+                    or any((old_steps or {}).get(name) is None or old_steps[name] in omitted for name in removed)):
+        return None, None, False, dict(added=added, removed=removed, reason='exclusive case belongs to an omitted or unknown step')
     def charge(names, figures):
         values = [figures.get(name) for name in names]
         if any(not isinstance(value, (int, float)) or isinstance(value, bool) or
@@ -1010,6 +1017,7 @@ def tier_summary(root, registry, worker_statuses):
     gate_start = raw_sample(root/'.lane/gate-resource-start.raw')
     selected_cases = {name: [] for name in groups}
     case_costs = {name: {} for name in groups}
+    case_steps = {name: {} for name in groups}
     paths = [root/'.lane/performance-events.jsonl', root/'.lane/harness-benchmarks.jsonl',
              *sorted((root/'.lane').glob('harness-ci-*.jsonl'))]
     for path in paths:
@@ -1017,6 +1025,9 @@ def tier_summary(root, registry, worker_statuses):
         for line in path.read_text().splitlines():
             row = json.loads(line)
             if row.get('scope') == 'case' and row.get('outcome') != 'held' and not row.get('retained'):
+                if row.get('step') != registry.producing_step(row['operation']):
+                    raise ValueError('case producing step differs: '+row['operation'])
+                case_steps.setdefault(row['tier'], {})[row['operation']] = row['step']
                 selected_cases.setdefault(row['tier'], []).append(row['operation'])
                 cpu = (row.get('own_user_s'), row.get('own_sys_s'))
                 valid = all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 for value in cpu)
@@ -1050,6 +1061,14 @@ def tier_summary(root, registry, worker_statuses):
             setup = setup_accounting(root/f'.lane/gate-{row[0]}-setup.jsonl', os.environ['PN_GATE_SOURCE'],
                                      os.environ['PN_BUILDGRAPH_RUN'], row[0])
             step_figures[row[0]].update(setup)
+            for case, charge in setup['setup_case_cpu_s'].items():
+                cost = case_costs[tier].get(case)
+                if cost is not None:
+                    # Millisecond child accounting can round below the setup
+                    # clock by one tick; never turn unavailable CPU into zero.
+                    if charge > cost+.002:
+                        raise ValueError('case setup exceeds its own CPU: '+case)
+                    case_costs[tier][case] = max(0, cost-charge)
             print('GATE-SETUP '+json.dumps(dict(step=row[0], **setup), sort_keys=True), flush=True)
         build_cpu = sum(row['cargo_cpu_s'] for row in step_figures.values())
         build_cpu += sum(row['own_cpu_s'] for name, row in step_figures.items() if name in policy['rebuild_steps'] and not row['layouts'] and row['own_cpu_s'] is not None)
@@ -1069,9 +1088,11 @@ def tier_summary(root, registry, worker_statuses):
         comparable_setup = sum(row['setup_cpu_s'] for name, row in step_figures.items() if name not in omitted) if comparable_cpu is not None else None
         comparable_old_setup = sum(row['setup_cpu_s'] for name, row in prior.get('step_figures', {}).items() if name in step_figures and name not in omitted) if comparable_old is not None else None
         intersection = dict(added=[], removed=[], own_removed_s=0, baseline_removed_s=0)
-        if not comparable_cases and not omitted:
+        if not comparable_cases:
             comparable_cpu, comparable_old, comparable_cases, intersection = case_intersection(
-                cases, prior.get('selected_cases', []), case_costs[tier], prior.get('case_costs', {}), comparable_cpu, comparable_old)
+                cases, prior.get('selected_cases', []), case_costs[tier], prior.get('case_costs', {}), comparable_cpu, comparable_old,
+                steps=case_steps[tier], old_steps=prior.get('case_steps', {}),
+                omitted=set(omitted) | (set(prior.get('step_figures', {}))-set(step_figures)))
         from gate_resources import node_stall
         stall = node_stall(measurement)
         old_stall = node_stall(prior.get('resources', {}))
@@ -1082,7 +1103,7 @@ def tier_summary(root, registry, worker_statuses):
             comparable_cpu = comparable_old = None
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
-            selected_cases=cases, case_costs=case_costs[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
+            selected_cases=cases, case_costs=case_costs[tier], case_steps=case_steps[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             comparable_setup_cpu_s=comparable_setup, baseline_comparable_setup_cpu_s=comparable_old_setup,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
