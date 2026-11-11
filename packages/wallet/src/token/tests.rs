@@ -38,25 +38,57 @@ fn fixture() -> (TransactionFields, AssetId, AssetId, [u8; 32]) {
     let row = &rows["assets"][0];
     let tx = decode_transaction(&hex(row["transaction"].as_str().unwrap()), decoder_limits()).unwrap();
     (
-        version_two(tx.fields().clone()),
+        tx.fields().clone(),
         AssetId(hex(rows["fee_asset"].as_str().unwrap()).try_into().unwrap()),
         AssetId(hex(row["asset"].as_str().unwrap()).try_into().unwrap()),
         hex(row["run"].as_str().unwrap()).try_into().unwrap(),
     )
 }
 
-fn version_two(mut fields: TransactionFields) -> TransactionFields {
-    for output in &mut fields.outputs {
-        if output.script.starts_with(b"\x6a\x2aPNAT\x01") {
-            let index = usize::try_from(u32::from_be_bytes(output.script[39..43].try_into().unwrap())).unwrap();
-            let mut script = b"\x6a\x4aPNAT\x02".to_vec();
-            script.extend(&output.script[7..39]);
-            script.extend(&fields.inputs[index].outpoint);
-            script.push(0);
-            output.script = script;
+fn chain_qualification() {
+    let rows: serde_json::Value = serde_json::from_str(include_str!("../../../act-authentication/tests/golden.json")).unwrap();
+    let fee = AssetId(hex(rows["fee_asset"].as_str().unwrap()).try_into().unwrap());
+    for ordinal in [2, 0, 1] {
+        let row = &rows["assets"][ordinal];
+        let run: [u8; 32] = hex(row["run"].as_str().unwrap()).try_into().unwrap();
+        let mut reversed_run = run;
+        reversed_run.reverse();
+        assert_ne!(run, reversed_run);
+        for field in ["reordered_transaction", "transaction"] {
+            let Some(raw) = row[field].as_str() else { continue };
+            let tx = decode_transaction(&hex(raw), decoder_limits()).unwrap();
+            let value = transaction_token_evidence(&tx, &[], run, fee, limits()).unwrap();
+            assert_eq!(value.tokens.len(), 1, "only marked issuance qualifies");
+            assert_eq!(
+                value.tokens[0].asset,
+                AssetId(hex(row["asset"].as_str().unwrap()).try_into().unwrap())
+            );
+            assert_eq!(
+                value.tokens[0].input,
+                usize::from(field == "reordered_transaction"),
+                "prevout follows reordered input"
+            );
+            assert_eq!(value.tokens[0].status, TokenStatus::Qualified);
+            assert!(
+                transaction_token_evidence(&tx, &[], reversed_run, fee, limits())
+                    .unwrap()
+                    .tokens
+                    .is_empty(),
+                "reversed run never qualifies"
+            );
         }
     }
-    fields
+    for row in rows["legacy_version_one"].as_array().unwrap().iter().rev() {
+        let tx = decode_transaction(&hex(row["transaction"].as_str().unwrap()), decoder_limits()).unwrap();
+        let run = hex(row["run"].as_str().unwrap()).try_into().unwrap();
+        assert!(
+            transaction_token_evidence(&tx, &[], run, fee, limits())
+                .unwrap()
+                .tokens
+                .is_empty(),
+            "version one is withdrawn"
+        );
+    }
 }
 
 fn sized(bytes: &[u8], target: &mut Vec<u8>) {
@@ -118,6 +150,7 @@ fn key_output(fields: &TransactionFields, byte: u8) -> Output {
 /// ´test:unit:token-qualification´
 #[test]
 fn token_qualification() {
+    chain_qualification();
     let (fields, fee, asset, run) = fixture();
     let tx = transaction(&fields);
     let value = transaction_token_evidence(&tx, &[], run, fee, limits()).unwrap();
@@ -358,7 +391,7 @@ fn multiple_tokens() {
     for (input, ordinal) in [2, 0, 1].into_iter().enumerate() {
         let row = &rows["assets"][ordinal];
         let tx = decode_transaction(&hex(row["transaction"].as_str().unwrap()), decoder_limits()).unwrap();
-        let adapted = version_two(tx.fields().clone());
+        let adapted = tx.fields().clone();
         fields.inputs.push(adapted.inputs[0].clone());
         for output in &adapted.outputs {
             let mut output = output.clone();
