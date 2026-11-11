@@ -42,7 +42,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "ci/authentication_vectors.py"]
+paths = ["packages/act-authentication/**/*.rs", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
