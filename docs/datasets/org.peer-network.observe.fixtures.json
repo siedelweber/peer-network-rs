@@ -25,6 +25,26 @@
         }
       },
       "ordinary_records": 240
+    },
+    {
+      "name": "complete-evidence",
+      "number_forms": {
+        "ordinary_records": {
+          "exact": "4 096",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 096",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "ordinary_records": {
+          "display": "exact",
+          "exact_digits": 4
+        }
+      },
+      "ordinary_records": 4096
     }
   ]
 }

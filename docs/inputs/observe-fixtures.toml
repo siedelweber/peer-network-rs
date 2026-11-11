@@ -5,3 +5,8 @@ version = [1, 0, 0]
 name = "trace-burst"
 ordinary_records = 240
 numeric_display = { ordinary_records = { display = "exact", exact_digits = 3 } }
+
+[[rows]]
+name = "complete-evidence"
+ordinary_records = 4096
+numeric_display = { ordinary_records = { display = "exact", exact_digits = 4 } }

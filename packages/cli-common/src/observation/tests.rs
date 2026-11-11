@@ -628,6 +628,62 @@ fn trace_burst_capacity() {
     assert_eq!(status["delivered_records"], delivered);
     assert_eq!(status["lost_records"], 0);
     assert_eq!(status["delivered_records"], rows.len() - 1);
+
+    complete_evidence_burst(&fixtures);
+}
+
+fn complete_evidence_burst(fixtures: &Value) {
+    let capture = Capture::default();
+    let mut evidence = Observation::with_delivery(
+        capture.clone(),
+        Arc::new(ManualClock(AtomicU64::new(0))),
+        None,
+        EVIDENCE_QUEUE_RECORDS,
+        true,
+    )
+    .unwrap();
+    let bound = fixtures["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["name"] == "complete-evidence")
+        .unwrap()["ordinary_records"]
+        .as_u64()
+        .unwrap();
+    assert_eq!(
+        u64::try_from(evidence.queue_records).unwrap(),
+        bound,
+        "evidence queue matches its declared bound"
+    );
+    evidence.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
+    for index in 0..bound {
+        evidence.emit(json!({"kind":"trace","public":index}));
+    }
+    assert_eq!(
+        evidence.delivered.load(Ordering::Relaxed),
+        0,
+        "evidence worker stays starved until drain"
+    );
+    assert_eq!(
+        evidence.lost.load(Ordering::Relaxed),
+        0,
+        "complete evidence cannot lose the bounded roster"
+    );
+    drop(BootstrapGuard(Some(evidence)));
+    let bytes = capture.0.lock().unwrap();
+    let rows: Vec<Value> = bytes
+        .split(|byte| *byte == b'\n')
+        .filter(|row| !row.is_empty())
+        .map(|row| serde_json::from_slice(row).unwrap())
+        .collect();
+    let status = rows.last().unwrap();
+    assert_eq!(status["lost_records"], 0, "complete evidence reports zero loss");
+    assert_eq!(
+        status["delivered_records"],
+        bound + 1,
+        "drain includes the complete roster and reserved summary"
+    );
+    assert_eq!(u64::try_from(rows.len()).unwrap(), bound + 2);
 }
 
 /// Claim: With the writer held by rendezvous, an ordinary queue filled beyond its slot capacity returns from every producer call before release, counts exactly the excess as queue-full loss, and reconciles delivered plus lost with attempted records after drain.

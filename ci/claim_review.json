@@ -455,7 +455,7 @@
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
       "after": "Claim: Compiler parameters, package verification and joined compilation preserve complete public successful results, title evidence, ledger values, cells, recipients, sparse base, emission and support, typed refusals and irrational holds with observation disabled, default and trace. Enabled observation accounts for all nested invocations; trace carries the verified source and compiled result without changing either.",
-      "review": "The executable compares complete outputs with observation off, default and trace, including a verified package, joined irrational evidence and a successful settlement prefix. A rejected publication binding and exhausted support budget remain explicit refusals. Nested accounting has 116 epoch operations; this is observation transparency, not authentication evidence."
+      "review": "The executable compares complete outputs with observation off, default and trace, including a verified package, joined irrational evidence and a successful settlement prefix. A rejected publication binding and exhausted support budget remain explicit refusals. Nested accounting has 116 epoch operations; this is observation transparency, not authentication evidence. Trace evidence selects the feature-gated complete capture and holds delivery until drain. Zero-loss reconciliation precedes every content assertion, with an explicit finite record ceiling; the original results and 116-operation assertions remain."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -831,7 +831,7 @@
       "claim": "CLICOMMON::claim:cli:trace-bursts-fit-the-bounded-queue",
       "before": "Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.",
       "after": "Claim: The declared trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.",
-      "review": "The same stalled-writer rendezvous, finite burst, delivered count and zero-loss assertions remain. The ordinary-record count comes from the typed observation fixture dataset; the reserved summary and final status determine the expected totals. The displayed delivered count is derived from that operand by the design check. The gloss states the delivery property without copying the fixture count."
+      "review": "The same stalled-writer rendezvous, finite burst, delivered count and zero-loss assertions remain. The ordinary-record count comes from the typed observation fixture dataset; the reserved summary and final status determine the expected totals. The displayed delivered count is derived from that operand by the design check. The gloss states the delivery property without copying the fixture count. The complete-evidence configuration additionally fills all its slots before allowing any writer progress, then requires zero loss and exact delivery including the reserved summary. The ordinary queue overflow witness and production bounds are unchanged."
     },
     {
       "operation": "cli-common::observation::tests::wallet_owner_accounting",

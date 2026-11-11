@@ -53,6 +53,8 @@ def run(argv, **kwargs):
 def compare(argv, mode, env, deadline=60, injected=False):
     """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
+    if not injected and mode == 'trace':
+        env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
     process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
                              env={key:value for key,value in env.items() if key!='PN_TEST_OBSERVATION_RENDEZVOUS'})
     stderr=[]; stdout=[]; reader_errors=[]
@@ -89,6 +91,13 @@ def compare(argv, mode, env, deadline=60, injected=False):
     if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
     if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
     if not injected and mode != 'disabled': complete_capture(b''.join(stderr))
+    if not injected and mode == 'trace':
+        rows=[json.loads(line) for line in b''.join(stderr).splitlines()]
+        capture_status=next(row for row in rows if row.get('kind')=='observation_status')
+        fixtures=json.loads(Path('docs/datasets/org.peer-network.observe.fixtures.json').read_text())['rows']
+        bound=next(row['ordinary_records'] for row in fixtures if row['name']=='complete-evidence')
+        if capture_status['attempted_records'] > bound:
+            raise AssertionError('complete-evidence record bound exceeded')
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
 
 

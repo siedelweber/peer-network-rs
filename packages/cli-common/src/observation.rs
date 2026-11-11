@@ -31,6 +31,7 @@ pub const RECORD_LIMIT: usize = 1024 * 1024;
 pub const CAPTURE_LIMIT: usize = 64 * 1024 * 1024;
 /// Ordinary delivery slots; the independent queued-byte limit also applies.
 pub const QUEUE_RECORDS: usize = 1024;
+const EVIDENCE_QUEUE_RECORDS: usize = 4096;
 /// Inline public-content limits used before content addressing.
 pub use content::{INLINE_BYTES, INLINE_NESTING};
 /// Reserved final-summary slots, independent of ordinary delivery.
@@ -262,6 +263,8 @@ impl Write for Limited {
 #[derive(Clone)]
 pub struct Observation {
     sender: SyncSender<Message>,
+    queue_records: usize,
+    delivery_start: Option<Arc<Mutex<Option<SyncSender<()>>>>>,
     summary_sender: SyncSender<Value>,
     flush_sender: SyncSender<SyncSender<()>>,
     diagnostic_sender: SyncSender<Value>,
@@ -294,6 +297,7 @@ pub struct Observation {
 type PublicationPause = Arc<Mutex<Option<Box<dyn FnOnce() + Send>>>>;
 
 struct Delivery {
+    queue_records: usize,
     worker_delivered: Arc<AtomicU64>,
     worker_lost: Arc<AtomicU64>,
     worker_timeouts: Arc<AtomicU64>,
@@ -327,7 +331,7 @@ impl Delivery {
         let worker_queued = &self.worker_queued;
         let delivery = &self;
         while let Ok(first) = receiver.recv() {
-            for message in std::iter::once(first).chain(receiver.try_iter().take(QUEUE_RECORDS)) {
+            for message in std::iter::once(first).chain(receiver.try_iter().take(self.queue_records)) {
                 if worker_closing.load(Ordering::Acquire) {
                     return;
                 }
@@ -355,7 +359,7 @@ impl Delivery {
                 // channel. Drain that prefix before acknowledging; later sends
                 // cannot overtake it. Keep the separate reserved request slot so
                 // a saturated record queue cannot reject the drain request.
-                for message in receiver.try_iter().take(QUEUE_RECORDS) {
+                for message in receiver.try_iter().take(self.queue_records) {
                     if worker_closing.load(Ordering::Acquire) {
                         return;
                     }
@@ -461,7 +465,23 @@ impl Observation {
         clock: Arc<dyn Clock>,
         bridge: Option<Arc<crate::observation_export::Bridge>>,
     ) -> io::Result<Self> {
-        let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
+        Self::with_delivery(writer, clock, bridge, QUEUE_RECORDS, false)
+    }
+
+    fn with_delivery(
+        writer: impl Write + Send + 'static,
+        clock: Arc<dyn Clock>,
+        bridge: Option<Arc<crate::observation_export::Bridge>>,
+        queue_records: usize,
+        hold_until_flush: bool,
+    ) -> io::Result<Self> {
+        let (delivery_start, started) = if hold_until_flush {
+            let (start, started) = mpsc::sync_channel(1);
+            (Some(Arc::new(Mutex::new(Some(start)))), Some(started))
+        } else {
+            (None, None)
+        };
+        let (sender, receiver) = mpsc::sync_channel(queue_records);
         let (summary_sender, summary_receiver) = mpsc::sync_channel::<Value>(SUMMARY_RECORDS);
         let (flush_sender, flush_receiver) = mpsc::sync_channel::<SyncSender<()>>(1);
         let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Value>(DIAGNOSTIC_RECORDS);
@@ -496,7 +516,13 @@ impl Observation {
         let artifact_root = content::root()?;
         let worker_bridge = bridge.clone();
         std::thread::Builder::new().name("observation-json".into()).spawn(move || {
+            if let Some(started) = started
+                && started.recv().is_err()
+            {
+                return;
+            }
             let delivery = Delivery {
+                queue_records,
                 worker_delivered,
                 worker_lost,
                 worker_timeouts,
@@ -518,6 +544,8 @@ impl Observation {
         })?;
         Ok(Self {
             sender,
+            queue_records,
+            delivery_start,
             summary_sender,
             flush_sender,
             diagnostic_sender,
@@ -613,6 +641,11 @@ impl Observation {
     }
 
     fn flush_for(&self, duration: Duration) {
+        if let Some(release) = &self.delivery_start
+            && let Some(start) = release.lock().unwrap_or_else(std::sync::PoisonError::into_inner).take()
+        {
+            let _released = start.send(());
+        }
         let (done, wait) = mpsc::sync_channel(1);
         if self.flush_sender.try_send(done).is_err() {
             self.drain_unavailable.fetch_add(1, Ordering::Relaxed);
@@ -627,7 +660,14 @@ impl Observation {
             // Explicit zero-deadline controls still exercise the loss accounting.
             duration.max(Duration::from_secs(30))
         };
-        match wait.recv_timeout(duration) {
+        let completed = if self.queue_records == QUEUE_RECORDS {
+            wait.recv_timeout(duration)
+        } else {
+            // Complete evidence waits for its finite roster; the fixture process
+            // watchdog only refuses. Production retains its bounded drain.
+            wait.recv().map_err(|_| mpsc::RecvTimeoutError::Disconnected)
+        };
+        match completed {
             Ok(()) => {}
             Err(mpsc::RecvTimeoutError::Timeout) => {
                 self.drain_timeouts.fetch_add(1, Ordering::Relaxed);
@@ -1480,8 +1520,23 @@ fn bootstrap_inner(
     if GLOBAL.get().is_some() {
         return Err(ObserverUnavailable::ObservationAlreadyInitialized.into());
     }
-    let mut observation = Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
-        .map_err(|_| ObserverUnavailable::Writer)?;
+    let evidence_capture = false;
+    #[cfg(feature = "observation-test-hook")]
+    let evidence_capture = evidence_capture || std::env::var_os("PN_OBSERVE_COMPLETE_EVIDENCE").is_some();
+    let mut observation = if evidence_capture {
+        // The finite evidence roster fits these slots and the unchanged byte bound.
+        // Holding the worker until flush makes completeness independent of scheduling.
+        Observation::with_delivery(
+            StderrSink,
+            Arc::new(SystemClock(started)),
+            bridge,
+            EVIDENCE_QUEUE_RECORDS,
+            true,
+        )
+    } else {
+        Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
+    }
+    .map_err(|_| ObserverUnavailable::Writer)?;
     observation.full_trace = level;
     // Legacy verbosity arguments do not silently enable payload persistence.
     tracing_subscriber::registry()
@@ -1492,7 +1547,7 @@ fn bootstrap_inner(
     GLOBAL
         .set(observation.clone())
         .map_err(|_| ObserverUnavailable::ObservationAlreadyInitialized)?;
-    let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":if observation.full_trace {"trace"} else {"default"},"queue_records":QUEUE_RECORDS,"record_capacity_bytes":RECORD_LIMIT}));
+    let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":if observation.full_trace {"trace"} else {"default"},"queue_records":observation.queue_records,"record_capacity_bytes":RECORD_LIMIT}));
     operation.started = Duration::ZERO;
     operation.finish(
         Outcome::Success,
