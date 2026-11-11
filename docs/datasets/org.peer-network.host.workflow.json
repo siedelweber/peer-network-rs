@@ -12,7 +12,7 @@
       "inputs": "stage, act identifier and exact public proposal header or approval document; private handshake material stays in the reviewed custody context",
       "kind": "mutation",
       "name": "submitAct",
-      "outcome": "receipt and durable stage; never implicit admission",
+      "outcome": "transient handshake response or committed slot winner and placement; no durable receipt or stage for an unordered attempt",
       "status": "planned; not served",
       "surface": "node"
     },
@@ -22,7 +22,7 @@
       "inputs": "act identifier",
       "kind": "query",
       "name": "actStatus",
-      "outcome": "received, verified, eligible, admitted or published status with evidence",
+      "outcome": "committed winning ActId and epoch/position for the queried author/sequence slot, or Unknown before commitment; unavailable evidence stays Unavailable",
       "status": "planned; not served",
       "surface": "node"
     },
@@ -223,10 +223,10 @@
       "recovery": "Read the current chain at the required depth; a reorg may change the selected attempt, and incomplete scans remain unavailable."
     },
     {
-      "action": "Submit the same structural act or request and recover its recorded receipt.",
+      "action": "Resend a surviving act attempt or construct a fresh one at the same slot; resolve its committed winner and placement from public order.",
       "category": "recovery",
       "name": "submitted",
-      "recovery": "Receipt and approval do not promise final inclusion."
+      "recovery": "No durable pending receipt is kept. Unknown before commitment and unavailable evidence do not prove the slot free; approval promises no final inclusion."
     },
     {
       "action": "Read admitted result and its complete package at the named boundary.",

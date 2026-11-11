@@ -3325,11 +3325,25 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/design/implementation.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "type",
       "label": "ax:graph:authored-act-ontology",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the accepted act owns exactly the listed fields",
+          "record": "ROOT::amend:design:act-envelope-field-inventory"
+        },
+        {
+          "clause": "Premise only: an act owns exactly its listed fields including admission-handshake authentication",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -7422,7 +7436,16 @@
       ],
       "kind": "type",
       "label": "def:graph:act-envelope",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: the envelope has that exact field inventory",
+          "record": "ROOT::amend:design:act-envelope-field-inventory"
+        },
+        {
+          "clause": "Premise only: the envelope retains exactly those fields",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -35898,10 +35921,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "67",
+          "exact": "68",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "67",
+          "num": "68",
           "num_exact": true,
           "num_relation": "="
         }
@@ -35912,7 +35935,7 @@
           "exact_digits": 32
         }
       },
-      "total": 67
+      "total": 68
     },
     {
       "category": "total",
