@@ -659,26 +659,23 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
     """Classify warning evidence without changing the functional verdict."""
     if not over: return 'within-budget'
     if cache_state == 'cold': return 'cold-cache'
-    unresolved = (type(stall) in (int, float) and 0 <= stall < 1
+    valid_stall = type(stall) in (int, float) and math.isfinite(stall) and 0 <= stall < 1
+    unresolved = (valid_stall
                   and stall > policy['load_unresolved_pressure_percent']/100)
     fallback = 'load-unresolved' if unresolved else 'unclassified'
-    if stall is None: return 'unclassified'
+    if not valid_stall: return 'unclassified'
     if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return fallback
     # Remove the baseline's stall before projecting its work into this interval.
     # A pressure fraction is context, not an attribution of CPU to this tier.
-    if not 0 <= stall < 1 or not 0 <= baseline_stall < 1: return 'unclassified'
+    if type(baseline_stall) not in (int, float) or not math.isfinite(baseline_stall) or not 0 <= baseline_stall < 1: return fallback
     if comparable_cases and comparable_wall and wall*stall >= excess and wall <= baseline_wall*(1-baseline_stall)/(1-stall): return 'high-stall'
     margin = 1+policy['cpu_growth_percent']/100
     # Comparable CPU has already excluded matched compilation on both sides.
-    noncompile = comparable_cases and own is not None and baseline is not None
-    remaining = own if noncompile else None
-    old_remaining = baseline if noncompile else None
     if (changed and build_cpu is not None and old_build_cpu is not None
             and build_cpu > old_build_cpu*margin
             and compile_wall_growth is not None and excess is not None
             and compile_wall_growth > 0
-            and (compile_wall_growth >= excess or
-                 (comparable_wall and noncompile and remaining <= old_remaining*margin))):
+            and compile_wall_growth >= excess):
         return 'rebuild'
     if not comparable_cases or own is None or baseline is None: return fallback
     # Pressure can inflate CPU as well as wall. Without a quiet measurement,
@@ -889,7 +886,7 @@ def retain_baseline(root):
         temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
         temporary.replace(skipped)
-        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+str(previous_best.get('provisional', True) if previous_best else None).lower()+' previous_tree='+str(candidate.get('previous_baseline_tree')))
+        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+(str(previous_best.get('provisional', True)).lower() if previous_best else 'unavailable')+' previous_tree='+str(candidate.get('previous_baseline_tree') or 'unavailable'))
         return
     candidate['quiet'] = True
     candidate['provisional'] = previous_best is None

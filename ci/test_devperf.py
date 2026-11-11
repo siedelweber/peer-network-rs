@@ -500,7 +500,7 @@ wait
             self.assertEqual(finding['outcome'], 'exit:1')
             self.assertEqual(finding['verdict_effect'], 'none')
     def test_overrun_classes(self):
-        """Rebuild classification requires comparable compile CPU growth and positive serialized wall growth, with either excess coverage or stable comparable non-compile work; changed case sets retain compile evidence but not aggregate comparisons, and load alone cannot establish rebuild work.
+        """Rebuild classification requires comparable compile CPU growth and serialized compile wall growth covering the excess; changed case sets retain compile evidence but not aggregate comparisons, and load alone cannot establish rebuild work.
         ´claim:devperf:rebuild-requires-compile-cpu-and-wall´
         ´test:integration:test-overrun-classes´
         """
@@ -513,12 +513,20 @@ wait
         self.assertEqual(classify(stall=0.1), 'high-stall')
         self.assertEqual(classify(own=121), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['packages/example/src/pins.rs']), 'rebuild')
-        self.assertEqual(classify(own=120, build=60, changed=['packages/example/src/pins.rs']), 'rebuild')
+        self.assertEqual(classify(own=120, build=60, changed=['packages/example/src/pins.rs']), 'plain')
         self.assertEqual(classify(own=150, build=60, changed=['packages/example/src/pins.rs']), 'growth')
         self.assertEqual(classify(own=121, build=61), 'growth')
         self.assertEqual(classify(own=121, build=61, changed=['Cargo.lock'], stall=0.1), 'high-stall')
         self.assertEqual(classify(baseline=None), 'unclassified')
         self.assertEqual(classify(stall=None), 'unclassified')
+        for invalid in (None, -1, 1, float('nan'), float('inf'), 'bad', True):
+            self.assertEqual(overrun_class(True, 100, 100, .4, 40, 40, [], policy,
+                wall=200, baseline_wall=100, baseline_stall=invalid, excess=80), 'load-unresolved')
+            self.assertEqual(overrun_class(True, 100, 100, invalid, 40, 40, [], policy,
+                wall=200, baseline_wall=100, baseline_stall=.1, excess=80), 'unclassified')
+        self.assertEqual(overrun_class(True, 100, 100, .05, 12.7, 1, ['source'], policy,
+            compile_wall_growth=.95, excess=19.5, wall=139.5, baseline_wall=144.5, baseline_stall=.05),
+            'plain', 'compile growth must explain the whole excess')
         self.assertEqual(overrun_class(True, 100, 100, 0, 120, 100, ['Cargo.lock'], policy,
             compile_wall_growth=60, excess=21, wall=141, baseline_wall=100, baseline_stall=0), 'plain')
         # The line is continuous: 5 percent pressure can explain an overrun,
@@ -567,12 +575,12 @@ wait
         self.assertEqual(overrun_class(True, 100, 100, .09, 40, 40,
             ['packages/example/src/pins.rs'], policy, compile_wall_growth=60, excess=21, wall=141, baseline_wall=100, baseline_stall=0), 'plain')
         # Round 149's rounded ridge extended figures: almost all extra CPU
-        # compiled, including the isolated owner; serial wall alone is short.
+        # compiled, including the isolated owner; serial wall cannot explain the excess.
         ridge = dict(compile_wall_growth=10.52, excess=30, wall=150,
                      baseline_wall=120, baseline_stall=0)
         self.assertAlmostEqual((182.2-87.6)/(91.8-.94), 1.0411622276)
         self.assertEqual(overrun_class(True, 182.2-87.6, 91.8-.94, .0349, 87.6, .94,
-            ['packages/records/src/ridge.rs'], policy, **ridge), 'rebuild')
+            ['packages/records/src/ridge.rs'], policy, **ridge), 'plain')
         self.assertEqual(overrun_class(True, 182.2-87.6, 91.8-.94, .0349, 87.6, .94,
             ['packages/records/src/ridge.rs'], policy, **(ridge | dict(compile_wall_growth=0))), 'plain')
         # The ridge's fast compile-CPU pair, with a controlled wall boundary:
