@@ -52,7 +52,7 @@ class Harness(unittest.TestCase):
             self.assertEqual(calibrated, dict(PN_CALIBRATION_CASE_CPU='calibration'))
             for status in (0, 7, 143):
                 env = dict(os.environ, PN_GATE_CASE_CPU=directory, PN_HARNESS_SOURCE='current',
-                           NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
+                           PN_GATE_STEP='fixture-step', NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
                 program = ('import os, signal; os.kill(os.getpid(), signal.SIGTERM)' if status == 143
                            else f'raise SystemExit({status})')
                 result = subprocess.run(['bash', str(script), sys.executable, '-c', program], env=env, capture_output=True)
@@ -61,6 +61,9 @@ class Harness(unittest.TestCase):
                     self.assertIn(b'Terminated', result.stderr)
                 case = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=123)
                 join_case_cpu([case], root, 'current')
+                self.assertEqual(case['step'], 'fixture-step')
+                with self.assertRaisesRegex(StructuralError, 'observed producing step'):
+                    join_case_cpu([dict(case, step='wrong-step')], root, 'current')
                 self.assertEqual(case['duration_ms'], 123)
                 self.assertGreaterEqual(case['own_user_s'], 0)
                 self.assertGreaterEqual(case['own_sys_s'], 0)
@@ -353,6 +356,28 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual(present.returncode, 0)
                 with workspace(root, owner, source) as (_, target):
                     self.assertEqual((target/'retained').read_text(), 'owned cache')
+                with patch.dict(os.environ, PN_GATE_SAMPLE='fresh-isolation', PN_BUILDGRAPH_RUN='sample-one', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=source):
+                    with workspace(root, owner, source) as (fresh, target):
+                        marker = fresh/'.git/series-witness'
+                        marker.write_text('first use')
+                        self.assertEqual((target/'retained').read_text(), 'owned cache')
+                    with workspace(root, owner, source) as (fresh, target):
+                        self.assertTrue(marker.exists(), 'one sample resets each owner only once')
+                with patch.dict(os.environ, PN_GATE_SAMPLE='fresh-isolation', PN_BUILDGRAPH_RUN='sample-two', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=source):
+                    with workspace(root, owner, source) as (fresh, target):
+                        self.assertFalse(marker.exists(), 'every sample must repay source setup')
+                        self.assertEqual((target/'retained').read_text(), 'owned cache', 'fresh source must preserve build cache')
+                from types import SimpleNamespace
+                consumed = [0]
+                def bound(*args):
+                    consumed[0] += 17
+                    return False
+                def usage(kind):
+                    return SimpleNamespace(ru_utime=consumed[0], ru_stime=0)
+                with patch('isolation.cache_policy', return_value={'owner_target_ceiling_bytes':1}), patch('isolation.bound_target', side_effect=bound), patch('isolation.resource.getrusage', side_effect=usage), patch('isolation.setup_receipt') as receipt:
+                    with workspace(root, owner, source):
+                        self.assertEqual(receipt.call_args.args[0]['own_user_s'], 34, 'owner setup includes the target bound before yielding')
+                        self.assertEqual(receipt.call_args.args[0]['action'], 'owner-window')
                 (root/'Cargo.lock').write_text('# Changed dependency selection fixture.\nversion = 4\n')
                 git('add', 'Cargo.lock')
                 git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'lock change')
@@ -569,7 +594,7 @@ assert (root/'payload').read_text() == 'committed'
         data[-1]['case_span'] = True
         slow = dict(data[-1], name='reference', tier='reference',
                     case_budget='integration', cases=['example::slow'])
-        policy = dict(kind='tier', name='reference', status='active',
+        policy = dict(kind='tier', name='reference', status='active', execution_tier='reference-certificate',
                       case_budget_policy='declared-suite', reason='Exact reference fixture.')
         data.extend([policy, slow])
         registry = Registry(data, declarations())
@@ -744,6 +769,11 @@ assert (root/'payload').read_text() == 'committed'
         ´claim:harness:dropped-case-refused´
         ´test:integration:test-dropped-case´
         """
+        from harness import load
+        actual = load()
+        wallet = actual.suites['ci::test_wallet_boundary']
+        self.assertEqual((wallet['tier'], wallet['budget']), ('service', 'elements-suite'))
+        self.assertEqual(len(wallet['cases']), 11)
         registry = fixture()
         with self.assertRaisesRegex(StructuralError, 'inventory differs'):
             registry.roster('nextest', [])
@@ -762,6 +792,17 @@ assert (root/'payload').read_text() == 'committed'
             registry.matrix([dict(record, step='another-step')], 'current')
         with self.assertRaisesRegex(StructuralError, 'lacks producing step'):
             registry.matrix([{k:v for k,v in record.items() if k != 'step'}], 'current')
+        import os
+        from unittest.mock import patch
+        from run_tests import join_case
+        with patch.dict(os.environ, PN_GATE_SOURCE='current', PN_GATE_STEP='elsewhere'):
+            with self.assertRaisesRegex(StructuralError, 'misreported step'):
+                join_case(registry, dict(operation='example::case', outcome='passed'), 'current', CONFIGURATION)
+        wrong_tier = rows()
+        wrong_tier[5]['name'] = 'unmapped'
+        wrong_tier[-1]['tier'] = 'unmapped'
+        with self.assertRaisesRegex(StructuralError, 'no unique execution step'):
+            result(Registry(wrong_tier, declarations()))
         for records in ([], [record, record]):
             with self.assertRaisesRegex(StructuralError, 'dropped or duplicate'):
                 registry.matrix(records, 'current')

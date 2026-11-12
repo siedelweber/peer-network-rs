@@ -491,12 +491,15 @@ def run_clippy(root, advisory=False):
         if nonce and retained.get('identity') == identity:
             result = subprocess.CompletedProcess(command, retained['status'], retained['stdout'], '')
             print('LINT-PASS reused=true compiled_cpu_s=0')
+            print('LINT-CACHE invocation_hit=true artifact_hits=0 artifact_misses=0 scope=no-replayed-compilation')
         else:
             start = time.monotonic()
             before = resource.getrusage(resource.RUSAGE_CHILDREN)
             result = subprocess.run(command, cwd=root, capture_output=True, text=True)
             after = resource.getrusage(resource.RUSAGE_CHILDREN)
             print(f'LINT-PASS reused=false wall_s={time.monotonic()-start:.6f} own_cpu_s={after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime:.6f}')
+            counted = [json.loads(line) for line in result.stdout.splitlines() if json.loads(line).get('reason') == 'compiler-artifact']
+            print(f'LINT-CACHE invocation_hit=false artifact_hits={sum(row.get("fresh") is True for row in counted)} artifact_misses={sum(row.get("fresh") is False for row in counted)}')
             if nonce:
                 # Replayed diagnostics must not replay compilation receipts.
                 diagnostics = ''.join(line+'\n' for line in result.stdout.splitlines()

@@ -71,6 +71,7 @@ quiet_window() {
 }
 gate_started=$(date -u +%s.%N)
 export PN_BUILDGRAPH_RUN="${gate_started}-$$"
+python3 -B ci/build_graph.py instruction-probe || exit 2
 gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-start.raw
 quiet_window before

@@ -395,6 +395,7 @@ def run(compile_records):
         # Baselines are reviewed declarations, never Criterion's automatically saved previous run.
         if workload['baseline_status'] != 'held':
             raise StructuralError('reviewed comparable benchmark baseline not yet implemented')
+        record['step'] = os.environ.get('PN_GATE_STEP', 'benchmarks')
         records.append(registry.join(record, source))
     records.append(registry.suite_event('foundation-benchmarks', (time.monotonic()-sample_started)*1000,
                                       'failed' if any(row['outcome'] == 'failed' for row in records) else 'passed', source))
@@ -404,7 +405,7 @@ def run(compile_records):
         return dict(status='failed', phase='workload-smoke', artifact=str(directory)), 1
     for point in additional['points']:
         declaration = next(row for row in workload_points(grids, 'smoke') if row['name'] == point['name'])
-        records.append(registry.join(dict(operation='benchmark::'+point['name'], source=source, configuration=CONFIGURATION,
+        records.append(registry.join(dict(operation='benchmark::'+point['name'], source=source, configuration=CONFIGURATION, step=os.environ.get('PN_GATE_STEP', 'benchmarks'),
                             implementation=declaration['implementation'], outcome=point['outcome'],
                             duration_ms=point['estimates']['mean']['point_estimate']/1_000_000,
                             invocation_ms=point['invocation_ms'], own_cpu_s=point['own_cpu_s'], utc=utc(),

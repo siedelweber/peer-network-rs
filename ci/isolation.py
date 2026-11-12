@@ -257,6 +257,8 @@ def workspace(root, name, source):
         started = time.monotonic()
         fcntl.flock(lock, fcntl.LOCK_EX)
         print(f'ISOLATION-LOCK owner={name} wall={time.monotonic()-started:.6f}s', flush=True)
+        owner_started = time.monotonic()
+        owner_cpu = [resource.getrusage(kind) for kind in (resource.RUSAGE_SELF, resource.RUSAGE_CHILDREN)]
         binding = base/'owner'
         if binding.exists() and binding.read_text() != name:
             raise ValueError('isolation owner key collision')
@@ -265,6 +267,16 @@ def workspace(root, name, source):
         generation = json.loads(state.read_text())['generation'] if state.exists() else 0
         (base/'last-use').write_text(str(generation))
         tree = base/'s'
+        if os.environ.get('PN_GATE_SAMPLE', 'import') == 'fresh-isolation':
+            invocation = os.environ.get('PN_BUILDGRAPH_RUN')
+            if not invocation:
+                raise ValueError('fresh isolation requires a gate invocation')
+            sample = base/'sample'
+            if not sample.exists() or sample.read_text() != invocation:
+                if tree.exists():
+                    shutil.rmtree(tree)
+                sample.write_text(invocation)
+                print(f'ISOLATION-FRESH owner={name} run={invocation} target=retained', flush=True)
         # Older shared clones borrow objects that the parent may prune.
         if (tree/'.git/objects/info/alternates').exists():
             shutil.rmtree(tree)
@@ -279,9 +291,9 @@ def workspace(root, name, source):
             cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
             result = cancellable(argv)
             used = resource.getrusage(resource.RUSAGE_CHILDREN)
-            setup_receipt(dict(owner=name, source=source, action=argv[1] if argv[1] != '-C' else argv[3],
+            print('ISOLATION-GIT '+json.dumps(dict(owner=name, source=source, action=argv[1] if argv[1] != '-C' else argv[3],
                 wall=time.monotonic()-started, own_user_s=used.ru_utime-cpu.ru_utime,
-                own_sys_s=used.ru_stime-cpu.ru_stime, status=result.returncode))
+                own_sys_s=used.ru_stime-cpu.ru_stime, status=result.returncode)), flush=True)
             if result.returncode:
                 raise ValueError('commit-scoped checkout failed')
         for argv, expected in ((['rev-parse', 'HEAD'], source), (['status', '--porcelain', '--untracked-files=no'], '')):
@@ -310,6 +322,11 @@ def workspace(root, name, source):
         identity = base/'layout'
         layout_changed = identity.exists() and identity.read_text() != layout
         identity.write_text(layout)
+        owner_used = [resource.getrusage(kind) for kind in (resource.RUSAGE_SELF, resource.RUSAGE_CHILDREN)]
+        setup_receipt(dict(owner=name, source=source, action='owner-window',
+            wall=time.monotonic()-owner_started,
+            own_user_s=sum(after.ru_utime-before.ru_utime for before, after in zip(owner_cpu, owner_used)),
+            own_sys_s=sum(after.ru_stime-before.ru_stime for before, after in zip(owner_cpu, owner_used)), status=0))
         try:
             yield tree, target
         finally:

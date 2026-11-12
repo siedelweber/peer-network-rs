@@ -48,9 +48,10 @@ def allocation_lock():
         yield
 
 
-# Disjoint from the PostgreSQL allocator's 42100 to 42119, so neither
+# Disjoint from the PostgreSQL allocator, so neither
 # service's lingering connections consume the other's ports.
-PORTS = range(42120, 42160)
+from host_postgresql import ELEMENTS_PORTS, check_ports
+PORTS = ELEMENTS_PORTS
 
 
 def free(port):
@@ -67,6 +68,8 @@ def free(port):
 
 @contextmanager
 def port_selection(ports=PORTS, exclude=()):
+    if ports is PORTS:
+        check_ports(PORTS)
     with allocation_lock():
         # A random starting offset spreads allocators that share no mutex,
         # which would otherwise all probe the lowest free port together.

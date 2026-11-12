@@ -61,21 +61,24 @@ def join_case_cpu(cases, directory, source):
     measured = {}
     for path in directory.glob('*.cpu'):
         fields = path.read_text().split('\0')
-        if len(fields) != 7 or fields[-1] != '':
+        if len(fields) != 8 or fields[-1] != '':
             raise StructuralError('nextest case CPU record is malformed')
-        operation, commit, status, wall, user, system, _ = fields
+        operation, commit, status, wall, user, system, step, _ = fields
         if operation in measured:
             raise StructuralError('duplicate nextest case CPU record')
         values = [float(value) for value in (wall, user, system)]
         if not all(number(value) for value in values):
             raise StructuralError('nextest case CPU is not finite and nonnegative')
-        measured[operation] = (commit, int(status), values)
+        measured[operation] = (commit, int(status), values, step)
     if set(measured) != {case['operation'] for case in cases}:
         raise StructuralError('nextest case CPU union differs')
     for case in cases:
-        commit, status, (wall, user, system) = measured[case['operation']]
+        commit, status, (wall, user, system), step = measured[case['operation']]
         if commit != source or (status == 0) != (case['outcome'] == 'passed'):
             raise StructuralError('nextest case CPU identity or outcome differs')
+        if 'step' in case and case['step'] != step:
+            raise StructuralError('nextest observed producing step differs')
+        case['step'] = step
         case.update(own_user_s=user, own_sys_s=system, child_wall_s=wall,
                     cpu_scope='case-process-and-reaped-descendants; bash-time-millisecond-resolution')
         print('CASE-CPU '+json.dumps({key:case[key] for key in ('operation', 'own_user_s', 'own_sys_s', 'cpu_scope')}, sort_keys=True), flush=True)
@@ -131,6 +134,11 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
 
 
 def join_case(registry, record, source, configuration):
+    if os.environ.get('PN_GATE_SOURCE') == source and os.environ.get('PN_GATE_STEP'):
+        observed = os.environ['PN_GATE_STEP']
+        if 'step' in record and record['step'] != observed:
+            raise StructuralError('case receipt differs from executing step')
+        record['step'] = observed
     for key in ('scope', 'level', 'suite', 'implementation', 'tier', 'evidence', 'applicable_budgets'):
         record.pop(key, None)
     return registry.join(record, source, configuration)
@@ -275,8 +283,8 @@ def suite_events(observations, inventory, registry, source, runner, selected=Non
             for name, suite in registry.suites.items() if suite.get('runner') == runner and suite['status'] == 'active' and (selected is None or set(suite['cases']) <= selected)]
 
 
-def invocation_tier(suite):
-    return suite['tier'] if suite['tier'] in {'reference-certificate', 'service', 'extended'} else 'fast'
+def invocation_tier(suite, registry):
+    return registry.tiers[suite['tier']].get('execution_tier', suite['tier'])
 
 
 def split_main(action):
@@ -360,7 +368,7 @@ def split_main(action):
         return status
     if action not in {'fast', 'service', 'reference-certificate', 'extended'}:
         raise StructuralError('unknown required invocation')
-    selected = {name for name, suite in registry.cases.items() if suite['runner'] == 'nextest' and invocation_tier(suite) == action}
+    selected = {name for name, suite in registry.cases.items() if suite['runner'] == 'nextest' and invocation_tier(suite, registry) == action}
     if not selected: raise StructuralError('required invocation is empty')
     expressions = []
     for binary, suite in inventory['rust-suites'].items():

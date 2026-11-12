@@ -195,7 +195,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -203,7 +203,19 @@ class WalletBoundary(unittest.TestCase):
         import time
         import types
         import wallet_elements
-        self.assertFalse(set(wallet_elements.PORTS) & set(range(42100, 42120)))
+        import tempfile
+        from host_postgresql import POSTGRESQL_PORTS, check_ports
+        self.assertFalse(set(wallet_elements.PORTS) & set(POSTGRESQL_PORTS))
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            (proc/'ip_local_port_range').write_text('32768 60999\n')
+            (proc/'ip_local_reserved_ports').write_text('')
+            check_ports(wallet_elements.PORTS, proc)
+            (proc/'ip_local_port_range').write_text('20000 60999\n')
+            with self.assertRaisesRegex(RuntimeError, 'overlap automatic allocation'):
+                check_ports(wallet_elements.PORTS, proc)
+            (proc/'ip_local_reserved_ports').write_text('22100-22159\n')
+            check_ports(wallet_elements.PORTS, proc)
         # Closing the accepted side first leaves the server port in TIME_WAIT, as the daemon does.
         with socket.socket() as server:
             server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

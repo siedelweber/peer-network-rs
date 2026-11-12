@@ -1,5 +1,6 @@
 kind = "tier"
 name = "mechanism-certificate"
 status = "active"
+execution_tier = "fast"
 case_budget_policy = "declared-suite"
 reason = "The smallest certified own-loss mechanism requires complete histories, signed response separation and replayed feedback bounds; it is not a published reference certificate."

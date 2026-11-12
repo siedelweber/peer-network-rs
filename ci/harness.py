@@ -204,8 +204,19 @@ class Registry:
         if runner == 'benchmark':
             return 'benchmarks'
         if runner in {'nextest', 'doctest'}:
-            return {'extended': 'extended-tests', 'service': 'service-tests',
-                    'reference-certificate': 'reference-certificates'}.get(suite['tier'], 'tests')
+            import shlex
+            from build_graph import roster
+            tier = self.tiers[suite['tier']].get('execution_tier', suite['tier'])
+            matches = []
+            for step, command in roster(ROOT):
+                argv = shlex.split(command)
+                if 'ci/run_tests.py' in argv and argv[argv.index('ci/run_tests.py')+1] == tier:
+                    matches.append(step)
+                if tier == 'fast' and 'ci/discipline.py' in argv and argv[argv.index('ci/discipline.py')+1] == 'tests':
+                    matches.append(step)
+            if len(matches) != 1:
+                raise StructuralError('tier has no unique execution step: '+suite['tier'])
+            return matches[0]
         if self.producer_steps is None:
             import shlex
             from build_graph import roster

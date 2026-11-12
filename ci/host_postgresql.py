@@ -12,6 +12,25 @@ import time
 import tempfile
 from contextlib import contextmanager
 
+
+# Fixed daemon ports are declared outside the worker's automatic client range.
+POSTGRESQL_PORTS = range(22100, 22120)
+ELEMENTS_PORTS = range(22120, 22160)
+
+
+def check_ports(ports, proc=Path('/proc/sys/net/ipv4')):
+    """A daemon without socket inheritance needs ports excluded from auto allocation."""
+    low, high = map(int, (proc/'ip_local_port_range').read_text().split())
+    reserved = set()
+    for item in (proc/'ip_local_reserved_ports').read_text().strip().split(','):
+        if not item:
+            continue
+        bounds = [int(value) for value in item.split('-')]
+        reserved.update(range(bounds[0], bounds[-1]+1))
+    if any(low <= port <= high and port not in reserved for port in ports):
+        raise RuntimeError('fixture ports overlap automatic allocation without a node reservation')
+    print(f'FIXTURE-PORTS first={ports.start} last={ports.stop-1} automatic_first={low} automatic_last={high} exclusion=checked', flush=True)
+
 class SocketPathError(ValueError):
     """A filesystem socket name cannot fit the platform's sockaddr_un."""
 
@@ -46,6 +65,7 @@ def port_selection(deadline=None):
     The Linux abstract socket is common to this user's gate processes, without
     relying on their checkout or TMPDIR. The kernel releases it on process exit.
     """
+    check_ports(POSTGRESQL_PORTS)
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
         if deadline is None: deadline = time.monotonic() + 60
         while True:
@@ -56,7 +76,7 @@ def port_selection(deadline=None):
                 if error.errno != 98 or time.monotonic() >= deadline:
                     raise RuntimeError('PostgreSQL port allocation unavailable') from None
                 time.sleep(0.05)
-        for port in range(42100, 42120):
+        for port in POSTGRESQL_PORTS:
             with socket.socket() as reservation:
                 reservation.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:

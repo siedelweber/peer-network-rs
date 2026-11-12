@@ -408,7 +408,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.waiting_ratio', return_value=1000), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     self.assertEqual(json.loads((lane/'gate-baseline.json').read_text())['import_base_tree'], 'tree', 'archive provenance must name the declared base tree')
@@ -486,6 +486,11 @@ wait
             with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 self.assertEqual(declare_run(root)['entry'], 'fixture:entry')
             entry = (Path(__file__).parent/'gate.sh').read_text()
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='fresh-isolation'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                self.assertEqual(declare_run(root)['sample'], 'fresh-isolation')
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='other'):
+                with self.assertRaisesRegex(ValueError, 'PN_GATE_SAMPLE'):
+                    declare_run(root)
             self.assertLess(entry.index('build_graph.py declare'), entry.index('TMPDIR'))
         campaign = dict(label='campaign:devperf:whole-gate-mixed', warmup_commit='a'*40, source_commit='b'*40,
                         discarded_warmup_ms=2000, rebuild_wall_ms=1200, warm_walls_ms=[1000, 1100, 1150],
@@ -512,6 +517,7 @@ wait
             measured = dict(step='gate', wall_seconds=1.2, own_user_s=1, own_sys_s=.1,
                             node_scope='node-wide', node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
             (lane/'gate-resources.json').write_text(json.dumps([measured]))
+            (lane/'gate-steps.tsv').write_text('fixture\t0\t1.2\t1.9\n')
             figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
                            baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
                            own_user_s=1, own_sys_s=0, baseline_cpu_s=1,
@@ -524,6 +530,8 @@ wait
                     self.assertEqual(wall_summary(root, status), 0)
                 result = json.loads((lane/'gate-wall.json').read_text())
                 self.assertEqual(result['status'], status)
+                self.assertAlmostEqual(result['preparation_s'], .2)
+                self.assertAlmostEqual(result['closing_s'], .3)
                 self.assertTrue(result['over_budget'])
                 self.assertEqual(result['classification'], 'high-stall')
                 self.assertEqual(result['baseline_stall'], .1)
@@ -719,15 +727,55 @@ wait
             self.assertEqual(omitted, [])
         unmetered = {'claim-tests':{k:v for k,v in first['claim-tests'].items() if k != 'setup_cpu_s'}}
         self.assertEqual(compile_comparison(first, unmetered, [])[3], ['claim-tests'])
-        # Recorded serial tracker pair on one tree. The residual 2.089 CPU
-        # seconds is observed variation, not a budget or a load attribution.
+        # Recorded serial tracker pair: assert exactly the removed component,
+        # not a tolerance fitted to this pair's unexplained residual.
         first = {'tests':dict(wall=29.210007, own_cpu_s=27.405551, cargo_cpu_s=0,
                              setup_cpu_s=17.998947, layouts={}, partial=False)}
         second = {'tests':dict(first['tests'], wall=8.767859, own_cpu_s=7.486846, setup_cpu_s=.169108)}
         for left, right in ((first,second),(second,first)):
             own, old, _, _ = compile_comparison(left, right, [])
-            self.assertLessEqual(abs(own-old), 2.089, 'recorded tracker setup must not become program growth')
+            self.assertAlmostEqual(own, left['tests']['own_cpu_s']-left['tests']['setup_cpu_s'])
+            self.assertAlmostEqual(old, right['tests']['own_cpu_s']-right['tests']['setup_cpu_s'])
         from isolation import setup_receipt
+        from build_graph import waiting_ratio, instruction_probe, measured_command
+        with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25'):
+            self.assertEqual(waiting_ratio(), 1.25)
+        for invalid in ('nan', 'inf', '0', '-1'):
+            with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO=invalid):
+                with self.assertRaisesRegex(ValueError, 'finite and positive'):
+                    waiting_ratio()
+        bounded = {'tests':dict(second['tests'], wait_dominated=True)}
+        self.assertIsNone(compile_comparison(bounded, bounded, [])[0], 'wait-dominated CPU must not be comparable')
+        bounded['tests']['wait_dominated'] = None
+        self.assertIsNone(compile_comparison(bounded, bounded, [])[0], 'an unmeasured waiting threshold must not classify work')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'.lane').mkdir()
+            with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe'), patch('build_graph.shutil.which', return_value=None), patch('builtins.print') as printed:
+                instruction_probe(root)
+                with patch('build_graph.cancellable', return_value=SimpleNamespace(returncode=0)) as invoked:
+                    measured_command(root, ['true'])
+                invoked.assert_called_once_with(['true'], reap_tree=True)
+                self.assertIn('unavailable', str(printed.call_args_list))
+            (root/'.lane/instructions-probe.json').write_text(json.dumps(dict(run='counter-probe', executable='perf')))
+            for counter, expected in [('42;;instructions;1;100.00', '42'), ('<not supported>;;instructions;', 'unavailable')]:
+                def counted(argv, **kwargs):
+                    self.assertEqual(argv[:5], ['perf', 'stat', '-x', ';', '-e'])
+                    Path(argv[argv.index('-o')+1]).write_text(counter)
+                    return SimpleNamespace(returncode=7)
+                with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe', PN_GATE_STEP='fixture'), patch('build_graph.cancellable', side_effect=counted) as invoked, patch('builtins.print') as printed:
+                    self.assertEqual(measured_command(root, ['fixture']).returncode, 7)
+                    invoked.assert_called_once()
+                    self.assertIn('retired='+expected, str(printed.call_args_list))
+
+        from build_graph import case_intersection
+        # A case clock can include the compilation already removed from its
+        # step: 29.162 - 9.655 - 9.133 - 16.466 = -6.092 seconds.
+        for left, right in ((['new'], []), ([], ['new'])):
+            result = case_intersection(left, right, {'new':16.466}, {'new':16.466}, 100, 100,
+                steps={'new':'discipline-tests'}, old_steps={'new':'discipline-tests'},
+                build_steps={'discipline-tests'}, old_build_steps={'discipline-tests'})
+            self.assertFalse(result[2], 'a larger tier total must not conceal overlapping case and build clocks')
+            self.assertIn('overlap removed build CPU', result[3]['reason'])
         from build_graph import setup_accounting
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'setup.jsonl'
@@ -940,6 +988,9 @@ wait
                 (archive/(name+'.json')).write_text(json.dumps(dict(value,tree='outside' if name == 'foreign' else 'inside', import_base_tree='old-base')))
             prune_peer_archive(archive, {'inside':'public', 'old-base':'old'}, 'inside')
             self.assertEqual({path.stem for path in archive.glob('*.json')}, {'fast'}, 'only eligible nondominated archive members remain')
+            (archive/'near.json').write_text(json.dumps(dict(slow, tree='near', source='near')))
+            prune_peer_archive(archive, {'inside':'public', 'near':'near'})
+            self.assertTrue((archive/'near.json').exists(), 'a nearer warm reference must survive an older dominator')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir(); archive = root/'peers'; archive.mkdir()
             a = dict(slow, source='A', tree='landed', import_base_tree='old-base',
@@ -1066,7 +1117,7 @@ wait
                 self.assertTrue(new_path.exists(), 'the threshold itself remains quiet')
                 new_path.unlink()
 
-                with patch('build_graph.subprocess.run', side_effect=[good, good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n')]):
+                with patch('build_graph.subprocess.run', side_effect=[good, good, good, SimpleNamespace(stdout='packages/example/src/pins.rs\npackages/example/src/pins.toml\nvendor/example/data.bin\nREADME.md\n'), SimpleNamespace(stdout='', returncode=0)]):
                     same_path, old, changed, context = baseline_context(root, registry)
                 self.assertEqual(path, same_path)
                 self.assertEqual(old['source'], 'ancestor')
@@ -1189,6 +1240,19 @@ wait
                     self.assertEqual(other_path.read_bytes(),retained_bytes,
                                      'a worse candidate must not replace the retained measurement')
                     self.assertIn('retained_provisional=false',output.getvalue())
+                # Distance takes precedence for comparison, not retention.
+                older=json.loads(quiet_bytes)
+                older.update(cache={'state':'warm'}, provisional=False)
+                older['whole']['stall']=.001
+                path.write_text(json.dumps(older))
+                other_path.write_text(json.dumps(newer))
+                check_output = subprocess.check_output
+                def distance(argv, **kwargs):
+                    if argv[:3] == ['git','rev-list','--count']:
+                        return '1' if argv[3].startswith(other+'..') else '2'
+                    return check_output(argv, **kwargs)
+                with patch.dict(os.environ, PN_IMPORT_BASE=other), patch('build_graph.subprocess.check_output', side_effect=distance):
+                    self.assertEqual(baseline_context(root, registry)[1]['source'], other, 'comparison must select the nearest warm reference')
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 
@@ -1442,7 +1506,7 @@ measurement_node = "fixture"
                         elif argv[1:3] == ['nextest', 'run']:
                             (Path(env['PN_GATE_CASE_CPU'])/'fixture.cpu').write_text(
                                 '\0'.join(['example::case', 'fixture', str(outcome),
-                                           str(duration), '0.001', '0.002', '']))
+                                           str(duration), '0.001', '0.002', 'tests', '']))
                             stdout.write(json.dumps({'type': 'test', 'event': 'failed' if outcome else 'ok',
                                                      'name': 'example::example$case', 'exec_time': duration,
                                                      'stdout': 'synthetic captured text'}))

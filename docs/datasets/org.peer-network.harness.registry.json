@@ -229,6 +229,7 @@
     },
     {
       "case_budget_policy": "declared-suite",
+      "execution_tier": "fast",
       "kind": "tier",
       "name": "mechanism-certificate",
       "reason": "The smallest certified own-loss mechanism requires complete histories, signed response separation and replayed feedback bounds; it is not a published reference certificate.",
@@ -773,7 +774,7 @@
       "tier": "fast"
     },
     {
-      "budget": "pure-suite",
+      "budget": "elements-suite",
       "case_budget_reasons": {
         "ci::test_wallet_boundary.WalletBoundary.test_confinement": "Every source and adapter mutation retains real Cargo identity resolution and full confinement checks; only unchanged pure lexical masks are reused by complete source text.",
         "ci::test_wallet_boundary.WalletBoundary.test_dependency_features": "Actual Cargo metadata and production dependency trees retain the renamed and moved-dependency controls and every reviewed feature check."
@@ -801,7 +802,7 @@
       "name": "ci::test_wallet_boundary",
       "runner": "ci",
       "status": "active",
-      "tier": "fast"
+      "tier": "service"
     },
     {
       "budget": "pure-suite",

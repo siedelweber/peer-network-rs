@@ -18,5 +18,5 @@ while IFS= read -r line; do
     fi
 done < "$base.time"
 set -o noclobber
-printf '%s\0' "$NEXTEST_BINARY_ID::$NEXTEST_TEST_NAME" "$PN_HARNESS_SOURCE" "$status" "$wall" "$user" "$system" > "$base.cpu"
+printf '%s\0' "$NEXTEST_BINARY_ID::$NEXTEST_TEST_NAME" "$PN_HARNESS_SOURCE" "$status" "$wall" "$user" "$system" "${PN_GATE_STEP:-unavailable}" > "$base.cpu"
 exit "$status"
