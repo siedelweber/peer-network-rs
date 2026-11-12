@@ -71,6 +71,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This surface enforces the carriage hold and claims no entropy or admitted replacement process.",
+      "relation": "realizes",
+      "source": "ROOT::amend:api:direct-listener",
+      "target": "ROOT::open:design:proposal-carriage"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This surface enforces the carriage hold and claims no entropy or admitted replacement process.",
+      "relation": "realizes",
+      "source": "ROOT::amend:api:listener-bootstrap",
+      "target": "ROOT::open:design:proposal-carriage"
+    },
+    {
+      "conditional_on": "",
       "reason": "The operation entry specifies public verification and separate secret-operation admission, not concealment assurance.",
       "relation": "realizes",
       "source": "ROOT::amend:crypto:authentication-entry",
@@ -421,15 +435,22 @@
     },
     {
       "conditional_on": "",
-      "reason": "This hold records the proposed process without claiming its entropy-dependent hiding.",
+      "reason": "This hold keeps the realization gated independently of the paper answer.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:proposal-carriage",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "Optional centralized carriage remains a separate paper hold.",
       "relation": "realizes",
       "source": "ROOT::open:design:proposal-carriage",
       "target": "ROOT::open:identity:optional-act-carriage"
     },
     {
-      "conditional_on": "",
+      "conditional_on": "subsec:deployment:concealment-entropy",
       "reason": "The hold identifies the tagged host nonce-custody duty and claims no entropy or concealment evidence.",
-      "relation": "realizes",
+      "relation": "relies",
       "source": "ROOT::open:design:proposal-carriage",
       "target": "subsec:deployment:concealment-entropy"
     },
@@ -469,16 +490,37 @@
       "target": "ROOT::amend:identity:authentication-recipe-gate"
     },
     {
+      "conditional_on": "",
+      "reason": "This selects a successor construction for admission, not evidence of entropy or implemented custody.",
+      "relation": "realizes",
+      "source": "ROOT::open:identity:act-realization-admission",
+      "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
       "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "The proposed content hiding argument needs the Actor's actual independent private entropy and custody.",
+      "reason": "The hiding argument needs actual independent Actor entropy and private custody.",
       "relation": "relies",
-      "source": "ROOT::open:identity:optional-act-carriage",
+      "source": "ROOT::open:identity:act-realization-admission",
       "target": "case:deployment:concealment-entropy-client-generated"
     },
     {
+      "conditional_on": "subsec:deployment:concealment-entropy",
+      "reason": "The tagged custody baseline is not a realization claim for the altered profile.",
+      "relation": "relies",
+      "source": "ROOT::open:identity:act-realization-admission",
+      "target": "subsec:deployment:concealment-entropy"
+    },
+    {
       "conditional_on": "",
-      "reason": "This proposal identifies the published custody duties it would amend, without claiming actual entropy or concealment.",
+      "reason": "This question preserves the independent identity admission hold without claiming its entropy premise.",
       "relation": "realizes",
+      "source": "ROOT::open:identity:optional-act-carriage",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "subsec:deployment:concealment-entropy",
+      "reason": "The host receives, checks and custodies the nonce with the payload.",
+      "relation": "relies",
       "source": "ROOT::open:identity:optional-act-carriage",
       "target": "subsec:deployment:concealment-entropy"
     },
@@ -544,6 +586,13 @@
       "relation": "realizes",
       "source": "ROOT::resol:design:replay-paper-contract",
       "target": "ROOT::open:design:verification-canonical-amendment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This surface enforces the carriage hold and claims no entropy or admitted replacement process.",
+      "relation": "realizes",
+      "source": "ROOT::rule:api:submission",
+      "target": "ROOT::open:design:proposal-carriage"
     },
     {
       "conditional_on": "",
