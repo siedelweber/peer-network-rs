@@ -86,7 +86,7 @@
 | planned-graph | held | held | none | fast | 0 |
 | planned-ledger | active | public-surface | pn-epoch-rust | fast | 5 |
 | planned-ledger-outer | held | held | none | fast | 0 |
-| planned-numeric | active | public-surface | pn-epoch-rust | fast | 27 |
+| planned-numeric | active | public-surface | pn-epoch-rust | fast | 29 |
 | planned-numeric-extended | active | public-surface | pn-epoch-rust | extended | 8 |
 | planned-numeric-outer | held | held | none | fast | 0 |
 | planned-publication | held | held | none | service | 0 |
@@ -138,7 +138,7 @@
 | pn-graph::bounded-power-domain | active | integration | pn-graph-rust | extended | 1 |
 | pn-graph::formation | active | public-surface | pn-graph-rust | fast | 44 |
 | pn-graph::integration | active | integration | pn-graph-rust | fast | 1 |
-| pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 17 |
+| pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 20 |
 | pn-graph::properties | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::public | active | public-surface | pn-graph-rust | fast | 4 |
 | pn-graph::reference-controller | active | public-surface | pn-graph-rust | reference-certificate | 1 |

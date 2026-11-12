@@ -1914,6 +1914,14 @@
       "review": "The shared reversed histories are compiled directly from a recognized marker prefix. Independent exact debit arithmetic checks each writing vintage, final own balance and count; prefix comparison retains earlier debits and the declared evidence-byte verifier rejects an unapproved act. No deployment authentication, chain finality or storage admission is inferred."
     },
     {
+      "operation": "pn-epoch::conserved::driver::proof_anchor::proof_anchor",
+      "path": "packages/epoch/src/conserved/driver/proof_anchor.rs",
+      "claim": "EPOCH::claim:numerics:exact-anchor-requires-its-empty-proof-conditions",
+      "before": "",
+      "after": "Claim: The existing fence join accepts the producer's certificate-free zero anchor and refuses a nonzero accepted upper endpoint, an inadmissible empty transcript, a changed hull and a changed accepted rung, without conserved solve or replay.",
+      "review": "The producer emits an empty-primitive zero-anchor transcript for a non-point compiled hull. The private join accepts it exactly at zero and separately refuses a nonzero accepted upper endpoint, a changed hull, a changed accepted-rung argument and an empty proof at a nonzero rung with nonzero width. No conserved solve/replay, Work assertion or admission runs."
+    },
+    {
       "operation": "pn-epoch::inputs::parameter_binding",
       "path": "packages/epoch/tests/inputs.rs",
       "claim": "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",
@@ -2563,6 +2571,14 @@
       "review": "Accepts the supplied valid declaration and rejects empty, missing-zero, ascending, repeated-value and negative rung grids. It rejects zero work or iteration limits, margin one, endpoint grid zero, empty or descending precision requests, an empty primitive set and an empty backend name. These are declaration checks, not package binding or numerical evaluation. Zero solve and replay allowances are independently refused."
     },
     {
+      "operation": "pn-epoch::solve::proof_epoch_scope",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:numerics:epoch-proof-replay-binds-question-and-rung",
+      "before": "",
+      "after": "Claim: Epoch fence replay accepts a producer attachment only for its frozen original question and declared rung; changed expression, coordinate domain, rung and absent attachment refuse separately before supplying any verdict.",
+      "review": "Frozen compiler inputs produce the original fence attachment. Changed expression and coordinate domain receive their own genuine producer certificates but are refused by epoch expected-question equality, in unsorted domain-then-expression order. A different declared rung, an undeclared rung and a missing attachment each refuse separately."
+    },
+    {
       "operation": "pn-epoch::solve::real_base",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance",
@@ -3169,6 +3185,30 @@
       "before": "",
       "after": "Claim: The primitive boundary preserves original comparison outcomes, distinguishes width-only bounds and interruption, refuses altered certificates and scopes, and admits no unknown schema or held composition through a backend name.",
       "review": "Checks exact PASS and FAIL versus width-only Bound, straddling INDECISIVE and deterministic interruption, five certificate or schema corruptions, a changed original goal, three held composition capabilities and BinaryBits refusal."
+    },
+    {
+      "operation": "pn-graph::numeric::proof_endpoints",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:proof-endpoints-separate-only-checked-comparisons",
+      "before": "",
+      "after": "Claim: Genuine checked comparison certificates retain upper equality as PASS and a strictly greater lower endpoint as FAIL; a final-precision straddle with its exact width met supplies neither verdict.",
+      "review": "Three unsorted coordinate intervals are enclosed and independently checked for AtMost(1): [17/16,9/8] fails, [1,33/32] supplies neither PASS nor FAIL, and [15/16,1] passes. The straddle is checked at the sequence final element 4; rational subtraction independently establishes width 1/32 <= 2^-4. No assertion grants the future final-precision admission predicate."
+    },
+    {
+      "operation": "pn-graph::numeric::proof_exhaustion",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:proof-replay-exhaustion-is-operational",
+      "before": "",
+      "after": "Claim: A genuine certificate cannot turn local replay exhaustion into a mathematical verdict; an exhausted fresh-scope construction retains no bounds or attachment.",
+      "review": "A numerics-produced certificate for the exact comparison 1 <= 1 first replays successfully. One local operation Work unit prevents scope construction, yielding Exhausted with a resource fault and neither bounds nor attachment. The assertion is about category, not a measured or portable Work figure."
+    },
+    {
+      "operation": "pn-graph::numeric::proof_scope",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:proof-replay-refuses-scope-substitution",
+      "before": "",
+      "after": "Claim: Independent certificate replay refuses changed original expressions, coordinate domains, law names and law versions separately, while accepting the numerics producer's unchanged evidence.",
+      "review": "An actual coordinate certificate first replays unchanged. A negated original expression and a widened coordinate domain each fail certificate scope checking. An unknown law name and an unsupported law version each fail the independent schema inventory. No fixture manufactures a positive certificate."
     },
     {
       "operation": "pn-graph::numeric::reference_wall_branches",

@@ -47,8 +47,8 @@
 | execwrap | 62 | 0 |
 | pn-act-authentication | 9 | 0 |
 | pn-act-profile | 11 | 0 |
-| pn-epoch | 53 | 19 |
-| pn-graph | 76 | 34 |
+| pn-epoch | 55 | 19 |
+| pn-graph | 78 | 34 |
 | pn-host | 27 | 0 |
 | pn-interchange | 26 | 0 |
 | pn-readouts | 0 | 0 |

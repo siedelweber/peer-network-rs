@@ -1534,8 +1534,18 @@
         "pn-epoch::solve::partitions::published_isolated_acts": "calibrated-published-isolated-acts-case",
         "pn-epoch::solve::partitions::receiving_small": "calibrated-receiving-small-case"
       },
+      "case_level_reasons": {
+        "pn-epoch::conserved::driver::proof_anchor::proof_anchor": "Exercise only the private fence join's empty exact-anchor branch and its refusal guards.",
+        "pn-epoch::solve::proof_epoch_scope": "Reconstruct a frozen compiler question and check independently produced graph attachments through the epoch boundary."
+      },
+      "case_levels": {
+        "pn-epoch::conserved::driver::proof_anchor::proof_anchor": "unit",
+        "pn-epoch::solve::proof_epoch_scope": "integration"
+      },
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::proof_epoch_scope",
+        "pn-epoch::conserved::driver::proof_anchor::proof_anchor",
         "pn-epoch::solve::schedules::effective_schedules",
         "pn-epoch::solve::controller::controller_binding",
         "pn-epoch::solve::standing_scope",
@@ -2539,6 +2549,9 @@
       },
       "case_span": true,
       "cases": [
+        "pn-graph::numeric::proof_endpoints",
+        "pn-graph::numeric::proof_scope",
+        "pn-graph::numeric::proof_exhaustion",
         "pn-graph::numeric::activation_costs",
         "pn-graph::numeric::activation_endpoints",
         "pn-graph::numeric::activation_oracles",

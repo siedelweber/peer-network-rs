@@ -1,0 +1,13 @@
+name = "EPOCH::verif:numerics:proof-checker"
+witnessed_labels = []
+path = "packages/epoch/README.md"
+status = "scoped-supported"
+claims = ["EPOCH::claim:numerics:epoch-proof-replay-binds-question-and-rung", "EPOCH::claim:numerics:exact-anchor-requires-its-empty-proof-conditions"]
+realizers = []
+premises = "Finite fixtures, admitted numerics checker and frozen compiler inputs; no authentication or deployment claim."
+evidence_paragraph = "EPOCH::rec:numerics:proof-checker-controls"
+hold = ""
+owner = "Numerical implementer"
+missing = "Final-precision verdict-carrier predicate and complete public verification remain later cuts."
+closing_condition = "Each named existing-checker control passes with its producer evidence."
+closing_step = "First proof cut"

@@ -4439,3 +4439,65 @@ mod schedules;
 
 #[path = "solve/admission.rs"]
 mod admission;
+
+/// Claim: Epoch fence replay accepts a producer attachment only for its frozen original question and declared rung; changed expression, coordinate domain, rung and absent attachment refuse separately before supplying any verdict.
+/// ´claim:numerics:epoch-proof-replay-binds-question-and-rung´
+/// ´test:integration:proof-epoch-scope´
+#[test]
+fn proof_epoch_scope() {
+    let state = fence_state(1, "100");
+    let mut p = fence_procedure(&state);
+    p.grid = vec!["1".into(), "0".into()];
+    p.precision = Precision::AbsoluteWidthBits(vec![4]);
+    let bound = bind_procedure(&state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let made = pn_epoch::fence::search(&bound, None).unwrap();
+    let rung = &made.evidence.attempts[0].rung;
+    let record = &made.evidence.primitives[0];
+    pn_epoch::fence::replay(&bound, rung, record).unwrap();
+    for case in [1, 0] {
+        let mut changed = record.clone();
+        match case {
+            0 => changed.query.nodes[record.query.target - 1] = pn_records::primitive::Node::Rational("7".into()),
+            _ => {
+                changed.query.coordinates[0] = pn_records::primitive::Range {
+                    lower: "3".into(),
+                    upper: "3".into(),
+                }
+            }
+        }
+        let mut policy = p.clone();
+        policy.enclosure.as_mut().unwrap().refinement.precision = record.precision;
+        changed.evidence = pn_graph::numeric::evaluate(&policy, &changed.query, None).unwrap();
+        assert!(changed.evidence.attachment.is_some());
+        assert!(
+            matches!(
+                pn_epoch::fence::replay(&bound, rung, &changed),
+                Err(pn_epoch::fence::Error::Profile)
+            ),
+            "changed question or domain {case}"
+        );
+    }
+    assert!(
+        matches!(
+            pn_epoch::fence::replay(&bound, "0", record),
+            Err(pn_epoch::fence::Error::Profile)
+        ),
+        "changed declared rung"
+    );
+    assert!(
+        matches!(
+            pn_epoch::fence::replay(&bound, "1/3", record),
+            Err(pn_epoch::fence::Error::Profile)
+        ),
+        "undeclared rung"
+    );
+    let mut missing = record.clone();
+    missing.evidence.attachment = None;
+    assert!(
+        matches!(
+            pn_epoch::fence::replay(&bound, rung, &missing),
+            Err(pn_epoch::fence::Error::Profile)
+        ),
+        "missing attachment"
+    );
+}

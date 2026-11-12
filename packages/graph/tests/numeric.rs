@@ -1893,3 +1893,94 @@ fn verification_resource_cause() {
     invalid.endpoint_bits = 0;
     assert_eq!(verification::evaluate_box(&p, &invalid, &candidate), Err(Error::Declaration));
 }
+
+/// Claim: Genuine checked comparison certificates retain upper equality as PASS and a strictly greater lower endpoint as FAIL; a final-precision straddle with its exact width met supplies neither verdict.
+/// ´claim:numerics:proof-endpoints-separate-only-checked-comparisons´
+/// ´test:integration:proof-endpoints´
+#[test]
+fn proof_endpoints() {
+    let p = procedure();
+    for (lower, upper, expected) in [
+        ("17/16", "9/8", Some(Outcome::Fail)),
+        ("1", "33/32", None),
+        ("15/16", "1", Some(Outcome::Pass)),
+    ] {
+        let mut q = query(vec![Node::Coordinate(0)]);
+        q.coordinates = vec![range(lower, upper)];
+        q.goal = Goal::AtMost("1".into());
+        let made = evaluate(&p, &q, None).unwrap();
+        let checked = replay(&p, &q, made.attachment.as_ref().unwrap(), None).unwrap();
+        let bounds = checked.bounds.as_ref().unwrap();
+        let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+        assert_eq!(bounds.lower().exact_string(&mut b).unwrap(), lower);
+        assert_eq!(bounds.upper().exact_string(&mut b).unwrap(), upper);
+        if let Some(outcome) = expected {
+            assert_eq!(checked.outcome, outcome, "checked endpoint verdict");
+        } else {
+            let Precision::AbsoluteWidthBits(sequence) = &p.precision else {
+                panic!("absolute width fixture")
+            };
+            let precision = p.enclosure.as_ref().unwrap().refinement.precision;
+            assert_eq!(Some(&precision), sequence.last());
+            let width = bounds.upper().sub(bounds.lower(), &mut b).unwrap();
+            let target = nrz_cas::Rational::parse(&format!("1/{}", 1_u64 << precision), &mut b).unwrap();
+            assert!(!width.compare(&target, &mut b).unwrap().is_gt());
+            assert!(
+                !matches!(checked.outcome, Outcome::Pass | Outcome::Fail),
+                "straddle supplies no proof"
+            );
+        }
+    }
+}
+
+/// Claim: Independent certificate replay refuses changed original expressions, coordinate domains, law names and law versions separately, while accepting the numerics producer's unchanged evidence.
+/// ´claim:numerics:proof-replay-refuses-scope-substitution´
+/// ´test:integration:proof-scope´
+#[test]
+fn proof_scope() {
+    let p = procedure();
+    let mut q = query(vec![Node::Coordinate(0)]);
+    q.coordinates = vec![range("1", "33/32")];
+    q.goal = Goal::AtMost("1".into());
+    let made = evaluate(&p, &q, None).unwrap();
+    let attachment = made.attachment.unwrap();
+    replay(&p, &q, &attachment, None).unwrap();
+    let mut expression = q.clone();
+    expression.nodes.push(Node::Negate(0));
+    expression.target = 1;
+    assert!(
+        matches!(replay(&p, &expression, &attachment, None), Err(Error::InvalidCertificate(_))),
+        "changed original question"
+    );
+    let mut domain = q.clone();
+    domain.coordinates[0].lower = "31/32".into();
+    assert!(
+        matches!(replay(&p, &domain, &attachment, None), Err(Error::InvalidCertificate(_))),
+        "changed domain"
+    );
+    let mut law = attachment.clone();
+    law.schemas[0].name.push_str("-unknown");
+    assert_eq!(replay(&p, &q, &law, None), Err(Error::Schema), "changed law");
+    let mut version = attachment;
+    version.schemas[0].version += 1;
+    assert_eq!(replay(&p, &q, &version, None), Err(Error::Schema), "changed law version");
+}
+
+/// Claim: A genuine certificate cannot turn local replay exhaustion into a mathematical verdict; an exhausted fresh-scope construction retains no bounds or attachment.
+/// ´claim:numerics:proof-replay-exhaustion-is-operational´
+/// ´test:integration:proof-exhaustion´
+#[test]
+fn proof_exhaustion() {
+    let mut p = procedure();
+    let mut q = query(vec![Node::Rational("1".into())]);
+    q.goal = Goal::AtMost("1".into());
+    let made = evaluate(&p, &q, None).unwrap();
+    let attachment = made.attachment.unwrap();
+    assert_eq!(replay(&p, &q, &attachment, None).unwrap().outcome, Outcome::Pass);
+    p.enclosure.as_mut().unwrap().operation.work = 1;
+    let refused = replay(&p, &q, &attachment, None).unwrap();
+    assert_eq!(refused.outcome, Outcome::Exhausted, "local exhaustion is operational");
+    assert!(refused.bounds.is_none());
+    assert!(refused.attachment.is_none());
+    assert!(refused.resource_fault.is_some());
+}

@@ -86,6 +86,24 @@
     },
     {
       "claims": [
+        "EPOCH::claim:numerics:epoch-proof-replay-binds-question-and-rung",
+        "EPOCH::claim:numerics:exact-anchor-requires-its-empty-proof-conditions"
+      ],
+      "closing_condition": "Each named existing-checker control passes with its producer evidence.",
+      "closing_step": "First proof cut",
+      "evidence_paragraph": "EPOCH::rec:numerics:proof-checker-controls",
+      "hold": "",
+      "missing": "Final-precision verdict-carrier predicate and complete public verification remain later cuts.",
+      "name": "EPOCH::verif:numerics:proof-checker",
+      "owner": "Numerical implementer",
+      "path": "packages/epoch/README.md",
+      "premises": "Finite fixtures, admitted numerics checker and frozen compiler inputs; no authentication or deployment claim.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "EPOCH::claim:numerics:mandatory-replay-retains-its-measured-work"
       ],
       "closing_condition": "The declared exact identity and refusal controls pass.",
@@ -97,6 +115,25 @@
       "owner": "Numerical implementer",
       "path": "packages/epoch/README.md",
       "premises": "Declared finite fixture, exact arithmetic, admitted backend and independent replay.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
+        "GRAPH::claim:numerics:proof-endpoints-separate-only-checked-comparisons",
+        "GRAPH::claim:numerics:proof-replay-refuses-scope-substitution",
+        "GRAPH::claim:numerics:proof-replay-exhaustion-is-operational"
+      ],
+      "closing_condition": "Each named existing-checker control passes with its producer evidence.",
+      "closing_step": "First proof cut",
+      "evidence_paragraph": "GRAPH::rec:numerics:proof-checker-controls",
+      "hold": "",
+      "missing": "Final-precision verdict-carrier predicate and complete public verification remain later cuts.",
+      "name": "GRAPH::verif:numerics:proof-checker",
+      "owner": "Numerical implementer",
+      "path": "packages/graph/README.md",
+      "premises": "Finite fixtures, admitted numerics checker and frozen compiler inputs; no authentication or deployment claim.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []

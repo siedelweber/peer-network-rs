@@ -205,3 +205,6 @@ pub(super) fn run(
         replay_work: budget.usage().work,
     })
 }
+
+#[cfg(test)]
+mod proof_anchor;
