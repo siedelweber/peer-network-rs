@@ -719,6 +719,38 @@
           "num_exact": true,
           "num_relation": "="
         },
+        "series_absolute_pressure": {
+          "exact": "0.10",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.10",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "series_attempts_per_ordinal": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "series_pressure_multiple": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "series_relative_floor": {
+          "exact": "0.044",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.044",
+          "num_exact": true,
+          "num_relation": "="
+        },
         "shared_target_ceiling_bytes": {
           "exact": "17 179 869 184",
           "exact_exact": true,
@@ -793,6 +825,22 @@
           "display": "exact",
           "exact_digits": 32
         },
+        "series_absolute_pressure": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "series_attempts_per_ordinal": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "series_pressure_multiple": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "series_relative_floor": {
+          "display": "exact",
+          "exact_digits": 32
+        },
         "shared_target_ceiling_bytes": {
           "display": "exact",
           "exact_digits": 32
@@ -833,6 +881,11 @@
       "record_second_wall_seconds": "85.5",
       "redundant_level_count": 1,
       "scope": "author fast tier inside the complete per-change gate, with its own retained node target",
+      "series_absolute_pressure": "0.10",
+      "series_attempts_per_ordinal": 3,
+      "series_policy_status": "proposed; confirm from the series",
+      "series_pressure_multiple": 2,
+      "series_relative_floor": "0.044",
       "shared_target_ceiling_bytes": 17179869184,
       "superseded_uniform_count": 55,
       "warm_samples": 3

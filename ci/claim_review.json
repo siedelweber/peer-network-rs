@@ -319,7 +319,7 @@
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
       "after": "Series declarations refuse missing and malformed members before printing a sample declaration.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "review": "Read declaration refusals for plan, sample identity and required series fields before work begins."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_membership",
@@ -343,7 +343,7 @@
       "claim": "ROOT::claim:devperf:series-owner-join",
       "before": "",
       "after": "The sample joins bound transitions of its invocation and never fixture log prefixes.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "review": "Read the invocation-bound transition sidecar join and its foreign owner refusal; fixture log lines do not supply membership."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_owner_targets",
@@ -367,7 +367,15 @@
       "claim": "ROOT::claim:devperf:series-start-key",
       "before": "",
       "after": "The current key and host start identity refuse a sample before any step runs.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "review": "Read the start identity and configuration-key refusal before any measured work; a current key cannot be borrowed from another invocation."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_structural_refusals",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-structural-refusals",
+      "before": "",
+      "after": "Series archive structure refuses malformed identity, ordering and terminal evidence.",
+      "review": "Read the named malformed archive and ledger controls: each asserts a protocol refusal, overlap or declaration disagreement without treating a decode traceback as the witness."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_terminal_attempt",
@@ -376,6 +384,14 @@
       "before": "",
       "after": "Terminal attempts preserve interrupted runs and refuse an unclosed entry.",
       "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_written_observations",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-written-observations",
+      "before": "",
+      "after": "Series writers preserve changed-file times and the primary and lint compiled sets.",
+      "review": "Read the nonempty changed-file and compiled-set observations through the production receipt writer; end keeps the original start times and both primary and lint evidence. No runtime timing conclusion follows."
     },
     {
       "operation": "ci::test_devperf.Performance.test_setup_bind_completion",

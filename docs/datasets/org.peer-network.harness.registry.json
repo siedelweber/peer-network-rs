@@ -463,6 +463,7 @@
       "budget": "pure-suite",
       "cases": [
         "ci::test_devperf.Performance.test_series_membership",
+        "ci::test_devperf.Performance.test_series_structural_refusals",
         "ci::test_devperf.Performance.test_series_owner_targets",
         "ci::test_devperf.Performance.test_series_outliers",
         "ci::test_devperf.Performance.test_series_reset_evidence",
@@ -470,6 +471,7 @@
         "ci::test_devperf.Performance.test_series_owner_join",
         "ci::test_devperf.Performance.test_reference_written_identity",
         "ci::test_devperf.Performance.test_series_start_key",
+        "ci::test_devperf.Performance.test_series_written_observations",
         "ci::test_devperf.Performance.test_setup_bind_completion",
         "ci::test_devperf.Performance.test_largest_tier_gap",
         "ci::test_devperf.Performance.test_series_declaration",
