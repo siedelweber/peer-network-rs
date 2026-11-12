@@ -3027,8 +3027,8 @@
       "label": "post:network:host-contract",
       "portions": [
         {
-          "clause": "Premise only: private solver state may not select a different result",
-          "record": "ROOT::open:design:replay-paper-contract"
+          "clause": "Premise only: private solver state cannot select another result",
+          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 1,
@@ -12081,8 +12081,8 @@
       "label": "def:epoch:tilt-backoff-grid",
       "portions": [
         {
-          "clause": "Premise only: the accepted rung is the greatest one the declared procedure proves passing",
-          "record": "ROOT::open:design:replay-paper-contract"
+          "clause": "Premise only: greatest means greatest proved by the declared procedure",
+          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 0,
@@ -12134,12 +12134,12 @@
       "label": "rem:epoch:certificate-failure-versus-indecisive-enclosure",
       "portions": [
         {
-          "clause": "Premise only: a certificate failure is a proof and indecision is not",
+          "clause": "Premise only: failure is proved and indecision is not",
           "record": "ROOT::amend:design:rung-proof-contract"
         },
         {
-          "clause": "Premise only: the text requires every replayer to reach the same verdicts",
-          "record": "ROOT::open:design:replay-paper-contract"
+          "clause": "Premise only: indecision is not certificate failure",
+          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 0,
@@ -13788,8 +13788,8 @@
       "label": "prop:epoch:epoch-replay-determinism",
       "portions": [
         {
-          "clause": "Premise only: the accepted rung is among the derivation's determined outputs",
-          "record": "ROOT::open:design:replay-paper-contract"
+          "clause": "Premise only: the accepted rung is a determined output",
+          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 0,
@@ -21903,7 +21903,7 @@
       "label": "def:dynamics:conserved-standing-certificate",
       "portions": [
         {
-          "clause": "Premise only: the evaluated fence is valid exactly at or below unity after margin",
+          "clause": "Premise only: the evaluated margined fence must be at most unity",
           "record": "ROOT::amend:design:rung-proof-contract"
         }
       ],
@@ -32616,6 +32616,22 @@
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
+          "clause": "Premise only: identical verdicts under the same declared procedure",
+          "record": "ROOT::amend:design:replay-roles"
+        },
+        {
+          "clause": "The clause requires equal replay verdicts; a checked straddle establishes a sound enclosure but does not require another build to remain indecisive, so the alternative route needs amended text.",
+          "record": "ROOT::amend:testing:canonical-replay-verification"
+        },
+        {
+          "clause": "Premise only: equal verdicts require the same declared procedure",
+          "record": "ROOT::amend:testing:replay-conformance-scope"
+        },
+        {
+          "clause": "Premise only: the same declared procedure and inputs must reproduce the verdicts",
+          "record": "ROOT::resol:design:replay-paper-contract"
+        },
+        {
           "clause": "Premise only: the tagged condition requires identical replay verdicts; no cross-build realization is claimed here",
           "record": "ROOT::rule:design:refinement"
         }
@@ -39724,10 +39740,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 664",
+          "exact": "1 670",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 664",
+          "num": "1 670",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39742,7 +39758,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1664
+      "total": 1670
     },
     {
       "category": "record-coverage",

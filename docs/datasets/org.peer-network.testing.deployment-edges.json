@@ -134,6 +134,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This specifies sound evidence checking, not its still-conditional status as canonical replay.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:replay-roles",
+      "target": "ROOT::open:design:verification-canonical-amendment"
+    },
+    {
+      "conditional_on": "",
       "reason": "The integration roadmap carries the public body field and exact bindings, not a concealment guarantee.",
       "relation": "realizes",
       "source": "ROOT::amend:design:token-authentication",
@@ -281,6 +288,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "Reproduction supplies the currently claimed route; the alternative's canonical status remains explicitly held.",
+      "relation": "realizes",
+      "source": "ROOT::amend:testing:replay-conformance-scope",
+      "target": "amend:testing:canonical-replay-verification"
+    },
+    {
+      "conditional_on": "",
       "reason": "Only the required realization disclosures are carried; external economic and settlement assurance is explicitly not established.",
       "relation": "realizes",
       "source": "ROOT::cav:devnet:assurance",
@@ -358,10 +372,17 @@
     },
     {
       "conditional_on": "amend:testing:standing-work-execution",
-      "reason": "Current Work-bearing replay needs the declaring numerical build and its exact internal accounting; the public mathematical inputs do not establish cross-build Work equality.",
+      "reason": "Current Work-bearing replay needs the declaring numerical build and its exact internal accounting; mathematical inputs alone do not establish cross-build Work equality.",
       "relation": "relies",
       "source": "ROOT::open:design:cross-build-replay",
       "target": "amend:testing:standing-work-execution"
+    },
+    {
+      "conditional_on": "amend:testing:canonical-replay-verification",
+      "reason": "Treating certificate-only verification as canonical replay needs an amendment to the tagged same-procedure requirement; reproduction remains the claimed route today.",
+      "relation": "relies",
+      "source": "ROOT::open:design:verification-canonical-amendment",
+      "target": "amend:testing:canonical-replay-verification"
     },
     {
       "conditional_on": "",
@@ -449,6 +470,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "The amendment is an activation hold, not a premise of the reproduction or certificate-soundness design.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:replay-paper-contract",
+      "target": "ROOT::open:design:verification-canonical-amendment"
+    },
+    {
+      "conditional_on": "",
       "reason": "The planned exit follows retained-projection custody requirements; no production custody evidence is supplied.",
       "relation": "realizes",
       "source": "ROOT::rule:crypto:retry-private-exit",
@@ -456,7 +484,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The rule identifies the current implementation hold; its decided mathematical contract does not assume the held replay portability.",
+      "reason": "This rule decides the replacement contract without claiming that current Work-bearing bytes implement it.",
       "relation": "realizes",
       "source": "ROOT::rule:design:build-relative-work",
       "target": "ROOT::open:design:cross-build-replay"
