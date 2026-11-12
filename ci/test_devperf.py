@@ -390,7 +390,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -411,6 +411,9 @@ wait
                         self.assertEqual(measured[name]['baseline_stall'], old_stall)
                         if wall == 3 and not cold:
                             self.assertEqual(measured[name]['classification'], ('rebuild' if rebuilding else 'load-unresolved') if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
+                    if cold and expected:
+                        self.assertEqual(measured['service']['classification'], 'cold-cache', 'a compiling tier has cold precedence')
+                        self.assertNotEqual(measured['fast']['classification'], 'cold-cache', 'overlap does not assign another tier its compilation')
                     self.assertFalse(measured['finalize']['over_budget'])
                     self.assertIsNone(measured['finalize']['excess_s'])
                     self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
@@ -822,6 +825,16 @@ wait
                     retain_baseline(root)
                     self.assertEqual(path.read_bytes(),original,'a nonselected frontier member must still constrain the next candidate')
             self.assertEqual(len(list((root/'peers').glob('*.json'))),2)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'.lane').mkdir()
+            path = root/'cold.json'
+            for index in range(2):
+                candidate = dict(recorded('cold', .05-index*.01), path=str(path), source='cold'+str(index), tree='same',
+                                 quiet_windows=windows(), load_unresolved_pressure_percent=10)
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+                with patch('build_graph.evidence_statuses', return_value={}):
+                    retain_baseline(root)
+                self.assertTrue(json.loads(path.read_text())['provisional'], 'a second cold run must not confirm a reference')
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
         self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None

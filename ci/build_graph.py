@@ -923,7 +923,7 @@ def retain_baseline(root):
         except (OSError, ValueError):
             continue
     previous_best = preferred_baseline(prior)
-    candidate['provisional'] = False
+    candidate['provisional'] = candidate.get('cache', {}).get('state') != 'warm'
     accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
     if quiet_baseline(candidate) and prior:
         selected = preferred_baseline([*prior, candidate])
@@ -937,7 +937,7 @@ def retain_baseline(root):
     if quiet_baseline(candidate) and candidate.get('tree'):
         archive = path.parent/'peers'
         archive.mkdir(exist_ok=True)
-        record = dict(candidate, provisional=previous_best is None, quiet=True)
+        record = dict(candidate, provisional=candidate['provisional'] or previous_best is None, quiet=True)
         temporary = archive/(uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(record, sort_keys=True)+'\n')
         temporary.replace(temporary.with_suffix('.json'))
@@ -950,7 +950,7 @@ def retain_baseline(root):
         print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+(str(previous_best.get('provisional', True)).lower() if previous_best else 'unavailable')+' previous_tree='+str(candidate.get('previous_baseline_tree') or 'unavailable'))
         return
     candidate['quiet'] = True
-    candidate['provisional'] = previous_best is None
+    candidate['provisional'] = candidate['provisional'] or previous_best is None
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
     temporary.replace(path)
@@ -1145,6 +1145,8 @@ def tier_summary(root, registry, worker_statuses):
                 cpu = (row.get('own_user_s'), row.get('own_sys_s'))
                 valid = all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 for value in cpu)
                 case_costs[producing_tier][row['operation']] = sum(cpu) if valid else None
+    from harness import build_cache_state
+    cache = build_cache_state(root, os.environ['PN_GATE_SOURCE'], os.environ.get('PN_BUILDGRAPH_RUN'))
     for tier, names in groups.items():
         selected_rows = [row for row in fields if row[0] in names]
         first = min(selected_rows, key=lambda row: float(row[2]))
@@ -1210,13 +1212,16 @@ def tier_summary(root, registry, worker_statuses):
         from gate_resources import node_stall
         stall = node_stall(measurement)
         old_stall = node_stall(prior.get('resources', {}))
+        compiled_steps = [name for name in names if name in cache.get('compiling_steps', [])
+                          or re.search(r'^\s*Compiling ', (root/f'.lane/gate-{name}.log').read_text(), re.M)]
+        tier_cache = cache['state'] if compiled_steps else 'not-compiling'
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
-            baseline_stall=old_stall, comparable_cases=comparable_cases, comparable_wall=comparable_wall)
+            baseline_stall=old_stall, comparable_cases=comparable_cases, comparable_wall=comparable_wall, cache_state=tier_cache)
         if not comparable_cases:
             comparable_cpu = comparable_old = None
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
-        reports[tier].update(over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
+        reports[tier].update(cache_state=cache['state'], compiling_steps=compiled_steps, over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             selected_cases=cases, case_costs=case_costs[tier], case_steps=case_steps[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             comparable_setup_cpu_s=comparable_setup, baseline_comparable_setup_cpu_s=comparable_old_setup,
@@ -1225,7 +1230,7 @@ def tier_summary(root, registry, worker_statuses):
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
+        print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
@@ -1237,8 +1242,6 @@ def tier_summary(root, registry, worker_statuses):
     tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
                           capture_output=True, text=True, check=True).stdout.strip()
     from gate_resources import node_identity
-    from harness import build_cache_state
-    cache = build_cache_state(root, os.environ['PN_GATE_SOURCE'], os.environ.get('PN_BUILDGRAPH_RUN'))
     print('GATE-CACHE '+json.dumps(cache, sort_keys=True), flush=True)
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), context_directory=str(context_directory), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
         lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
