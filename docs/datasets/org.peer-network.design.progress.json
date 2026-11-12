@@ -4985,7 +4985,12 @@
       "holds": [],
       "kind": "policy",
       "label": "rem:graph:erasure-floor",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: The stated privacy limit motivates the hold, not a new realization claim.",
+          "record": "ROOT::open:design:proposal-carriage"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -7038,6 +7043,10 @@
         {
           "clause": "Premise only: the proposal commits its Actor-chosen body before host fields",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Premise only: The private proposal input is the premise of this unresolved transport question.",
+          "record": "ROOT::open:design:proposal-carriage"
         }
       ],
       "record_granular": 1,
@@ -7084,7 +7093,12 @@
       ],
       "kind": "type",
       "label": "def:graph:verified-act",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: The host consumes that input; this hold implements no admission rule.",
+          "record": "ROOT::open:design:proposal-carriage"
+        }
+      ],
       "record_granular": 1,
       "record_routes": [
         {
@@ -39735,10 +39749,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 672",
+          "exact": "1 686",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 672",
+          "num": "1 686",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39753,7 +39767,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1672
+      "total": 1686
     },
     {
       "category": "record-coverage",

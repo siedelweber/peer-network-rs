@@ -406,6 +406,13 @@
       "target": "amend:testing:standing-work-execution"
     },
     {
+      "conditional_on": "",
+      "reason": "This hold identifies the missing carriage decision without claiming private entropy or concealment evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:proposal-carriage",
+      "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
       "conditional_on": "amend:testing:canonical-replay-verification",
       "reason": "Treating certificate-only verification as canonical replay needs an amendment to the tagged same-procedure requirement; reproduction remains the claimed route today.",
       "relation": "relies",
