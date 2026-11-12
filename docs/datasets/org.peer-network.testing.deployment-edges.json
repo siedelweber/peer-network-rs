@@ -414,10 +414,24 @@
     },
     {
       "conditional_on": "",
-      "reason": "This hold identifies the missing carriage decision without claiming private entropy or concealment evidence.",
+      "reason": "The hold names missing carriage and custody decisions, without claiming actual entropy or concealment.",
       "relation": "realizes",
       "source": "ROOT::open:design:proposal-carriage",
       "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This hold records the proposed process without claiming its entropy-dependent hiding.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:proposal-carriage",
+      "target": "ROOT::open:identity:optional-act-carriage"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The hold identifies the tagged host nonce-custody duty and claims no entropy or concealment evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:proposal-carriage",
+      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "amend:testing:canonical-replay-verification",
@@ -453,6 +467,13 @@
       "relation": "realizes",
       "source": "ROOT::open:identity:act-production-concealment",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This proposal identifies the published custody duties it would amend, without claiming actual entropy or concealment.",
+      "relation": "realizes",
+      "source": "ROOT::open:identity:optional-act-carriage",
+      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",

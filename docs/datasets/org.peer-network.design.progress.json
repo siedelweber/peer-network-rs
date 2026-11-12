@@ -4851,7 +4851,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "type",
       "label": "def:graph:act-payload-projection",
@@ -4867,11 +4870,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "post:graph:separable-act-projections",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: Structural checking must not depend on content carriage.",
+          "record": "ROOT::open:identity:optional-act-carriage"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4883,7 +4894,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "type",
       "label": "def:graph:act-payload-state",
@@ -4899,7 +4913,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "prop:graph:removable-projection-invariance",
@@ -4965,11 +4982,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:graph:act-payload-custody-phases",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: The two phases retain the same structural record.",
+          "record": "ROOT::open:identity:optional-act-carriage"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4987,7 +5012,7 @@
       "label": "rem:graph:erasure-floor",
       "portions": [
         {
-          "clause": "Premise only: The stated privacy limit motivates the hold, not a new realization claim.",
+          "clause": "Premise only: Removal cannot erase recipients' copies or replace an entropy obligation.",
           "record": "ROOT::open:design:proposal-carriage"
         }
       ],
@@ -7045,7 +7070,7 @@
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
-          "clause": "Premise only: The private proposal input is the premise of this unresolved transport question.",
+          "clause": "Premise only: The tagged shared nonce and private inputs define what must change.",
           "record": "ROOT::open:design:proposal-carriage"
         }
       ],
@@ -7095,7 +7120,7 @@
       "label": "def:graph:verified-act",
       "portions": [
         {
-          "clause": "Premise only: The host consumes that input; this hold implements no admission rule.",
+          "clause": "Premise only: Tagged host checks require the received content opening.",
           "record": "ROOT::open:design:proposal-carriage"
         }
       ],
@@ -33150,6 +33175,14 @@
         {
           "clause": "Claimed part: The Actor nonce and proposal format is specified here; the particular excluded entropy premise is named separately.",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Claimed part: The hold identifies the tagged host nonce-custody duty and claims no entropy or concealment evidence.",
+          "record": "ROOT::open:design:proposal-carriage"
+        },
+        {
+          "clause": "Claimed part: This proposal identifies the published custody duties it would amend, without claiming actual entropy or concealment.",
+          "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
       "record_granular": 0,
@@ -35990,10 +36023,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "69",
+          "exact": "74",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "74",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36004,7 +36037,7 @@
           "exact_digits": 32
         }
       },
-      "total": 69
+      "total": 74
     },
     {
       "category": "total",
@@ -39753,10 +39786,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 687",
+          "exact": "1 688",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 687",
+          "num": "1 688",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39771,7 +39804,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1687
+      "total": 1688
     },
     {
       "category": "record-coverage",
