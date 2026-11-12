@@ -4851,19 +4851,23 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-carrier"
+        }
       ],
-      "holds": [],
       "kind": "type",
       "label": "def:graph:act-payload-projection",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::rule:devnet:content-carrier"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -4889,11 +4893,13 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-carrier"
+        }
       ],
-      "holds": [],
       "kind": "type",
       "label": "def:graph:act-payload-state",
       "portions": [
@@ -4904,9 +4910,11 @@
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::rule:devnet:content-carrier"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -4984,6 +4992,10 @@
         {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::open:design:proposal-carriage"
+        },
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-carrier"
         }
       ],
       "kind": "policy",
@@ -4997,7 +5009,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::open:design:proposal-carriage"
+        "ROOT::open:design:proposal-carriage",
+        "ROOT::rule:devnet:content-carrier"
       ],
       "routes": [],
       "status": "held",
@@ -5008,14 +5021,20 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-nonce"
+        }
+      ],
       "kind": "policy",
       "label": "rem:graph:erasure-floor",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:act-concealment"
+        "ROOT::amend:identity:act-concealment",
+        "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
       "status": "designed",
@@ -7068,6 +7087,10 @@
         {
           "clause": "Premise only: the proposal commits its Actor-chosen body before host fields",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Premise only: I and the Actor-chosen B exist before the nonces; P and final commitments do not.",
+          "record": "ROOT::open:identity:host-contribution-option"
         }
       ],
       "record_granular": 1,
@@ -7115,6 +7138,10 @@
         {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::open:design:proposal-carriage"
+        },
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-carrier"
         }
       ],
       "kind": "type",
@@ -7142,7 +7169,8 @@
         "ROOT::amend:identity:act-proposal-admission",
         "ROOT::def:identity:verified-header-name",
         "ROOT::open:design:proposal-carriage",
-        "ROOT::open:identity:act-realization-admission"
+        "ROOT::open:identity:act-realization-admission",
+        "ROOT::rule:devnet:content-carrier"
       ],
       "routes": [],
       "status": "designed",
@@ -33177,7 +33205,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-nonce"
+        }
+      ],
       "kind": "policy",
       "label": "subsec:deployment:concealment-entropy",
       "portions": [
@@ -33196,6 +33229,14 @@
         {
           "clause": "Conformance reliance: Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
           "record": "ROOT::open:identity:act-realization-admission"
+        },
+        {
+          "clause": "Conformance reliance: Hiding depends on actual private entropy and custody under each carriage path.",
+          "record": "ROOT::open:identity:host-contribution-option"
+        },
+        {
+          "clause": "Conformance reliance: Actual entropy and private custody cannot be established by form checks.",
+          "record": "ROOT::rule:devnet:content-nonce"
         }
       ],
       "record_granular": 0,
@@ -33203,7 +33244,8 @@
       "records": [
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-content-admission",
-        "ROOT::amend:identity:act-proposal-admission"
+        "ROOT::amend:identity:act-proposal-admission",
+        "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
       "status": "designed",
@@ -33241,7 +33283,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::rule:devnet:content-nonce"
+        }
+      ],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-client-generated",
       "portions": [
@@ -33252,12 +33299,22 @@
         {
           "clause": "Conformance reliance: Proposal hiding depends on actual Actor nonce entropy and private handling.",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Conformance reliance: The optional derivation retains the client's private entropy obligation, not a checked property of its nonce.",
+          "record": "ROOT::open:identity:host-contribution-option"
+        },
+        {
+          "clause": "Conformance reliance: Sufficient client entropy and private custody remain deployment premises.",
+          "record": "ROOT::rule:devnet:content-nonce"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:act-concealment"
+        "ROOT::amend:identity:act-concealment",
+        "ROOT::open:identity:host-contribution-option",
+        "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
       "status": "designed",
@@ -36036,10 +36093,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "72",
+          "exact": "70",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "72",
+          "num": "70",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36050,12 +36107,12 @@
           "exact_digits": 32
         }
       },
-      "total": 72
+      "total": 70
     },
     {
       "category": "total",
       "designed": 408,
-      "held": 57,
+      "held": 59,
       "name": "implementation",
       "number_forms": {
         "designed": {
@@ -36067,10 +36124,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "57",
+          "exact": "59",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "59",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36107,10 +36164,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "856",
+          "exact": "854",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "856",
+          "num": "854",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36149,7 +36206,7 @@
       "record_granular": 32,
       "tentative": 7,
       "total": 1356,
-      "unassigned": 856
+      "unassigned": 854
     },
     {
       "category": "total",
@@ -36748,7 +36805,7 @@
     {
       "category": "crate",
       "designed": 76,
-      "held": 9,
+      "held": 11,
       "name": "pn-records",
       "number_forms": {
         "designed": {
@@ -36760,10 +36817,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "9",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36800,10 +36857,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "131",
+          "exact": "129",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "131",
+          "num": "129",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36842,7 +36899,7 @@
       "record_granular": 7,
       "tentative": 1,
       "total": 218,
-      "unassigned": 131
+      "unassigned": 129
     },
     {
       "category": "crate",
@@ -37936,7 +37993,7 @@
     {
       "category": "kind",
       "designed": 51,
-      "held": 5,
+      "held": 7,
       "name": "type",
       "number_forms": {
         "designed": {
@@ -37948,10 +38005,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "5",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37988,10 +38045,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "35",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "35",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38030,7 +38087,7 @@
       "record_granular": 5,
       "tentative": 0,
       "total": 92,
-      "unassigned": 35
+      "unassigned": 33
     },
     {
       "category": "bite",
@@ -39124,7 +39181,7 @@
     {
       "category": "bite",
       "designed": 285,
-      "held": 19,
+      "held": 21,
       "name": "unlinked",
       "number_forms": {
         "designed": {
@@ -39136,10 +39193,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "19",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39176,10 +39233,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 158",
+          "exact": "1 156",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 158",
+          "num": "1 156",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39218,7 +39275,7 @@
       "record_granular": 21,
       "tentative": 13,
       "total": 1484,
-      "unassigned": 1158
+      "unassigned": 1156
     },
     {
       "category": "classification-identities",
@@ -39787,22 +39844,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 204,
+      "exact_citing": 207,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "204",
+          "exact": "207",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "204",
+          "num": "207",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 692",
+          "exact": "1 695",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 692",
+          "num": "1 695",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39817,7 +39874,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1692
+      "total": 1695
     },
     {
       "category": "record-coverage",

@@ -751,7 +751,7 @@
       "kind": "statement",
       "name": "case:deployment:concealment-entropy-client-generated",
       "paper_tag": "network-v0.32.0",
-      "reason": "The Actor nonce specification and append checks are public; genuine client entropy and private handling cannot be inferred from a nonce format.",
+      "reason": "The client source requirement is a published preclusion premise, not a checked entropy property. Append checks cover only a supplied pair; otherwise the accepting carrier owns checkable form and reuse duties.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {

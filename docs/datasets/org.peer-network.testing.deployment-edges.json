@@ -532,6 +532,27 @@
       "target": "subsec:deployment:concealment-entropy"
     },
     {
+      "conditional_on": "case:deployment:concealment-entropy-client-generated,subsec:deployment:concealment-entropy",
+      "reason": "The optional derivation depends on the client's published nonce form and entropy obligation; it does not replace client generation.",
+      "relation": "relies",
+      "source": "ROOT::open:identity:host-contribution-option",
+      "target": "ROOT::rule:devnet:content-nonce"
+    },
+    {
+      "conditional_on": "case:deployment:concealment-entropy-client-generated",
+      "reason": "The optional derivation retains the client's private entropy obligation, not a checked property of its nonce.",
+      "relation": "relies",
+      "source": "ROOT::open:identity:host-contribution-option",
+      "target": "case:deployment:concealment-entropy-client-generated"
+    },
+    {
+      "conditional_on": "subsec:deployment:concealment-entropy",
+      "reason": "Hiding depends on actual private entropy and custody under each carriage path.",
+      "relation": "relies",
+      "source": "ROOT::open:identity:host-contribution-option",
+      "target": "subsec:deployment:concealment-entropy"
+    },
+    {
       "conditional_on": "",
       "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
       "relation": "realizes",
@@ -635,6 +656,41 @@
       "relation": "realizes",
       "source": "ROOT::rule:devnet:author-public-evidence",
       "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The carrier checks the public form and reuse obligations, not actual generator entropy.",
+      "relation": "realizes",
+      "source": "ROOT::rule:devnet:content-carrier",
+      "target": "ROOT::rule:devnet:content-nonce"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This assigns the profile generation and carrier checks without proving private entropy.",
+      "relation": "realizes",
+      "source": "ROOT::rule:devnet:content-nonce",
+      "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "case:deployment:concealment-entropy-client-generated,subsec:deployment:concealment-entropy",
+      "reason": "Only the optional path depends on this held recipe; plain client generation does not.",
+      "relation": "relies",
+      "source": "ROOT::rule:devnet:content-nonce",
+      "target": "ROOT::open:identity:host-contribution-option"
+    },
+    {
+      "conditional_on": "case:deployment:concealment-entropy-client-generated",
+      "reason": "Sufficient client entropy and private custody remain deployment premises.",
+      "relation": "relies",
+      "source": "ROOT::rule:devnet:content-nonce",
+      "target": "case:deployment:concealment-entropy-client-generated"
+    },
+    {
+      "conditional_on": "subsec:deployment:concealment-entropy",
+      "reason": "Actual entropy and private custody cannot be established by form checks.",
+      "relation": "relies",
+      "source": "ROOT::rule:devnet:content-nonce",
+      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
