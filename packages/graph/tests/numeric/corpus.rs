@@ -474,7 +474,7 @@ fn contributing_width(record: &pn_records::conserved::BoxMapRecord, wall: &str, 
 }
 
 // Exact declaration rows supplement the outward certificate rows.
-// network-v0.31.1, ver:standing:conserved-equilibrium-enclosure.
+// network-v0.32.0, ver:standing:conserved-equilibrium-enclosure.
 fn declaration_rows(input: &pn_records::conserved::VerificationInput, budget: &mut Budget) -> Result<(), &'static str> {
     use NumberId as N;
     let coordinates = [

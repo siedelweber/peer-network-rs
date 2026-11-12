@@ -28,7 +28,7 @@ class DeploymentClaims(unittest.TestCase):
         from deployment_claims import Refusal, project, compare_edges, source_units, validate
         from claims import conformance_marks, StructuralError
         statement = dict(kind='statement', name='cond:deployment:standing-work',
-                         paper_tag='network-v0.31.1', classification='split',
+                         paper_tag='network-v0.32.0', classification='split',
                          included='Accepted counts.', excluded='Clock truth.',
                          reason='Counts follow from inputs; clocks do not.',
                          witness_route='rec:testing:fixture-route', evidence_status='scope-only')
@@ -306,8 +306,8 @@ class Correspondence(unittest.TestCase):
                 validate_again.assert_called_once_with(original)
         from design import paper_edition_mentions
         paper_edition_mentions.cache_clear()
-        self.assertEqual(paper_edition_mentions('network-v0.31.1'), ((1, 'network-v0.31.1'),))
-        self.assertEqual(paper_edition_mentions('network-v0.31.1'), ((1, 'network-v0.31.1'),))
+        self.assertEqual(paper_edition_mentions('network-v0.32.0'), ((1, 'network-v0.32.0'),))
+        self.assertEqual(paper_edition_mentions('network-v0.32.0'), ((1, 'network-v0.32.0'),))
         self.assertEqual(paper_edition_mentions.cache_info().hits, 1)
         self.assertEqual(paper_edition_mentions('network-v0.31.0'), ((1, 'network-v0.31.0'),))
 
@@ -326,7 +326,7 @@ class Correspondence(unittest.TestCase):
                 tag_path.write_text(tag)
             with self.assertRaisesRegex(ValueError, 'external TAG'):
                 published_correspondence(rows, path)
-        tag_path.write_text('network-v0.31.1\n')
+        tag_path.write_text('network-v0.32.0\n')
         published_correspondence(rows, path)
         for field in ('paper_key', 'paper_tag'):
             changed = json.loads(json.dumps(rows))

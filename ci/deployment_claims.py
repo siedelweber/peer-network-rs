@@ -40,7 +40,7 @@ def validate(rows, inventory, labels):
     if statements != set(inventory):
         raise Refusal('deployment inventory differs: '+str(sorted(statements ^ set(inventory))))
     for row in indexed.values():
-        if row['paper_tag'] != 'network-v0.31.1' or row['classification'] not in CLASSES:
+        if row['paper_tag'] != 'network-v0.32.0' or row['classification'] not in CLASSES:
             raise Refusal('deployment classification or paper edition: '+row['name'])
         if row['evidence_status'] != 'scope-only' or not row['reason']:
             raise Refusal('deployment scope is not execution evidence: '+row['name'])

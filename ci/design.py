@@ -368,10 +368,10 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.31.1'
-CURRENT_INVENTORY_PIN = 'f747420675dbab27f57bdc6c4439a3767cf43d14ced6b6d063647f6812402b71'
-REFRESHED_CONSTANTS_PIN = '03aa866e0fabcf333b197ade3dc5022acf3eaa8101eab9f20c1779a14d61617a'
-RELEASE_QUESTIONS_PIN = 'e15ab3d56900f3e696b1733cc32f1aa0b9491bb793cbddc7b13b0b9bd6c584e7'
+PAPER_TAG = 'network-v0.32.0'
+CURRENT_INVENTORY_PIN = 'd8a140ebeac29fb74ae13fbce41ac38a467c8b799fd9761f726ed7e8b1952edc'
+REFRESHED_CONSTANTS_PIN = '0a20fc72df3e7300616daa3c07da810874172737f22f922c91104b6956220077'
+RELEASE_QUESTIONS_PIN = '1f40ca985d567636f757eacec464f413cf79ec4766771be355e96ee7b9213830'
 
 
 CRATES_PIN = 'bed338b467a73299cd0bab328c1b3ccbf897d37fdfa58942b4f3bf7108d21b22'
