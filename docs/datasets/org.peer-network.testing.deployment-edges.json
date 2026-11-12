@@ -498,7 +498,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The amendment is an activation hold, not a premise of the reproduction or certificate-soundness design.",
+      "reason": "This resolution keeps the conditional canonical-verification claim in that hold and establishes only the independent reproduction and certificate-verification scopes.",
       "relation": "realizes",
       "source": "ROOT::resol:design:replay-paper-contract",
       "target": "ROOT::open:design:verification-canonical-amendment"

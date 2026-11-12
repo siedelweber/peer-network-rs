@@ -43,7 +43,7 @@
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The tagged requirement in full through the designed reproduction route for packages carrying a version-two build declaration: the declared build, fresh-request discipline and ordered public inputs reproduce exact bytes and all verdicts; certificate-only verification is a separate route, not a substitute at this tag.",
+      "included": "The tagged requirement in full through the designed reproduction route for packages carrying a sufficient version-three reproduction annotation: the declared build, fresh-request discipline and ordered public inputs reproduce exact bytes and all verdicts; certificate-only verification is a separate route, not a substitute at this tag.",
       "kind": "statement",
       "name": "cond:deployment:canonical-replay",
       "paper_tag": "network-v0.31.1",

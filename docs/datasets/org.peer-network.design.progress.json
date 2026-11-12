@@ -3027,7 +3027,7 @@
       "label": "post:network:host-contract",
       "portions": [
         {
-          "clause": "Premise only: private solver state cannot select another result",
+          "clause": "Premise only: the public causes and declared procedure reproduce the binding result",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -12079,12 +12079,7 @@
       ],
       "kind": "certificate",
       "label": "def:epoch:tilt-backoff-grid",
-      "portions": [
-        {
-          "clause": "Premise only: greatest means greatest proved by the declared procedure",
-          "record": "ROOT::resol:design:replay-paper-contract"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -12136,10 +12131,6 @@
         {
           "clause": "Premise only: failure is proved and indecision is not",
           "record": "ROOT::amend:design:rung-proof-contract"
-        },
-        {
-          "clause": "Premise only: indecision is not certificate failure",
-          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 0,
@@ -13788,7 +13779,7 @@
       "label": "prop:epoch:epoch-replay-determinism",
       "portions": [
         {
-          "clause": "Premise only: the accepted rung is a determined output",
+          "clause": "Premise only: the declared procedure and public inputs determine the reproduced result",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -32628,11 +32619,7 @@
           "record": "ROOT::amend:testing:replay-conformance-scope"
         },
         {
-          "clause": "Premise only: replayers must use the same procedure and reproduce every verdict",
-          "record": "ROOT::open:design:replay-proof-fields"
-        },
-        {
-          "clause": "Premise only: the same declared procedure and inputs must reproduce the verdicts",
+          "clause": "Premise only: the same declared procedure must reproduce all verdicts",
           "record": "ROOT::resol:design:replay-paper-contract"
         },
         {
@@ -33513,8 +33500,8 @@
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
-          "clause": "Premise only: identical verdicts include indecision",
-          "record": "ROOT::open:design:replay-proof-fields"
+          "clause": "Premise only: verdict identity includes indecision",
+          "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
       "record_granular": 0,
@@ -39748,10 +39735,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 670",
+          "exact": "1 672",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 670",
+          "num": "1 672",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39766,7 +39753,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1670
+      "total": 1672
     },
     {
       "category": "record-coverage",
