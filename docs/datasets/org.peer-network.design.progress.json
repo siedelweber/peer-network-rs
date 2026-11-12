@@ -34003,6 +34003,10 @@
           "record": "ROOT::amend:design:publication-field-inventory"
         },
         {
+          "clause": "Claimed part: Complete public audit carriage is required, without claiming its external truth.",
+          "record": "ROOT::amend:design:publication-three-inventory"
+        },
+        {
           "clause": "Claimed part: Only the required realization disclosures are carried; external economic and settlement assurance is explicitly not established.",
           "record": "ROOT::cav:devnet:assurance"
         },
@@ -39749,10 +39753,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 686",
+          "exact": "1 687",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 686",
+          "num": "1 687",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39767,7 +39771,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1686
+      "total": 1687
     },
     {
       "category": "record-coverage",

@@ -155,6 +155,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "Complete public audit carriage is required, without claiming its external truth.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:publication-three-inventory",
+      "target": "subsec:deployment:realization-obligations"
+    },
+    {
+      "conditional_on": "",
       "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
       "relation": "realizes",
       "source": "ROOT::amend:design:refinement-review",

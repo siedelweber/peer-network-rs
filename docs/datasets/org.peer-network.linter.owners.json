@@ -220,6 +220,10 @@
         {
           "owner": "ACTAUTH",
           "target": "RECORDS"
+        },
+        {
+          "owner": "ROOT",
+          "target": "RECORDS"
         }
       ],
       "name": "declaration",
