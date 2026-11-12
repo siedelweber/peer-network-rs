@@ -44,13 +44,19 @@ def bound_target(target, ceiling, owner):
     """Bound retained profile caches at a quiescent owner boundary."""
     if type(ceiling) is not int or ceiling <= 0:
         raise ValueError('target ceiling must be positive bytes')
+    retired = [target/name for name in ('lint-required', 'lint-nursery') if (target/name).is_dir()]
+    retired_bytes = allocated(retired)
+    for path in retired:
+        shutil.rmtree(path)
+    if retired:
+        print(f'TARGET-DIRS owner={owner} retired_bytes={retired_bytes} removed_layouts=lint-required,lint-nursery path={target}', flush=True)
     names = ('debug', 'gate', 'release', 'doc')
     profiles = [target/name for name in names]
     # Cargo puts root metadata in each independent target, not in a triple.
     nested = [path for path in target.iterdir() if path.is_dir()
               and (path/'.rustc_info.json').is_file()] if target.exists() else []
-    # Lint caches, including retired split caches, share the gate's ceiling.
-    lints = [target/name for name in ('lint-combined', 'lint-required', 'lint-nursery') if (target/name).is_dir()]
+    # Only the live combined lint profile competes for the shared ceiling.
+    lints = [target/name for name in ('lint-combined',) if (target/name).is_dir()]
     profiles.extend(path/name for path in lints for name in names)
     triples = [path for path in target.iterdir() if path.is_dir() and path.name not in (*names, 'isolation')
                and path not in nested and path not in lints and any((path/name/'.fingerprint').is_dir() for name in names)] if target.exists() else []
@@ -72,7 +78,7 @@ def bound_target(target, ceiling, owner):
     for path in sorted(triples+lints):
         print(f'TARGET-DIRS owner={owner} target_layout={path.name} bytes={allocated([path])} scope=profiles-bounded-metadata-reported path={path}', flush=True)
     print(f'TARGET-DIRS owner={owner} before_bytes={before} after_bytes={after} ceiling_bytes={ceiling} path={target}', flush=True)
-    return before > after
+    return bool(retired) or before > after
 
 
 def gate_target(command):

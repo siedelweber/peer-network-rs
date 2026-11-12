@@ -1181,6 +1181,14 @@ class SourceDiscipline(unittest.TestCase):
                 self.assertGreaterEqual(shared_count, 1)
                 self.assertNotIn('compiler-artifact', shared.stdout, 'sharing findings must not duplicate compile receipts')
             source = root/'src/lib.rs'
+            for attribute in ('allow', 'expect'):
+                source.write_text('#['+attribute+'(clippy::missing_const_for_fn)]\npub fn candidate(value: u32) -> u32 { value + 1 }\n')
+                observed, findings = run_clippy(root, advisory=True)
+                self.assertEqual(observed.returncode, 0, observed.stderr)
+                self.assertIn('clippy::missing_const_for_fn', observed.stdout,
+                              'force-warn must report nursery diagnostics through source '+attribute)
+                self.assertGreaterEqual(findings, 1)
+                print('NURSERY-SOURCE-SUPPRESSION attribute='+attribute+' reported=true')
             source.write_text('pub fn candidate(value: u32) -> u32 { let unused = value; value + 1 }\n')
             refused, _ = run_clippy(root)
             self.assertNotEqual(refused.returncode, 0, 'a non-nursery warning must remain a required failure')

@@ -335,10 +335,15 @@ wait
                 (target/name/'.rustc_info.json').write_text('{}')
                 (target/name/'gate/dependency').write_bytes(b'x'*8192)
             with redirect_stdout(output):
-                self.assertTrue(bound_target(target, 1, 'fixture'), 'lint targets must count inside the shared ceiling')
-            for name in ('lint-combined', 'lint-required', 'lint-nursery'):
-                self.assertFalse((target/name/'gate').exists())
-                self.assertTrue((target/name/'.rustc_info.json').exists())
+                self.assertTrue(bound_target(target, 24576, 'fixture'))
+            self.assertTrue((target/'lint-combined/gate/dependency').exists(), 'retired layouts must leave before live artifacts are trimmed')
+            for name in ('lint-required', 'lint-nursery'):
+                self.assertFalse((target/name).exists(), 'retired lint layouts have no reader')
+            self.assertIn('retired_bytes=', output.getvalue())
+            with redirect_stdout(output):
+                self.assertTrue(bound_target(target, 1, 'fixture'), 'live lint profiles still count inside the ceiling')
+            self.assertFalse((target/'lint-combined/gate').exists())
+            self.assertTrue((target/'lint-combined/.rustc_info.json').exists())
             log = target/'meter.jsonl'
             with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
                 for command in ('build', 'check', 'run', 'test'):
