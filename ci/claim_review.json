@@ -98,12 +98,28 @@
       "review": "Explicit reliance alone propagates through the direct, transitive and cyclic controls. Claimed-part citations do not. Removing a mark or a generated edge and retaining a stale edge each refuses by source and target. A real acute-syntax claim-doc fixture proves claim-site edges are collected and cannot disappear when their mark is removed. Scope and premises are unchanged; this is structural evidence, not semantic classification. The input, registry and obligation fixtures each refuse an unmarked conditional record; paired marked controls pass. Exact diagnostics distinguish classification, relation and fixed-point failures. The reviewed conditional-claim set refuses additions, removals and changed conditions and prints each name."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_archive_trigger",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:archive-trigger",
+      "before": "",
+      "after": "The archive prints a CPU comparison against its warning and counts retained obsolete keys.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_baseline_lineage",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:baseline-follows-import-tree",
       "before": "",
       "after": "Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.",
       "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts. The additional controls require byte-identical preservation of a quieter baseline when quiet boundary windows surround a noisier whole run, and recover it through an ancestry-validated retained predecessor chain without deleting the historical noisier file. Cache controls additionally distinguish cold then warm, warm then cold, quieter and noisier warm candidates, first-key provisional retention, and stale build receipts. Warm evidence supersedes cold or provisional evidence before stall orders peers; claim scope and premises stay unchanged."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_benchmark_build_accounting",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:benchmark-build-accounting",
+      "before": "",
+      "after": "Mixed benchmark accounting removes only observed no-run build CPU and keeps validation work.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_calibration_identity",
@@ -114,12 +130,44 @@
       "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_compile_progress_forwarding",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:compile-progress-forwarding",
+      "before": "",
+      "after": "The isolation meter detects compiler progress and forwards every observed output byte.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_counter_execution",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:counter-execution",
+      "before": "",
+      "after": "The counter preserves exit and signal status and falls back only before a workload starts.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_counter_receipt_refusals",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:counter-receipt-refusals",
+      "before": "",
+      "after": "Counter wrappers with incomplete or malformed receipts fail without repeating their workload.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_distinct_excess_ledger",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:distinct-excess-ledger-is-gate-evidence",
       "before": "",
       "after": "Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.",
       "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_fixture_diagnostics",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:fixture-diagnostics",
+      "before": "",
+      "after": "Synthetic declaration and series diagnostics cannot masquerade as the enclosing gate's lines.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_gate_cancel_cleanup",
@@ -136,6 +184,14 @@
       "before": "",
       "after": "The supervisor reports its wait and owns the target lock until gate exit, without lending it to a surviving descendant.",
       "review": "The gate supervisor holds flock while the child waits at a pipe barrier. A competing nonblocking acquisition refuses; after the gate exits it succeeds while the background descendant is still alive. This preserves exclusion and directly witnesses that descendants cannot retain the descriptor. The emitted wait field is checked."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_largest_tier_gap",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:largest-tier-gap",
+      "before": "",
+      "after": "Tier diagnostics name the steps bordering the largest union gap despite overlapping steps.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_overrun_classes",
@@ -175,6 +231,14 @@
       "claim": "ROOT::claim:devperf:peer-serialized-mismatch",
       "before": "",
       "after": "A changed serialized-build declaration cannot turn build time into program cost.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_port_range_refusal",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:port-range-refusal",
+      "before": "",
+      "after": "Unreadable and malformed automatic port ranges receive the check's own refusal.",
       "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
@@ -242,6 +306,78 @@
       "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_reference_written_identity",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:reference-written-identity",
+      "before": "",
+      "after": "Written raw measurements remain addressable and comparable when reference margins are declared.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_declaration",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-declaration",
+      "before": "",
+      "after": "Series declarations refuse missing and malformed members before printing a sample declaration.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_membership",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-membership",
+      "before": "",
+      "after": "Series membership requires one identity, unique complete ordinals and both bound idle receipts.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_outliers",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-outliers",
+      "before": "",
+      "after": "Series pressure above the proposed median multiple is repeated and never sets a ceiling.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_owner_join",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-owner-join",
+      "before": "",
+      "after": "The sample joins bound transitions of its invocation and never fixture log prefixes.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_owner_targets",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-owner-targets",
+      "before": "",
+      "after": "Series membership refuses cold, swept and unobserved owner targets despite a warm primary receipt.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_start_key",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-start-key",
+      "before": "",
+      "after": "The current key and host start identity refuse a sample before any step runs.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_setup_bind_completion",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:setup-bind-completion",
+      "before": "",
+      "after": "A setup binding refusal writes the step completion and failure status without running its workload.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_setup_receipt_binding",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:setup-receipt-binding",
+      "before": "",
+      "after": "Setup accounting subtracts the bound whole owner window once and refuses legacy or foreign receipts.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_target_retention",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:target-retention-preserves-metadata",
@@ -256,6 +392,14 @@
       "before": "",
       "after": "Tier summaries keep wall overruns separate from functional verdicts and exclude foreign-source and cold-owner measurements from comparisons.",
       "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_unobserved_compilation",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:unobserved-compilation",
+      "before": "",
+      "after": "Exclusive-case projection conservatively omits steps with missing or unknown compilation evidence.",
+      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_whole_gate_warning",

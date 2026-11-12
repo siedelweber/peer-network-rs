@@ -36,7 +36,7 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
     return inventory, metadata
 
 
-def written_peer(source='fixture', cpu=100, stall=.05, extra=0, instructions=None):
+def written_peer(source='fixture', cpu=100, stall=.05, extra=0, instructions=None, serialized=()):
     """Feed controlled observations through the production tier record writer."""
     from contextlib import redirect_stdout
     from build_graph import tier_summary
@@ -55,7 +55,7 @@ def written_peer(source='fixture', cpu=100, stall=.05, extra=0, instructions=Non
         (lane/'performance-events.jsonl').write_text(''.join(json.dumps(dict(scope='case', operation=name,
             step='service', outcome='passed', own_user_s=cost, own_sys_s=0))+'\n' for name,cost in cases))
         registry = SimpleNamespace(tiers=tiers, producing_step=lambda _: 'service')
-        policy = dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=[])
+        policy = dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=list(serialized))
         with patch('devperf.budgets', return_value={'fixture':dict(budget_ms=2000),'gate':policy}), \
                 patch('build_graph.baseline_context', return_value=(lane/'baseline.json',None,[],lane)), \
                 patch('harness.build_cache_state', return_value=dict(state='warm',compiling_steps=[])), \
@@ -72,7 +72,307 @@ def written_peer(source='fixture', cpu=100, stall=.05, extra=0, instructions=Non
         return result
 
 
+def series_records():
+    """One complete synthetic series; membership fields mirror receipt joins."""
+    rows=[]
+    for ordinal in range(1,6):
+        entry='sample-'+str(ordinal)
+        declaration=dict(series='fixture',ordinal=str(ordinal),count='5',entry=entry,base='base',source='source',configuration_key='a'*64,cache='warm')
+        identity=dict(PN_GATE_SERIES='fixture',PN_GATE_ORDINAL=str(ordinal),PN_GATE_ENTRY=entry)
+        rows.append(dict(declaration=declaration,tree='tree',run=entry,status='complete',observed_key='a'*64,observed_cache='warm',
+            host_idle_start=dict(identity=identity,boundary='start'),host_idle_end=dict(identity=identity,boundary='end'),whole=dict(stall=.05),
+            owners=[dict(base='base',source='source',run=entry,cold_target=False,layout_changed=False)]))
+    return rows
+
+
 class Performance(unittest.TestCase):
+    def setUp(self):
+        import io
+        from contextlib import redirect_stdout
+        if self._testMethodName == 'test_gate_cancel_cleanup':
+            return
+        self.fixture_output = io.StringIO()
+        self.fixture_capture = redirect_stdout(self.fixture_output)
+        self.fixture_capture.__enter__()
+
+    def tearDown(self):
+        if self._testMethodName == 'test_gate_cancel_cleanup':
+            return
+        self.fixture_capture.__exit__(None,None,None)
+        for line in self.fixture_output.getvalue().splitlines():
+            print('TEST-FIXTURE '+line)
+
+
+    def test_series_membership(self):
+        """Series membership requires one identity, unique complete ordinals and both bound idle receipts.
+        ´claim:devperf:series-membership´
+        ´test:integration:test-series-membership´
+        """
+        from build_graph import series_check
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            records=series_records()
+            def check(rows):
+                paths=[]
+                for index,row in enumerate(rows):
+                    path=root/(str(index)+'.json');path.write_text(json.dumps(row));paths.append(path)
+                return series_check('fixture', paths)
+            self.assertEqual(check(records),0,'complete same-transition samples are admitted')
+            for key,value in [('base','foreign'),('source','foreign'),('configuration_key','b'*64),('cache','cold'),('count','6')]:
+                bad=copy.deepcopy(records);bad[1]['declaration'][key]=value
+                with self.subTest(key=key),self.assertRaisesRegex(ValueError,'disagree',msg='identity mismatch must refuse: '+key):check(bad)
+            bad=copy.deepcopy(records);bad[1]['declaration']['ordinal']='1'
+            with self.assertRaisesRegex(ValueError,'duplicate',msg='duplicate ordinal must refuse'):check(bad)
+            with self.assertRaisesRegex(ValueError,'incomplete',msg='missing ordinal must refuse'):check(records[:-1])
+            for boundary in ('start','end'):
+                bad=copy.deepcopy(records);bad[1].pop('host_idle_'+boundary)
+                with self.assertRaisesRegex(ValueError,'both bound',msg='missing idle boundary must refuse'):check(bad)
+            bad=copy.deepcopy(records);bad[1]['status']='refused-owner-target'
+            with self.assertRaisesRegex(ValueError,'incomplete or refused',msg='refused sample cannot enter series'):check(bad)
+
+    def test_series_owner_targets(self):
+        """Series membership refuses cold, swept and unobserved owner targets despite a warm primary receipt.
+        ´claim:devperf:series-owner-targets´
+        ´test:integration:test-series-owner-targets´
+        """
+        from build_graph import series_check
+        with tempfile.TemporaryDirectory() as directory:
+            paths=[Path(directory)/(str(n)+'.json') for n in range(5)]
+            for key,value in [('cold_target',True),('layout_changed',True),('cold_target',None),('run','foreign')]:
+                rows=series_records();rows[0]['owners'][0][key]=value
+                for path,row in zip(paths,rows):path.write_text(json.dumps(row))
+                with self.subTest(key=key,value=value),self.assertRaisesRegex(ValueError,'owner target',msg='every owner must retain its primed target'):series_check('fixture',paths)
+
+    def test_series_outliers(self):
+        """Series pressure above the proposed median multiple is repeated and never sets a ceiling.
+        ´claim:devperf:series-outliers´
+        ´test:integration:test-series-outliers´
+        """
+        from build_graph import series_check
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            paths=[Path(directory)/(str(n)+'.json') for n in range(5)]
+            for pressure,status,ceiling in ((.1,0,.1),(.224,4,None)):
+                rows=series_records();rows[-1]['whole']['stall']=pressure
+                for path,row in zip(paths,rows):path.write_text(json.dumps(row))
+                output=io.StringIO()
+                with redirect_stdout(output):actual=series_check('fixture',paths)
+                self.assertEqual(actual,status,'only pressure above twice median needs a replacement entry')
+                result=json.loads(output.getvalue().split(' ',1)[1])
+                self.assertEqual(result['ceiling'],ceiling,'outlier must not set reference ceiling')
+
+    def test_series_owner_join(self):
+        """The sample joins bound transitions of its invocation and never fixture log prefixes.
+        ´claim:devperf:series-owner-join´
+        ´test:integration:test-series-owner-join´
+        """
+        from build_graph import series_owners
+        from isolation import bind_setup
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);lane=root/'.lane';lane.mkdir()
+            declaration=dict(source='source',base='base')
+            (lane/'gate-fixture.log').write_text('ISOLATION-TRANSITION {"owner":"real","base":"foreign"}\n')
+            bind_setup(lane/'gate-real-setup.jsonl','source','run','step')
+            path=lane/'gate-real-transitions.jsonl'
+            row=dict(source='source',base='base',run='run',step='step',owner='real')
+            path.write_text(json.dumps(row)+'\n')
+            self.assertEqual(series_owners(root,declaration,'run'),[row],'sample reads bound transitions, not log lines')
+            self.assertEqual(series_owners(root,declaration,'other'),[],'another invocation cannot borrow transitions')
+            path.write_text(json.dumps(dict(row,step='foreign'))+'\n')
+            with self.assertRaisesRegex(ValueError,'foreign owner',msg='foreign row in current sidecar must refuse'):series_owners(root,declaration,'run')
+
+    def test_reference_written_identity(self):
+        """Written raw measurements remain addressable and comparable when reference margins are declared.
+        ´claim:devperf:reference-written-identity´
+        ´test:integration:test-reference-written-identity´
+        """
+        from build_graph import reference_key, peer_cost, warm_peer_replacement
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'Cargo.toml').write_text('')
+            registry=SimpleNamespace(tiers={})
+            with patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='compiler')):
+                before=reference_key(root,registry)
+                path=root/(before+'.json');path.write_text(json.dumps(written_peer('retained',100)))
+                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.1',PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                    after=reference_key(root,registry)
+                    self.assertEqual(after,before,'comparison margins never change stored measurement identity')
+                    stored=json.loads((root/(after+'.json')).read_text())
+                    self.assertEqual(peer_cost(stored)[1],100,'writer raw work is available after margins are declared')
+                    self.assertTrue(warm_peer_replacement(written_peer('candidate',80),stored)[0],'declared margin applies to archived raw records')
+
+    def test_series_start_key(self):
+        """The current key and host start identity refuse a sample before any step runs.
+        ´claim:devperf:series-start-key´
+        ´test:integration:test-series-start-key´
+        """
+        from build_graph import series_receipt
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);lane=root/'.lane';lane.mkdir()
+            declaration=series_records()[0]['declaration'];declaration['sample']='import-transition'
+            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
+            (lane/'instructions-probe.json').write_text('{}')
+            idle=series_records()[0]['host_idle_start']
+            (lane/'gate-series-host-start.json').write_text(json.dumps(idle))
+            with patch.dict(os.environ,PN_BUILDGRAPH_RUN='run'),patch('harness.load'),patch('build_graph.subprocess.check_output',return_value='tree'),patch('build_graph.subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='',stderr='')):
+                with patch('build_graph.reference_key',return_value='b'*64):
+                    with self.assertRaisesRegex(ValueError,'key differs at start',msg='wrong key refuses before work'):series_receipt(root,'start')
+                idle['identity']['PN_GATE_ENTRY']='foreign';(lane/'gate-series-host-start.json').write_text(json.dumps(idle))
+                with patch('build_graph.reference_key',return_value='a'*64):
+                    with self.assertRaisesRegex(ValueError,'another invocation',msg='foreign host receipt refuses before work'):series_receipt(root,'start')
+
+    def test_setup_bind_completion(self):
+        """A setup binding refusal writes the step completion and failure status without running its workload.
+        ´claim:devperf:setup-bind-completion´
+        ´test:integration:test-setup-bind-completion´
+        """
+        import subprocess
+        source=Path(__file__).with_name('gate.sh').read_text()
+        function=source[source.index('run_step() {'):source.index('run_graph() {')]
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'.lane').mkdir()
+            script='set -u\nfailed=0\nstatuses=()\nsource_id=fixture\nresource_root=\nPN_GATE_PARALLEL=1\ngate_resource_sample() { :; }\npython3() { if [ "$3" = bind-setup ]; then return 2; fi; return 0; }\n'+function+'\nrun_step fixture touch ran\nprintf \'FAILED=%s\\n\' "$failed"\n'
+            result=subprocess.run(['bash','-c',script],cwd=root,capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,'fixture shell completes refusal reporting: '+result.stderr)
+            path=root/'.lane/completed-fixture.tsv'
+            self.assertTrue(path.exists(),'bind refusal must publish a completion row')
+            self.assertEqual(path.read_text().split('\t')[:2],['fixture','2'],'bind status must reach scheduler')
+            self.assertIn('FAILED=1',result.stdout,'bind refusal must mark the child failed')
+            self.assertFalse((root/'ran').exists(),'refused binding must not run its command')
+
+    def test_largest_tier_gap(self):
+        """Tier diagnostics name the steps bordering the largest union gap despite overlapping steps.
+        ´claim:devperf:largest-tier-gap´
+        ´test:integration:test-largest-tier-gap´
+        """
+        from build_graph import largest_tier_gap
+        rows=[('close',8,9),('overlap',1,3),('open',0,4),('tail',10,11)]
+        self.assertEqual(largest_tier_gap(rows),dict(wall_s=4,after='open',before='close'),'largest gap uses the union frontier and names both boundaries')
+        self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
+
+    def test_series_declaration(self):
+        """Series declarations refuse missing and malformed members before printing a sample declaration.
+        ´claim:devperf:series-declaration´
+        ´test:integration:test-series-declaration´
+        """
+        from build_graph import declare_run
+        invoke = declare_run
+        def declare_run(root):
+            try:
+                return invoke(root)
+            except KeyError as error:
+                self.fail('missing series member needs its named refusal: '+str(error))
+        valid=dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY='fixture',PN_GATE_SAMPLE='import-transition',PN_GATE_SERIES='fixture',
+            PN_GATE_ORDINAL='1',PN_IMPORT_BASE='base',PN_GATE_SERIES_KEY='a'*64,PN_GATE_SERIES_CACHE='warm',PN_GATE_SERIES_COUNT='5')
+        with tempfile.TemporaryDirectory() as directory:
+            for key in ('PN_GATE_SERIES','PN_GATE_ORDINAL','PN_IMPORT_BASE','PN_GATE_SERIES_KEY','PN_GATE_SERIES_CACHE','PN_GATE_SERIES_COUNT'):
+                env=dict(valid);env.pop(key)
+                with self.subTest(missing=key),patch.dict(os.environ,env,clear=True),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source')):
+                    with self.assertRaisesRegex(ValueError,'series requires',msg='missing member refuses: '+key):declare_run(Path(directory))
+            for key,value in [('PN_GATE_SERIES','bad name'),('PN_GATE_ORDINAL','0'),('PN_GATE_ORDINAL','6'),('PN_GATE_SERIES_COUNT','bad'),('PN_GATE_SERIES_COUNT','4'),('PN_GATE_SERIES_KEY','bad'),('PN_GATE_SERIES_CACHE','unknown')]:
+                with self.subTest(key=key,value=value),patch.dict(os.environ,dict(valid,**{key:value}),clear=True),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source')):
+                    with self.assertRaisesRegex(ValueError,'invalid series|series count',msg='malformed member refuses: '+key):declare_run(Path(directory))
+
+    def test_counter_receipt_refusals(self):
+        """Counter wrappers with incomplete or malformed receipts fail without repeating their workload.
+        ´claim:devperf:counter-receipt-refusals´
+        ´test:integration:test-counter-receipt-refusals´
+        """
+        from build_graph import measured_command
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);lane=root/'.lane';lane.mkdir();stub=root/'counter'
+            stub.chmod(0o755) if stub.exists() else None
+            (lane/'instructions-probe.json').write_text(json.dumps(dict(run='run',executable=str(stub))))
+            for content in ('{','{"started":true}'):
+                stub.write_text('#!'+sys.executable+'\nimport sys\nfrom pathlib import Path\nargs=sys.argv[sys.argv.index("--")+1:]\nPath(args[4]).write_text('+repr(content)+')\n')
+                stub.chmod(0o755)
+                with patch.dict(os.environ,PN_BUILDGRAPH_RUN='run',PN_GATE_STEP='fixture'):
+                    try:result=measured_command(root,[sys.executable,'-c','raise SystemExit(99)'])
+                    except (ValueError,OSError) as error:self.fail('malformed receipt needs its typed refusal: '+str(error))
+                self.assertEqual(result.returncode,2,'started but incomplete counter receipt must fail, never fall back')
+            stub.write_text('#!'+sys.executable+'\nimport os,signal\nos.kill(os.getpid(),signal.SIGTERM)\n')
+            with patch.dict(os.environ,PN_BUILDGRAPH_RUN='run',PN_GATE_STEP='fixture'):
+                self.assertEqual(measured_command(root,['true']).returncode,-15,'signal-ended counter must fail without fallback')
+
+    def test_unobserved_compilation(self):
+        """Exclusive-case projection conservatively omits steps with missing or unknown compilation evidence.
+        ´claim:devperf:unobserved-compilation´
+        ´test:integration:test-unobserved-compilation´
+        """
+        from build_graph import peer_intersection
+        for evidence in ('absent',None,True,False):
+            old,new=written_peer(),written_peer(extra=1)
+            for record in (old,new):
+                figure=record['tiers']['service']['step_figures']['service']
+                if evidence=='absent':figure.pop('compiled')
+                else:figure['compiled']=evidence
+            result=peer_intersection([old,new])
+            self.assertEqual(result,[100,99] if evidence is False else [0,0],'unknown compilation omits the step and retains other common work')
+        record=written_peer(serialized=('service',))
+        self.assertIsNone(record['tiers']['service']['step_figures']['service']['compiled'],'unobserved dedicated build is unknown, never false')
+
+    def test_archive_trigger(self):
+        """The archive prints a CPU comparison against its warning and counts retained obsolete keys.
+        ´claim:devperf:archive-trigger´
+        ´test:integration:test-archive-trigger´
+        """
+        from build_graph import baseline_context
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'Cargo.toml').write_text('');old=root/'target/gate-baselines/old/peers';old.mkdir(parents=True)
+            (old/'record.json').write_text('{}')
+            registry=SimpleNamespace(tiers={})
+            usage=[SimpleNamespace(ru_utime=n,ru_stime=0) for n in (0,0,100,100)]
+            output=io.StringIO()
+            with patch.dict(os.environ,CARGO_TARGET_DIR=str(root/'target'),PN_GATE_SOURCE='source',PN_IMPORT_BASE=''),patch('build_graph.subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='source')),patch('build_graph.resource.getrusage',side_effect=usage),redirect_stdout(output):
+                baseline_context(root,registry)
+            row=json.loads(next(line.split(' ',1)[1] for line in output.getvalue().splitlines() if line.startswith('GATE-ARCHIVE ')))
+            self.assertEqual((row['obsolete_keys'],row['obsolete_records']),(1,1),'obsolete archives must remain visible')
+            self.assertEqual(row['context_own_cpu_s'],200,'trigger measures own and waited children over baseline context')
+            self.assertTrue(row['review_required'],'context alone exceeding command warning requires review')
+            self.assertIn('own-cpu',row['comparison'],'trigger must compare CPU with CPU')
+
+    def test_fixture_diagnostics(self):
+        """Synthetic declaration and series diagnostics cannot masquerade as the enclosing gate's lines.
+        ´claim:devperf:fixture-diagnostics´
+        ´test:integration:test-fixture-diagnostics´
+        """
+        import subprocess
+        result=subprocess.run([sys.executable,'-B','-m','unittest','test_devperf.Performance.test_whole_gate_warning'],cwd=Path(__file__).parent,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,'nested diagnostic witness must complete: '+result.stderr)
+        lines=result.stdout.splitlines()
+        self.assertTrue(any(line.startswith('TEST-FIXTURE GATE-SERIES ') for line in lines),'fixture lines retain their evidence with an explicit prefix')
+        self.assertFalse(any(line.startswith(('GATE-DECLARED ','GATE-SERIES ')) for line in lines),'fixture records must never impersonate live prefixes')
+
+    def test_compile_progress_forwarding(self):
+        """The isolation meter detects compiler progress and forwards every observed output byte.
+        ´claim:devperf:compile-progress-forwarding´
+        ´test:integration:test-compile-progress-forwarding´
+        """
+        from isolation import cargo_work
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'meter.jsonl';output=io.StringIO()
+            content=b'  Compiling fixture v1\nfixture-result\n'
+            with patch('isolation.subprocess.Popen',return_value=SimpleNamespace(stdout=io.BytesIO(content),stderr=io.BytesIO(),wait=lambda:0)),redirect_stdout(output):
+                self.assertEqual(cargo_work(['cargo',str(path),'check']),0,'meter preserves successful child status')
+            self.assertEqual(output.getvalue(),content.decode(),'meter forwards every byte without altering evidence')
+            self.assertEqual(json.loads(path.read_text())['compiled'],['Compiling fixture v1'],'progress without final artifact still records compilation')
+
+    def test_port_range_refusal(self):
+        """Unreadable and malformed automatic port ranges receive the check's own refusal.
+        ´claim:devperf:port-range-refusal´
+        ´test:integration:test-port-range-refusal´
+        """
+        from host_postgresql import check_ports, POSTGRESQL_PORTS
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            for text in (None,'broken'):
+                if text is not None:(root/'ip_local_port_range').write_text(text)
+                try:
+                    with self.assertRaisesRegex(RuntimeError,'automatic port range is unavailable',msg='port range must refuse in its own vocabulary'):
+                        check_ports(POSTGRESQL_PORTS,root)
+                except (OSError,ValueError) as error:self.fail('raw port-range exception escaped: '+str(error))
+
     def test_quiet_repeat_request(self):
         """Loaded excess names a separately declared quiet repeat without scheduling or changing a verdict.
         ´claim:devperf:quiet-repeat-request´
@@ -602,7 +902,7 @@ wait
                     self.assertEqual(cargo_work(['cargo', str(log), command]), 0)
             rows = [json.loads(line) for line in log.read_text().splitlines()]
             self.assertEqual([row['compile_only'] for row in rows], [True, True, False, False])
-            self.assertTrue(all(row['compiled'] == ['fixture'] for row in rows))
+            self.assertTrue(all(row['compiled'] == ['fixture'] for row in rows), 'artifact freshness must record compilation for every Cargo invocation kind')
 
     def test_distinct_excess_ledger(self):
         """Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.
@@ -693,6 +993,8 @@ wait
                         self.assertEqual(measured[name]['status'], status)
                         self.assertEqual(measured[name]['over_budget'], expected)
                         self.assertEqual(measured[name]['step_figures'][name]['partial'], cold)
+                        self.assertEqual(measured[name]['step_figures'][name]['compiled'], cold and name == 'service', 'primary cache compilation reaches written step figures')
+                        self.assertTrue(measured[name]['comparable_reason'], 'every unavailable comparable value names its reason')
                         self.assertEqual(measured[name]['step_figures'][name]['serialized_build'], rebuilding and name == 'service')
                         self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
@@ -764,30 +1066,35 @@ wait
             with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 self.assertEqual(declare_run(root)['entry'], 'fixture:entry')
             entry = (Path(__file__).parent/'gate.sh').read_text()
-            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='import-transition', PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_IMPORT_BASE='source', PN_GATE_SERIES_KEY='a'*64, PN_GATE_SERIES_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='import-transition', PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_IMPORT_BASE='source', PN_GATE_SERIES_KEY='a'*64, PN_GATE_SERIES_CACHE='warm', PN_GATE_SERIES_COUNT='5', PN_GATE_CONTAINER_LIST='["fixture-list"]'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 with patch('isolation.import_base', return_value='source'):
                     self.assertEqual(declare_run(root)['sample'], 'import-transition')
                     from build_graph import series_receipt
+                    (root/'.lane/gate-wall.json').write_text('{"stall":0.05}')
                     (root/'.lane/instructions-probe.json').write_text('{"state":"unavailable"}')
                     (root/'.lane/gate-series-host-start.json').write_text(json.dumps(dict(boundary='start', identity=dict(PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_GATE_ENTRY='fixture:sample'))))
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm'),path=str(root/('a'*64)/'tree.json'))))
                     observed=SimpleNamespace(returncode=0,stdout='[]',stderr='')
-                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='sample'), patch('build_graph.subprocess.run',return_value=observed), patch('build_graph.subprocess.check_output',return_value='tree'):
+                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='sample'), patch('build_graph.subprocess.run',return_value=observed), patch('build_graph.subprocess.check_output',return_value='tree'), patch('build_graph.reference_key',return_value='a'*64), patch('harness.load'):
                         series_receipt(root,'start')
                         series_receipt(root,'end')
                         receipt=json.loads((root/'.lane/gate-series-end.json').read_text())
                         self.assertEqual(receipt['declaration']['ordinal'],'1')
                         self.assertEqual(receipt['observed_cache'],'warm')
-                        self.assertIn('containers',receipt)
+                        self.assertIn('processes',receipt)
                         from build_graph import series_idle
                         series_idle(root,'end')
                         joined=json.loads((root/'.lane/gate-series-end.json').read_text())
                         self.assertEqual(joined['host_idle_end']['identity'],joined['host_idle_start']['identity'])
+                        self.assertEqual(joined['host_idle_end']['container_command'],['fixture-list'],'host receipt records the invoker-selected listing argv')
                         with patch.dict(os.environ, PN_GATE_ENTRY='different'):
                             with self.assertRaisesRegex(ValueError,'another invocation'):
                                 series_idle(root,'end')
                         (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='cold'),path=str(root/('a'*64)/'tree.json'))))
-                        with self.assertRaisesRegex(ValueError,'differs from declared'):
+                        with self.assertRaisesRegex(ValueError,'differs from declared',msg='sample cache mismatch refuses membership'):
+                            series_receipt(root,'end')
+                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm'),path=str(root/('b'*64)/'tree.json'))))
+                        with self.assertRaisesRegex(ValueError,'differs from declared',msg='sample observed key mismatch refuses membership'):
                             series_receipt(root,'end')
 
             with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='other'):
@@ -834,7 +1141,7 @@ wait
                 self.assertEqual(result['status'], status)
                 self.assertAlmostEqual(result['preparation_s'], .2)
                 self.assertAlmostEqual(result['closing_s'], .3)
-                self.assertAlmostEqual(result['step_span_s'], .7)
+                self.assertAlmostEqual(result['step_span_s'], .7, msg='step span must partition the whole wall between preparation and closing')
                 self.assertAlmostEqual(result['preparation_s']+result['step_span_s']+result['closing_s'], result['wall'])
                 self.assertTrue(result['over_budget'])
                 self.assertEqual(result['classification'], 'load-unresolved')
@@ -1061,8 +1368,26 @@ wait
                                    'raw receipts must survive obsolete ratio classifications')
             archived = dict(whole=dict(wall=10, own_user_s=7.486846, own_sys_s=0, comparable_cpu_s=None),
                             tiers={'fast':dict(step_figures=bounded)})
-            with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
-                self.assertAlmostEqual(peer_cost(archived)[1], 7.486846-.169108)
+            with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                self.assertIsNotNone(peer_cost(archived)[1], 'raw cost must remain available despite stored null')
+                self.assertAlmostEqual(peer_cost(archived)[1], 7.486846-.169108, msg='stored classification cannot override raw cost')
+        from build_graph import case_intersection
+        # A case clock can include the compilation already removed from its
+        # step: 29.162 - 9.655 - 9.133 - 16.466 = -6.092 seconds.
+        for left, right in ((['new'], []), ([], ['new'])):
+            result = case_intersection(left, right, {'new':16.466}, {'new':16.466}, 100, 100,
+                steps={'new':'discipline-tests'}, old_steps={'new':'discipline-tests'},
+                build_steps={'discipline-tests'}, old_build_steps={'discipline-tests'})
+            self.assertFalse(result[2], 'a larger tier total must not conceal overlapping case and build clocks')
+            self.assertIn('overlap removed build CPU', result[3]['reason'])
+
+
+    def test_counter_execution(self):
+        """The counter preserves exit and signal status and falls back only before a workload starts.
+        ´claim:devperf:counter-execution´
+        ´test:integration:test-counter-execution´
+        """
+        from build_graph import instruction_probe, measured_command
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe'), patch('build_graph.shutil.which', return_value=None), patch('builtins.print') as printed:
@@ -1078,26 +1403,24 @@ wait
             stub.chmod(0o755)
             (root/'.lane/instructions-probe.json').write_text(json.dumps(dict(run='counter-probe', executable=str(stub))))
             with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe', PN_GATE_STEP='fixture'), patch('builtins.print') as printed:
-                self.assertEqual(measured_command(root, [sys.executable,'-c','raise SystemExit(7)']).returncode, 7)
+                self.assertEqual(measured_command(root, [sys.executable,'-c','raise SystemExit(7)']).returncode, 7, 'counter success cannot replace workload exit status')
                 self.assertIn('retired=42', str(printed.call_args_list))
                 self.assertEqual(measured_command(root, [sys.executable,'-c','import os,signal;os.kill(os.getpid(),signal.SIGTERM)']).returncode, -15,
                                  'counter success cannot hide a signal-ended workload')
                 stub.write_text('#!'+sys.executable+'\nraise SystemExit(1)\n')
                 once=root/'once'
                 result=measured_command(root, [sys.executable,'-c','from pathlib import Path; p=Path('+repr(str(once))+'); p.write_text(p.read_text()+"x" if p.exists() else "x")'])
-                self.assertEqual(result.returncode, 0)
+                self.assertEqual(result.returncode, 0, 'counter open failure must permit one uncounted run')
                 self.assertEqual(once.read_text(), 'x', 'failed counter open runs the workload once')
                 self.assertIn('retired=unavailable', str(printed.call_args_list))
 
-        from build_graph import case_intersection
-        # A case clock can include the compilation already removed from its
-        # step: 29.162 - 9.655 - 9.133 - 16.466 = -6.092 seconds.
-        for left, right in ((['new'], []), ([], ['new'])):
-            result = case_intersection(left, right, {'new':16.466}, {'new':16.466}, 100, 100,
-                steps={'new':'discipline-tests'}, old_steps={'new':'discipline-tests'},
-                build_steps={'discipline-tests'}, old_build_steps={'discipline-tests'})
-            self.assertFalse(result[2], 'a larger tier total must not conceal overlapping case and build clocks')
-            self.assertIn('overlap removed build CPU', result[3]['reason'])
+
+    def test_setup_receipt_binding(self):
+        """Setup accounting subtracts the bound whole owner window once and refuses legacy or foreign receipts.
+        ´claim:devperf:setup-receipt-binding´
+        ´test:integration:test-setup-receipt-binding´
+        """
+        from isolation import setup_receipt, bind_setup
         from build_graph import setup_accounting
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'setup.jsonl'
@@ -1118,10 +1441,10 @@ wait
             for action in ('clone','fetch','checkout','clean'):
                 stale = dict(data, action=action)
                 path.write_text(json.dumps(stale)+'\n')
-                with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
+                with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt', msg='legacy or malformed owner accounting must refuse'):
                     setup_accounting(path, 'gate-source', 'run', 'tests')
             with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source', PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='other'):
-                with self.assertRaisesRegex(ValueError, 'another invocation'):
+                with self.assertRaisesRegex(ValueError, 'another invocation', msg='foreign invocation must refuse'):
                     setup_receipt(data)
             path.with_suffix('.binding.json').unlink()
             with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path)):
@@ -1129,9 +1452,17 @@ wait
                     setup_receipt(data)
             data['own_user_s'] = -1
             path.write_text(json.dumps(data)+'\n')
-            with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
+            with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt', msg='legacy or malformed owner accounting must refuse'):
                 setup_accounting(path, 'gate-source', 'run', 'tests')
 
+
+    def test_benchmark_build_accounting(self):
+        """Mixed benchmark accounting removes only observed no-run build CPU and keeps validation work.
+        ´claim:devperf:benchmark-build-accounting´
+        ´test:integration:test-benchmark-build-accounting´
+        """
+        from build_graph import compile_comparison, overrun_class
+        policy = dict(load_unresolved_pressure_percent=10,cpu_growth_percent=20)
         # The mixed benchmark step must remove only its no-run builds, not
         # validation. Exercise the producer and its emitted accounting too.
         import benchmarks
@@ -1154,7 +1485,7 @@ wait
                     capture.assert_called_once_with(command, root, 'build')
                 self.assertEqual(rows[0]['cargo_cpu_s'], cpu)
                 self.assertEqual(rows[0]['cargo_wall_s'], 7)
-                self.assertEqual(rows[0]['compiled'], [] if cpu == 1 else ['fixture'])
+                self.assertEqual(rows[0]['compiled'], [] if cpu == 1 else ['fixture'], 'artifact freshness alone decides actual benchmark compilation')
                 out, err = io.StringIO(), io.StringIO()
                 def run(records):
                     records.extend(rows)
@@ -1179,7 +1510,6 @@ wait
                 own, old, _, _ = compile_comparison(current, prior, ['test-build'])
                 self.assertEqual(overrun_class(True, own, old, 0, current_build, previous_build, [], policy,
                     compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
-
 
     def test_reference_cache_order(self):
         """Cache rank keeps cold references provisional and refuses cold replacement of warm evidence.
@@ -1477,7 +1807,7 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed, context = baseline_context(root, registry)
                 self.assertIsNone(old)
-                with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                     self.assertEqual(baseline_context(root, registry)[0], path, 'named comparison values do not change archive identity')
                 candidate = dict(path=str(path), source='ancestor', tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
@@ -1585,7 +1915,7 @@ wait
                     tiers={'fast':dict(step_figures={'tests':dict(own_cpu_s=10,setup_cpu_s=2,cargo_cpu_s=0,
                         layouts={},partial=False,serialized_build=False,compiled=False,wait_dominated=None,wall=10)})})
                 path.write_text(json.dumps(measured))
-                with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                     found_path, found, _, _ = baseline_context(root, registry)
                     self.assertEqual(found_path,path,'archived samples remain under the same key')
                     from build_graph import peer_cost

@@ -235,6 +235,9 @@ def import_base(root, source, base):
 def bind_setup(destination, source, run, step):
     """The step supervisor binds one empty setup log to its invocation."""
     destination.write_text('')
+    transitions = destination.with_name(destination.name.replace('-setup.jsonl', '-transitions.jsonl'))
+    transitions.write_text('')
+    transitions.with_suffix('.binding.json').write_text(json.dumps(dict(source=source, run=run, step=step))+'\n')
     destination.with_suffix('.binding.json').write_text(json.dumps(dict(
         path=str(destination.resolve()), source=source, run=run, step=step))+'\n')
 
@@ -303,6 +306,8 @@ def workspace(root, name, source):
                 sample.write_text(invocation)
         # Older shared clones borrow objects that the parent may prune.
         if (tree/'.git/objects/info/alternates').exists():
+            if transition is not None:
+                raise ValueError('series owner borrows an object store: '+name)
             shutil.rmtree(tree)
         commands = []
         if not tree.exists():
@@ -365,9 +370,20 @@ def workspace(root, name, source):
                 cargo_and_run_cpu_s=sum(row['own_cpu'] for row in rows if not row.get('compile_only')),
                 calls=len(rows), scope='compile-only; mixed Cargo-and-run reported separately')), flush=True)
             if transition is not None:
-                print('ISOLATION-TRANSITION '+json.dumps(dict(owner=name, base=transition, source=source,
+                row = dict(owner=name, base=transition, source=source, run=os.environ['PN_BUILDGRAPH_RUN'],
+                    step=os.environ.get('PN_GATE_STEP'), cold_target=cold_target, layout_changed=layout_changed,
                     reset_wall_s=reset_wall, compile_wall_s=sum(row['wall'] for row in rows if row.get('compile_only')),
-                    compile_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')))), flush=True)
+                    compile_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')))
+                destination = Path(os.environ['PN_GATE_SETUP_LOG'])
+                destination = destination.with_name(destination.name.replace('-setup.jsonl', '-transitions.jsonl'))
+                binding = json.loads(destination.with_suffix('.binding.json').read_text())
+                if binding != {key:row[key] for key in ('source','run','step')}:
+                    raise ValueError('owner transition belongs to another invocation')
+                with destination.open('a') as output:
+                    fcntl.flock(output, fcntl.LOCK_EX)
+                    output.write(json.dumps(row)+'\n')
+                print('ISOLATION-TRANSITION '+json.dumps(row), flush=True)
+
 
 
 def cargo_environment(tree):

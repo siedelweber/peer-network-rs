@@ -72,7 +72,7 @@ quiet_window() {
 gate_started=$(date -u +%s.%N)
 export PN_BUILDGRAPH_RUN="${gate_started}-$$"
 python3 -B ci/build_graph.py instruction-probe || exit 2
-python3 -B ci/build_graph.py series-receipt start || exit 2
+python3 -B ci/build_graph.py series-receipt start || exit 4
 gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-start.raw
 quiet_window before
@@ -94,14 +94,18 @@ run_step() {
     local status started ended wall
     local PN_GATE_STEP="$name" PN_GATE_SETUP_LOG="$PWD/.lane/gate-${name}-setup.jsonl" PN_GATE_SETUP_SOURCE="$source_id"
     export PN_GATE_STEP PN_GATE_SETUP_LOG PN_GATE_SETUP_SOURCE
-    python3 -B ci/isolation.py bind-setup || return 2
     gate_resource_sample ".lane/gate-${name}-resource-start.raw" "$resource_root" 2>/dev/null || true
     started=$(date -u +%s.%N)
+    if python3 -B ci/isolation.py bind-setup; then
     python3 -B ci/build_graph.py supervise bash -c 'TIMEFORMAT="OWN-TIME user=%U sys=%S"; time "$@"' gate-command "$@" > ".lane/gate-${name}.log" 2>&1 &
     active_pid=$!
     wait "$active_pid"
     status=$?
     active_pid=
+    else
+        status=2
+        printf 'GATE-SETUP-REFUSED step=%s status=2\n' "$name" > ".lane/gate-${name}.log"
+    fi
     ended=$(date -u +%s.%N)
     gate_resource_sample ".lane/gate-${name}-resource-end.raw" "$resource_root" 2>/dev/null || true
     wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
@@ -186,10 +190,12 @@ else
 fi
 python3 -B ci/build_graph.py check-inputs || failed=1
 python3 -B ci/build_graph.py wall-summary "$failed" "$gate_started" "$gate_ended" || failed=1
-python3 -B ci/build_graph.py series-receipt end || failed=1
+series_status=0
+python3 -B ci/build_graph.py series-receipt end || series_status=4
 python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
 if [ "$failed" = 0 ] && [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
     python3 -B ci/build_graph.py retain-baseline || failed=1
 fi
 printf 'GATE-EXIT=%s\n' "$failed"
+if [ "$failed" = 0 ] && [ "$series_status" != 0 ]; then exit "$series_status"; fi
 exit "$failed"

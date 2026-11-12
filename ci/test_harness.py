@@ -32,6 +32,19 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def setUp(self):
+        import io
+        from contextlib import redirect_stdout
+        self.fixture_output = io.StringIO()
+        self.fixture_capture = redirect_stdout(self.fixture_output)
+        self.fixture_capture.__enter__()
+
+    def tearDown(self):
+        self.fixture_capture.__exit__(None,None,None)
+        for line in self.fixture_output.getvalue().splitlines():
+            print('TEST-FIXTURE '+line)
+
+
     def nextest_cpu(self):
         import os
         import subprocess
@@ -380,6 +393,20 @@ assert (root/'payload').read_text() == 'committed'
                             self.assertEqual((target/'retained').read_text(),'owned cache')
                         with workspace(root, owner, series_source) as (fresh,target):
                             self.assertTrue(marker.exists(), 'one sample resets an owner once')
+                with patch.dict(os.environ, PN_GATE_SAMPLE='import-transition', PN_IMPORT_BASE=source, PN_GATE_STEP='fixture', PN_BUILDGRAPH_RUN='refusal-probe', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=series_source):
+                    bind_setup(lane/'sample-setup.jsonl',series_source,'refusal-probe','fixture')
+                    alternates=isolated/'.git/objects/info/alternates'
+                    alternates.write_text(str(root/'.git/objects')+'\n')
+                    try:
+                        with self.assertRaisesRegex(ValueError,'borrows an object store',msg='series must refuse alternate-store recloning'):
+                            with workspace(root,owner,series_source):pass
+                    finally:alternates.unlink(missing_ok=True)
+                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='base-refusal'), patch('isolation.import_base',return_value='0'*40):
+                        bind_setup(lane/'sample-setup.jsonl',series_source,'base-refusal','fixture')
+                        with self.assertRaisesRegex(ValueError,'base is unavailable',msg='series refuses an unavailable owner base'):
+                            with workspace(root,owner,series_source):pass
+                    with self.assertRaisesRegex(ValueError,'retained owner checkout',msg='series refuses a cold owner checkout'):
+                        with workspace(root,'missing-owner',series_source):pass
                 git('checkout','--force','--detach',source)
                 from types import SimpleNamespace
                 consumed = [0]

@@ -638,6 +638,11 @@ def delegate(root, step):
     return result['status']
 
 
+def series_count():
+    rows = tomllib.loads((Path(__file__).resolve().parent.parent/'docs/inputs/devperf-measurements.toml').read_text())['rows']
+    return next(row['samples'] for row in rows if row['name'] == 'comparison')
+
+
 def declare_run(root):
     """Record the invoker's plan before any gate work or outcome exists."""
     from datetime import datetime, timezone
@@ -661,17 +666,20 @@ def declare_run(root):
     declared = dict(plan=plan, entry=entry, at=datetime.now(timezone.utc).isoformat(), source=source, first_cache=first_cache, sample=sample)
     if sample == 'import-transition':
         from isolation import import_base
-        for key in ('PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_IMPORT_BASE', 'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE'):
+        for key in ('PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_IMPORT_BASE', 'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE', 'PN_GATE_SERIES_COUNT'):
             if not os.environ.get(key):
                 raise ValueError('series requires '+key)
         label, ordinal = os.environ['PN_GATE_SERIES'], os.environ['PN_GATE_ORDINAL']
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,127}', label) or not re.fullmatch(r'[1-9][0-9]*', ordinal):
             raise ValueError('invalid series label or ordinal')
+        count = os.environ['PN_GATE_SERIES_COUNT']
+        if not re.fullmatch(r'[1-9][0-9]*', count) or int(count) != series_count() or int(ordinal) > int(count):
+            raise ValueError('series count must match the declared comparison count and contain the ordinal')
         key, cache = os.environ['PN_GATE_SERIES_KEY'], os.environ['PN_GATE_SERIES_CACHE']
         if not re.fullmatch(r'[0-9a-f]{64}', key) or cache not in {'cold', 'warm'}:
             raise ValueError('invalid series configuration key or cache state')
         declared.update(series=label, ordinal=ordinal, base=import_base(root, source, os.environ['PN_IMPORT_BASE']),
-                        configuration_key=key, cache=cache)
+                        configuration_key=key, cache=cache, count=count)
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
     lane = root/'.lane'
     lane.mkdir(exist_ok=True)
@@ -688,9 +696,12 @@ def series_idle(root, boundary):
     """The host wrapper records account scope outside the build container."""
     identity = {key:os.environ[key] for key in ('PN_GATE_SERIES','PN_GATE_ORDINAL','PN_GATE_ENTRY')}
     processes = subprocess.run(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args='],capture_output=True,text=True,check=True)
-    containers = subprocess.run(['podman','ps','--format','json'],capture_output=True,text=True,check=True)
+    command = json.loads(os.environ.get('PN_GATE_CONTAINER_LIST', 'null'))
+    if not isinstance(command, list) or not command or any(not isinstance(x, str) or not x for x in command):
+        raise ValueError('PN_GATE_CONTAINER_LIST must be a nonempty JSON argv')
+    containers = subprocess.run(command,capture_output=True,text=True,check=True)
     record = dict(identity=identity, boundary=boundary, at=time.time(),
-                  processes=processes.stdout, containers=json.loads(containers.stdout), load=list(os.getloadavg()))
+                  processes=processes.stdout, container_command=command, containers=containers.stdout, load=list(os.getloadavg()))
     path = root/('.lane/gate-series-host-'+boundary+'.json')
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(record,sort_keys=True)+'\n')
@@ -718,7 +729,7 @@ def series_receipt(root, boundary):
     record = dict(declaration=declaration, boundary=boundary, run=os.environ['PN_BUILDGRAPH_RUN'],
         tree=subprocess.check_output(['git','rev-parse','HEAD^{tree}'], cwd=root, text=True).strip(),
         processes=observed(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args=']),
-        containers=observed(['podman','ps','--format','json']), load=list(os.getloadavg()))
+        load=list(os.getloadavg()))
     try:
         record['automatic_ports'] = Path('/proc/sys/net/ipv4/ip_local_port_range').read_text().strip()
     except OSError as error:
@@ -729,17 +740,87 @@ def series_receipt(root, boundary):
     if host_idle.get('identity') != identity or host_idle.get('boundary') != 'start':
         raise ValueError('series idle receipt belongs to another invocation')
     record['host_idle_start'] = host_idle
+    from harness import load
+    if reference_key(root, load()) != declaration['configuration_key']:
+        raise ValueError('series configuration key differs at start')
     if boundary == 'end':
         pending = json.loads((root/'.lane/gate-baseline.json').read_text())
         record['observed_cache'] = pending['cache']['state']
         record['observed_key'] = Path(pending['path']).parent.name
-        record['owners'] = [json.loads(line.removeprefix('ISOLATION-TRANSITION '))
-            for log in sorted((root/'.lane').glob('gate-*.log')) for line in log.read_text().splitlines()
-            if line.startswith('ISOLATION-TRANSITION ')]
+        record['owners'] = series_owners(root, declaration, record['run'])
+        record['whole'] = json.loads((root/'.lane/gate-wall.json').read_text())
+        record['status'] = 'complete'
+        if any(row['cold_target'] or row['layout_changed'] for row in record['owners']):
+            record['status'] = 'refused-owner-target'
+        if record['observed_cache'] != declaration['cache'] or record['observed_key'] != declaration['configuration_key']:
+            record['status'] = 'refused-identity'
     (root/('.lane/gate-series-'+boundary+'.json')).write_text(json.dumps(record, sort_keys=True)+'\n')
     print('GATE-SERIES '+json.dumps(record, sort_keys=True), flush=True)
-    if boundary == 'end' and (record['observed_cache'] != declaration['cache'] or record['observed_key'] != declaration['configuration_key']):
-        raise ValueError('series sample differs from declared configuration or cache state')
+    if boundary == 'end' and record['status'] != 'complete':
+        raise ValueError('series sample differs from declared configuration, cache or retained owner target')
+
+
+def series_owners(root, declaration, invocation):
+    """Only bound owner transitions of this invocation enter its sample."""
+    rows = []
+    for path in (root/'.lane').glob('gate-*-transitions.jsonl'):
+        binding = json.loads(path.with_suffix('.binding.json').read_text())
+        if binding.get('run') != invocation or binding.get('source') != declaration['source']:
+            continue
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            if any(row.get(key) != binding.get(key) for key in ('run','source','step')):
+                raise ValueError('foreign owner transition in bound receipt')
+            if row.get('base') != declaration['base']:
+                raise ValueError('owner transition differs from series base')
+            rows.append(row)
+    return rows
+
+
+def series_check(label, paths):
+    """Decide membership without changing a functional verdict or a reference."""
+    import statistics
+    records = [json.loads(path.read_text()) for path in paths]
+    if not records:
+        raise ValueError('series has no samples')
+    first = records[0]['declaration']
+    count = int(first['count'])
+    if count != series_count():
+        raise ValueError('series count differs from the declared comparison count')
+    ordinals, entries, pressures = set(), set(), []
+    for row in records:
+        declaration = row['declaration']
+        if declaration.get('series') != label or any(declaration.get(key) != first.get(key) for key in
+                ('base','source','configuration_key','cache','count')) or row.get('tree') != records[0].get('tree'):
+            raise ValueError('series samples disagree on identity')
+        ordinal = int(declaration['ordinal'])
+        if ordinal in ordinals or declaration['entry'] in entries or not 1 <= ordinal <= count:
+            raise ValueError('series ordinal or entry is duplicate or outside count')
+        ordinals.add(ordinal); entries.add(declaration['entry'])
+        if row.get('status') != 'complete' or row.get('observed_key') != declaration['configuration_key'] or row.get('observed_cache') != declaration['cache']:
+            raise ValueError('series sample is incomplete or refused')
+        identity = dict(PN_GATE_SERIES=label, PN_GATE_ORDINAL=declaration['ordinal'], PN_GATE_ENTRY=declaration['entry'])
+        for boundary in ('start','end'):
+            idle = row.get('host_idle_'+boundary, {})
+            if idle.get('identity') != identity or idle.get('boundary') != boundary:
+                raise ValueError('series requires both bound idle receipts')
+        if not row.get('owners') or any(owner.get('cold_target') is not False or owner.get('layout_changed') is not False
+                or owner.get('base') != declaration['base'] or owner.get('source') != declaration['source'] or owner.get('run') != row.get('run') for owner in row['owners']):
+            raise ValueError('series owner target is cold, swept, unobserved or foreign')
+        pressure = row.get('whole', {}).get('stall')
+        if not isinstance(pressure, (int,float)) or not math.isfinite(pressure) or not 0 <= pressure <= 1:
+            raise ValueError('series whole pressure is unavailable')
+        pressures.append(pressure)
+    if ordinals != set(range(1,count+1)):
+        raise ValueError('series ordinals are incomplete')
+    median = statistics.median(pressures)
+    multiple = 2.0  # Proposed series_pressure_multiple, confirmed by the series.
+    outliers = [row['declaration']['ordinal'] for row,pressure in zip(records,pressures) if pressure > median*multiple]
+    result = dict(series=label, outcome='repeat' if outliers else 'admitted', count=count,
+        pressures=pressures, median=median, pressure_multiple=multiple, multiple_status='proposal',
+        repeat_ordinals=outliers, ceiling=None if outliers else max(pressures))
+    print('GATE-SERIES-CHECK '+json.dumps(result,sort_keys=True),flush=True)
+    return 4 if outliers else 0
 
 
 def instruction_probe(root):
@@ -772,7 +853,11 @@ def measured_command(root, command):
             if result.returncode >= 0:
                 result = cancellable(command, reap_tree=True)
         else:
-            status = json.loads(receipt.read_text()).get('status')
+            try:
+                status = json.loads(receipt.read_text()).get('status')
+            except (OSError, ValueError, TypeError, AttributeError):
+                print('GATE-COUNTER-REFUSED step='+str(step)+' reason=malformed-workload-receipt',flush=True)
+                status = None
             result = subprocess.CompletedProcess(command, result.returncode if result.returncode < 0 else status if type(status) is int else 2)
     count = None
     if enabled and path.exists():
@@ -889,9 +974,7 @@ def prune_peer_archive(archive, ancestry, current_base_tree=None):
     print(f'GATE-PEER-PRUNE removed={removed} retained={len(kept)}', flush=True)
 
 
-def baseline_context(root, registry, policy=None):
-    """A retained target compares only the same runner configuration and lineage."""
-    selection_started = time.monotonic()
+def reference_identity(root, registry):
     from harness import CONFIGURATION
     from gate_resources import node_identity
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
@@ -905,6 +988,18 @@ def baseline_context(root, registry, policy=None):
             for path in (directory/'.cargo/config', directory/'.cargo/config.toml') if path.is_file()],
         cargo_home_config=[(name, path.read_text()) for name in ('config', 'config.toml')
             if (path := Path(os.environ.get('CARGO_HOME', str(Path.home()/'.cargo')))/name).is_file()])
+    return identity
+
+
+def reference_key(root, registry):
+    return hashlib.sha256(json.dumps(reference_identity(root, registry), sort_keys=True).encode()).hexdigest()
+
+
+def baseline_context(root, registry, policy=None):
+    """A retained target compares only the same runner configuration and lineage."""
+    selection_started = time.monotonic()
+    selection_cpu = [resource.getrusage(kind) for kind in (resource.RUSAGE_SELF,resource.RUSAGE_CHILDREN)]
+    identity = reference_identity(root, registry)
     key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
     directory = Path(os.environ['CARGO_TARGET_DIR'])/'gate-baselines'/key
     source = os.environ['PN_GATE_SOURCE']
@@ -1014,7 +1109,17 @@ def baseline_context(root, registry, policy=None):
         print('GATE-COMPARISON '+json.dumps(dict(reference=baseline['source'], intervening_commits_and_inputs=history.splitlines())), flush=True)
         baseline['selection_peers'] = [dict(value) for value, _ in eligible]
     context = Path(os.environ['CARGO_TARGET_DIR'])/'gate-step-context'/step_context_key(identity)
-    print('GATE-ARCHIVE '+json.dumps(dict(records=len(peers), selection_wall_s=time.monotonic()-selection_started, growth='retained-frontiers-per-landed-tree')), flush=True)
+    selection_used = [resource.getrusage(kind) for kind in (resource.RUSAGE_SELF,resource.RUSAGE_CHILDREN)]
+    cpu = sum(after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime for before,after in zip(selection_cpu,selection_used))
+    from devperf import budgets
+    warning = budgets(Path(__file__).resolve().parent.parent/'docs/inputs/devperf-budgets.toml')['whole-tree-build-graph']['budget_ms']/1000
+    obsolete = [entry for entry in directory.parent.iterdir() if entry.is_dir() and entry != directory] if directory.parent.exists() else []
+    print('GATE-ARCHIVE '+json.dumps(dict(records=len(peers), selection_wall_s=time.monotonic()-selection_started,
+        context_own_cpu_s=cpu, context_cpu_warning_s=warning, review_required=cpu>warning,
+        comparison='whole-baseline-context-own-cpu-against-whole-build-graph-warning',
+        obsolete_keys=len(obsolete), obsolete_records=sum(1 for entry in obsolete for _ in entry.rglob('*.json')),
+        obsolete_policy='retained-for-an-explicit-return-to-that-recipe; never-selected-under-current-key',
+        growth='retained-frontiers-per-landed-tree')), flush=True)
     return path, baseline, changed, context
 
 
@@ -1420,6 +1525,18 @@ def tier_wall_ownership(wall, intervals):
     return dict(step_wall_sum_s=total, step_wall_union_s=covered, unowned_wall_s=max(0.0,wall-covered))
 
 
+def largest_tier_gap(rows):
+    """Name the two tier steps bounding its largest uncovered interval."""
+    frontier = None
+    largest = dict(wall_s=0.0, after=None, before=None)
+    for name,start,end in sorted(rows,key=lambda row:(row[1],row[2],row[0])):
+        if frontier is not None and start-frontier[0] > largest['wall_s']:
+            largest = dict(wall_s=start-frontier[0],after=frontier[1],before=name)
+        if frontier is None or end > frontier[0]:
+            frontier = (end,name)
+    return largest
+
+
 def tier_summary(root, registry, worker_statuses):
     from devperf import budgets
     from gate_resources import cpu_from_log, raw_sample, joined, compact
@@ -1483,6 +1600,7 @@ def tier_summary(root, registry, worker_statuses):
         budget = registry.tiers[tier]['invocation_budget'] if tier != 'finalize' else None
         status = int(any(int(row[1]) or worker_statuses[row[0]] for row in selected_rows))
         measurement = joined(start, end, wall)
+        gap = largest_tier_gap([(row[0],float(row[2]),float(row[3])) for row in selected_rows])
         ownership = tier_wall_ownership(wall, [(float(row[2]),float(row[3])) for row in selected_rows])
         reports[tier] = dict(**ownership, wall=wall, started=start['epoch_seconds'], ended=end['epoch_seconds'], status=status,
             budget=budget, own_user_s=own[0], own_sys_s=own[1], steps=names, resources=measurement)
@@ -1498,7 +1616,8 @@ def tier_summary(root, registry, worker_statuses):
             isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target']) for value in isolated)
             step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
                 serialized_build=row[0] in policy['rebuild_steps'],
-                compiled=row[0] in cache.get('compiling_steps', []) or any(value.get('compiled') for value in isolated),
+                compiled=(True if row[0] in cache.get('compiling_steps', []) or any(value.get('compiled') for value in isolated) else
+                    False if isolated or (row[0] in ('test-build','clippy') and cache.get('state') in ('cold','warm')) or row[0] not in policy['rebuild_steps'] else None),
                 cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
                 layouts={value['owner']:value['layout'] for value in isolated},
                 partial=any(value.get('cold_target') or value.get('layout_changed') for value in isolated))
@@ -1569,7 +1688,7 @@ def tier_summary(root, registry, worker_statuses):
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} isolated_compiling_steps={json.dumps(isolated_compiling_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
+        print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} isolated_compiling_steps={json.dumps(isolated_compiling_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} largest_unowned_gap={json.dumps(gap,separators=(",",":"))} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
               f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_provisional={str(baseline.get("provisional", True)).lower() if baseline else "unavailable"} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} comparable_reason={reports[tier]['comparable_reason']} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
@@ -1784,6 +1903,10 @@ def main():
     sub.add_parser('gate')
     sub.add_parser('declare')
     sub.add_parser('instruction-probe')
+    sub.add_parser('series-key')
+    check_series = sub.add_parser('series-check')
+    check_series.add_argument('label')
+    check_series.add_argument('receipts', nargs='+', type=Path)
     counted = sub.add_parser('counter-work')
     counted.add_argument('receipt')
     counted.add_argument('command', nargs=argparse.REMAINDER)
@@ -1815,6 +1938,16 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'series-key':
+        from harness import load
+        print(reference_key(Path.cwd(), load()))
+        return 0
+    if args.action == 'series-check':
+        try:
+            return series_check(args.label, args.receipts)
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            print('GATE-SERIES-REFUSED '+str(error), flush=True)
+            return 4
     if args.action == 'declare':
         declare_run(Path.cwd())
         return 0
@@ -1822,8 +1955,12 @@ def main():
         series_idle(Path.cwd(), args.boundary)
         return 0
     if args.action == 'series-receipt':
-        series_receipt(Path.cwd(), args.boundary)
-        return 0
+        try:
+            series_receipt(Path.cwd(), args.boundary)
+            return 0
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            print('GATE-SERIES-REFUSED '+str(error), flush=True)
+            return 4
     if args.action == 'counter-work':
         return counter_work(Path(args.receipt), args.command)
     if args.action == 'instruction-probe':
