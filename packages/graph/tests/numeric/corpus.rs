@@ -1,4 +1,4 @@
-//! Reference figures produced by the paper's own build at network-v0.31.1.
+//! Retained exact rational reference figures identified by `NumberId` registry entries and this public fixture; attribution to the current reference build requires the external-exact join.
 //! (´[ROOT-rec:design:pending-reference-corpus]´)
 use super::NumberId;
 use nrz_cas::{Rational, limits::Budget};

@@ -1764,7 +1764,7 @@
       "kind": "policy",
       "label": "rem:network:durations-no-glyph",
       "label_source": "explicit",
-      "statement": "Publish duration policy, closure cause and asserted timestamp without inventing a formula-derived clock."
+      "statement": "Publish duration policy, closure cause and the host’s asserted timestamp. Check their mutual consistency with published duration bounds, without anchoring to an external clock."
     },
     {
       "chapter": "03 Network",
@@ -2699,7 +2699,7 @@
       "kind": "type",
       "label": "def:graph:act-payload-state",
       "label_source": "explicit",
-      "statement": "Distinguish full-empty, full and reduced payload states with one-way reduction."
+      "statement": "Distinguish full-empty, full and reduced with one-way reduction, wherever the content pair is held. An author-held pair is full; absence at the host is neither empty nor reduced. Availability belongs to an accepting carrier, not to Layer 1 when no layer carries the pair."
     },
     {
       "chapter": "04 Graph",
@@ -2754,7 +2754,7 @@
       "kind": "policy",
       "label": "rem:graph:act-payload-custody-phases",
       "label_source": "explicit",
-      "statement": "Change carriage responsibility across phases while retaining the same witness and structural record."
+      "statement": "Append custody and content carriage are independent. Centralized carriage retains and atomically removes the optional payload/content-nonce pair and its opening material; decentralized carriage retains only the witness at Layer 1. All four combinations preserve the same structural record and witness."
     },
     {
       "chapter": "04 Graph",
@@ -2765,7 +2765,7 @@
       "kind": "policy",
       "label": "rem:graph:erasure-floor",
       "label_source": "explicit",
-      "statement": "Retain concealing residue and do not promise erasure of other authors' quotations or proof of payload authorship. Concealment rests on private entropy the network cannot audit: the committer bears its quality, including the Actor for the proposal nonce; the centralized operator bears its own values and decentralized carriage requires constrained generation."
+      "statement": "Retain concealing residue without promising erasure of other authors’ copies or proof of payload authorship. The host owns commitment-salt quality in both carriage modes; the Actor or carrier owns content-nonce quality under its published generation rule. Private entropy is not established by inspecting the record."
     },
     {
       "chapter": "04 Graph",
@@ -4063,7 +4063,7 @@
       "kind": "type",
       "label": "def:graph:proposal-pre-commitment",
       "label_source": "explicit",
-      "statement": "Bind the actor proposal and requested projection states before host salts or ordering."
+      "statement": "Bind the Actor-chosen body and requested projection states before host salts or ordering, through independent content and dependency nonces and the three version-two pre-commitment tags. Disclose the dependency nonce with the dependency list; disclose the content nonce only with the optional content pair."
     },
     {
       "chapter": "04 Graph",
@@ -4074,7 +4074,7 @@
       "kind": "type",
       "label": "def:graph:verified-act",
       "label_source": "explicit",
-      "statement": "Represent the validated host-sealed header with separate commitment editions and no order fields."
+      "statement": "Use one submission procedure with or without the optional content pair. Act checks use the received content pre-digest and recomputed dependency pre-digest; carriage checks refuse carriage only. Commit content through its pre-digest and dependencies through their canonical encoding under version-two tags. The version-one seal does not attest carriage; a separate authenticated carriage result does."
     },
     {
       "chapter": "04 Graph",
@@ -4085,7 +4085,7 @@
       "kind": "invariant check",
       "label": "def:graph:approval-witness",
       "label_source": "explicit",
-      "statement": "Only the exact actor-approved verified act is eligible for candidate ordering."
+      "statement": "The Actor recomputes its content pre-digest, checks the content commitment over it and the dependency commitment over canonical dependencies, and approves the exact returned header and seal. Only that approved act is eligible for ordering."
     },
     {
       "chapter": "04 Graph",
@@ -4217,7 +4217,7 @@
       "kind": "type",
       "label": "def:graph:act-envelope",
       "label_source": "explicit",
-      "statement": "Publish the accepted act identifier, author, family, body, protocol references, causal parents, commitments, handshake, approval witness, finalization epoch and act time as an abstract envelope, with payload bytes, salts and dependency opening beside it and serialization left to deployment."
+      "statement": "Publish the accepted act identifier, author, family, body, protocol references, causal parents, commitments, handshake, approval witness, finalization epoch and act time as an abstract envelope, with the optional payload/content-nonce pair, salts and dependency opening beside it and serialization left to deployment."
     },
     {
       "chapter": "04 Graph",
@@ -8628,7 +8628,7 @@
       "kind": "none",
       "label": "rem:sorting:mc-estimator-semantics",
       "label_source": "explicit",
-      "statement": "Keep sum-of-path estimates distinct from maximum-path relevance."
+      "statement": "Estimate a declared finite-horizon sum of eligible path weights using importance-corrected independently sampled walks, not the max-product relevance score."
     },
     {
       "chapter": "7 Sorting",
@@ -8639,7 +8639,7 @@
       "kind": "none",
       "label": "alg:sorting:monte-carlo-sum-of-paths",
       "label_source": "explicit",
-      "statement": "Inventory the terminal random-walk estimator without adding Layer 1 sampling."
+      "statement": "Fix the graph, weights, eligible paths and finite horizon before sampling independent walks. Sum each eligible sampled prefix weight divided by its selection probability, including zero for unvisited targets, and average over samples."
     },
     {
       "chapter": "7 Sorting",
@@ -8650,7 +8650,7 @@
       "kind": "none",
       "label": "thm:sorting:monte-carlo-concentration",
       "label_source": "explicit",
-      "statement": "Inventory the claimed concentration bound under bounded independent samples."
+      "statement": "Establish a deterministic positive finite support bound independently of observed samples, positive selection probability for every positive-weight eligible path, and independent walks under one fixed stopped law before applying Hoeffding concentration. An observed maximum is not a support bound."
     },
     {
       "chapter": "7 Sorting",
@@ -8661,7 +8661,7 @@
       "kind": "none",
       "label": "cor:sorting:boundary-tightening",
       "label_source": "explicit",
-      "statement": "Inventory the stated entropy-dependent sampling bound."
+      "statement": "For a fixed sampling law, reducing a proved support bound tightens concentration. Changed transition probabilities require a new bound; neither the Boltzmann factor nor average path entropy alone establishes a smaller sample count."
     },
     {
       "chapter": "7 Sorting",
@@ -13578,7 +13578,7 @@
       "kind": "fixture",
       "label": "ver:membership:invitation-netting",
       "label_source": "explicit",
-      "statement": "Compare Invitation cancellation in the next epoch and in the same epoch under both dependency-compliant orders: the author’s bundle nets to zero, fails positivity and weighs home at coefficient zero. Check later positive re-establishment, unaffected independent authors and De-invite changing no standing quantity; every act remains in counts and debits."
+      "statement": "Compare Invitation cancellation in the next epoch and in the same epoch under both dependency-compliant orders: the author’s bundle nets to zero, fails positivity and weighs home at coefficient zero. Check later positive re-establishment, unaffected independent authors and De-invite making no outward allocation and leaving its author’s Invitation bundle untouched, with one debit, one count increment and coefficient-one self-retention; every act remains in counts and debits."
     },
     {
       "chapter": "F Verification",
@@ -17675,7 +17675,7 @@
       "kind": "policy",
       "label": "subsec:deployment:concealment-entropy",
       "label_source": "explicit",
-      "statement": "Declare sufficient concealment entropy and its custody in every phase: the centralized operator for its private commitment values, and a published constrained-generation rule for decentralized carriage. The Actor owns proposal-nonce entropy; the host receives it to verify P, checks format, length, freshness and non-reuse at append, and removes it with the payload. A low-entropy Actor nonce exposes that Actor alone. P is published without a host salt and binds the structural body and two projection pre-digests. Those pre-digests are not retained after reduction: the nonce’s entropy conceals payload and dependencies against joint search by any record holder, while host salts protect only C_Y and C_D."
+      "statement": "Assign content-nonce entropy to the Actor or carrier under a published generation rule, independently of the host’s commitment salts. The dependency list and its nonce are disclosed at submission. A sent content pair discloses its nonce to the host and path; an absent pair gives the host no content nonce. The carrier checks format, length, freshness and non-reuse and removes the nonce with payload. These are carriage duties, never act-acceptance conditions. Published P has no host salt; content concealment depends on the content nonce even for a holder of the disclosed dependency nonce."
     },
     {
       "chapter": "Appendix I — Deployment",
