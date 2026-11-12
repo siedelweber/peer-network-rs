@@ -874,7 +874,7 @@ def baseline_stall(candidate):
 def baseline_rank(candidate):
     """Warm evidence precedes cold or unclassified evidence; stall orders peers."""
     warm = candidate.get('cache', {}).get('state') == 'warm'
-    return (not warm, warm and candidate.get('provisional', True), baseline_stall(candidate))
+    return (not warm, False, baseline_stall(candidate))
 
 
 def baseline_replacement(candidate, previous):
@@ -883,12 +883,10 @@ def baseline_replacement(candidate, previous):
         return True, 'first-compatible-run-provisional'
     current = candidate.get('cache', {}).get('state', 'unknown')
     retained = previous.get('cache', {}).get('state', 'unknown')
-    if current == 'warm' and (retained != 'warm' or previous.get('provisional', True)):
-        return True, 'warm-replaces-cold-or-provisional'
+    if current == 'warm' and retained != 'warm':
+        return True, 'warm-replaces-cold-or-unknown'
     if retained == 'warm' and current != 'warm':
         return False, 'retained-warm-cache'
-    if current == retained == 'warm' and candidate.get('provisional', False) and not previous.get('provisional', True):
-        return False, 'retained-confirmed-warm-cache'
     if current == retained == 'warm':
         decision = warm_peer_replacement(candidate, previous)
         if decision is not None:
@@ -994,8 +992,18 @@ def retain_baseline(root):
         accepted = selected is candidate
         if not accepted:
             previous_best = selected
-        if candidate.get('cache', {}).get('state') == 'warm' and all(value.get('cache', {}).get('state') == 'warm' and not value.get('provisional', True) for value in prior):
+        if candidate.get('cache', {}).get('state') == 'warm' and previous_best.get('cache', {}).get('state') == 'warm':
             reason = 'warm-peer-set-selected' if accepted else 'warm-peer-set-retained'
+            if not accepted:
+                # Confirmation describes the pair, not which member won it.
+                for retained_path in [*path.parent.glob('*.json'), *(path.parent/'peers').glob('*.json')]:
+                    retained = json.loads(retained_path.read_text())
+                    if retained.get('provisional', True) and (retained.get('source'), retained.get('tree'), retained.get('whole')) == (previous_best.get('source'), previous_best.get('tree'), previous_best.get('whole')):
+                        retained['provisional'] = False
+                        temporary = retained_path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+                        temporary.write_text(json.dumps(retained, sort_keys=True)+'\n')
+                        temporary.replace(retained_path)
+                previous_best['provisional'] = False
     candidate_cache = candidate.get('cache', {}).get('state', 'unknown')
     retained_cache = previous_best.get('cache', {}).get('state', 'unknown') if previous_best else 'unavailable'
     if quiet_baseline(candidate) and candidate.get('tree'):

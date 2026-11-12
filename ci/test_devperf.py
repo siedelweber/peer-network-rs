@@ -809,15 +809,15 @@ wait
         self.assertEqual(overrun_class(*args, cache_state='warm'), 'load-unresolved')
         self.assertEqual(overrun_class(False,*args[1:], cache_state='cold'), 'within-budget')
         cold, warm = recorded('cold', .060), recorded('warm', .081)
-        self.assertEqual(baseline_replacement(warm, cold), (True, 'warm-replaces-cold-or-provisional'))
+        self.assertEqual(baseline_replacement(warm, cold), (True, 'warm-replaces-cold-or-unknown'))
         self.assertEqual(baseline_replacement(cold, warm), (False, 'retained-warm-cache'))
         self.assertEqual(baseline_replacement(recorded('warm', .05), warm), (True, 'no-higher-whole-gate-stall'))
         self.assertEqual(baseline_replacement(recorded('warm', .09), warm), (False, 'higher-whole-gate-stall'))
         self.assertEqual(baseline_replacement(warm, None), (True, 'first-compatible-run-provisional'))
-        self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (True, 'warm-replaces-cold-or-provisional'))
+        self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (False, 'higher-whole-gate-stall'))
         self.assertEqual(baseline_replacement(recorded('unknown', .001), warm), (False, 'retained-warm-cache'))
         self.assertLess(baseline_rank(warm), baseline_rank(cold))
-        self.assertLess(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
+        self.assertGreater(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
         slow, fast = recorded('warm', .102), recorded('warm', .147)
         for value, wall, cpu in ((slow,218.0,1177.5),(fast,204.7,1093.8)):
             value['whole'].update(wall=wall, comparable_cpu_s=cpu)
@@ -844,6 +844,25 @@ wait
             peers.append(value)
         for permutation in itertools.permutations(peers):
             self.assertIs(preferred_baseline(permutation), peers[0], 'the full cost frontier must precede stall, independently of enumeration')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'.lane').mkdir()
+            incumbent = dict(recorded('warm', .055, True), source='quiet', tree='quiet-tree',
+                             quiet_windows=windows(), load_unresolved_pressure_percent=10)
+            incumbent['whole'].update(wall=149.6, comparable_cpu_s=800)
+            incumbent['tiers'] = {'fast':dict(selected_cases=['same-case'])}
+            prior_path = root/'quiet-tree.json'; prior_path.write_text(json.dumps(incumbent))
+            candidate = copy.deepcopy(incumbent)
+            candidate.update(path=str(root/'loaded-tree.json'), source='loaded', tree='loaded-tree',
+                             previous_baseline_tree='quiet-tree', previous_peers=[incumbent])
+            candidate['whole'].update(stall=.256, wall=242.8, comparable_cpu_s=900)
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+            with patch('build_graph.evidence_statuses', return_value={}):
+                retain_baseline(root)
+            retained = json.loads(prior_path.read_text())
+            self.assertEqual(retained['source'], 'quiet', 'the quiet provisional warm peer must win')
+            self.assertFalse(retained['provisional'], 'the retained warm peer must be confirmed')
+            self.assertFalse((root/'loaded-tree.json').exists(), 'a loaded peer must not confirm itself by rank')
+            self.assertEqual(retained['whole'], incumbent['whole'], 'confirmation changes no measured value')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             incumbent = dict(peers[0],tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
@@ -1096,8 +1115,8 @@ wait
                     self.assertEqual(baseline_context(root, registry)[1]['source'], original)
                     self.assertTrue(other_path.exists())
                 import contextlib
-                # A quieter unknown or provisional predecessor cannot undo
-                # cache-aware selection in ancestry or among prior files.
+                # Unknown evidence cannot displace warmth; provisional warm
+                # evidence competes by the same pressure order as its peer.
                 for old_cache in ('unknown', 'warm'):
                     older=json.loads(quiet_bytes)
                     older.update(cache={'state':old_cache}, provisional=True)
@@ -1107,14 +1126,14 @@ wait
                     other_path.write_text(json.dumps(newer))
                     retained_bytes=other_path.read_bytes()
                     with patch.dict(os.environ, PN_IMPORT_BASE=other):
-                        self.assertEqual(baseline_context(root, registry)[1]['source'], other,
-                                         'lineage must prefer confirmed warm over quieter predecessor')
+                        self.assertEqual(baseline_context(root, registry)[1]['source'], original if old_cache == 'warm' else other,
+                                         'lineage must rank warm peers without a confirmation advantage')
                     candidate=dict(newer, whole={'node_scope':'node-wide','stall':.3})
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                     output=io.StringIO()
                     with contextlib.redirect_stdout(output): retain_baseline(root)
                     self.assertEqual(other_path.read_bytes(),retained_bytes,
-                                     'prior-file selection must retain confirmed warm before stall')
+                                     'a worse candidate must not replace the retained measurement')
                     self.assertIn('retained_provisional=false',output.getvalue())
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
