@@ -403,7 +403,7 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
                     for name in tiers:
@@ -453,14 +453,27 @@ wait
                     declare_run(root)
             for plan in ('one-run', 'warm-after-cold-first', 'refresh-first', 'refresh-second', 'warm-after-cold-second'):
                 output = io.StringIO()
-                with patch.dict(os.environ, PN_GATE_PLAN=plan, PN_GATE_FIRST_CACHE='cold'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')), redirect_stdout(output):
+                with patch.dict(os.environ, PN_GATE_PLAN=plan, PN_GATE_FIRST_CACHE='cold', PN_GATE_ENTRY='fixture:entry'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')), redirect_stdout(output):
                     declared_run = declare_run(root)
                 self.assertTrue(output.getvalue().startswith('GATE-DECLARED plan='+plan+' '))
                 self.assertEqual(json.loads((root/'.lane/gate-declaration.json').read_text()), declared_run)
             for cache in ('warm', 'unknown', 'unavailable'):
-                with patch.dict(os.environ, PN_GATE_PLAN='warm-after-cold-second', PN_GATE_FIRST_CACHE=cache), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with patch.dict(os.environ, PN_GATE_PLAN='warm-after-cold-second', PN_GATE_FIRST_CACHE=cache, PN_GATE_ENTRY='fixture:entry'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                     with self.assertRaisesRegex(ValueError, 'first observed cache to be cold'):
                         declare_run(root)
+            for entry_id in ('', 'invalid space', 'a'*129):
+                with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY=entry_id), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                    with self.assertRaisesRegex(ValueError, 'PN_GATE_ENTRY'):
+                        declare_run(root)
+            for first_cache in ('unknown', 'unavailable', 'invented'):
+                with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE=first_cache), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                    with self.assertRaisesRegex(ValueError, 'first cache receipt|unknown form'):
+                        declare_run(root)
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='invented'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with self.assertRaisesRegex(ValueError, 'unknown form'):
+                    declare_run(root)
+            with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                self.assertEqual(declare_run(root)['entry'], 'fixture:entry')
             entry = (Path(__file__).parent/'gate.sh').read_text()
             self.assertLess(entry.index('build_graph.py declare'), entry.index('TMPDIR'))
         campaign = dict(label='campaign:devperf:whole-gate-mixed', warmup_commit='a'*40, source_commit='b'*40,

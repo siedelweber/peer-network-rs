@@ -640,11 +640,18 @@ def declare_run(root):
     plan = os.environ.get('PN_GATE_PLAN')
     if plan not in {'one-run', 'warm-after-cold-first', 'warm-after-cold-second', 'refresh-first', 'refresh-second'}:
         raise ValueError('PN_GATE_PLAN must declare one-run, warm-after-cold-first/second or refresh-first/second')
+    entry = os.environ.get('PN_GATE_ENTRY', '')
+    if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,127}', entry):
+        raise ValueError('PN_GATE_ENTRY must name the recorded ledger entry')
     first_cache = os.environ.get('PN_GATE_FIRST_CACHE', 'unavailable')
+    if first_cache not in {'cold', 'warm', 'unknown', 'unavailable'}:
+        raise ValueError('PN_GATE_FIRST_CACHE has an unknown form')
+    if plan == 'refresh-second' and first_cache not in {'cold', 'warm'}:
+        raise ValueError('refresh-second requires a complete first cache receipt')
     if plan == 'warm-after-cold-second' and first_cache != 'cold':
         raise ValueError('warm-after-cold-second requires the first observed cache to be cold')
     source = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
-    declared = dict(plan=plan, at=datetime.now(timezone.utc).isoformat(), source=source, first_cache=first_cache)
+    declared = dict(plan=plan, entry=entry, at=datetime.now(timezone.utc).isoformat(), source=source, first_cache=first_cache)
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
     lane = root/'.lane'
     lane.mkdir(exist_ok=True)
@@ -1128,7 +1135,6 @@ def tier_summary(root, registry, worker_statuses):
     if Counter(name for group in groups.values() for name in group) != Counter(row[0] for row in fields):
         raise ValueError('tier step partition differs from the exact roster')
     reports = {}
-    gate_start = raw_sample(root/'.lane/gate-resource-start.raw')
     selected_cases = {name: [] for name in groups}
     case_costs = {name: {} for name in groups}
     case_steps = {name: {} for name in groups}
@@ -1151,9 +1157,9 @@ def tier_summary(root, registry, worker_statuses):
         selected_rows = [row for row in fields if row[0] in names]
         first = min(selected_rows, key=lambda row: float(row[2]))
         last = max(selected_rows, key=lambda row: float(row[3]))
-        start = gate_start if tier == 'fast' else raw_sample(root/f'.lane/gate-{first[0]}-resource-start.raw')
+        start = raw_sample(root/f'.lane/gate-{first[0]}-resource-start.raw')
         end = raw_sample(root/f'.lane/gate-{last[0]}-resource-end.raw')
-        wall = float(last[3])-(gate_start['epoch_seconds'] if tier == 'fast' else float(first[2]))
+        wall = float(last[3])-float(first[2])
         values = [cpu_from_log((root/f'.lane/gate-{row[0]}.log').read_text().splitlines()) for row in selected_rows]
         own = [sum(pair[i] for pair in values) if all(pair[i] is not None for pair in values) else None for i in (0,1)]
         budget = registry.tiers[tier]['invocation_budget'] if tier != 'finalize' else None
