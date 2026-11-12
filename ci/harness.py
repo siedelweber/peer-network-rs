@@ -16,7 +16,7 @@ CONFIGURATION = 'foundation-fast/gate/default-features+pn-epoch/test-support+pn-
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def build_cache_state(root, source, invocation):
+def primary_cache_state(root, source, invocation):
     """Classify the primary no-run build from its invocation-bound Cargo receipt."""
     import re
     run = root/'.lane/tier-tests'
@@ -34,6 +34,28 @@ def build_cache_state(root, source, invocation):
         return dict(state='cold' if compiled else 'warm', compiled=compiled)
     except (OSError, ValueError, KeyError, TypeError):
         return dict(state='unknown', compiled=None)
+
+
+def build_cache_state(root, source, invocation):
+    """One cache state accounts both invocation-bound compiler configurations."""
+    primary = primary_cache_state(root, source, invocation)
+    lint = None
+    step = None
+    try:
+        receipt = json.loads((root/'.lane/lint-pass.json').read_text())
+        artifacts = receipt['artifacts']
+        if (receipt['identity'][:3] == [invocation, source, str(root.resolve())]
+                and invocation and receipt['status'] == 0 and artifacts
+                and all(type(row['fresh']) is bool for row in artifacts)):
+            lint = [row['target']['name'] for row in artifacts if not row['fresh']]
+            step = receipt['step']
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    compiled = dict(primary=primary['compiled'], lint=lint)
+    state = ('cold' if any(compiled.values()) else
+             'warm' if all(value is not None for value in compiled.values()) else 'unknown')
+    return dict(state=state, compiled=compiled,
+                compiling_steps=(['test-build'] if primary['compiled'] else []) + ([step] if lint and step else []))
 
 
 def source_id():

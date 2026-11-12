@@ -501,7 +501,10 @@ def run_clippy(root, advisory=False):
                 # Replayed diagnostics must not replay compilation receipts.
                 diagnostics = ''.join(line+'\n' for line in result.stdout.splitlines()
                                       if json.loads(line).get('reason') == 'compiler-message')
-                receipt.write_text(json.dumps(dict(identity=identity, status=result.returncode, stdout=diagnostics)))
+                artifacts = [json.loads(line) for line in result.stdout.splitlines()
+                             if json.loads(line).get('reason') == 'compiler-artifact']
+                receipt.write_text(json.dumps(dict(identity=identity, status=result.returncode, stdout=diagnostics,
+                                                   artifacts=artifacts, step=os.environ.get('PN_GATE_STEP'))))
         print(f'LINT-TARGET bytes={allocated([target])} scope=shared-profile-ceiling path={target}')
     pathlib.Path(".lane/" + ("nursery" if advisory else "clippy") + "-diagnostics.jsonl").write_text(result.stdout)
     count = 0

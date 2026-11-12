@@ -697,7 +697,7 @@ def baseline_context(root, registry, policy=None):
     from gate_resources import node_identity
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
     identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers, node=node_identity(),
-        accounting='own-cpu-minus-build-and-isolation-setup/producing-step/v1',
+        accounting='own-cpu-minus-build-and-isolation-setup/producing-step/cache-union-v2',
         profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
         toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
         runtime=dict(python=sys.version, machine=os.uname().machine, flags=os.environ.get('RUSTFLAGS'),

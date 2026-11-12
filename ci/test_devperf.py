@@ -833,6 +833,9 @@ wait
             manifest = dict(source='source', configuration=CONFIGURATION, run='invocation',
                             records=[dict(operation='build', outcome='exit:0')])
             (run/'manifest.json').write_text(json.dumps(manifest))
+            receipt = dict(identity=['invocation', 'source', str(root.resolve()), ['cargo']], status=0,
+                           artifacts=[dict(fresh=True, target=dict(name='example'))], step='clippy')
+            (root/'.lane/lint-pass.json').write_text(json.dumps(receipt))
             for log, expected in [('   Compiling example v1.0\n    Finished `gate` profile [optimized]\n', 'cold'),
                                   ('    Finished `gate` profile [optimized]\n', 'warm'),
                                   (chr(27)+'[32m    Finished `gate` profile [optimized]'+chr(27)+'[0m\n', 'warm'), ('', 'unknown')]:
@@ -840,6 +843,16 @@ wait
                 self.assertEqual(build_cache_state(root, 'source', 'invocation')['state'], expected)
                 self.assertEqual(build_cache_state(root, 'other', 'invocation')['state'], 'unknown')
                 self.assertEqual(build_cache_state(root, 'source', 'other')['state'], 'unknown')
+            (run/'build.stderr').write_text('    Finished `gate` profile [optimized]\n')
+            receipt['artifacts'][0]['fresh'] = False
+            (root/'.lane/lint-pass.json').write_text(json.dumps(receipt))
+            cache = build_cache_state(root, 'source', 'invocation')
+            self.assertEqual(cache['state'], 'cold', 'a rebuilt lint target is cold even when primary artifacts are fresh')
+            self.assertEqual(cache['compiled'], dict(primary=[], lint=['example']))
+            self.assertEqual(cache['compiling_steps'], ['clippy'])
+            (root/'.lane/lint-pass.json').unlink()
+            self.assertEqual(build_cache_state(root, 'source', 'invocation')['state'], 'unknown')
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 1\n')
