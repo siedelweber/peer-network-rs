@@ -296,7 +296,7 @@ name = "8-i"
 category = "hold"
 owner = "lane/design"
 scope = "node API"
-evidence = "reviewed SDL/register/introspection equality, native exact scalars, measured finite limits, HTTPS trust boundary, independent messages and historical package reads"
+evidence = "reviewed SDL/register/introspection equality, native exact scalars, measured finite limits, direct-listener contract and its stated path cost, independent messages and historical package reads"
 hold = "open:design:api-evidence"
 
 [[rows]]
