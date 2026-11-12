@@ -155,9 +155,22 @@ class Performance(unittest.TestCase):
         import fcntl
         import multiprocessing
         import signal
+        import subprocess
         import sys
         from contextlib import redirect_stdout, redirect_stderr
         from isolation import gate_target
+        root = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as target:
+            environment = dict(os.environ, CARGO_TARGET_DIR=target, TMPDIR=str(Path(target)/'absent'))
+            environment.pop('PN_GATE_LOCK_FD', None)
+            environment.pop('PN_GATE_LOCK_TOKEN', None)
+            direct = subprocess.run(['bash', 'ci/gate.sh', '--gate-target-locked'], cwd=root,
+                                    env=environment, capture_output=True, text=True)
+            self.assertEqual(direct.returncode, 2)
+            self.assertIn('requires the target supervisor token and held lock', direct.stderr)
+            with patch.dict(os.environ, environment, clear=True):
+                self.assertEqual(gate_target([sys.executable, '-B', 'ci/isolation.py', 'locked-entry']), 0,
+                                 'the supervisor must admit its own locked entry')
         with tempfile.TemporaryDirectory() as directory:
             command = 'sleep 30 >/dev/null 2>&1 & echo $! > "$1"\nprintf "locked\\n"\nread -r release\n'
             pidfile = Path(directory)/'descendant'

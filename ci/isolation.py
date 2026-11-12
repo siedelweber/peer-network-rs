@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 import re
 import resource
+import secrets
+import stat
 import shlex
 import shutil
 import subprocess
@@ -83,8 +85,41 @@ def gate_target(command):
         print(f'GATE-TARGET-LOCK wait_s={time.monotonic()-started:.6f} path={target}', flush=True)
         # The gate owns adapter escalation and service-stop deadlines. Killing
         # it here would release exclusion before its EXIT cleanup has finished.
-        status = cancellable(command, kill_after=None, close_fds=True).returncode
-        return 128-status if status < 0 else status
+        read_end, write_end = os.pipe()
+        token = secrets.token_hex(32)
+        try:
+            os.write(write_end, token.encode())
+        finally:
+            os.close(write_end)
+        try:
+            status = cancellable(command, kill_after=None, close_fds=True, pass_fds=(read_end,),
+                                 env=os.environ | {'PN_GATE_LOCK_FD':str(read_end), 'PN_GATE_LOCK_TOKEN':token}).returncode
+            return 128-status if status < 0 else status
+        finally:
+            os.close(read_end)
+
+
+def locked_entry():
+    """Consume the supervisor's pipe token and verify exclusion before re-entry."""
+    try:
+        descriptor = int(os.environ['PN_GATE_LOCK_FD'])
+        token = os.environ['PN_GATE_LOCK_TOKEN']
+        if not stat.S_ISFIFO(os.fstat(descriptor).st_mode) or len(token) != 64:
+            raise ValueError('invalid token channel')
+        supplied = os.read(descriptor, 65)
+        os.close(descriptor)
+        if not secrets.compare_digest(supplied, token.encode()):
+            raise ValueError('token mismatch or already consumed')
+        target = Path(os.environ.get('CARGO_TARGET_DIR', str(Path.cwd()/'target')))
+        with (target/'.gate-target.lock').open('r') as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return
+        raise ValueError('target lock is not held')
+    except (KeyError, OSError, ValueError) as error:
+        raise ValueError('locked gate re-entry requires the target supervisor token and held lock') from error
+
 
 
 def cache_policy(root):
@@ -349,7 +384,10 @@ def built_executable(output):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 2 and sys.argv[1] == 'gate-target':
+    if sys.argv[1:] == ['locked-entry']:
+        locked_entry()
+        raise SystemExit(0)
+    elif len(sys.argv) > 2 and sys.argv[1] == 'gate-target':
         raise SystemExit(gate_target(sys.argv[2:]))
     if len(sys.argv) == 2 and sys.argv[1] in {'retention', 'target-sizes'}:
         if sys.argv[1] == 'target-sizes':

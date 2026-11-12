@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Run every foundation check and report one final verdict.
 set -u
-if [ "${1:-}" != --gate-target-locked ]; then
+if [ "${1:-}" = --gate-target-locked ]; then
+    python3 -B ci/isolation.py locked-entry || exit 2
+    unset PN_GATE_LOCK_FD PN_GATE_LOCK_TOKEN
+else
     python3 -B ci/build_graph.py declare || exit 2
 fi
 if [ -z "${TMPDIR:-}" ] || [ ! -d "$TMPDIR" ]; then
