@@ -33239,6 +33239,10 @@
         {
           "clause": "Conformance reliance: Proposal hiding depends on actual Actor nonce entropy and private handling.",
           "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "clause": "Conformance reliance: The proposed content hiding argument needs the Actor's actual independent private entropy and custody.",
+          "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
       "record_granular": 0,

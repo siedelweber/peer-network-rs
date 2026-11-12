@@ -449,6 +449,7 @@
 | ``ROOT::amend:identity:act-proposal-admission`` | ``case:deployment:concealment-entropy-client-generated`` | case:deployment:concealment-entropy-client-generated |
 | ``ROOT::open:design:cross-build-replay`` | ``amend:testing:standing-work-execution`` | amend:testing:standing-work-execution |
 | ``ROOT::open:design:verification-canonical-amendment`` | ``amend:testing:canonical-replay-verification`` | amend:testing:canonical-replay-verification |
+| ``ROOT::open:identity:optional-act-carriage`` | ``case:deployment:concealment-entropy-client-generated`` | case:deployment:concealment-entropy-client-generated |
 | ``input:org.peer-network.design.inventory:rem:frontiers:priority`` | ``amend:testing:standing-work-envelopes`` | amend:testing:standing-work-envelopes |
 | ``input:org.peer-network.design.inventory:rem:frontiers:priority`` | ``cond:deployment:boundary-search-evidence`` | cond:deployment:boundary-search-evidence |
 | ``input:org.peer-network.host.profile:comparison-resources`` | ``amend:testing:standing-work-envelopes`` | amend:testing:standing-work-envelopes |

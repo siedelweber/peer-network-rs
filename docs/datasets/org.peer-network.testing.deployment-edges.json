@@ -469,6 +469,13 @@
       "target": "ROOT::amend:identity:authentication-recipe-gate"
     },
     {
+      "conditional_on": "case:deployment:concealment-entropy-client-generated",
+      "reason": "The proposed content hiding argument needs the Actor's actual independent private entropy and custody.",
+      "relation": "relies",
+      "source": "ROOT::open:identity:optional-act-carriage",
+      "target": "case:deployment:concealment-entropy-client-generated"
+    },
+    {
       "conditional_on": "",
       "reason": "This proposal identifies the published custody duties it would amend, without claiming actual entropy or concealment.",
       "relation": "realizes",
