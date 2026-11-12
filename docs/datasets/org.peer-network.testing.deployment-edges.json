@@ -57,6 +57,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "RECORDS::def:acts:authentication-disclosure",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The selected constants edition is resolved from its published identity and effective boundary.",
       "relation": "realizes",
       "source": "RECORDS::def:declarations:constants-edition",
@@ -68,6 +75,13 @@
       "relation": "realizes",
       "source": "RECORDS::def:numerics:solve-records",
       "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::alg:design:authentication-handoff",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
@@ -89,6 +103,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:crypto:authentication-entry",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:decomposition:act-profile",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
@@ -203,22 +224,29 @@
       "target": "ROOT::amend:identity:act-concealment"
     },
     {
+      "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:act-concealment",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
       "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+      "reason": "Content hiding depends on actual client entropy and private custody.",
       "relation": "relies",
       "source": "ROOT::amend:identity:act-concealment",
       "target": "case:deployment:concealment-entropy-client-generated"
     },
     {
       "conditional_on": "case:deployment:concealment-entropy-operator-generated",
-      "reason": "The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+      "reason": "Salt hiding depends on actual host entropy and custody.",
       "relation": "relies",
       "source": "ROOT::amend:identity:act-concealment",
       "target": "case:deployment:concealment-entropy-operator-generated"
     },
     {
       "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+      "reason": "Private entropy and custody are premises, not consequences of format checks.",
       "relation": "relies",
       "source": "ROOT::amend:identity:act-concealment",
       "target": "subsec:deployment:concealment-entropy"
@@ -250,6 +278,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-proposal-admission",
       "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:act-proposal-admission",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "case:deployment:concealment-entropy-client-generated",
@@ -313,6 +348,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:proposal-signature",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:proposal-signature",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
@@ -407,6 +449,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::def:identity:verified-header-name",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "Missing required disclosures are detectable publication failures; their external acquisition truth is not proved.",
       "relation": "realizes",
       "source": "ROOT::model:design:burn",
@@ -428,31 +477,17 @@
     },
     {
       "conditional_on": "",
-      "reason": "The hold names missing carriage and custody decisions, without claiming actual entropy or concealment.",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
       "relation": "realizes",
-      "source": "ROOT::open:design:proposal-carriage",
-      "target": "ROOT::amend:identity:act-concealment"
-    },
-    {
-      "conditional_on": "",
-      "reason": "This hold keeps the realization gated independently of the paper answer.",
-      "relation": "realizes",
-      "source": "ROOT::open:design:proposal-carriage",
+      "source": "ROOT::open:design:dependency-opening-recipe",
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
-      "reason": "Optional centralized carriage remains a separate paper hold.",
+      "reason": "This route retains the recipe and coordinated implementation hold, not its entropy premise.",
       "relation": "realizes",
       "source": "ROOT::open:design:proposal-carriage",
-      "target": "ROOT::open:identity:optional-act-carriage"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "The hold identifies the tagged host nonce-custody duty and claims no entropy or concealment evidence.",
-      "relation": "relies",
-      "source": "ROOT::open:design:proposal-carriage",
-      "target": "subsec:deployment:concealment-entropy"
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "amend:testing:canonical-replay-verification",
@@ -490,39 +525,18 @@
       "target": "ROOT::amend:identity:authentication-recipe-gate"
     },
     {
-      "conditional_on": "",
-      "reason": "This selects a successor construction for admission, not evidence of entropy or implemented custody.",
-      "relation": "realizes",
-      "source": "ROOT::open:identity:act-realization-admission",
-      "target": "ROOT::amend:identity:act-concealment"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "The hiding argument needs actual independent Actor entropy and private custody.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:act-realization-admission",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
       "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "The tagged custody baseline is not a realization claim for the altered profile.",
+      "reason": "Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
       "relation": "relies",
       "source": "ROOT::open:identity:act-realization-admission",
       "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
-      "reason": "This question preserves the independent identity admission hold without claiming its entropy premise.",
+      "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::open:identity:optional-act-carriage",
       "target": "ROOT::open:identity:act-realization-admission"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "The host receives, checks and custodies the nonce with the payload.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:optional-act-carriage",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",

@@ -4858,12 +4858,7 @@
       "holds": [],
       "kind": "type",
       "label": "def:graph:act-payload-projection",
-      "portions": [
-        {
-          "clause": "Premise only: The aggregate per-act payload bound assumes a content opening.",
-          "record": "ROOT::open:identity:optional-act-carriage"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4882,12 +4877,7 @@
       "holds": [],
       "kind": "invariant check",
       "label": "post:graph:separable-act-projections",
-      "portions": [
-        {
-          "clause": "Premise only: Binding and concealment survive removal.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4908,7 +4898,7 @@
       "label": "def:graph:act-payload-state",
       "portions": [
         {
-          "clause": "Premise only: Full requires bytes and private value present, so a carrierless full state cannot be assumed.",
+          "clause": "Premise only: A pair held only by its author is full; availability belongs to an accepting carrier.",
           "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
@@ -4923,19 +4913,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "prop:graph:removable-projection-invariance",
-      "portions": [
-        {
-          "clause": "Premise only: No Layer 1 formula reads carriage.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4997,24 +4979,28 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::open:design:proposal-carriage"
+        }
       ],
-      "holds": [],
       "kind": "policy",
       "label": "rem:graph:act-payload-custody-phases",
       "portions": [
         {
-          "clause": "Premise only: Centralized Layer 1 carries payload and salt.",
+          "clause": "Premise only: Centralized append permits decentralized carriage.",
           "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:design:proposal-carriage"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -5025,16 +5011,7 @@
       "holds": [],
       "kind": "policy",
       "label": "rem:graph:erasure-floor",
-      "portions": [
-        {
-          "clause": "Premise only: Removal cannot erase recipients' copies or replace an entropy obligation.",
-          "record": "ROOT::open:design:proposal-carriage"
-        },
-        {
-          "clause": "Premise only: Prior copies and private entropy remain limits.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -7003,12 +6980,7 @@
       ],
       "kind": "invariant check",
       "label": "def:graph:act-dependency-tombstone",
-      "portions": [
-        {
-          "clause": "Premise only: Removal never rewrites the structural record.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -7060,7 +7032,7 @@
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
-          "clause": "Premise only: The four constructions are a reference realization, not mandatory cryptographic bytes.",
+          "clause": "Premise only: The reference permits deployment encodings satisfying the seven requirements.",
           "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
@@ -7096,14 +7068,6 @@
         {
           "clause": "Premise only: the proposal commits its Actor-chosen body before host fields",
           "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Premise only: The tagged construction is a reference realization, not mandatory deployment bytes.",
-          "record": "ROOT::open:design:proposal-carriage"
-        },
-        {
-          "clause": "Premise only: The tagged construction supplies the reference comparison.",
-          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 1,
@@ -7120,7 +7084,8 @@
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission",
-        "ROOT::amend:identity:proposal-signature"
+        "ROOT::amend:identity:proposal-signature",
+        "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
       "status": "designed",
@@ -7146,18 +7111,18 @@
         {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::open:design:proposal-carriage"
         }
       ],
       "kind": "type",
       "label": "def:graph:verified-act",
       "portions": [
         {
-          "clause": "Premise only: Tagged host checks require the received content opening.",
-          "record": "ROOT::open:design:proposal-carriage"
-        },
-        {
-          "clause": "Premise only: Formation checks remain despite the different commitment realization.",
-          "record": "ROOT::open:identity:act-realization-admission"
+          "clause": "Premise only: Act acceptance is independent of optional content carriage.",
+          "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
       "record_granular": 1,
@@ -7174,9 +7139,10 @@
         "ROOT::alg:design:formation",
         "ROOT::amend:decomposition:act-profile",
         "ROOT::amend:design:publication-field-inventory",
-        "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission",
-        "ROOT::def:identity:verified-header-name"
+        "ROOT::def:identity:verified-header-name",
+        "ROOT::open:design:proposal-carriage",
+        "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
       "status": "designed",
@@ -7207,10 +7173,6 @@
         {
           "clause": "Premise only: approval binds one realization but promises no final-set membership",
           "record": "ROOT::amend:harness:actor-retry-proposal"
-        },
-        {
-          "clause": "Premise only: Approval binds the exact finalizable parent and both legs.",
-          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 1,
@@ -7224,7 +7186,8 @@
       "records": [
         "RECORDS::def:acts:authentication-disclosure",
         "ROOT::alg:design:authentication-handoff",
-        "ROOT::amend:design:publication-field-inventory"
+        "ROOT::amend:design:publication-field-inventory",
+        "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
       "status": "designed",
@@ -7241,6 +7204,18 @@
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::alg:design:formation"
+        },
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:design:dependency-opening-recipe",
+          "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::open:design:dependency-opening-recipe"
         }
       ],
       "kind": "certificate",
@@ -7249,17 +7224,15 @@
         {
           "clause": "Premise only: the named proof opens a dependency projection and proves a placement violation",
           "record": "ROOT::amend:identity:act-stops"
-        },
-        {
-          "clause": "Premise only: Public opening evidence establishes dependency violations.",
-          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "ROOT::alg:design:formation",
-        "ROOT::amend:decomposition:act-profile"
+        "ROOT::amend:decomposition:act-profile",
+        "ROOT::open:design:dependency-opening-recipe",
+        "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
       "status": "designed",
@@ -7288,12 +7261,7 @@
       ],
       "kind": "policy",
       "label": "post:graph:ordering-accountability",
-      "portions": [
-        {
-          "clause": "Premise only: Finalization attests dependency compliance and is not reversed by proof.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 1,
       "record_routes": [
         {
@@ -7333,12 +7301,7 @@
       ],
       "kind": "policy",
       "label": "post:graph:act-authentication-requirements",
-      "portions": [
-        {
-          "clause": "Premise only: All seven properties remain required.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 1,
       "record_routes": [
         {
@@ -33219,7 +33182,7 @@
       "label": "subsec:deployment:concealment-entropy",
       "portions": [
         {
-          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "clause": "Conformance reliance: Private entropy and custody are premises, not consequences of format checks.",
           "record": "ROOT::amend:identity:act-concealment"
         },
         {
@@ -33231,16 +33194,8 @@
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
-          "clause": "Conformance reliance: The hold identifies the tagged host nonce-custody duty and claims no entropy or concealment evidence.",
-          "record": "ROOT::open:design:proposal-carriage"
-        },
-        {
-          "clause": "Conformance reliance: The tagged custody baseline is not a realization claim for the altered profile.",
+          "clause": "Conformance reliance: Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
           "record": "ROOT::open:identity:act-realization-admission"
-        },
-        {
-          "clause": "Conformance reliance: The host receives, checks and custodies the nonce with the payload.",
-          "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
       "record_granular": 0,
@@ -33264,7 +33219,7 @@
       "label": "case:deployment:concealment-entropy-operator-generated",
       "portions": [
         {
-          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "clause": "Conformance reliance: Salt hiding depends on actual host entropy and custody.",
           "record": "ROOT::amend:identity:act-concealment"
         },
         {
@@ -33291,16 +33246,12 @@
       "label": "case:deployment:concealment-entropy-client-generated",
       "portions": [
         {
-          "clause": "Conformance reliance: The computational hiding assertion depends on actual private entropy and custody, not merely the published nonce and salt formats.",
+          "clause": "Conformance reliance: Content hiding depends on actual client entropy and private custody.",
           "record": "ROOT::amend:identity:act-concealment"
         },
         {
           "clause": "Conformance reliance: Proposal hiding depends on actual Actor nonce entropy and private handling.",
           "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Conformance reliance: The hiding argument needs actual independent Actor entropy and private custody.",
-          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 0,
@@ -36085,10 +36036,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "74",
+          "exact": "72",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "74",
+          "num": "72",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36099,12 +36050,12 @@
           "exact_digits": 32
         }
       },
-      "total": 74
+      "total": 72
     },
     {
       "category": "total",
       "designed": 408,
-      "held": 56,
+      "held": 57,
       "name": "implementation",
       "number_forms": {
         "designed": {
@@ -36116,10 +36067,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "56",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36156,10 +36107,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "857",
+          "exact": "856",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "857",
+          "num": "856",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36198,7 +36149,7 @@
       "record_granular": 32,
       "tentative": 7,
       "total": 1356,
-      "unassigned": 857
+      "unassigned": 856
     },
     {
       "category": "total",
@@ -36599,7 +36550,7 @@
     {
       "category": "crate",
       "designed": 49,
-      "held": 16,
+      "held": 17,
       "name": "pn-host",
       "number_forms": {
         "designed": {
@@ -36611,10 +36562,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "16",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36651,10 +36602,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "96",
+          "exact": "95",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "96",
+          "num": "95",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36693,7 +36644,7 @@
       "record_granular": 2,
       "tentative": 1,
       "total": 166,
-      "unassigned": 96
+      "unassigned": 95
     },
     {
       "category": "crate",
@@ -37787,7 +37738,7 @@
     {
       "category": "kind",
       "designed": 55,
-      "held": 16,
+      "held": 17,
       "name": "policy",
       "number_forms": {
         "designed": {
@@ -37799,10 +37750,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "16",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37839,10 +37790,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "191",
+          "exact": "190",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "191",
+          "num": "190",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37881,7 +37832,7 @@
       "record_granular": 4,
       "tentative": 5,
       "total": 265,
-      "unassigned": 191
+      "unassigned": 190
     },
     {
       "category": "kind",
@@ -39173,7 +39124,7 @@
     {
       "category": "bite",
       "designed": 285,
-      "held": 18,
+      "held": 19,
       "name": "unlinked",
       "number_forms": {
         "designed": {
@@ -39185,10 +39136,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "18",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39225,10 +39176,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 159",
+          "exact": "1 158",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 159",
+          "num": "1 158",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39267,7 +39218,7 @@
       "record_granular": 21,
       "tentative": 13,
       "total": 1484,
-      "unassigned": 1159
+      "unassigned": 1158
     },
     {
       "category": "classification-identities",
@@ -39836,14 +39787,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 202,
+      "exact_citing": 204,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "202",
+          "exact": "204",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "202",
+          "num": "204",
           "num_exact": true,
           "num_relation": "="
         },
