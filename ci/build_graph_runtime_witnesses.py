@@ -320,6 +320,7 @@ def interrupted_gate(case, repository):
                  PN_HOST_TEST_ROOT=str(root/'.lane/host'),PN_WALLET_TEST_ROOT=str(root/'.lane/wallet'))
         graph_tree(case,root,[('blocked','python3 -B wait.py')],set(),checker,env,['wait.py'])
         shutil.copyfile(checker,root/'ci/build_graph.py')
+        shutil.copyfile(repository/'ci/isolation.py',root/'ci/isolation.py')
         cleanup="import pathlib,sys\np=pathlib.Path(sys.argv[sys.argv.index('--root')+1]);(p/'alive').unlink();(p/'cleaned').write_text('owned')\n"
         for script in ('host_postgresql.py','wallet_elements.py'):(root/'ci'/script).write_text(cleanup)
         for name in ('host','wallet','sibling'):

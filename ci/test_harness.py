@@ -356,17 +356,31 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual(present.returncode, 0)
                 with workspace(root, owner, source) as (_, target):
                     self.assertEqual((target/'retained').read_text(), 'owned cache')
-                with patch.dict(os.environ, PN_GATE_SAMPLE='fresh-isolation', PN_BUILDGRAPH_RUN='sample-one', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=source):
-                    with workspace(root, owner, source) as (fresh, target):
-                        marker = fresh/'.git/series-witness'
-                        marker.write_text('first use')
-                        self.assertEqual((target/'retained').read_text(), 'owned cache')
-                    with workspace(root, owner, source) as (fresh, target):
-                        self.assertTrue(marker.exists(), 'one sample resets each owner only once')
-                with patch.dict(os.environ, PN_GATE_SAMPLE='fresh-isolation', PN_BUILDGRAPH_RUN='sample-two', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=source):
-                    with workspace(root, owner, source) as (fresh, target):
-                        self.assertFalse(marker.exists(), 'every sample must repay source setup')
-                        self.assertEqual((target/'retained').read_text(), 'owned cache', 'fresh source must preserve build cache')
+                from isolation import bind_setup
+                git('checkout', '--force', '--detach', source)
+                (root/'transition').write_text('changed by the import')
+                git('add','transition')
+                git('-c','commit.gpgsign=false','-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','--quiet','-m','transition')
+                series_source=git('rev-parse','HEAD')
+                transition_stamp = None
+                for invocation in ('sample-one','sample-two'):
+                    with patch.dict(os.environ, PN_GATE_SAMPLE='import-transition', PN_IMPORT_BASE=source, PN_GATE_STEP='fixture', PN_BUILDGRAPH_RUN=invocation, PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=series_source):
+                        bind_setup(lane/'sample-setup.jsonl',series_source,invocation,'fixture')
+                        before=(isolated/'payload').stat().st_mtime_ns
+                        with workspace(root, owner, series_source) as (fresh, target):
+                            marker = fresh/'.git/series-witness'
+                            if invocation=='sample-one':marker.write_text('retained object store')
+                            self.assertTrue(marker.exists(), 'transition retains the object store')
+                            self.assertEqual((fresh/'payload').stat().st_mtime_ns,before,'unchanged files retain modification times')
+                            self.assertEqual((fresh/'transition').read_text(),'changed by the import')
+                            stamp = (fresh/'transition').stat().st_mtime_ns
+                            if transition_stamp is not None:
+                                self.assertNotEqual(stamp, transition_stamp, 'each sample repays changed-file checkout')
+                            transition_stamp = stamp
+                            self.assertEqual((target/'retained').read_text(),'owned cache')
+                        with workspace(root, owner, series_source) as (fresh,target):
+                            self.assertTrue(marker.exists(), 'one sample resets an owner once')
+                git('checkout','--force','--detach',source)
                 from types import SimpleNamespace
                 consumed = [0]
                 def bound(*args):

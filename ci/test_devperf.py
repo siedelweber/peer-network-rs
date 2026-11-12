@@ -8,6 +8,7 @@ import copy
 import io
 import json
 import os
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
@@ -345,11 +346,12 @@ wait
             self.assertFalse((target/'lint-combined/gate').exists())
             self.assertTrue((target/'lint-combined/.rustc_info.json').exists())
             log = target/'meter.jsonl'
-            with patch('isolation.subprocess.run', return_value=SimpleNamespace(returncode=0)):
+            with patch('isolation.subprocess.Popen', side_effect=lambda *args, **kw: SimpleNamespace(stdout=io.BytesIO(b'{"reason":"compiler-artifact","fresh":false,"package_id":"fixture"}\n'), stderr=io.BytesIO(), wait=lambda:0)):
                 for command in ('build', 'check', 'run', 'test'):
                     self.assertEqual(cargo_work(['cargo', str(log), command]), 0)
             rows = [json.loads(line) for line in log.read_text().splitlines()]
             self.assertEqual([row['compile_only'] for row in rows], [True, True, False, False])
+            self.assertTrue(all(row['compiled'] == ['fixture'] for row in rows))
 
     def test_distinct_excess_ledger(self):
         """Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.
@@ -408,9 +410,16 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.waiting_ratio', return_value=1000), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
-                    measured = json.loads((lane/'gate-tiers.json').read_text())
+                        measured = json.loads((lane/'gate-tiers.json').read_text())
+                        if not cold:
+                            with patch('build_graph.baseline_context', return_value=(lane/'baseline.json', None, [], lane)):
+                                tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
+                            unreferenced = json.loads((lane/'gate-tiers.json').read_text())
+                            for name in tiers:
+                                self.assertIsNotNone(unreferenced[name]['comparable_cpu_s'], 'missing reference cannot erase current measured work')
+                                self.assertIsNone(unreferenced[name]['baseline_comparable_cpu_s'])
                     self.assertEqual(json.loads((lane/'gate-baseline.json').read_text())['import_base_tree'], 'tree', 'archive provenance must name the declared base tree')
                     for name in tiers:
                         self.assertEqual(measured[name]['status'], status)
@@ -487,8 +496,32 @@ wait
             with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 self.assertEqual(declare_run(root)['entry'], 'fixture:entry')
             entry = (Path(__file__).parent/'gate.sh').read_text()
-            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='fresh-isolation'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
-                self.assertEqual(declare_run(root)['sample'], 'fresh-isolation')
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='import-transition', PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_IMPORT_BASE='source', PN_GATE_SERIES_KEY='a'*64, PN_GATE_SERIES_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with patch('isolation.import_base', return_value='source'):
+                    self.assertEqual(declare_run(root)['sample'], 'import-transition')
+                    from build_graph import series_receipt
+                    (root/'.lane/instructions-probe.json').write_text('{"state":"unavailable"}')
+                    (root/'.lane/gate-series-host-start.json').write_text(json.dumps(dict(boundary='start', identity=dict(PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_GATE_ENTRY='fixture:sample'))))
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm'),path=str(root/('a'*64)/'tree.json'))))
+                    observed=SimpleNamespace(returncode=0,stdout='[]',stderr='')
+                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='sample'), patch('build_graph.subprocess.run',return_value=observed), patch('build_graph.subprocess.check_output',return_value='tree'):
+                        series_receipt(root,'start')
+                        series_receipt(root,'end')
+                        receipt=json.loads((root/'.lane/gate-series-end.json').read_text())
+                        self.assertEqual(receipt['declaration']['ordinal'],'1')
+                        self.assertEqual(receipt['observed_cache'],'warm')
+                        self.assertIn('containers',receipt)
+                        from build_graph import series_idle
+                        series_idle(root,'end')
+                        joined=json.loads((root/'.lane/gate-series-end.json').read_text())
+                        self.assertEqual(joined['host_idle_end']['identity'],joined['host_idle_start']['identity'])
+                        with patch.dict(os.environ, PN_GATE_ENTRY='different'):
+                            with self.assertRaisesRegex(ValueError,'another invocation'):
+                                series_idle(root,'end')
+                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='cold'),path=str(root/('a'*64)/'tree.json'))))
+                        with self.assertRaisesRegex(ValueError,'differs from declared'):
+                            series_receipt(root,'end')
+
             with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='other'):
                 with self.assertRaisesRegex(ValueError, 'PN_GATE_SAMPLE'):
                     declare_run(root)
@@ -533,6 +566,8 @@ wait
                 self.assertEqual(result['status'], status)
                 self.assertAlmostEqual(result['preparation_s'], .2)
                 self.assertAlmostEqual(result['closing_s'], .3)
+                self.assertAlmostEqual(result['step_span_s'], .7)
+                self.assertAlmostEqual(result['preparation_s']+result['step_span_s']+result['closing_s'], result['wall'])
                 self.assertTrue(result['over_budget'])
                 self.assertEqual(result['classification'], 'load-unresolved')
                 self.assertEqual(result['baseline_stall'], .1)
@@ -555,6 +590,7 @@ wait
             self.assertNotIn('baseline_provisional=null',output.getvalue())
             unavailable = json.loads((lane/'gate-wall.json').read_text())
             self.assertIsNone(unavailable['own_user_s'])
+            self.assertEqual(unavailable['comparable_reason'], 'missing-or-incompatible-step-case-or-resource-measurements')
             self.assertEqual(unavailable['classification'], 'unclassified')
             self.assertEqual(unavailable['status'], 0)
             registry = root/'registry.toml'
@@ -744,18 +780,16 @@ wait
             own, old, _, _ = compile_comparison(left, right, [])
             self.assertAlmostEqual(own, left['tests']['own_cpu_s']-left['tests']['setup_cpu_s'])
             self.assertAlmostEqual(old, right['tests']['own_cpu_s']-right['tests']['setup_cpu_s'])
-        from isolation import setup_receipt
-        from build_graph import waiting_ratio, instruction_probe, measured_command
-        with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25'):
-            self.assertEqual(waiting_ratio(), 1.25)
-        for invalid in ('nan', 'inf', '0', '-1'):
-            with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO=invalid):
-                with self.assertRaisesRegex(ValueError, 'finite and positive'):
-                    waiting_ratio()
-        bounded = {'tests':dict(second['tests'], wait_dominated=True)}
-        self.assertIsNone(compile_comparison(bounded, bounded, [])[0], 'wait-dominated CPU must not be comparable')
-        bounded['tests']['wait_dominated'] = None
-        self.assertIsNone(compile_comparison(bounded, bounded, [])[0], 'an unmeasured waiting threshold must not classify work')
+        from isolation import setup_receipt, bind_setup
+        from build_graph import instruction_probe, measured_command, peer_cost
+        for stale in (True, None, False):
+            bounded = {'tests':dict(second['tests'], wait_dominated=stale, serialized_build=False)}
+            self.assertAlmostEqual(compile_comparison(bounded, bounded, [])[0], 7.486846-.169108,
+                                   'raw receipts must survive obsolete ratio classifications')
+            archived = dict(whole=dict(wall=10, own_user_s=7.486846, own_sys_s=0, comparable_cpu_s=None),
+                            tiers={'fast':dict(step_figures=bounded)})
+            with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                self.assertAlmostEqual(peer_cost(archived)[1], 7.486846-.169108)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe'), patch('build_graph.shutil.which', return_value=None), patch('builtins.print') as printed:
@@ -764,16 +798,23 @@ wait
                     measured_command(root, ['true'])
                 invoked.assert_called_once_with(['true'], reap_tree=True)
                 self.assertIn('unavailable', str(printed.call_args_list))
-            (root/'.lane/instructions-probe.json').write_text(json.dumps(dict(run='counter-probe', executable='perf')))
-            for counter, expected in [('42;;instructions;1;100.00', '42'), ('<not supported>;;instructions;', 'unavailable')]:
-                def counted(argv, **kwargs):
-                    self.assertEqual(argv[:5], ['perf', 'stat', '-x', ';', '-e'])
-                    Path(argv[argv.index('-o')+1]).write_text(counter)
-                    return SimpleNamespace(returncode=7)
-                with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe', PN_GATE_STEP='fixture'), patch('build_graph.cancellable', side_effect=counted) as invoked, patch('builtins.print') as printed:
-                    self.assertEqual(measured_command(root, ['fixture']).returncode, 7)
-                    invoked.assert_called_once()
-                    self.assertIn('retired='+expected, str(printed.call_args_list))
+            stub = root/'counter'
+            stub.write_text('#!'+sys.executable+'\nimport sys,subprocess\nfrom pathlib import Path\n'
+                'Path(sys.argv[sys.argv.index("-o")+1]).write_text("42;;instructions;1;100.00\\n")\n'
+                'subprocess.run(sys.argv[sys.argv.index("--")+1:])\nsys.exit(0)\n')
+            stub.chmod(0o755)
+            (root/'.lane/instructions-probe.json').write_text(json.dumps(dict(run='counter-probe', executable=str(stub))))
+            with patch.dict(os.environ, PN_BUILDGRAPH_RUN='counter-probe', PN_GATE_STEP='fixture'), patch('builtins.print') as printed:
+                self.assertEqual(measured_command(root, [sys.executable,'-c','raise SystemExit(7)']).returncode, 7)
+                self.assertIn('retired=42', str(printed.call_args_list))
+                self.assertEqual(measured_command(root, [sys.executable,'-c','import os,signal;os.kill(os.getpid(),signal.SIGTERM)']).returncode, -15,
+                                 'counter success cannot hide a signal-ended workload')
+                stub.write_text('#!'+sys.executable+'\nraise SystemExit(1)\n')
+                once=root/'once'
+                result=measured_command(root, [sys.executable,'-c','from pathlib import Path; p=Path('+repr(str(once))+'); p.write_text(p.read_text()+"x" if p.exists() else "x")'])
+                self.assertEqual(result.returncode, 0)
+                self.assertEqual(once.read_text(), 'x', 'failed counter open runs the workload once')
+                self.assertIn('retired=unavailable', str(printed.call_args_list))
 
         from build_graph import case_intersection
         # A case clock can include the compilation already removed from its
@@ -789,7 +830,8 @@ wait
             path = Path(directory)/'setup.jsonl'
             with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source',
                             PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='run', PN_GATE_CASE='ci::fixture.case'), patch('builtins.print'):
-                setup_receipt(dict(owner='nested-tracker', source='gate-source', action='fetch',
+                bind_setup(path, 'gate-source', 'run', 'tests')
+                setup_receipt(dict(owner='nested-tracker', source='gate-source', action='owner-window',
                                    wall=3, own_user_s=8.2, own_sys_s=1, status=0))
             self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
                              dict(setup_cpu_s=9.2, setup_wall_s=3, setup_calls=1, setup_case_cpu_s={'ci::fixture.case':9.2}, fixture_git_cpu_s=0))
@@ -800,6 +842,18 @@ wait
             self.assertEqual(setup_accounting(path, 'gate-source', 'run', 'tests'),
                              dict(setup_cpu_s=0, setup_wall_s=0, setup_calls=0, setup_case_cpu_s={}, fixture_git_cpu_s=9.2),
                              'synthetic fixture Git remains program work')
+            for action in ('clone','fetch','checkout','clean'):
+                stale = dict(data, action=action)
+                path.write_text(json.dumps(stale)+'\n')
+                with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
+                    setup_accounting(path, 'gate-source', 'run', 'tests')
+            with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path), PN_GATE_SETUP_SOURCE='gate-source', PN_GATE_STEP='tests', PN_BUILDGRAPH_RUN='other'):
+                with self.assertRaisesRegex(ValueError, 'another invocation'):
+                    setup_receipt(data)
+            path.with_suffix('.binding.json').unlink()
+            with patch.dict(os.environ, PN_GATE_SETUP_LOG=str(path)):
+                with self.assertRaisesRegex(ValueError, 'unbound isolation setup log'):
+                    setup_receipt(data)
             data['own_user_s'] = -1
             path.write_text(json.dumps(data)+'\n')
             with self.assertRaisesRegex(ValueError, 'invalid isolation setup receipt'):
@@ -817,6 +871,7 @@ wait
                        '--profile', 'gate', '--no-run']
             def build(cpu):
                 rows = []
+                (root/'build.stdout.log').write_text(json.dumps(dict(reason='compiler-artifact',package_id='fixture',fresh=cpu == 1))+'\n')
                 usage = [SimpleNamespace(ru_utime=3, ru_stime=2),
                          SimpleNamespace(ru_utime=3+cpu, ru_stime=2)]
                 with patch.dict(os.environ, CARGO_TARGET_DIR=str(root/'target')), \
@@ -826,6 +881,7 @@ wait
                     capture.assert_called_once_with(command, root, 'build')
                 self.assertEqual(rows[0]['cargo_cpu_s'], cpu)
                 self.assertEqual(rows[0]['cargo_wall_s'], 7)
+                self.assertEqual(rows[0]['compiled'], [] if cpu == 1 else ['fixture'])
                 out, err = io.StringIO(), io.StringIO()
                 def run(records):
                     records.extend(rows)
@@ -898,7 +954,7 @@ wait
                         whole=dict(node_scope='node-wide', stall=stall, wall=wall, comparable_cpu_s=cpu),
                         tiers={'service':dict(selected_cases=cases, case_steps={case:'service' for case in cases},
                             case_costs={'extra':extra}, steps=['service'], step_figures={'service':dict(
-                                own_cpu_s=cpu, cargo_cpu_s=0, setup_cpu_s=0, layouts=[], partial=False, wall=wall)})})
+                                own_cpu_s=cpu, cargo_cpu_s=0, setup_cpu_s=0, layouts=[], partial=False, compiled=False, wall=wall)})})
         old = intersection_peer('old', .049136754226175854, 134.454, 747.703316)
         new = intersection_peer('new', .04430517164619928, 140.000857, 763.142702)
         old['tiers'] = {}; new['tiers'] = {}
@@ -912,7 +968,7 @@ wait
                 cases = [name]+(['added-service-case'] if extra else [])
                 value['tiers'][name] = dict(selected_cases=cases,case_steps={case:name for case in cases},
                     case_costs={'added-service-case':extra},steps=[name],step_figures={name:dict(
-                        own_cpu_s=cost+extra,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,wall=1)})
+                        own_cpu_s=cost+extra,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,compiled=False,wall=1)})
         self.assertEqual(baseline_replacement(new, old), (False,'warm-peer-intersection'),
                          'a small stall lead must not replace a cheaper common workload')
         old = intersection_peer('old', .0491, 134.5, 747.7)
@@ -921,6 +977,8 @@ wait
         self.assertEqual(baseline_replacement(new, old), (True,'warm-peer-intersection'),
                          'a cheaper common workload must replace across case domains')
         new['tiers']['service']['step_figures']['service']['cargo_cpu_s'] = 1
+        self.assertIsNotNone(peer_intersection([old,new]), 'build-tool CPU without compilation remains comparable')
+        new['tiers']['service']['step_figures']['service']['compiled'] = True
         self.assertIsNone(peer_intersection([old,new]), 'exclusive compiled case clocks cannot be subtracted twice')
         disjoint = copy.deepcopy(new)
         disjoint['tiers']['service'].update(selected_cases=['unrelated'],case_steps={'unrelated':'service'})
@@ -1206,6 +1264,8 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed, context = baseline_context(root, registry)
                 self.assertIsNone(old)
+                with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                    self.assertEqual(baseline_context(root, registry)[0], path, 'named comparison values do not change archive identity')
                 candidate = dict(path=str(path), source='ancestor', tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                 retain_baseline(root)
@@ -1305,6 +1365,19 @@ wait
                 self.assertEqual(retained['source'], original)
                 self.assertEqual(retained['match'], 'import-base-tree')
                 self.assertEqual(changed, [])
+                saved = path.read_text()
+                measured = json.loads(saved)
+                measured.update(cache=dict(state='warm'),
+                    whole=dict(node_scope='node-wide',stall=0,wall=10,own_user_s=10,own_sys_s=0,comparable_cpu_s=None),
+                    tiers={'fast':dict(step_figures={'tests':dict(own_cpu_s=10,setup_cpu_s=2,cargo_cpu_s=0,
+                        layouts={},partial=False,serialized_build=False,compiled=False,wait_dominated=None,wall=10)})})
+                path.write_text(json.dumps(measured))
+                with patch.dict(os.environ, PN_GATE_WAIT_CPU_WALL_RATIO='1.25', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                    found_path, found, _, _ = baseline_context(root, registry)
+                    self.assertEqual(found_path,path,'archived samples remain under the same key')
+                    from build_graph import peer_cost
+                    self.assertEqual(peer_cost(found),(10,8),'archived raw costs are evaluated after policy changes')
+                path.write_text(saved)
                 (root/'Cargo.toml').write_text('[profile.gate]\nopt-level = 1\n# Unimported candidate\n')
                 git('add', 'Cargo.toml')
                 other_tree = git('write-tree')

@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import tomllib
 
@@ -230,6 +231,14 @@ def import_base(root, source, base):
     return commit
 
 
+
+def bind_setup(destination, source, run, step):
+    """The step supervisor binds one empty setup log to its invocation."""
+    destination.write_text('')
+    destination.with_suffix('.binding.json').write_text(json.dumps(dict(
+        path=str(destination.resolve()), source=source, run=run, step=step))+'\n')
+
+
 def setup_receipt(row):
     """Retain waited Git CPU even when a nested witness captures its stdout."""
     case = os.environ.get('PN_GATE_CASE')
@@ -239,6 +248,14 @@ def setup_receipt(row):
     print('ISOLATION-GIT '+json.dumps(row, sort_keys=True), flush=True)
     destination = os.environ.get('PN_GATE_SETUP_LOG')
     if destination:
+        expected = dict(path=str(Path(destination).resolve()), source=os.environ.get('PN_GATE_SETUP_SOURCE'),
+                        run=os.environ.get('PN_BUILDGRAPH_RUN'), step=os.environ.get('PN_GATE_STEP'))
+        try:
+            binding = json.loads(Path(destination).with_suffix('.binding.json').read_text())
+        except (OSError, ValueError) as error:
+            raise ValueError('unbound isolation setup log') from error
+        if binding != expected or any(value is None for value in expected.values()):
+            raise ValueError('isolation setup log belongs to another invocation')
         row = dict(row, gate_source=os.environ['PN_GATE_SETUP_SOURCE'],
                    run=os.environ['PN_BUILDGRAPH_RUN'], step=os.environ['PN_GATE_STEP'])
         with Path(destination).open('a') as output:
@@ -267,16 +284,23 @@ def workspace(root, name, source):
         generation = json.loads(state.read_text())['generation'] if state.exists() else 0
         (base/'last-use').write_text(str(generation))
         tree = base/'s'
-        if os.environ.get('PN_GATE_SAMPLE', 'import') == 'fresh-isolation':
+        transition = None
+        reset_wall = 0.0
+        if os.environ.get('PN_GATE_SAMPLE', 'import') == 'import-transition' and source == os.environ.get('PN_GATE_SETUP_SOURCE', source):
             invocation = os.environ.get('PN_BUILDGRAPH_RUN')
             if not invocation:
-                raise ValueError('fresh isolation requires a gate invocation')
+                raise ValueError('import transition requires a gate invocation')
+            transition = import_base(root, source, os.environ['PN_IMPORT_BASE'])
             sample = base/'sample'
             if not sample.exists() or sample.read_text() != invocation:
-                if tree.exists():
-                    shutil.rmtree(tree)
+                if not tree.exists():
+                    raise ValueError('series requires a retained owner checkout: '+name)
+                started = time.monotonic()
+                result = cancellable(['git', '-C', str(tree), 'checkout', '--quiet', '--force', '--detach', transition])
+                if result.returncode:
+                    raise ValueError('series owner base is unavailable: '+name)
+                reset_wall = time.monotonic()-started
                 sample.write_text(invocation)
-                print(f'ISOLATION-FRESH owner={name} run={invocation} target=retained', flush=True)
         # Older shared clones borrow objects that the parent may prune.
         if (tree/'.git/objects/info/alternates').exists():
             shutil.rmtree(tree)
@@ -335,10 +359,15 @@ def workspace(root, name, source):
             log = tree/'.lane/cargo-work.jsonl'
             rows = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
             print('ISOLATION-COMPILE '+json.dumps(dict(owner=name, source=source, layout=layout, cold_target=cold_target, layout_changed=layout_changed,
+                compiled=sorted({name for row in rows for name in row.get('compiled', [])}),
                 cargo_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')),
                 cargo_wall_s=sum(row['wall'] for row in rows if row.get('compile_only')),
                 cargo_and_run_cpu_s=sum(row['own_cpu'] for row in rows if not row.get('compile_only')),
                 calls=len(rows), scope='compile-only; mixed Cargo-and-run reported separately')), flush=True)
+            if transition is not None:
+                print('ISOLATION-TRANSITION '+json.dumps(dict(owner=name, base=transition, source=source,
+                    reset_wall_s=reset_wall, compile_wall_s=sum(row['wall'] for row in rows if row.get('compile_only')),
+                    compile_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')))), flush=True)
 
 
 def cargo_environment(tree):
@@ -359,10 +388,33 @@ def cargo_work(arguments):
     real, destination, *arguments = arguments
     started = time.monotonic()
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
-    result = subprocess.run([real, *arguments])
+    process = subprocess.Popen([real, *arguments], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    compiled = []
+    def forward(stream, destination):
+        for line in iter(stream.readline, b''):
+            if hasattr(destination, 'buffer'):
+                destination.buffer.write(line)
+                destination.buffer.flush()
+            else:
+                destination.write(line.decode(errors='replace'))
+                destination.flush()
+            text = line.decode(errors='replace')
+            if re.match(r'\s*(Compiling|Checking|Documenting) ', text):
+                compiled.append(text.strip())
+            try:
+                artifact = json.loads(text)
+            except ValueError:
+                continue
+            if isinstance(artifact, dict) and artifact.get('reason') == 'compiler-artifact' and artifact.get('fresh') is False:
+                compiled.append(artifact.get('package_id', 'artifact'))
+    threads = [threading.Thread(target=forward, args=(stream, destination))
+               for stream,destination in ((process.stdout,sys.stdout),(process.stderr,sys.stderr))]
+    for thread in threads:thread.start()
+    for thread in threads:thread.join()
+    result = subprocess.CompletedProcess([real,*arguments], process.wait())
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     row = dict(wall=time.monotonic()-started, own_cpu=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
-               command=arguments, status=result.returncode,
+               command=arguments, status=result.returncode, compiled=sorted(set(compiled)),
                compile_only=bool(arguments) and arguments[0] in ('build', 'check', 'clippy', 'rustdoc'))
     with Path(destination).open('a') as output:
         fcntl.flock(output, fcntl.LOCK_EX)
@@ -407,6 +459,10 @@ def built_executable(output):
 
 
 if __name__ == '__main__':
+    if sys.argv[1:] == ['bind-setup']:
+        bind_setup(Path(os.environ['PN_GATE_SETUP_LOG']), os.environ['PN_GATE_SETUP_SOURCE'],
+                   os.environ['PN_BUILDGRAPH_RUN'], os.environ['PN_GATE_STEP'])
+        raise SystemExit(0)
     if sys.argv[1:] == ['locked-entry']:
         locked_entry()
         raise SystemExit(0)

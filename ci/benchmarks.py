@@ -285,8 +285,12 @@ def capture_build(command, directory, name, compile_records):
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     status, wall_ms = capture(command, directory, name)
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
+    artifacts = [json.loads(line) for line in (directory/(name+'.stdout.log')).read_text().splitlines()
+                 if line.startswith('{')]
+    compiled = sorted({row['package_id'] for row in artifacts
+                       if row.get('reason') == 'compiler-artifact' and row.get('fresh') is False})
     compile_records.append(dict(owner='benchmarks/'+command[command.index('-p')+1]+'/'+command[command.index('--bench')+1],
-        source=source, layout=layout, cold_target=cold, layout_changed=False,
+        source=source, layout=layout, cold_target=cold, layout_changed=False, compiled=compiled,
         cargo_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
         cargo_wall_s=wall_ms/1000, cargo_and_run_cpu_s=0, calls=1,
         scope='compile-only; shared gate target; waited no-run Cargo child'))

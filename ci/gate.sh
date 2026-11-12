@@ -72,6 +72,7 @@ quiet_window() {
 gate_started=$(date -u +%s.%N)
 export PN_BUILDGRAPH_RUN="${gate_started}-$$"
 python3 -B ci/build_graph.py instruction-probe || exit 2
+python3 -B ci/build_graph.py series-receipt start || exit 2
 gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-start.raw
 quiet_window before
@@ -93,7 +94,7 @@ run_step() {
     local status started ended wall
     local PN_GATE_STEP="$name" PN_GATE_SETUP_LOG="$PWD/.lane/gate-${name}-setup.jsonl" PN_GATE_SETUP_SOURCE="$source_id"
     export PN_GATE_STEP PN_GATE_SETUP_LOG PN_GATE_SETUP_SOURCE
-    : > "$PN_GATE_SETUP_LOG"
+    python3 -B ci/isolation.py bind-setup || return 2
     gate_resource_sample ".lane/gate-${name}-resource-start.raw" "$resource_root" 2>/dev/null || true
     started=$(date -u +%s.%N)
     python3 -B ci/build_graph.py supervise bash -c 'TIMEFORMAT="OWN-TIME user=%U sys=%S"; time "$@"' gate-command "$@" > ".lane/gate-${name}.log" 2>&1 &
@@ -185,6 +186,7 @@ else
 fi
 python3 -B ci/build_graph.py check-inputs || failed=1
 python3 -B ci/build_graph.py wall-summary "$failed" "$gate_started" "$gate_ended" || failed=1
+python3 -B ci/build_graph.py series-receipt end || failed=1
 python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
 if [ "$failed" = 0 ] && [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
     python3 -B ci/build_graph.py retain-baseline || failed=1

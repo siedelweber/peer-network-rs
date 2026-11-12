@@ -20,9 +20,13 @@ ELEMENTS_PORTS = range(22120, 22160)
 
 def check_ports(ports, proc=Path('/proc/sys/net/ipv4')):
     """A daemon without socket inheritance needs ports excluded from auto allocation."""
-    low, high = map(int, (proc/'ip_local_port_range').read_text().split())
+    try:
+        low, high = map(int, (proc/'ip_local_port_range').read_text().split())
+        reservations = (proc/'ip_local_reserved_ports').read_text().strip()
+    except (OSError, ValueError) as error:
+        raise RuntimeError('fixture automatic port range is unavailable') from error
     reserved = set()
-    for item in (proc/'ip_local_reserved_ports').read_text().strip().split(','):
+    for item in reservations.split(','):
         if not item:
             continue
         bounds = [int(value) for value in item.split('-')]

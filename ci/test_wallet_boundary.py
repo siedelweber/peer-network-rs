@@ -204,12 +204,16 @@ class WalletBoundary(unittest.TestCase):
         import types
         import wallet_elements
         import tempfile
+        from unittest.mock import patch
         from host_postgresql import POSTGRESQL_PORTS, check_ports
         self.assertFalse(set(wallet_elements.PORTS) & set(POSTGRESQL_PORTS))
         with tempfile.TemporaryDirectory() as directory:
             proc = Path(directory)
             (proc/'ip_local_port_range').write_text('32768 60999\n')
             (proc/'ip_local_reserved_ports').write_text('')
+            with patch('pathlib.Path.read_text', side_effect=OSError('unreadable')):
+                with self.assertRaisesRegex(RuntimeError, 'automatic port range is unavailable'):
+                    check_ports(wallet_elements.PORTS, proc)
             check_ports(wallet_elements.PORTS, proc)
             (proc/'ip_local_port_range').write_text('20000 60999\n')
             with self.assertRaisesRegex(RuntimeError, 'overlap automatic allocation'):

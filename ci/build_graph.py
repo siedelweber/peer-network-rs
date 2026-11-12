@@ -655,11 +655,23 @@ def declare_run(root):
     if plan == 'warm-after-cold-second' and first_cache != 'cold':
         raise ValueError('warm-after-cold-second requires the first observed cache to be cold')
     sample = os.environ.get('PN_GATE_SAMPLE', 'import')
-    if sample not in {'import', 'fresh-isolation'}:
-        raise ValueError('PN_GATE_SAMPLE must name import or fresh-isolation')
-    waiting_ratio()
+    if sample not in {'import', 'import-transition'}:
+        raise ValueError('PN_GATE_SAMPLE must name import or import-transition')
     source = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
     declared = dict(plan=plan, entry=entry, at=datetime.now(timezone.utc).isoformat(), source=source, first_cache=first_cache, sample=sample)
+    if sample == 'import-transition':
+        from isolation import import_base
+        for key in ('PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_IMPORT_BASE', 'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE'):
+            if not os.environ.get(key):
+                raise ValueError('series requires '+key)
+        label, ordinal = os.environ['PN_GATE_SERIES'], os.environ['PN_GATE_ORDINAL']
+        if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,127}', label) or not re.fullmatch(r'[1-9][0-9]*', ordinal):
+            raise ValueError('invalid series label or ordinal')
+        key, cache = os.environ['PN_GATE_SERIES_KEY'], os.environ['PN_GATE_SERIES_CACHE']
+        if not re.fullmatch(r'[0-9a-f]{64}', key) or cache not in {'cold', 'warm'}:
+            raise ValueError('invalid series configuration key or cache state')
+        declared.update(series=label, ordinal=ordinal, base=import_base(root, source, os.environ['PN_IMPORT_BASE']),
+                        configuration_key=key, cache=cache)
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
     lane = root/'.lane'
     lane.mkdir(exist_ok=True)
@@ -670,15 +682,64 @@ def declare_run(root):
     return declared
 
 
-def waiting_ratio():
-    """A campaign supplies the reviewed ratio; no default fabricates a measurement."""
-    value = os.environ.get('PN_GATE_WAIT_CPU_WALL_RATIO')
-    if value is None:
-        return None
-    ratio = float(value)
-    if not math.isfinite(ratio) or ratio <= 0:
-        raise ValueError('PN_GATE_WAIT_CPU_WALL_RATIO must be finite and positive')
-    return ratio
+
+
+def series_idle(root, boundary):
+    """The host wrapper records account scope outside the build container."""
+    identity = {key:os.environ[key] for key in ('PN_GATE_SERIES','PN_GATE_ORDINAL','PN_GATE_ENTRY')}
+    processes = subprocess.run(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args='],capture_output=True,text=True,check=True)
+    containers = subprocess.run(['podman','ps','--format','json'],capture_output=True,text=True,check=True)
+    record = dict(identity=identity, boundary=boundary, at=time.time(),
+                  processes=processes.stdout, containers=json.loads(containers.stdout), load=list(os.getloadavg()))
+    path = root/('.lane/gate-series-host-'+boundary+'.json')
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps(record,sort_keys=True)+'\n')
+    if boundary == 'end':
+        result_path=root/'.lane/gate-series-end.json'
+        result=json.loads(result_path.read_text())
+        if result['host_idle_start']['identity'] != identity:
+            raise ValueError('series idle receipt belongs to another invocation')
+        result['host_idle_end']=record
+        result_path.write_text(json.dumps(result,sort_keys=True)+'\n')
+    print('GATE-SERIES-IDLE '+json.dumps(record,sort_keys=True),flush=True)
+
+
+def series_receipt(root, boundary):
+    """Join the declared transition to raw idle and platform observations."""
+    declaration = json.loads((root/'.lane/gate-declaration.json').read_text())
+    if declaration.get('sample') != 'import-transition':
+        return
+    def observed(command):
+        try:
+            result = subprocess.run(command, capture_output=True, text=True)
+            return dict(status=result.returncode, stdout=result.stdout, stderr=result.stderr)
+        except OSError as error:
+            return dict(status='unavailable', reason=str(error))
+    record = dict(declaration=declaration, boundary=boundary, run=os.environ['PN_BUILDGRAPH_RUN'],
+        tree=subprocess.check_output(['git','rev-parse','HEAD^{tree}'], cwd=root, text=True).strip(),
+        processes=observed(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args=']),
+        containers=observed(['podman','ps','--format','json']), load=list(os.getloadavg()))
+    try:
+        record['automatic_ports'] = Path('/proc/sys/net/ipv4/ip_local_port_range').read_text().strip()
+    except OSError as error:
+        record['automatic_ports'] = dict(state='unavailable', reason=str(error))
+    record['counters'] = json.loads((root/'.lane/instructions-probe.json').read_text())
+    host_idle = json.loads((root/'.lane/gate-series-host-start.json').read_text())
+    identity = dict(PN_GATE_SERIES=declaration['series'], PN_GATE_ORDINAL=declaration['ordinal'], PN_GATE_ENTRY=declaration['entry'])
+    if host_idle.get('identity') != identity or host_idle.get('boundary') != 'start':
+        raise ValueError('series idle receipt belongs to another invocation')
+    record['host_idle_start'] = host_idle
+    if boundary == 'end':
+        pending = json.loads((root/'.lane/gate-baseline.json').read_text())
+        record['observed_cache'] = pending['cache']['state']
+        record['observed_key'] = Path(pending['path']).parent.name
+        record['owners'] = [json.loads(line.removeprefix('ISOLATION-TRANSITION '))
+            for log in sorted((root/'.lane').glob('gate-*.log')) for line in log.read_text().splitlines()
+            if line.startswith('ISOLATION-TRANSITION ')]
+    (root/('.lane/gate-series-'+boundary+'.json')).write_text(json.dumps(record, sort_keys=True)+'\n')
+    print('GATE-SERIES '+json.dumps(record, sort_keys=True), flush=True)
+    if boundary == 'end' and (record['observed_cache'] != declaration['cache'] or record['observed_key'] != declaration['configuration_key']):
+        raise ValueError('series sample differs from declared configuration or cache state')
 
 
 def instruction_probe(root):
@@ -699,8 +760,20 @@ def measured_command(root, command):
     data = json.loads(probe.read_text()) if probe.exists() else {}
     enabled = bool(step and data.get('executable') and data.get('run') == os.environ.get('PN_BUILDGRAPH_RUN'))
     path = root/('.lane/instructions-'+str(step)+'.csv')
-    argv = [data['executable'], 'stat', '-x', ';', '-e', 'instructions', '-o', str(path), '--', *command] if enabled else command
+    receipt = root/('.lane/instructions-'+str(step)+'-'+uuid.uuid4().hex+'.status')
+    wrapper = [sys.executable, '-B', str(Path(__file__).resolve()), 'counter-work', str(receipt), *command]
+    argv = [data['executable'], 'stat', '-x', ';', '-e', 'instructions', '-o', str(path), '--', *wrapper] if enabled else command
     result = cancellable(argv, reap_tree=True)
+    if enabled:
+        if not receipt.exists():
+            # The wrapper writes before starting work. A failed counter open
+            # therefore admits one uncounted execution, not a workload retry.
+            enabled = False
+            if result.returncode >= 0:
+                result = cancellable(command, reap_tree=True)
+        else:
+            status = json.loads(receipt.read_text()).get('status')
+            result = subprocess.CompletedProcess(command, result.returncode if result.returncode < 0 else status if type(status) is int else 2)
     count = None
     if enabled and path.exists():
         for line in path.read_text().splitlines():
@@ -709,6 +782,15 @@ def measured_command(root, command):
                 count = int(fields[0])
     print('GATE-INSTRUCTIONS step='+str(step)+' retired='+('unavailable' if count is None else str(count)), flush=True)
     return result
+
+
+
+def counter_work(receipt, command):
+    """Keep the workload's wait status independently of the counter's exit."""
+    receipt.write_text(json.dumps(dict(started=True))+'\n')
+    result = cancellable(command, reap_tree=True)
+    receipt.write_text(json.dumps(dict(started=True, status=result.returncode))+'\n')
+    return 128-result.returncode if result.returncode < 0 else result.returncode
 
 
 def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed, policy, *, compile_wall_growth=None, excess=None, wall=None, baseline_wall=None, baseline_stall=None, comparable_cases=True, comparable_wall=True, cache_state=None):
@@ -812,11 +894,11 @@ def prune_peer_archive(archive, ancestry, current_base_tree=None):
 
 def baseline_context(root, registry, policy=None):
     """A retained target compares only the same runner configuration and lineage."""
+    selection_started = time.monotonic()
     from harness import CONFIGURATION
     from gate_resources import node_identity
     lineage = os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve()))
     identity = dict(configuration=CONFIGURATION, lineage=lineage, tiers=registry.tiers, node=node_identity(),
-        waiting_cpu_wall_ratio=waiting_ratio(),
         accounting='own-cpu-minus-build-and-owner-window/producing-step/cache-union-v3',
         profiles=tomllib.loads((root/'Cargo.toml').read_text()).get('profile', {}),
         toolchain=subprocess.run(['rustc', '-Vv'], cwd=root, capture_output=True, text=True, check=True).stdout,
@@ -930,6 +1012,7 @@ def baseline_context(root, registry, policy=None):
         print('GATE-COMPARISON '+json.dumps(dict(reference=baseline['source'], intervening_commits_and_inputs=history.splitlines())), flush=True)
         baseline['selection_peers'] = [dict(value) for value, _ in eligible]
     context = Path(os.environ['CARGO_TARGET_DIR'])/'gate-step-context'/step_context_key(identity)
+    print('GATE-ARCHIVE '+json.dumps(dict(records=len(peers), selection_wall_s=time.monotonic()-selection_started, growth='retained-frontiers-per-landed-tree')), flush=True)
     return path, baseline, changed, context
 
 
@@ -973,7 +1056,16 @@ def peer_domain(value):
 
 
 def peer_cost(value):
-    row = value.get('whole', {})
+    row = dict(value.get('whole', {}))
+    tiers = value.get('tiers', {})
+    if tiers and all(tier.get('step_figures') for tier in tiers.values()):
+        figures = {name:figure for tier in tiers.values() for name,figure in tier['step_figures'].items()}
+        serial = [name for name,figure in figures.items() if figure.get('serialized_build')]
+        program, _, _, omitted = compile_comparison(figures, figures, serial)
+        raw = [figure.get('own_cpu_s') for figure in figures.values()]
+        whole = (row.get('own_user_s'), row.get('own_sys_s'))
+        row['comparable_cpu_s'] = (program+sum(whole)-sum(raw)
+            if not omitted and None not in (*raw,*whole,program) else None)
     keys = ('wall', 'comparable_cpu_s')
     if any(type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0 for key in keys):
         return None
@@ -1042,7 +1134,7 @@ def peer_intersection(peers):
             exclusive = selected-cases
             # Omit this entire step, not the unaffected intersection, when
             # exclusive case clocks could overlap the removed build clock.
-            if omitted or exclusive and (figure.get('cargo_cpu_s', 0) or figure.get('serialized_build')):
+            if omitted or exclusive and figure.get('compiled') is not False:
                 break
             removed = [charges.get(case) for case in exclusive]
             if any(type(value) not in (int, float) or not math.isfinite(value) or value < 0 for value in removed):
@@ -1208,8 +1300,6 @@ def step_cpu_context(current, previous):
 def compile_comparison(current, prior, serialized):
     """Compare non-build CPU symmetrically; keep serialized build wall separate."""
     def remaining(name, row):
-        if 'wait_dominated' in row and row['wait_dominated'] is not False:
-            return None
         own = row.get('own_cpu_s')
         build = row.get('cargo_cpu_s') if row.get('layouts') else own if name in serialized else 0
         setup = row.get('setup_cpu_s')
@@ -1232,7 +1322,7 @@ def setup_accounting(path, source, run, step):
     for row in rows:
         if row.get('run') != run or row.get('step') != step or row.get('gate_source') != source:
             raise ValueError('stale isolation setup receipt: '+step)
-        if row.get('action') not in {'clone', 'fetch', 'checkout', 'clean', 'owner-window'} or any(
+        if row.get('action') != 'owner-window' or any(
                 type(row.get(key)) not in (int, float) or not math.isfinite(row[key]) or row[key] < 0
                 for key in ('wall', 'own_user_s', 'own_sys_s')):
             raise ValueError('invalid isolation setup receipt: '+step)
@@ -1398,6 +1488,7 @@ def tier_summary(root, registry, worker_statuses):
             isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target']) for value in isolated)
             step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
                 serialized_build=row[0] in policy['rebuild_steps'],
+                compiled=row[0] in cache.get('compiling_steps', []) or any(value.get('compiled') for value in isolated),
                 cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
                 layouts={value['owner']:value['layout'] for value in isolated},
                 partial=any(value.get('cold_target') or value.get('layout_changed') for value in isolated))
@@ -1406,11 +1497,9 @@ def tier_summary(root, registry, worker_statuses):
             step_figures[row[0]].update(setup)
             wall_seconds = step_figures[row[0]]['wall']
             ratio = sum(cpu)/wall_seconds if None not in cpu and wall_seconds > 0 else None
-            threshold = waiting_ratio()
-            step_figures[row[0]].update(cpu_wall_ratio=ratio,
-                wait_dominated=(ratio > threshold) if ratio is not None and threshold is not None else None)
-            print('GATE-STEP-COST '+json.dumps(dict(step=row[0], cpu_wall_ratio=ratio, waiting_ratio_ceiling=threshold,
-                wait_dominated=step_figures[row[0]]['wait_dominated'])), flush=True)
+            step_figures[row[0]].update(cpu_wall_ratio=ratio)
+            print('GATE-STEP-COST '+json.dumps(dict(step=row[0], cpu_wall_ratio=ratio,
+                exclusion='none', attribution='unattributed-context')), flush=True)
             for case, charge in setup['setup_case_cpu_s'].items():
                 cost = case_costs[tier].get(case)
                 if cost is not None:
@@ -1429,6 +1518,8 @@ def tier_summary(root, registry, worker_statuses):
         old_cpu = prior.get('own_cpu_s')
         own_cpu = sum(own) if None not in own else None
         comparable_cpu, comparable_old, wall_growth, omitted = compile_comparison(step_figures, prior.get('step_figures', {}), policy['rebuild_steps'])
+        if not baseline:
+            comparable_cpu, _, _, omitted = compile_comparison(step_figures, step_figures, policy['rebuild_steps'])
         def compile_cpu(figures):
             return sum(row['cargo_cpu_s'] if row['layouts'] else row['own_cpu_s']
                        for name, row in figures.items() if name in step_figures and name not in omitted
@@ -1438,12 +1529,12 @@ def tier_summary(root, registry, worker_statuses):
         comparable_setup = sum(row['setup_cpu_s'] for name, row in step_figures.items() if name not in omitted) if comparable_cpu is not None else None
         comparable_old_setup = sum(row['setup_cpu_s'] for name, row in prior.get('step_figures', {}).items() if name in step_figures and name not in omitted) if comparable_old is not None else None
         intersection = dict(added=[], removed=[], own_removed_s=0, baseline_removed_s=0)
-        if not comparable_cases:
+        if not comparable_cases and baseline:
             comparable_cpu, comparable_old, comparable_cases, intersection = case_intersection(
                 cases, prior.get('selected_cases', []), case_costs[tier], prior.get('case_costs', {}), comparable_cpu, comparable_old,
                 steps=case_steps[tier], old_steps=prior.get('case_steps', {}),
-                build_steps={name for name, row in step_figures.items() if row['cargo_cpu_s'] > 0 or name in policy['rebuild_steps']},
-                old_build_steps={name for name, row in prior.get('step_figures', {}).items() if row['cargo_cpu_s'] > 0 or name in policy['rebuild_steps']},
+                build_steps={name for name, row in step_figures.items() if row.get('compiled') is not False},
+                old_build_steps={name for name, row in prior.get('step_figures', {}).items() if row.get('compiled') is not False},
                 omitted=set(omitted) | (set(prior.get('step_figures', {}))-set(step_figures)))
         from gate_resources import node_stall
         stall = node_stall(measurement)
@@ -1453,14 +1544,14 @@ def tier_summary(root, registry, worker_statuses):
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
             baseline_stall=old_stall, comparable_cases=comparable_cases, comparable_wall=comparable_wall, cache_state=tier_cache)
-        if not comparable_cases:
+        if not comparable_cases and baseline:
             comparable_cpu = comparable_old = None
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
         reports[tier].update(cache_state=cache['state'], compiling_steps=compiled_steps, isolated_compiling_steps=isolated_compiling_steps, over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             selected_cases=cases, case_costs=case_costs[tier], case_steps=case_steps[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             comparable_setup_cpu_s=comparable_setup, baseline_comparable_setup_cpu_s=comparable_old_setup,
-            step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
+            step_figures=step_figures, non_comparable_steps=omitted, comparable_reason='available' if comparable_cpu is not None else 'missing-or-incompatible-step-or-case-measurements', comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
             baseline_provisional=baseline.get('provisional', True) if baseline else None,
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
@@ -1468,7 +1559,7 @@ def tier_summary(root, registry, worker_statuses):
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
         print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} isolated_compiling_steps={json.dumps(isolated_compiling_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
-              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_provisional={str(baseline.get("provisional", True)).lower() if baseline else "unavailable"} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_provisional={str(baseline.get("provisional", True)).lower() if baseline else "unavailable"} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} comparable_reason={reports[tier]['comparable_reason']} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
@@ -1544,11 +1635,11 @@ def wall_summary(root, status, interval=None):
     preparation = min(float(row[2]) for row in intervals)-measured['start']['epoch_seconds'] if intervals else None
     closing = measured['end']['epoch_seconds']-max(float(row[3]) for row in intervals) if intervals else None
     result = dict(wall=wall, budget_s=limit, excess_s=excess, over_budget=excess > 0, classification=classification,
-        preparation_s=preparation, closing_s=closing,
+        preparation_s=preparation, step_span_s=wall-preparation-closing if None not in (preparation, closing) else None, closing_s=closing,
         status=status, own_user_s=measured['own_user_s'], own_sys_s=measured['own_sys_s'],
         stall=stall, node_scope=measured.get('node_scope', 'unavailable'), baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
         baseline_source=fast.get('baseline_source'), baseline_provisional=fast.get('baseline_provisional'), baseline_match=fast.get('baseline_match'),
-        comparable_cpu_s=current_cpu, baseline_comparable_cpu_s=prior_cpu,
+        comparable_cpu_s=current_cpu, comparable_reason='available' if current_cpu is not None else 'missing-or-incompatible-step-case-or-resource-measurements', baseline_comparable_cpu_s=prior_cpu,
         comparable_build_cpu_s=current_build, baseline_comparable_build_cpu_s=prior_build,
         comparable_setup_cpu_s=total('comparable_setup_cpu_s'), baseline_comparable_setup_cpu_s=total('baseline_comparable_setup_cpu_s'),
         compile_wall_growth_s=growth, changed_build_inputs=changed,
@@ -1658,6 +1749,13 @@ def main():
     sub.add_parser('gate')
     sub.add_parser('declare')
     sub.add_parser('instruction-probe')
+    counted = sub.add_parser('counter-work')
+    counted.add_argument('receipt')
+    counted.add_argument('command', nargs=argparse.REMAINDER)
+    idle = sub.add_parser('series-idle')
+    idle.add_argument('boundary', choices=('start','end'))
+    series = sub.add_parser('series-receipt')
+    series.add_argument('boundary', choices=('start','end'))
     sub.add_parser('bind-inputs')
     sub.add_parser('check-inputs')
     sub.add_parser('plan')
@@ -1685,6 +1783,14 @@ def main():
     if args.action == 'declare':
         declare_run(Path.cwd())
         return 0
+    if args.action == 'series-idle':
+        series_idle(Path.cwd(), args.boundary)
+        return 0
+    if args.action == 'series-receipt':
+        series_receipt(Path.cwd(), args.boundary)
+        return 0
+    if args.action == 'counter-work':
+        return counter_work(Path(args.receipt), args.command)
     if args.action == 'instruction-probe':
         instruction_probe(Path.cwd())
         return 0
