@@ -8,6 +8,20 @@
   "rows": [
     {
       "conditional_on": "",
+      "reason": "This scopes legacy evidence and retains the new-tag implementation hold, without proving private entropy.",
+      "relation": "realizes",
+      "source": "ACTAUTH::rec:authentication:encoding-evidence",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This scopes legacy evidence and retains the new-tag implementation hold, without proving private entropy.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::amend:profile:opening-evidence",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The package uses the public formats and bounds while production entropy and custody remain held.",
       "relation": "realizes",
       "source": "ACTPROFILE::def:profile:private-inputs",
@@ -253,7 +267,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The operator salt and content format uses the declared construction; the particular hiding premise is named separately.",
+      "reason": "The legacy format and held new content recipe use the declared construction; actual entropy is not established.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-content-admission",
       "target": "ROOT::amend:identity:act-concealment"
@@ -267,7 +281,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The operator salt and content format is specified here; the particular excluded entropy premise is named separately.",
+      "reason": "The immutable legacy format and held new content recipe are specified here; actual entropy is not established.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-content-admission",
       "target": "subsec:deployment:concealment-entropy"
@@ -596,6 +610,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This inventories the implementation hold, not evidence of entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::rec:identity:reference-code-transition",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The requirement trace names the public disclosure portion of the imported burn boundary.",
       "relation": "realizes",
       "source": "ROOT::req:vision:burn-boundary",
@@ -694,6 +715,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the coordinated reference implementation hold, not evidence of private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::verif:design:dependency-opening-cases",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.",
       "relation": "realizes",
       "source": "ROOT::verif:design:finality-breach-cases",
@@ -719,6 +747,13 @@
       "relation": "realizes",
       "source": "ROOT::verif:identity:authentication-encoding",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The evidence scope retains the new-tag implementation hold, not an entropy claim.",
+      "relation": "realizes",
+      "source": "ROOT::verif:identity:authentication-encoding",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",

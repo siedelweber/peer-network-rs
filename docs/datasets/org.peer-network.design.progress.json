@@ -5023,6 +5023,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::rule:devnet:content-nonce"
         }
@@ -5037,7 +5041,7 @@
         "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7077,8 +7081,32 @@
           "record": "RECORDS::def:acts:authentication-disclosure"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:decomposition:act-profile"
+        },
+        {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:proposal-signature"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "kind": "type",
@@ -7111,7 +7139,7 @@
         "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7128,16 +7156,40 @@
           "record": "RECORDS::def:acts:authentication-disclosure"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::alg:design:authentication-handoff"
+        },
+        {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::alg:design:formation"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:decomposition:act-profile"
         },
         {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::amend:design:publication-field-inventory"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::def:identity:verified-header-name"
+        },
+        {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::open:design:proposal-carriage"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
         },
         {
           "hold": "ROOT::open:identity:act-production-concealment",
@@ -7173,7 +7225,7 @@
         "ROOT::rule:devnet:content-carrier"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7187,8 +7239,20 @@
           "record": "RECORDS::def:acts:authentication-disclosure"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::alg:design:authentication-handoff"
+        },
+        {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "kind": "invariant check",
@@ -7218,7 +7282,7 @@
         "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7234,6 +7298,10 @@
           "record": "ROOT::alg:design:formation"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:decomposition:act-profile"
+        },
+        {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::open:design:dependency-opening-recipe"
         },
@@ -7244,6 +7312,14 @@
         {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "kind": "certificate",
@@ -7263,7 +7339,7 @@
         "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -7319,6 +7395,14 @@
           "record": "RECORDS::def:acts:authentication-disclosure"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "RECORDS::def:acts:authentication-disclosure"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::alg:design:authentication-handoff"
+        },
+        {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:act-envelope-field-inventory"
         },
@@ -7345,7 +7429,7 @@
         "ROOT::dec:crypto:base-library"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -33207,6 +33291,14 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::rule:devnet:content-nonce"
         }
@@ -33219,7 +33311,7 @@
           "record": "ROOT::amend:identity:act-concealment"
         },
         {
-          "clause": "Claimed part: The operator salt and content format is specified here; the particular excluded entropy premise is named separately.",
+          "clause": "Claimed part: The immutable legacy format and held new content recipe are specified here; actual entropy is not established.",
           "record": "ROOT::amend:identity:act-content-admission"
         },
         {
@@ -33256,7 +33348,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        }
+      ],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-operator-generated",
       "portions": [
@@ -33275,7 +33372,7 @@
         "ROOT::amend:identity:act-concealment"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -33284,6 +33381,10 @@
       "crate": "pn-host",
       "elsewhere": [],
       "holds": [
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
         {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::rule:devnet:content-nonce"
@@ -33317,7 +33418,7 @@
         "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -34491,6 +34592,10 @@
         },
         {
           "hold": "ROOT::open:identity:act-production-concealment",
+          "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::open:design:dependency-opening-recipe"
         }
       ],
@@ -36111,23 +36216,23 @@
     },
     {
       "category": "total",
-      "designed": 408,
-      "held": 59,
+      "designed": 400,
+      "held": 67,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "408",
+          "exact": "400",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "408",
+          "num": "400",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "59",
+          "exact": "67",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "59",
+          "num": "67",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36606,23 +36711,23 @@
     },
     {
       "category": "crate",
-      "designed": 49,
-      "held": 17,
+      "designed": 46,
+      "held": 20,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "49",
+          "exact": "46",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49",
+          "num": "46",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "17",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36804,23 +36909,23 @@
     },
     {
       "category": "crate",
-      "designed": 76,
-      "held": 11,
+      "designed": 71,
+      "held": 16,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "76",
+          "exact": "71",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "76",
+          "num": "71",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "11",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37101,23 +37206,23 @@
     },
     {
       "category": "kind",
-      "designed": 5,
-      "held": 0,
+      "designed": 4,
+      "held": 1,
       "name": "certificate",
       "number_forms": {
         "designed": {
-          "exact": "5",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37596,23 +37701,23 @@
     },
     {
       "category": "kind",
-      "designed": 142,
-      "held": 22,
+      "designed": 141,
+      "held": 23,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "142",
+          "exact": "141",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "142",
+          "num": "141",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "22",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37794,23 +37899,23 @@
     },
     {
       "category": "kind",
-      "designed": 55,
-      "held": 17,
+      "designed": 51,
+      "held": 21,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "55",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "55",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "17",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37992,23 +38097,23 @@
     },
     {
       "category": "kind",
-      "designed": 51,
-      "held": 7,
+      "designed": 49,
+      "held": 9,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "51",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "7",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38289,23 +38394,23 @@
     },
     {
       "category": "bite",
-      "designed": 18,
-      "held": 3,
+      "designed": 16,
+      "held": 5,
       "name": "3",
       "number_forms": {
         "designed": {
-          "exact": "18",
+          "exact": "16",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "16",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "3",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38388,23 +38493,23 @@
     },
     {
       "category": "bite",
-      "designed": 23,
-      "held": 11,
+      "designed": 22,
+      "held": 12,
       "name": "4",
       "number_forms": {
         "designed": {
-          "exact": "23",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "11",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39180,23 +39285,23 @@
     },
     {
       "category": "bite",
-      "designed": 285,
-      "held": 21,
+      "designed": 279,
+      "held": 27,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "285",
+          "exact": "279",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "285",
+          "num": "279",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "21",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39856,10 +39961,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 695",
+          "exact": "1 696",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 695",
+          "num": "1 696",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39874,7 +39979,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1695
+      "total": 1696
     },
     {
       "category": "record-coverage",
