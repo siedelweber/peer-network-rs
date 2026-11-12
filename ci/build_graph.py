@@ -734,18 +734,22 @@ def peer_frontier(records):
                        and dominates(other, value) for other in records)]
 
 
-def prune_peer_archive(archive, ancestry=None):
+def prune_peer_archive(archive, ancestry, current_base_tree=None):
     """Prune only after the eligible set and its retained dominators are known."""
     records = []
     removed = 0
     for path in archive.glob('*.json'):
         value = json.loads(path.read_text())
-        if ancestry is not None and value.get('tree') not in ancestry:
+        recorded_base = value.get('import_base_tree')
+        if (current_base_tree is not None and value.get('tree') not in ancestry and recorded_base in ancestry
+                and recorded_base != current_base_tree):
             path.unlink()
             removed += 1
         else:
             records.append((path, value))
-    kept = peer_frontier([value for _, value in records])
+    eligible = [value for _, value in records if value.get('tree') in ancestry]
+    kept = peer_frontier(eligible)
+    kept.extend(value for _, value in records if value.get('tree') not in ancestry)
     for path, value in records:
         if not any(value is other for other in kept):
             path.unlink()
@@ -809,28 +813,31 @@ def baseline_context(root, registry, policy=None):
                 break
             predecessors.append(previous)
             cursor = previous
-        peer_trees = {peer:json.loads(peer.read_text())['tree'] for peer in peers}
-        history = ancestry_trees(root, base, set(predecessors) | set(peer_trees.values()))
+        peer_records = {peer:json.loads(peer.read_text()) for peer in peers}
+        peer_trees = {peer:value['tree'] for peer, value in peer_records.items()}
+        recorded_bases = {value['import_base_tree'] for value in peer_records.values() if value.get('import_base_tree')}
+        history = ancestry_trees(root, base, set(predecessors) | set(peer_trees.values()) | recorded_bases)
         for previous in predecessors:
             if previous not in history:
                 break
             candidate = directory/(previous+'.json')
             candidates.append(candidate)
             comparisons[candidate] = history[previous]
-        prune_peer_archive(directory/'peers', history)
+        prune_peer_archive(directory/'peers', history, base_tree.stdout.strip())
         for peer, peer_tree in peer_trees.items():
             if peer.exists() and peer_tree in history:
                 candidates.append(peer)
                 comparisons[peer] = history[peer_tree]
     else:
+        history = {}
         for peer in peers:
             value = json.loads(peer.read_text())
             ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', value['source'], source], cwd=root, capture_output=True)
-            if ancestor.returncode == 1:
-                peer.unlink()
-            elif ancestor.returncode:
+            if ancestor.returncode == 0:
+                history[value['tree']] = value['source']
+            elif ancestor.returncode != 1:
                 raise ValueError('cannot establish archived source ancestry')
-        prune_peer_archive(directory/'peers')
+        prune_peer_archive(directory/'peers', history)
         candidates.extend(peer for peer in peers if peer.exists())
     eligible = []
     for candidate in candidates:
@@ -1013,7 +1020,6 @@ def retain_baseline(root):
         temporary = archive/(uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(record, sort_keys=True)+'\n')
         temporary.replace(temporary.with_suffix('.json'))
-        prune_peer_archive(archive)
     if not accepted:
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')
@@ -1238,10 +1244,12 @@ def tier_summary(root, registry, worker_statuses):
         excess = max(0.0, wall-limit) if limit is not None else None
         over_budget = excess is not None and excess > 0
         step_figures = {}
+        isolated_compiling_steps = []
         for row, cpu in zip(selected_rows, values):
             log = (root/f'.lane/gate-{row[0]}.log').read_text()
             isolated = [json.loads(line.removeprefix('ISOLATION-COMPILE ')) for line in log.splitlines() if line.startswith('ISOLATION-COMPILE ')]
             isolated = [value for value in isolated if value.get('source') == os.environ['PN_GATE_SOURCE']]
+            isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target']) for value in isolated)
             step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
                 cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
                 layouts={value['owner']:value['layout'] for value in isolated},
@@ -1284,8 +1292,7 @@ def tier_summary(root, registry, worker_statuses):
         from gate_resources import node_stall
         stall = node_stall(measurement)
         old_stall = node_stall(prior.get('resources', {}))
-        compiled_steps = [name for name in names if name in cache.get('compiling_steps', [])
-                          or re.search(r'^\s*Compiling ', (root/f'.lane/gate-{name}.log').read_text(), re.M)]
+        compiled_steps = [name for name in names if name in cache.get('compiling_steps', [])]
         tier_cache = cache['state'] if compiled_steps else 'not-compiling'
         classification = overrun_class(over_budget, comparable_cpu, comparable_old, stall, comparable_build, comparable_old_build, changed, policy,
             compile_wall_growth=wall_growth, excess=excess, wall=wall, baseline_wall=prior.get('wall'),
@@ -1293,18 +1300,19 @@ def tier_summary(root, registry, worker_statuses):
         if not comparable_cases:
             comparable_cpu = comparable_old = None
         partial_steps = sorted(name for name, row in step_figures.items() if row['partial'])
-        reports[tier].update(cache_state=cache['state'], compiling_steps=compiled_steps, over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
+        reports[tier].update(cache_state=cache['state'], compiling_steps=compiled_steps, isolated_compiling_steps=isolated_compiling_steps, over_budget=over_budget, excess_s=excess, classification=classification, partial_steps=partial_steps,
             selected_cases=cases, case_costs=case_costs[tier], case_steps=case_steps[tier], case_intersection=intersection, comparable_cases=comparable_cases, comparable_wall=comparable_wall,
             comparable_build_cpu_s=comparable_build, baseline_comparable_build_cpu_s=comparable_old_build,
             comparable_setup_cpu_s=comparable_setup, baseline_comparable_setup_cpu_s=comparable_old_setup,
             step_figures=step_figures, non_comparable_steps=omitted, comparable_cpu_s=comparable_cpu, baseline_comparable_cpu_s=comparable_old, compile_wall_growth_s=wall_growth,
             own_cpu_s=own_cpu, build_cpu_s=build_cpu, baseline_source=baseline['source'] if baseline else None,
+            baseline_provisional=baseline.get('provisional', True) if baseline else None,
             baseline_wall_s=prior.get('wall'), baseline_stall=old_stall,
             baseline_tree=baseline.get('tree') if baseline else None, baseline_match=baseline.get('match') if baseline else None,
             baseline_cpu_s=old_cpu, baseline_build_cpu_s=prior.get('build_cpu_s'), changed_build_inputs=changed)
-        print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
+        print(f'GATE-TIER tier={tier} cache_state={cache["state"]} compiling_steps={json.dumps(compiled_steps,separators=(",",":"))} isolated_compiling_steps={json.dumps(isolated_compiling_steps,separators=(",",":"))} WALL={wall:.6f}s step_wall_sum_s={ownership["step_wall_sum_s"]:.6f} step_wall_union_s={ownership["step_wall_union_s"]:.6f} unowned_wall_s={ownership["unowned_wall_s"]:.6f} budget_s={limit} verdict={"green" if not status else "red"} comparable_build_cpu_s={comparable_build} baseline_comparable_build_cpu_s={comparable_old_build} comparable_setup_cpu_s={comparable_setup} baseline_comparable_setup_cpu_s={comparable_old_setup} '
               f'baseline_wall_s={prior.get("wall")} baseline_stall={old_stall} comparable_cases={str(comparable_cases).lower()} comparable_wall={str(comparable_wall).lower()} case_intersection={json.dumps(intersection,separators=(",",":"))} '
-              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} classification={classification} baseline_source={baseline["source"] if baseline else None} baseline_provisional={str(baseline.get("provisional", True)).lower() if baseline else "unavailable"} baseline_tree={baseline.get("tree") if baseline else None} baseline_match={baseline.get("match") if baseline else None} baseline_cpu_s={old_cpu} build_cpu_s={build_cpu} baseline_build_cpu_s={prior.get("build_cpu_s")} compile_wall_growth_s={wall_growth} comparable_cpu_s={comparable_cpu} baseline_comparable_cpu_s={comparable_old} partial_steps={json.dumps(partial_steps,separators=(",",":"))} non_comparable_steps={json.dumps(omitted,separators=(",",":"))} changed_build_inputs={json.dumps(changed,separators=(",",":"))} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
@@ -1313,10 +1321,13 @@ def tier_summary(root, registry, worker_statuses):
     (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
     tree = subprocess.run(['git', 'rev-parse', os.environ['PN_GATE_SOURCE']+'^{tree}'], cwd=root,
                           capture_output=True, text=True, check=True).stdout.strip()
+    import_base = os.environ.get('PN_IMPORT_BASE')
+    import_base_tree = subprocess.run(['git', 'rev-parse', import_base+'^{tree}'], cwd=root,
+                                     capture_output=True, text=True, check=True).stdout.strip() if import_base else None
     from gate_resources import node_identity
     print('GATE-CACHE '+json.dumps(cache, sort_keys=True), flush=True)
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), context_directory=str(context_directory), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
-        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), tiers=reports, step_cpu=step_cpu,
+        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), import_base_tree=import_base_tree, tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,
         previous_peers=baseline.get('selection_peers', []) if baseline else [],
@@ -1375,7 +1386,7 @@ def wall_summary(root, status, interval=None):
     result = dict(wall=wall, budget_s=limit, excess_s=excess, over_budget=excess > 0, classification=classification,
         status=status, own_user_s=measured['own_user_s'], own_sys_s=measured['own_sys_s'],
         stall=stall, node_scope=measured.get('node_scope', 'unavailable'), baseline_wall=prior.get('wall'), baseline_stall=prior.get('stall'),
-        baseline_source=fast.get('baseline_source'), baseline_match=fast.get('baseline_match'),
+        baseline_source=fast.get('baseline_source'), baseline_provisional=fast.get('baseline_provisional'), baseline_match=fast.get('baseline_match'),
         comparable_cpu_s=current_cpu, baseline_comparable_cpu_s=prior_cpu,
         comparable_build_cpu_s=current_build, baseline_comparable_build_cpu_s=prior_build,
         comparable_setup_cpu_s=total('comparable_setup_cpu_s'), baseline_comparable_setup_cpu_s=total('baseline_comparable_setup_cpu_s'),

@@ -394,12 +394,12 @@ wait
             lane = root/'.lane'
             lane.mkdir()
             for wall, expected, cold, old_cold, old_stall in ((1, False, False, False, .2), (1, False, False, True, .2), (2, False, True, False, .2), (3, True, True, False, .2), (3, True, False, False, .2), (3, True, False, False, .9)):
-                baseline = dict(source="prior", tiers={name: dict(wall=4, selected_cases=[], resources={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, setup_cpu_s=0, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
+                baseline = dict(source="prior", provisional=True, tiers={name: dict(wall=4, selected_cases=[], resources={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':old_stall}}, step_figures={name: dict(wall=1, own_cpu_s=1, cargo_cpu_s=0.25, setup_cpu_s=0, layouts={"fixture":"fixture-layout"}, partial=old_cold)}) for name in names})
                 for name in names:
                     actual = dict(owner='fixture', source='fixture', layout='fixture-layout', cargo_cpu_s=0.5, cold_target=cold, layout_changed=False)
                     synthetic = dict(actual, owner='synthetic', source='witness-source', cargo_cpu_s=100, cold_target=True)
                     (lane/f'gate-{name}-setup.jsonl').write_text('')
-                    (lane/f'gate-{name}.log').write_text('\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
+                    (lane/f'gate-{name}.log').write_text('   Compiling isolated-fixture v1.0\n'+'\n'.join('ISOLATION-COMPILE '+json.dumps(row) for row in (synthetic, actual)))
                 for status, changed_selection in ((0, False), (1, False), (0, True), (0, 'rebuild')):
                     if changed_selection:
                         baseline["tiers"]["service"]["selected_cases"] = ["previous-case"]
@@ -408,9 +408,10 @@ wait
                     (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
                     output = io.StringIO()
                     rebuilding = changed_selection == 'rebuild'
-                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run'), redirect_stdout(output):
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000), 'gate': dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=['service'] if rebuilding else [])}), patch('build_graph.baseline_context', return_value=(lane/'baseline.json', baseline, ['packages/records/src/ridge.rs'] if rebuilding else [], lane)), patch('harness.build_cache_state', return_value=dict(state='cold' if cold else 'warm', compiling_steps=['service'] if cold else [])), patch('gate_resources.raw_sample', return_value={'epoch_seconds':-10}), patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':.4}}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0, stdout='tree')), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), redirect_stdout(output):
                         tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
                     measured = json.loads((lane/'gate-tiers.json').read_text())
+                    self.assertEqual(json.loads((lane/'gate-baseline.json').read_text())['import_base_tree'], 'tree', 'archive provenance must name the declared base tree')
                     for name in tiers:
                         self.assertEqual(measured[name]['status'], status)
                         self.assertEqual(measured[name]['over_budget'], expected)
@@ -418,6 +419,9 @@ wait
                         self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
+                        self.assertEqual(measured[name]['compiling_steps'], ['service'] if cold and name == 'service' else [], 'only cache receipt steps give cold precedence')
+                        self.assertEqual(measured[name]['isolated_compiling_steps'], [dict(step=name, owner='fixture', cold_target=cold)], 'isolated compiles retain their own target state')
+                        self.assertTrue(measured[name]['baseline_provisional'])
                         selection_differs = changed_selection and name == 'service'
                         self.assertEqual(measured[name]['comparable_cases'], not selection_differs)
                         self.assertEqual(measured[name]['comparable_build_cpu_s'], None if cold or old_cold else 0.5)
@@ -441,6 +445,8 @@ wait
                     self.assertEqual(measured['fast']['step_wall_sum_s'],wall)
                     fast = next(line for line in output.getvalue().splitlines() if line.startswith('GATE-TIER tier=fast '))
                     self.assertIn('over_budget='+str(expected).lower(), fast)
+                    self.assertIn('baseline_source=prior baseline_provisional=true', fast)
+                    self.assertIn('isolated_compiling_steps=', fast)
                     self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)
 
     def test_whole_gate_warning(self):
@@ -509,7 +515,7 @@ wait
             figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
                            baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
                            own_user_s=1, own_sys_s=0, baseline_cpu_s=1,
-                           changed_build_inputs=[], baseline_source='prior', baseline_match='import-base-tree')
+                           changed_build_inputs=[], baseline_source='prior', baseline_provisional=True, baseline_match='import-base-tree')
             for status in (0, 1):
                 pending = dict(source='fixture', tiers={'fast':figures}, previous_whole={'wall':2, 'stall':.1, 'own_user_s':1, 'own_sys_s':.1})
                 (lane/'gate-baseline.json').write_text(json.dumps(pending))
@@ -522,6 +528,8 @@ wait
                 self.assertEqual(result['classification'], 'high-stall')
                 self.assertEqual(result['baseline_stall'], .1)
                 self.assertEqual(result['baseline_source'], 'prior')
+                self.assertTrue(result['baseline_provisional'])
+                self.assertIn('baseline_source=prior baseline_provisional=true', output.getvalue())
                 self.assertAlmostEqual(result['comparable_cpu_s'], 1.1)
                 self.assertAlmostEqual(result['baseline_comparable_cpu_s'], 1.1)
                 self.assertIn('GATE-WALL WALL=1.200000s verdict='+('green' if status == 0 else 'red'), output.getvalue())
@@ -875,7 +883,7 @@ wait
                     retain_baseline(root)
                     self.assertEqual(path.read_bytes(),original,'a nonselected frontier member must still constrain the next candidate')
             archived = [json.loads(path.read_text()) for path in (root/'peers').glob('*.json')]
-            self.assertEqual([value['source'] for value in archived], ['C'], 'the retained dominator replaces the redundant archive member')
+            self.assertEqual({value['source'] for value in archived}, {'B','C'}, 'retention must not prune before ancestry is known')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             path = root/'cold.json'
@@ -890,6 +898,8 @@ wait
         import random
         generator = random.Random(2718)
         distinct = set()
+        next_distinct = set()
+        singleton_domains = ties = older_winners = 0
         for index in range(256):
             archive = []
             for member in range(7):
@@ -900,23 +910,65 @@ wait
                 value['tiers']['fast']['selected_cases'] = [generator.choice(['first','second'])]
                 archive.append(value)
             generator.shuffle(archive)
-            distinct.add(json.dumps(archive,sort_keys=True))
+            content = [{key:value for key,value in row.items() if key not in ('source','tree')} for row in archive]
+            distinct.add(json.dumps(sorted(content,key=lambda row:json.dumps(row,sort_keys=True)),sort_keys=True))
+            from build_graph import peer_domain, peer_cost, dominates
+            domains = [json.dumps(peer_domain(row),sort_keys=True) for row in archive]
+            singleton_domains += sum(domains.count(domain) == 1 for domain in set(domains))
+            ties += sum(a['whole']['stall'] == b['whole']['stall'] and peer_cost(a) == peer_cost(b)
+                        for i,a in enumerate(archive) for b in archive[i+1:])
             pruned = peer_frontier(archive)
             self.assertEqual(preferred_baseline(pruned), preferred_baseline(archive), 'pruning changed the current choice')
             for next_case in range(5):
                 candidate = copy.deepcopy(generator.choice(archive))
                 candidate['source'] = 'next:'+str(next_case)
                 candidate['whole'].update(wall=generator.randrange(1,5), comparable_cpu_s=generator.randrange(1,5))
+                next_distinct.add(json.dumps({key:value for key,value in candidate.items() if key not in ('source','tree')},sort_keys=True))
+                incumbent = preferred_baseline(archive)
+                winner = preferred_baseline([*archive,candidate])
+                older_winners += dominates(candidate, incumbent) and winner is not candidate and winner is not incumbent
                 self.assertEqual(preferred_baseline([*pruned,candidate]), preferred_baseline([*archive,candidate]),
                                  'pruning changed the next candidate choice')
         self.assertEqual(len(distinct), 256)
-        print('PEER-ARCHIVES distinct='+str(len(distinct))+' next_candidates=1280 order=generated-unsorted')
+        self.assertGreater(singleton_domains, 0)
+        self.assertGreater(ties, 0)
+        self.assertGreater(older_winners, 0)
+        print(f'PEER-ARCHIVES content_distinct={len(distinct)} next_candidates=1280 next_content_distinct={len(next_distinct)} singleton_domains={singleton_domains} cost_stall_ties={ties} older_frontier_wins={older_winners} order=generated-unsorted')
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory)
             for name, value in [('slow',slow),('fast',fast),('foreign',quiet_fast)]:
-                (archive/(name+'.json')).write_text(json.dumps(dict(value,tree='outside' if name == 'foreign' else 'inside')))
-            prune_peer_archive(archive, {'inside':'public'})
+                (archive/(name+'.json')).write_text(json.dumps(dict(value,tree='outside' if name == 'foreign' else 'inside', import_base_tree='old-base')))
+            prune_peer_archive(archive, {'inside':'public', 'old-base':'old'}, 'inside')
             self.assertEqual({path.stem for path in archive.glob('*.json')}, {'fast'}, 'only eligible nondominated archive members remain')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'.lane').mkdir(); archive = root/'peers'; archive.mkdir()
+            a = dict(slow, source='A', tree='landed', import_base_tree='old-base',
+                     quiet_windows=windows(), load_unresolved_pressure_percent=10)
+            (archive/'A.json').write_text(json.dumps(a))
+            b = dict(fast, source='B', tree='pending', import_base_tree='current-base',
+                     quiet_windows=windows(), load_unresolved_pressure_percent=10,
+                     path=str(root/'pending.json'), previous_peers=[a])
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(b))
+            with patch('build_graph.evidence_statuses', return_value={}): retain_baseline(root)
+            self.assertTrue((archive/'A.json').exists(), 'an unlanded dominator must not delete A at retention')
+            prune_peer_archive(archive, {'landed':'A', 'old-base':'old'}, 'old-base')
+            self.assertEqual(len(list(archive.glob('*.json'))), 2, 'a candidate based ahead of this gate must remain pending')
+            history = {'landed':'A', 'old-base':'old', 'current-base':'current'}
+            prune_peer_archive(archive, history, 'current-base')
+            self.assertEqual(len(list(archive.glob('*.json'))), 2, 'a candidate at the current base is still pending')
+            history['next-base'] = 'next'
+            prune_peer_archive(archive, history, 'next-base')
+            self.assertEqual(len(list(archive.glob('*.json'))), 1, 'B never landed when its base was passed')
+            remaining = [json.loads(p.read_text()) for p in archive.glob('*.json')]
+            self.assertEqual(preferred_baseline(remaining), preferred_baseline([a]), 'the next selection must equal the full eligible set')
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory)
+            for name, base in [('future','future-base'), ('current','current-base'), ('legacy',None), ('passed','old-base')]:
+                (archive/(name+'.json')).write_text(json.dumps(dict(fast,tree=name,import_base_tree=base)))
+            prune_peer_archive(archive, {'current-base':'now','old-base':'before'})
+            self.assertEqual(len(list(archive.glob('*.json'))), 4, 'without a declared base absence cannot prove obsolescence')
+            prune_peer_archive(archive, {'current-base':'now','old-base':'before'}, 'current-base')
+            self.assertEqual({p.stem for p in archive.glob('*.json')}, {'future','current','legacy'}, 'only a passed base permits absence pruning')
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
         self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
@@ -940,6 +992,7 @@ wait
                 self.assertEqual(build_cache_state(root, 'source', 'other')['state'], 'unknown')
             (run/'build.stderr').write_text('    Finished `gate` profile [optimized]\n')
             receipt['artifacts'][0]['fresh'] = False
+            receipt['artifacts'].append(copy.deepcopy(receipt['artifacts'][0]))
             (root/'.lane/lint-pass.json').write_text(json.dumps(receipt))
             cache = build_cache_state(root, 'source', 'invocation')
             self.assertEqual(cache['state'], 'cold', 'a rebuilt lint target is cold even when primary artifacts are fresh')
@@ -1074,9 +1127,10 @@ wait
                 self.assertEqual(baseline_context(root, registry)[1]['source'], original)
                 other_path.unlink()
                 with patch.dict(os.environ, PN_IMPORT_BASE=other):
-                    self.assertEqual(baseline_context(root, registry)[1]['source'], original,
-                                     'only the eligible predecessor remains after the foreign archive is pruned')
-                    self.assertFalse(any(json.loads(peer.read_text())['tree'] == other_tree
+                    selected = baseline_context(root, registry)[1]
+                    self.assertIn(other, {value['source'] for value in selected['selection_peers']},
+                                  'the pending archive becomes eligible once its tree lands')
+                    self.assertTrue(any(json.loads(peer.read_text())['tree'] == other_tree
                                          for peer in (path.parent/'peers').glob('*.json')))
                 # The remaining controls isolate the legacy predecessor route;
                 # archives have independently passed ancestry selection above.
