@@ -715,8 +715,12 @@ def series_idle(root, boundary):
     command = json.loads(os.environ.get('PN_GATE_CONTAINER_LIST', 'null'))
     if not isinstance(command, list) or not command or any(not isinstance(x, str) or not x for x in command):
         raise ValueError('PN_GATE_CONTAINER_LIST must be a nonempty JSON argv')
+    service_command = json.loads(os.environ.get('PN_GATE_SERVICE_LIST', 'null'))
+    if not isinstance(service_command,list) or not service_command or any(not isinstance(x,str) or not x for x in service_command):
+        raise ValueError('PN_GATE_SERVICE_LIST must be a nonempty JSON argv')
     processes = listing(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args='])
     containers = listing(command)
+    services = listing(service_command)
     # Only the collector and its ancestors are exempt from the battery census.
     ancestors = [os.getpid()]
     parents = {}
@@ -728,7 +732,7 @@ def series_idle(root, boundary):
         ancestors.append(parents[ancestors[-1]])
     record = dict(identity=identity, boundary=boundary, at=time.time(),
                   processes=processes, collector_ancestors=ancestors,
-                  container_command=command, containers=containers, load=list(os.getloadavg()))
+                  container_command=command, containers=containers, service_command=service_command, services=services, load=list(os.getloadavg()))
     path = root/('.lane/gate-series-host-'+boundary+'.json')
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(record,sort_keys=True)+'\n')
@@ -812,10 +816,11 @@ def series_owners(root, declaration, invocation):
 
 # Proposed sampling policy has the same carrier as other gate declarations.
 def series_policy():
-    rows = tomllib.loads((Path(__file__).resolve().parent.parent/'docs/inputs/devperf-budgets.toml').read_text())['rows']
-    row = next(row for row in rows if row['name'] == 'gate')
-    return {name: (int(row[name]) if name == 'series_attempts_per_ordinal' else float(row[name]))
-            for name in ('series_pressure_multiple','series_absolute_pressure','series_relative_floor','series_attempts_per_ordinal')}
+    from devperf import budgets
+    row = budgets(Path(__file__).resolve().parent.parent/'docs/inputs/devperf-budgets.toml')['gate']
+    return dict({name: (int(row[name]) if name == 'series_attempts_per_ordinal' else float(row[name]))
+                 for name in ('series_pressure_multiple','series_absolute_pressure','series_relative_floor','series_attempts_per_ordinal')},
+                provisional=row['series_policy_provisional'])
 
 
 
@@ -841,7 +846,7 @@ def series_close(root, status, archive_root=None):
 
 
 def series_idle_refusal(idle):
-    """End observations must be readable and contain no other account battery."""
+    """Both boundary observations must be readable and free of account batteries."""
     processes, containers = idle.get('processes', {}), idle.get('containers', {})
     if not isinstance(processes,dict) or not isinstance(containers,dict) or processes.get('status') != 0 or containers.get('status') != 0:
         return 'idle listing unavailable'
@@ -852,7 +857,18 @@ def series_idle_refusal(idle):
     if not isinstance(active,list):
         return 'idle container listing is not a JSON array'
     if active:
-        return 'other account container at end'
+        return 'other account container at boundary'
+    services = idle.get('services', {})
+    if not isinstance(services,dict) or services.get('status') != 0:
+        return 'idle service listing unavailable'
+    try:
+        units = json.loads(services['stdout'])
+    except (ValueError, KeyError, TypeError):
+        return 'idle service listing is not a JSON array'
+    if not isinstance(units,list) or any(not isinstance(unit,dict) or not isinstance(unit.get('unit'),str) or not unit['unit'].endswith('.service') for unit in units):
+        return 'idle service listing is malformed'
+    if any(unit['unit'] not in {'dbus.service','dbus-broker.service'} for unit in units):
+        return 'other account user service at boundary'
     ancestors=idle.get('collector_ancestors',[])
     for line in processes.get('stdout','').splitlines():
         fields=line.split(None,2)
@@ -861,7 +877,7 @@ def series_idle_refusal(idle):
         if int(fields[0]) in ancestors:
             continue
         if re.search(r'(?:ci/(?:gate\.sh|precheck\.py|run_ci\.py|run_tests\.py)|cargo(?:-|\s)(?:test|nextest|build|check|clippy|fmt)|(?:focus|battery|test_[\w-]+)\.py|[-_]node\.py|[-_]probe\.py|-m\s+unittest)',fields[2]):
-            return 'other account battery at end'
+            return 'other account battery at boundary'
     return None
 
 
@@ -869,13 +885,23 @@ def series_ledger(label, ledger):
     """The label's ordered JSONL outcome rows join every archive directory."""
     rows = [json.loads(line) for line in ledger.read_text().splitlines() if line.strip()]
     entries = {}
+    declared_identity = None
     for row in rows:
-        if row.get('series') != label or not isinstance(row.get('entry'),str) or row['entry'] in entries:
+        if not isinstance(row,dict) or row.get('series') != label or not isinstance(row.get('entry'),str) or row['entry'] in entries:
             raise ValueError('ledger label or entry is foreign or duplicate')
         if type(row.get('ordinal')) is not int or not 1 <= row['ordinal'] <= series_count():
             raise ValueError('ledger ordinal outside declared count')
         if any(type(row.get(key)) is not int for key in ('gate_status','close_status','archive_status')):
             raise ValueError('ledger requires separate integer gate, close and archive statuses')
+        identity = row.get('declared_identity')
+        if (not isinstance(identity,dict) or set(identity) != {'base','source','configuration_key','cache'}
+                or any(not isinstance(identity.get(key),str) or not identity[key] for key in ('base','source','configuration_key','cache'))
+                or not re.fullmatch(r'[0-9a-f]{64}',identity['configuration_key']) or identity['cache'] not in {'cold','warm'}
+                or identity['base'] == identity['source']):
+            raise ValueError('ledger declared identity is malformed')
+        if declared_identity is not None and identity != declared_identity:
+            raise ValueError('ledger rows disagree on declared identity')
+        declared_identity = identity
         entries[row['entry']] = row
     return entries
 
@@ -899,9 +925,9 @@ def series_member(row, first):
         idle = row.get('host_idle_'+boundary, {})
         if idle.get('identity') != identity or idle.get('boundary') != boundary:
             raise ValueError('series requires both bound idle receipts')
-    refusal = series_idle_refusal(row['host_idle_end'])
-    if refusal:
-        raise ValueError(refusal)
+        refusal = series_idle_refusal(idle)
+        if refusal:
+            raise ValueError(boundary+' '+refusal)
     if not row.get('owners') or any(owner.get('cold_target') is not False or owner.get('layout_changed') is not False
             or owner.get('base') != declaration['base'] or owner.get('source') != declaration['source'] or owner.get('run') != row.get('run') for owner in row['owners']):
         raise ValueError('series owner target is cold, swept, unobserved or foreign')
@@ -917,11 +943,29 @@ def series_member(row, first):
         raise ValueError('series changed-file evidence differs')
 
 
-def series_check(label, archive, ledger):
+def series_plans(label, path):
+    """Optional independently retained plans expose attempts absent from the other records."""
+    plans = {}
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        if (not isinstance(row,dict) or row.get('series') != label or not isinstance(row.get('entry'),str) or not row['entry'] or row['entry'] in plans
+                or type(row.get('ordinal')) is not int or not 1 <= row['ordinal'] <= series_count()
+                or type(row.get('start')) not in (int,float) or not math.isfinite(row['start'])):
+            raise ValueError('series plan identity, ordinal or start is malformed')
+        plans[row['entry']] = row
+    return plans
+
+
+def series_check(label, archive, ledger, plans=None):
     """Read every terminal attempt; a later success never displaces a success."""
     import statistics
     SERIES_POLICY = series_policy()
     ledger_rows = series_ledger(label, ledger)
+    plan_rows = series_plans(label,plans) if plans is not None else {}
+    if set(plan_rows)-set(ledger_rows):
+        raise ValueError('planned attempt missing from ledger and archive join')
     attempts = []
     entries = set()
     for directory in archive.iterdir():
@@ -948,6 +992,8 @@ def series_check(label, archive, ledger):
         ordinal = int(identity['PN_GATE_ORDINAL'])
         if not 1 <= ordinal <= series_count():
             raise ValueError('series ordinal outside declared count')
+        if entry in plan_rows and (plan_rows[entry]['ordinal'] != ordinal or plan_rows[entry]['start'] > attempt['started']):
+            raise ValueError('plan ordinal or start disagrees with attempt')
         attempts.append((attempt['started'], entry, ordinal, attempt))
     if entries != set(ledger_rows):
         raise ValueError('ledger attempt missing from archive')
@@ -975,6 +1021,9 @@ def series_check(label, archive, ledger):
                 raise ValueError('attempt measurement is incomplete')
             if row['declaration'] != attempt.get('declaration') or row['host_idle_start']['identity'] != attempt['identity']:
                 raise ValueError('attempt and measurement disagree')
+            declared_identity = ledger_rows[entry]['declared_identity']
+            if any(row['declaration'].get(key) != value for key,value in declared_identity.items()):
+                raise ValueError('sample and ledger declared identity disagree')
             series_member(row, first if first is not None else row)
             for mtime in row['changed_files'].values():
                 if type(mtime) not in (int,float) or not math.isfinite(mtime) or (previous_end is not None and mtime <= previous_end) or mtime > started:
@@ -1016,7 +1065,7 @@ def series_check(label, archive, ledger):
                               common_work_instructions=peer_intersection(evidence,instructions=True)))
     result = dict(series=label, pairs=pairs, outcome='exhausted' if exhausted else 'incomplete' if median is None else 'repeat' if missing else 'admitted',
         selected={str(n):entry for n,(entry,_) in selected.items()}, excluded=excluded,
-        frozen_median=median, policy=SERIES_POLICY,
+        frozen_median=median, policy=SERIES_POLICY, attempt_cap=SERIES_POLICY['series_attempts_per_ordinal'],
         evidence_strength=dict(compiled_sets='observed-nonempty' if first and any(first['compiled'].values()) else 'empty-equality-only',
             changed_files='observed-surviving-files' if first and first['changed_files'] else 'empty-no-reset-witness',
             first_attempt_lower_bound='unavailable', base_build='invoker-assertion-not-detected',
@@ -2269,6 +2318,7 @@ def main():
     check_series.add_argument('label')
     check_series.add_argument('archive', type=Path)
     check_series.add_argument('ledger', type=Path)
+    check_series.add_argument('--plans', type=Path)
     close_series = sub.add_parser('series-close')
     close_series.add_argument('status', type=int)
     close_series.add_argument('--archive-root', type=Path)
@@ -2313,7 +2363,7 @@ def main():
         return 0
     if args.action == 'series-check':
         try:
-            return series_check(args.label, args.archive, args.ledger)
+            return series_check(args.label, args.archive, args.ledger, args.plans)
         except (OSError, ValueError, KeyError, TypeError) as error:
             print('GATE-SERIES-REFUSED '+str(error), flush=True)
             return 4

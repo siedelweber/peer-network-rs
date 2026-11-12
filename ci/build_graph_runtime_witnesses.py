@@ -327,13 +327,32 @@ def interrupted_gate(case, repository):
             path=root/'.lane'/name;path.mkdir();(path/'alive').write_text('owned')
         (root/'ci/devperf.py').write_text('raise SystemExit(0)\n')
         (root/'entry.sh').write_text('set -u\nfailed=0\nstatuses=()\nresource_root=\nsource_id=fixture\ngate_resource_sample() { :; }\n'+traps+runners+'run_graph blocked python3 -B wait.py\n')
+        def ready(child):
+            descriptor=os.pidfd_open(child.pid)
+            try:
+                observed=select.select([listener,descriptor],[],[],30)[0]
+                if descriptor in observed:
+                    status=child.wait(timeout=5)
+                    case.fail('gate child exited before readiness: status='+str(status)+' diagnostic='+(root/'entry.log').read_text())
+                case.assertIn(listener,observed,'gate readiness deadline: 30s; diagnostic='+(root/'entry.log').read_text())
+                return listener.accept()
+            finally:
+                os.close(descriptor)
+        with (root/'entry.log').open('wb') as output:
+            stopped=subprocess.Popen(['python3','-c',"import sys;print('fixture startup refusal',flush=True);sys.exit(7)"],stdout=output,stderr=subprocess.STDOUT)
+            try:
+                with case.assertRaisesRegex(AssertionError,'status=7 diagnostic=fixture startup refusal',msg='startup refusal reports the child status and diagnostic'):
+                    ready(stopped)
+            finally:
+                if stopped.poll() is None:stopped.kill()
+                stopped.wait(timeout=5)
         with (root/'entry.log').open('wb') as output:
             child=subprocess.Popen(['bash','entry.sh'],cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             connection=None
             descendants={child.pid}
             identities={}
             try:
-                connection,_=listener.accept();case.assertEqual(connection.recv(1),b'R')
+                connection,_=ready(child);case.assertEqual(connection.recv(1),b'R')
                 # The socket handshake establishes that the actual command is
                 # running inside Ninja, rather than relying on a sleep.
                 descendants={child.pid}

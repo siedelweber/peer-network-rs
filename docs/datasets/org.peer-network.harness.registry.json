@@ -462,6 +462,12 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_devperf.Performance.test_series_battery_patterns",
+        "ci::test_devperf.Performance.test_series_plan_join",
+        "ci::test_devperf.Performance.test_series_policy_standing",
+        "ci::test_devperf.Performance.test_series_boundary_services",
+        "ci::test_devperf.Performance.test_series_idle_writer",
+        "ci::test_devperf.Performance.test_series_declared_ledger_identity",
         "ci::test_devperf.Performance.test_series_membership",
         "ci::test_devperf.Performance.test_series_structural_refusals",
         "ci::test_devperf.Performance.test_series_owner_targets",

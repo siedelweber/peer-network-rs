@@ -1,6 +1,6 @@
 """Regenerate public authentication vectors with the admitted Elements daemon.
 
-Run with pn-env: python3 -B ci/authentication_vectors.py --generate PATH.
+Run in the gate’s container, target and environment: python3 -B ci/authentication_vectors.py --generate PATH.
 Unit tests consume the committed output; they never start a service.
 """
 import argparse

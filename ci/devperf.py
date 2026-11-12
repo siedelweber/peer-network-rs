@@ -42,6 +42,8 @@ def budgets(path):
                 or not all(isinstance(row.get(key), str) and row[key]
                            for key in ('measurement_source', 'measurement_node'))):
             raise StructuralError('whole-tree budget requires measured CPU, source, node and provisional standing')
+        if name == 'gate' and 'series_pressure_multiple' in row and type(row.get('series_policy_provisional')) is not bool:
+            raise StructuralError('series sampling policy requires boolean provisional standing')
         result[name] = row
     if not result:
         raise StructuralError('missing budget declarations')

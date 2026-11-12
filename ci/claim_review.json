@@ -346,12 +346,44 @@
       "review": "Read the recurring package/version set against cache compiles and owner artifacts. The controls distinguish freshness, recurring checks, lint rebuilds and a new owner artifact."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-battery-patterns",
+      "before": "",
+      "after": "Every declared battery process family refuses an idle observation outside the collector ancestry.",
+      "review": "Read each process-family control outside and inside collector ancestry, malformed and out-of-count ledger rows, ignored blank lines and the surviving-file evidence branch."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_boundary_services",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-boundary-services",
+      "before": "",
+      "after": "Both idle boundaries refuse unreadable services and any running service except the session bus.",
+      "review": "Read start and end controls for missing, malformed, unavailable and busy services, plus process and container controls. Session-bus-only observations admit; a malformed unit is distinguished from a busy unit."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_series_declaration",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
       "after": "Series declarations refuse missing and malformed members before printing a sample declaration.",
       "review": "Read declaration refusals for plan, sample identity and required series fields before work begins."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-declared-ledger-identity",
+      "before": "",
+      "after": "Every attempt is checked against the ledger declaration before it can anchor the label.",
+      "review": "Read foreign first-attempt base, source, cache and key controls against the external repeated declaration. Correct later attempts complete; malformed or inconsistent ledger declarations refuse. A valid loaded anchor fixes compiler sets without entering the median."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_idle_writer",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-idle-writer",
+      "before": "",
+      "after": "The idle writer retains declared service commands, failed observations and the actual ancestor chain.",
+      "review": "Read the writer with a multi-generation process parent table and a declared service argv. It retains the actual ancestor chain, invokes the selected command and records an unavailable service listing."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_membership",
@@ -384,6 +416,22 @@
       "before": "",
       "after": "Series membership refuses cold, swept and foreign owner targets.",
       "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_plan_join",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-plan-join",
+      "before": "",
+      "after": "An optional independent plan record exposes missing attempts and refuses mismatched timing or ordinals.",
+      "review": "Read the optional independent plan record against a matching series, an omitted attempt, a mismatched ordinal, a late start and nonfinite time. Missing third-record evidence is not inferred."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_policy_standing",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-policy-standing",
+      "before": "",
+      "after": "Sampling proposals have loader-checked boolean standing and expose their values and cap.",
+      "review": "Read exact policy values and the printed cap/boolean standing against the budgets loader. Text and numeric status stand-ins refuse rather than masquerading as a proposal type."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_reset_evidence",
@@ -735,7 +783,7 @@
       "claim": "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
       "before": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.",
       "after": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; the runtime roster names each required invocation and retains explicit shutdown and evidence joins.",
-      "review": "The command roster now includes inventory construction and disjoint required invocations with an evidence merge; shutdown additionally publishes public RPC timings. The existing refusal, sibling failure, hold, measurement and interrupted cleanup assertions are unchanged. Independent scenario/route fixtures run under the declared job bound, join every result and preserve all outcome comparisons and the separate signal-cleanup witness. The cancellation fixture now retains PID start times and a separate-session descendant that ignores TERM; the supervisor must reap it before exit. A deliberately live child fails the absence check, and disabling cleanup signals reaches a refusing deadline. The claim and its existing assertions remain unchanged."
+      "review": "The command roster now includes inventory construction and disjoint required invocations with an evidence merge; shutdown additionally publishes public RPC timings. The existing refusal, sibling failure, hold, measurement and interrupted cleanup assertions are unchanged. Independent scenario/route fixtures run under the declared job bound, join every result and preserve all outcome comparisons and the separate signal-cleanup witness. The cancellation fixture now retains PID start times and a separate-session descendant that ignores TERM; the supervisor must reap it before exit. A deliberately live child fails the absence check, and disabling cleanup signals reaches a refusing deadline. The claim and its existing assertions remain unchanged. A child that exits before the readiness handshake now reports its status and diagnostic; an actual exited-child control distinguishes that from the readiness deadline."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_service_ownership",
