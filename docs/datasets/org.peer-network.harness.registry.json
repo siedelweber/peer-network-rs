@@ -462,6 +462,9 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_devperf.Performance.test_fixture_declaration_boundary",
+        "ci::test_devperf.Performance.test_series_archive_list",
+        "ci::test_devperf.Performance.test_series_comparison_projection",
         "ci::test_devperf.Performance.test_series_battery_patterns",
         "ci::test_devperf.Performance.test_series_plan_join",
         "ci::test_devperf.Performance.test_series_policy_standing",

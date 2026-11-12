@@ -643,23 +643,38 @@ def series_count():
     return next(row['samples'] for row in rows if row['name'] == 'comparison')
 
 
+# Invoker inputs only: source/run/step accounting is supplied by the gate.
+DECLARATION_VARIABLES = (
+    'PN_GATE_PLAN', 'PN_GATE_ENTRY', 'PN_GATE_FIRST_CACHE', 'PN_GATE_SAMPLE',
+    'PN_IMPORT_BASE', 'PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_GATE_SERIES_COUNT',
+    'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE', 'PN_GATE_REPEAT_OF',
+    'PN_GATE_CONTAINER_LIST', 'PN_GATE_SERVICE_LIST',
+)
+
+
+def declaration_environment():
+    """One roster supplies invoker declarations and the fixture boundary."""
+    return {name: os.environ[name] for name in DECLARATION_VARIABLES if name in os.environ}
+
+
 def declare_run(root):
     """Record the invoker's plan before any gate work or outcome exists."""
     from datetime import datetime, timezone
-    plan = os.environ.get('PN_GATE_PLAN')
+    environment = declaration_environment()
+    plan = environment.get('PN_GATE_PLAN')
     if plan not in {'one-run', 'warm-after-cold-first', 'warm-after-cold-second', 'refresh-first', 'refresh-second'}:
         raise ValueError('PN_GATE_PLAN must declare one-run, warm-after-cold-first/second or refresh-first/second')
-    entry = os.environ.get('PN_GATE_ENTRY', '')
+    entry = environment.get('PN_GATE_ENTRY', '')
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,127}', entry):
         raise ValueError('PN_GATE_ENTRY must name the recorded ledger entry')
-    first_cache = os.environ.get('PN_GATE_FIRST_CACHE', 'unavailable')
+    first_cache = environment.get('PN_GATE_FIRST_CACHE', 'unavailable')
     if first_cache not in {'cold', 'warm', 'unknown', 'unavailable'}:
         raise ValueError('PN_GATE_FIRST_CACHE has an unknown form')
     if plan == 'refresh-second' and first_cache not in {'cold', 'warm'}:
         raise ValueError('refresh-second requires a complete first cache receipt')
     if plan == 'warm-after-cold-second' and first_cache != 'cold':
         raise ValueError('warm-after-cold-second requires the first observed cache to be cold')
-    sample = os.environ.get('PN_GATE_SAMPLE', 'import')
+    sample = environment.get('PN_GATE_SAMPLE', 'import')
     if sample not in {'import', 'import-transition'}:
         raise ValueError('PN_GATE_SAMPLE must name import or import-transition')
     source = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
@@ -669,26 +684,26 @@ def declare_run(root):
             raise ValueError('series sample requires one-run plan')
         from isolation import import_base
         for key in ('PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_IMPORT_BASE', 'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE', 'PN_GATE_SERIES_COUNT'):
-            if not os.environ.get(key):
+            if not environment.get(key):
                 raise ValueError('series requires '+key)
-        label, ordinal = os.environ['PN_GATE_SERIES'], os.environ['PN_GATE_ORDINAL']
+        label, ordinal = environment['PN_GATE_SERIES'], environment['PN_GATE_ORDINAL']
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,127}', label) or not re.fullmatch(r'[1-9][0-9]*', ordinal):
             raise ValueError('invalid series label or ordinal')
-        count = os.environ['PN_GATE_SERIES_COUNT']
+        count = environment['PN_GATE_SERIES_COUNT']
         if not re.fullmatch(r'[1-9][0-9]*', count) or int(count) != series_count() or int(ordinal) > int(count):
             raise ValueError('series count must match the declared comparison count and contain the ordinal')
-        key, cache = os.environ['PN_GATE_SERIES_KEY'], os.environ['PN_GATE_SERIES_CACHE']
+        key, cache = environment['PN_GATE_SERIES_KEY'], environment['PN_GATE_SERIES_CACHE']
         if not re.fullmatch(r'[0-9a-f]{64}', key) or cache not in {'cold', 'warm'}:
             raise ValueError('invalid series configuration key or cache state')
-        declared.update(series=label, ordinal=ordinal, base=import_base(root, source, os.environ['PN_IMPORT_BASE']),
+        declared.update(series=label, ordinal=ordinal, base=import_base(root, source, environment['PN_IMPORT_BASE']),
                         configuration_key=key, cache=cache, count=count)
         if declared['base'] == source:
             raise ValueError('series base equals source')
-    repeat_path = os.environ.get('PN_GATE_REPEAT_OF')
+    repeat_path = environment.get('PN_GATE_REPEAT_OF')
     if repeat_path:
         obligation = json.loads(Path(repeat_path).read_text())
         if (sample != obligation['sample'] or plan != 'one-run' or source != obligation['source']
-                or os.environ.get('PN_IMPORT_BASE') != obligation['base'] or entry == obligation['owing_entry']):
+                or environment.get('PN_IMPORT_BASE') != obligation['base'] or entry == obligation['owing_entry']):
             raise ValueError('repeat declaration differs from its obligation')
         declared['repeat_of'] = obligation['obligation']
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
@@ -705,17 +720,18 @@ def declare_run(root):
 
 def series_idle(root, boundary):
     """The host wrapper records account scope outside the build container."""
-    identity = {key:os.environ[key] for key in ('PN_GATE_SERIES','PN_GATE_ORDINAL','PN_GATE_ENTRY')}
+    environment = declaration_environment()
+    identity = {key:environment[key] for key in ('PN_GATE_SERIES','PN_GATE_ORDINAL','PN_GATE_ENTRY')}
     def listing(argv):
         try:
             result = subprocess.run(argv,capture_output=True,text=True)
             return dict(status=result.returncode,stdout=result.stdout,stderr=result.stderr)
         except OSError as error:
             return dict(status='unavailable',stdout='',stderr=str(error))
-    command = json.loads(os.environ.get('PN_GATE_CONTAINER_LIST', 'null'))
+    command = json.loads(environment.get('PN_GATE_CONTAINER_LIST', 'null'))
     if not isinstance(command, list) or not command or any(not isinstance(x, str) or not x for x in command):
         raise ValueError('PN_GATE_CONTAINER_LIST must be a nonempty JSON argv')
-    service_command = json.loads(os.environ.get('PN_GATE_SERVICE_LIST', 'null'))
+    service_command = json.loads(environment.get('PN_GATE_SERVICE_LIST', 'null'))
     if not isinstance(service_command,list) or not service_command or any(not isinstance(x,str) or not x for x in service_command):
         raise ValueError('PN_GATE_SERVICE_LIST must be a nonempty JSON argv')
     processes = listing(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args='])
@@ -752,15 +768,8 @@ def series_receipt(root, boundary):
     declaration = json.loads((root/'.lane/gate-declaration.json').read_text())
     if declaration.get('sample') != 'import-transition':
         return
-    def observed(command):
-        try:
-            result = subprocess.run(command, capture_output=True, text=True)
-            return dict(status=result.returncode, stdout=result.stdout, stderr=result.stderr)
-        except OSError as error:
-            return dict(status='unavailable', reason=str(error))
     record = dict(declaration=declaration, boundary=boundary, run=os.environ['PN_BUILDGRAPH_RUN'],
         tree=subprocess.check_output(['git','rev-parse','HEAD^{tree}'], cwd=root, text=True).strip(),
-        processes=observed(['ps','-u',str(os.getuid()),'-o','pid=,ppid=,args=']),
         load=list(os.getloadavg()))
     try:
         record['automatic_ports'] = Path('/proc/sys/net/ipv4/ip_local_port_range').read_text().strip()
@@ -781,7 +790,8 @@ def series_receipt(root, boundary):
         pending = json.loads((root/'.lane/gate-baseline.json').read_text())
         record['changed_files'] = json.loads((root/'.lane/gate-series-start.json').read_text())['changed_files']
         record['compiled'] = {name:sorted(values,key=lambda x:json.dumps(x,sort_keys=True)) if values is not None else None for name,values in pending['cache']['compiled'].items()}
-        record['comparison'] = pending
+        record['comparison'] = series_comparison(pending)
+        record['comparison_detail'] = 'gate-baseline.json'
         record['observed_cache'] = pending['cache']['state']
         record['observed_key'] = Path(pending['path']).parent.name
         record['owners'] = series_owners(root, declaration, record['run'])
@@ -795,6 +805,42 @@ def series_receipt(root, boundary):
     print('GATE-SERIES '+json.dumps(record, sort_keys=True), flush=True)
     if boundary == 'end' and record['status'] != 'complete':
         raise ValueError('series sample differs from declared configuration, cache or retained owner target')
+
+
+def series_comparison(pending):
+    """Only the pair-projection inputs belong in each sample receipt."""
+    return dict(tiers={name:{key:tier[key] for key in
+        ('step_figures','selected_cases','case_steps','case_costs') if key in tier}
+        for name,tier in pending.get('tiers',{}).items()})
+
+
+def series_archive_list(root, round_log):
+    """List regular evidence files, never service data or a recursive workspace."""
+    lane = root/'.lane'
+    required = ('series-attempt.json','gate-series-host-start.json','gate-series-host-end.json')
+    fixed = (*required, 'gate-declaration.json','gate-series-start.json','gate-series-end.json',
+        'gate-baseline.json','gate-wall.json','gate-tiers.json','gate-resources.json',
+        'instructions-probe.json','gate-steps.tsv','lint-pass.json',
+        'tier-tests/manifest.json','tier-tests/build.stderr','tier-tests/build.stdout',
+        'performance-events.jsonl','performance-findings.jsonl')
+    patterns = ('gate-*.log','gate-*-setup.jsonl','gate-*-setup.binding.json',
+                'gate-*-transitions.jsonl','gate-*-transitions.binding.json')
+    paths = {lane/name for name in fixed if (lane/name).exists()}
+    for pattern in patterns:
+        paths.update(lane.glob(pattern))
+    if any(not (lane/name).is_file() for name in required):
+        raise ValueError('archive requires closed attempt and both host receipts')
+    files = []
+    for path in sorted(paths):
+        if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(lane.resolve()):
+            raise ValueError('archive evidence is not a regular file: '+path.name)
+        files.append(dict(source=str(path.resolve()), destination=str(path.relative_to(lane)), bytes=path.stat().st_size))
+    if round_log.is_symlink() or not round_log.is_file():
+        raise ValueError('archive round log is not a regular file')
+    files.append(dict(source=str(round_log.resolve()),destination='round.log',bytes=round_log.stat().st_size))
+    result = dict(schema=1, files=files, absent=[name for name in fixed if not (lane/name).exists()])
+    print(json.dumps(result,sort_keys=True),flush=True)
+    return result
 
 
 def series_owners(root, declaration, invocation):
@@ -2319,6 +2365,8 @@ def main():
     check_series.add_argument('archive', type=Path)
     check_series.add_argument('ledger', type=Path)
     check_series.add_argument('--plans', type=Path)
+    archive_series = sub.add_parser('series-archive-list')
+    archive_series.add_argument('--round-log',type=Path,required=True)
     close_series = sub.add_parser('series-close')
     close_series.add_argument('status', type=int)
     close_series.add_argument('--archive-root', type=Path)
@@ -2370,6 +2418,13 @@ def main():
     if args.action == 'declare':
         declare_run(Path.cwd())
         return 0
+    if args.action == 'series-archive-list':
+        try:
+            series_archive_list(Path.cwd(), args.round_log)
+            return 0
+        except (OSError,ValueError) as error:
+            print('GATE-SERIES-ARCHIVE-REFUSED '+str(error),file=sys.stderr,flush=True)
+            return 4
     if args.action == 'series-close':
         series_close(Path.cwd(), args.status, args.archive_root)
         return 0

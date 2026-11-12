@@ -147,6 +147,101 @@ class Performance(unittest.TestCase):
             print('TEST-FIXTURE '+line)
 
 
+    def test_fixture_declaration_boundary(self):
+        """The suite boundary removes every invoker declaration and restores it after nested fixture execution.
+        ´claim:devperf:fixture-declaration-boundary´
+        ´test:integration:test-fixture-declaration-boundary´
+        """
+        import run_ci
+        from build_graph import DECLARATION_VARIABLES,declaration_environment,declare_run,series_idle
+        import ast,inspect,re
+        names=set()
+        for function in (declare_run,series_idle):
+            tree=ast.parse(inspect.getsource(function))
+            names.update(n.value for n in ast.walk(tree) if isinstance(n,ast.Constant) and isinstance(n.value,str)
+                         and re.fullmatch(r'PN_[A-Z_]+',n.value))
+            self.assertNotIn('os.environ',inspect.getsource(function),'declaration readers use the shared roster')
+        self.assertEqual(names,set(DECLARATION_VARIABLES),'every declaration input has one shared carrier')
+        foreign={name:'foreign-'+name for name in DECLARATION_VARIABLES}
+        def probe(module):
+            self.assertEqual(declaration_environment(),{},'the suite sees no enclosing declaration')
+            self.assertEqual(os.environ.get('PN_GATE_STEP'),'owned-step','step accounting survives isolation')
+            output=io.StringIO()
+            suite=unittest.TestSuite(Performance(name) for name in ('test_whole_gate_warning','test_fixture_diagnostics'))
+            result=unittest.TextTestRunner(stream=output).run(suite)
+            self.assertTrue(result.wasSuccessful(),'nested declaration fixtures are independent: '+output.getvalue())
+            return 0
+        with patch.dict(os.environ,dict(foreign,PN_CI_ISOLATED='fixture',PN_GATE_STEP='owned-step')):
+            with patch('run_ci.run_suite',side_effect=probe):
+                self.assertEqual(run_ci.main('fixture'),0,'production runner enters the cleared boundary')
+            self.assertEqual(declaration_environment(),foreign,'enclosing declaration restored after success')
+            with patch('run_ci.run_suite',side_effect=ValueError('fixture failure')):
+                with self.assertRaisesRegex(ValueError,'fixture failure'):run_ci.main('fixture')
+            self.assertEqual(declaration_environment(),foreign,'enclosing declaration restored after failure')
+
+    def test_series_archive_list(self):
+        """The archive manifest preserves closed-attempt evidence and excludes service state and recursive workspace contents.
+        ´claim:devperf:series-archive-list´
+        ´test:integration:test-series-archive-list´
+        """
+        from build_graph import series_archive_list,series_close
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);lane=root/'.lane';lane.mkdir()
+            record=series_records()[0]
+            for name,value in [('gate-series-host-start',record['host_idle_start']),('gate-series-host-end',record['host_idle_end']),
+                               ('gate-series-end',record),('gate-declaration',record['declaration'])]:
+                (lane/(name+'.json')).write_text(json.dumps(value))
+            log=root/'round.log';log.write_text('closed round')
+            with self.assertRaisesRegex(ValueError,'closed attempt',msg='an unclosed attempt cannot be archived'):series_archive_list(root,log)
+            series_close(root,0)
+            (lane/'host-postgres').mkdir();(lane/'host-postgres/secret-state').write_text('not evidence')
+            (lane/'tier-tests').mkdir();(lane/'tier-tests/manifest.json').write_text('{}')
+            (lane/'tier-tests/build.stderr').write_text('compiled')
+            (lane/'tier-tests/not-a-receipt').write_text('unused')
+            (lane/'gate-example-transitions.jsonl').write_text('{}')
+            (lane/'gate-example-transitions.binding.json').write_text('{}')
+            manifest=series_archive_list(root,log)
+            wanted={'series-attempt.json','gate-series-host-start.json','gate-series-host-end.json','gate-series-end.json',
+                'gate-declaration.json','tier-tests/manifest.json','tier-tests/build.stderr','gate-example-transitions.jsonl',
+                'gate-example-transitions.binding.json','round.log'}
+            self.assertEqual({row['destination'] for row in manifest['files']},wanted,'manifest is the exact nonrecursive evidence set')
+            destination=root/'archive';destination.mkdir()
+            for row in manifest['files']:
+                target=destination/row['destination'];target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(row['source'],target)
+                self.assertEqual(target.stat().st_size,row['bytes'],'manifest sizes describe copied bytes')
+            self.assertEqual(json.loads((destination/'series-attempt.json').read_text())['receipt'],record,'archive preserves the check input')
+            self.assertIn('gate-series-start.json',manifest['absent'],'incomplete evidence is named, not fabricated')
+            import subprocess
+            argv=[sys.executable,'-B',str(Path(__file__).with_name('build_graph.py')),'series-archive-list','--round-log',str(log)]
+            emitted=subprocess.run(argv,cwd=root,capture_output=True,text=True)
+            self.assertEqual(emitted.returncode,0,'archive command succeeds: '+emitted.stderr)
+            self.assertEqual(json.loads(emitted.stdout),manifest,'archive stdout is exactly the copy manifest')
+            (lane/'gate-bad.log').symlink_to(log)
+            with self.assertRaisesRegex(ValueError,'regular file',msg='archive does not follow an evidence symlink'):series_archive_list(root,log)
+            refused=subprocess.run(argv,cwd=root,capture_output=True,text=True)
+            self.assertEqual(refused.returncode,4,'archive protocol refusal has its own status')
+            self.assertIn('GATE-SERIES-ARCHIVE-REFUSED',refused.stderr,'archive refusal is named')
+
+    def test_series_comparison_projection(self):
+        """A sample retains exactly the pair-comparison inputs while previous-peer history stays in its cited sidecar.
+        ´claim:devperf:series-comparison-projection´
+        ´test:integration:test-series-comparison-projection´
+        """
+        from build_graph import series_comparison,peer_intersection
+        left=written_peer(cpu=100,extra=2,instructions=100);right=written_peer(cpu=110,extra=3,instructions=120)
+        for record in (left,right):
+            record['previous_peers']=[{'unrelated':'large history'}]*100
+            record['previous_statuses']={'not':'comparison work'}
+        pair=[series_comparison(x) for x in (left,right)]
+        self.assertEqual(set(pair[0]),{'tiers'},'no previous peer or status history enters the sample')
+        for tier in pair[0]['tiers'].values():
+            self.assertEqual(set(tier),{'step_figures','selected_cases','case_steps','case_costs'},'projection has exactly its reader fields')
+        for counts in (False,True):
+            self.assertIsNotNone(peer_intersection([left,right],instructions=counts),'control has comparable work on each metric')
+            self.assertEqual(peer_intersection(pair,instructions=counts),peer_intersection([left,right],instructions=counts),'projection preserves the common-work answer')
+
     def test_series_battery_patterns(self):
         """Every declared battery process family refuses an idle observation outside the collector ancestry.
         ´claim:devperf:series-battery-patterns´
@@ -628,11 +723,16 @@ class Performance(unittest.TestCase):
                 series_receipt(root,'start')
                 start=json.loads((lane/'gate-series-start.json').read_text())
                 self.assertEqual(start['changed_files'],{'changed':123},'writer stats the nonempty tree diff')
+                self.assertNotIn('processes',start,'container process observation is replaced by the host receipt')
+                self.assertEqual(start['host_idle_start'],row['host_idle_start'],'host process observation is retained')
                 os.utime(root/'changed',(456,456))
                 series_receipt(root,'end')
                 end=json.loads((lane/'gate-series-end.json').read_text())
                 self.assertEqual(end['changed_files'],{'changed':123},'end preserves start times rather than restatting')
                 self.assertEqual(end['compiled'],dict(primary=['primary-artifact'],lint=[dict(package='p',target='t',kind=['lib'])]),'end joins both compiled receipts without omission')
+                self.assertEqual(end['comparison'],{'tiers':{}},'writer excludes cache and historical context from comparison')
+                self.assertEqual(end['comparison_detail'],'gate-baseline.json','full context is cited where retained')
+                self.assertNotIn('processes',end,'end process observation belongs to host boundary')
 
     def test_setup_bind_completion(self):
         """A setup binding refusal writes the step completion and failure status without running its workload.
@@ -1616,26 +1716,26 @@ wait
                     declare_run(root)
             for plan in ('one-run', 'warm-after-cold-first', 'refresh-first', 'refresh-second', 'warm-after-cold-second'):
                 output = io.StringIO()
-                with patch.dict(os.environ, PN_GATE_PLAN=plan, PN_GATE_FIRST_CACHE='cold', PN_GATE_ENTRY='fixture:entry'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')), redirect_stdout(output):
+                with patch.dict(os.environ, PN_GATE_PLAN=plan, PN_GATE_FIRST_CACHE='cold', PN_GATE_ENTRY='fixture:entry', PN_GATE_SAMPLE='import'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')), redirect_stdout(output):
                     declared_run = declare_run(root)
                 self.assertTrue(output.getvalue().startswith('GATE-DECLARED plan='+plan+' '))
                 self.assertEqual(json.loads((root/'.lane/gate-declaration.json').read_text()), declared_run)
             for cache in ('warm', 'unknown', 'unavailable'):
-                with patch.dict(os.environ, PN_GATE_PLAN='warm-after-cold-second', PN_GATE_FIRST_CACHE=cache, PN_GATE_ENTRY='fixture:entry'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with patch.dict(os.environ, PN_GATE_PLAN='warm-after-cold-second', PN_GATE_FIRST_CACHE=cache, PN_GATE_ENTRY='fixture:entry', PN_GATE_SAMPLE='import'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                     with self.assertRaisesRegex(ValueError, 'first observed cache to be cold'):
                         declare_run(root)
             for entry_id in ('', 'invalid space', 'a'*129):
-                with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY=entry_id), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY=entry_id, PN_GATE_SAMPLE='import'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                     with self.assertRaisesRegex(ValueError, 'PN_GATE_ENTRY'):
                         declare_run(root)
             for first_cache in ('unknown', 'unavailable', 'invented'):
-                with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE=first_cache), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+                with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_SAMPLE='import', PN_GATE_FIRST_CACHE=first_cache), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                     with self.assertRaisesRegex(ValueError, 'first cache receipt|unknown form'):
                         declare_run(root)
-            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='invented'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+            with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:entry', PN_GATE_SAMPLE='import', PN_GATE_FIRST_CACHE='invented'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 with self.assertRaisesRegex(ValueError, 'unknown form'):
                     declare_run(root)
-            with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
+            with patch.dict(os.environ, PN_GATE_PLAN='refresh-second', PN_GATE_ENTRY='fixture:entry', PN_GATE_SAMPLE='import', PN_GATE_FIRST_CACHE='warm'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
                 self.assertEqual(declare_run(root)['entry'], 'fixture:entry')
             entry = (Path(__file__).parent/'gate.sh').read_text()
             with patch.dict(os.environ, PN_GATE_PLAN='one-run', PN_GATE_ENTRY='fixture:sample', PN_GATE_SAMPLE='import-transition', PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_IMPORT_BASE='source', PN_GATE_SERIES_KEY='a'*64, PN_GATE_SERIES_CACHE='warm', PN_GATE_SERIES_COUNT='5', PN_GATE_CONTAINER_LIST='["fixture-list"]',PN_GATE_SERVICE_LIST='["fixture-services"]'), patch('build_graph.subprocess.run', return_value=SimpleNamespace(stdout='source\n')):
@@ -1653,7 +1753,8 @@ wait
                         receipt=json.loads((root/'.lane/gate-series-end.json').read_text())
                         self.assertEqual(receipt['declaration']['ordinal'],'1')
                         self.assertEqual(receipt['observed_cache'],'warm')
-                        self.assertIn('processes',receipt)
+                        self.assertNotIn('processes',receipt,'container does not repeat the host process census')
+                        self.assertIn('host_idle_start',receipt,'sample retains its host boundary observation')
                         from build_graph import series_idle
                         series_idle(root,'end')
                         joined=json.loads((root/'.lane/gate-series-end.json').read_text())

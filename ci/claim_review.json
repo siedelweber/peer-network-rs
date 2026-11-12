@@ -162,6 +162,14 @@
       "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_fixture_declaration_boundary",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:fixture-declaration-boundary",
+      "before": "",
+      "after": "The suite boundary removes every invoker declaration and restores it after nested fixture execution.",
+      "review": "Read the production runner boundary with every declaration input poisoned; both formerly failing nested fixtures must complete, and enclosing inputs are restored on success and exception."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_fixture_diagnostics",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:fixture-diagnostics",
@@ -346,6 +354,14 @@
       "review": "Read the recurring package/version set against cache compiles and owner artifacts. The controls distinguish freshness, recurring checks, lint rebuilds and a new owner artifact."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_series_archive_list",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-archive-list",
+      "before": "",
+      "after": "The archive manifest preserves closed-attempt evidence and excludes service state and recursive workspace contents.",
+      "review": "Read the exact manifest copy, incomplete-attempt refusal, absent evidence and symlink controls; service state is excluded."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-battery-patterns",
@@ -360,6 +376,14 @@
       "before": "",
       "after": "Both idle boundaries refuse unreadable services and any running service except the session bus.",
       "review": "Read start and end controls for missing, malformed, unavailable and busy services, plus process and container controls. Session-bus-only observations admit; a malformed unit is distinguished from a busy unit."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_comparison_projection",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-comparison-projection",
+      "before": "",
+      "after": "A sample retains exactly the pair-comparison inputs while previous-peer history stays in its cited sidecar.",
+      "review": "Read production-writer records through the compact projection; CPU and instruction answers remain identical while prior peer history is excluded."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declaration",

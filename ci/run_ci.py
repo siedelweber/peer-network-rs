@@ -1,6 +1,7 @@
 """Inventory and meter unittest cases, preserving the unittest verdict."""
 
 import json
+from contextlib import contextmanager
 import os
 import shutil
 from pathlib import Path
@@ -93,6 +94,21 @@ def isolated_suite(module, name, marker, logs, root, source, tree, target):
     return result.returncode
 
 
+@contextmanager
+def fixture_environment():
+    """Restore the enclosing declaration after fixtures finish, even on failure."""
+    from build_graph import DECLARATION_VARIABLES
+    saved = {name:os.environ[name] for name in DECLARATION_VARIABLES if name in os.environ}
+    try:
+        for name in DECLARATION_VARIABLES:
+            os.environ.pop(name,None)
+        yield
+    finally:
+        for name in DECLARATION_VARIABLES:
+            os.environ.pop(name,None)
+        os.environ.update(saved)
+
+
 def main(module):
     if (os.environ.get('PN_GATE_PARALLEL') == '1' or os.environ.get('PN_CALIBRATION') == '1') and os.environ.get('PN_CI_ISOLATED') != module:
         if module == 'test_wallet_boundary':
@@ -100,6 +116,11 @@ def main(module):
         if module == 'test_host_runtime':
             return isolated_host(module)
         return isolated_runtime(module, 'ci-'+module, 'PN_CI_CHILD', ())
+    with fixture_environment():
+        return run_suite(module)
+
+
+def run_suite(module):
     registry = load()
     source = source_id()
     suite_name = 'ci::' + module
