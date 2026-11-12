@@ -1902,8 +1902,8 @@ fn proof_endpoints() {
     let p = procedure();
     for (lower, upper, expected) in [
         ("17/16", "9/8", Some(Outcome::Fail)),
-        ("1", "33/32", None),
         ("15/16", "1", Some(Outcome::Pass)),
+        ("1", "33/32", None),
     ] {
         let mut q = query(vec![Node::Coordinate(0)]);
         q.coordinates = vec![range(lower, upper)];

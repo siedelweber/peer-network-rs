@@ -1919,7 +1919,7 @@
       "claim": "EPOCH::claim:numerics:exact-anchor-requires-its-empty-proof-conditions",
       "before": "",
       "after": "Claim: The existing fence join accepts the producer's certificate-free zero anchor and refuses a nonzero accepted upper endpoint, an inadmissible empty transcript, a changed hull and a changed accepted rung, without conserved solve or replay.",
-      "review": "The producer emits an empty-primitive zero-anchor transcript for a non-point compiled hull. The private join accepts it exactly at zero and separately refuses a nonzero accepted upper endpoint, a changed hull, a changed accepted-rung argument and an empty proof at a nonzero rung with nonzero width. No conserved solve/replay, Work assertion or admission runs."
+      "review": "The producer emits empty-primitive transcripts both at rung zero over a non-point hull and at rung one over an equal-burn Registration point hull. Both check as exact zero. Separate controls refuse changed upper endpoint, hull, accepted rung, non-point nonzero-rung emptiness and a non-Pass empty attempt preceding the accepted anchor. Record validation accepts the last control before the join refuses it. No conserved solve/replay, Work assertion or admission runs."
     },
     {
       "operation": "pn-epoch::inputs::parameter_binding",
@@ -2575,8 +2575,8 @@
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:numerics:epoch-proof-replay-binds-question-and-rung",
       "before": "",
-      "after": "Claim: Epoch fence replay accepts a producer attachment only for its frozen original question and declared rung; changed expression, coordinate domain, rung and absent attachment refuse separately before supplying any verdict.",
-      "review": "Frozen compiler inputs produce the original fence attachment. Changed expression and coordinate domain receive their own genuine producer certificates but are refused by epoch expected-question equality, in unsorted domain-then-expression order. A different declared rung, an undeclared rung and a missing attachment each refuse separately."
+      "after": "Claim: Epoch fence replay accepts a producer attachment only for its frozen original question, declared rung and precision; changed expression, coordinate domain, rung, precision and absent attachment refuse separately before supplying any verdict.",
+      "review": "The original plus six negative records are checked separately. Changed expression and domain use fresh genuine certificates but refuse epoch question equality; the declared-rung substitution remains a Profile refusal. The undeclared rung and precision each use a record produced and successfully replayed under its own declaration, isolating grid and sequence membership. Removing the attachment refuses independently. No verification admission or Work figure is asserted."
     },
     {
       "operation": "pn-epoch::solve::real_base",
@@ -3192,7 +3192,7 @@
       "claim": "GRAPH::claim:numerics:proof-endpoints-separate-only-checked-comparisons",
       "before": "",
       "after": "Claim: Genuine checked comparison certificates retain upper equality as PASS and a strictly greater lower endpoint as FAIL; a final-precision straddle with its exact width met supplies neither verdict.",
-      "review": "Three unsorted coordinate intervals are enclosed and independently checked for AtMost(1): [17/16,9/8] fails, [1,33/32] supplies neither PASS nor FAIL, and [15/16,1] passes. The straddle is checked at the sequence final element 4; rational subtraction independently establishes width 1/32 <= 2^-4. No assertion grants the future final-precision admission predicate."
+      "review": "Three unsorted coordinate intervals are enclosed and independently checked for AtMost(1): [17/16,9/8] fails, [15/16,1] passes, and [1,33/32] supplies neither PASS nor FAIL. The straddle is checked at the sequence final element 4; rational subtraction independently establishes width 1/32 <= 2^-4. No assertion grants the future final-precision admission predicate."
     },
     {
       "operation": "pn-graph::numeric::proof_exhaustion",

@@ -9,7 +9,7 @@ use pn_records::{
 };
 
 #[derive(Debug)]
-pub(crate) struct Verifier;
+struct Verifier;
 impl RegistrationVerifier for Verifier {
     fn approval(&self, _: &ValidatedAct) -> bool {
         true
@@ -19,13 +19,13 @@ impl RegistrationVerifier for Verifier {
     }
 }
 
-pub(crate) fn named(namespace: &str, name: &str) -> PublicReference {
+fn named(namespace: &str, name: &str) -> PublicReference {
     PublicReference::Named {
         namespace: namespace.into(),
         name: name.into(),
     }
 }
-pub(crate) fn id(family: &str, author: &str, sequence: u64) -> ActId {
+fn id(family: &str, author: &str, sequence: u64) -> ActId {
     ActId {
         family: family.into(),
         author: author.into(),
@@ -35,7 +35,7 @@ pub(crate) fn id(family: &str, author: &str, sequence: u64) -> ActId {
 fn minted(family: &str, author: &str, sequence: u64) -> PublicReference {
     PublicReference::Minted(id(family, author, sequence))
 }
-pub(crate) fn coordinates(act: &mut CandidateAct, names: &[&str], numerator: i64) {
+fn coordinates(act: &mut CandidateAct, names: &[&str], numerator: i64) {
     act.body.quantities = names
         .iter()
         .flat_map(|name| [(format!("{name}.numerator"), numerator), (format!("{name}.denominator"), 1)])
@@ -66,9 +66,7 @@ fn paired(act: &mut CandidateAct, middle: PublicReference, target: PublicReferen
     });
 }
 
-// Raw input construction only. The expected recipients below are literal tables,
-// not a second invocation of the production fold, title fold or recipient logic.
-pub(crate) fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> CandidateAct {
+fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> CandidateAct {
     let mut act = CandidateAct {
         commitments: None,
         id: id(family, author, sequence),
@@ -168,7 +166,7 @@ pub(crate) fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> Cand
     }
     act
 }
-pub(crate) fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
+fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
     // Compact raw fixture gaps without sorting the presentation or changing its order of record.
     let mut keys: Vec<_> = inputs
         .iter()
@@ -193,7 +191,7 @@ pub(crate) fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
         })
         .collect()
 }
-pub(crate) fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
+fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
     let placed = positions(inputs);
     let history = validate_history(&placed, &[]).unwrap();
     assert_eq!(
@@ -202,7 +200,7 @@ pub(crate) fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
     );
     history
 }
-pub(crate) fn numeric() -> pn_records::numerics::NumericContext {
+fn numeric() -> pn_records::numerics::NumericContext {
     pn_records::numerics::NumericContext::new(
         nrz_cas::limits::Limits::default(),
         pn_records::numerics::ComparisonLimits::new(1000, 1000),
@@ -234,7 +232,7 @@ fn complete_markers(raw: &mut pn_records::test_support::burn::BurnCase, boundary
     }
 }
 
-pub(crate) fn package_at_prices(
+fn package_at_prices(
     acts: &[CandidateAct],
     boundary: u64,
     burns: &[(&str, &str)],
@@ -355,7 +353,7 @@ use crate::{FamilyProfile, ParameterInput};
 use pn_records::constants::{ConstantDefinition, EditionInput};
 use pn_records::numerics::{ComparisonLimits, ExactLimits, Floor, NumericContext};
 use pn_records::{Declaration, DeclarationContent, DeclarationId};
-pub(crate) fn fixture() -> (Declaration, EditionInput, ParameterInput) {
+fn fixture() -> (Declaration, EditionInput, ParameterInput) {
     let mut c = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
     let one = c.literal("1").unwrap();
     let unit = c.burn_per_action(&one, "burn").unwrap();
@@ -449,14 +447,13 @@ use nrz_cas::limits::Limits;
 use pn_records::solve::{Equality, Precision, Primitive, Procedure};
 use std::collections::BTreeSet;
 
-fn state() -> crate::compiler::CompiledState {
-    let acts = vec![
-        act("Registration", "seller", 1, 1),
-        act("Registration", "buyer", 2, 1),
-        act("Opinion", "seller", 3, 1),
-    ];
+fn frozen_state(buyer: &str, opinion: bool) -> crate::compiler::CompiledState {
+    let mut acts = vec![act("Registration", "seller", 1, 1), act("Registration", "buyer", 2, 1)];
+    if opinion {
+        acts.push(act("Opinion", "seller", 3, 1));
+    }
     crate::compiler::compile_final_state(
-        &package_at_prices(&acts, 1, &[("seller", "50"), ("buyer", "100")], &["1"], &[]),
+        &package_at_prices(&acts, 1, &[("seller", "50"), ("buyer", buyer)], &["1"], &[]),
         &Verifier,
         &mut numeric(),
         Limits::default(),
@@ -529,13 +526,14 @@ fn procedure(state: &crate::compiler::CompiledState) -> Procedure {
 /// ´test:unit:proof-anchor´
 #[test]
 fn proof_anchor() {
-    let state = state();
+    let state = frozen_state("100", true);
     let p = procedure(&state);
     let bound = crate::solve::bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
     let made = crate::fence::search(&bound, None).unwrap();
     assert_eq!(made.evidence.primitives, []);
     assert!(made.evidence.attempts.iter().all(|a| a.primitives.is_empty()));
     assert!(super::fence(&bound, &made.evidence, "0").unwrap().is_zero());
+    assert_eq!(made.evidence.attempts.len(), 1, "single-attempt anchor control");
     let mut upper = made.evidence.clone();
     upper.attempts[0].margined_fence.upper = "1/2".into();
     assert!(
@@ -564,5 +562,34 @@ fn proof_anchor() {
     assert!(
         matches!(super::fence(&bound, &empty, "1"), Err(super::Error::Scope)),
         "empty proof at nonzero width and rung"
+    );
+    let point_state = frozen_state("50", false);
+    let mut p = procedure(&point_state);
+    p.grid = vec!["1".into(), "0".into()];
+    let bound = crate::solve::bind_procedure(&point_state, p.clone(), &Published(p), Limits::default()).unwrap();
+    let point = crate::fence::search(&bound, None).unwrap();
+    assert!(!point.evidence.hull.is_empty());
+    assert!(
+        point.evidence.hull.values().all(|r| r.lower == r.upper),
+        "equal burns produce a point hull"
+    );
+    assert_eq!(point.evidence.attempts.len(), 1);
+    assert_eq!(point.evidence.attempts[0].rung, "1");
+    assert_eq!(point.evidence.primitives, []);
+    assert!(
+        matches!(super::fence(&bound, &point.evidence, "1"), Ok(value) if value.is_zero()),
+        "nonzero-rung point anchor"
+    );
+    let mut nonpass = point.evidence;
+    let mut failed = nonpass.attempts[0].clone();
+    failed.completion = pn_records::solve::Completion::Fail;
+    failed.margined_fence.lower = "2".into();
+    failed.margined_fence.upper = "2".into();
+    nonpass.attempts[0].rung = "0".into();
+    nonpass.attempts.insert(0, failed);
+    pn_records::solve::validate_evidence(bound.inputs().1, &nonpass, Limits::default()).unwrap();
+    assert!(
+        matches!(super::fence(&bound, &nonpass, "0"), Err(super::Error::Scope)),
+        "non-Pass empty attempt"
     );
 }

@@ -1535,7 +1535,7 @@
         "pn-epoch::solve::partitions::receiving_small": "calibrated-receiving-small-case"
       },
       "case_level_reasons": {
-        "pn-epoch::conserved::driver::proof_anchor::proof_anchor": "Exercise only the private fence join's empty exact-anchor branch and its refusal guards.",
+        "pn-epoch::conserved::driver::proof_anchor::proof_anchor": "Exercise only the private fence join's empty exact-anchor branch and its refusal guards. Warm serial case walls after one discarded warm-up are 7.956997, 7.572836 and 7.734265 milliseconds, each with 3 milliseconds of child wall and own CPU. The case wall includes the harness; the uniform maximum-times-two rule rounded upward to 50 milliseconds fits the 100-millisecond unit default, so no override is retained under conv:design:case-budget-calibration.",
         "pn-epoch::solve::proof_epoch_scope": "Reconstruct a frozen compiler question and check independently produced graph attachments through the epoch boundary."
       },
       "case_levels": {

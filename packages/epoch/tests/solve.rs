@@ -4440,7 +4440,7 @@ mod schedules;
 #[path = "solve/admission.rs"]
 mod admission;
 
-/// Claim: Epoch fence replay accepts a producer attachment only for its frozen original question and declared rung; changed expression, coordinate domain, rung and absent attachment refuse separately before supplying any verdict.
+/// Claim: Epoch fence replay accepts a producer attachment only for its frozen original question, declared rung and precision; changed expression, coordinate domain, rung, precision and absent attachment refuse separately before supplying any verdict.
 /// ´claim:numerics:epoch-proof-replay-binds-question-and-rung´
 /// ´test:integration:proof-epoch-scope´
 #[test]
@@ -4484,12 +4484,33 @@ fn proof_epoch_scope() {
         ),
         "changed declared rung"
     );
+    let mut other = p.clone();
+    other.grid = vec!["1/3".into(), "0".into()];
+    let other_bound = bind_procedure(&state, other.clone(), &Published(other), Limits::default()).unwrap();
+    let other_made = pn_epoch::fence::search(&other_bound, None).unwrap();
+    let other_record = &other_made.evidence.primitives[0];
+    pn_epoch::fence::replay(&other_bound, "1/3", other_record).unwrap();
     assert!(
         matches!(
-            pn_epoch::fence::replay(&bound, "1/3", record),
+            pn_epoch::fence::replay(&bound, "1/3", other_record),
             Err(pn_epoch::fence::Error::Profile)
         ),
         "undeclared rung"
+    );
+    let mut other = p.clone();
+    other.precision = Precision::AbsoluteWidthBits(vec![5]);
+    other.enclosure.as_mut().unwrap().refinement.precision = 5;
+    let other_bound = bind_procedure(&state, other.clone(), &Published(other), Limits::default()).unwrap();
+    let other_made = pn_epoch::fence::search(&other_bound, None).unwrap();
+    let other_record = &other_made.evidence.primitives[0];
+    pn_epoch::fence::replay(&other_bound, rung, other_record).unwrap();
+    assert_eq!(other_record.precision, 5);
+    assert!(
+        matches!(
+            pn_epoch::fence::replay(&bound, rung, other_record),
+            Err(pn_epoch::fence::Error::Profile)
+        ),
+        "undeclared precision"
     );
     let mut missing = record.clone();
     missing.evidence.attachment = None;
