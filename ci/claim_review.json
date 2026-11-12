@@ -319,23 +319,23 @@
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
       "after": "Series declarations refuse missing and malformed members before printing a sample declaration.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_membership",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-membership",
       "before": "",
-      "after": "Series membership requires one identity, unique complete ordinals and both bound idle receipts.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "after": "Series membership checks every terminal attempt and selects the first admissible one.",
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_outliers",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-outliers",
       "before": "",
-      "after": "Series pressure above the proposed median multiple is repeated and never sets a ceiling.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "after": "Series pressure uses an absolute bound, a frozen median and a finite attempt cap.",
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_owner_join",
@@ -343,15 +343,23 @@
       "claim": "ROOT::claim:devperf:series-owner-join",
       "before": "",
       "after": "The sample joins bound transitions of its invocation and never fixture log prefixes.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_owner_targets",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-owner-targets",
       "before": "",
-      "after": "Series membership refuses cold, swept and unobserved owner targets despite a warm primary receipt.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "after": "Series membership refuses cold, swept and foreign owner targets.",
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_reset_evidence",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-reset-evidence",
+      "before": "",
+      "after": "Series receipts require the same compiler sets and a new transition after each attempt.",
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_start_key",
@@ -359,7 +367,15 @@
       "claim": "ROOT::claim:devperf:series-start-key",
       "before": "",
       "after": "The current key and host start identity refuse a sample before any step runs.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_series_terminal_attempt",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:series-terminal-attempt",
+      "before": "",
+      "after": "Terminal attempts preserve interrupted runs and refuse an unclosed entry.",
+      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_setup_bind_completion",

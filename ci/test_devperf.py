@@ -80,9 +80,42 @@ def series_records():
         declaration=dict(series='fixture',ordinal=str(ordinal),count='5',entry=entry,base='base',source='source',configuration_key='a'*64,cache='warm')
         identity=dict(PN_GATE_SERIES='fixture',PN_GATE_ORDINAL=str(ordinal),PN_GATE_ENTRY=entry)
         rows.append(dict(declaration=declaration,tree='tree',run=entry,status='complete',observed_key='a'*64,observed_cache='warm',
-            host_idle_start=dict(identity=identity,boundary='start'),host_idle_end=dict(identity=identity,boundary='end'),whole=dict(stall=.05),
+            host_idle_start=dict(identity=identity,boundary='start',at=ordinal*10),host_idle_end=dict(identity=identity,boundary='end',at=ordinal*10+1),whole=dict(stall=.05,status=0),
+            compiled=dict(primary=[],lint=[]),changed_files={'input':ordinal*10-1},comparison=written_peer(cpu=100+ordinal,stall=.05),
             owners=[dict(base='base',source='source',run=entry,cold_target=False,layout_changed=False)]))
     return rows
+
+def check_series_records(records, statuses=None):
+    """Archive every supplied attempt through the terminal receipt writer."""
+    from build_graph import series_close, series_check
+    from contextlib import redirect_stdout
+    with tempfile.TemporaryDirectory() as directory:
+        root=Path(directory); archive=root/'archive';archive.mkdir()
+        for index,row in enumerate(records):
+            entry=row['declaration']['entry']
+            work=root/('work'+str(index));lane=work/'.lane';lane.mkdir(parents=True)
+            for name,value in [('gate-series-host-start',row['host_idle_start']),('gate-series-host-end',row['host_idle_end']),
+                               ('gate-series-end',row),('gate-declaration',row['declaration'])]:
+                (lane/(name+'.json')).write_text(json.dumps(value))
+            with redirect_stdout(io.StringIO()):
+                series_close(work, 0 if statuses is None else statuses[index])
+            destination=archive/entry;destination.mkdir()
+            (destination/'series-attempt.json').write_bytes((lane/'series-attempt.json').read_bytes())
+        output=io.StringIO()
+        with redirect_stdout(output):status=series_check('fixture',archive)
+        return status,json.loads(output.getvalue().split(' ',1)[1])
+
+
+def later_series_attempt(row, index, pressure=None):
+    row=copy.deepcopy(row);entry='attempt-'+str(index)
+    row['declaration']['entry']=entry;row['run']=entry
+    for boundary in ('start','end'):
+        row['host_idle_'+boundary]['identity']['PN_GATE_ENTRY']=entry
+        row['host_idle_'+boundary]['at']=index*10+(boundary=='end')
+    row['changed_files']={'input':index*10-1}
+    for owner in row['owners']:owner['run']=entry
+    if pressure is not None:row['whole']['stall']=pressure
+    return row
 
 
 class Performance(unittest.TestCase):
@@ -104,62 +137,131 @@ class Performance(unittest.TestCase):
 
 
     def test_series_membership(self):
-        """Series membership requires one identity, unique complete ordinals and both bound idle receipts.
+        """Series membership checks every terminal attempt and selects the first admissible one.
         ´claim:devperf:series-membership´
         ´test:integration:test-series-membership´
         """
-        from build_graph import series_check
-        with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory)
-            records=series_records()
-            def check(rows):
-                paths=[]
-                for index,row in enumerate(rows):
-                    path=root/(str(index)+'.json');path.write_text(json.dumps(row));paths.append(path)
-                return series_check('fixture', paths)
-            self.assertEqual(check(records),0,'complete same-transition samples are admitted')
-            for key,value in [('base','foreign'),('source','foreign'),('configuration_key','b'*64),('cache','cold'),('count','6')]:
-                bad=copy.deepcopy(records);bad[1]['declaration'][key]=value
-                with self.subTest(key=key),self.assertRaisesRegex(ValueError,'disagree',msg='identity mismatch must refuse: '+key):check(bad)
-            bad=copy.deepcopy(records);bad[1]['declaration']['ordinal']='1'
-            with self.assertRaisesRegex(ValueError,'duplicate',msg='duplicate ordinal must refuse'):check(bad)
-            with self.assertRaisesRegex(ValueError,'incomplete',msg='missing ordinal must refuse'):check(records[:-1])
-            for boundary in ('start','end'):
-                bad=copy.deepcopy(records);bad[1].pop('host_idle_'+boundary)
-                with self.assertRaisesRegex(ValueError,'both bound',msg='missing idle boundary must refuse'):check(bad)
-            bad=copy.deepcopy(records);bad[1]['status']='refused-owner-target'
-            with self.assertRaisesRegex(ValueError,'incomplete or refused',msg='refused sample cannot enter series'):check(bad)
+        rows=series_records()
+        status,result=check_series_records(rows)
+        self.assertEqual(status,0,'complete series admits')
+        self.assertEqual(len(result['pairs']),10,'retain every two-way common-work spread with its stalls')
+        self.assertTrue(all(pair['stalls']==[.05,.05] and pair['common_work_cpu_s'] is not None for pair in result['pairs']),'pair evidence uses writer records')
+        for key,value in [('base','foreign'),('source','foreign'),('configuration_key','b'*64),('cache','cold'),('count','6')]:
+            bad=copy.deepcopy(rows);bad[1]['declaration'][key]=value
+            status,result=check_series_records(bad)
+            self.assertEqual(status,4,'identity mismatch refuses '+key)
+            self.assertIn('disagree',result['excluded'][0]['reason'],'identity refusal is named')
+        status,result=check_series_records(rows[:-1])
+        self.assertEqual(status,4,'missing ordinal is incomplete')
+        self.assertIn(5,result['repeat_ordinals'],'missing ordinal is named')
+        for boundary in ('start','end'):
+            bad=copy.deepcopy(rows);bad[1]['host_idle_'+boundary]['boundary']='foreign'
+            status,result=check_series_records(bad)
+            self.assertEqual(status,4,'foreign idle boundary refuses')
+            self.assertIn('both bound',result['excluded'][0]['reason'],'idle refusal is named')
+        # The directory is populated out of chronological order.
+        later=later_series_attempt(rows[0],6,.01)
+        status,result=check_series_records([later,*reversed(rows)])
+        self.assertEqual(status,0,'archive enumeration cannot change recorded attempt order')
+        self.assertEqual(result['selected']['1'],'sample-1','quieter later success cannot replace first success')
+        self.assertEqual(result['excluded'][0]['reason'],'earlier attempt admitted','unused attempt reason names first success')
+        bad=copy.deepcopy(rows);bad[0]['whole']['status']=1
+        status,result=check_series_records([*bad,later])
+        self.assertEqual(result['selected']['1'],'attempt-6','red first attempt permits replacement')
+        self.assertEqual(result['excluded'][0]['reason'],'functional gate was not green','red is a named refusal')
+        status,result=check_series_records([*rows,later],[4,0,0,0,0,0])
+        self.assertEqual(result['selected']['1'],'attempt-6','protocol refusal permits replacement')
 
     def test_series_owner_targets(self):
-        """Series membership refuses cold, swept and unobserved owner targets despite a warm primary receipt.
+        """Series membership refuses cold, swept and foreign owner targets.
         ´claim:devperf:series-owner-targets´
         ´test:integration:test-series-owner-targets´
         """
-        from build_graph import series_check
-        with tempfile.TemporaryDirectory() as directory:
-            paths=[Path(directory)/(str(n)+'.json') for n in range(5)]
-            for key,value in [('cold_target',True),('layout_changed',True),('cold_target',None),('run','foreign')]:
-                rows=series_records();rows[0]['owners'][0][key]=value
-                for path,row in zip(paths,rows):path.write_text(json.dumps(row))
-                with self.subTest(key=key,value=value),self.assertRaisesRegex(ValueError,'owner target',msg='every owner must retain its primed target'):series_check('fixture',paths)
+        for key,value in [('cold_target',True),('layout_changed',True),('cold_target',None),('run','foreign'),('base','foreign')]:
+            rows=series_records();rows[1]['owners'][0][key]=value
+            status,result=check_series_records(rows)
+            self.assertEqual(status,4,'every owner retains its primed target: '+key)
+            self.assertIn('owner target',result['excluded'][0]['reason'],'owner refusal is named')
 
     def test_series_outliers(self):
-        """Series pressure above the proposed median multiple is repeated and never sets a ceiling.
+        """Series pressure uses an absolute bound, a frozen median and a finite attempt cap.
         ´claim:devperf:series-outliers´
         ´test:integration:test-series-outliers´
         """
-        from build_graph import series_check
-        from contextlib import redirect_stdout
+        from build_graph import SERIES_POLICY
+        for pressure,status,ceiling in ((.1,0,.1),(.224,4,None)):
+            rows=series_records();rows[-1]['whole']['stall']=pressure
+            actual,result=check_series_records(rows)
+            self.assertEqual(actual,status,'pressure above a bound requires a replacement')
+            self.assertEqual(result['ceiling'],ceiling,'refused pressure cannot set ceiling')
+        rows=series_records()
+        for row in rows:row['whole']['stall']=.2
+        status,result=check_series_records(rows)
+        self.assertEqual(status,4,'uniformly loaded set refuses')
+        self.assertTrue(all(r['reason']=='absolute pressure bound' for r in result['excluded']),'absolute bound applies independently')
+        for row,pressure in zip(rows,[.03,.03,.07,.07,.2]):row['whole']['stall']=pressure
+        replacement=later_series_attempt(rows[-1],6,.03)
+        status,result=check_series_records([replacement,*rows])
+        self.assertEqual(status,0,'replacement cannot lower the frozen median')
+        self.assertEqual(result['frozen_median'],.07,'first complete set fixes median')
+        self.assertEqual(result['ceiling'],.07,'previously admitted pressures remain admitted')
+        low=series_records()
+        for row in low:row['whole']['stall']=.02
+        low[-1]['whole']['stall']=.05
+        status,result=check_series_records(low)
+        self.assertEqual(status,4,'relative outlier below absolute bound still refuses')
+        self.assertEqual(result['excluded'][0]['reason'],'frozen median pressure bound','relative bound has its own refusal')
+        rows=series_records();rows[0]['whole']['stall']=.2
+        for index in range(6,6+SERIES_POLICY['attempts_per_ordinal']-1):
+            rows.append(later_series_attempt(rows[0],index,.2))
+        status,result=check_series_records(rows)
+        self.assertEqual(result['outcome'],'exhausted','finite failed attempts exhaust the ordinal')
+        rows.append(later_series_attempt(rows[0],10,.01))
+        with self.assertRaisesRegex(ValueError,'cap exceeded',msg='attempt beyond cap cannot enter'):
+            check_series_records(rows)
+
+    def test_series_reset_evidence(self):
+        """Series receipts require the same compiler sets and a new transition after each attempt.
+        ´claim:devperf:series-reset-evidence´
+        ´test:integration:test-series-reset-evidence´
+        """
+        rows=series_records()
+        for change,reason in [('compiled','compiled sets'),('changed_files','not reset')]:
+            bad=copy.deepcopy(rows)
+            if change=='compiled':bad[1]['compiled']['primary']=['different']
+            else:bad[1]['changed_files']['input']=bad[0]['host_idle_end']['at']
+            status,result=check_series_records(bad)
+            self.assertEqual(status,4,'reset evidence refuses '+change)
+            self.assertIn(reason,result['excluded'][0]['reason'],'reset refusal identifies evidence')
+        bad=copy.deepcopy(rows);bad[1]['whole']['stall']=float('nan')
+        status,result=check_series_records(bad)
+        self.assertEqual(status,4,'nonfinite pressure refuses')
+        self.assertIn('pressure',result['excluded'][0]['reason'],'pressure refusal is named')
+
+
+    def test_series_terminal_attempt(self):
+        """Terminal attempts preserve interrupted runs and refuse an unclosed entry.
+        ´claim:devperf:series-terminal-attempt´
+        ´test:integration:test-series-terminal-attempt´
+        """
+        from build_graph import series_idle, series_close, series_check
         with tempfile.TemporaryDirectory() as directory:
-            paths=[Path(directory)/(str(n)+'.json') for n in range(5)]
-            for pressure,status,ceiling in ((.1,0,.1),(.224,4,None)):
-                rows=series_records();rows[-1]['whole']['stall']=pressure
-                for path,row in zip(paths,rows):path.write_text(json.dumps(row))
-                output=io.StringIO()
-                with redirect_stdout(output):actual=series_check('fixture',paths)
-                self.assertEqual(actual,status,'only pressure above twice median needs a replacement entry')
-                result=json.loads(output.getvalue().split(' ',1)[1])
-                self.assertEqual(result['ceiling'],ceiling,'outlier must not set reference ceiling')
+            root=Path(directory);lane=root/'.lane';lane.mkdir()
+            identity=dict(PN_GATE_SERIES='fixture',PN_GATE_ORDINAL='1',PN_GATE_ENTRY='entry')
+            (lane/'gate-series-host-start.json').write_text(json.dumps(dict(identity=identity,at=1)))
+            with patch.dict(os.environ,**identity,PN_GATE_CONTAINER_LIST='["fixture-list"]'),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='[]')):
+                series_idle(root,'end')
+            series_close(root,124)
+            attempt=json.loads((lane/'series-attempt.json').read_text())
+            self.assertIsNone(attempt['receipt'],'container failure retains an incomplete measurement')
+            self.assertEqual(attempt['exit_status'],124,'container status is preserved')
+            with self.assertRaisesRegex(ValueError,'already closed',msg='an attempt cannot be overwritten'):series_close(root,0)
+            archive=root/'archive';(archive/'entry').mkdir(parents=True)
+            with self.assertRaisesRegex(ValueError,'incomplete',msg='unclosed attempt blocks selection'):series_check('fixture',archive)
+        rows=series_records()
+        status,result=check_series_records(rows[:-1])
+        self.assertEqual(result['repeat_ordinals'],[5],'a partial first set requests only missing ordinal')
+        self.assertEqual(result['outcome'],'incomplete','median is not sized from partial samples')
 
     def test_series_owner_join(self):
         """The sample joins bound transitions of its invocation and never fixture log prefixes.
@@ -213,7 +315,7 @@ class Performance(unittest.TestCase):
             (lane/'instructions-probe.json').write_text('{}')
             idle=series_records()[0]['host_idle_start']
             (lane/'gate-series-host-start.json').write_text(json.dumps(idle))
-            with patch.dict(os.environ,PN_BUILDGRAPH_RUN='run'),patch('harness.load'),patch('build_graph.subprocess.check_output',return_value='tree'),patch('build_graph.subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='',stderr='')):
+            with patch.dict(os.environ,PN_BUILDGRAPH_RUN='run'),patch('harness.load'),patch('build_graph.subprocess.check_output',side_effect=lambda argv,**kw: '' if argv[1]=='diff' else 'tree'),patch('build_graph.subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='',stderr='')):
                 with patch('build_graph.reference_key',return_value='b'*64):
                     with self.assertRaisesRegex(ValueError,'key differs at start',msg='wrong key refuses before work'):series_receipt(root,'start')
                 idle['identity']['PN_GATE_ENTRY']='foreign';(lane/'gate-series-host-start.json').write_text(json.dumps(idle))
@@ -1073,9 +1175,9 @@ wait
                     (root/'.lane/gate-wall.json').write_text('{"stall":0.05}')
                     (root/'.lane/instructions-probe.json').write_text('{"state":"unavailable"}')
                     (root/'.lane/gate-series-host-start.json').write_text(json.dumps(dict(boundary='start', identity=dict(PN_GATE_SERIES='fixture', PN_GATE_ORDINAL='1', PN_GATE_ENTRY='fixture:sample'))))
-                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm'),path=str(root/('a'*64)/'tree.json'))))
+                    (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm',compiled=dict(primary=[],lint=[])),path=str(root/('a'*64)/'tree.json'))))
                     observed=SimpleNamespace(returncode=0,stdout='[]',stderr='')
-                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='sample'), patch('build_graph.subprocess.run',return_value=observed), patch('build_graph.subprocess.check_output',return_value='tree'), patch('build_graph.reference_key',return_value='a'*64), patch('harness.load'):
+                    with patch.dict(os.environ, PN_BUILDGRAPH_RUN='sample'), patch('build_graph.subprocess.run',return_value=observed), patch('build_graph.subprocess.check_output',side_effect=lambda argv,**kw: '' if argv[1]=='diff' else 'tree'), patch('build_graph.reference_key',return_value='a'*64), patch('harness.load'):
                         series_receipt(root,'start')
                         series_receipt(root,'end')
                         receipt=json.loads((root/'.lane/gate-series-end.json').read_text())
@@ -1090,10 +1192,10 @@ wait
                         with patch.dict(os.environ, PN_GATE_ENTRY='different'):
                             with self.assertRaisesRegex(ValueError,'another invocation'):
                                 series_idle(root,'end')
-                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='cold'),path=str(root/('a'*64)/'tree.json'))))
+                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='cold',compiled=dict(primary=['p'],lint=[])),path=str(root/('a'*64)/'tree.json'))))
                         with self.assertRaisesRegex(ValueError,'differs from declared',msg='sample cache mismatch refuses membership'):
                             series_receipt(root,'end')
-                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm'),path=str(root/('b'*64)/'tree.json'))))
+                        (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(cache=dict(state='warm',compiled=dict(primary=[],lint=[])),path=str(root/('b'*64)/'tree.json'))))
                         with self.assertRaisesRegex(ValueError,'differs from declared',msg='sample observed key mismatch refuses membership'):
                             series_receipt(root,'end')
 

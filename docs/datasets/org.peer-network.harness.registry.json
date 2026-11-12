@@ -465,6 +465,8 @@
         "ci::test_devperf.Performance.test_series_membership",
         "ci::test_devperf.Performance.test_series_owner_targets",
         "ci::test_devperf.Performance.test_series_outliers",
+        "ci::test_devperf.Performance.test_series_reset_evidence",
+        "ci::test_devperf.Performance.test_series_terminal_attempt",
         "ci::test_devperf.Performance.test_series_owner_join",
         "ci::test_devperf.Performance.test_reference_written_identity",
         "ci::test_devperf.Performance.test_series_start_key",

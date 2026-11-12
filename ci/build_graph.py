@@ -707,11 +707,12 @@ def series_idle(root, boundary):
     path.write_text(json.dumps(record,sort_keys=True)+'\n')
     if boundary == 'end':
         result_path=root/'.lane/gate-series-end.json'
-        result=json.loads(result_path.read_text())
-        if result['host_idle_start']['identity'] != identity:
+        result=json.loads(result_path.read_text()) if result_path.exists() else None
+        if result is not None and result['host_idle_start']['identity'] != identity:
             raise ValueError('series idle receipt belongs to another invocation')
-        result['host_idle_end']=record
-        result_path.write_text(json.dumps(result,sort_keys=True)+'\n')
+        if result is not None:
+            result['host_idle_end']=record
+            result_path.write_text(json.dumps(result,sort_keys=True)+'\n')
     print('GATE-SERIES-IDLE '+json.dumps(record,sort_keys=True),flush=True)
 
 
@@ -743,8 +744,13 @@ def series_receipt(root, boundary):
     from harness import load
     if reference_key(root, load()) != declaration['configuration_key']:
         raise ValueError('series configuration key differs at start')
+    changed = subprocess.check_output(['git','diff','--name-only','--no-renames','--diff-filter=ACMT','-z',declaration['base'],declaration['source']], cwd=root, text=True).split('\0')
+    record['changed_files'] = {name:(root/name).stat().st_mtime for name in changed if name}
     if boundary == 'end':
         pending = json.loads((root/'.lane/gate-baseline.json').read_text())
+        record['changed_files'] = json.loads((root/'.lane/gate-series-start.json').read_text())['changed_files']
+        record['compiled'] = {name:sorted(values,key=lambda x:json.dumps(x,sort_keys=True)) if values is not None else None for name,values in pending['cache']['compiled'].items()}
+        record['comparison'] = pending
         record['observed_cache'] = pending['cache']['state']
         record['observed_key'] = Path(pending['path']).parent.name
         record['owners'] = series_owners(root, declaration, record['run'])
@@ -777,50 +783,152 @@ def series_owners(root, declaration, invocation):
     return rows
 
 
-def series_check(label, paths):
-    """Decide membership without changing a functional verdict or a reference."""
+# Proposed sampling policy, not a budget or a measured reference value.
+SERIES_POLICY = dict(pressure_multiple=2.0, absolute_pressure=0.10, attempts_per_ordinal=3,
+                     status='proposed; confirm from the series')
+
+
+def series_close(root, status):
+    """Seal an ended attempt, including a gate that never wrote its end receipt."""
+    start = json.loads((root/'.lane/gate-series-host-start.json').read_text())
+    end = json.loads((root/'.lane/gate-series-host-end.json').read_text())
+    if start['identity'] != end['identity'] or end['at'] < start['at']:
+        raise ValueError('attempt idle identities or times disagree')
+    declaration_path = root/'.lane/gate-declaration.json'
+    declaration = json.loads(declaration_path.read_text()) if declaration_path.exists() else None
+    receipt_path = root/'.lane/gate-series-end.json'
+    receipt = json.loads(receipt_path.read_text()) if receipt_path.exists() else None
+    attempt = dict(identity=start['identity'], started=start['at'], ended=end['at'],
+                   exit_status=status, declaration=declaration, receipt=receipt)
+    path = root/'.lane/series-attempt.json'
+    if path.exists():
+        raise ValueError('attempt was already closed')
+    path.write_text(json.dumps(attempt, sort_keys=True)+'\n')
+    print('GATE-SERIES-ATTEMPT '+json.dumps(attempt, sort_keys=True), flush=True)
+
+
+def series_member(row, first):
+    """Validate a completed measurement before it can affect sampling policy."""
+    declaration = row['declaration']
+    if any(declaration.get(key) != first['declaration'].get(key) for key in
+           ('series','base','source','configuration_key','cache','count')) or row.get('tree') != first.get('tree'):
+        raise ValueError('series samples disagree on identity')
+    if row.get('status') != 'complete' or row.get('observed_key') != declaration['configuration_key'] or row.get('observed_cache') != declaration['cache']:
+        raise ValueError('series sample is incomplete or refused')
+    if type(row.get('whole', {}).get('status')) is not int or row['whole']['status'] != 0:
+        raise ValueError('functional gate was not green')
+    identity = dict(PN_GATE_SERIES=declaration['series'], PN_GATE_ORDINAL=declaration['ordinal'], PN_GATE_ENTRY=declaration['entry'])
+    for boundary in ('start','end'):
+        idle = row.get('host_idle_'+boundary, {})
+        if idle.get('identity') != identity or idle.get('boundary') != boundary:
+            raise ValueError('series requires both bound idle receipts')
+    if not row.get('owners') or any(owner.get('cold_target') is not False or owner.get('layout_changed') is not False
+            or owner.get('base') != declaration['base'] or owner.get('source') != declaration['source'] or owner.get('run') != row.get('run') for owner in row['owners']):
+        raise ValueError('series owner target is cold, swept, unobserved or foreign')
+    pressure = row.get('whole', {}).get('stall')
+    if type(pressure) not in (int,float) or not math.isfinite(pressure) or not 0 <= pressure <= 1:
+        raise ValueError('series whole pressure is unavailable')
+    compiled = row.get('compiled')
+    if not isinstance(compiled, dict) or set(compiled) != {'primary','lint'} or any(not isinstance(v,list) for v in compiled.values()):
+        raise ValueError('series compilation evidence is unavailable')
+    if compiled != first.get('compiled'):
+        raise ValueError('series compiled sets differ')
+    if not isinstance(row.get('changed_files'), dict) or set(row['changed_files']) != set(first.get('changed_files', {})):
+        raise ValueError('series changed-file evidence differs')
+
+
+def series_check(label, archive):
+    """Read every terminal attempt; a later success never displaces a success."""
     import statistics
-    records = [json.loads(path.read_text()) for path in paths]
-    if not records:
-        raise ValueError('series has no samples')
-    first = records[0]['declaration']
-    count = int(first['count'])
-    if count != series_count():
-        raise ValueError('series count differs from the declared comparison count')
-    ordinals, entries, pressures = set(), set(), []
-    for row in records:
-        declaration = row['declaration']
-        if declaration.get('series') != label or any(declaration.get(key) != first.get(key) for key in
-                ('base','source','configuration_key','cache','count')) or row.get('tree') != records[0].get('tree'):
-            raise ValueError('series samples disagree on identity')
-        ordinal = int(declaration['ordinal'])
-        if ordinal in ordinals or declaration['entry'] in entries or not 1 <= ordinal <= count:
-            raise ValueError('series ordinal or entry is duplicate or outside count')
-        ordinals.add(ordinal); entries.add(declaration['entry'])
-        if row.get('status') != 'complete' or row.get('observed_key') != declaration['configuration_key'] or row.get('observed_cache') != declaration['cache']:
-            raise ValueError('series sample is incomplete or refused')
-        identity = dict(PN_GATE_SERIES=label, PN_GATE_ORDINAL=declaration['ordinal'], PN_GATE_ENTRY=declaration['entry'])
-        for boundary in ('start','end'):
-            idle = row.get('host_idle_'+boundary, {})
-            if idle.get('identity') != identity or idle.get('boundary') != boundary:
-                raise ValueError('series requires both bound idle receipts')
-        if not row.get('owners') or any(owner.get('cold_target') is not False or owner.get('layout_changed') is not False
-                or owner.get('base') != declaration['base'] or owner.get('source') != declaration['source'] or owner.get('run') != row.get('run') for owner in row['owners']):
-            raise ValueError('series owner target is cold, swept, unobserved or foreign')
-        pressure = row.get('whole', {}).get('stall')
-        if not isinstance(pressure, (int,float)) or not math.isfinite(pressure) or not 0 <= pressure <= 1:
-            raise ValueError('series whole pressure is unavailable')
-        pressures.append(pressure)
-    if ordinals != set(range(1,count+1)):
-        raise ValueError('series ordinals are incomplete')
-    median = statistics.median(pressures)
-    multiple = 2.0  # Proposed series_pressure_multiple, confirmed by the series.
-    outliers = [row['declaration']['ordinal'] for row,pressure in zip(records,pressures) if pressure > median*multiple]
-    result = dict(series=label, outcome='repeat' if outliers else 'admitted', count=count,
-        pressures=pressures, median=median, pressure_multiple=multiple, multiple_status='proposal',
-        repeat_ordinals=outliers, ceiling=None if outliers else max(pressures))
+    attempts = []
+    entries = set()
+    for directory in archive.iterdir():
+        if not directory.is_dir():
+            raise ValueError('series archive contains a non-entry path')
+        path = directory/'series-attempt.json'
+        if not path.exists():
+            raise ValueError('series attempt is incomplete; close it before checking: '+directory.name)
+        attempt = json.loads(path.read_text())
+        identity = attempt['identity']
+        entry = identity['PN_GATE_ENTRY']
+        if identity['PN_GATE_SERIES'] != label or entry != directory.name or entry in entries:
+            raise ValueError('series entry or label is foreign or duplicate')
+        entries.add(entry)
+        if any(type(attempt.get(k)) not in (int,float) or not math.isfinite(attempt[k]) for k in ('started','ended')) or attempt['ended'] < attempt['started']:
+            raise ValueError('series attempt times are invalid')
+        if type(attempt.get('exit_status')) is not int:
+            raise ValueError('series attempt outcome is incomplete')
+        ordinal = int(identity['PN_GATE_ORDINAL'])
+        if not 1 <= ordinal <= series_count():
+            raise ValueError('series ordinal outside declared count')
+        attempts.append((attempt['started'], entry, ordinal, attempt))
+    attempts.sort()  # Receipt time decides, never directory order or outcome.
+    if not attempts:
+        raise ValueError('series has no attempts')
+    if len({x[0] for x in attempts}) != len(attempts):
+        raise ValueError('series attempt order is ambiguous')
+    first = next((a['receipt'] for _,_,_,a in attempts if a.get('receipt')), None)
+    if first is None or int(first['declaration']['count']) != series_count():
+        raise ValueError('series count or first receipt is unavailable')
+    candidates, excluded, counts = {}, [], {}
+    previous_end = None
+    for started,entry,ordinal,attempt in attempts:
+        counts[ordinal] = counts.get(ordinal,0)+1
+        if counts[ordinal] > SERIES_POLICY['attempts_per_ordinal']:
+            raise ValueError('series attempt cap exceeded at ordinal '+str(ordinal))
+        row = attempt.get('receipt')
+        try:
+            if previous_end is not None and started <= previous_end:
+                raise ValueError('series attempts overlap')
+            if attempt['exit_status'] != 0:
+                raise ValueError('attempt gate or protocol refused')
+            if row is None:
+                raise ValueError('attempt measurement is incomplete')
+            if row['declaration'] != attempt.get('declaration') or row['host_idle_start']['identity'] != attempt['identity']:
+                raise ValueError('attempt and measurement disagree')
+            series_member(row, first)
+            for mtime in row['changed_files'].values():
+                if type(mtime) not in (int,float) or not math.isfinite(mtime) or (previous_end is not None and mtime <= previous_end) or mtime > started:
+                    raise ValueError('changed file was not reset after previous attempt')
+            candidates.setdefault(ordinal, []).append((entry,row))
+        except (ValueError, KeyError, TypeError) as error:
+            excluded.append(dict(entry=entry, ordinal=ordinal, reason=str(error)))
+        previous_end = attempt['ended']
+    # Freeze on the first structurally complete set, independently of pressure.
+    if set(candidates) != set(range(1,series_count()+1)):
+        median = None
+    else:
+        median = statistics.median(rows[0][1]['whole']['stall'] for rows in candidates.values())
+    selected = {}
+    if median is not None:
+        for ordinal, rows in candidates.items():
+            for entry,row in rows:
+                pressure = row['whole']['stall']
+                reason = ('earlier attempt admitted' if ordinal in selected else
+                          'absolute pressure bound' if pressure > SERIES_POLICY['absolute_pressure'] else
+                          'frozen median pressure bound' if pressure > median*SERIES_POLICY['pressure_multiple'] else None)
+                if reason:
+                    excluded.append(dict(entry=entry,ordinal=ordinal,reason=reason))
+                else:
+                    selected[ordinal] = (entry,row)
+    missing = [n for n in range(1,series_count()+1) if n not in (candidates if median is None else selected)]
+    exhausted = [n for n in missing if counts.get(n,0) >= SERIES_POLICY['attempts_per_ordinal']]
+    pairs = []
+    chosen = list(selected.values())
+    for index,(left_name,left) in enumerate(chosen):
+        for right_name,right in chosen[index+1:]:
+            evidence = [left.get('comparison',{}),right.get('comparison',{})]
+            pairs.append(dict(entries=[left_name,right_name], stalls=[left['whole']['stall'],right['whole']['stall']],
+                              common_work_cpu_s=peer_intersection(evidence),
+                              common_work_instructions=peer_intersection(evidence,instructions=True)))
+    result = dict(series=label, pairs=pairs, outcome='exhausted' if exhausted else 'incomplete' if median is None else 'repeat' if missing else 'admitted',
+        selected={str(n):entry for n,(entry,_) in selected.items()}, excluded=excluded,
+        frozen_median=median, policy=SERIES_POLICY, repeat_ordinals=missing, exhausted_ordinals=exhausted,
+        samples=[dict(entry=entry,ordinal=n,stall=row['whole']['stall'],compiled=row['compiled']) for n,(entry,row) in selected.items()],
+        ceiling=None if median is None or missing else max(row['whole']['stall'] for _,row in selected.values()))
     print('GATE-SERIES-CHECK '+json.dumps(result,sort_keys=True),flush=True)
-    return 4 if outliers else 0
+    return 4 if median is None or missing else 0
+
 
 
 def instruction_probe(root):
@@ -1001,6 +1109,7 @@ def baseline_context(root, registry, policy=None):
     selection_cpu = [resource.getrusage(kind) for kind in (resource.RUSAGE_SELF,resource.RUSAGE_CHILDREN)]
     identity = reference_identity(root, registry)
     key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+    print('GATE-CONFIGURATION key='+key, flush=True)
     directory = Path(os.environ['CARGO_TARGET_DIR'])/'gate-baselines'/key
     source = os.environ['PN_GATE_SOURCE']
     tree = subprocess.run(['git', 'rev-parse', source+'^{tree}'], cwd=root,
@@ -1906,7 +2015,9 @@ def main():
     sub.add_parser('series-key')
     check_series = sub.add_parser('series-check')
     check_series.add_argument('label')
-    check_series.add_argument('receipts', nargs='+', type=Path)
+    check_series.add_argument('archive', type=Path)
+    close_series = sub.add_parser('series-close')
+    close_series.add_argument('status', type=int)
     counted = sub.add_parser('counter-work')
     counted.add_argument('receipt')
     counted.add_argument('command', nargs=argparse.REMAINDER)
@@ -1944,12 +2055,15 @@ def main():
         return 0
     if args.action == 'series-check':
         try:
-            return series_check(args.label, args.receipts)
+            return series_check(args.label, args.archive)
         except (OSError, ValueError, KeyError, TypeError) as error:
             print('GATE-SERIES-REFUSED '+str(error), flush=True)
             return 4
     if args.action == 'declare':
         declare_run(Path.cwd())
+        return 0
+    if args.action == 'series-close':
+        series_close(Path.cwd(), args.status)
         return 0
     if args.action == 'series-idle':
         series_idle(Path.cwd(), args.boundary)
