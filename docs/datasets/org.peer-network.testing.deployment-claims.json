@@ -47,7 +47,7 @@
       "kind": "statement",
       "name": "cond:deployment:canonical-replay",
       "paper_tag": "network-v0.31.1",
-      "reason": "Re-execution of the same declared procedure supplies the identical-verdict predicate for packages carrying the host-bound build declaration; its new binding recipe remains held, version-one bytes do not name their declaring build, and no current implementation or cross-build endpoint identity is asserted.",
+      "reason": "Re-execution of the same declared procedure supplies the identical-verdict predicate for packages carrying the host-bound build declaration; its new binding recipe remains held under open:identity:reproduction-binding, version-one bytes do not name their declaring build, and no current implementation or cross-build endpoint identity is asserted.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
