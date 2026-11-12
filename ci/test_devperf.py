@@ -36,7 +36,258 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
     return inventory, metadata
 
 
+def written_peer(source='fixture', cpu=100, stall=.05, extra=0, instructions=None):
+    """Feed controlled observations through the production tier record writer."""
+    from contextlib import redirect_stdout
+    from build_graph import tier_summary
+    tiers = {'service':dict(steps=['service'], invocation_budget='fixture'),
+             'fast':dict(steps=['fast'], finalize_steps=['finalize'], invocation_budget='fixture')}
+    names = ['service', 'fast', 'finalize']
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory); lane = root/'.lane'; lane.mkdir()
+        for name in names:
+            own = cpu if name == 'service' else 0
+            count = str(instructions) if instructions is not None else 'unavailable'
+            (lane/f'gate-{name}.log').write_text(f'OWN-TIME user={own} sys=0\nGATE-INSTRUCTIONS step={name} retired={count}\n')
+            (lane/f'gate-{name}-setup.jsonl').write_text('')
+        (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t0\t0\t1\n' for name in names))
+        cases = [('common',0)]+([('extra',extra)] if extra else [])
+        (lane/'performance-events.jsonl').write_text(''.join(json.dumps(dict(scope='case', operation=name,
+            step='service', outcome='passed', own_user_s=cost, own_sys_s=0))+'\n' for name,cost in cases))
+        registry = SimpleNamespace(tiers=tiers, producing_step=lambda _: 'service')
+        policy = dict(load_unresolved_pressure_percent=10, cpu_growth_percent=20, rebuild_steps=[])
+        with patch('devperf.budgets', return_value={'fixture':dict(budget_ms=2000),'gate':policy}), \
+                patch('build_graph.baseline_context', return_value=(lane/'baseline.json',None,[],lane)), \
+                patch('harness.build_cache_state', return_value=dict(state='warm',compiling_steps=[])), \
+                patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), \
+                patch('gate_resources.joined', return_value={'node_scope':'node-wide','node_pressure_fraction':{'cpu.some':stall}}), \
+                patch('gate_resources.compact', return_value='fixture'), \
+                patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0,stdout=source)), \
+                patch.dict(os.environ, PN_GATE_SOURCE=source, PN_BUILDGRAPH_RUN='fixture-run', PN_IMPORT_BASE='fixture-base'), \
+                redirect_stdout(io.StringIO()):
+            tier_summary(root, registry, dict.fromkeys(names,0))
+        result = json.loads((lane/'gate-baseline.json').read_text())
+        # Whole-run observations are not step figures or the projection.
+        result['whole'] = dict(node_scope='node-wide',stall=stall,wall=1,own_user_s=cpu,own_sys_s=0)
+        return result
+
+
 class Performance(unittest.TestCase):
+    def test_quiet_repeat_request(self):
+        """Loaded excess names a separately declared quiet repeat without scheduling or changing a verdict.
+        ´claim:devperf:quiet-repeat-request´
+        ´test:integration:test-quiet-repeat-request´
+        """
+        from build_graph import quiet_repeat
+        for excess, compiled, expected in ((9,[],False),(10,[],False),(11,[],True),(1,['build'],True)):
+            request = quiet_repeat('commit','tree','fast',dict(classification='load-unresolved',excess_s=excess),100,compiled)
+            self.assertEqual(request['required'],expected,'repeat trigger follows excess share or compilation')
+            self.assertEqual((request['source'],request['tree'],request['plan'],request['entry']),
+                             ('commit','tree','one-run','new-ledger-entry'))
+            self.assertEqual(request['schedules'],'nothing')
+            self.assertIn('idle',request['node'])
+        self.assertIsNone(quiet_repeat('commit','tree','fast',dict(classification='within-budget'),100,[]))
+
+    def test_reference_incumbent_tree(self):
+        """Retention uses the previous reference tree even when an unrelated peer has a lower stall.
+        ´claim:devperf:reference-incumbent-tree´
+        ´test:integration:test-reference-incumbent-tree´
+        """
+        from build_graph import retain_baseline
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); (root/'.lane').mkdir()
+            old, unrelated, candidate = written_peer('old',100,.05),written_peer('unrelated',1,.001),written_peer('new',90,.04)
+            for row in (old,unrelated,candidate):
+                row['quiet_windows']={phase:dict(node_scope='node-wide',node_pressure_fraction={'cpu.some':0},wall_seconds=5) for phase in ('before','after')}
+                row['load_unresolved_pressure_percent']=10
+                row.pop('previous_reference',None)
+            candidate.update(path=str(root/'new.json'),context_directory=str(root),previous_baseline_tree=old['tree'],previous_peers=[unrelated,old])
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+            output=io.StringIO()
+            with patch.dict(os.environ,{},clear=True),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(output):
+                retain_baseline(root)
+            self.assertIn('reason=warm-peer-noise-margin-unavailable',output.getvalue())
+            self.assertFalse((root/'new.json').exists(),'no unsized-margin replacement is permitted')
+            # A sized margin distinguishes using the wrong previous tree.
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
+                retain_baseline(root)
+            self.assertTrue((root/'new.json').exists(),'the candidate improves the named incumbent, not the unrelated archive minimum')
+            candidate.update(previous_reference=old, previous_peers=[dict(unrelated,tree=old['tree'])])
+            (root/'new.json').unlink()
+            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
+            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
+                retain_baseline(root)
+            self.assertTrue((root/'new.json').exists(),'the exact comparison receipt must survive a same-tree archive peer')
+
+    def test_reference_deletion_events(self):
+        """Generated land, replay, revert and archive events preserve landable records and delete passed-base absences.
+        ´claim:devperf:reference-deletion-events´
+        ´test:integration:test-reference-deletion-events´
+        """
+        import random
+        from contextlib import redirect_stdout
+        from build_graph import prune_peer_archive
+        generator=random.Random(32189)
+        kinds=['archive','land','replay','move','legacy','foreign-base','revert','duplicate','dominance']
+        counts=dict.fromkeys(kinds,0); distinct=set(); preserved=deleted=0
+        legacy_checks=foreign_checks=duplicate_checks=dominance_checks=0
+        for sequence in range(128):
+            with tempfile.TemporaryDirectory() as directory:
+                archive=Path(directory); history={'base-0':'commit-0'}; base='base-0'; records={}; events=[]
+                for position in range(36):
+                    action=generator.choice(kinds)
+                    live=[name for name in records if (archive/(name+'.json')).exists()]
+                    if not live and action in ('land','replay','duplicate','dominance'):
+                        action='archive'
+                    name=f'record-{position}'; tree=f'tree-{position}'; origin=None
+                    if action in ('land','move','revert'):
+                        if action=='land':
+                            origin=generator.choice(live); base=records[origin]['tree']
+                        elif action=='revert':
+                            base=generator.choice(list(history))
+                        else:
+                            base=f'base-{position+1}'
+                        history[base]=f'commit-{position+1}'
+                    else:
+                        if action in ('duplicate','dominance','replay'):
+                            origin=generator.choice(live)
+                        if action in ('duplicate','dominance'):
+                            tree=records[origin]['tree']
+                        if action=='dominance':
+                            history[tree]=f'commit-{position+1}'
+                        value=dict(tree=tree,source=name,cache=dict(state='warm'),
+                                   whole=dict(wall=1 if action=='dominance' else 2,comparable_cpu_s=1 if action=='dominance' else 2,stall=.01),
+                                   tiers={'fast':dict(selected_cases=['same'])})
+                        if action!='legacy':
+                            value['import_base_tree']='outside-base' if action=='foreign-base' else base
+                        records[name]=value
+                        (archive/(name+'.json')).write_text(json.dumps(value))
+                    events.append(dict(action=action,base=base,tree=tree,origin=origin));counts[action]+=1
+                    before={path.stem for path in archive.glob('*.json')}
+                    legacy_checks+=sum('import_base_tree' not in records[name] for name in before)
+                    foreign_checks+=sum(records[name].get('import_base_tree')=='outside-base' for name in before)
+                    duplicate_checks+=sum(records[left]['tree']==records[right]['tree'] for left in before for right in before if left<right)
+                    from build_graph import dominates
+                    dominance_checks+=sum(records[left]['tree']==records[right]['tree'] and records[left]['tree'] in history
+                                          and dominates(records[left],records[right]) for left in before for right in before if left!=right)
+                    doomed={name for name in before if records[name]['tree'] not in history
+                            and records[name].get('import_base_tree') in history
+                            and records[name].get('import_base_tree')!=base}
+                    with redirect_stdout(io.StringIO()):
+                        prune_peer_archive(archive,history,base)
+                    after={path.stem for path in archive.glob('*.json')}
+                    self.assertEqual(after,before-doomed,'only a proven passed-base absence may be deleted')
+                    preserved+=len(before-doomed);deleted+=len(doomed)
+                distinct.add(json.dumps(events,sort_keys=True))
+        self.assertEqual(len(distinct),128)
+        self.assertTrue(all(counts.values()))
+        self.assertGreater(preserved,0); self.assertGreater(deleted,0)
+        self.assertTrue(all((legacy_checks,foreign_checks,duplicate_checks,dominance_checks)))
+        print(f'PEER-EVENTS content_distinct={len(distinct)} kinds={json.dumps(counts,sort_keys=True)} preserved_checks={preserved} deleted_checks={deleted} legacy_checks={legacy_checks} foreign_base_checks={foreign_checks} duplicate_tree_pairs={duplicate_checks} landed_strict_dominance_pairs={dominance_checks} order=generated-unsorted')
+
+    def test_written_peer_noise(self):
+        """Written common-work receipts keep the incumbent until a measured noise margin is exceeded.
+        ´claim:devperf:written-peer-noise´
+        ´test:integration:test-written-peer-noise´
+        """
+        from build_graph import baseline_replacement, peer_intersection, reference_noise_margin
+        old = written_peer('old',727.488316,.049136754226175854)
+        new = written_peer('new',742.153702+15.548151,.04430517164619928,15.548151)
+        self.assertEqual(peer_intersection([old,new]),[727.488316,742.153702])
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertFalse(baseline_replacement(new,old)[0], 'unsized noise must keep the incumbent')
+            self.assertFalse(baseline_replacement(old,new)[0], 'a cheaper candidate is not evidence beyond an unsized margin')
+        with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.03'):
+            self.assertFalse(baseline_replacement(old,new)[0], 'two percent is inside this controlled three percent margin')
+            better = written_peer('better',600,.06,10)
+            self.assertTrue(baseline_replacement(better,old)[0], 'a measured common-work improvement beyond the margin replaces')
+        new['tiers']['service']['step_figures']['service']['compiled'] = True
+        self.assertEqual(peer_intersection([old,new]),[0,0], 'exclusive compiled cases omit their step, not unaffected common work')
+        new['tiers']['service']['step_figures']['service']['compiled'] = False
+        for malformed in ('nan','inf','-1','1','text'):
+            with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN=malformed):
+                with self.assertRaises(ValueError):
+                    reference_noise_margin()
+
+    def test_written_peer_margin(self):
+        """An empty written intersection uses only a declared strict stall margin.
+        ´claim:devperf:written-peer-stall-margin´
+        ´test:integration:test-written-peer-margin´
+        """
+        from build_graph import baseline_replacement, peer_intersection
+        old,new = written_peer('old',100,.05),written_peer('new',50,.04)
+        for record in (old,new):
+            record['tiers'] = {'service':record['tiers']['service']}
+        new['tiers']['service'].update(selected_cases=['other'],case_steps={'other':'service'})
+        self.assertIsNone(peer_intersection([old,new]))
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertFalse(baseline_replacement(new,old)[0], 'unset stall margin retains')
+        for margin, expected in (('.02',False),('.005',True)):
+            with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_MARGIN=margin):
+                self.assertEqual(baseline_replacement(new,old)[0],expected,'empty projection must obey the strict margin')
+
+    def test_written_peer_instructions(self):
+        """Complete matching counter scopes take precedence over load-sensitive CPU without invented deductions.
+        ´claim:devperf:written-peer-instructions´
+        ´test:integration:test-written-peer-instructions´
+        """
+        from build_graph import baseline_replacement, peer_intersection
+        old,new = written_peer('old',100,instructions=1000),written_peer('new',110,instructions=800)
+        self.assertEqual(peer_intersection([old,new],instructions=True),[3000,2400])
+        with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
+            self.assertEqual(baseline_replacement(new,old),(True,'warm-peer-instructions-noise-margin'))
+            new['tiers']['service']['step_figures']['service']['setup_cpu_s'] = 1
+            self.assertIsNone(peer_intersection([old,new],instructions=True),'a gross counter cannot invent setup deductions')
+            self.assertFalse(baseline_replacement(new,old)[0])
+
+    def test_peer_duplicate_step(self):
+        """Different measurements for one step in two tiers refuse the projection.
+        ´claim:devperf:peer-duplicate-step´
+        ´test:integration:test-peer-duplicate-step´
+        """
+        from build_graph import peer_intersection
+        old,new = written_peer(),written_peer()
+        new['tiers']['duplicate'] = copy.deepcopy(new['tiers']['service'])
+        new['tiers']['duplicate']['step_figures']['service']['own_cpu_s'] += 1
+        self.assertIsNone(peer_intersection([old,new]),'different duplicate step values must refuse')
+
+    def test_peer_serialized_mismatch(self):
+        """A changed serialized-build declaration cannot turn build time into program cost.
+        ´claim:devperf:peer-serialized-mismatch´
+        ´test:integration:test-peer-serialized-mismatch´
+        """
+        from build_graph import peer_intersection
+        old,new = written_peer(),written_peer()
+        for value in (old,new):
+            value['tiers'] = {'service':value['tiers']['service']}
+        new['tiers']['service']['step_figures']['service']['serialized_build'] = True
+        self.assertIsNone(peer_intersection([old,new]),'serialized-build mismatch must omit the step')
+
+    def test_peer_removed_cost_finite(self):
+        """A non-finite exclusive case charge cannot enter the common-work sum.
+        ´claim:devperf:peer-removed-cost-finite´
+        ´test:integration:test-peer-removed-cost-finite´
+        """
+        from build_graph import peer_intersection
+        old,new = written_peer(),written_peer(extra=1)
+        for value in (old,new):
+            value['tiers'] = {'service':value['tiers']['service']}
+        new['tiers']['service']['case_costs']['extra'] = float('nan')
+        self.assertIsNone(peer_intersection([old,new]),'non-finite removed cost must omit the step')
+
+    def test_peer_removed_cost_bounded(self):
+        """Exclusive case charges cannot subtract more than the measured remaining program work.
+        ´claim:devperf:peer-removed-cost-bounded´
+        ´test:integration:test-peer-removed-cost-bounded´
+        """
+        from build_graph import peer_intersection
+        old,new = written_peer(),written_peer(extra=101)
+        for value in (old,new):
+            value['tiers'] = {'service':value['tiers']['service']}
+        self.assertIsNone(peer_intersection([old,new]),'over-subtraction must omit the step')
+
     def test_loaded_step_context(self):
         """Loaded step costs remain unattributed context, including missing and changed steps, independently of quiet baselines.
         ´claim:devperf:loaded-step-context-is-nonverdict´
@@ -420,6 +671,23 @@ wait
                             for name in tiers:
                                 self.assertIsNotNone(unreferenced[name]['comparable_cpu_s'], 'missing reference cannot erase current measured work')
                                 self.assertIsNone(unreferenced[name]['baseline_comparable_cpu_s'])
+                            # Exercise the actual archive writer, including every
+                            # historical spelling of the retired classification.
+                            from build_graph import peer_intersection
+                            written = json.loads((lane/'gate-baseline.json').read_text())
+                            expected_cpu = sum(row['comparable_cpu_s'] for row in unreferenced.values()
+                                               if not any(figure['serialized_build'] for figure in row['step_figures'].values()))
+                            for flag in ('absent', None, False, True):
+                                archived = copy.deepcopy(written)
+                                for row in archived['tiers'].values():
+                                    for figure in row['step_figures'].values():
+                                        if flag == 'absent':
+                                            figure.pop('wait_dominated', None)
+                                        else:
+                                            figure['wait_dominated'] = flag
+                                self.assertEqual(peer_intersection([written, archived]),
+                                                 [expected_cpu, expected_cpu],
+                                                 'written records must ignore obsolete waiting classifications')
                     self.assertEqual(json.loads((lane/'gate-baseline.json').read_text())['import_base_tree'], 'tree', 'archive provenance must name the declared base tree')
                     for name in tiers:
                         self.assertEqual(measured[name]['status'], status)
@@ -570,6 +838,11 @@ wait
                 self.assertAlmostEqual(result['preparation_s']+result['step_span_s']+result['closing_s'], result['wall'])
                 self.assertTrue(result['over_budget'])
                 self.assertEqual(result['classification'], 'load-unresolved')
+                requests = [line.removeprefix('GATE-QUIET-REPEAT ') for line in output.getvalue().splitlines()
+                            if line.startswith('GATE-QUIET-REPEAT ')]
+                self.assertTrue(requests, 'a loaded excess must print a quiet-repeat request')
+                repeat = json.loads(requests[0])
+                self.assertTrue(repeat['required'], 'a loaded excess must print its owed quiet repeat')
                 self.assertEqual(result['baseline_stall'], .1)
                 self.assertEqual(result['baseline_source'], 'prior')
                 self.assertTrue(result['baseline_provisional'])
@@ -908,20 +1181,22 @@ wait
                     compile_wall_growth=0, wall=150, baseline_wall=120, baseline_stall=0, excess=30), 'growth')
 
 
-    def test_baseline_lineage(self):
-        """Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.
-        ´claim:devperf:baseline-follows-import-tree´
-        ´test:integration:test-baseline-lineage´
+    def test_reference_cache_order(self):
+        """Cache rank keeps cold references provisional and refuses cold replacement of warm evidence.
+        ´claim:devperf:reference-cache-order´
+        ´test:integration:test-reference-cache-order´
         """
         def windows(stall=0):
             return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
                     for phase in ('before', 'after')}
-        from build_graph import baseline_context, retain_baseline
-        from build_graph import baseline_replacement, baseline_rank
-        from harness import build_cache_state, CONFIGURATION
         def recorded(cache, stall, provisional=False):
-            return dict(cache=dict(state=cache), provisional=provisional,
-                        whole=dict(node_scope='node-wide', stall=stall))
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         from build_graph import overrun_class
         policy={'cpu_growth_percent':10,'load_unresolved_pressure_percent':10}
         args=(True,None,None,.8,None,None,[],policy)
@@ -931,106 +1206,30 @@ wait
         cold, warm = recorded('cold', .060), recorded('warm', .081)
         self.assertEqual(baseline_replacement(warm, cold), (True, 'warm-replaces-cold-or-unknown'))
         self.assertEqual(baseline_replacement(cold, warm), (False, 'retained-warm-cache'))
-        self.assertEqual(baseline_replacement(recorded('warm', .05), warm), (True, 'no-higher-whole-gate-stall'))
-        self.assertEqual(baseline_replacement(recorded('warm', .09), warm), (False, 'higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(recorded('warm', .05), warm), (False, 'warm-peer-intersection-unavailable-margin'))
+        self.assertEqual(baseline_replacement(recorded('warm', .09), warm), (False, 'warm-peer-intersection-unavailable-margin'))
         self.assertEqual(baseline_replacement(warm, None), (True, 'first-compatible-run-provisional'))
-        self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (False, 'higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(warm, recorded('warm', .01, True)), (False, 'warm-peer-intersection-unavailable-margin'))
         self.assertEqual(baseline_replacement(recorded('unknown', .001), warm), (False, 'retained-warm-cache'))
         self.assertLess(baseline_rank(warm), baseline_rank(cold))
         self.assertGreater(baseline_rank(warm), baseline_rank(recorded('warm', .01, True)))
-        slow, fast = recorded('warm', .102), recorded('warm', .147)
-        for value, wall, cpu in ((slow,218.0,1177.5),(fast,204.7,1093.8)):
-            value['whole'].update(wall=wall, comparable_cpu_s=cpu)
-            value['tiers'] = {'fast':dict(selected_cases=['same-case'], non_comparable_steps=[])}
-        self.assertEqual(baseline_replacement(fast, slow), (True, 'warm-peer-dominance'),
-                         'faster and cheaper warm evidence must replace quieter slower evidence')
-        self.assertEqual(baseline_replacement(slow, fast), (False, 'warm-peer-dominance'),
-                         'quieter slower and costlier evidence must not replace faster warm evidence')
-        from build_graph import preferred_baseline
-        from build_graph import peer_intersection
-        def intersection_peer(source, stall, wall, cpu, extra=0):
-            cases = ['common']+(['extra'] if extra else [])
-            return dict(source=source, cache=dict(state='warm'),
-                        whole=dict(node_scope='node-wide', stall=stall, wall=wall, comparable_cpu_s=cpu),
-                        tiers={'service':dict(selected_cases=cases, case_steps={case:'service' for case in cases},
-                            case_costs={'extra':extra}, steps=['service'], step_figures={'service':dict(
-                                own_cpu_s=cpu, cargo_cpu_s=0, setup_cpu_s=0, layouts=[], partial=False, compiled=False, wall=wall)})})
-        old = intersection_peer('old', .049136754226175854, 134.454, 747.703316)
-        new = intersection_peer('new', .04430517164619928, 140.000857, 763.142702)
-        old['tiers'] = {}; new['tiers'] = {}
-        # These are the printed tier intersections of the recorded pair;
-        # whole CPU also owns preparation/closing and is not the intersection.
-        for name, current, previous in [('extended',203.977088,202.310768),('fast',271.152326,261.620315),
-                ('reference-certificate',108.402,109.295),('service',143.520288,140.22523299999997),
-                ('finalize',15.102,14.037)]:
-            for value,cost in ((old,previous),(new,current)):
-                extra = 15.548150999999994 if value is new and name == 'service' else 0
-                cases = [name]+(['added-service-case'] if extra else [])
-                value['tiers'][name] = dict(selected_cases=cases,case_steps={case:name for case in cases},
-                    case_costs={'added-service-case':extra},steps=[name],step_figures={name:dict(
-                        own_cpu_s=cost+extra,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,compiled=False,wall=1)})
-        self.assertEqual(baseline_replacement(new, old), (False,'warm-peer-intersection'),
-                         'a small stall lead must not replace a cheaper common workload')
-        old = intersection_peer('old', .0491, 134.5, 747.7)
-        new = intersection_peer('new', .0443, 140.0, 763.1, 2)
-        new['tiers']['service']['step_figures']['service']['own_cpu_s'] = 740
-        self.assertEqual(baseline_replacement(new, old), (True,'warm-peer-intersection'),
-                         'a cheaper common workload must replace across case domains')
-        new['tiers']['service']['step_figures']['service']['cargo_cpu_s'] = 1
-        self.assertIsNotNone(peer_intersection([old,new]), 'build-tool CPU without compilation remains comparable')
-        new['tiers']['service']['step_figures']['service']['compiled'] = True
-        self.assertIsNone(peer_intersection([old,new]), 'exclusive compiled case clocks cannot be subtracted twice')
-        disjoint = copy.deepcopy(new)
-        disjoint['tiers']['service'].update(selected_cases=['unrelated'],case_steps={'unrelated':'service'})
-        self.assertIsNone(peer_intersection([old,disjoint]), 'disjoint cases have an empty intersection')
-        for candidate in (new,disjoint):
-            with patch.dict(os.environ, {}, clear=True):
-                self.assertFalse(baseline_replacement(candidate, old)[0], 'an unmeasured margin cannot authorize replacement')
-            for margin, expected in ((.01,False),(.001,True)):
-                with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_MARGIN=str(margin)):
-                    self.assertEqual(baseline_replacement(candidate, old)[0], expected, 'empty intersection obeys the measured strict margin')
-        from build_graph import reference_stall_margin
-        for malformed in ('nan','inf','-0.1','1','not-a-number'):
-            with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_MARGIN=malformed):
-                with self.assertRaises(ValueError):
-                    reference_stall_margin()
-        for value in (old,new):
-            value['tiers']['other'] = dict(selected_cases=['stable'],case_steps={'stable':'other'},case_costs={},steps=['other'],
-                step_figures={'other':dict(own_cpu_s=10 if value is old else 9,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,wall=1)})
-        self.assertEqual(peer_intersection([old,new]), [10,9], 'a compiled exclusive step cannot erase unaffected common cases')
-        self.assertTrue(baseline_replacement(new,old)[0])
-        for value,cost in ((old,5),(new,4)):
-            value['tiers']['uncased'] = dict(selected_cases=[],case_steps={},case_costs={},steps=['uncased'],
-                step_figures={'uncased':dict(own_cpu_s=cost,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,
-                                           serialized_build=False,wall=1)})
-        self.assertEqual(peer_intersection([old,new]),[15,13], 'common check work without cases still belongs to the projection')
-        for value in (old,new):
-            value['tiers']['uncased']['step_figures']['uncased']['serialized_build'] = True
-        self.assertEqual(peer_intersection([old,new]),[10,9], 'serialized build CPU must not become program work')
-        from build_graph import peer_frontier
-        projection_a = intersection_peer('projection-a', .05, 100, 100, 90)
-        projection_b = intersection_peer('projection-b', .04, 90, 90, 70)
-        projected = intersection_peer('projection-c', .03, 110, 30)
-        self.assertEqual(peer_frontier([projection_a,projection_b]),[projection_a,projection_b],
-                         'aggregate dominance must not erase the cheaper future projection')
-        self.assertIs(preferred_baseline([projection_a,projection_b,projected],incumbent=projection_b),projection_a)
-        for values in ([slow,fast],[fast,slow]):
-            self.assertIs(preferred_baseline(values), fast)
-        quiet_fast = copy.deepcopy(slow);quiet_fast['whole']['wall'] = 200
-        self.assertEqual(baseline_replacement(quiet_fast,fast), (True,'warm-peer-frontier-stall'))
-        unresolved = copy.deepcopy(slow);unresolved['whole']['comparable_cpu_s'] = 1000
-        self.assertEqual(baseline_replacement(unresolved,fast), (True,'warm-peer-frontier-stall'))
-        self.assertEqual(baseline_replacement(fast,unresolved), (False,'warm-peer-frontier-stall'))
-        tied = copy.deepcopy(slow); tied['whole']['stall'] = fast['whole']['stall']
-        self.assertEqual(baseline_replacement(tied,fast), (False,'warm-peer-dominance'), 'equal stall cannot prefer slower and costlier evidence')
-        import itertools
-        peers=[]
-        for source, stall, wall, cpu in [('A',.10,210,1000),('B',.05,205,1100),('C',.20,200,1050)]:
-            value=copy.deepcopy(fast);value['source']=source
-            value['whole'].update(stall=stall,wall=wall,comparable_cpu_s=cpu)
-            peers.append(value)
-        for permutation in itertools.permutations(peers):
-            self.assertIs(preferred_baseline(permutation), peers[0], 'the full cost frontier must precede stall, independently of enumeration')
+
+    def test_reference_confirmation(self):
+        """Malformed unrelated records cannot interrupt confirmation of the retained warm reference.
+        ´claim:devperf:reference-confirmation´
+        ´test:integration:test-reference-confirmation´
+        """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             incumbent = dict(recorded('warm', .055, True), source='quiet', tree='quiet-tree',
@@ -1047,12 +1246,32 @@ wait
             candidate['whole'].update(stall=.256, wall=242.8, comparable_cpu_s=900)
             (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
             with patch('build_graph.evidence_statuses', return_value={}):
-                retain_baseline(root)
+                try:
+                    retain_baseline(root)
+                except ValueError as error:
+                    self.fail('malformed confirmation file must be ignored: '+str(error))
             retained = json.loads(prior_path.read_text())
             self.assertEqual(retained['source'], 'quiet', 'the quiet provisional warm peer must win')
             self.assertFalse(retained['provisional'], 'the retained warm peer must be confirmed')
             self.assertFalse((root/'loaded-tree.json').exists(), 'a loaded peer must not confirm itself by rank')
             self.assertEqual(retained['whole'], incumbent['whole'], 'confirmation changes no measured value')
+
+    def test_reference_archive_retention(self):
+        """Unselected candidates cannot displace the incumbent through archive enumeration.
+        ´claim:devperf:reference-archive-retention´
+        ´test:integration:test-reference-archive-retention´
+        """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             incumbent = dict(peers[0],tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
@@ -1060,12 +1279,30 @@ wait
             original = path.read_bytes()
             with patch('build_graph.evidence_statuses',return_value={}):
                 for value in (peers[2],peers[1]):
-                    candidate = dict(value,path=str(path),tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
+                    candidate = dict(value,path=str(path),tree='same',previous_baseline_tree='same',quiet_windows=windows(),load_unresolved_pressure_percent=10)
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                     retain_baseline(root)
-                    self.assertEqual(path.read_bytes(),original,'a nonselected frontier member must still constrain the next candidate')
+                    self.assertEqual(json.loads(path.read_text())['whole'],incumbent['whole'],
+                                     'an unrelated archived peer cannot replace the incumbent')
             archived = [json.loads(path.read_text()) for path in (root/'peers').glob('*.json')]
             self.assertEqual({value['source'] for value in archived}, {'B','C'}, 'retention must not prune before ancestry is known')
+
+    def test_reference_cold_provisional(self):
+        """Repeated cold records never confirm a reference.
+        ´claim:devperf:reference-cold-provisional´
+        ´test:integration:test-reference-cold-provisional´
+        """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             path = root/'cold.json'
@@ -1076,6 +1313,23 @@ wait
                 with patch('build_graph.evidence_statuses', return_value={}):
                     retain_baseline(root)
                 self.assertTrue(json.loads(path.read_text())['provisional'], 'a second cold run must not confirm a reference')
+
+    def test_reference_archive_selection(self):
+        """Generated archive orders preserve the incumbent and selection after safe pruning.
+        ´claim:devperf:reference-archive-selection´
+        ´test:integration:test-reference-archive-selection´
+        """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         from build_graph import peer_frontier, prune_peer_archive
         import random
         generator = random.Random(2718)
@@ -1107,80 +1361,38 @@ wait
                 candidate['whole'].update(wall=generator.randrange(1,5), comparable_cpu_s=generator.randrange(1,5))
                 next_distinct.add(json.dumps({key:value for key,value in candidate.items() if key not in ('source','tree')},sort_keys=True))
                 incumbent = preferred_baseline(archive)
-                winner = preferred_baseline([*archive,candidate])
+                winner = candidate if baseline_replacement(candidate,incumbent)[0] else incumbent
                 older_winners += dominates(candidate, incumbent) and winner is not candidate and winner is not incumbent
                 self.assertEqual(preferred_baseline([*pruned,candidate]), preferred_baseline([*archive,candidate]),
                                  'pruning changed the next candidate choice')
         self.assertEqual(len(distinct), 256)
         self.assertGreater(singleton_domains, 0)
         self.assertGreater(ties, 0)
-        self.assertGreater(older_winners, 0)
+        self.assertEqual(older_winners, 0, 'an unrelated archived peer cannot take over a pairwise decision')
         print(f'PEER-ARCHIVES content_distinct={len(distinct)} next_candidates=1280 next_content_distinct={len(next_distinct)} singleton_domains={singleton_domains} cost_stall_ties={ties} older_frontier_wins={older_winners} order=generated-unsorted')
-        from contextlib import redirect_stdout
-        sequences = set()
-        event_counts = dict(archive=0,land=0,replay=0,move=0)
-        still_landable = passed_absent = landed_kept = replayed_moved = actual_lands = 0
-        generator = random.Random(30186)
-        for sequence in range(128):
-            with tempfile.TemporaryDirectory() as directory:
-                archive = Path(directory)
-                base = 'base-0'
-                history = {base:'commit-0'}
-                records = {}
-                events = []
-                for position in range(24):
-                    action = generator.choice(['archive','archive','land','replay','move'])
-                    if position == 0:
-                        action = 'archive'
-                    if action in ('land','replay') and not records:
-                        action = 'archive'
-                    if action in ('archive','replay'):
-                        origin = generator.choice(list(records)) if action == 'replay' else None
-                        replayed_moved += origin is not None and records[origin]['base'] != base
-                        name = 'tree-'+str(position)
-                        records[name] = dict(base=base,state='pending')
-                        (archive/(name+'.json')).write_text(json.dumps(dict(fast,tree=name,source=name,import_base_tree=base)))
-                        events.append(dict(action=action,tree=name,base=base,origin=origin))
-                    else:
-                        available = [name for name,row in records.items() if row['state'] == 'pending']
-                        landing = generator.choice(available) if action == 'land' and available else None
-                        previous_base = base
-                        base = landing if landing is not None else 'base-'+str(position+1)
-                        history[base] = 'commit-'+str(position+1)
-                        if landing is not None:
-                            records[landing]['state'] = 'landed'
-                            actual_lands += 1
-                        for row in records.values():
-                            if row['state'] == 'pending' and row['base'] == previous_base and base != previous_base:
-                                row['state'] = 'obsolete'
-                        events.append(dict(action=action,base=base,landed=landing))
-                    event_counts[action] += 1
-                    with redirect_stdout(io.StringIO()):
-                        prune_peer_archive(archive,history,base)
-                    actual = {path.stem for path in archive.glob('*.json')}
-                    pending = {name for name,row in records.items() if row['state']=='pending'}
-                    obsolete = {name for name,row in records.items() if row['state']=='obsolete'}
-                    landed = {name for name,row in records.items() if row['state']=='landed'}
-                    self.assertTrue(pending <= actual, 'a still-landable archive record was deleted')
-                    self.assertFalse(obsolete & actual, 'an absent record survived its passed base')
-                    self.assertTrue(landed <= actual, 'landing must preserve the eligible record')
-                    still_landable += len(pending)
-                    passed_absent += len(obsolete)
-                    landed_kept += len(landed)
-                sequences.add(json.dumps(events,sort_keys=True))
-        self.assertEqual(len(sequences),128)
-        self.assertTrue(all(event_counts.values()))
-        self.assertGreater(still_landable,0)
-        self.assertGreater(passed_absent,0)
-        self.assertGreater(landed_kept,0)
-        self.assertGreater(replayed_moved,0)
-        print(f'PEER-EVENTS content_distinct={len(sequences)} events={json.dumps(event_counts,sort_keys=True)} actual_lands={actual_lands} replayed_onto_moved_base={replayed_moved} pending_checks={still_landable} passed_absent_checks={passed_absent} landed_checks={landed_kept} order=generated-unsorted')
+
+    def test_baseline_lineage(self):
+        """Tree-keyed lineage baselines survive re-signing and unimported candidates while refusing a mismatched import tree.
+        ´claim:devperf:baseline-follows-import-tree´
+        ´test:integration:test-baseline-lineage´
+        """
+        def windows(stall=0):
+            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
+                    for phase in ('before', 'after')}
+        def recorded(cache, stall, provisional=False):
+            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
+        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
+        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
+        from harness import build_cache_state, CONFIGURATION
+        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
+        quiet_fast = written_peer('quiet-fast',1000,.05)
+        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory)
             for name, value in [('slow',slow),('fast',fast),('foreign',quiet_fast)]:
                 (archive/(name+'.json')).write_text(json.dumps(dict(value,tree='outside' if name == 'foreign' else 'inside', import_base_tree='old-base')))
             prune_peer_archive(archive, {'inside':'public', 'old-base':'old'}, 'inside')
-            self.assertEqual({path.stem for path in archive.glob('*.json')}, {'fast'}, 'only eligible nondominated archive members remain')
+            self.assertEqual({path.stem for path in archive.glob('*.json')}, {'slow','fast'}, 'noise margins preserve eligible incumbents even under strict dominance')
             (archive/'near.json').write_text(json.dumps(dict(slow, tree='near', source='near')))
             prune_peer_archive(archive, {'inside':'public', 'near':'near'})
             self.assertTrue((archive/'near.json').exists(), 'a nearer warm reference must survive an older dominator')
@@ -1204,7 +1416,8 @@ wait
             prune_peer_archive(archive, history, 'next-base')
             self.assertEqual(len(list(archive.glob('*.json'))), 1, 'B never landed when its base was passed')
             remaining = [json.loads(p.read_text()) for p in archive.glob('*.json')]
-            self.assertEqual(preferred_baseline(remaining), preferred_baseline([a]), 'the next selection must equal the full eligible set')
+            self.assertEqual(preferred_baseline(remaining)['whole'], a['whole'],
+                             'base-passed deletion must preserve the retained measurement')
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory)
             for name, base in [('future','future-base'), ('current','current-base'), ('legacy',None), ('passed','old-base')]:
@@ -1214,9 +1427,9 @@ wait
             prune_peer_archive(archive, {'current-base':'now','old-base':'before'}, 'current-base')
             self.assertEqual({p.stem for p in archive.glob('*.json')}, {'future','current','legacy'}, 'only a passed base permits absence pruning')
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
-        self.assertEqual(baseline_replacement(different,slow), (False,'warm-peer-intersection-unavailable-margin'))
+        self.assertEqual(baseline_replacement(different,slow), (False,'warm-peer-noise-margin-unavailable'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
-        self.assertEqual(baseline_replacement(unavailable,slow), (False,'higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(unavailable,slow), (False,'warm-peer-noise-margin-unavailable'))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             run = root/'.lane/tier-tests'
@@ -1466,6 +1679,10 @@ wait
                     return check_output(argv, **kwargs)
                 with patch.dict(os.environ, PN_IMPORT_BASE=other), patch('build_graph.subprocess.check_output', side_effect=distance):
                     self.assertEqual(baseline_context(root, registry)[1]['source'], other, 'comparison must select the nearest warm reference')
+                    archived_peer = dict(newer, source='archived-peer', whole=dict(newer['whole'],stall=.00001))
+                    (path.parent/'peers/cheaper.json').write_text(json.dumps(archived_peer))
+                    self.assertEqual(baseline_context(root, registry)[1]['source'], other,
+                                     'a same-tree archived peer cannot re-elect the retained incumbent')
                 with patch.dict(os.environ, PN_GATE_LINEAGE='lane:fixture'):
                     self.assertIsNone(baseline_context(root, registry)[1])
 
