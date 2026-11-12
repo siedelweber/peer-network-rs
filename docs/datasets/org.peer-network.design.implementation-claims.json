@@ -207,7 +207,7 @@
       "requirements": [
         "rung-verdicts"
       ],
-      "status": "minted in declared rung-refinement scope at bite 6; precision- and Work-limited straddles pass over to the anchor and interruption selects no rung; arbitrary deployment profiles remain held",
+      "status": "minted in declared version-one rung-refinement scope at bite 6; precision- and Work-limited straddles pass over to the anchor and interruption selects no rung; this version-one behavior is held for replacement under realizes{``open:design:cross-build-replay``; This describes version-one behavior held for replacement, not a portable Work premise.}; arbitrary deployment profiles remain held",
       "suite": "numeric"
     },
     {

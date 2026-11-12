@@ -50,10 +50,24 @@
     },
     {
       "conditional_on": "",
+      "reason": "This names the version-one implementation and its replacement hold without claiming portable Work.",
+      "relation": "realizes",
+      "source": "EPOCH::rule:compiler:fence-refinement",
+      "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The selected constants edition is resolved from its published identity and effective boundary.",
       "relation": "realizes",
       "source": "RECORDS::def:declarations:constants-edition",
       "target": "case:deployment:transparency-of-protocol-formulas-edition-fixed"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This names the version-one implementation and its replacement hold without claiming portable Work.",
+      "relation": "realizes",
+      "source": "RECORDS::def:numerics:solve-records",
+      "target": "ROOT::open:design:cross-build-replay"
     },
     {
       "conditional_on": "",
@@ -89,6 +103,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:design:act-envelope-field-inventory",
       "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:bite-six-conserved-solve",
+      "target": "ROOT::open:design:cross-build-replay"
     },
     {
       "conditional_on": "",
@@ -131,6 +152,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:design:publication-field-inventory",
       "target": "subsec:deployment:realization-obligations"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:refinement-review",
+      "target": "ROOT::open:design:cross-build-replay"
     },
     {
       "conditional_on": "",
@@ -537,6 +565,13 @@
       "relation": "realizes",
       "source": "input:org.peer-network.design.bites:1",
       "target": "subsec:deployment:transparency-of-protocol-formulas"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.implementation-claims:rung-policy-cases",
+      "target": "ROOT::open:design:cross-build-replay"
     },
     {
       "conditional_on": "",

@@ -32628,6 +32628,10 @@
           "record": "ROOT::amend:testing:replay-conformance-scope"
         },
         {
+          "clause": "Premise only: replayers must use the same procedure and reproduce every verdict",
+          "record": "ROOT::open:design:replay-proof-fields"
+        },
+        {
           "clause": "Premise only: the same declared procedure and inputs must reproduce the verdicts",
           "record": "ROOT::resol:design:replay-paper-contract"
         },
@@ -33507,6 +33511,10 @@
         {
           "clause": "Premise only: publication requires complete versioned deterministic bytes",
           "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
+          "clause": "Premise only: identical verdicts include indecision",
+          "record": "ROOT::open:design:replay-proof-fields"
         }
       ],
       "record_granular": 0,
