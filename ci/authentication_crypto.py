@@ -25,6 +25,12 @@ def check_sources(sources):
             continue
         if re.search(r'\b(?:use|extern|unsafe|macro_rules)\b|\bas\b', code):
             raise ValueError('authentication backend alias or escape')
+        if re.search(r'\bimpl\b', code):
+            raise ValueError('authentication backend impl block')
+        if re.search(r'\b\w+\s*!\s*[({\[]', code):
+            raise ValueError('authentication backend macro invocation')
+        if re.search(r'==|!=|<=|>=|\.\s*0\s*\)*\s*[<>]|[<>]\s*\(*\s*&?\s*\w+\s*\.\s*0', code):
+            raise ValueError('authentication backend comparison operator')
         if re.search(r'>\s*::', code):
             raise ValueError('authentication qualified type call')
         calls = {re.sub(r'\s+', '', call) for call in

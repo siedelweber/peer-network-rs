@@ -145,7 +145,8 @@ fn key_output(fields: &TransactionFields, byte: u8) -> Output {
 }
 
 /// Daemon issuance qualifies only under its run, unique marker and exact unit.
-/// Unrelated issuance and malformed tagged outputs do not inherit authority.
+/// Unrelated issuance and malformed tagged outputs do not inherit authority;
+/// another run is not a duplicate, and each tagged-output condition is required.
 /// ´claim:wallet:token-qualification-is-local´
 /// ´test:unit:token-qualification´
 #[test]
@@ -165,25 +166,25 @@ fn token_qualification() {
     assert_eq!(value.declarations, []);
     assert_eq!(
         qualifies(&fields.inputs[0], &fields.outputs, [9; 32], fee),
-        Err(QualificationRefusal::Run)
+        Err(QualificationReason::Run)
     );
     let mut duplicate = fields.outputs.clone();
     duplicate.extend(fields.outputs.clone());
     assert_eq!(
         qualifies(&fields.inputs[0], &duplicate, run, fee),
-        Err(QualificationRefusal::Duplicate)
+        Err(QualificationReason::Duplicate)
     );
     let mut absent = fields.inputs[0].clone();
     absent.has_issuance = false;
     assert_eq!(
         qualifies(&absent, &fields.outputs, run, fee),
-        Err(QualificationRefusal::NoIssuance)
+        Err(QualificationReason::NoIssuance)
     );
     absent.has_issuance = true;
     absent.outpoint[0] ^= 1;
     assert_eq!(
         qualifies(&absent, &fields.outputs, run, fee),
-        Err(QualificationRefusal::Missing)
+        Err(QualificationReason::Missing)
     );
     assert_eq!(
         transaction_token_evidence(&tx, &[], [9; 32], fee, limits()).unwrap().tokens,
@@ -213,6 +214,7 @@ fn token_qualification() {
             []
         );
     }
+    marker_output_cases(&fields, marker, run, fee, &value.tokens);
     let mut changed = fields;
     changed.outputs.push(key_output(&changed, 8));
     let mut bad = key_output(&changed, 9);
@@ -224,6 +226,42 @@ fn token_qualification() {
             .declarations,
         [KeyHash([8; 32])]
     );
+}
+
+fn marker_output_cases(fields: &TransactionFields, marker: usize, run: [u8; 32], fee: AssetId, expected: &[TokenEffect]) {
+    // A marker for another run is not a duplicate in this run.
+    let mut mixed = fields.clone();
+    let mut other_run = fields.outputs[marker].clone();
+    other_run.script[7] ^= 1;
+    mixed.outputs.push(other_run);
+    assert_eq!(
+        transaction_token_evidence(&transaction(&mixed), &[], run, fee, limits())
+            .unwrap()
+            .tokens,
+        expected,
+        "only markers of the selected run count"
+    );
+    // Each tagged-output condition is independently necessary.
+    for case in [2, 0, 1, 3] {
+        let mut changed = fields.clone();
+        let output = &mut changed.outputs[marker];
+        if case == 0 || case == 3 {
+            output.asset[1] ^= 1;
+        }
+        if case == 1 || case == 3 {
+            output.value[8] = 1;
+        }
+        if case == 2 || case == 3 {
+            output.nonce = vec![2; 33];
+        }
+        assert!(
+            transaction_token_evidence(&transaction(&changed), &[], run, fee, limits())
+                .unwrap()
+                .tokens
+                .is_empty(),
+            "qualification requires the explicit zero fee-asset output with null nonce"
+        );
+    }
 }
 
 /// Exact inventories admit; one-below declarations and allocation refuse before

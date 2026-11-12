@@ -1670,8 +1670,8 @@
       "path": "packages/act-authentication/tests/encoding.rs",
       "claim": "ACTAUTH::claim:authentication:canonical-header-material",
       "before": "",
-      "after": "Independent canonical bytes round trip through typed parts without repair.\nFive distinct fixtures reach the operations in deliberately unsorted order.\nTheir decoded bodies and retained openings recompute P through the profile encoder.",
-      "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added."
+      "after": "Independent canonical bytes round trip through typed parts without repair.\nFive distinct fixtures reach the operations in deliberately unsorted order.\nTheir decoded bodies and retained openings recompute P through the profile encoder.\nEvery recipe position refuses a wrong recipe in encoding and decoding.",
+      "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added. The added exact refusals witness unknown recipes, malformed prefixed hosts or local marker conditions, as named by this claim; no stronger authority is inferred."
     },
     {
       "operation": "pn-act-authentication::encoding::header_comparison",
@@ -1686,8 +1686,8 @@
       "path": "packages/act-authentication/tests/encoding.rs",
       "claim": "ACTAUTH::claim:authentication:role-messages-match-golden-values",
       "before": "",
-      "after": "Three recipe outputs agree with independent framing and SHA-256; only a\nprofile-computed commitment produces a proposal role. An unopened seal digest\nremains a different type and establishes no proposal relation.",
-      "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added."
+      "after": "Three recipe outputs agree with independent framing and SHA-256; only a\nprofile-computed commitment produces a proposal role. An unopened seal digest\nremains a different type and establishes no proposal relation.\nWrong recipes and well-prefixed malformed host identities refuse explicitly.",
+      "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added. The added exact refusals witness unknown recipes, malformed prefixed hosts or local marker conditions, as named by this claim; no stronger authority is inferred."
     },
     {
       "operation": "pn-act-authentication::public::asset_identifiers",
@@ -5385,8 +5385,8 @@
       "path": "packages/wallet/src/token/tests.rs",
       "claim": "WALLET::claim:wallet:token-qualification-is-local",
       "before": "",
-      "after": "Daemon issuance qualifies only under its run, unique marker and exact unit.\nUnrelated issuance and malformed tagged outputs do not inherit authority.",
-      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred."
+      "after": "Daemon issuance qualifies only under its run, unique marker and exact unit.\nUnrelated issuance and malformed tagged outputs do not inherit authority;\nanother run is not a duplicate, and each tagged-output condition is required.",
+      "review": "Read the explicit expected values and refusal assertions. Daemon values are retained reference data; synthetic mutations establish only the declared conditional interpretation. No signature or chain verdict is inferred. The added exact refusals witness unknown recipes, malformed prefixed hosts or local marker conditions, as named by this claim; no stronger authority is inferred."
     },
     {
       "operation": "pn-wallet::token::tests::token_spends",

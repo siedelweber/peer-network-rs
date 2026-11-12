@@ -331,6 +331,9 @@ fn license_projection(
 /// Encode the public version-one proposal body through its sole admitted projection.
 /// # Errors
 /// Refuses unsupported shapes and the profile's component and byte bounds.
+/// # Panics
+/// Panics only if an i64 fails to fit the interchange integer domain, which its
+/// constructor's declared range cannot arrange.
 /// (´def:profile:body´)
 #[tracing::instrument(
     name = "def:profile:body",

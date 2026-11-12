@@ -48,6 +48,9 @@ impl VerificationKey {
     }
 
     /// Verify a 64-byte BIP-340 signature over exactly one 32-byte digest.
+    /// Success attests only the supplied bytes. A proposal relation requires
+    /// recomputation from its openings; see [`crate::unopened_proposal_digest`].
+    /// Role-typed verification belongs to the three-signature verifier, not this operation.
     /// Length admission precedes context construction and every binding call.
     /// (´def:authentication:verification-admission´)
     /// # Errors

@@ -7,6 +7,8 @@ use pn_records::commitments::{ActCommitments, ContentCommitment, DependencyCommi
 /// The sole admitted authentication interpretation. (´def:authentication:encoding´)
 pub const AUTHENTICATION_EDITION: &str = "pn-act-authentication/author-token-bip340/v1";
 const HEADER_NAMESPACE: &str = "org.peer-network.test.verified-act";
+// The profile bounds B at 1,048,576 bytes; fixed header fields add fewer than
+// 512. The admitted ceiling and derivation are in def:identity:verified-header-name.
 const BYTE_LIMIT: usize = 2_097_152;
 
 /// Representation and comparison refusals, not signature verdicts. (´def:authentication:encoding´)

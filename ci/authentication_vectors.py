@@ -109,6 +109,8 @@ def transaction_parts(text):
 
 def check(value):
     """Recompute declared scripts and digests without the Rust implementation."""
+    if not any(row['vout'] > 0 for row in value['assets']):
+        raise ValueError('nonzero issuance output index is absent')
     for row in value['keys']:
         key = bytes.fromhex(row['encoding'])
         if len(key) != 32:
@@ -163,8 +165,8 @@ def compact_fixture(value):
         if 'issuance_results' not in row:
             row['issuance_results'] = [dict(vin=i,entropy=v['issuance']['assetEntropy'],asset=v['issuance']['asset'],token=v['issuance']['token']) for i,v in enumerate(row['decoded']['vin']) if 'issuance' in v]
         row.pop('decoded', None)
-    value['byte_orders'] = dict(prevout='display transaction id; reversed once into the marker',vout='integer output index; four little-endian consensus bytes in the marker',contract='consensus raw contract',contract_rpc='RPC display contract',run='opaque bytes; never reversed',txid='display transaction id',reordered_txid='display transaction id',entropy='daemon display; reverse of SHA-256 midstate bytes',asset='display asset identifier',token='display reissuance-token identifier')
-    value['unrecomputed_inputs'] = 'Daemon version and help text, supplied funding prevouts and fee asset, raw transaction witnesses and witness programs are public fixture inputs. No signature, chain inclusion or origin is established by this reader. Entropy, asset and token identifiers and both transaction identifiers are independently recomputed.'
+    value['byte_orders'] = dict(fee_asset='display Elements regtest asset identifier',prevout='display Elements regtest transaction id; reversed once into the marker',vout='integer output index; four little-endian consensus bytes in the marker',contract='consensus raw contract',contract_rpc='RPC display contract',run='opaque bytes; never reversed',txid='display Elements regtest transaction id',reordered_txid='display Elements regtest transaction id',entropy='daemon display; reverse of SHA-256 midstate bytes',asset='display asset identifier',token='display reissuance-token identifier')
+    value['unrecomputed_inputs'] = 'Elements regtest daemon version and help text, supplied funding prevouts and fee asset, raw transaction witnesses and witness programs are public fixture inputs. No signature, chain inclusion or origin is established by this reader. Entropy, asset and token identifiers and both transaction identifiers are independently recomputed.'
     return value
 
 
@@ -185,9 +187,24 @@ def generate():
                 for part in range(1 if ordinal == 0 else 2):
                     address = rpc('getnewaddress', ['author-funding', 'bech32'])
                     address = rpc('getaddressinfo', [address])['unconfidential']
-                    funding = rpc('sendtoaddress', dict(address=address,amount=1,assetlabel=fee_asset))
+                    if ordinal == 0:
+                        spare = rpc('getnewaddress', ['author-funding-spare', 'bech32'])
+                        spare = rpc('getaddressinfo', [spare])['unconfidential']
+                        bootstrap = rpc('sendtoaddress', dict(address=spare,amount=2,assetlabel=fee_asset))
+                        elements.sign_block(root, False)
+                        source = next(c for c in rpc('listunspent',[0]) if c['txid']==bootstrap and c['asset']==fee_asset and c['address']==spare)
+                        raw_funding = rpc('createrawtransaction', [[dict(txid=source['txid'],vout=source['vout'])],
+                            [{spare:str(Decimal(str(source['amount']))-Decimal('1.0001'))}, {address:'1'}, {'fee':'0.0001'}]])
+                        signed_funding = rpc('signrawtransactionwithwallet', [raw_funding])
+                        if not signed_funding['complete']: raise RuntimeError('incomplete funding signature')
+                        acceptance = rpc('testmempoolaccept', [[signed_funding['hex']]])
+                        if not acceptance[0]['allowed']: raise RuntimeError('funding refused: '+json.dumps(acceptance))
+                        funding = rpc('sendrawtransaction', [signed_funding['hex']])
+                    else:
+                        funding = rpc('sendtoaddress', dict(address=address,amount=1,assetlabel=fee_asset))
                     elements.sign_block(root, False)
                     coins.append(next(c for c in rpc('listunspent',[0]) if c['txid']==funding and c['asset']==fee_asset and c['address']==address))
+                    if ordinal == 0 and coins[-1]['vout'] == 0: raise RuntimeError('funding output index must be nonzero')
                     rpc('lockunspent',[False,[dict(txid=coins[-1]['txid'],vout=coins[-1]['vout'])]])
                 address = rpc('getnewaddress', ['author-vector','bech32'])
                 address = rpc('getaddressinfo',[address])['unconfidential']
@@ -224,7 +241,7 @@ def generate():
             return dict(producer=elements.installed_version(root), key_route='Python hashlib.sha256',
                 rawissueasset_help=help_text, fee_asset=fee_asset, assets=rows, keys=keys,
                 legacy_version_one=legacy.get('legacy_version_one',legacy['assets']),
-                byte_orders=dict(prevout='display transaction id',vout='integer output index',contract='consensus raw contract',contract_rpc='RPC display contract',run='opaque bytes; never reversed',txid='display transaction id',reordered_txid='display transaction id'),
+                byte_orders=dict(fee_asset='display Elements regtest asset identifier',prevout='display Elements regtest transaction id',vout='integer output index',contract='consensus raw contract',contract_rpc='RPC display contract',run='opaque bytes; never reversed',txid='display Elements regtest transaction id',reordered_txid='display Elements regtest transaction id'),
                 reordered_status='Unconfirmed alternative accepted by testmempoolaccept before the original was broadcast; identical ANYONECANPAY witnesses, not a second mined spend.')
         finally:
             elements.stop(root)

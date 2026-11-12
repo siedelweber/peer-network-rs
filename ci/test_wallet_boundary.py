@@ -35,7 +35,10 @@ class WalletBoundary(unittest.TestCase):
                         source + '\nPartialEq::eq(&key.0, &key.0);\n',
                         source + '\nstd::cmp::PartialEq::eq(&key.0, &key.0);\n',
                         source + '\n<secp256k1_zkp::XOnlyPublicKey>::serialize(&key.0);\n',
-                        source + '\nkey.escape::<u8>();\n'):
+                        source + '\nkey.escape::<u8>();\n',
+                        source + '\nkey.0 < other.0;\n',
+                        source + '\nformat!("{}", key.0);\n',
+                        source + '\nimpl Key {}\n'):
             with self.assertRaises(ValueError):
                 authentication_crypto.check_sources({authentication_crypto.BACKEND: changed})
         with self.assertRaises(ValueError):

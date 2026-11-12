@@ -19,6 +19,10 @@ fn hex(text: &str) -> Vec<u8> {
 fn asset_identifiers() {
     let values: serde_json::Value = serde_json::from_str(include_str!("golden.json")).unwrap();
     let assets = values["assets"].as_array().unwrap();
+    assert!(
+        assets.iter().any(|row| row["vout"].as_u64().unwrap() != 0),
+        "daemon corpus includes a nonzero issuance index"
+    );
     for index in [2, 0, 1] {
         let row = &assets[index];
         let txid = hex(row["prevout"].as_str().unwrap()).try_into().unwrap();
@@ -77,6 +81,10 @@ fn qualification() {
     script.extend(prevout);
     script.push(0);
     let value = qualification_script(&script).unwrap();
+    let mut wrong_tag_version = script.clone();
+    wrong_tag_version[5] ^= 1;
+    wrong_tag_version[6] = 3;
+    assert_eq!(qualification_script(&wrong_tag_version), Err(QualificationRefusal::Tag));
     assert_eq!(value.run, run);
     assert_eq!(value.prevout, prevout);
     for (at, refusal) in [

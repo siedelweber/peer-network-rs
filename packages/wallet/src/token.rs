@@ -1,7 +1,7 @@
 //! Conditional evidence for one transaction, never a chain-history verdict.
 //! (´def:wallet:token-evidence´)
 
-use pn_act_authentication::{AssetId, KeyHash, QualificationRefusal, initial_asset_id, key_script, qualification_script};
+use pn_act_authentication::{AssetId, KeyHash, initial_asset_id, key_script, qualification_script};
 
 use crate::{Input, Output, Transaction};
 
@@ -171,9 +171,19 @@ pub fn transaction_token_evidence(
     Ok(result)
 }
 
-fn qualifies(input: &Input, outputs: &[Output], run: [u8; 32], fee_asset: AssetId) -> Result<(), QualificationRefusal> {
+/// Private reasons for an issuance contributing no qualified token. These are
+/// not exposed to callers, results or observation without a consumer contract.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum QualificationReason {
+    Run,
+    NoIssuance,
+    Duplicate,
+    Missing,
+}
+
+fn qualifies(input: &Input, outputs: &[Output], run: [u8; 32], fee_asset: AssetId) -> Result<(), QualificationReason> {
     if !input.has_issuance {
-        return Err(QualificationRefusal::NoIssuance);
+        return Err(QualificationReason::NoIssuance);
     }
     let mut count = 0;
     let mut other_run = false;
@@ -190,10 +200,10 @@ fn qualifies(input: &Input, outputs: &[Output], run: [u8; 32], fee_asset: AssetI
         }
     }
     match count {
-        0 if other_run => Err(QualificationRefusal::Run),
-        0 => Err(QualificationRefusal::Missing),
+        0 if other_run => Err(QualificationReason::Run),
+        0 => Err(QualificationReason::Missing),
         1 => Ok(()),
-        _ => Err(QualificationRefusal::Duplicate),
+        _ => Err(QualificationReason::Duplicate),
     }
 }
 

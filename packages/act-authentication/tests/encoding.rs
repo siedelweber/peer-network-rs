@@ -61,6 +61,7 @@ fn change_header(input: &[u8], key: u64, value: &Value) -> Vec<u8> {
 /// Independent canonical bytes round trip through typed parts without repair.
 /// Five distinct fixtures reach the operations in deliberately unsorted order.
 /// Their decoded bodies and retained openings recompute P through the profile encoder.
+/// Every recipe position refuses a wrong recipe in encoding and decoding.
 /// ´claim:authentication:canonical-header-material´
 /// ´test:integration:canonical-header-material´
 #[test]
@@ -71,6 +72,7 @@ fn canonical_header_material() {
         let header = decode_header(&bytes).unwrap();
         assert_eq!(encode_header(header.parts()).unwrap(), header);
         assert_eq!(header.bytes(), bytes);
+        recipe_refusals(&header, &bytes);
         let dependencies = row["dependencies"]
             .as_array()
             .unwrap()
@@ -162,9 +164,44 @@ fn canonical_header_material() {
     }
 }
 
+fn recipe_refusals(header: &VerifiedHeader, bytes: &[u8]) {
+    for key in [6, 3, 5] {
+        let bad = change_header(
+            bytes,
+            key,
+            &Value::Array(Array::new([
+                Value::Text("unknown".to_owned().into()),
+                Value::Bytes(vec![0; 32].into()),
+            ])),
+        );
+        assert_eq!(decode_header(&bad), Err(EncodingError::Recipe));
+        let mut parts = header.parts().clone();
+        match key {
+            3 => parts.commitments.proposal.recipe = "unknown".into(),
+            5 => parts.commitments.content.recipe = "unknown".into(),
+            _ => parts.commitments.dependency.recipe = "unknown".into(),
+        }
+        assert_eq!(encode_header(&parts), Err(EncodingError::Recipe));
+    }
+}
+
+fn malformed_hosts(run: &[u8; 32], header: &VerifiedHeader, seal: &[u8; 64]) {
+    for suffix in ["a".repeat(63), "A".repeat(64)] {
+        let host = format!("pn-host-bip340-v1/{suffix}");
+        assert_eq!(seal_message(run, &host, header), Err(EncodingError::Shape));
+        assert_eq!(approval_message(run, &host, header, seal), Err(EncodingError::Shape));
+    }
+    let wrong_recipe = pn_records::commitments::ProposalCommitment {
+        recipe: "unknown".into(),
+        bytes: [0; 32],
+    };
+    assert_eq!(unopened_proposal_digest(&wrong_recipe), Err(EncodingError::Recipe));
+}
+
 /// Three recipe outputs agree with independent framing and SHA-256; only a
 /// profile-computed commitment produces a proposal role. An unopened seal digest
 /// remains a different type and establishes no proposal relation.
+/// Wrong recipes and well-prefixed malformed host identities refuse explicitly.
 /// ´claim:authentication:role-messages-match-golden-values´
 /// ´test:integration:role-messages´
 #[test]
@@ -176,6 +213,7 @@ fn role_messages() {
         let run: [u8; 32] = field(row, "run").try_into().unwrap();
         let host = row["host"].as_str().unwrap();
         let seal: [u8; 64] = field(row, "seal").try_into().unwrap();
+        malformed_hosts(&run, &header, &seal);
         assert_eq!(seal_message(&run, "wrong-host", &header), Err(EncodingError::Shape));
         assert_eq!(
             approval_message(&run, "wrong-host", &header, &seal),

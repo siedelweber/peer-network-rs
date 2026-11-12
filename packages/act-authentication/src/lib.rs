@@ -25,8 +25,8 @@ pub struct Qualification {
     pub prevout: [u8; 36],
 }
 
-/// Why a supplied qualification does not qualify an issuance.
-/// These refusals never invalidate unrelated outputs or inputs.
+/// Why a supplied qualification script cannot be decoded.
+/// Issuance qualification reasons belong to the wallet's private interpretation.
 /// (´def:authentication:public-evidence´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum QualificationRefusal {
@@ -35,10 +35,6 @@ pub enum QualificationRefusal {
     Push,
     Tag,
     Flags,
-    Run,
-    NoIssuance,
-    Duplicate,
-    Missing,
 }
 
 /// Public recipe input refusal. (´def:authentication:public-evidence´)

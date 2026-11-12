@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "token::QualificationReason",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "The private enum derives only local copies, Debug and equality for its four content-free interpretation reasons. No public result or observation exposes the reasons; no secret, binding trait or encoding is generated."
+  }
+}
