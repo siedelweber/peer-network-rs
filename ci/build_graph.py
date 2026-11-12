@@ -698,6 +698,61 @@ def step_context_key(identity):
     return hashlib.sha256(json.dumps(context, sort_keys=True).encode()).hexdigest()
 
 
+def ancestry_trees(root, base, wanted):
+    """Retain only requested trees and stop at the last required ancestor."""
+    remaining = set(wanted)
+    matches = {}
+    if not remaining:
+        return matches
+    visited = 0
+    process = subprocess.Popen(['git', 'log', '--format=%H %T', base], cwd=root,
+                               stdout=subprocess.PIPE, text=True)
+    try:
+        for line in process.stdout:
+            commit, tree = line.split()
+            visited += 1
+            if tree in remaining:
+                matches[tree] = commit
+                remaining.remove(tree)
+                if not remaining:
+                    break
+        if remaining and process.wait():
+            raise ValueError('cannot establish baseline ancestry')
+    finally:
+        process.stdout.close()
+        if process.poll() is None:
+            process.terminate()
+        process.wait()
+    print(f'GATE-PEER-ANCESTRY requested={len(wanted)} matched={len(matches)} visited={visited} exhausted={str(bool(remaining)).lower()}', flush=True)
+    return matches
+
+
+def peer_frontier(records):
+    """Prune strict dominance only within the same warm rank and domain."""
+    return [value for value in records if value.get('cache', {}).get('state') != 'warm'
+            or not any(baseline_rank(other)[:2] == baseline_rank(value)[:2]
+                       and dominates(other, value) for other in records)]
+
+
+def prune_peer_archive(archive, ancestry=None):
+    """Prune only after the eligible set and its retained dominators are known."""
+    records = []
+    removed = 0
+    for path in archive.glob('*.json'):
+        value = json.loads(path.read_text())
+        if ancestry is not None and value.get('tree') not in ancestry:
+            path.unlink()
+            removed += 1
+        else:
+            records.append((path, value))
+    kept = peer_frontier([value for _, value in records])
+    for path, value in records:
+        if not any(value is other for other in kept):
+            path.unlink()
+            removed += 1
+    print(f'GATE-PEER-PRUNE removed={removed} retained={len(kept)}', flush=True)
+
+
 def baseline_context(root, registry, policy=None):
     """A retained target compares only the same runner configuration and lineage."""
     from harness import CONFIGURATION
@@ -734,11 +789,12 @@ def baseline_context(root, registry, policy=None):
     legacy = directory.with_suffix('.json')
     if legacy.exists(): candidates.append(legacy)
     comparisons = {}
+    peers = sorted((directory/'peers').glob('*.json'))
     if base_tree and not base_tree.returncode:
-        # Follow retained as well as skipped imports, verifying every predecessor
-        # in public ancestry. An older, quieter baseline must remain selectable.
+        # Collect the legacy predecessor chain before one bounded ancestry read.
         cursor = base_tree.stdout.strip()
         visited = set()
+        predecessors = []
         while cursor not in visited:
             visited.add(cursor)
             try:
@@ -749,32 +805,33 @@ def baseline_context(root, registry, policy=None):
                     previous = json.loads((directory/(cursor+'.skipped.json')).read_text())['previous_tree']
             except (FileNotFoundError, KeyError, ValueError):
                 break
-            if not previous: break
-            history = subprocess.run(['git', 'log', '--format=%H %T', base], cwd=root,
-                                     capture_output=True, text=True, check=True).stdout.splitlines()
-            matches = [line.split()[0] for line in history if line.split()[-1] == previous]
-            if not matches: break
+            if not previous:
+                break
+            predecessors.append(previous)
+            cursor = previous
+        peer_trees = {peer:json.loads(peer.read_text())['tree'] for peer in peers}
+        history = ancestry_trees(root, base, set(predecessors) | set(peer_trees.values()))
+        for previous in predecessors:
+            if previous not in history:
+                break
             candidate = directory/(previous+'.json')
             candidates.append(candidate)
-            comparisons[candidate] = matches[0]
-            cursor = previous
-    # A frontier member can matter to a later choice without having won an
-    # earlier choice. Keep every admitted run, validating its public ancestry.
-    peers = sorted((directory/'peers').glob('*.json'))
-    if base_tree and not base_tree.returncode:
-        history = subprocess.run(['git', 'log', '--format=%H %T', base], cwd=root,
-                                 capture_output=True, text=True, check=True).stdout.splitlines() if peers else []
-        history = {line.split()[-1]:line.split()[0] for line in history}
-        for peer in peers:
-            try:
-                comparison = history.get(json.loads(peer.read_text()).get('tree'))
-                if comparison:
-                    candidates.append(peer)
-                    comparisons[peer] = comparison
-            except (OSError, ValueError):
-                continue
+            comparisons[candidate] = history[previous]
+        prune_peer_archive(directory/'peers', history)
+        for peer, peer_tree in peer_trees.items():
+            if peer.exists() and peer_tree in history:
+                candidates.append(peer)
+                comparisons[peer] = history[peer_tree]
     else:
-        candidates.extend(peers)
+        for peer in peers:
+            value = json.loads(peer.read_text())
+            ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', value['source'], source], cwd=root, capture_output=True)
+            if ancestor.returncode == 1:
+                peer.unlink()
+            elif ancestor.returncode:
+                raise ValueError('cannot establish archived source ancestry')
+        prune_peer_archive(directory/'peers')
+        candidates.extend(peer for peer in peers if peer.exists())
     eligible = []
     for candidate in candidates:
         try:
@@ -948,6 +1005,7 @@ def retain_baseline(root):
         temporary = archive/(uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(record, sort_keys=True)+'\n')
         temporary.replace(temporary.with_suffix('.json'))
+        prune_peer_archive(archive)
     if not accepted:
         # Keep the prior quiet file intact, even for a loaded repeat of its tree.
         skipped = path.with_suffix('.skipped.json')

@@ -855,7 +855,8 @@ wait
                     (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
                     retain_baseline(root)
                     self.assertEqual(path.read_bytes(),original,'a nonselected frontier member must still constrain the next candidate')
-            self.assertEqual(len(list((root/'peers').glob('*.json'))),2)
+            archived = [json.loads(path.read_text()) for path in (root/'peers').glob('*.json')]
+            self.assertEqual([value['source'] for value in archived], ['C'], 'the retained dominator replaces the redundant archive member')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); (root/'.lane').mkdir()
             path = root/'cold.json'
@@ -866,6 +867,37 @@ wait
                 with patch('build_graph.evidence_statuses', return_value={}):
                     retain_baseline(root)
                 self.assertTrue(json.loads(path.read_text())['provisional'], 'a second cold run must not confirm a reference')
+        from build_graph import peer_frontier, prune_peer_archive
+        import random
+        generator = random.Random(2718)
+        distinct = set()
+        for index in range(256):
+            archive = []
+            for member in range(7):
+                value = copy.deepcopy(fast)
+                value.update(source=f'{index}:{member}', provisional=generator.choice([False, True]))
+                value['cache']['state'] = generator.choice(['warm', 'warm', 'cold', 'unknown'])
+                value['whole'].update(stall=generator.choice([.01,.02,.03]), wall=generator.randrange(1,5), comparable_cpu_s=generator.randrange(1,5))
+                value['tiers']['fast']['selected_cases'] = [generator.choice(['first','second'])]
+                archive.append(value)
+            generator.shuffle(archive)
+            distinct.add(json.dumps(archive,sort_keys=True))
+            pruned = peer_frontier(archive)
+            self.assertEqual(preferred_baseline(pruned), preferred_baseline(archive), 'pruning changed the current choice')
+            for next_case in range(5):
+                candidate = copy.deepcopy(generator.choice(archive))
+                candidate['source'] = 'next:'+str(next_case)
+                candidate['whole'].update(wall=generator.randrange(1,5), comparable_cpu_s=generator.randrange(1,5))
+                self.assertEqual(preferred_baseline([*pruned,candidate]), preferred_baseline([*archive,candidate]),
+                                 'pruning changed the next candidate choice')
+        self.assertEqual(len(distinct), 256)
+        print('PEER-ARCHIVES distinct='+str(len(distinct))+' next_candidates=1280 order=generated-unsorted')
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory)
+            for name, value in [('slow',slow),('fast',fast),('foreign',quiet_fast)]:
+                (archive/(name+'.json')).write_text(json.dumps(dict(value,tree='outside' if name == 'foreign' else 'inside')))
+            prune_peer_archive(archive, {'inside':'public'})
+            self.assertEqual({path.stem for path in archive.glob('*.json')}, {'fast'}, 'only eligible nondominated archive members remain')
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
         self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
@@ -990,6 +1022,12 @@ wait
             original = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, input='gate source\n')
             imported = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, input='imported metadata\n')
             current = git('-c', 'commit.gpgsign=false', 'commit-tree', tree, '-p', imported, input='next import\n')
+            from build_graph import ancestry_trees
+            from contextlib import redirect_stdout
+            output = io.StringIO()
+            with redirect_stdout(output):
+                self.assertEqual(ancestry_trees(root, current, {tree}), {tree:current})
+            self.assertIn('visited=1 ', output.getvalue(), 'ancestry stops once every requested tree is located')
             self.assertNotEqual(original, imported)
             self.assertNotEqual(subprocess.run(['git', '-C', str(root), 'merge-base', '--is-ancestor', original, current]).returncode, 0)
             (root/'.lane').mkdir()
@@ -1017,7 +1055,10 @@ wait
                 self.assertEqual(baseline_context(root, registry)[1]['source'], original)
                 other_path.unlink()
                 with patch.dict(os.environ, PN_IMPORT_BASE=other):
-                    self.assertIsNotNone(baseline_context(root, registry)[1], 'eligible archived evidence survives removal of the selected file')
+                    self.assertEqual(baseline_context(root, registry)[1]['source'], original,
+                                     'only the eligible predecessor remains after the foreign archive is pruned')
+                    self.assertFalse(any(json.loads(peer.read_text())['tree'] == other_tree
+                                         for peer in (path.parent/'peers').glob('*.json')))
                 # The remaining controls isolate the legacy predecessor route;
                 # archives have independently passed ancestry selection above.
                 for archived in (path.parent/'peers').glob('*.json'):
