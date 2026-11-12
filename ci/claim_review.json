@@ -306,12 +306,44 @@
       "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_reference_retained_selection",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:reference-retained-selection",
+      "before": "",
+      "after": "Generated rejected-run walks keep the retained ancestor ahead of closer archived observations.",
+      "review": "Read the retained-reference choice and measured-policy controls on written records. Generated rejected-run walks cannot replace the retained incumbent; CPU and counts have distinct comparison premises."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_reference_stall_band",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:reference-stall-band",
+      "before": "",
+      "after": "CPU decisions require a sized ceiling and strict stall band; counts have their own margin.",
+      "review": "Read the retained-reference choice and measured-policy controls on written records. Generated rejected-run walks cannot replace the retained incumbent; CPU and counts have distinct comparison premises."
+    },
+    {
       "operation": "ci::test_devperf.Performance.test_reference_written_identity",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:reference-written-identity",
       "before": "",
       "after": "Written raw measurements remain addressable and comparable when reference margins are declared.",
       "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_repeat_obligation_close",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:repeat-obligation-close",
+      "before": "",
+      "after": "One linked green quiet repeat discharges all scopes even over budget; foreign or loaded evidence refuses.",
+      "review": "Read one obligation across scopes and its declaration, configuration and idle joins. A quiet green regression discharges; a foreign, loaded, failed or busy repeat does not, and it creates no recursive obligation."
+    },
+    {
+      "operation": "ci::test_devperf.Performance.test_repeat_transition_compiles",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:repeat-transition-compiles",
+      "before": "",
+      "after": "Only cache compilation or owner work outside each recurring set triggers a compile repeat.",
+      "review": "Read the recurring package/version set against cache compiles and owner artifacts. The controls distinguish freshness, recurring checks, lint rebuilds and a new owner artifact."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declaration",

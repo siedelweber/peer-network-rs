@@ -413,7 +413,7 @@ class Performance(unittest.TestCase):
             with patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='compiler')):
                 before=reference_key(root,registry)
                 path=root/(before+'.json');path.write_text(json.dumps(written_peer('retained',100)))
-                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.1',PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.1',PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                     after=reference_key(root,registry)
                     self.assertEqual(after,before,'comparison margins never change stored measurement identity')
                     stored=json.loads((root/(after+'.json')).read_text())
@@ -638,11 +638,95 @@ class Performance(unittest.TestCase):
         for excess, compiled, expected in ((9,[],False),(10,[],False),(11,[],True),(1,['build'],True)):
             request = quiet_repeat('commit','tree','fast',dict(classification='load-unresolved',excess_s=excess),100,compiled)
             self.assertEqual(request['required'],expected,'repeat trigger follows excess share or compilation')
-            self.assertEqual((request['source'],request['tree'],request['plan'],request['entry']),
-                             ('commit','tree','one-run','new-ledger-entry'))
-            self.assertEqual(request['schedules'],'nothing')
-            self.assertIn('idle',request['node'])
+            self.assertEqual(request['transition_compiling_steps'],compiled,'trigger names transition compiles')
         self.assertIsNone(quiet_repeat('commit','tree','fast',dict(classification='within-budget'),100,[]))
+
+    def test_repeat_transition_compiles(self):
+        """Only cache compilation or owner work outside each recurring set triggers a compile repeat.
+        ´claim:devperf:repeat-transition-compiles´
+        ´test:integration:test-repeat-transition-compiles´
+        """
+        from build_graph import repeat_compilation
+        rows=[dict(step='wallet-conformance',owner='wallet-conformance',cold_target=False,compiled=['Checking pn-wallet v0.1.0 (/fixture)'])]
+        tiers={'service':dict(isolated_compiling_steps=rows)}
+        self.assertEqual(repeat_compilation(dict(compiling_steps=[]),tiers),[],'recurring package check is not a cache rebuild')
+        self.assertEqual(repeat_compilation(dict(compiling_steps=['clippy']),tiers),['clippy'],'lint cache compilation triggers')
+        rows[0]['cold_target']=True
+        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a cold owner is not exempt as recurring work')
+        rows[0]['cold_target']=False
+        rows[0]['compiled'].append('Checking new-dependency v0.1.0 (/fixture)')
+        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a new owner artifact triggers')
+        rows[0]['compiled']=[]
+        self.assertEqual(repeat_compilation({},tiers),[],'fresh owner invocation is not compilation')
+
+    def test_repeat_obligation_close(self):
+        """One linked green quiet repeat discharges all scopes even over budget; foreign or loaded evidence refuses.
+        ´claim:devperf:repeat-obligation-close´
+        ´test:integration:test-repeat-obligation-close´
+        """
+        from build_graph import repeat_obligation, repeat_close, declare_run
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);lane=root/'.lane';lane.mkdir()
+            declaration=dict(source='source',entry='owing',plan='one-run',sample='import')
+            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
+            declared={'whole-gate':dict(budget_ms=100000),'fast':dict(budget_ms=50000)}
+            tiers={'fast':dict(classification='load-unresolved',excess_s=10,budget='fast',steps=[],isolated_compiling_steps=[])}
+            whole=dict(classification='load-unresolved',excess_s=20)
+            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
+                request=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,tiers,declared)
+            self.assertEqual(len(output.getvalue().splitlines()),1,'one run owes one obligation for all scopes')
+            self.assertEqual(len(request['scopes']),2,'whole and tier scopes join one obligation')
+            self.assertEqual(request['base'],'base','request preserves import base')
+            self.assertTrue(request['required'],'excess share makes the obligation required')
+            obligation=lane/'gate-quiet-repeat.json'
+            declaration.update(entry=request['entry'],repeat_of=request['obligation'])
+            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
+            with redirect_stdout(io.StringIO()) as output:
+                self.assertIsNone(repeat_obligation(root,{},whole,tiers,declared),'repeat must keep its original obligation')
+            self.assertIn('GATE-QUIET-REPEAT-PENDING',output.getvalue(),'a repeat does not recursively owe another obligation')
+            run=written_peer('source',100,.04);run.update(tree='tree',import_base='base',path='key/tree.json',load_unresolved_pressure_percent=10)
+            run['quiet_windows']={phase:dict(node_scope='node-wide',node_pressure_fraction={'cpu.some':0},wall_seconds=5) for phase in ('before','after')}
+            (lane/'gate-baseline.json').write_text(json.dumps(run))
+            whole=dict(status=0,stall=.04,node_scope='node-wide',classification='owned-regression',started=10,ended=20)
+            (lane/'gate-wall.json').write_text(json.dumps(whole))
+            for phase,at in [('start',9),('end',21)]:
+                idle=dict(identity={'PN_GATE_ENTRY':declaration['entry']},boundary=phase,at=at,
+                          processes=dict(status=0,stdout=''),containers=dict(status=0,stdout='[]'))
+                (lane/('gate-series-host-'+phase+'.json')).write_text(json.dumps(idle))
+            with redirect_stdout(io.StringIO()) as output:
+                try:repeat_close(obligation,lane)
+                except ValueError as error:self.fail('quiet regression must discharge: '+str(error))
+            self.assertIn('GATE-QUIET-REPEAT-DISCHARGED',output.getvalue(),'quiet regression discharges, it need not be within budget')
+            for key,value,reason in [('stall',.2,'pressure'),('status',1,'functionally green')]:
+                bad=dict(whole);bad[key]=value;(lane/'gate-wall.json').write_text(json.dumps(bad))
+                with self.assertRaisesRegex(ValueError,reason,msg='nonadmitted repeat cannot discharge '+key):repeat_close(obligation,lane)
+            (lane/'gate-wall.json').write_text(json.dumps(whole))
+            run['import_base']='foreign';(lane/'gate-baseline.json').write_text(json.dumps(run))
+            with self.assertRaisesRegex(ValueError,'identity',msg='repeat must repay the same base transition'):repeat_close(obligation,lane)
+            run['import_base']='base';(lane/'gate-baseline.json').write_text(json.dumps(run))
+            admission=lane/'admission.json';admission.write_text(json.dumps(dict(outcome='admitted',frozen_median=.05,
+                policy=dict(series_absolute_pressure=.1,series_relative_floor=.044,series_pressure_multiple=2))))
+            whole['stall']=.07;(lane/'gate-wall.json').write_text(json.dumps(whole))
+            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane,admission)
+            for member,value,reason in [('tree','foreign','identity'),('path','foreign/tree.json','identity')]:
+                changed=dict(run);changed[member]=value;(lane/'gate-baseline.json').write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,reason,msg='repeat refuses foreign '+member):repeat_close(obligation,lane,admission)
+            (lane/'gate-baseline.json').write_text(json.dumps(run))
+            valid_idle=json.loads((lane/'gate-series-host-end.json').read_text())
+            for changed,reason in [(dict(valid_idle,identity={'PN_GATE_ENTRY':'foreign'}),'foreign'),(dict(valid_idle,at=19),'bracket')]:
+                (lane/'gate-series-host-end.json').write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,reason,msg='repeat refuses invalid idle join '+reason):repeat_close(obligation,lane,admission)
+            (lane/'gate-series-host-end.json').write_text(json.dumps(valid_idle))
+            badadmission=json.loads(admission.read_text());badadmission['policy']['series_absolute_pressure']=float('nan')
+            admission.write_text(json.dumps(badadmission))
+            with self.assertRaisesRegex(ValueError,'malformed',msg='nonfinite admission policy cannot discharge'):repeat_close(obligation,lane,admission)
+            badadmission['policy']['series_absolute_pressure']=.1;admission.write_text(json.dumps(badadmission))
+            badidle=json.loads((lane/'gate-series-host-end.json').read_text());badidle['containers']['stdout']='[{}]'
+            (lane/'gate-series-host-end.json').write_text(json.dumps(badidle))
+            with self.assertRaisesRegex(ValueError,'container',msg='another account container blocks discharge'):repeat_close(obligation,lane,admission)
+            with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='wrong',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
+                with self.assertRaisesRegex(ValueError,'repeat declaration',msg='wrong repeat base refuses before work'):declare_run(root)
 
     def test_reference_incumbent_tree(self):
         """Retention uses the previous reference tree even when an unrelated peer has a lower stall.
@@ -667,15 +751,82 @@ class Performance(unittest.TestCase):
             self.assertFalse((root/'new.json').exists(),'no unsized-margin replacement is permitted')
             # A sized margin distinguishes using the wrong previous tree.
             (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
-            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
+            with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.02',PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
                 retain_baseline(root)
             self.assertTrue((root/'new.json').exists(),'the candidate improves the named incumbent, not the unrelated archive minimum')
             candidate.update(previous_reference=old, previous_peers=[dict(unrelated,tree=old['tree'])])
             (root/'new.json').unlink()
             (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
-            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
+            with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.02',PN_GATE_REFERENCE_NOISE_MARGIN='.05'),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()):
                 retain_baseline(root)
             self.assertTrue((root/'new.json').exists(),'the exact comparison receipt must survive a same-tree archive peer')
+
+    def test_reference_retained_selection(self):
+        """Generated rejected-run walks keep the retained ancestor ahead of closer archived observations.
+        ´claim:devperf:reference-retained-selection´
+        ´test:integration:test-reference-retained-selection´
+        """
+        from build_graph import select_incumbent, baseline_replacement
+        import random
+        rng=random.Random(36192); sequences=set(); records=set(); pairs=set()
+        template=written_peer('retained',100,.05)
+        for number in range(128):
+            old=copy.deepcopy(template); old['source']='retained-'+str(number)
+            eligible=[(old,9)]; rejected=[]
+            for index in range(rng.randrange(2,8)):
+                row=copy.deepcopy(template); row['source']=f'{number}-rejected-{index}'
+                row['tiers']['service']['step_figures']['service']['own_cpu_s']=104+index
+                eligible.append((row,index+1));rejected.append(row)
+            rng.shuffle(eligible)
+            sequences.add(json.dumps(eligible,sort_keys=True))
+            for row,_ in eligible:records.add(json.dumps(row,sort_keys=True))
+            selected=select_incumbent(eligible,[old],lambda value:value)
+            self.assertIs(selected,old,'a rejected nearer archive cannot become incumbent')
+            candidate=copy.deepcopy(template);candidate['source']='next-'+str(number)
+            candidate['tiers']['service']['step_figures']['service']['own_cpu_s']=100.5
+            pairs.add(json.dumps([selected,candidate],sort_keys=True))
+            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.03',PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.01'):
+                self.assertFalse(baseline_replacement(candidate,selected)[0],'alternating rejection cannot walk the retained cost upward')
+                self.assertTrue(baseline_replacement(candidate,rejected[0])[0],'control exposes the rejected-record walk')
+            boot=select_incumbent(eligible,[],lambda value:value)
+            self.assertIs(boot,next(row for row,distance in eligible if distance==1),'archive bootstraps only without a retained file')
+        self.assertEqual(len(sequences),128,'all generated orders are distinct by content')
+        print(f'REFERENCE-SELECTION sequences={len(sequences)} distinct_records={len(records)} distinct_pairs={len(pairs)} order=generated-unsorted')
+
+    def test_reference_stall_band(self):
+        """CPU decisions require a sized ceiling and strict stall band; counts have their own margin.
+        ´claim:devperf:reference-stall-band´
+        ´test:integration:test-reference-stall-band´
+        """
+        from build_graph import reference_judgment, reference_provisional
+        old,new=written_peer('old',100,.05),written_peer('new',50,.06)
+        with patch.dict(os.environ,{},clear=True):
+            legacy=dict(old,provisional=False)
+            self.assertTrue(reference_provisional(legacy),'a historical false flag cannot prove a deciding comparison')
+            missing=copy.deepcopy(new);missing['whole'].pop('stall')
+            self.assertEqual(reference_judgment(missing,old)['reason'],'whole-gate-stall-unavailable','missing pressure cannot confirm or order a record')
+            cold=copy.deepcopy(old);cold['cache']['state']='cold'
+            self.assertTrue(reference_judgment(new,cold)['decidable'],'observed warmth can replace a cold provisional reference')
+            self.assertFalse(reference_judgment(new,old)['decidable'],'unsized CPU margin cannot confirm')
+            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
+                self.assertEqual(reference_judgment(new,old)['reason'],'warm-peer-stall-policy-unavailable','CPU needs measured stall policy')
+                with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.055',PN_GATE_REFERENCE_STALL_BAND='.02'):
+                    self.assertEqual(reference_judgment(new,old)['reason'],'warm-peer-stall-ceiling','both runs must meet the ceiling')
+                with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.005'):
+                    self.assertEqual(reference_judgment(new,old)['reason'],'warm-peer-stall-band','a quieter CPU figure cannot decide outside the band')
+                with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.02'):
+                    judgment=reference_judgment(new,old)
+                    self.assertTrue(judgment['accepted'],'matched stalls permit improvement beyond noise')
+                    self.assertEqual(judgment['costs'],[100,50],'reason reports two-way rather than whole CPU')
+                    self.assertEqual(judgment['policy']['stall_band'],.02,'judgment stores policy in force')
+                    new['whole']['stall']=old['whole']['stall']+.02
+                    self.assertFalse(reference_judgment(new,old)['decidable'],'band boundary is strict')
+            counted_old=written_peer('old',100,.05,instructions=1000)
+            counted_new=written_peer('new',110,.2,instructions=500)
+            with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
+                self.assertEqual(reference_judgment(counted_new,counted_old)['reason'],'warm-peer-count-margin-unavailable','CPU margin cannot size count spread')
+            with patch.dict(os.environ,PN_GATE_REFERENCE_COUNT_MARGIN='.1'):
+                self.assertTrue(reference_judgment(counted_new,counted_old)['accepted'],'complete counts need no CPU stall band')
 
     def test_reference_deletion_events(self):
         """Generated land, replay, revert and archive events preserve landable records and delete passed-base absences.
@@ -755,7 +906,7 @@ class Performance(unittest.TestCase):
         with patch.dict(os.environ, {}, clear=True):
             self.assertFalse(baseline_replacement(new,old)[0], 'unsized noise must keep the incumbent')
             self.assertFalse(baseline_replacement(old,new)[0], 'a cheaper candidate is not evidence beyond an unsized margin')
-        with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.03'):
+        with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.03'):
             self.assertFalse(baseline_replacement(old,new)[0], 'two percent is inside this controlled three percent margin')
             better = written_peer('better',600,.06,10)
             self.assertTrue(baseline_replacement(better,old)[0], 'a measured common-work improvement beyond the margin replaces')
@@ -763,7 +914,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(peer_intersection([old,new]),[0,0], 'exclusive compiled cases omit their step, not unaffected common work')
         new['tiers']['service']['step_figures']['service']['compiled'] = False
         for malformed in ('nan','inf','-1','1','text'):
-            with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN=malformed):
+            with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN=malformed):
                 with self.assertRaises(ValueError):
                     reference_noise_margin()
 
@@ -792,7 +943,7 @@ class Performance(unittest.TestCase):
         from build_graph import baseline_replacement, peer_intersection
         old,new = written_peer('old',100,instructions=1000),written_peer('new',110,instructions=800)
         self.assertEqual(peer_intersection([old,new],instructions=True),[3000,2400])
-        with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
+        with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
             self.assertEqual(baseline_replacement(new,old),(True,'warm-peer-instructions-noise-margin'))
             new['tiers']['service']['step_figures']['service']['setup_cpu_s'] = 1
             self.assertIsNone(peer_intersection([old,new],instructions=True),'a gross counter cannot invent setup deductions')
@@ -1256,7 +1407,7 @@ wait
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
                         self.assertEqual(measured[name]['compiling_steps'], ['service'] if cold and name == 'service' else [], 'only cache receipt steps give cold precedence')
-                        self.assertEqual(measured[name]['isolated_compiling_steps'], [dict(step=name, owner='fixture', cold_target=cold)], 'isolated compiles retain their own target state')
+                        self.assertEqual(measured[name]['isolated_compiling_steps'], [dict(step=name, owner='fixture', cold_target=cold, compiled=None)], 'isolated compiles retain their own target state')
                         self.assertTrue(measured[name]['baseline_provisional'])
                         selection_differs = changed_selection and name == 'service'
                         self.assertEqual(measured[name]['comparable_cases'], not selection_differs)
@@ -1381,6 +1532,7 @@ wait
             lane.mkdir()
             measured = dict(step='gate', wall_seconds=1.2, own_user_s=1, own_sys_s=.1,
                             node_scope='node-wide', node_pressure_fraction={'cpu.some':.2}, start={'epoch_seconds':1}, end={'epoch_seconds':2.2})
+            (lane/'gate-declaration.json').write_text(json.dumps(dict(source='fixture',entry='fixture-entry',plan='one-run',sample='import')))
             (lane/'gate-resources.json').write_text(json.dumps([measured]))
             (lane/'gate-steps.tsv').write_text('fixture\t0\t1.2\t1.9\n')
             figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
@@ -1624,7 +1776,7 @@ wait
                                    'raw receipts must survive obsolete ratio classifications')
             archived = dict(whole=dict(wall=10, own_user_s=7.486846, own_sys_s=0, comparable_cpu_s=None),
                             tiers={'fast':dict(step_figures=bounded)})
-            with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+            with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                 self.assertIsNotNone(peer_cost(archived)[1], 'raw cost must remain available despite stored null')
                 self.assertAlmostEqual(peer_cost(archived)[1], 7.486846-.169108, msg='stored classification cannot override raw cost')
         from build_graph import case_intersection
@@ -1805,42 +1957,31 @@ wait
         ´claim:devperf:reference-confirmation´
         ´test:integration:test-reference-confirmation´
         """
-        def windows(stall=0):
-            return {phase: dict(node_scope='node-wide', node_pressure_fraction={'cpu.some':stall}, wall_seconds=5)
-                    for phase in ('before', 'after')}
-        def recorded(cache, stall, provisional=False):
-            return dict(cache=dict(state=cache), provisional=provisional, whole=dict(node_scope='node-wide',stall=stall))
-        from build_graph import baseline_context, retain_baseline, baseline_replacement, baseline_rank
-        from build_graph import preferred_baseline, peer_frontier, prune_peer_archive
-        from harness import build_cache_state, CONFIGURATION
-        slow, fast = written_peer('slow',1177.5,.102), written_peer('fast',1093.8,.147)
-        quiet_fast = written_peer('quiet-fast',1000,.05)
-        peers = [written_peer('A',1000,.10),written_peer('B',1100,.05),written_peer('C',1050,.20)]
+        from build_graph import retain_baseline
+        from contextlib import redirect_stdout
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); (root/'.lane').mkdir()
-            incumbent = dict(recorded('warm', .055, True), source='quiet', tree='quiet-tree',
-                             quiet_windows=windows(), load_unresolved_pressure_percent=10)
-            incumbent['whole'].update(wall=149.6, comparable_cpu_s=800)
-            incumbent['tiers'] = {'fast':dict(selected_cases=['same-case'])}
-            prior_path = root/'quiet-tree.json'; prior_path.write_text(json.dumps(incumbent))
-            (root/'malformed.json').write_text('{invalid')
-            (root/'peers').mkdir()
-            (root/'peers/malformed.json').write_text('{invalid')
-            candidate = copy.deepcopy(incumbent)
-            candidate.update(path=str(root/'loaded-tree.json'), source='loaded', tree='loaded-tree',
-                             previous_baseline_tree='quiet-tree', previous_peers=[incumbent])
-            candidate['whole'].update(stall=.256, wall=242.8, comparable_cpu_s=900)
-            (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
-            with patch('build_graph.evidence_statuses', return_value={}):
-                try:
-                    retain_baseline(root)
-                except ValueError as error:
-                    self.fail('malformed confirmation file must be ignored: '+str(error))
-            retained = json.loads(prior_path.read_text())
-            self.assertEqual(retained['source'], 'quiet', 'the quiet provisional warm peer must win')
-            self.assertFalse(retained['provisional'], 'the retained warm peer must be confirmed')
-            self.assertFalse((root/'loaded-tree.json').exists(), 'a loaded peer must not confirm itself by rank')
-            self.assertEqual(retained['whole'], incumbent['whole'], 'confirmation changes no measured value')
+            root=Path(directory);(root/'.lane').mkdir();(root/'peers').mkdir()
+            old,new=written_peer('quiet',100,.05),written_peer('new',105,.05)
+            for row in (old,new):
+                row.update(provisional=True,load_unresolved_pressure_percent=10)
+                row['quiet_windows']={phase:dict(node_scope='node-wide',node_pressure_fraction={'cpu.some':0},wall_seconds=5) for phase in ('before','after')}
+            old_path=root/'quiet.json';old_path.write_text(json.dumps(old))
+            (root/'malformed.json').write_text('{invalid');(root/'peers/malformed.json').write_text('{invalid')
+            new.update(path=str(root/'new.json'),previous_reference=old,previous_baseline_tree=old['tree'])
+            for sized in (False,True):
+                (root/'.lane/gate-baseline.json').write_text(json.dumps(new))
+                env=dict(PN_GATE_REFERENCE_NOISE_MARGIN='.1',PN_GATE_REFERENCE_STALL_CEILING='.1',PN_GATE_REFERENCE_STALL_BAND='.01') if sized else {}
+                with patch.dict(os.environ,env,clear=True),patch('build_graph.evidence_statuses',return_value={}),redirect_stdout(io.StringIO()) as output:
+                    try:retain_baseline(root)
+                    except ValueError as error:self.fail('malformed unrelated file must not break confirmation: '+str(error))
+                retained=json.loads(old_path.read_text())
+                self.assertEqual(retained['provisional'],not sized,'confirmation requires a comparison that could replace')
+                self.assertEqual(retained['whole'],old['whole'],'confirmation cannot change observed measurements')
+                self.assertFalse((root/'new.json').exists(),'more costly candidate must not replace')
+                self.assertIn('candidate_archived=true',output.getvalue(),'rejected quiet candidate archival is explicit')
+                self.assertIn('two_way=',output.getvalue(),'decision prints the two-way evidence')
+                if sized:
+                    self.assertEqual(retained.get('confirmation_judgment',{}).get('policy',{}).get('cpu_margin'),.1,'confirmation keeps the policy that decided')
 
     def test_reference_archive_retention(self):
         """Unselected candidates cannot displace the incumbent through archive enumeration.
@@ -2063,7 +2204,7 @@ wait
             with patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_GATE_SOURCE='current', PN_IMPORT_BASE=''), patch('build_graph.subprocess.run', return_value=good):
                 path, old, changed, context = baseline_context(root, registry)
                 self.assertIsNone(old)
-                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                     self.assertEqual(baseline_context(root, registry)[0], path, 'named comparison values do not change archive identity')
                 candidate = dict(path=str(path), source='ancestor', tiers={}, quiet_windows=windows(), whole={'node_scope':'node-wide','stall':0}, load_unresolved_pressure_percent=10)
                 (root/'.lane/gate-baseline.json').write_text(json.dumps(candidate))
@@ -2171,7 +2312,7 @@ wait
                     tiers={'fast':dict(step_figures={'tests':dict(own_cpu_s=10,setup_cpu_s=2,cargo_cpu_s=0,
                         layouts={},partial=False,serialized_build=False,compiled=False,wait_dominated=None,wall=10)})})
                 path.write_text(json.dumps(measured))
-                with patch.dict(os.environ, PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_CEILING='.9', PN_GATE_REFERENCE_STALL_BAND='.9', PN_GATE_REFERENCE_COUNT_MARGIN='.1', PN_GATE_REFERENCE_NOISE_MARGIN='.2', PN_GATE_REFERENCE_STALL_MARGIN='.01'):
                     found_path, found, _, _ = baseline_context(root, registry)
                     self.assertEqual(found_path,path,'archived samples remain under the same key')
                     from build_graph import peer_cost
@@ -2251,7 +2392,7 @@ wait
                     with contextlib.redirect_stdout(output): retain_baseline(root)
                     self.assertEqual(other_path.read_bytes(),retained_bytes,
                                      'a worse candidate must not replace the retained measurement')
-                    self.assertIn('retained_provisional=false',output.getvalue())
+                    self.assertIn('retained_provisional=true',output.getvalue(), 'historical flags without a deciding judgment remain provisional')
                 # Distance takes precedence for comparison, not retention.
                 older=json.loads(quiet_bytes)
                 older.update(cache={'state':'warm'}, provisional=False)

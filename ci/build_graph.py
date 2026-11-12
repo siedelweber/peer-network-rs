@@ -684,6 +684,13 @@ def declare_run(root):
                         configuration_key=key, cache=cache, count=count)
         if declared['base'] == source:
             raise ValueError('series base equals source')
+    repeat_path = os.environ.get('PN_GATE_REPEAT_OF')
+    if repeat_path:
+        obligation = json.loads(Path(repeat_path).read_text())
+        if (sample != obligation['sample'] or plan != 'one-run' or source != obligation['source']
+                or os.environ.get('PN_IMPORT_BASE') != obligation['base'] or entry == obligation['owing_entry']):
+            raise ValueError('repeat declaration differs from its obligation')
+        declared['repeat_of'] = obligation['obligation']
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
     lane = root/'.lane'
     lane.mkdir(exist_ok=True)
@@ -1272,6 +1279,7 @@ def baseline_context(root, registry, policy=None):
         try:
             value = json.loads(candidate.read_text())
             if not quiet_baseline(value, policy): continue
+            value['provisional'] = reference_provisional(value)
             if base_tree and not base_tree.returncode:
                 if candidate in comparisons:
                     comparison = comparisons[candidate]
@@ -1290,16 +1298,8 @@ def baseline_context(root, registry, policy=None):
                 retained_files.append(value)
         except (FileNotFoundError, ValueError, KeyError):
             continue
-    warm = [(value, comparison) for value, comparison in eligible if value.get('cache', {}).get('state') == 'warm']
-    if warm:
-        distances = [(int(subprocess.check_output(['git', 'rev-list', '--count', comparison+'..'+source], cwd=root, text=True)), value)
-                     for value, comparison in warm]
-        nearest = min(distance for distance, _ in distances)
-        nearest_peers = [value for distance, value in distances if distance == nearest]
-        retained = [value for value in nearest_peers if any(value is row for row in retained_files)]
-        baseline = preferred_baseline(retained or nearest_peers)
-    else:
-        baseline = preferred_baseline([value for value, _ in eligible])
+    baseline = select_incumbent(eligible, retained_files, lambda comparison: int(
+        subprocess.check_output(['git', 'rev-list', '--count', comparison+'..'+source], cwd=root, text=True)))
     if baseline is not None:
         comparison = next(comparison for value, comparison in eligible if value is baseline)
         diff = subprocess.run(['git', 'diff', '--name-only', comparison, source], cwd=root, capture_output=True, text=True, check=True)
@@ -1322,12 +1322,33 @@ def baseline_context(root, registry, policy=None):
     return path, baseline, changed, context
 
 
+def select_incumbent(eligible, retained_files, distance):
+    """Follow the retained reference before bootstrapping from an archive."""
+    retained = [(value, comparison) for value, comparison in eligible
+                if any(value is row for row in retained_files)]
+    pool = retained or eligible
+    if not pool:
+        return None
+    if len(pool) == 1:
+        return pool[0][0]
+    distances = [(distance(comparison), value) for value, comparison in pool]
+    nearest = min(number for number, _ in distances)
+    return preferred_baseline([value for number, value in distances if number == nearest])
+
+
 def baseline_stall(candidate):
     """Only observed, finite node-wide whole-gate pressure can rank baselines."""
     whole = candidate.get('whole', {})
     value = whole.get('stall')
     return value if (whole.get('node_scope') == 'node-wide' and type(value) in (int, float)
                      and math.isfinite(value) and 0 <= value < 1) else None
+
+
+def reference_provisional(value):
+    """A historical confirmation flag without a deciding judgment is unproved."""
+    return (value.get('provisional', True) or value.get('cache',{}).get('state') != 'warm'
+            or not any(value.get(name,{}).get('decidable') is True
+                       for name in ('reference_judgment','confirmation_judgment')))
 
 
 def baseline_rank(candidate):
@@ -1384,19 +1405,62 @@ def dominates(a, b):
             and all(left <= right for left, right in zip(x,y)) and any(left < right for left, right in zip(x,y)))
 
 
-def warm_peer_replacement(candidate, previous):
-    """Only this candidate and its incumbent determine the common workload."""
-    instructions = peer_intersection([previous, candidate], instructions=True)
-    costs = instructions if instructions is not None else peer_intersection([previous, candidate])
+def reference_policy():
+    """Unassigned comparison values authorize no decision on their route."""
+    def value(name):
+        raw = os.environ.get(name)
+        if raw is None:
+            return None
+        result = float(raw)
+        if not math.isfinite(result) or not 0 <= result < 1:
+            raise ValueError(name+' must be finite and in [0,1)')
+        return result
+    return dict(cpu_margin=reference_noise_margin(), stall_margin=reference_stall_margin(),
+                count_margin=value('PN_GATE_REFERENCE_COUNT_MARGIN'),
+                stall_band=value('PN_GATE_REFERENCE_STALL_BAND'),
+                stall_ceiling=value('PN_GATE_REFERENCE_STALL_CEILING'))
+
+
+def reference_judgment(candidate, previous):
+    """Record two-way quantities and whether the policy could select either run."""
+    policy = reference_policy()
+    evidence = dict(policy=policy, previous_stall=baseline_stall(previous) if previous else None,
+                    candidate_stall=baseline_stall(candidate), costs=None, metric=None, decidable=False)
+    if previous is not None and (evidence['candidate_stall'] is None or evidence['previous_stall'] is None):
+        return dict(evidence, accepted=False, reason='whole-gate-stall-unavailable')
+    if previous is None or candidate.get('cache',{}).get('state') != 'warm' or previous.get('cache',{}).get('state') != 'warm':
+        accepted, reason = baseline_replacement(candidate, previous)
+        return dict(evidence, accepted=accepted, reason=reason,
+                    decidable=previous is not None and candidate.get('cache',{}).get('state') == 'warm')
+    counts = peer_intersection([previous, candidate], instructions=True)
+    costs = counts if counts is not None else peer_intersection([previous, candidate])
+    evidence.update(costs=costs, metric='instructions' if counts is not None else 'cpu')
     if costs is None:
-        margin = reference_stall_margin()
-        return (margin is not None and baseline_stall(previous)-baseline_stall(candidate) > margin,
-                'warm-peer-intersection-unavailable-margin')
-    margin = reference_noise_margin()
+        margin = policy['stall_margin']
+        available = margin is not None and evidence['previous_stall'] is not None and evidence['candidate_stall'] is not None
+        accepted = available and evidence['previous_stall']-evidence['candidate_stall'] > margin
+        return dict(evidence, accepted=accepted, decidable=available,
+                    reason='warm-peer-intersection-unavailable-margin' if margin is None else
+                    'warm-peer-stall-margin-exceeded' if accepted else 'warm-peer-stall-margin-not-exceeded')
+    margin = policy['count_margin'] if counts is not None else policy['cpu_margin']
     if margin is None:
-        return False, 'warm-peer-noise-margin-unavailable'
-    return (costs[0]-costs[1] > costs[0]*margin,
-            'warm-peer-'+('instructions' if instructions is not None else 'cpu')+'-noise-margin')
+        return dict(evidence, accepted=False, reason='warm-peer-count-margin-unavailable' if counts is not None else 'warm-peer-noise-margin-unavailable')
+    if counts is None:
+        ceiling, band = policy['stall_ceiling'], policy['stall_band']
+        stalls = (evidence['previous_stall'], evidence['candidate_stall'])
+        if ceiling is None or band is None:
+            return dict(evidence, accepted=False, reason='warm-peer-stall-policy-unavailable')
+        if None in stalls or any(value > ceiling for value in stalls):
+            return dict(evidence, accepted=False, reason='warm-peer-stall-ceiling')
+        if abs(stalls[0]-stalls[1]) >= band:
+            return dict(evidence, accepted=False, reason='warm-peer-stall-band')
+    return dict(evidence, accepted=costs[0]-costs[1] > costs[0]*margin, decidable=True,
+                reason='warm-peer-'+evidence['metric']+'-noise-margin')
+
+
+def warm_peer_replacement(candidate, previous):
+    judgment = reference_judgment(candidate, previous)
+    return judgment['accepted'], judgment['reason']
 
 
 def reference_noise_margin():
@@ -1541,11 +1605,17 @@ def retain_baseline(root):
     else:
         incumbent = next((value for value in prior if value.get('tree') == candidate.get('previous_baseline_tree')), None)
     previous_best = preferred_baseline(prior, incumbent=incumbent)
-    candidate['provisional'] = candidate.get('cache', {}).get('state') != 'warm'
-    accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
+    if previous_best is not None:
+        previous_best['provisional'] = reference_provisional(previous_best)
+    judgment = reference_judgment(candidate, previous_best)
+    if not quiet_baseline(candidate):
+        judgment.update(accepted=False, reason='load-unresolved', decidable=False)
+    candidate['reference_judgment'] = judgment
+    candidate['provisional'] = not judgment['decidable']
+    accepted, reason = (judgment['accepted'], judgment['reason']) if quiet_baseline(candidate) else (False, 'load-unresolved')
     if quiet_baseline(candidate) and previous_best:
         if candidate.get('cache', {}).get('state') == 'warm' and previous_best.get('cache', {}).get('state') == 'warm':
-            if not accepted:
+            if not accepted and judgment['decidable']:
                 # Confirmation describes the pair, not which member won it.
                 for retained_path in [*path.parent.glob('*.json'), *(path.parent/'peers').glob('*.json')]:
                     try:
@@ -1554,6 +1624,7 @@ def retain_baseline(root):
                         continue
                     if retained.get('provisional', True) and (retained.get('source'), retained.get('tree'), retained.get('whole')) == (previous_best.get('source'), previous_best.get('tree'), previous_best.get('whole')):
                         retained['provisional'] = False
+                        retained['confirmation_judgment'] = dict(judgment, candidate_source=candidate['source'])
                         temporary = retained_path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
                         temporary.write_text(json.dumps(retained, sort_keys=True)+'\n')
                         temporary.replace(retained_path)
@@ -1573,7 +1644,7 @@ def retain_baseline(root):
         temporary = skipped.with_suffix('.'+uuid.uuid4().hex+'.tmp')
         temporary.write_text(json.dumps(dict(previous_tree=candidate.get('previous_baseline_tree')))+'\n')
         temporary.replace(skipped)
-        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+(str(previous_best.get('provisional', True)).lower() if previous_best else 'unavailable')+' previous_tree='+str(candidate.get('previous_baseline_tree') or 'unavailable'))
+        print('GATE-BASELINE retained=false reason='+reason+' candidate_cache='+candidate_cache+' retained_cache='+retained_cache+' retained_provisional='+(str(previous_best.get('provisional', True)).lower() if previous_best else 'unavailable')+' previous_tree='+str(candidate.get('previous_baseline_tree') or 'unavailable')+' candidate_archived='+str(quiet_baseline(candidate) and bool(candidate.get('tree'))).lower()+' two_way='+json.dumps(judgment,separators=(',',':')))
         return
     candidate['quiet'] = True
     candidate['provisional'] = candidate['provisional'] or previous_best is None
@@ -1581,7 +1652,7 @@ def retain_baseline(root):
     temporary.write_text(json.dumps(candidate, sort_keys=True)+'\n')
     temporary.replace(path)
     path.with_suffix('.skipped.json').unlink(missing_ok=True)
-    print('GATE-BASELINE retained=true source='+candidate['source']+' candidate_cache='+candidate_cache+' retained_cache='+candidate_cache+' previous_cache='+retained_cache+' reason='+reason+' provisional='+str(candidate['provisional']).lower())
+    print('GATE-BASELINE retained=true source='+candidate['source']+' candidate_cache='+candidate_cache+' retained_cache='+candidate_cache+' previous_cache='+retained_cache+' reason='+reason+' provisional='+str(candidate['provisional']).lower()+' candidate_archived=true two_way='+json.dumps(judgment,separators=(',',':')))
 
 
 def retain_step_context(directory, candidate):
@@ -1812,7 +1883,7 @@ def tier_summary(root, registry, worker_statuses):
             log = (root/f'.lane/gate-{row[0]}.log').read_text()
             isolated = [json.loads(line.removeprefix('ISOLATION-COMPILE ')) for line in log.splitlines() if line.startswith('ISOLATION-COMPILE ')]
             isolated = [value for value in isolated if value.get('source') == os.environ['PN_GATE_SOURCE']]
-            isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target']) for value in isolated)
+            isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target'], compiled=value.get('compiled')) for value in isolated)
             step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
                 serialized_build=row[0] in policy['rebuild_steps'],
                 compiled=(True if row[0] in cache.get('compiling_steps', []) or any(value.get('compiled') for value in isolated) else
@@ -1904,7 +1975,7 @@ def tier_summary(root, registry, worker_statuses):
     from gate_resources import node_identity
     print('GATE-CACHE '+json.dumps(cache, sort_keys=True), flush=True)
     (root/'.lane/gate-baseline.json').write_text(json.dumps(dict(path=str(baseline_path), context_directory=str(context_directory), source=os.environ['PN_GATE_SOURCE'], tree=tree, node=node_identity(), cache=cache,
-        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), import_base_tree=import_base_tree, tiers=reports, step_cpu=step_cpu,
+        lineage=os.environ.get('PN_GATE_LINEAGE', 'lane:'+str(root.resolve())), import_base=import_base, import_base_tree=import_base_tree, tiers=reports, step_cpu=step_cpu,
         load_unresolved_pressure_percent=policy['load_unresolved_pressure_percent'],
         previous_baseline_tree=baseline.get('tree') if baseline else None,
         previous_reference={key:value for key,value in baseline.items() if key != 'selection_peers'} if baseline else None,
@@ -1913,17 +1984,110 @@ def tier_summary(root, registry, worker_statuses):
         previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 
 
+# Recurring compile-only witnesses; a new package or owner is not exempt.
+RECURRING_COMPILES = {
+    ('discipline-tests','ci-test_discipline'): {'app@0.0.0','fork@0.0.0','foundation-nursery-probe@0.0.0','pn-host@0.0.0','secret-trait-probe@0.0.0','dependency@0.0.0'},
+    ('linter-entry-tests','ci-test_linter_entry'): {'composition-fixture@0.1.0'},
+    ('host-observation-runtime','host-observation-runtime'): {'pn-host@0.1.0'},
+    ('wallet-conformance','wallet-conformance'): {'pn-wallet@0.1.0'},
+}
+
+
+def repeat_compilation(cache, tiers):
+    """Cache compiles and owner compiles outside the named recurring set."""
+    triggers = set(cache.get('compiling_steps', []))
+    for tier in tiers.values():
+        for row in tier.get('isolated_compiling_steps', []):
+            allowed = RECURRING_COMPILES.get((row['step'],row['owner']), set())
+            for artifact in row.get('compiled') or []:
+                match = re.match(r'(?:Checking|Compiling) ([^ ]+) v([^ ]+)(?: |$)',artifact)
+                name = match[1]+'@'+match[2] if match else artifact.rsplit('#',1)[-1]
+                if name not in allowed or row.get('cold_target'):
+                    triggers.add(row['step'])
+    return sorted(triggers)
+
+
 def quiet_repeat(source, tree, scope, measurement, budget, compiling):
-    """Describe owed evidence; do not schedule or change a functional verdict."""
+    """A scope contributes evidence to one obligation, not another scheduled run."""
     if measurement.get('classification') != 'load-unresolved':
         return None
     share = .10
-    excess = measurement.get('excess_s', 0)
-    return dict(source=source, tree=tree, scope=scope, plan='one-run', entry='new-ledger-entry',
-                node='account-batteries-and-containers-idle;quiet-boundaries-and-whole-window-recorded',
-                required=bool(compiling) or budget is not None and excess > budget*share,
+    return dict(scope=scope, required=bool(compiling) or budget is not None and measurement.get('excess_s',0) > budget*share,
                 excess_share=share, share_status='proposal-for-series-confirmation',
-                compiling_steps=compiling, purpose='cost-versus-load', schedules='nothing')
+                transition_compiling_steps=compiling)
+
+
+def repeat_obligation(root, pending, whole, tiers, declared):
+    declaration_path = root/'.lane/gate-declaration.json'
+    if not declaration_path.exists():
+        return None
+    declaration = json.loads(declaration_path.read_text())
+    if declaration.get('repeat_of'):
+        print('GATE-QUIET-REPEAT-PENDING obligation='+declaration['repeat_of']+' entry='+declaration['entry']+' close=repeat-close',flush=True)
+        return None
+    compiling = repeat_compilation(pending.get('cache',{}),tiers)
+    scopes = []
+    for scope, measurement in [('whole',whole),*tiers.items()]:
+        budget = declared['whole-gate']['budget_ms']/1000 if scope == 'whole' else declared[measurement['budget']]['budget_ms']/1000 if measurement.get('budget') else None
+        selected = compiling if scope == 'whole' else [name for name in compiling if name in measurement.get('steps',[])]
+        request = quiet_repeat(declaration['source'],pending.get('tree'),scope,measurement,budget,selected)
+        if request is not None:scopes.append(request)
+    if not scopes:return None
+    policy = series_policy()
+    # The floor is sufficient for every possible frozen-median admission bound.
+    quiet_limit = min(policy['series_absolute_pressure'],policy['series_relative_floor'])
+    identity = dict(source=declaration['source'], tree=pending.get('tree'),base=os.environ.get('PN_IMPORT_BASE'),
+                    configuration_key=Path(pending['path']).parent.name if pending.get('path') else None,
+                    sample=declaration.get('sample','import'),owing_entry=declaration['entry'])
+    digest = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
+    request = dict(identity, obligation=digest, plan='one-run',entry='quiet-'+digest[:24],
+                   scopes=scopes,required=any(row['required'] for row in scopes),
+                   whole_stall_at_most=quiet_limit,quiet_basis='sufficient-for-every-frozen-median; absolute-and-relative-floor',
+                   node='account-batteries-and-containers-idle-at-both-observations',schedules='nothing')
+    (root/'.lane/gate-quiet-repeat.json').write_text(json.dumps(request,sort_keys=True)+'\n')
+    print('GATE-QUIET-REPEAT '+json.dumps(request,sort_keys=True),flush=True)
+    return request
+
+
+def repeat_close(obligation, directory, admission=None):
+    """One admitted quiet repeat discharges; its own classification stands."""
+    request=json.loads(obligation.read_text())
+    declaration=json.loads((directory/'gate-declaration.json').read_text())
+    whole=json.loads((directory/'gate-wall.json').read_text())
+    run=json.loads((directory/'gate-baseline.json').read_text())
+    if (declaration.get('repeat_of') != request['obligation'] or declaration.get('source') != request['source']
+            or declaration.get('plan') != 'one-run' or declaration.get('sample') != request['sample']
+            or run.get('tree') != request['tree'] or run.get('import_base') != request['base']
+            or (Path(run['path']).parent.name if run.get('path') else None) != request['configuration_key']):
+        raise ValueError('quiet repeat identity differs from obligation')
+    if whole.get('status') != 0 or not quiet_baseline(run):
+        raise ValueError('quiet repeat is not functionally green with quiet boundaries')
+    pressure=baseline_stall(dict(whole=whole))
+    limit=request['whole_stall_at_most']
+    if admission is not None:
+        admitted=json.loads(admission.read_text().removeprefix('GATE-SERIES-CHECK '))
+        median=admitted.get('frozen_median')
+        if admitted.get('outcome') != 'admitted' or type(median) not in (int,float) or not math.isfinite(median) or not 0 <= median <= 1:
+            raise ValueError('quiet repeat admission is not a completed series check')
+        policy=admitted['policy']
+        for name in ('series_absolute_pressure','series_relative_floor','series_pressure_multiple'):
+            value=policy.get(name)
+            if type(value) not in (int,float) or not math.isfinite(value) or not (value >= 1 if name == 'series_pressure_multiple' else 0 <= value <= 1):
+                raise ValueError('quiet repeat admission policy is malformed')
+        limit=min(policy['series_absolute_pressure'],max(policy['series_relative_floor'],median*policy['series_pressure_multiple']))
+    if pressure is None or pressure > limit:
+        raise ValueError('quiet repeat exceeds its admission pressure bound')
+    for phase in ('start','end'):
+        idle=json.loads((directory/('gate-series-host-'+phase+'.json')).read_text())
+        if idle.get('identity',{}).get('PN_GATE_ENTRY') != declaration['entry'] or idle.get('boundary') != phase:
+            raise ValueError('quiet repeat idle receipt is foreign')
+        refusal=series_idle_refusal(idle)
+        if refusal:raise ValueError(refusal)
+        at=idle.get('at')
+        if type(at) not in (int,float) or not math.isfinite(at) or (at > whole['started'] if phase=='start' else at < whole['ended']):
+            raise ValueError('quiet repeat idle receipt does not bracket the run')
+    print('GATE-QUIET-REPEAT-DISCHARGED '+json.dumps(dict(obligation=request['obligation'],owing_entry=request['owing_entry'],
+        entry=declaration['entry'],classification=whole['classification'],whole_stall=pressure),sort_keys=True),flush=True)
 
 
 def wall_summary(root, status, interval=None):
@@ -1992,20 +2156,18 @@ def wall_summary(root, status, interval=None):
     if pending:
         pending['whole'] = result
         pending['quiet_windows'] = measured.get('quiet_windows', {})
+        judgment = reference_judgment(pending, pending.get('previous_reference'))
+        result['reference_judgment'] = judgment
+        result['comparable_scope'] = 'whole-accounting-not-two-way-selection'
+        if quiet_baseline(pending, policy) and judgment['decidable']:
+            result['baseline_provisional'] = False
         pending_path.write_text(json.dumps(pending)+'\n')
+    (root/'.lane/gate-wall.json').write_text(json.dumps(result, indent=2)+'\n')
     fields = ' '.join(key+'='+('unavailable' if key == 'baseline_provisional' and value is None else
                      value if isinstance(value, str) else json.dumps(value, separators=(',', ':')))
                      for key, value in result.items() if key not in {'wall', 'status'})
     print(f'GATE-WALL WALL={wall:.6f}s verdict={"green" if status == 0 else "red"} '+fields, flush=True)
-    for scope, measurement in [('whole', result), *tiers.items()]:
-        ceiling = limit if scope == 'whole' else declared[measurement['budget']]['budget_ms']/1000 if measurement.get('budget') else None
-        compiling = (pending.get('cache', {}).get('compiling_steps', []) if scope == 'whole'
-                     else measurement.get('compiling_steps', []))
-        compiling = sorted(set(compiling) | {step for row in (tiers.values() if scope == 'whole' else [measurement])
-                           for step, figure in row.get('step_figures', {}).items() if figure.get('compiled')})
-        repeat = quiet_repeat(os.environ['PN_GATE_SOURCE'], pending.get('tree'), scope, measurement, ceiling, compiling)
-        if repeat is not None:
-            print('GATE-QUIET-REPEAT '+json.dumps(repeat, sort_keys=True), flush=True)
+    repeat_obligation(root,pending,result,tiers,declared)
     return subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'gate::whole',
         '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
         '--budget', 'whole-gate', '--overrun-class', classification, '--findings', '.lane/performance-findings.jsonl'], cwd=root).returncode
@@ -2128,6 +2290,10 @@ def main():
     whole.add_argument('status', type=int)
     whole.add_argument('interval', nargs=2, type=float)
     sub.add_parser('retain-baseline')
+    repeat = sub.add_parser('repeat-close')
+    repeat.add_argument('obligation',type=Path)
+    repeat.add_argument('directory',type=Path)
+    repeat.add_argument('--admission',type=Path)
     supervisor = sub.add_parser('supervise')
     supervisor.add_argument('command', nargs=argparse.REMAINDER)
     measurements=sub.add_parser('resource-lines')
@@ -2183,6 +2349,13 @@ def main():
         return 0
     if args.action == 'parallel-declared':
         return int('gate_dependencies = {' not in Path('meson.build').read_text())
+    if args.action == 'repeat-close':
+        try:
+            repeat_close(args.obligation,args.directory,args.admission)
+        except (OSError,ValueError,KeyError,TypeError) as error:
+            print('GATE-QUIET-REPEAT-REFUSED '+str(error),flush=True)
+            return 4
+        return 0
     if args.action == 'retain-baseline':
         retain_baseline(Path.cwd())
         return 0
