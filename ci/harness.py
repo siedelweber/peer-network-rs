@@ -47,7 +47,9 @@ def build_cache_state(root, source, invocation):
         if (receipt['identity'][:3] == [invocation, source, str(root.resolve())]
                 and invocation and receipt['status'] == 0 and artifacts
                 and all(type(row['fresh']) is bool for row in artifacts)):
-            lint = list(dict.fromkeys(row['target']['name'] for row in artifacts if not row['fresh']))
+            identities = dict.fromkeys((row['package_id'], row['target']['name'], tuple(row['target']['kind']))
+                                       for row in artifacts if not row['fresh'])
+            lint = [dict(package=package, target=name, kind=list(kind)) for package,name,kind in identities]
             step = receipt['step']
     except (OSError, ValueError, KeyError, TypeError):
         pass

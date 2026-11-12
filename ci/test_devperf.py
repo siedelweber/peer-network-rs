@@ -416,6 +416,7 @@ wait
                         self.assertEqual(measured[name]['status'], status)
                         self.assertEqual(measured[name]['over_budget'], expected)
                         self.assertEqual(measured[name]['step_figures'][name]['partial'], cold)
+                        self.assertEqual(measured[name]['step_figures'][name]['serialized_build'], rebuilding and name == 'service')
                         self.assertEqual(measured[name]['partial_steps'], [name] if cold else [])
                         self.assertEqual(measured[name]['step_figures'][name]['layouts'], {'fixture':'fixture-layout'})
                         self.assertEqual(measured[name]['build_cpu_s'], 0.5)
@@ -432,7 +433,7 @@ wait
                         self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
                         self.assertEqual(measured[name]['baseline_stall'], old_stall)
                         if wall == 3 and not cold:
-                            self.assertEqual(measured[name]['classification'], ('rebuild' if rebuilding else 'load-unresolved') if selection_differs else ('high-stall' if old_stall == .2 else 'load-unresolved'))
+                            self.assertEqual(measured[name]['classification'], 'load-unresolved')
                     if cold and expected:
                         self.assertEqual(measured['service']['classification'], 'cold-cache', 'a compiling tier has cold precedence')
                         self.assertNotEqual(measured['fast']['classification'], 'cold-cache', 'overlap does not assign another tier its compilation')
@@ -533,7 +534,7 @@ wait
                 self.assertAlmostEqual(result['preparation_s'], .2)
                 self.assertAlmostEqual(result['closing_s'], .3)
                 self.assertTrue(result['over_budget'])
-                self.assertEqual(result['classification'], 'high-stall')
+                self.assertEqual(result['classification'], 'load-unresolved')
                 self.assertEqual(result['baseline_stall'], .1)
                 self.assertEqual(result['baseline_source'], 'prior')
                 self.assertTrue(result['baseline_provisional'])
@@ -546,8 +547,12 @@ wait
                 self.assertNotIn('previous_whole', retained)
                 self.assertIn('exit:'+str(status), run.call_args.args[0])
             (lane/'gate-resources.json').unlink()
-            with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(io.StringIO()):
+            (lane/'gate-baseline.json').write_text(json.dumps(dict(source='fixture',tiers={})))
+            output = io.StringIO()
+            with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
                 self.assertEqual(wall_summary(root, 0, (1, 2.2)), 0)
+            self.assertIn('baseline_provisional=unavailable',output.getvalue())
+            self.assertNotIn('baseline_provisional=null',output.getvalue())
             unavailable = json.loads((lane/'gate-wall.json').read_text())
             self.assertIsNone(unavailable['own_user_s'])
             self.assertEqual(unavailable['classification'], 'unclassified')
@@ -603,7 +608,7 @@ wait
         # while 15 percent pressure cannot excuse a wall beyond its projection.
         for stall in (.05, .15):
             projected = 118*(1-.01)/(1-stall)
-            for delta, expected in ((-.001, 'high-stall'), (.001, 'load-unresolved' if stall > .1 else 'plain')):
+            for delta, expected in ((-.001, 'load-unresolved' if stall > .1 else 'high-stall'), (.001, 'load-unresolved' if stall > .1 else 'plain')):
                 self.assertEqual(overrun_class(True, 100, 100, stall, 40, 40, [], policy,
                     wall=projected+delta, baseline_wall=118, baseline_stall=.01, excess=projected+delta-120), expected)
         # A previously over-budget baseline cannot turn zero or insufficient
@@ -614,6 +619,9 @@ wait
         for cpu in (100, 150):
             self.assertEqual(overrun_class(True, cpu, 100, .4, 40, 40, [], policy,
                 wall=200, baseline_wall=100, baseline_stall=.05, excess=80), 'load-unresolved')
+        self.assertEqual(overrun_class(True, 532.7, 406.1, .325, 100, 1, ['source'], policy,
+            compile_wall_growth=100, wall=200, baseline_wall=150, baseline_stall=.049, excess=20),
+            'load-unresolved', 'a loaded run cannot establish a cost change even with apparent compile growth')
         # Projection is slack here, so only whole-excess coverage decides.
         boundary = 120/(1-.1)
         for delta, expected in ((-.001, 'high-stall'), (.001, 'plain')):
@@ -883,6 +891,71 @@ wait
         self.assertEqual(baseline_replacement(slow, fast), (False, 'warm-peer-dominance'),
                          'quieter slower and costlier evidence must not replace faster warm evidence')
         from build_graph import preferred_baseline
+        from build_graph import peer_intersection
+        def intersection_peer(source, stall, wall, cpu, extra=0):
+            cases = ['common']+(['extra'] if extra else [])
+            return dict(source=source, cache=dict(state='warm'),
+                        whole=dict(node_scope='node-wide', stall=stall, wall=wall, comparable_cpu_s=cpu),
+                        tiers={'service':dict(selected_cases=cases, case_steps={case:'service' for case in cases},
+                            case_costs={'extra':extra}, steps=['service'], step_figures={'service':dict(
+                                own_cpu_s=cpu, cargo_cpu_s=0, setup_cpu_s=0, layouts=[], partial=False, wall=wall)})})
+        old = intersection_peer('old', .049136754226175854, 134.454, 747.703316)
+        new = intersection_peer('new', .04430517164619928, 140.000857, 763.142702)
+        old['tiers'] = {}; new['tiers'] = {}
+        # These are the printed tier intersections of the recorded pair;
+        # whole CPU also owns preparation/closing and is not the intersection.
+        for name, current, previous in [('extended',203.977088,202.310768),('fast',271.152326,261.620315),
+                ('reference-certificate',108.402,109.295),('service',143.520288,140.22523299999997),
+                ('finalize',15.102,14.037)]:
+            for value,cost in ((old,previous),(new,current)):
+                extra = 15.548150999999994 if value is new and name == 'service' else 0
+                cases = [name]+(['added-service-case'] if extra else [])
+                value['tiers'][name] = dict(selected_cases=cases,case_steps={case:name for case in cases},
+                    case_costs={'added-service-case':extra},steps=[name],step_figures={name:dict(
+                        own_cpu_s=cost+extra,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,wall=1)})
+        self.assertEqual(baseline_replacement(new, old), (False,'warm-peer-intersection'),
+                         'a small stall lead must not replace a cheaper common workload')
+        old = intersection_peer('old', .0491, 134.5, 747.7)
+        new = intersection_peer('new', .0443, 140.0, 763.1, 2)
+        new['tiers']['service']['step_figures']['service']['own_cpu_s'] = 740
+        self.assertEqual(baseline_replacement(new, old), (True,'warm-peer-intersection'),
+                         'a cheaper common workload must replace across case domains')
+        new['tiers']['service']['step_figures']['service']['cargo_cpu_s'] = 1
+        self.assertIsNone(peer_intersection([old,new]), 'exclusive compiled case clocks cannot be subtracted twice')
+        disjoint = copy.deepcopy(new)
+        disjoint['tiers']['service'].update(selected_cases=['unrelated'],case_steps={'unrelated':'service'})
+        self.assertIsNone(peer_intersection([old,disjoint]), 'disjoint cases have an empty intersection')
+        for candidate in (new,disjoint):
+            with patch.dict(os.environ, {}, clear=True):
+                self.assertFalse(baseline_replacement(candidate, old)[0], 'an unmeasured margin cannot authorize replacement')
+            for margin, expected in ((.01,False),(.001,True)):
+                with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_MARGIN=str(margin)):
+                    self.assertEqual(baseline_replacement(candidate, old)[0], expected, 'empty intersection obeys the measured strict margin')
+        from build_graph import reference_stall_margin
+        for malformed in ('nan','inf','-0.1','1','not-a-number'):
+            with patch.dict(os.environ, PN_GATE_REFERENCE_STALL_MARGIN=malformed):
+                with self.assertRaises(ValueError):
+                    reference_stall_margin()
+        for value in (old,new):
+            value['tiers']['other'] = dict(selected_cases=['stable'],case_steps={'stable':'other'},case_costs={},steps=['other'],
+                step_figures={'other':dict(own_cpu_s=10 if value is old else 9,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,wall=1)})
+        self.assertEqual(peer_intersection([old,new]), [10,9], 'a compiled exclusive step cannot erase unaffected common cases')
+        self.assertTrue(baseline_replacement(new,old)[0])
+        for value,cost in ((old,5),(new,4)):
+            value['tiers']['uncased'] = dict(selected_cases=[],case_steps={},case_costs={},steps=['uncased'],
+                step_figures={'uncased':dict(own_cpu_s=cost,cargo_cpu_s=0,setup_cpu_s=0,layouts=[],partial=False,
+                                           serialized_build=False,wall=1)})
+        self.assertEqual(peer_intersection([old,new]),[15,13], 'common check work without cases still belongs to the projection')
+        for value in (old,new):
+            value['tiers']['uncased']['step_figures']['uncased']['serialized_build'] = True
+        self.assertEqual(peer_intersection([old,new]),[10,9], 'serialized build CPU must not become program work')
+        from build_graph import peer_frontier
+        projection_a = intersection_peer('projection-a', .05, 100, 100, 90)
+        projection_b = intersection_peer('projection-b', .04, 90, 90, 70)
+        projected = intersection_peer('projection-c', .03, 110, 30)
+        self.assertEqual(peer_frontier([projection_a,projection_b]),[projection_a,projection_b],
+                         'aggregate dominance must not erase the cheaper future projection')
+        self.assertIs(preferred_baseline([projection_a,projection_b,projected],incumbent=projection_b),projection_a)
         for values in ([slow,fast],[fast,slow]):
             self.assertIs(preferred_baseline(values), fast)
         quiet_fast = copy.deepcopy(slow);quiet_fast['whole']['wall'] = 200
@@ -907,6 +980,9 @@ wait
             incumbent['whole'].update(wall=149.6, comparable_cpu_s=800)
             incumbent['tiers'] = {'fast':dict(selected_cases=['same-case'])}
             prior_path = root/'quiet-tree.json'; prior_path.write_text(json.dumps(incumbent))
+            (root/'malformed.json').write_text('{invalid')
+            (root/'peers').mkdir()
+            (root/'peers/malformed.json').write_text('{invalid')
             candidate = copy.deepcopy(incumbent)
             candidate.update(path=str(root/'loaded-tree.json'), source='loaded', tree='loaded-tree',
                              previous_baseline_tree='quiet-tree', previous_peers=[incumbent])
@@ -982,6 +1058,65 @@ wait
         self.assertGreater(ties, 0)
         self.assertGreater(older_winners, 0)
         print(f'PEER-ARCHIVES content_distinct={len(distinct)} next_candidates=1280 next_content_distinct={len(next_distinct)} singleton_domains={singleton_domains} cost_stall_ties={ties} older_frontier_wins={older_winners} order=generated-unsorted')
+        from contextlib import redirect_stdout
+        sequences = set()
+        event_counts = dict(archive=0,land=0,replay=0,move=0)
+        still_landable = passed_absent = landed_kept = replayed_moved = actual_lands = 0
+        generator = random.Random(30186)
+        for sequence in range(128):
+            with tempfile.TemporaryDirectory() as directory:
+                archive = Path(directory)
+                base = 'base-0'
+                history = {base:'commit-0'}
+                records = {}
+                events = []
+                for position in range(24):
+                    action = generator.choice(['archive','archive','land','replay','move'])
+                    if position == 0:
+                        action = 'archive'
+                    if action in ('land','replay') and not records:
+                        action = 'archive'
+                    if action in ('archive','replay'):
+                        origin = generator.choice(list(records)) if action == 'replay' else None
+                        replayed_moved += origin is not None and records[origin]['base'] != base
+                        name = 'tree-'+str(position)
+                        records[name] = dict(base=base,state='pending')
+                        (archive/(name+'.json')).write_text(json.dumps(dict(fast,tree=name,source=name,import_base_tree=base)))
+                        events.append(dict(action=action,tree=name,base=base,origin=origin))
+                    else:
+                        available = [name for name,row in records.items() if row['state'] == 'pending']
+                        landing = generator.choice(available) if action == 'land' and available else None
+                        previous_base = base
+                        base = landing if landing is not None else 'base-'+str(position+1)
+                        history[base] = 'commit-'+str(position+1)
+                        if landing is not None:
+                            records[landing]['state'] = 'landed'
+                            actual_lands += 1
+                        for row in records.values():
+                            if row['state'] == 'pending' and row['base'] == previous_base and base != previous_base:
+                                row['state'] = 'obsolete'
+                        events.append(dict(action=action,base=base,landed=landing))
+                    event_counts[action] += 1
+                    with redirect_stdout(io.StringIO()):
+                        prune_peer_archive(archive,history,base)
+                    actual = {path.stem for path in archive.glob('*.json')}
+                    pending = {name for name,row in records.items() if row['state']=='pending'}
+                    obsolete = {name for name,row in records.items() if row['state']=='obsolete'}
+                    landed = {name for name,row in records.items() if row['state']=='landed'}
+                    self.assertTrue(pending <= actual, 'a still-landable archive record was deleted')
+                    self.assertFalse(obsolete & actual, 'an absent record survived its passed base')
+                    self.assertTrue(landed <= actual, 'landing must preserve the eligible record')
+                    still_landable += len(pending)
+                    passed_absent += len(obsolete)
+                    landed_kept += len(landed)
+                sequences.add(json.dumps(events,sort_keys=True))
+        self.assertEqual(len(sequences),128)
+        self.assertTrue(all(event_counts.values()))
+        self.assertGreater(still_landable,0)
+        self.assertGreater(passed_absent,0)
+        self.assertGreater(landed_kept,0)
+        self.assertGreater(replayed_moved,0)
+        print(f'PEER-EVENTS content_distinct={len(sequences)} events={json.dumps(event_counts,sort_keys=True)} actual_lands={actual_lands} replayed_onto_moved_base={replayed_moved} pending_checks={still_landable} passed_absent_checks={passed_absent} landed_checks={landed_kept} order=generated-unsorted')
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory)
             for name, value in [('slow',slow),('fast',fast),('foreign',quiet_fast)]:
@@ -1021,7 +1156,7 @@ wait
             prune_peer_archive(archive, {'current-base':'now','old-base':'before'}, 'current-base')
             self.assertEqual({p.stem for p in archive.glob('*.json')}, {'future','current','legacy'}, 'only a passed base permits absence pruning')
         different = copy.deepcopy(fast);different['tiers']['fast']['selected_cases'].append('new')
-        self.assertEqual(baseline_replacement(different,slow), (False,'higher-whole-gate-stall'))
+        self.assertEqual(baseline_replacement(different,slow), (False,'warm-peer-intersection-unavailable-margin'))
         unavailable = copy.deepcopy(fast);unavailable['whole']['comparable_cpu_s'] = None
         self.assertEqual(baseline_replacement(unavailable,slow), (False,'higher-whole-gate-stall'))
         with tempfile.TemporaryDirectory() as directory:
@@ -1032,7 +1167,7 @@ wait
                             records=[dict(operation='build', outcome='exit:0')])
             (run/'manifest.json').write_text(json.dumps(manifest))
             receipt = dict(identity=['invocation', 'source', str(root.resolve()), ['cargo']], status=0,
-                           artifacts=[dict(fresh=True, target=dict(name='example'))], step='clippy')
+                           artifacts=[dict(fresh=True, package_id='package-a', target=dict(name='example', kind=['lib']))], step='clippy')
             (root/'.lane/lint-pass.json').write_text(json.dumps(receipt))
             for log, expected in [('   Compiling example v1.0\n    Finished `gate` profile [optimized]\n', 'cold'),
                                   ('    Finished `gate` profile [optimized]\n', 'warm'),
@@ -1044,10 +1179,15 @@ wait
             (run/'build.stderr').write_text('    Finished `gate` profile [optimized]\n')
             receipt['artifacts'][0]['fresh'] = False
             receipt['artifacts'].append(copy.deepcopy(receipt['artifacts'][0]))
+            receipt['artifacts'].extend([dict(fresh=False,package_id='package-b',target=dict(name='example',kind=['lib'])),
+                                         dict(fresh=False,package_id='package-a',target=dict(name='example',kind=['test']))])
             (root/'.lane/lint-pass.json').write_text(json.dumps(receipt))
             cache = build_cache_state(root, 'source', 'invocation')
             self.assertEqual(cache['state'], 'cold', 'a rebuilt lint target is cold even when primary artifacts are fresh')
-            self.assertEqual(cache['compiled'], dict(primary=[], lint=['example']))
+            self.assertEqual(cache['compiled'], dict(primary=[], lint=[
+                dict(package='package-a',target='example',kind=['lib']),
+                dict(package='package-b',target='example',kind=['lib']),
+                dict(package='package-a',target='example',kind=['test'])]))
             self.assertEqual(cache['compiling_steps'], ['clippy'])
             (root/'.lane/lint-pass.json').unlink()
             self.assertEqual(build_cache_state(root, 'source', 'invocation')['state'], 'unknown')

@@ -720,6 +720,7 @@ def overrun_class(over, own, baseline, stall, build_cpu, old_build_cpu, changed,
                   and stall > policy['load_unresolved_pressure_percent']/100)
     fallback = 'load-unresolved' if unresolved else 'unclassified'
     if not valid_stall: return 'unclassified'
+    if unresolved: return 'load-unresolved'
     if wall is None or baseline_wall is None or baseline_stall is None or excess is None: return fallback
     # Remove the baseline's stall before projecting its work into this interval.
     # A pressure fraction is context, not an attribution of CPU to this tier.
@@ -779,6 +780,7 @@ def ancestry_trees(root, base, wanted):
 def peer_frontier(records):
     """Prune strict dominance only within the same warm rank and domain."""
     return [value for value in records if value.get('cache', {}).get('state') != 'warm'
+            or any(row.get('step_figures') for row in value.get('tiers', {}).values())
             or not any(baseline_rank(other)[:2] == baseline_rank(value)[:2]
                        and dominates(other, value) for other in records)]
 
@@ -986,7 +988,11 @@ def dominates(a, b):
 
 def warm_peer_replacement(candidate, previous):
     """The pair uses the same frontier selection as a larger available set."""
-    if not peer_domain(candidate) or peer_domain(candidate) != peer_domain(previous) or peer_cost(candidate) is None or peer_cost(previous) is None:
+    if peer_domain(candidate) != peer_domain(previous):
+        costs = peer_intersection([previous, candidate])
+        selected = preferred_baseline([previous, candidate], incumbent=previous)
+        return selected is candidate, 'warm-peer-intersection' if costs is not None else 'warm-peer-intersection-unavailable-margin'
+    if not peer_domain(candidate) or peer_cost(candidate) is None or peer_cost(previous) is None:
         return None
     selected = preferred_baseline([previous, candidate])
     reason = ('warm-peer-dominance' if dominates(candidate,previous) or dominates(previous,candidate)
@@ -994,12 +1000,80 @@ def warm_peer_replacement(candidate, previous):
     return selected is candidate, reason
 
 
-def preferred_baseline(candidates):
+def reference_stall_margin():
+    """The series supplies the margin; absence authorizes no replacement."""
+    raw = os.environ.get('PN_GATE_REFERENCE_STALL_MARGIN')
+    if raw is None:
+        return None
+    value = float(raw)
+    if not math.isfinite(value) or not 0 <= value < 1:
+        raise ValueError('reference stall margin must be finite and in [0,1)')
+    return value
+
+
+def peer_intersection(peers):
+    """Project all peers onto one common case/step domain, counting steps once."""
+    receipts = []
+    for peer in peers:
+        steps = {}
+        for tier in peer.get('tiers', {}).values():
+            for name, figure in tier.get('step_figures', {}).items():
+                cases = {case for case in tier.get('selected_cases', []) if tier.get('case_steps', {}).get(case) == name}
+                value = (figure, cases, tier.get('case_costs', {}))
+                if name in steps and steps[name] != value:
+                    return None
+                steps[name] = value
+        receipts.append(steps)
+    common = set.intersection(*(set(row) for row in receipts)) if receipts else set()
+    totals = [0.0 for _ in peers]
+    retained = 0
+    for name in sorted(common):
+        rows = [receipt[name] for receipt in receipts]
+        cases = set.intersection(*(row[1] for row in rows))
+        if not cases and (any(row[1] for row in rows) or any(
+                type(row[0].get('serialized_build')) is not bool or row[0]['serialized_build'] for row in rows)):
+            continue
+        values = []
+        for figure, selected, charges in rows:
+            if figure.get('serialized_build',False) != rows[0][0].get('serialized_build',False):
+                break
+            own, _, _, omitted = compile_comparison({name:figure}, {name:rows[0][0]},
+                                                    (name,) if figure.get('serialized_build') else ())
+            exclusive = selected-cases
+            # Omit this entire step, not the unaffected intersection, when
+            # exclusive case clocks could overlap the removed build clock.
+            if omitted or exclusive and (figure.get('cargo_cpu_s', 0) or figure.get('serialized_build')):
+                break
+            removed = [charges.get(case) for case in exclusive]
+            if any(type(value) not in (int, float) or not math.isfinite(value) or value < 0 for value in removed):
+                break
+            if own is None or own < sum(removed):
+                break
+            values.append(own-sum(removed))
+        if len(values) == len(peers):
+            totals = [total+value for total,value in zip(totals,values)]
+            retained += len(cases) or 1
+    return totals if retained else None
+
+
+def preferred_baseline(candidates, incumbent=None):
     """Cache rank, same-domain cost frontier, then stall and stable tie breaks."""
     if not candidates:
         return None
     rank = min(baseline_rank(value)[:2] for value in candidates)
     peers = [value for value in candidates if baseline_rank(value)[:2] == rank]
+    if not rank[0] and any(peer_domain(value) != peer_domain(peers[0]) for value in peers):
+        costs = peer_intersection(peers)
+        if costs is not None:
+            return min(zip(costs, peers), key=lambda pair:(pair[0], baseline_stall(pair[1]),
+                       pair[1].get('source',''), pair[1].get('tree',''), json.dumps(pair[1],sort_keys=True)))[1]
+        if incumbent is not None and any(value is incumbent for value in peers):
+            margin = reference_stall_margin()
+            eligible = [value for value in peers if margin is not None and
+                        baseline_stall(incumbent)-baseline_stall(value) > margin]
+            if not eligible:
+                return incumbent
+            peers = eligible
     if not rank[0]:
         peers = [value for value in peers if not any(dominates(other, value) for other in peers)]
     return min(peers, key=lambda value:(baseline_stall(value), peer_cost(value) or (float('inf'),float('inf')),
@@ -1052,20 +1126,26 @@ def retain_baseline(root):
                 prior.append(value)
         except (OSError, ValueError):
             continue
-    previous_best = preferred_baseline(prior)
+    incumbent = next((value for value in prior if value.get('tree') == candidate.get('previous_baseline_tree')), None)
+    previous_best = preferred_baseline(prior, incumbent=incumbent)
     candidate['provisional'] = candidate.get('cache', {}).get('state') != 'warm'
     accepted, reason = baseline_replacement(candidate, previous_best) if quiet_baseline(candidate) else (False, 'load-unresolved')
     if quiet_baseline(candidate) and prior:
-        selected = preferred_baseline([*prior, candidate])
+        selected = preferred_baseline([*prior, candidate], incumbent=previous_best)
         accepted = selected is candidate
         if not accepted:
             previous_best = selected
         if candidate.get('cache', {}).get('state') == 'warm' and previous_best.get('cache', {}).get('state') == 'warm':
-            reason = 'warm-peer-set-selected' if accepted else 'warm-peer-set-retained'
+            different = any(peer_domain(value) != peer_domain(candidate) for value in prior)
+            route = ('intersection' if peer_intersection([*prior,candidate]) is not None else 'intersection-unavailable-margin') if different else 'set'
+            reason = 'warm-peer-'+route+('-selected' if accepted else '-retained')
             if not accepted:
                 # Confirmation describes the pair, not which member won it.
                 for retained_path in [*path.parent.glob('*.json'), *(path.parent/'peers').glob('*.json')]:
-                    retained = json.loads(retained_path.read_text())
+                    try:
+                        retained = json.loads(retained_path.read_text())
+                    except (OSError, ValueError):
+                        continue
                     if retained.get('provisional', True) and (retained.get('source'), retained.get('tree'), retained.get('whole')) == (previous_best.get('source'), previous_best.get('tree'), previous_best.get('whole')):
                         retained['provisional'] = False
                         temporary = retained_path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
@@ -1317,6 +1397,7 @@ def tier_summary(root, registry, worker_statuses):
             isolated = [value for value in isolated if value.get('source') == os.environ['PN_GATE_SOURCE']]
             isolated_compiling_steps.extend(dict(step=row[0], owner=value['owner'], cold_target=value['cold_target']) for value in isolated)
             step_figures[row[0]] = dict(wall=float(row[3])-float(row[2]), own_cpu_s=sum(cpu) if None not in cpu else None,
+                serialized_build=row[0] in policy['rebuild_steps'],
                 cargo_cpu_s=sum(value['cargo_cpu_s'] for value in isolated),
                 layouts={value['owner']:value['layout'] for value in isolated},
                 partial=any(value.get('cold_target') or value.get('layout_changed') for value in isolated))
@@ -1477,7 +1558,9 @@ def wall_summary(root, status, interval=None):
         pending['whole'] = result
         pending['quiet_windows'] = measured.get('quiet_windows', {})
         pending_path.write_text(json.dumps(pending)+'\n')
-    fields = ' '.join(key+'='+(value if isinstance(value, str) else json.dumps(value, separators=(',', ':'))) for key, value in result.items() if key not in {'wall', 'status'})
+    fields = ' '.join(key+'='+('unavailable' if key == 'baseline_provisional' and value is None else
+                     value if isinstance(value, str) else json.dumps(value, separators=(',', ':')))
+                     for key, value in result.items() if key not in {'wall', 'status'})
     print(f'GATE-WALL WALL={wall:.6f}s verdict={"green" if status == 0 else "red"} '+fields, flush=True)
     return subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'gate::whole',
         '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
