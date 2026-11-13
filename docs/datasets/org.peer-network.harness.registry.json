@@ -3134,6 +3134,11 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::encode::budget_tests::map_reservations_and_usage_overflow",
+        "pn-interchange::encode::budget_tests::scalar_counts_use_writers",
+        "pn-interchange::value::budget::tests::reserved_value_shared_meter",
+        "pn-interchange::value::budget::tests::reserved_value_disposal",
+        "pn-interchange::value::budget::tests::reserved_value_transfers",
         "pn-interchange::value::text_tests::text_exact_storage",
         "pn-interchange::encode::secret_tests::protected_encoding_retains_legacy_policy",
         "pn-interchange::encode::budget_tests::canonical_encoding_differential",

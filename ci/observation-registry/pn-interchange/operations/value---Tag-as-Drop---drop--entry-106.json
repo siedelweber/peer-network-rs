@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Tag as Drop>::drop",
-    "body": "{ if matches ! (* self . item , Value :: Tag (_)) { tear_down (vec ! [self . take_item ()]) ; } }",
+    "body": "{ if matches ! (* self . item , Value :: Tag (_)) { # [cfg (test)] budget :: allocation_site () ; tear_down (vec ! [self . take_item ()]) ; } }",
     "class_decision": "value-traits",
     "item_premise": "This body inherits the value-traits decision for value::<Tag as Drop>::drop.",
     "assessments": {

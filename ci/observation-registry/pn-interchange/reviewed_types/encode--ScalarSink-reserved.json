@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::ScalarSink",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "enum ScalarSink < 'a > { Bytes (& 'a mut Vec < u8 >) , Count (& 'a mut ScalarCount) , }"
+  }
+}

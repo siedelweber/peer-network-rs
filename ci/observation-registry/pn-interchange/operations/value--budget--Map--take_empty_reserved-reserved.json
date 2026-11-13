@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value/budget.rs",
+    "item": "value::budget::Map::take_empty_reserved",
+    "owner": "INTERCHANGE",
+    "signature": "fn take_empty_reserved (buffer : & mut Vec < (Value , Value) >) -> Result < Self , TransferError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/value/budget.rs::value::budget::Map::take_empty_reserved",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"value::budget::Map::take_empty_reserved\" , & buffer ,) ; let result = if buffer . is_empty () { Ok (Self (mem :: take (buffer))) } else { Err (TransferError :: NonemptyMap) } ; scope . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "Public ownership transfer, refusal and explicit disposal. Full public buffers and outcomes are observed outside the construction budget; the reservation operation observes the full buffer, type/length/capacity and requested storage, and reports usage on refusal. Callback is executable, not serialized. Pointer/capacity and reservation-site controls are not an allocator census. No protected route or loan changes.",
+    "assessments": {
+      "full_recording": "review-047",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

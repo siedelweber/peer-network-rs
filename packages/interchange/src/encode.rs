@@ -59,19 +59,44 @@ fn write_head(out: &mut Vec<u8>, major: u8, argument: u64) {
     }
 }
 
-fn write_simple(out: &mut Vec<u8>, simple: Simple) {
-    if simple.get() < 24 {
-        out.push(0xe0 | simple.get());
-    } else {
-        out.push(0xf8);
-        out.push(simple.get());
+// Both counting and writing use these scalar writers; no parallel width formula.
+enum ScalarSink<'a> {
+    Bytes(&'a mut Vec<u8>),
+    Count(&'a mut ScalarCount),
+}
+
+impl ScalarSink<'_> {
+    fn octet(&mut self, byte: u8) {
+        match self {
+            Self::Bytes(bytes) => bytes.push(byte),
+            Self::Count(count) => count.0 += 1,
+        }
+    }
+    fn octets(&mut self, bytes: &[u8]) {
+        match self {
+            Self::Bytes(output) => output.extend_from_slice(bytes),
+            Self::Count(count) => count.0 += bytes.len(),
+        }
     }
 }
 
-fn write_float(out: &mut Vec<u8>, float: Float) {
-    out.push(float.width().initial_byte());
+// Each scalar writer emits at most nine bytes into this fresh counter.
+#[derive(Default)]
+struct ScalarCount(usize);
+
+fn write_simple(out: &mut ScalarSink<'_>, simple: Simple) {
+    if simple.get() < 24 {
+        out.octet(0xe0 | simple.get());
+    } else {
+        out.octet(0xf8);
+        out.octet(simple.get());
+    }
+}
+
+fn write_float(out: &mut ScalarSink<'_>, float: Float) {
+    out.octet(float.width().initial_byte());
     let argument_len = float.width().argument_len();
-    out.extend_from_slice(&float.bits().to_be_bytes()[8 - argument_len..]);
+    out.octets(&float.bits().to_be_bytes()[8 - argument_len..]);
 }
 
 impl Value {
@@ -234,6 +259,49 @@ pub enum EncodingError {
     Allocation,
 }
 
+impl EncodingUsage {
+    /// Reserve public construction storage through the encoding admission policy.
+    /// Usage is cumulative and reports full requested replacement capacities.
+    /// Full public-buffer observation and callback allocations are outside the budget.
+    /// (´amend:interchange:canonical-budget´)
+    /// # Errors
+    /// Returns `Limit` for checked arithmetic or ceiling refusal, `Reservation` for
+    /// callback refusal, or `Allocation` for a failed admitted request; `Length` cannot arise.
+    /// # Panics
+    /// A panicking callback propagates with usage at the earlier admitted requests.
+    pub fn reserve_value_buffer<T: std::fmt::Debug>(
+        &mut self,
+        buffer: &mut Vec<T>,
+        additional: usize,
+        ceiling: usize,
+        mut reservation: impl FnMut(usize) -> Result<(), ()>,
+    ) -> Result<(), EncodingError> {
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "encode::EncodingUsage::reserve_value_buffer",
+            &(
+                &*self,
+                std::any::type_name::<T>(),
+                &*buffer,
+                buffer.len(),
+                buffer.capacity(),
+                additional,
+                ceiling,
+                "reservation callback is executable",
+            ),
+        );
+        let result = WritePolicy::Budget {
+            limit: ceiling,
+            usage: self,
+            reservation: &mut reservation,
+        }
+        .reserve(buffer, additional);
+        scope.finish(&(&result, self));
+        result
+    }
+}
+
 enum WritePolicy<'a> {
     Legacy,
     Budget {
@@ -359,12 +427,22 @@ fn public_node<'a>(
         Value::Bool(true) => out.bytes(&[0xf5])?,
         Value::Null => out.bytes(&[0xf6])?,
         Value::Simple(s) => match out {
-            PublicOutput::Count { .. } => out.count(if s.get() < 24 { 1 } else { 2 })?,
-            PublicOutput::Bytes(bytes) => write_simple(bytes, *s),
+            PublicOutput::Count { .. } => {
+                // Count through the writer; a separate formula would reopen sufficiency review.
+                let mut count = ScalarCount::default();
+                write_simple(&mut ScalarSink::Count(&mut count), *s);
+                out.count(count.0)?;
+            }
+            PublicOutput::Bytes(bytes) => write_simple(&mut ScalarSink::Bytes(bytes), *s),
         },
         Value::Float(f) => match out {
-            PublicOutput::Count { .. } => out.count(1 + f.width().argument_len())?,
-            PublicOutput::Bytes(bytes) => write_float(bytes, *f),
+            PublicOutput::Count { .. } => {
+                // Count through the writer; a separate formula would reopen sufficiency review.
+                let mut count = ScalarCount::default();
+                write_float(&mut ScalarSink::Count(&mut count), *f);
+                out.count(count.0)?;
+            }
+            PublicOutput::Bytes(bytes) => write_float(&mut ScalarSink::Bytes(bytes), *f),
         },
     }
     Ok(())
@@ -473,6 +551,8 @@ impl Drop for SecretValue {
 }
 
 impl SecretValue {
+    /// The capacity pass and traversal workspace remain unbudgeted and owed to the
+    /// protected encoding budget cut under (`[ROOT-open:observe:protected-encoding-budget]`).
     /// Encode through the same canonical traversal as public values.
     /// The result remains protected until an explicitly labelled consumer borrow.
     ///

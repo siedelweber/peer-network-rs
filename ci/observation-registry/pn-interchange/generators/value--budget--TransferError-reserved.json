@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "value::budget::TransferError",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value/budget.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "Public scalar counting and transfer refusals; no protected value, credential or new secret loan. Observation remains outside the construction budget."
+  }
+}

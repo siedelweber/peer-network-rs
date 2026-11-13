@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "value::budget::TransferError",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/value/budget.rs",
+    "syntax": "# [doc = \" A transfer refuses without moving, shrinking or copying its input buffer.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum TransferError { # [doc = \" Exact payload storage requires length equal to capacity.\"] SpareCapacity , # [doc = \" Text must already be valid UTF-8.\"] InvalidUtf8 { # [doc = \" Byte offset at which valid UTF-8 ends.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] offset : usize , } , # [doc = \" Only the position projection's empty map is admitted by this constructor.\"] NonemptyMap , }"
+  }
+}

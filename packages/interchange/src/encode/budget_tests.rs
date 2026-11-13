@@ -35,6 +35,117 @@ fn nested() -> Value {
     value
 }
 
+/// Claim: Simple and float lengths are counted through their byte writers, and the scalar counts equal the legacy bytes across every simple value and every float width.
+/// ´claim:encoding:scalar-counts-use-writers´
+/// ´test:unit:scalar-counts-use-writers´
+#[test]
+fn scalar_counts_use_writers() {
+    let mut values: Vec<_> = (0_u8..=255)
+        .map(|n| n.wrapping_mul(73))
+        .filter_map(|n| crate::Simple::new(n).ok())
+        .map(Value::Simple)
+        .collect();
+    values.extend(
+        [0.0, -0.0, 1.5, 100_000.0, 1.1, f64::INFINITY, f64::NEG_INFINITY, f64::NAN]
+            .into_iter()
+            .map(|n| Value::Float(crate::Float::from_f64(n).unwrap())),
+    );
+    for value in values {
+        let mut output = PublicOutput::Count {
+            length: 0,
+            ceiling: usize::MAX,
+        };
+        public_node(&value, &mut output, &mut Vec::new(), &mut WritePolicy::Legacy).unwrap();
+        let PublicOutput::Count { length, .. } = output else {
+            unreachable!()
+        };
+        assert_eq!(
+            length,
+            value.to_canonical_bytes().len(),
+            "scalar count is the writer's length"
+        );
+    }
+}
+
+/// Claim: Map workspace capacity is covered by admitted requests, each map request can be refused before execution, and usage arithmetic overflow refuses before the callback with prior usage retained.
+/// ´claim:encoding:map-reservations-and-usage-overflow´
+/// ´test:unit:map-reservations-and-usage-overflow´
+#[test]
+fn map_reservations_and_usage_overflow() {
+    let value = Value::Map(Map::new((0..12).map(|n| (Value::Unsigned(n), Value::Null))).unwrap());
+    clear();
+    let mut usage = EncodingUsage::default();
+    let mut work = Vec::new();
+    public_node(
+        &value,
+        &mut PublicOutput::Count {
+            length: 0,
+            ceiling: usize::MAX,
+        },
+        &mut work,
+        &mut WritePolicy::Budget {
+            limit: usize::MAX,
+            usage: &mut usage,
+            reservation: &mut |_| Ok(()),
+        },
+    )
+    .unwrap();
+    assert!(
+        work.capacity() * std::mem::size_of::<Node<'_>>() <= usage.allocation_bytes,
+        "map capacity must be covered by reservations"
+    );
+    accounted(&usage);
+    let requests = calls();
+    assert_ne!(requests, [] as [(usize, usize, usize); 0]);
+    for refused in 0..requests.len() {
+        clear();
+        let mut usage = EncodingUsage::default();
+        let mut work = Vec::new();
+        let mut position = 0;
+        let result = public_node(
+            &value,
+            &mut PublicOutput::Count {
+                length: 0,
+                ceiling: usize::MAX,
+            },
+            &mut work,
+            &mut WritePolicy::Budget {
+                limit: usize::MAX,
+                usage: &mut usage,
+                reservation: &mut |_| {
+                    position += 1;
+                    if position == refused + 1 { Err(()) } else { Ok(()) }
+                },
+            },
+        );
+        assert_eq!(result, Err(EncodingError::Reservation));
+        assert_eq!(calls(), requests[..refused], "refused map request never executes");
+        assert!(work.capacity() * std::mem::size_of::<Node<'_>>() <= usage.allocation_bytes);
+        accounted(&usage);
+    }
+    clear();
+    let mut usage = EncodingUsage::default();
+    let bytes = value.to_canonical_bytes_budgeted(usize::MAX, &mut usage, |_| Ok(())).unwrap();
+    assert_eq!(bytes, value.to_canonical_bytes());
+    accounted(&usage);
+    for (bytes, calls) in [(usize::MAX, 0), (0, usize::MAX)] {
+        clear();
+        let mut usage = EncodingUsage {
+            allocation_bytes: bytes,
+            allocation_calls: calls,
+        };
+        let mut called = false;
+        let result = usage.reserve_value_buffer(&mut Vec::<u8>::new(), 1, usize::MAX, |_| {
+            called = true;
+            Ok(())
+        });
+        assert_eq!(result, Err(EncodingError::Limit), "usage overflow refuses before callback");
+        assert!(!called);
+        assert_eq!((usage.allocation_bytes, usage.allocation_calls), (bytes, calls));
+        assert_eq!(self::calls(), [] as [(usize, usize, usize); 0]);
+    }
+}
+
 /// Claim: Encoding reservation-site observations show prior charging and exact usage on success and refusal, including each workspace growth and output reservation; no allocator outside the site is observed.
 /// ´claim:encoding:canonical-encoding-reservations´
 /// ´test:unit:canonical-encoding-reservations´

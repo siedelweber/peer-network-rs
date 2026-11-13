@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::EncodingUsage::reserve_value_buffer",
+    "owner": "INTERCHANGE",
+    "signature": "fn reserve_value_buffer < T : std :: fmt :: Debug > (& mut self , buffer : & mut Vec < T > , additional : usize , ceiling : usize , mut reservation : impl FnMut (usize) -> Result < () , () > ,) -> Result < () , EncodingError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::EncodingUsage::reserve_value_buffer",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"encode::EncodingUsage::reserve_value_buffer\" , & (& * self , std :: any :: type_name :: < T > () , & * buffer , buffer . len () , buffer . capacity () , additional , ceiling , \"reservation callback is executable\" ,) ,) ; let result = WritePolicy :: Budget { limit : ceiling , usage : self , reservation : & mut reservation , } . reserve (buffer , additional) ; scope . finish (& (& result , self)) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "Public ownership transfer, refusal and explicit disposal. Full public buffers and outcomes are observed outside the construction budget; the reservation operation observes the full buffer, type/length/capacity and requested storage, and reports usage on refusal. Callback is executable, not serialized. Pointer/capacity and reservation-site controls are not an allocator census. No protected route or loan changes.",
+    "assessments": {
+      "full_recording": "review-047",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

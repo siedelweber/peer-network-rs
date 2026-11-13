@@ -24,3 +24,4 @@ endforeach
 subdir('cddl')
 subdir('decode')
 subdir('encode')
+subdir('value')

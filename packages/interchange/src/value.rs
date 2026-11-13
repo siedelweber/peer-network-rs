@@ -10,6 +10,9 @@
 //! Non-canonicity is therefore unrepresentable rather than checked for,
 //! which is why encoding has no failure mode.
 
+mod budget;
+pub use budget::TransferError;
+
 use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 use std::mem;
@@ -1192,6 +1195,10 @@ impl Drop for Map {
     /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn drop(&mut self) {
         let entries = mem::take(&mut self.0);
+        #[cfg(test)]
+        if !entries.is_empty() {
+            budget::allocation_site();
+        }
         let mut work = Vec::with_capacity(entries.len() * 2);
         for (key, value) in entries {
             work.push(key);
@@ -1209,14 +1216,34 @@ impl Drop for Map {
 fn tear_down(mut work: Vec<Value>) {
     while let Some(value) = work.pop() {
         match value {
-            Value::Array(mut a) => work.append(&mut a.0),
+            Value::Array(mut a) => {
+                #[cfg(test)]
+                if work
+                    .len()
+                    .checked_add(a.0.len())
+                    .is_none_or(|length| length > work.capacity())
+                {
+                    budget::allocation_site();
+                }
+                work.append(&mut a.0);
+            }
             Value::Map(mut m) => {
                 for (key, value) in mem::take(&mut m.0) {
+                    #[cfg(test)]
+                    if work.len().checked_add(2).is_none_or(|length| length > work.capacity()) {
+                        budget::allocation_site();
+                    }
                     work.push(key);
                     work.push(value);
                 }
             }
-            Value::Tag(mut t) => work.push(t.take_item()),
+            Value::Tag(mut t) => {
+                #[cfg(test)]
+                if work.len() == work.capacity() {
+                    budget::allocation_site();
+                }
+                work.push(t.take_item());
+            }
             _ => {}
         }
     }
@@ -1369,6 +1396,8 @@ impl Drop for Tag {
     /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn drop(&mut self) {
         if matches!(*self.item, Value::Tag(_)) {
+            #[cfg(test)]
+            budget::allocation_site();
             tear_down(vec![self.take_item()]);
         }
     }

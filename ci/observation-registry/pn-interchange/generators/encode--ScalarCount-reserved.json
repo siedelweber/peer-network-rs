@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "encode::ScalarCount",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [derive (Default)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "Public scalar counting and transfer refusals; no protected value, credential or new secret loan. Observation remains outside the construction budget."
+  }
+}

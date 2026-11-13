@@ -101,5 +101,5 @@ pub use envelope::{Content, ContentKey, Document, Envelope, MAX_ENVELOPE_PREFIX}
 pub use error::{AcquireError, DecodeError, EnvelopeError, Error, LabelError, RegexpError, TheoryError, ValueError};
 pub use label::NamespaceLabel;
 pub use registry::Registry;
-pub use value::{Array, Bytes, Float, FloatWidth, Map, Negative, Simple, Tag, Text, Value};
+pub use value::{Array, Bytes, Float, FloatWidth, Map, Negative, Simple, Tag, Text, TransferError, Value};
 pub use version::{Coordinate, Version};

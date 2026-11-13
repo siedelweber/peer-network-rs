@@ -4675,6 +4675,22 @@
       "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
     },
     {
+      "operation": "pn-interchange::encode::budget_tests::map_reservations_and_usage_overflow",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:map-reservations-and-usage-overflow",
+      "before": "",
+      "after": "Claim: Map workspace capacity is covered by admitted requests, each map request can be refused before execution, and usage arithmetic overflow refuses before the callback with prior usage retained.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
+    },
+    {
+      "operation": "pn-interchange::encode::budget_tests::scalar_counts_use_writers",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:scalar-counts-use-writers",
+      "before": "",
+      "after": "Claim: Simple and float lengths are counted through their byte writers, and the scalar counts equal the legacy bytes across every simple value and every float width.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
+    },
+    {
       "operation": "pn-interchange::encode::secret_tests::protected_canonical_bytes",
       "path": "packages/interchange/src/encode.rs",
       "claim": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",
@@ -4929,6 +4945,30 @@
       "before": "",
       "after": "Claim: Allowed transport heads, map order, indefinite containers and empty or nonempty chunks yield the canonical reader's typed value without changing embedded document bytes.",
       "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
+    },
+    {
+      "operation": "pn-interchange::value::budget::tests::reserved_value_disposal",
+      "path": "packages/interchange/src/value/budget/tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:reserved-value-disposal",
+      "before": "",
+      "after": "Claim: Explicit disposal reaches no marked legacy allocation site for 4096 nested arrays, mixed containers, or the partial value after each of twelve construction reservation refusals; no allocator outside those sites is observed.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
+    },
+    {
+      "operation": "pn-interchange::value::budget::tests::reserved_value_shared_meter",
+      "path": "packages/interchange/src/value/budget/tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:reserved-value-shared-meter",
+      "before": "",
+      "after": "Claim: Public construction and canonical encoding share a caller meter, with exact admitted requests on success and refusal; explicit disposal adds none, and exact versus one-below construction limits decide before reservation.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
+    },
+    {
+      "operation": "pn-interchange::value::budget::tests::reserved_value_transfers",
+      "path": "packages/interchange/src/value/budget/tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:reserved-value-transfers",
+      "before": "",
+      "after": "Claim: Reserved transfers retain buffer addresses and capacities, and capacity, UTF-8 and empty-map refusals leave the original buffers unchanged; these are transfer controls, not an allocator census.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
     },
     {
       "operation": "pn-interchange::value::text_tests::text_exact_storage",

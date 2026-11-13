@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Map as Drop>::drop",
-    "body": "{ let entries = mem :: take (& mut self . 0) ; let mut work = Vec :: with_capacity (entries . len () * 2) ; for (key , value) in entries { work . push (key) ; work . push (value) ; } tear_down (work) ; }",
+    "body": "{ let entries = mem :: take (& mut self . 0) ; # [cfg (test)] if ! entries . is_empty () { budget :: allocation_site () ; } let mut work = Vec :: with_capacity (entries . len () * 2) ; for (key , value) in entries { work . push (key) ; work . push (value) ; } tear_down (work) ; }",
     "class_decision": "value-traits",
     "item_premise": "This body inherits the value-traits decision for value::<Map as Drop>::drop.",
     "assessments": {
