@@ -456,6 +456,8 @@ impl Home {
         ret
     )]
     pub fn complete(mut self) -> Result<(), CompletionError> {
+        #[cfg(test)]
+        tests::CHECKED_COMPLETIONS.with(|count| count.set(count.get() + 1));
         self.finish()
     }
 

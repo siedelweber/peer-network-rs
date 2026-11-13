@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-secret-home::packages/secret-home/src/lib.rs::Home::complete",
-    "body": "{ self . finish () }",
+    "body": "{ # [cfg (test)] tests :: CHECKED_COMPLETIONS . with (| count | count . set (count . get () + 1)) ; self . finish () }",
     "class_decision": "secret-home-private",
     "item_premise": "Home and Staging have constant Debug. Completion erases the complete checked mapping, returns only ownership or cleanup flags, and caches release state. Its instrumented inputs and output contain no private byte; the real subscriber and error-format controls witness the finite sentinel case. No derivation, output descriptor or installation contract is admitted.",
     "assessments": {

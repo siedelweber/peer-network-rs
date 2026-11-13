@@ -157,6 +157,7 @@ pub fn verifier(salt: Input<'_>, stored_key: Input<'_>, server_key: Input<'_>, o
     {
         return Err(Error::Bound);
     }
+    const { assert!(MAX_ITERATIONS == 600_000) };
     output.0[..21].copy_from_slice(b"SCRAM-SHA-256$600000:");
     STANDARD
         .encode_slice(salt.0, &mut output.0[21..45])

@@ -10,10 +10,15 @@ struct HomeVector {
 }
 
 thread_local! {
+    pub(super) static CHECKED_COMPLETIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static CORRUPT_REGION: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) };
     static CORRUPT_CREDENTIAL: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
 
 pub(super) fn corrupt_credential(credential: &mut Credential) {
+    if let Some(offset) = CORRUPT_REGION.get() {
+        credential.verifier.checked_bytes().unwrap()[offset] ^= 1;
+    }
     if CORRUPT_CREDENTIAL.get() {
         credential.password.checked_bytes().unwrap()[0] ^= 1;
     }
@@ -84,14 +89,32 @@ fn credential_vectors() {
     assert_eq!(distinct.len(), 3, "three distinct inputs executed without sorting");
 }
 
-/// A corrupted constructor pairing refuses before a credential can be returned;
-/// partial entropy and insufficient declared budget refuse without retained mappings.
-/// These finite injected cases do not establish the operating-system entropy quality.
+/// Pairing refuses corruption in each verifier region; salt entropy failure after
+/// password filling erases both homes. An overlapping role refuses at the exact
+/// two-page budget. Checked completion attempts both homes when either refuses.
+/// These finite injected cases do not establish entropy quality or installation.
 /// ´claim:crypto:protected-credentials-refuse-pairing-entropy-and-budget´
 /// ´test:unit:credential-refusals´
 #[test]
 fn credential_refusals() {
-    let Some(case) = child_case("tests::credential_refusals", &["pair", "entropy", "budget"]) else {
+    let Some(case) = child_case(
+        "tests::credential_refusals",
+        &[
+            "pair",
+            "entropy",
+            "salt",
+            "budget",
+            "overlap",
+            "completion-first",
+            "completion-second",
+            "region-prefix",
+            "region-salt",
+            "region-dollar",
+            "region-stored",
+            "region-colon",
+            "region-server",
+        ],
+    ) else {
         return;
     };
     let _serial = SERIAL.lock().unwrap();
@@ -104,6 +127,48 @@ fn credential_refusals() {
             CredentialError::Home(Error::Budget),
             "one-page budget refuses"
         );
+    } else if case == "salt" {
+        set_fault("none");
+        REFUSE_UNMAP_AT.set(Some(0));
+        let mut calls = 0;
+        let result = protection.credential_with(|bytes| {
+            calls += 1;
+            bytes.fill(0x59);
+            if calls == 2 { Err(Error::Entropy) } else { Ok(()) }
+        });
+        assert_eq!(calls, 2, "salt request follows filled password");
+        assert!(
+            matches!(result, Err(CredentialError::Home(Error::Entropy))),
+            "salt entropy failure refuses"
+        );
+        FAULT.with_borrow(|state| {
+            assert_eq!(
+                state.events.iter().filter(|event| **event == "erase").count(),
+                2,
+                "salt failure erases both homes"
+            );
+            assert_eq!(state.erased_pages, [true, true], "salt failure erases both full allocations");
+        });
+    } else if case == "overlap" {
+        let first = fixture_credential(&protection, &vectors::VECTORS[0]).unwrap();
+        assert_eq!(protection.budget, 2 * page, "exact established role budget");
+        let mut calls = 0;
+        let second = protection.credential_with(|bytes| {
+            calls += 1;
+            bytes.fill(0x73);
+            Ok(())
+        });
+        assert!(
+            matches!(second, Err(CredentialError::Home(Error::Budget))),
+            "live role refuses second credential at reservation guard"
+        );
+        assert_eq!(calls, 0, "reservation refusal precedes entropy");
+        assert_eq!(first.complete(), Ok(()), "first role still completes");
+    } else if case.starts_with("completion-") {
+        credential_completion_case(&protection, &case, reserved);
+        return;
+    } else if case.starts_with("region-") {
+        credential_region_case(&protection, &case);
     } else if case == "entropy" {
         let result = protection.credential_with(|bytes| {
             bytes.fill(0x59);
@@ -124,6 +189,54 @@ fn credential_refusals() {
         );
     }
     assert_eq!(RESERVED.load(Ordering::SeqCst), reserved, "refused credential releases homes");
+}
+
+fn credential_completion_case(protection: &Protection, case: &str, reserved: usize) {
+    let credential = fixture_credential(protection, &vectors::VECTORS[0]).unwrap();
+    set_fault("none");
+    REFUSE_UNMAP_AT.set(Some(if case == "completion-first" { 1 } else { 2 }));
+    CHECKED_COMPLETIONS.set(0);
+    assert_eq!(
+        credential.complete(),
+        Err(CredentialError::Completion),
+        "one refused release refuses credential completion"
+    );
+    assert_eq!(
+        CHECKED_COMPLETIONS.get(),
+        2,
+        "both checked completions attempted despite refusal"
+    );
+    FAULT.with_borrow(|state| {
+        assert_eq!(
+            state.events,
+            ["erase", "unlock", "unmap", "erase", "unlock", "unmap"],
+            "both real release paths attempted"
+        );
+    });
+    assert_eq!(
+        RESERVED.load(Ordering::SeqCst),
+        reserved + protection.page,
+        "only refused mapping remains reserved"
+    );
+}
+
+fn credential_region_case(protection: &Protection, case: &str) {
+    let offset = match case {
+        "region-prefix" => 14,
+        "region-salt" => 21,
+        "region-dollar" => 45,
+        "region-stored" => 46,
+        "region-colon" => 90,
+        "region-server" => 91,
+        _ => unreachable!(),
+    };
+    CORRUPT_REGION.set(Some(offset));
+    let result = fixture_credential(protection, &vectors::VECTORS[0]);
+    CORRUPT_REGION.set(None);
+    assert!(
+        matches!(result, Err(CredentialError::Pairing)),
+        "constructor refuses independently corrupted verifier region {case}"
+    );
 }
 
 /// Credential carriers have no implicit copy or byte view; actual wrong-pairing
@@ -200,6 +313,7 @@ pub(super) fn observe_erased(bytes: &[u8]) {
         if state.active {
             state.events.push("erase");
             state.erased = bytes.iter().all(|byte| *byte == 0);
+            state.erased_pages.push(state.erased);
         }
     });
     if OBSERVE_ERASE.swap(false, Ordering::SeqCst) {
@@ -224,12 +338,14 @@ struct Fault {
     kind: FaultKind,
     released: bool,
     erased: bool,
+    erased_pages: Vec<bool>,
     retained: Option<(bool, bool)>,
     events: Vec<&'static str>,
 }
 
 thread_local! {
     static FAULT: std::cell::RefCell<Fault> = std::cell::RefCell::default();
+    static REFUSE_UNMAP_AT: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) };
 }
 
 pub(super) fn refuse_ownership() -> bool {
@@ -253,6 +369,10 @@ pub(super) fn before_unmap() -> Option<Result<(), rustix::io::Errno>> {
     FAULT.with_borrow_mut(|state| {
         if state.active {
             state.events.push("unmap");
+        }
+        if REFUSE_UNMAP_AT.get().is_some() {
+            let attempt = state.events.iter().filter(|event| **event == "unmap").count();
+            return (REFUSE_UNMAP_AT.get() == Some(attempt)).then_some(Err(rustix::io::Errno::IO));
         }
         if state.released {
             // Observe a mutant's duplicate call without actually unmapping twice.

@@ -5457,15 +5457,15 @@
       "claim": "SECRETHOME::claim:crypto:protected-credential-errors-and-traces-contain-no-private-bytes",
       "before": "",
       "after": "Credential carriers have no implicit copy or byte view; actual wrong-pairing\nerrors and tracing contain no fixture password or verifier, only fixed classes.",
-      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition is separately conditional on the recorded installation and terminal-lifecycle requirements."
     },
     {
       "operation": "pn-secret-home::tests::credential_refusals",
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:protected-credentials-refuse-pairing-entropy-and-budget",
       "before": "",
-      "after": "A corrupted constructor pairing refuses before a credential can be returned;\npartial entropy and insufficient declared budget refuse without retained mappings.\nThese finite injected cases do not establish the operating-system entropy quality.",
-      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+      "after": "Pairing refuses corruption in each verifier region; salt entropy failure after\npassword filling erases both homes. An overlapping role refuses at the exact\ntwo-page budget. Checked completion attempts both homes when either refuses.\nThese finite injected cases do not establish entropy quality or installation.",
+      "review": "Finite isolated children cover salt entropy failure after password filling, each verifier region independently, overlapping roles at an exactly two-page budget, and checked completion of both owners with either release refusing. The completion-entry counter distinguishes checked completion from fallback destruction; release hooks observe real cleanup ordering. These controls do not witness installed swap exclusion or process lifetime."
     },
     {
       "operation": "pn-secret-home::tests::credential_vectors",
@@ -5473,7 +5473,7 @@
       "claim": "SECRETHOME::claim:crypto:protected-credentials-match-independent-vectors",
       "before": "",
       "after": "Three distinct unsorted public entropy inputs match independent password/verifier\nbytes through the protected constructor; each sequential role uses two locked\npages, clears 263 scratch bytes and releases both reservations on completion.",
-      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition is separately conditional on the recorded installation and terminal-lifecycle requirements."
     },
     {
       "operation": "pn-secret-home::tests::descriptor_exhaustion",

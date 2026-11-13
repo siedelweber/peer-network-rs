@@ -976,7 +976,7 @@
       "closing_condition": "The ordered credential cuts preserve host vectors and bounds, pass their scoped controls and source-local census, and join the independently required installation evidence without a secret byte export or additional unsafe site.",
       "closing_step": "Ordered credential cuts before executable startup",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Independent review of the protected consumer inventory and proposed residue disposition under ROOT::amend:crypto:protected-verifier-residue, executable and test-only models, delivered-set integration and installation witnesses. Shared derivation, checked completion and protected construction have only their scoped library evidence.",
+      "missing": "Installed swap/hibernation exclusion and terminal generator lifecycle required by the conditional residue admission under ROOT::amend:crypto:protected-verifier-residue, executable and test-only models, delivered-set integration and installation witnesses. Shared derivation, checked completion and protected construction have only their scoped library evidence.",
       "name": "ROOT::dec:observe:credential-packages",
       "owner": "Foundation implementer, storage reviewer and secret-boundary reviewer",
       "path": "adr/016-observability.md",
@@ -3228,7 +3228,7 @@
       "name": "ROOT::verif:crypto:secret-home",
       "owner": "Secret-home implementer and independent cryptographic integration reviewer",
       "path": "adr/023-cryptographic-base.md",
-      "premises": "Finite Linux mapping, process, protected-vector and refusal controls; protected consumer residue remains held for separate review; no signing or paper theorem is realized by these operational checks.",
+      "premises": "Finite Linux mapping, process, protected-vector and refusal controls; protected consumer residue is separately admitted only under the installation and terminal-lifecycle conditions of ROOT::amend:crypto:protected-verifier-residue; no signing or paper theorem is realized by these operational checks.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
