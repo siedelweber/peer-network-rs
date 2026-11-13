@@ -325,10 +325,16 @@ def controls(test, group):
                 round.storage_token='live-fixture-token'
                 printed=io.StringIO()
                 with redirect_stdout(printed):
-                    status,_=production_command(round,[sys.executable,'-c','pass'],build=True)
+                    status,_=production_command(round,[sys.executable,'-c','pass','PN_GATE_STORAGE_TOKEN=second-live-token'],build=True)
                 recorded=json.loads((round.store/'commands.jsonl').read_text().splitlines()[-1])['argv']
                 test.assertNotIn('PN_GATE_STORAGE_TOKEN=live-fixture-token',recorded,'retained command masks the live storage token')
                 test.assertNotIn('live-fixture-token',printed.getvalue(),'printed command masks the live storage token')
+                test.assertNotIn('PN_GATE_STORAGE_TOKEN=second-live-token',recorded,'retained command masks a second token assignment')
+                test.assertNotIn('second-live-token',printed.getvalue(),'printed command masks a second token assignment')
+                with patch('build_graph.cancellable',return_value=SimpleNamespace(returncode=-15,stdout='')):
+                    try:production_command(round,[sys.executable,'-c','pass'])
+                    except InterruptedError as error:test.assertIn('signal 15',str(error),'series interruption names signal')
+                    else:test.fail('series command raises interruption rather than returning an ordinary result')
                 test.assertIn('PN_GATE_STORAGE_TOKEN=[redacted]',recorded,'record keeps an explicitly non-replayable token marker')
                 import os, subprocess
                 from isolation import storage_binding, storage_lock
@@ -361,6 +367,48 @@ def storage_controls(test):
         with patch.dict(os.environ,env):
             directory=storage_binding(root)
             test.assertEqual(storage_binding(root),directory,'bound storage can be reused by its checkout')
+            from isolation import publish_binding, storage_driver, storage_entry
+            for point in ('write', 'flush', 'link', 'published'):
+                record=area/('atomic-'+point)
+                real_link=os.link
+                def interrupted(*args, **kwargs):
+                    if point == 'published':real_link(*args, **kwargs)
+                    raise OSError('interrupted publication')
+                target={'write':'isolation.json.dump','flush':'isolation.os.fsync','link':'isolation.os.link','published':'isolation.os.link'}[point]
+                with patch(target,side_effect=interrupted):
+                    try:publish_binding(record,dict(complete=True))
+                    except OSError:pass
+                test.assertEqual(record.read_text() if record.exists() else None,
+                                 json.dumps(dict(complete=True))+'\n' if point=='published' else None,
+                                 'binding interruption publishes complete bytes or nothing: '+point)
+                publish_binding(record,dict(complete=True))
+                test.assertEqual(json.loads(record.read_text()),dict(complete=True),'binding interruption permits consistent retry: '+point)
+            with patch('isolation.Path.read_text',side_effect=PermissionError('unreadable')):
+                try:storage_binding(root)
+                except ValueError as error:test.assertIn('storage binding unreadable',str(error),'unreadable binding has a named refusal')
+                else:test.fail('unreadable binding must refuse')
+            driver=root/'driver.sh';driver.write_text('exit 0\n')
+            try:storage_driver(root,['bash',str(driver)])
+            except ValueError as error:test.assertIn(str(driver),str(error),'inside driver refusal names resolved path')
+            else:test.fail('wrapper refuses driver inside checkout')
+            outside=area/'driver.sh';outside.write_text('exit 0\n')
+            storage_driver(root,['bash',str(outside)])
+            with storage_lock(directory,'gate') as token:
+                test.assertEqual(storage_entry(root,token)['kind'],'gate','join reads real gate holder kind')
+                from isolation import gate_storage
+                from contextlib import redirect_stdout
+                import io
+                output=io.StringIO()
+                with patch('isolation.Path.cwd',return_value=root),patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token),redirect_stdout(output):
+                    test.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'joined gate control succeeds')
+                test.assertIn('action=joined kind=gate',output.getvalue(),'join line prints real gate holder kind')
+            record=area/'target/.gate-storage-owner.json';original=record.read_text()
+            record.write_text(json.dumps(dict(json.loads(original),checkout=str(area/'foreign-checkout'))))
+            try:
+                try:storage_binding(root)
+                except ValueError as error:test.assertIn('checkout',str(error),'isolated checkout difference is named')
+                else:test.fail('binding refuses isolated checkout difference')
+            finally:record.write_text(original)
             for field,value,member in [('CARGO_TARGET_DIR',str(area/'other-target'),'target'),('PN_ISOLATION_ROOT',str(area/'other-storage'),'storage')]:
                 with patch.dict(os.environ,{field:value}):
                     try:storage_binding(root)
@@ -389,6 +437,35 @@ def storage_controls(test):
         def alive(pid):
             path=Path('/proc')/str(pid)/'stat'
             return path.exists() and path.read_text().split(') ',1)[1][0]!='Z'
+        # The joined entry has no parent relationship to the holder: this
+        # stands in for a prefix which leaves its workload running.
+        token_path=area/'holder-token';ready=root/'child-ready'
+        ready.unlink(missing_ok=True)
+        holder_code='from isolation import storage_lock; from pathlib import Path; import time; c=storage_lock(Path('+repr(str(directory))+'),"series"); token=c.__enter__(); Path('+repr(str(token_path))+').write_text(token); time.sleep(60)'
+        child_env=dict(os.environ,**env,PYTHONPATH=ci);child_env.pop('PN_GATE_STORAGE_TOKEN',None)
+        holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        joined=None;pid=None
+        try:
+            deadline=time.monotonic()+10
+            while not token_path.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
+            test.assertTrue(token_path.exists(),'watch control establishes holder')
+            joined_code='from isolation import gate_storage; raise SystemExit(gate_storage('+repr([sys.executable,'-c',child_code])+'))'
+            joined=subprocess.Popen([sys.executable,'-B','-c',joined_code],cwd=root,env=dict(child_env,PN_GATE_STORAGE_TOKEN=token_path.read_text()),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            deadline=time.monotonic()+10
+            while not ready.exists() and joined.poll() is None and time.monotonic()<deadline:time.sleep(.01)
+            test.assertTrue(ready.exists(),'independent joined workload starts')
+            pid=int(ready.read_text());started=time.monotonic();holder.kill();holder.communicate()
+            deadline=started+7
+            while (alive(pid) or joined.poll() is None) and time.monotonic()<deadline:time.sleep(.01)
+            test.assertFalse(alive(pid),'lock watch ends workload behind non-relaying prefix')
+            test.assertIsNotNone(joined.poll(),'lock watch ends joined entry within polling and cleanup bound')
+            output,_=joined.communicate()
+            test.assertEqual(joined.returncode,5,'lost holder is uncounted status five')
+            test.assertIn('reason=holder-lock-released',output,'lost holder names the lock release')
+        finally:
+            if holder.poll() is None:holder.kill();holder.communicate()
+            if joined is not None and joined.poll() is None:joined.kill();joined.communicate()
+            if pid and alive(pid):os.kill(pid,signal.SIGKILL)
         for mode,number in [('storage',signal.SIGKILL),('storage',signal.SIGHUP),('series',signal.SIGTERM)]:
             ready=root/'child-ready';ready.unlink(missing_ok=True)
             if mode=='storage':

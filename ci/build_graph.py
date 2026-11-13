@@ -189,7 +189,7 @@ def parent_death(parent):
         os.kill(os.getpid(), signal.SIGTERM)
 
 
-def cancellable(argv, *, kill_after=5, reap_tree=False, **kwargs):
+def cancellable(argv, *, kill_after=5, reap_tree=False, still_owned=None, **kwargs):
     """Forward termination through each adapter boundary and reap its child."""
     child = None
     pending = []
@@ -211,6 +211,8 @@ def cancellable(argv, *, kill_after=5, reap_tree=False, **kwargs):
         if pending:
             terminate(pending[0], None)
         while True:
+            if still_owned is not None and not pending and not still_owned():
+                terminate(signal.SIGTERM, None)
             if pending and reap_tree and time.monotonic()-pending[1] >= 35:
                 raise ValueError('cancelled command leader not reaped by 35s deadline')
             try:
@@ -2248,13 +2250,20 @@ def repeat_obligation(root, pending, whole, tiers, declared):
     if declaration.get('repeat_of'):
         print('GATE-QUIET-REPEAT-PENDING obligation='+declaration['repeat_of']+' entry='+declaration['entry']+' close=repeat-close',flush=True)
         return None
-    compiling = compilation['transition_compiling_steps']
+    compiling = sorted(set(pending.get('cache',{}).get('compiling_steps',[])))
+    nonrepeatable = sorted(set(compilation['transition_compiling_steps'])-set(compiling))
     scopes = []
     for scope, measurement in [('whole',whole),*tiers.items()]:
         budget = declared['whole-gate']['budget_ms']/1000 if scope == 'whole' else declared[measurement['budget']]['budget_ms']/1000 if measurement.get('budget') else None
         selected = compiling if scope == 'whole' else [name for name in compiling if name in measurement.get('steps',[])]
         request = quiet_repeat(declaration['source'],pending.get('tree'),scope,measurement,budget,selected)
-        if request is not None:scopes.append(request)
+        if request is not None:
+            omitted = nonrepeatable if scope == 'whole' else [name for name in nonrepeatable if name in measurement.get('steps',[])]
+            request['not_repeatable'] = [dict(step=name, reason='owner cache history is not prepared by the controller') for name in omitted]
+            if omitted:
+                request['required'] = False
+                request['transition_compiling_steps'] = []
+            scopes.append(request)
     if not scopes:return None
     policy = series_policy()
     # The floor is sufficient for every possible frozen-median admission bound.
@@ -2278,45 +2287,60 @@ def repeat_close(obligation, directory, admission=None):
     declaration=json.loads((directory/'gate-declaration.json').read_text())
     whole=json.loads((directory/'gate-wall.json').read_text())
     run=json.loads((directory/'gate-baseline.json').read_text())
+    failures = []
     if (declaration.get('repeat_of') != request['obligation'] or declaration.get('source') != request['source']
             or declaration.get('plan') != 'one-run' or declaration.get('sample') != request['sample']
             or run.get('tree') != request['tree'] or run.get('import_base') != request['base']
             or (Path(run['path']).parent.name if run.get('path') else None) != request['configuration_key']):
-        raise ValueError('quiet repeat identity differs from obligation')
+        failures.append('quiet repeat identity differs from obligation')
     if whole.get('status') != 0 or not quiet_baseline(run):
-        raise ValueError('quiet repeat is not functionally green with quiet boundaries')
+        failures.append('quiet repeat is not functionally green with quiet boundaries')
     required = {step for scope in request['scopes'] for step in scope['transition_compiling_steps']}
     repeated = repeat_compile_evidence(run.get('cache',{}),run.get('tiers',{}))
     unknown_steps = {step for step,owner in repeated['unknown']}
     if not required <= set(repeated['transition_compiling_steps'])-unknown_steps:
-        raise ValueError('quiet repeat does not cover the obligation compiling steps')
+        failures.append('quiet repeat does not cover the obligation compiling steps')
     pressure=baseline_stall(dict(whole=whole))
     limit=request['whole_stall_at_most']
     if admission is not None:
-        admitted=json.loads(admission.read_text().removeprefix('GATE-SERIES-CHECK '))
-        median=admitted.get('frozen_median')
-        if admitted.get('outcome') != 'admitted' or type(median) not in (int,float) or not math.isfinite(median) or not 0 <= median <= 1:
-            raise ValueError('quiet repeat admission is not a completed series check')
-        identity = admitted.get('declared_identity',{})
-        if not isinstance(identity,dict) or identity.get('configuration_key') != request['configuration_key']:
-            raise ValueError('quiet repeat admission identity differs from obligation')
-        policy=admitted['policy']
-        for name in ('series_absolute_pressure','series_relative_floor','series_pressure_multiple'):
-            value=policy.get(name)
-            if type(value) not in (int,float) or not math.isfinite(value) or not (value >= 1 if name == 'series_pressure_multiple' else 0 <= value <= 1):
+        try:
+            admitted=json.loads(admission.read_text().removeprefix('GATE-SERIES-CHECK '))
+            if not isinstance(admitted, dict):
+                raise ValueError('quiet repeat admission is not a completed series check')
+            median=admitted.get('frozen_median')
+            valid = True
+            if admitted.get('outcome') != 'admitted' or type(median) not in (int,float) or not math.isfinite(median) or not 0 <= median <= 1:
+                failures.append('quiet repeat admission is not a completed series check')
+                valid = False
+            identity = admitted.get('declared_identity',{})
+            if not isinstance(identity,dict) or identity.get('configuration_key') != request['configuration_key']:
+                failures.append('quiet repeat admission identity differs from obligation')
+                valid = False
+            policy=admitted.get('policy')
+            if not isinstance(policy,dict):
                 raise ValueError('quiet repeat admission policy is malformed')
-        limit=min(policy['series_absolute_pressure'],max(policy['series_relative_floor'],median*policy['series_pressure_multiple']))
+            for name in ('series_absolute_pressure','series_relative_floor','series_pressure_multiple'):
+                value=policy.get(name)
+                if type(value) not in (int,float) or not math.isfinite(value) or not (value >= 1 if name == 'series_pressure_multiple' else 0 <= value <= 1):
+                    failures.append('quiet repeat admission policy is malformed: '+name)
+                    valid = False
+            if valid:
+                limit=min(policy['series_absolute_pressure'],max(policy['series_relative_floor'],median*policy['series_pressure_multiple']))
+        except (ValueError, KeyError, TypeError) as error:
+            failures.append(str(error))
     if pressure is None or pressure > limit:
-        raise ValueError('quiet repeat exceeds its admission pressure bound')
+        failures.append('quiet repeat exceeds its admission pressure bound')
     for phase in ('start','end'):
         idle=json.loads((directory/('gate-series-host-'+phase+'.json')).read_text())
         if idle.get('identity',{}).get('PN_GATE_ENTRY') != declaration['entry'] or idle.get('boundary') != phase:
-            raise ValueError('quiet repeat idle receipt is foreign')
+            failures.append('quiet repeat '+phase+' idle receipt is foreign')
         refusal=series_idle_refusal(idle)
-        if refusal:raise ValueError(refusal)
+        if refusal:failures.append(phase+': '+refusal)
         at=idle.get('at')
         if type(at) not in (int,float) or not math.isfinite(at) or (at > whole['started'] if phase=='start' else at < whole['ended']):
-            raise ValueError('quiet repeat idle receipt does not bracket the run')
+            failures.append('quiet repeat '+phase+' idle receipt does not bracket the run')
+    if failures:
+        raise ValueError('; '.join(failures))
     print('GATE-QUIET-REPEAT-DISCHARGED '+json.dumps(dict(obligation=request['obligation'],owing_entry=request['owing_entry'],
         entry=declaration['entry'],classification=whole['classification'],whole_stall=pressure),sort_keys=True),flush=True)
 

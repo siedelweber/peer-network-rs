@@ -1,5 +1,6 @@
 """The sole writable source-tree boundary for gate mutation witnesses."""
 from contextlib import contextmanager
+import ctypes
 import fcntl
 import hashlib
 import json
@@ -37,6 +38,34 @@ class StorageBusy(ValueError):
     """An uncounted gate refusal before declaration or measurement."""
 
 
+class StorageRange(ctypes.Structure):
+    """Native Linux record-lock query; no descriptor crosses the boundary."""
+    _fields_ = [('kind', ctypes.c_short), ('origin', ctypes.c_short),
+                ('start', ctypes.c_longlong), ('length', ctypes.c_longlong),
+                ('pid', ctypes.c_int)]
+
+
+def storage_range(stream, action, kind):
+    query = StorageRange(kind, os.SEEK_SET, 0, 1, 0)
+    answer = fcntl.fcntl(stream, action, bytes(query))
+    return StorageRange.from_buffer_copy(answer).kind
+
+
+def publish_binding(record, expected):
+    """Publish a complete first-use record without replacing another writer."""
+    descriptor, temporary = tempfile.mkstemp(prefix='.binding-', dir=record.parent)
+    try:
+        with os.fdopen(descriptor, 'w') as output:
+            json.dump(expected, output); output.write('\n')
+            output.flush(); os.fsync(output.fileno())
+        try:
+            os.link(temporary, record)
+        except FileExistsError:
+            pass
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+
+
 def storage_binding(root):
     """Bind all three retained locations; checkout metadata survives clean."""
     root = root.resolve()
@@ -60,11 +89,8 @@ def storage_binding(root):
                     raise ValueError('storage binding differs members='+','.join(differences)+' record='+str(record))
         for record in records:
             record.parent.mkdir(parents=True, exist_ok=True)
-            try:
-                with record.open('x') as output:
-                    json.dump(expected, output); output.write('\n')
-            except FileExistsError:
-                pass
+            if not record.exists():
+                publish_binding(record, expected)
             try:
                 observed = json.loads(record.read_text())
             except (OSError, ValueError) as error:
@@ -95,24 +121,29 @@ def storage_lock(directory, kind, identity=None):
         os.fchmod(stream.fileno(), 0o600)
         stream.seek(0); stream.truncate()
         stream.write(json.dumps(dict(kind=kind, token=token, identity=identity))+'\n'); stream.flush()
+        storage_range(stream, fcntl.F_OFD_SETLK, fcntl.F_WRLCK)
         print('GATE-STORAGE-LOCK action=acquired kind='+kind, flush=True)
         try:
             yield token
         finally:
+            storage_range(stream, fcntl.F_OFD_SETLK, fcntl.F_UNLCK)
             fcntl.flock(stream, fcntl.LOCK_UN)
             print('GATE-STORAGE-LOCK action=released kind='+kind, flush=True)
 
 
 def storage_entry(root, token):
     """Check the command's cooperative token and held storage inode."""
-    with (storage_binding(root)/'.gate-storage.lock').open('r') as stream:
+    return storage_observation(storage_binding(root), token)
+
+
+def storage_observation(directory, token):
+    """Observe without reentering binding preparation or taking any lock."""
+    with (directory/'.gate-storage.lock').open('r') as stream:
         row = json.load(stream)
         if not token or not secrets.compare_digest(str(row.get('token', '')), token):
             raise ValueError('storage lock token differs')
-        try:
-            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            return
+        if storage_range(stream, fcntl.F_OFD_GETLK, fcntl.F_RDLCK) == fcntl.F_WRLCK:
+            return row
     raise ValueError('storage lock is not held')
 
 
@@ -122,19 +153,49 @@ def storage_token():
     return declaration_environment().get('PN_GATE_STORAGE_TOKEN')
 
 
+def storage_driver(root, command):
+    """A switching driver must survive the checkout it changes."""
+    if not command:
+        raise ValueError('storage wrapper needs a command')
+    for word in command:
+        try:
+            path = Path(word).resolve()
+            exists = path.is_file()
+        except (OSError, ValueError):
+            continue
+        internal = (path == root/'ci/gate.sh' and '--gate-storage-locked' in command or
+                    path == root/'ci/precheck.py' and '--storage-locked' in command)
+        if exists and path.is_relative_to(root) and not internal:
+            raise ValueError('storage driver is inside checkout: '+str(path))
+
+
 def gate_storage(command):
     """Acquire before declaration, or enter the series command's held lock."""
     root = Path.cwd()
     token = storage_token()
-    def invoke(value):
-        result = cancellable(command, kill_after=None, close_fds=True,
+    def invoke(value, watching=False):
+        lost = []
+        directory = storage_root(root)
+        def owned():
+            try:
+                storage_observation(directory, value)
+                return True
+            except (OSError, ValueError, TypeError):
+                lost.append(True)
+                return False
+        result = cancellable(command, kill_after=5 if watching else None, reap_tree=watching, close_fds=True,
+                             still_owned=owned if watching else None,
                              env=os.environ | {'PN_GATE_STORAGE_TOKEN': value}).returncode
+        if lost:
+            print('GATE-STORAGE-REFUSED status=5 counted=false reason=holder-lock-released', flush=True)
+            return 5
         return 128-result if result < 0 else result
     try:
+        storage_driver(root, command)
         if token:
-            storage_entry(root, token)
-            print('GATE-STORAGE-LOCK action=joined kind=series', flush=True)
-            return invoke(token)
+            holder = storage_entry(root, token)
+            print('GATE-STORAGE-LOCK action=joined kind='+holder['kind'], flush=True)
+            return invoke(token, watching=True)
         with storage_lock(storage_binding(root), 'gate') as acquired:
             return invoke(acquired)
     except StorageBusy as error:

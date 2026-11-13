@@ -208,7 +208,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(declaration_environment(),foreign,'package runner restores the enclosing declaration')
 
     def test_series_archive_list(self):
-        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live.
+        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live. Both token assignments are masked, and a signalled command raises interruption.
         ´claim:devperf:series-archive-list´
         ´test:integration:test-series-archive-list´
         """
@@ -878,7 +878,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes outlive no released holder in the timed fixture even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -1063,7 +1063,7 @@ class Performance(unittest.TestCase):
         self.assertIsNone(quiet_repeat('commit','tree','fast',dict(classification='within-budget'),100,[]))
 
     def test_repeat_transition_compiles(self):
-        """Only cache compilation or owner work outside each recurring set triggers a compile repeat.
+        """Only cache compilation or owner work outside each recurring set enters transition-compilation evidence; the obligation separately identifies reproducible scopes.
         ´claim:devperf:repeat-transition-compiles´
         ´test:integration:test-repeat-transition-compiles´
         """
@@ -1088,7 +1088,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(repeat_compile_evidence({},tiers)['unknown'],[('wallet-conformance','wallet-conformance')],'unknown is not observed compilation')
 
     def test_repeat_obligation_close(self):
-        """One linked green quiet repeat discharges all scopes even over budget; foreign or loaded evidence refuses.
+        """One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Owner-history scopes are reported non-repeatable rather than required, and independent work, pressure and functional failures are reported together.
         ´claim:devperf:repeat-obligation-close´
         ´test:integration:test-repeat-obligation-close´
         """
@@ -1109,6 +1109,16 @@ class Performance(unittest.TestCase):
             self.assertEqual(request['base'],'base','request preserves import base')
             self.assertTrue(request['required'],'excess share makes the obligation required')
             self.assertEqual(request['whole_stall_at_most'],.08,'interim repeat bound is the absolute/floor minimum')
+            original_request=copy.deepcopy(request)
+            affected=copy.deepcopy(tiers)
+            affected['fast'].update(steps=['owner-step'],isolated_compiling_steps=[dict(step='owner-step',owner='owner',cold_target=False,compiled=['Compiling extra v1.0.0'])])
+            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()):
+                limited=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,affected,declared)
+            self.assertFalse(limited['required'],'owner cache history cannot issue an impossible required repeat')
+            self.assertTrue(all(row['not_repeatable'] for row in limited['scopes']),'whole and affected tier retain non-repeatable cause')
+            self.assertTrue(all(row['transition_compiling_steps']==[] for row in limited['scopes']),'non-repeatable work is not owed compiling work')
+            self.assertIn('cache history',limited['scopes'][0]['not_repeatable'][0]['reason'],'non-repeatable work names its preparation limit')
+            (lane/'gate-quiet-repeat.json').write_text(json.dumps(original_request))
             obligation=lane/'gate-quiet-repeat.json'
             declaration.update(entry=request['entry'],repeat_of=request['obligation'])
             (lane/'gate-declaration.json').write_text(json.dumps(declaration))
@@ -1135,6 +1145,13 @@ class Performance(unittest.TestCase):
             request['scopes'][0]['transition_compiling_steps']=['clippy']
             obligation.write_text(json.dumps(request))
             with self.assertRaisesRegex(ValueError,'compiling steps',msg='a warm repeat cannot discharge omitted compilation'):repeat_close(obligation,lane)
+            (lane/'gate-wall.json').write_text(json.dumps(dict(whole,stall=.2,status=1)))
+            try:repeat_close(obligation,lane)
+            except ValueError as error:
+                for reason in ('compiling steps','pressure bound','functionally green'):
+                    self.assertIn(reason,str(error),'close reports every independent failure: '+reason)
+            else:self.fail('invalid repeat must refuse')
+            (lane/'gate-wall.json').write_text(json.dumps(whole))
             run['cache']['compiling_steps']=['clippy'];(lane/'gate-baseline.json').write_text(json.dumps(run))
             with redirect_stdout(io.StringIO()):repeat_close(obligation,lane)
             request['scopes'][0]['transition_compiling_steps']=[];obligation.write_text(json.dumps(request))

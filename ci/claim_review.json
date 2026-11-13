@@ -342,15 +342,15 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:repeat-obligation-close",
       "before": "",
-      "after": "One linked green quiet repeat discharges all scopes even over budget; foreign or loaded evidence refuses.",
-      "review": "Read one obligation across scopes and its declaration, configuration and idle joins. A quiet green regression discharges; a foreign, loaded, failed or busy repeat does not, and it creates no recursive obligation."
+      "after": "One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Owner-history scopes are reported non-repeatable rather than required, and independent work, pressure and functional failures are reported together.",
+      "review": "Read one obligation across scopes and its declaration, configuration and idle joins. A quiet green regression discharges; a foreign, loaded, failed or busy repeat does not, and it creates no recursive obligation. Owner-history scopes are reported non-repeatable rather than required, and independent work, pressure and functional failures are reported together."
     },
     {
       "operation": "ci::test_devperf.Performance.test_repeat_transition_compiles",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:repeat-transition-compiles",
       "before": "",
-      "after": "Only cache compilation or owner work outside each recurring set triggers a compile repeat.",
+      "after": "Only cache compilation or owner work outside each recurring set enters transition-compilation evidence; the obligation separately identifies reproducible scopes.",
       "review": "Read the recurring package/version set against cache compiles and owner artifacts. The controls distinguish freshness, recurring checks, lint rebuilds and a new owner artifact."
     },
     {
@@ -358,8 +358,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-archive-list",
       "before": "",
-      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live.",
-      "review": "Conformance controls run the production command, inspect its retained and printed vectors, and replay the retained vector against a live holder. Robustness controls retain archive boundaries and path diagnostics. The cooperative token is not an authentication boundary against the account."
+      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live. Both token assignments are masked, and a signalled command raises interruption.",
+      "review": "Conformance controls run the production command, inspect its retained and printed vectors, and replay the retained vector against a live holder. Robustness controls retain archive boundaries and path diagnostics. The cooperative token is not an authentication boundary against the account. Both token assignments are masked, and a signalled command raises interruption."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
@@ -390,8 +390,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
-      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion.",
-      "review": "Conformance and robustness controls execute the storage and entry paths with real temporary lock files and bounded child processes; their assertions cover only cooperative exclusion and the stated controlled lifetime and identity refusals, not noncooperating account processes."
+      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes outlive no released holder in the timed fixture even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder.",
+      "review": "Conformance and robustness controls execute the storage and entry paths with real temporary lock files and bounded child processes; their assertions cover only cooperative exclusion and the stated controlled lifetime and identity refusals, not noncooperating account processes. Controlled joined processes outlive no released holder in the timed fixture even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",
