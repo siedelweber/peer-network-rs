@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "delivery::DeliveryFailure",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "syntax": "# [doc = \" Closed delivery causes; dependency error strings are discarded.\"] # [doc = \" (´def:home:named-delivery´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum DeliveryFailure { Home , ZeroProgress , ClosedReader , Write , }"
+  }
+}

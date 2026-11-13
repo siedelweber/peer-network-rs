@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "delivery::AcquisitionError",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "syntax": "# [doc = \" Public startup refusal; no dependency error or input value is retained.\"] # [doc = \" (´def:home:named-delivery´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum AcquisitionError { Missing , Additional , NameMismatch , InvalidConvention , Unavailable , ReceiverInvalid , }"
+  }
+}

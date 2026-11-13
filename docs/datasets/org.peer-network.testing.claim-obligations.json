@@ -3264,7 +3264,15 @@
         "SECRETHOME::claim:crypto:home-completion-errors-contain-no-private-bytes",
         "SECRETHOME::claim:crypto:protected-credentials-match-independent-vectors",
         "SECRETHOME::claim:crypto:protected-credentials-refuse-pairing-entropy-and-budget",
-        "SECRETHOME::claim:crypto:protected-credential-errors-and-traces-contain-no-private-bytes"
+        "SECRETHOME::claim:crypto:protected-credential-errors-and-traces-contain-no-private-bytes",
+        "SECRETHOME::claim:crypto:protected-delivery-accounts-every-write-outcome",
+        "SECRETHOME::claim:crypto:delivery-errors-and-traces-contain-no-private-bytes",
+        "SECRETHOME::claim:crypto:receiver-acquisition-refuses-before-protection",
+        "SECRETHOME::claim:crypto:closed-standard-streams-are-restored-before-acquisition",
+        "SECRETHOME::claim:crypto:named-receiver-validation-is-closed",
+        "SECRETHOME::claim:crypto:typed-deliveries-preserve-the-two-protected-frames",
+        "SECRETHOME::claim:crypto:delivery-refusal-retains-independent-completion",
+        "ROOT::claim:discipline:credential-receiver-census-pins-first-entry"
       ],
       "closing_condition": "Pass the finite kernel, acquisition, ownership and source inventory controls.",
       "closing_step": "Secret-home implementation before signing.",

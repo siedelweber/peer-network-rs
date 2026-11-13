@@ -149,7 +149,7 @@ establishment = "resolvable"
 reader = "cargo-archive"
 source = "Cargo.lock"
 definition = "The package name and version locate https://static.crates.io/crates/{name}/{name}-{version}.crate; the registry checksum measures those archive bytes."
-paths = ["Cargo.lock"]
+paths = ["Cargo.lock", "ci/protected-packages/*.json"]
 
 [[rows]]
 family = "correspondence-pins"
@@ -1270,3 +1270,13 @@ reader = "result-position-vectors"
 source = "packages/host/src/admitted_result/position/vectors.json"
 definition = "Regenerate the seven distinct unsorted projection fixtures without the host carrier, its helpers or the interchange encoder. The root and ordinary child use the public admitted fixture; other cases control recognized marker projections. No transition continuity, settlement, store admission or collision proof is established."
 paths = ["packages/host/src/admitted_result/position/vectors.json"]
+
+[[rows]]
+family = "named-receiver-denial-filter"
+group = "first-party controls"
+measures = "Public instruction and action words of the syscall-denial control"
+producer = "None; Linux UAPI bpf_common.h and seccomp.h"
+establishment = "defined"
+reader = "receiver-filter"
+definition = "The classic filter loads the syscall number as an absolute word, compares an immediate, and returns either permission refusal or allowance. Only those five published instruction/action words are admitted."
+paths = ["packages/secret-home/src/delivery/tests.rs"]

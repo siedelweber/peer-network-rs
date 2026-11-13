@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "item": "delivery::<DeliveryError as std :: fmt :: Display>::fmt",
+    "owner": "SECRETHOME",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::amend:crypto:secret-home",
+    "mode": "exception",
+    "shape": "shape-secret-home",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: The public error never reads the protected source or a dependency message.",
+      "witness": "SECRETHOME::claim:crypto:delivery-errors-and-traces-contain-no-private-bytes",
+      "boundary": "pn-secret-home::packages/secret-home/src/delivery.rs::delivery::Credential::deliver_password",
+      "class_decision": "named-credential-delivery"
+    }
+  },
+  "review": {
+    "operation": "pn-secret-home::packages/secret-home/src/delivery.rs::delivery::<DeliveryError as std :: fmt :: Display>::fmt",
+    "body": "{ f . write_str (\"credential delivery refused\") }",
+    "class_decision": "named-credential-delivery",
+    "item_premise": "Source review covers opaque role capabilities with fixed Debug, constant refusal classes and public accepted-byte counts. Acquisition contains no secret and runs before observation; the executable records its public convention and outcome. The two deliveries borrow only their own protected regions into the two labelled kernel-pipe exits, whose buffers are receiver custody. Formatting sees no descriptor, private byte or dependency text. Protection establishes the fixed two-page budget before observation workers. This recording confirmation neither establishes installed wiring nor substitutes for the conditional primitive-residue admission.",
+    "assessments": {
+      "full_recording": "named-credential-delivery-review",
+      "secret_flow": "named-credential-delivery-review",
+      "exposure_consumers": "named-credential-delivery-review"
+    }
+  }
+}

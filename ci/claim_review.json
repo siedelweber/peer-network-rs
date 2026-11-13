@@ -626,6 +626,14 @@
       "review": "Read the dated-channel and component witnesses, full answering rustc commit acceptance, and wrong, missing, repeated or shortened commit-hash refusals. The expected public identity comes from build policy; a channel file alone cannot admit a different answering nightly. These assertions do not establish older-compiler compatibility or artifact reproducibility."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_credential_receiver_census",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:credential-receiver-census-pins-first-entry",
+      "before": "",
+      "after": "One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; syscall denial and write outcome seams remain explicitly test-only and do not witness installation."
+    },
+    {
       "operation": "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:protected-packages-retain-scoped-resolution",
@@ -638,8 +646,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:secret-carriers-reject-printable-traits",
       "before": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.",
-      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them.",
-      "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls."
+      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them; the receiver fixture compiles a correct-role twin and refuses both reversed and conversion-mediated deliveries.",
+      "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls. The standing receiver-role compiler fixture adds the correct-role twin and both direct and conversion-mediated refusals, within the existing compiler-control budget."
     },
     {
       "operation": "ci::test_discipline.WorkspaceChecks.test_unsafe_inventory",
@@ -5578,6 +5586,62 @@
       "before": "",
       "after": "Claim: With an injected internal declaration whose announcement is after genesis but effect is before it, the binder's announcement guard refuses independently; public declaration validation already excludes this inconsistent ordering.",
       "review": "A valid fixture binds before mutation. The unit test then injects an internally inconsistent announcement after genesis with effect unchanged, bypassing the public ordering validator solely to isolate the defensive announcement guard."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::closed_reader",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:delivery-refusal-retains-independent-completion",
+      "before": "",
+      "after": "A closed pipe reader yields a typed content-free failure with no accepted\nbytes; the other role remains independently deliverable and both homes complete.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::closed_standard_streams",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:closed-standard-streams-are-restored-before-acquisition",
+      "before": "",
+      "after": "The pinned runtime restores closed standard streams before the test entry;\nthis finite process control does not assume anything about passed slots three and four.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::diagnostics",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:delivery-errors-and-traces-contain-no-private-bytes",
+      "before": "",
+      "after": "Real protected fixture reads reach the delivery failure and trace boundary;\nno fixture bytes occur in Debug, Display, the source chain or recorded fields.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::protected_delivery",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:typed-deliveries-preserve-the-two-protected-frames",
+      "before": "",
+      "after": "A real protected fixture delivers its password and verifier to separate\nowned pipes, with independent expected bytes; both homes then complete.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::protocol",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:receiver-acquisition-refuses-before-protection",
+      "before": "",
+      "after": "Separate processes exercise ordered startup refusals and the irreversible\nlatch. An unprivileged filter supplies actual denied syscall results.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::validation",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:named-receiver-validation-is-closed",
+      "before": "",
+      "after": "Finite public metadata and pipe fixtures distinguish malformed counts and\nwrong receivers; no deployment wiring or process-handle availability is inferred.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
+    },
+    {
+      "operation": "pn-secret-home::delivery::tests::write_outcomes",
+      "path": "packages/secret-home/src/delivery/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:protected-delivery-accounts-every-write-outcome",
+      "before": "",
+      "after": "Interrupted writes retry, short writes advance exactly once, and terminal\nrefusals retain the accepted prefix. The seam changes outcomes, never source bytes.",
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; actual syscall denial uses a test launcher filter, write outcomes use a test-only seam, and neither witnesses installation."
     },
     {
       "operation": "pn-secret-home::integration::kernel_limits",

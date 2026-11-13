@@ -569,6 +569,7 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
+        "ci::test_discipline.WorkspaceChecks.test_credential_receiver_census",
         "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
         "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",
@@ -4329,19 +4330,26 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-secret-home::delivery::tests::write_outcomes",
+        "pn-secret-home::delivery::tests::diagnostics",
+        "pn-secret-home::delivery::tests::protocol",
+        "pn-secret-home::delivery::tests::closed_standard_streams",
+        "pn-secret-home::delivery::tests::validation",
+        "pn-secret-home::delivery::tests::protected_delivery",
+        "pn-secret-home::delivery::tests::closed_reader",
+        "pn-secret-home::tests::credential_vectors",
+        "pn-secret-home::tests::credential_refusals",
+        "pn-secret-home::tests::credential_diagnostics",
+        "pn-secret-home::tests::completion_controls",
+        "pn-secret-home::tests::completion_repeat",
+        "pn-secret-home::tests::completion_diagnostics",
         "pn-secret-home::tests::kernel_home",
         "pn-secret-home::tests::acquisition",
         "pn-secret-home::tests::ownership",
         "pn-secret-home::tests::namespace_identity",
         "pn-secret-home::tests::no_deref",
         "pn-secret-home::tests::descriptor_exhaustion",
-        "pn-secret-home::tests::foreign_pid",
-        "pn-secret-home::tests::completion_controls",
-        "pn-secret-home::tests::completion_repeat",
-        "pn-secret-home::tests::completion_diagnostics",
-        "pn-secret-home::tests::credential_vectors",
-        "pn-secret-home::tests::credential_refusals",
-        "pn-secret-home::tests::credential_diagnostics"
+        "pn-secret-home::tests::foreign_pid"
       ],
       "implementation": "pn-secret-home-rust",
       "kind": "suite",

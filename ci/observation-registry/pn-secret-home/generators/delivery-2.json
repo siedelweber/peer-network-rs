@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "delivery::DeliveryFailure",
+    "kind": "derive",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+    "class_decision": "named-credential-delivery",
+    "expansion_review": "Derived copying, equality and Debug cover only closed public discriminants and accepted-byte counts. Opaque receiver types have explicit fixed-marker Debug and no copying or byte conversion."
+  }
+}

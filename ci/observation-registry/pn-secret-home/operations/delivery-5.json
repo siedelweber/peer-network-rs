@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "item": "delivery::Credential::deliver_password",
+    "owner": "SECRETHOME",
+    "signature": "fn deliver_password (& mut self , mut receiver : PasswordReceiver) -> Result < usize , DeliveryError >",
+    "claim": "ROOT::amend:crypto:secret-home",
+    "mode": "instrumented",
+    "shape": "shape-secret-home"
+  },
+  "review": {
+    "operation": "pn-secret-home::packages/secret-home/src/delivery.rs::delivery::Credential::deliver_password",
+    "body": "{ let bytes = self . password . checked_bytes () . map_err (| _ | DeliveryError { accepted : 0 , kind : DeliveryFailure :: Home , }) ? ; write_protected (& mut receiver . 0 , & bytes [.. super :: PASSWORD_LENGTH]) }",
+    "class_decision": "named-credential-delivery",
+    "item_premise": "Source review covers opaque role capabilities with fixed Debug, constant refusal classes and public accepted-byte counts. Acquisition contains no secret and runs before observation; the executable records its public convention and outcome. The two deliveries borrow only their own protected regions into the two labelled kernel-pipe exits, whose buffers are receiver custody. Formatting sees no descriptor, private byte or dependency text. Protection establishes the fixed two-page budget before observation workers. This recording confirmation neither establishes installed wiring nor substitutes for the conditional primitive-residue admission.",
+    "assessments": {
+      "full_recording": "named-credential-delivery-review",
+      "secret_flow": "named-credential-delivery-review",
+      "exposure_consumers": "named-credential-delivery-review"
+    }
+  }
+}

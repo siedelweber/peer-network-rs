@@ -582,6 +582,10 @@ def establish(root, rule):
         if set(pins) != set(rule["subjects"]) or rule["algorithm"] != "SHA-256 over the digest function's canonical JSON rows":
             raise ValueError("hash citations: incomplete projection recipe")
         return lambda value, line: any(value == pin and re.match(r"^" + re.escape(name) + r"\s*=", line) for name, pin in pins.items())
+    if kind == "receiver-filter" and standing == "defined":
+        # Linux UAPI: BPF_LD|BPF_W|BPF_ABS, BPF_JMP|BPF_JEQ|BPF_K,
+        # BPF_RET|BPF_K, SECCOMP_RET_ERRNO|EPERM, SECCOMP_RET_ALLOW.
+        return lambda value, _line: literal_integer(value) in {32, 21, 6, 327681, 2147418112}
     if kind == "byte" and standing == "defined":
         # ASCII controls, the two bytes excluded by UTF-8, the euro sign's UTF-8
         # encoding, and the pack's visible alternating-pair payload pattern.

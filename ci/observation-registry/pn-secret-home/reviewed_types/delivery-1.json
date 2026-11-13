@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "delivery::PasswordReceiver",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "syntax": "# [doc = \" An opaque receiver selected by the password name, never by argument position.\"] # [doc = \" (´def:home:named-delivery´)\"] pub struct PasswordReceiver (File) ;"
+  }
+}

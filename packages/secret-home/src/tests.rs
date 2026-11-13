@@ -2,11 +2,15 @@ use super::*;
 
 mod vectors;
 
-struct HomeVector {
-    entropy: [u8; 32],
-    salt: [u8; 16],
-    password: &'static [u8],
-    verifier: &'static [u8],
+pub(crate) struct HomeVector {
+    pub(crate) entropy: [u8; 32],
+    pub(crate) salt: [u8; 16],
+    pub(crate) password: &'static [u8],
+    pub(crate) verifier: &'static [u8],
+}
+
+pub(crate) fn delivery_vector() -> &'static HomeVector {
+    &vectors::VECTORS[0]
 }
 
 thread_local! {
@@ -24,7 +28,7 @@ pub(super) fn corrupt_credential(credential: &mut Credential) {
     }
 }
 
-fn fixture_credential(protection: &Protection, vector: &HomeVector) -> Result<Credential, CredentialError> {
+pub(crate) fn fixture_credential(protection: &Protection, vector: &HomeVector) -> Result<Credential, CredentialError> {
     let mut calls = 0;
     let result = protection.credential_with(|bytes| {
         calls += 1;
@@ -393,7 +397,7 @@ pub(super) fn observe_retained(bytes: &[u8]) {
     });
 }
 
-fn child_case(test: &str, cases: &[&str]) -> Option<String> {
+pub(crate) fn child_case(test: &str, cases: &[&str]) -> Option<String> {
     if let Ok(case) = std::env::var("PN_HOME_COMPLETION_CASE") {
         return Some(case);
     }
@@ -611,7 +615,7 @@ fn completion_repeat() {
     );
 }
 
-struct Trace(Arc<std::sync::Mutex<String>>);
+pub(crate) struct Trace(pub(crate) Arc<std::sync::Mutex<String>>);
 struct Fields<'a>(&'a mut String);
 impl tracing::field::Visit for Fields<'_> {
     fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {

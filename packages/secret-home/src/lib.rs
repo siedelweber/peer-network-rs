@@ -15,6 +15,9 @@ static BUDGET: OnceLock<usize> = OnceLock::new();
 static PAGE_SIZE: OnceLock<Result<usize, Error>> = OnceLock::new();
 static RESERVED: AtomicUsize = AtomicUsize::new(0);
 
+mod delivery;
+pub use delivery::{AcquisitionError, DeliveryError, DeliveryFailure, PasswordReceiver, VerifierReceiver, acquire_receivers};
+
 /// Content-free failure classes; operating-system details never contain a key.
 /// (´[ROOT-amend:crypto:secret-home]´)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -115,6 +118,25 @@ impl Drop for Staging<'_> {
 }
 
 impl Protection {
+    /// Establish exactly the two locked pages of the credential process.
+    /// (´def:home:named-delivery´)
+    /// # Errors
+    /// Refuses an unavailable page size or any process-protection refusal.
+    #[tracing::instrument(
+        name = "amend:crypto:secret-home",
+        fields(
+            execution_owner = "SECRETHOME",
+            claim_owner = "ROOT",
+            claim_label = "amend:crypto:secret-home",
+            source_item = "Protection::for_credential"
+        ),
+        ret
+    )]
+    pub fn for_credential() -> Result<Self, Error> {
+        let page = (*PAGE_SIZE.get_or_init(page_size))?;
+        Self::establish(page.checked_mul(2).ok_or(Error::Budget)?)
+    }
+
     /// Clear dumpability and the core limit, verify both, then admit one budget.
     /// Call at process start before accepting secret material or spawning workers.
     /// (´[ROOT-amend:crypto:secret-home]´)

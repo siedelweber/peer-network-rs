@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "delivery::VerifierReceiver",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/delivery.rs",
+    "syntax": "# [doc = \" An opaque receiver selected by the verifier name, with no role conversion.\"] # [doc = \" (´def:home:named-delivery´)\"] pub struct VerifierReceiver (File) ;"
+  }
+}

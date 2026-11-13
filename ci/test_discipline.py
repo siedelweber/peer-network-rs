@@ -19,6 +19,7 @@ import sys
 import tempfile
 import time
 import json
+import re
 from unittest.mock import patch
 
 from discipline import cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_toolchain
@@ -42,6 +43,8 @@ class WorkspaceChecks(unittest.TestCase):
                 compare('home', expected, parse_tree(changed))
         distinct = parse_tree('x v1.0.0|a\nx v1.0.0|b\nx v1.0.0|a (*)\n')
         self.assertEqual([x['features'] for x in distinct], [['a'], ['b']])
+        self.assertEqual(parse_tree('x v1.0.0 (proc-macro)|a\n'), parse_tree('x v1.0.0|a\n'))
+        self.assertEqual(parse_tree('x v1.0.0 (proc-macro) (/fixture)|a\n'), parse_tree('x v1.0.0 (/fixture)|a\n'))
         with self.assertRaisesRegex(ValueError, 'unreadable protected dependency row'):
             parse_tree('not a resolved dependency')
         with tempfile.TemporaryDirectory() as directory:
@@ -49,11 +52,87 @@ class WorkspaceChecks(unittest.TestCase):
             records = root/'ci/protected-packages'
             records.mkdir(parents=True)
             (records/'one.json').write_text(json.dumps(dict(package='pn-secret-home', closure=[])))
-            with patch('protected_packages.resolve') as resolve:
+            with patch('protected_packages.resolve') as resolve, patch('protected_packages.required_packages',return_value={'pn-secret-home','pn-credential-derivation','pn-credential-generator'}):
+                resolve.side_effect = AssertionError('roster refuses before resolution')
                 with self.assertRaisesRegex(ValueError, 'protected package roster differs'):
                     check(root, True)
                 resolve.assert_not_called()
+                (records/'two.json').write_text(json.dumps(dict(package='pn-credential-derivation',closure=[])))
+                with self.assertRaisesRegex(ValueError, 'protected package roster differs'):
+                    check(root)
+                (records/'duplicate.json').write_bytes((records/'one.json').read_bytes())
+                with self.assertRaisesRegex(ValueError, 'invalid protected package record'):
+                    check(root)
+                (records/'duplicate.json').write_text(json.dumps(dict(package='other',closure='invalid')))
+                with self.assertRaisesRegex(ValueError, 'invalid protected package record'):
+                    check(root)
+                for record in records.glob('*.json'):
+                    record.unlink()
+                with self.assertRaisesRegex(ValueError, 'protected package roster is empty'):
+                    check(root)
+        from protected_packages import required_packages, bind_sources
+        metadata = dict(workspace_members=['future','generator'],packages=[dict(id='future',name='future-executable',targets=[dict(kind=['bin'])]),dict(id='generator',name='pn-credential-generator',targets=[dict(kind=['bin'])])])
+        with patch('protected_packages.subprocess.run',return_value=subprocess.CompletedProcess([],0,json.dumps(metadata))), patch('protected_packages.resolve',return_value=[dict(name='pn-secret-home')]):
+            self.assertIn('future-executable',required_packages(Path('.')), 'every executable with a secret closure is protected')
+            self.assertIn('pn-credential-generator',required_packages(Path('.')), 'present generator requires its protected row')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'Cargo.lock').write_text('[[package]]\nname="x"\nversion="1.0.0"\nsource="registry+https://example.invalid/index"\nchecksum="one"\n')
+            original = bind_sources(root,parse_tree('x v1.0.0|\n'))
+            (root/'Cargo.lock').write_text((root/'Cargo.lock').read_text().replace('one','two'))
+            with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
+                compare('x',original,bind_sources(root,parse_tree('x v1.0.0|\n')))
+            replacement = root/'replacement';replacement.mkdir()
+            (replacement/'Cargo.toml').write_text('[package]\nname="x"\nversion="1.0.0"\n')
+            with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
+                compare('x',original,bind_sources(root,parse_tree(f'x v1.0.0 ({replacement})|\n')))
+            revision = 'a' * 40
+            source = 'https://example.invalid/package?rev='+revision+'#'
+            (root/'Cargo.lock').write_text('[[package]]\nname="x"\nversion="1.0.0"\nsource="git+'+source+revision+'"\n')
+            actual = bind_sources(root,parse_tree('x v1.0.0 ('+source+revision[:8]+')|\n'))
+            self.assertEqual(actual[0]['source'],'git+'+source+revision,'abbreviated display binds the full locked source')
+            with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
+                compare('x',original,actual)
 
+    def test_credential_receiver_census(self):
+        """One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.
+        ´claim:discipline:credential-receiver-census-pins-first-entry´
+        ´test:integration:test-credential-receiver-census´
+        """
+        from discipline import credential_receiver_findings
+        path = Path('packages/secret-home/src/delivery.rs')
+        source = path.read_text()
+        self.assertEqual(credential_receiver_findings({path: source}), [], 'closed acquisition census')
+        for before, after in [
+            ('duplicate(&process, 4)', 'duplicate(&process, 5)'),
+            ('rustix::process::getpid()', 'another_process()'),
+            ('ATTEMPTED.swap(true, Ordering::SeqCst)', 'false'),
+        ]:
+            changed = source.replace(before, after)
+            self.assertNotEqual(changed, source)
+            self.assertTrue(credential_receiver_findings({path: changed}), 'changed acquisition invariant refuses')
+        second = source + '\nfn second(p: &std::os::fd::OwnedFd) { let _ = rustix::process::pidfd_getfd(p, 3, rustix::process::PidfdGetfdFlags::empty()); }\n'
+        self.assertTrue(credential_receiver_findings({path: second}), 'second foreign-number use refuses')
+        generator = Path('packages/credential-generator/src/main.rs')
+        good = 'fn main() -> ExitCode { let receivers = pn_secret_home::acquire_receivers(); finish(receivers) }'
+        self.assertEqual(credential_receiver_findings({path: source, generator: good}), [])
+        self.assertTrue(credential_receiver_findings({path: source, generator: good.replace('let receivers', 'open_something(); let receivers')}), 'later acquisition refuses')
+        self.assertTrue(credential_receiver_findings({path: source, generator: good+' fn later() { let _ = pn_secret_home::acquire_receivers(); }'}), 'second generator acquisition reference refuses')
+        foreign = Path('packages/other/src/main.rs')
+        for reference in ('pn_secret_home::acquire_receivers()', 'use pn_secret_home::acquire_receivers as later;', 'let later = pn_secret_home::acquire_receivers;'):
+            self.assertTrue(credential_receiver_findings({path:source,foreign:reference}), 'foreign acquisition reference refuses')
+        for role in ('PasswordReceiver','VerifierReceiver'):
+            changed = source+'\nuse self::'+role+' as Alternate;\nimpl Clone for Alternate {}\n'
+            self.assertTrue(credential_receiver_findings({path:changed}), 'receiver import alias cannot hide duplication')
+            for trait in ('From<Other>','Into<Other>','TryFrom<Other>','TryInto<Other>','AsRef<Other>','Deref','DerefMut','Clone','Copy','AsFd'):
+                changed = source+'\nimpl '+trait+' for '+role+' {}\n'
+                self.assertTrue(credential_receiver_findings({path:changed}), 'receiver conversion and duplication refuses')
+            changed = source.replace('pub struct '+role+'(File);','pub struct '+role+'(pub File);')
+            self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver constructor refuses')
+            changed = source+'\npub fn receiver(file: File) -> '+role+' { '+role+'(file) }\n'
+            self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver-producing function refuses')
+            changed = changed.replace('fn receiver(', 'fn permitted_entry(')
+            self.assertTrue(credential_receiver_findings({path:changed}), 'constructor spelling grants no exception')
     def test_unsafe_inventory(self):
         """Only the six private mapping sites with their exact expressions, item permissions and safety arguments are admitted; foreign, added, missing and changed sites refuse.
         ´claim:discipline:unsafe-sites-match-the-owned-mapping-inventory´
@@ -115,7 +194,7 @@ class WorkspaceChecks(unittest.TestCase):
             self.assertTrue(http_admission_findings(bad, rows)[0])
 
     def test_secret_carrier_traits(self):
-        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them.
+        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them; the receiver fixture compiles a correct-role twin and refuses both reversed and conversion-mediated deliveries.
         ´claim:discipline:secret-carriers-reject-printable-traits´
         ´test:integration:test-secret-carrier-traits´
         """
@@ -130,6 +209,23 @@ class WorkspaceChecks(unittest.TestCase):
         if os.environ.get('FOUNDATION_COMPUTE_TESTS') != '1':
             self.skipTest('requires the provisioned compute toolchain')
         root = Path.cwd()
+        fixtures = json.loads(Path('ci/credential-receiver-types.json').read_text())
+        root = Path.cwd()
+        with tempfile.TemporaryDirectory(prefix='receiver-types-',dir=os.environ['TMPDIR']) as directory:
+            fixture = Path(directory)
+            (fixture/'src').mkdir()
+            (fixture/'Cargo.lock').write_bytes((root/'Cargo.lock').read_bytes())
+            (fixture/'Cargo.toml').write_text('[package]\nname="receiver-types"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[profile.gate]\ninherits="dev"\ndebug=0\n[dependencies]\npn-secret-home={path='+json.dumps(str(root/'packages/secret-home'))+',default-features=false}\n')
+            for case, source in fixtures.items():
+                (fixture/'src/main.rs').write_text(source)
+                result = subprocess.run(['cargo','check','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml')],capture_output=True,text=True)
+                if case == 'positive':
+                    self.assertEqual(result.returncode,0,'receiver positive twin compiles: '+result.stderr)
+                else:
+                    self.assertNotEqual(result.returncode,0,'receiver wrong role refuses: '+case)
+                    self.assertIn('VerifierReceiver',result.stderr,'role diagnostic, not an unrelated failure: '+case)
+                    self.assertIn('PasswordReceiver',result.stderr,'role diagnostic, not an unrelated failure: '+case)
+
         with tempfile.TemporaryDirectory(prefix='secret-traits-', dir=os.environ['TMPDIR']) as directory:
             fixture = Path(directory)
             (fixture/'src').mkdir()

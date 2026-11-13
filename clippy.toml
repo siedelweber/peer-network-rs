@@ -1,5 +1,6 @@
 # Every secret exit is a reviewed, labelled smallest-item exception.
 disallowed-methods = [
+  { path = "pn_secret_home::delivery::write_protected", reason = "Requires a labelled role-specific protected pipe delivery." },
   { path = "pn_host::config::Configuration::expose_field", reason = "Requires a labelled configuration consumer." },
   { path = "pn_host::config::Configuration::expose_text", reason = "Requires a labelled configuration text consumer." },
   { path = "pn_host::config::Configuration::expose_port", reason = "Requires a labelled connection scalar consumer." },

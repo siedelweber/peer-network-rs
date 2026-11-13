@@ -144,7 +144,7 @@ def test_sources(sources, include_support=False):
         marked.update(added)
 
 
-SECRET_EXITS = {"expose_bytes", "expose_storage", "expose_field", "expose_text", "expose_port", "expose_auth", "expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
+SECRET_EXITS = {"expose_bytes", "expose_storage", "expose_field", "expose_text", "expose_port", "expose_auth", "expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with", "write_protected"}
 
 
 def exposure_sites(path, source):
@@ -320,6 +320,114 @@ def source_findings(path, source, mode, forced_test=False, forced_support=False)
         if match.group(1) or conditional or (test_tree and not fixture_exit) or not justified or not named or not item_follows:
             findings.append("suppression is not a justified named production-item attribute")
     findings.extend(exposure_sites(path, source)[1])
+    return findings
+
+
+def credential_receiver_findings(sources):
+    """Confine foreign-number access to the closed, first-entry self-duplication route."""
+    home = pathlib.Path('packages/secret-home/src/delivery.rs')
+    findings = []
+    calls = []
+    for path, source in sources.items():
+        code = rust_code(source)
+        for match in re.finditer(r'\b(?:pidfd_getfd|ForeignRawFd)\b', code):
+            calls.append((path, match.group(), match.start()))
+        if re.search(r'\buse\s+rustix\s*::\s*process\s*::\s*\*', code):
+            findings.append(f'{path}: foreign-number interfaces cannot be imported by wildcard')
+    if len(calls) != 1 or calls[0][:2] != (home, 'pidfd_getfd'):
+        return findings + ['foreign-number census requires the one named acquisition call']
+    code = re.sub(r'\s+', '', rust_code(sources[home]))
+    required = (
+        'fn duplicate(process:&OwnedFd,number:i32)',
+        'rustix::process::pidfd_getfd(process,number,PidfdGetfdFlags::empty())',
+        'rustix::process::pidfd_open(rustix::process::getpid(),PidfdFlags::empty())',
+        'duplicate(&process,3)',
+        'duplicate(&process,4)',
+        'ifATTEMPTED.swap(true,Ordering::SeqCst)',
+    )
+    for expression in required:
+        if re.sub(r'\s+', '', expression) not in code:
+            findings.append('named acquisition invariant missing: '+expression)
+    if len(re.findall(r'duplicate\(', code)) != 3:
+        findings.append('named acquisition requires only its two fixed duplicate calls')
+    if re.search(r'pub(?:\([^)]*\))?fnduplicate\(', code):
+        findings.append('named acquisition duplicate helper must remain private')
+    generator = pathlib.Path('packages/credential-generator/src/main.rs')
+    lib = pathlib.Path('packages/secret-home/src/lib.rs')
+    home_tests = {p for p in test_sources(sources) if p.is_relative_to(home.parent.parent)}
+    for path, source in sources.items():
+        if path in home_tests:
+            continue
+        code = rust_code(source)
+        if path == home:
+            code = re.sub(r'pub\s+fn\s+acquire_receivers\b', 'pub fn ', code, count=1)
+        if path == lib:
+            code = code.replace('pub use delivery::{AcquisitionError, DeliveryError, DeliveryFailure, PasswordReceiver, VerifierReceiver, acquire_receivers};', '')
+        if path == generator:
+            code = re.sub(r'(fn\s+main\s*\(\s*\)\s*->\s*ExitCode\s*\{\s*let\s+receivers\s*=\s*)pn_secret_home::acquire_receivers\(\);', r'\1permitted_entry();', code, count=1)
+        if re.search(r'\bacquire_receivers\b', code):
+            findings.append(f'{path}: acquisition reference outside the sole first entry or owning tests')
+        roles = r'\b(?:PasswordReceiver|VerifierReceiver)\b'
+        for match in re.finditer(r'\bimpl\b[^{}]*\{', code):
+            header = match.group()
+            if re.search(roles, header) and not (path == home and re.fullmatch(r'impl\s+std::fmt::Debug\s+for\s+(?:PasswordReceiver|VerifierReceiver)\s*\{', header)):
+                findings.append(f'{path}: receiver conversion or duplication implementation refuses')
+        if re.search(r'\btype\b[^;]*'+roles, code) or re.search(roles+r'\s+as\s+\w+', code):
+            findings.append(f'{path}: receiver alias refuses')
+        for match in re.finditer(r'\bpub(?:\([^)]*\))?\s+fn\s+(\w+)\b[^{};]*?->([^{};]*)', code):
+            if re.search(roles, match.group(2)):
+                findings.append(f'{path}: public receiver-producing constructor refuses')
+        if path == home:
+            for role in ('PasswordReceiver','VerifierReceiver'):
+                if not re.search(r'pub struct '+role+r'\(File\);', code):
+                    findings.append('receiver constructor must remain private: '+role)
+                if re.search(r'#\[derive\([^]]*\)\]\s*pub struct '+role, code):
+                    findings.append('receiver derived implementation refuses: '+role)
+    if generator in sources:
+        entry = re.sub(r'\s+', '', rust_code(sources[generator]))
+        if 'fnmain()->ExitCode{letreceivers=pn_secret_home::acquire_receivers();' not in entry:
+            findings.append('generator acquisition is not the first entry act')
+    return findings
+
+
+def credential_model_findings(sources, manifest):
+    """Keep administrator and supervisor models outside the installed binary."""
+    root = pathlib.Path('packages/credential-generator')
+    main = root/'src/main.rs'
+    findings = []
+    if manifest.get('lib') or manifest.get('features') or manifest.get('package', {}).get('autotests') is not False:
+        findings.append('credential models require a sole binary without library or feature activation')
+    if manifest.get('bin') != [{'name': 'pn-credential-generator', 'path': 'src/main.rs'}]:
+        findings.append('credential generator target roster differs')
+    entry = sources.get(main, '')
+    code = rust_code(entry)
+    boundary = re.search(r'\bfn\s+entry\s*\(', code)
+    if boundary is None:
+        findings.append('credential terminal entry is missing')
+    else:
+        end = item_end(code, boundary.start())
+        body = re.sub(r'\s+', '', code[boundary.start():end])
+        if not body.endswith('terminal(&mutProduction{password:Some(password),verifier:Some(verifier),credential:None,protection,})}') and not body.endswith('terminal(&mutProduction{password:Some(password),verifier:Some(verifier),credential:None,protection})}'):
+            findings.append('credential terminal entry performs work after the terminal lifecycle')
+    declaration = '#[cfg(test)]\nmod tests;'
+    if entry.count(declaration) != 1:
+        findings.append('credential model entry is not the exact private test-only module')
+    remaining = entry.replace(declaration, '')
+    if re.search(r'\b(?:include|include_str|include_bytes)\s*!|\bmod\s+\w+\s*;', rust_code(remaining)):
+        # The package documentation is a literal include_str attribute, not a
+        # model source entry. Its text is excluded by rust_code's literal mask.
+        stripped = re.sub(r'#!\[doc\s*=\s*include_str!\([^)]*\)\]', '', rust_code(remaining))
+        if re.search(r'\b(?:include|include_str|include_bytes)\s*!|\bmod\s+\w+\s*;', stripped):
+            findings.append('credential production source admits another module or include')
+    for path, source in sources.items():
+        if path.is_relative_to(root/'src') and path not in {main, root/'src/tests.rs'}:
+            findings.append('credential production source roster differs')
+        if path.is_relative_to(root/'tests/models') and re.search(r'\bpub\b', rust_code(source)):
+            findings.append('credential model is exported')
+    if manifest.get('test') != [{'name': 'models', 'path': 'tests/models.rs'}, {'name': 'process', 'path': 'tests/process.rs'}]:
+        findings.append('credential model target roster differs')
+    if sources.get(root/'tests/models.rs') != '#[path = "models/completion.rs"]\nmod completion;\n':
+        findings.append('credential model root differs')
     return findings
 
 
@@ -799,6 +907,18 @@ def main():
             print(finding)
         failed |= bool(unsafe_findings)
         print(f'UNSAFE-SITES sites={len(unsafe_rows)} findings={len(unsafe_findings)}')
+        receiver_findings = credential_receiver_findings(sources)
+        for finding in receiver_findings:
+            print(finding)
+        failed |= bool(receiver_findings)
+        print(f'CREDENTIAL-RECEIVER-CENSUS sites=1 findings={len(receiver_findings)}')
+        generator_manifest = pathlib.Path('packages/credential-generator/Cargo.toml')
+        if generator_manifest.exists():
+            model_findings = credential_model_findings(sources, tomllib.loads(generator_manifest.read_text()))
+            for finding in model_findings:
+                print(finding)
+            failed |= bool(model_findings)
+            print(f'CREDENTIAL-MODEL-CENSUS findings={len(model_findings)}')
         labels = [row["label"] for row in exposures if row["label"]]
         if len(labels) != len(set(labels)):
             print("SECRET-EXPOSURES duplicate labels")
