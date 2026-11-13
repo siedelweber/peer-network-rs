@@ -860,6 +860,19 @@ def series_owners(root, declaration, invocation):
     return rows
 
 
+def retained_owner_heads(root):
+    """Read retained checkouts without fetching or repairing their preparation."""
+    from isolation import storage_root
+    heads = {}
+    for owner in sorted(storage_root(root).glob('*/owner')):
+        tree = owner.parent/'s'
+        if not tree.exists():
+            continue
+        heads[owner.read_text()] = subprocess.check_output(
+            ['git','-C',str(tree),'rev-parse','HEAD'],text=True).strip()
+    return heads
+
+
 # Proposed sampling policy has the same carrier as other gate declarations.
 def series_policy():
     from devperf import budgets
@@ -2394,6 +2407,7 @@ def main():
     sub.add_parser('declare')
     sub.add_parser('instruction-probe')
     sub.add_parser('series-key')
+    sub.add_parser('series-owner-heads')
     check_series = sub.add_parser('series-check')
     check_series.add_argument('label')
     check_series.add_argument('archive', type=Path)
@@ -2439,6 +2453,9 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'series-owner-heads':
+        print(json.dumps(retained_owner_heads(Path.cwd()),sort_keys=True))
+        return 0
     if args.action == 'series-key':
         from harness import load
         print(reference_key(Path.cwd(), load()))

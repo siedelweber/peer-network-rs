@@ -359,7 +359,7 @@
       "claim": "ROOT::claim:devperf:series-archive-list",
       "before": "",
       "after": "The archive manifest preserves closed-attempt evidence and excludes service state and recursive workspace contents.",
-      "review": "Read the exact manifest copy, incomplete-attempt refusal, absent evidence and symlink controls; service state is excluded."
+      "review": "Read the exact manifest copy, incomplete-attempt refusal, absent evidence and symlink controls; service state is excluded. The command-boundary controls also distinguish its constructed declaration from foreign caller and build-prefix inputs."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
@@ -391,7 +391,7 @@
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
       "after": "Series declarations refuse missing and malformed members before printing a sample declaration.",
-      "review": "Read declaration refusals for plan, sample identity and required series fields before work begins."
+      "review": "Read declaration refusals for plan, sample identity and required series fields before work begins; retained-owner heads are observed without fetching and foreign heads refuse before preparation."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",
@@ -415,7 +415,7 @@
       "claim": "ROOT::claim:devperf:series-membership",
       "before": "",
       "after": "Series membership checks every terminal attempt and selects the first admissible one.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "review": "Read the named assertions against terminal receipts and membership, command label closure after interrupted plans or evidence failures, uncounted start refusal versus counted end exclusion, and external repeat evidence with discharge status. The accepted plan predates its joined idle observation. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_outliers",

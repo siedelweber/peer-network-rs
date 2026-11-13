@@ -68,6 +68,13 @@ class Round:
         if any(path.is_symlink() for path in (args.directory, *args.directory.parents)):
             raise Refusal('round evidence directory traverses a link')
         self.store.mkdir(parents=True, exist_ok=True)
+        plans = self.store/'plans.jsonl'
+        ledger = self.store/'ledger.jsonl'
+        completed = {row['entry'] for row in map(json.loads,ledger.read_text().splitlines())} if ledger.exists() else set()
+        unfinished = [row['entry'] for row in map(json.loads,plans.read_text().splitlines())
+                      if row['entry'] not in completed] if plans.exists() else []
+        if unfinished or (self.store/'active.json').exists():
+            write(self.store/'ended.json',dict(reason='unfinished planned round',entries=unfinished))
         if (self.store/'ended.json').exists():
             raise Refusal('ended label cannot be reused')
         self.count = build_graph.series_count()
@@ -78,15 +85,18 @@ class Round:
         if (args.mode == 'repeat') != (args.repeat_of is not None):
             raise Refusal('repeat requires its obligation and only repeat accepts one')
         self.log = None
+        self.planned = None
 
     def command(self, command, environment=None, build=False):
         """Each command retains its output, status, wall and reaped CPU."""
-        full = (self.args.build_prefix+['env']+[key+'='+value for key,value in (environment or {}).items()]+command
+        clean = {key:value for key,value in os.environ.items() if key not in build_graph.DECLARATION_VARIABLES}
+        unset = [word for key in build_graph.DECLARATION_VARIABLES for word in ('-u',key)]
+        full = (self.args.build_prefix+['env']+unset+[key+'='+value for key,value in (environment or {}).items()]+command
                 if build else command)
         start = time.time()
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
         try:
-            result = subprocess.run(full, cwd=self.root, env=dict(os.environ, **(environment or {})),
+            result = subprocess.run(full, cwd=self.root, env=dict(clean, **(environment or {})),
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
             status, output = result.returncode, result.stdout
         except OSError as error:
@@ -107,6 +117,14 @@ class Round:
         return output.strip()
 
     def run(self):
+        try:
+            return self.execute()
+        except BaseException as error:
+            if self.planned:
+                write(self.store/'ended.json',dict(reason='planned round interrupted: '+str(error),entry=self.planned))
+            raise
+
+    def execute(self):
         args = self.args
         # The command is loaded from the candidate before either reset occurs.
         source = self.require(['git','rev-parse','--verify',args.source+'^{commit}'])
@@ -125,9 +143,20 @@ class Round:
             raise Refusal('sample requires green priming of this base and source')
         obligation = None
         if args.mode == 'repeat':
+            for path in (args.repeat_of,args.repeat_of.parent/'gate-baseline.json'):
+                if path.resolve().is_relative_to(self.root):
+                    raise Refusal('repeat obligation and sidecar must live outside checkout before reset')
+                if not path.is_file():
+                    raise Refusal('repeat obligation and sidecar must exist before reset')
             obligation = json.loads(args.repeat_of.read_text())
             if obligation['base'] != base or obligation['source'] != source:
                 raise Refusal('repeat transition differs from obligation')
+        if args.mode == 'sample':
+            heads = json.loads(self.require(['python3','-B','ci/build_graph.py','series-owner-heads'],build=True))
+            if any(head not in (base,source) for head in heads.values()):
+                append(self.store/'preparations.jsonl',dict(reason='retained owner outside label base or source',owners=heads))
+                print('GATE-ROUND-RESTARTABLE retained owner outside label base or source; prepare owners before sampling',flush=True)
+                return 5
         ledger_path = self.store/'ledger.jsonl'
         previous = [json.loads(line) for line in ledger_path.read_text().splitlines()] if ledger_path.exists() else []
         if args.mode == 'sample' and sum(row['ordinal'] == args.ordinal for row in previous) >= build_graph.series_policy()['series_attempts_per_ordinal']:
@@ -170,8 +199,22 @@ class Round:
                 if cache not in ('warm','cold'):
                     raise Refusal('repeat requires the owed cache receipt')
                 environment.update(PN_GATE_SERIES_COUNT=str(self.count),PN_GATE_SERIES_KEY=key,PN_GATE_SERIES_CACHE=cache)
-        plan = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,start=time.time(),mode=args.mode)
+        plan_time = time.time()
+        if args.mode != 'priming':
+            status, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','start'],environment=environment)
+            idle_path = self.root/'.lane/gate-series-host-start.json'
+            try:
+                reason = 'start receipt failed' if status else build_graph.series_idle_refusal(json.loads(idle_path.read_text()))
+            except (OSError,ValueError,TypeError) as error:
+                reason = 'start receipt unreadable: '+str(error)
+            if reason:
+                append(self.store/'preparations.jsonl',dict(entry=entry,reason=reason,status=status))
+                print('GATE-ROUND-RESTARTABLE '+reason,flush=True)
+                return 5
+        plan = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,start=plan_time,mode=args.mode)
         append(self.store/('plans.jsonl' if args.mode == 'sample' else 'preparations.jsonl'),plan)
+        self.planned = entry
+        write(self.store/'active.json',plan)
         print('GATE-PLAN '+json.dumps(plan),flush=True)
         if args.mode == 'priming':
             status, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
@@ -180,26 +223,32 @@ class Round:
             cache = pending.get('cache',{})
             complete = cache.get('state') in ('warm','cold') and set(cache.get('compiled',{})) == {'primary','lint'} and all(isinstance(v,list) for v in cache.get('compiled',{}).values())
             record = dict(base=base,source=source,configuration_key=key,cache=cache.get('state'),
-                status=status,compiled=cache.get('compiled'),complete=complete,entry=entry,log=str(self.log))
+                status=status,compiled=cache.get('compiled'),complete=complete,entry=entry,log=str(self.log),
+                owners=json.loads(self.require(['python3','-B','ci/build_graph.py','series-owner-heads'],build=True)))
             write(priming_path,record)
+            (self.store/'active.json').unlink()
+            self.planned = None
             if status or not complete:
                 write(self.store/'ended.json',dict(reason='priming red or compilation receipt incomplete',entry=entry))
                 return 1 if status else 4
             print('GATE-ROUND-PRIMED '+json.dumps(record),flush=True)
             return 0
-        status, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','start'],environment=environment)
-        if status:
-            append(self.store/'preparations.jsonl',dict(entry=entry,aborted=True,reason='start receipt failed',status=status))
-            print('GATE-ROUND-ABORT entry='+entry+' reason=start-receipt-failed',flush=True)
-            return 4
-        gate = 125
-        if not status:
-            gate, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
+        gate, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
         end, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','end'],environment=environment)
         close, _ = self.command(['python3','-B','ci/build_graph.py','series-close',str(gate)],environment=environment)
         discharge = 0
         if obligation:
             discharge, _ = self.command(['python3','-B','ci/build_graph.py','repeat-close',str(args.repeat_of.resolve()),str(self.root/'.lane')],environment=environment)
+        exclusion = None
+        if args.mode == 'sample' and not end and not close:
+            try:
+                attempt = json.loads((self.root/'.lane/series-attempt.json').read_text())
+                receipt = attempt['receipt']
+                build_graph.series_member(receipt,receipt)
+                if receipt['whole']['stall'] > build_graph.series_policy()['series_absolute_pressure']:
+                    raise ValueError('whole pressure exceeds absolute bound')
+            except (OSError,ValueError,KeyError,TypeError) as error:
+                exclusion = str(error)
         archive_status, output = self.command(['python3','-B','ci/build_graph.py','series-archive-list','--round-log',str(self.log)])
         sidecar_bytes = None
         if archive_status == 0:
@@ -216,10 +265,16 @@ class Round:
                 print('GATE-ROUND-ARCHIVE-REFUSED '+str(error),flush=True)
         ledger = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,gate_status=gate,
             end_status=end,close_status=close,archive_status=archive_status,sidecar_bytes=sidecar_bytes,
+            discharge_status=discharge,exclusion=exclusion,
             declared_identity=dict(base=base,source=source,configuration_key=key,cache=priming['cache'] if priming else 'unknown'))
         append(self.store/('ledger.jsonl' if args.mode == 'sample' else 'repeat-ledger.jsonl'),ledger)
+        if end or close or archive_status:
+            write(self.store/'ended.json',dict(reason='planned round evidence failed',entry=entry,
+                end_status=end,close_status=close,archive_status=archive_status))
+        (self.store/'active.json').unlink()
+        self.planned = None
         print('GATE-ROUND-CLOSED '+json.dumps(ledger),flush=True)
-        return 4 if status or end or close or archive_status or discharge else (1 if gate else 0)
+        return 4 if end or close or archive_status or discharge else (1 if gate else (4 if exclusion else 0))
 
 
 def main():
