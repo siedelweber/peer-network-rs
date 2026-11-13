@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::CanonicalItem",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" A completed canonical item's borrowed encoding and already checked head.\"] # [doc = \" Events are provisional until the entire validation call succeeds.\"] # [doc = \" Major type, argument and payload offset use the CBOR head vocabulary;\"] # [doc = \" the payload includes child encodings for containers and tags.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] # [derive (Clone , Copy , Debug)] pub struct CanonicalItem < 'a > { # [doc = \" Complete original item bytes, with no repaired or re-encoded spelling.\"] pub bytes : & 'a [u8] , # [doc = \" Item head offset in the original input.\"] pub offset : usize , # [doc = \" Root is depth one; completion events visit children before parents.\"] pub depth : usize , # [doc = \" Checked CBOR major type.\"] pub major : u8 , # [doc = \" Checked head argument (including a tag number or container length).\"] pub argument : u64 , # [doc = \" Byte offset of the payload within this item's encoding.\"] pub payload_offset : usize , }"
+  }
+}

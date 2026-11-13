@@ -584,9 +584,9 @@
     },
     {
       "exceptions": 35,
-      "generators": 93,
+      "generators": 95,
       "helpers": 1,
-      "instrumented": 120,
+      "instrumented": 121,
       "name": "pn-interchange",
       "number_forms": {
         "exceptions": {
@@ -598,10 +598,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "93",
+          "exact": "95",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93",
+          "num": "95",
           "num_exact": true,
           "num_relation": "="
         },
@@ -614,18 +614,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "120",
+          "exact": "121",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "120",
+          "num": "121",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "156",
+          "exact": "157",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "156",
+          "num": "157",
           "num_exact": true,
           "num_relation": "="
         }
@@ -652,7 +652,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 156
+      "operations": 157
     },
     {
       "exceptions": 72,

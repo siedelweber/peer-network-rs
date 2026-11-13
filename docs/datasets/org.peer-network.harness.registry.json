@@ -3108,6 +3108,8 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::decode::budget_tests::canonical_validation_obeys_shared_meter",
+        "pn-interchange::decode::budget_tests::canonical_validation_reserves_before_allocation",
         "pn-interchange::encode::secret_tests::protected_canonical_bytes",
         "pn-interchange::cddl::ast::tests::a_broken_unicode_escape_is_refused",
         "pn-interchange::cddl::ast::tests::a_doubled_backslash_denotes_one",
@@ -3738,6 +3740,8 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::properties::canonical_validation_borrows_content",
+        "pn-interchange::properties::canonical_validation_matches_strict_corpus",
         "pn-interchange::properties::a_deep_chain_of_arrays_maps_and_tags_drops",
         "pn-interchange::properties::a_deep_chain_of_tags_alone_drops",
         "pn-interchange::properties::a_value_nested_one_million_deep_clones_hashes_compares_and_satisfies",

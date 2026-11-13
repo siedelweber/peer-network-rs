@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "decode::CanonicalUsage",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [derive (Default , Debug)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "Derived fields are public borrowed canonical bytes, offsets, head metadata and reservation counters. They carry no credentials or admission capability. Observation allocations are distinct from decoder frame reservations."
+  }
+}

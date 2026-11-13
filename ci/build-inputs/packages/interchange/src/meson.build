@@ -21,3 +21,4 @@ foreach row : local_inputs
   graph_arguments += ['--input', row[0] + '\t' + row[1] + '\t' + row[2]]
 endforeach
 subdir('cddl')
+subdir('decode')

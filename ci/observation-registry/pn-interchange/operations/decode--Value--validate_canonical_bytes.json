@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "item": "decode::Value::validate_canonical_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn validate_canonical_bytes (bytes : & [u8] , allocation_bytes : usize , usage : & mut CanonicalUsage , mut reservation : impl FnMut (usize) -> Result < () , () > , mut visitor : impl FnMut (CanonicalItem < '_ >) ,) -> Result < () , DecodeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::validate_canonical_bytes",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"decode::Value::validate_canonical_bytes\" , & (bytes , allocation_bytes , \"reservation and item callbacks consume public input; executable capabilities\" ,) ,) ; * usage = CanonicalUsage :: default () ; let result = (| | { let mut policy = ReadPolicy :: Validate { allocation_bytes , usage , reservation : & mut reservation , visitor : & mut visitor , } ; let (_ , consumed) = decode_one (bytes , & mut policy) ? ; if consumed != bytes . len () { return Err (DecodeError :: TrailingBytes { offset : consumed , count : bytes . len () - consumed , }) ; } Ok (()) }) () ; tracing :: event ! (tracing :: Level :: TRACE , canonical_usage = ? usage) ; let result = result . inspect_err (| _ | tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\")) ; scope . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "The strict validation boundary offers public input bytes, caller allocation ceiling, typed refusal or success and final usage to observation outside the read budget. The repository subscriber has separate trace capture and queue bounds, not a whole-process allocation bound. The ceiling and fallible caller meter both admit each stack reservation before charging and execution. Site evidence does not observe allocations bypassing that site; borrowed content needs no owned buffer as a reviewed source property. Callback and visitor are executable capabilities, not serializable input; provisional visitor events confer no admission. Existing public-interchange secret-flow premises apply.",
+    "assessments": {
+      "full_recording": "review-047",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

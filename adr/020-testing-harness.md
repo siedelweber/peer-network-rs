@@ -164,7 +164,7 @@
 | pn-host::public | active | public-surface | pn-host-rust | fast | 14 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
-| pn-interchange | active | unit | pn-interchange-rust | fast | 234 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 236 |
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | pn-interchange::benchmark_correctness | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
@@ -174,7 +174,7 @@
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::labels | active | integration | pn-interchange-rust | fast | 10 |
 | pn-interchange::prefix | active | integration | pn-interchange-rust | fast | 12 |
-| pn-interchange::properties | active | integration | pn-interchange-rust | fast | 25 |
+| pn-interchange::properties | active | integration | pn-interchange-rust | fast | 27 |
 | pn-interchange::public | active | public-surface | pn-interchange-rust | fast | 2 |
 | pn-interchange::registry | active | integration | pn-interchange-rust | fast | 23 |
 | pn-interchange::restraint | active | integration | pn-interchange-rust | fast | 26 |

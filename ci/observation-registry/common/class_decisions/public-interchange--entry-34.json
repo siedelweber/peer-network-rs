@@ -51,6 +51,7 @@
         "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::provisions",
         "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_bytes",
         "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_prefix",
+        "pn-interchange::packages/interchange/src/decode.rs::decode::Value::validate_canonical_bytes",
         "pn-interchange::packages/interchange/src/encode.rs::encode::Value::canonical_len",
         "pn-interchange::packages/interchange/src/encode.rs::encode::Value::to_canonical_bytes",
         "pn-interchange::packages/interchange/src/encode.rs::encode::Value::write_canonical",

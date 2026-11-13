@@ -4,6 +4,6 @@
     "item": "decode::ReadPolicy",
     "package": "pn-interchange",
     "path": "packages/interchange/src/decode.rs",
-    "syntax": "# [doc = \" Strict is selected explicitly by both canonical entry points. Transport\"] # [doc = \" cannot change that selection or supply limits to the canonical language.\"] enum ReadPolicy < 'a > { Strict , Transport { limits : TransportLimits , usage : & 'a mut TransportUsage , } , }"
+    "syntax": "# [doc = \" Owned canonical decoding and borrowed validation share the strict grammar.\"] # [doc = \" Transport cannot change either route's canonical acceptance.\"] enum ReadPolicy < 'a > { Strict , Validate { allocation_bytes : usize , usage : & 'a mut CanonicalUsage , reservation : & 'a mut dyn FnMut (usize) -> Result < () , () > , visitor : & 'a mut dyn FnMut (CanonicalItem < '_ >) , } , Transport { limits : TransportLimits , usage : & 'a mut TransportUsage , } , }"
   }
 }

@@ -94,7 +94,7 @@ pub use cddl::{
     BaseTheory, ImplicitReach, Inclusion, InclusionBreach, KeySlot, Mismatch, MismatchKind, OpenTheory, Provision, Restrained,
     RestraintReport, Satisfaction, Theory, check_inclusion, global, satisfies, satisfies_global, satisfies_open,
 };
-pub use decode::{TransportLimits, TransportUsage};
+pub use decode::{CanonicalItem, CanonicalUsage, TransportLimits, TransportUsage};
 pub use encode::{SecretEncodingLimit, SecretValue};
 pub use envelope::{Content, ContentKey, Document, Envelope, MAX_ENVELOPE_PREFIX};
 pub use error::{AcquireError, DecodeError, EnvelopeError, Error, LabelError, RegexpError, TheoryError, ValueError};

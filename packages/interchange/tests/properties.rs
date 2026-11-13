@@ -1007,3 +1007,183 @@ fn a_deep_chain_of_tags_alone_drops() {
     assert_eq!(value.canonical_len(), bytes.len());
     drop(value);
 }
+
+// This control reuses the existing whole-value generator without changing any
+// canonical entry-point test. Inputs reach both routes before deduplication.
+fn canonical_validation_compare(bytes: &[u8]) {
+    let strict = Value::from_canonical_bytes(bytes);
+    let mut usage = pn_interchange::CanonicalUsage::default();
+    let mut roots = 0;
+    let bounded = Value::validate_canonical_bytes(
+        bytes,
+        1_048_576,
+        &mut usage,
+        |_| Ok(()),
+        |item| {
+            if item.depth == 1 {
+                roots += 1;
+                assert_eq!(item.offset, 0);
+            }
+            let value = Value::from_canonical_bytes(item.bytes).expect("every completed item is strict");
+            assert_eq!(
+                value.to_canonical_bytes(),
+                item.bytes,
+                "visitor borrows unchanged canonical content"
+            );
+        },
+    );
+    match (strict, bounded) {
+        (Ok(_), Ok(())) => assert_eq!(roots, 1, "one complete root"),
+        (Err(expected), Err(actual)) => assert_eq!(
+            std::mem::discriminant(&actual),
+            std::mem::discriminant(&expected),
+            "strict refusal class for {bytes:?}"
+        ),
+        (expected, actual) => panic!("strict and budgeted membership differ: {bytes:?}: {expected:?}, {actual:?}"),
+    }
+}
+
+/// Claim: Budgeted borrowed validation and the existing strict decoder agree in both directions on every retained canonical/refusal corpus row, distinct generated whole-model values with truncation and trailing-data mutations, and the existing arbitrary-byte strategy; completed item spans preserve canonical bytes.
+/// ´claim:encoding:canonical-validation-matches-strict-corpus´
+/// ´test:integration:canonical-validation-matches-strict-corpus´
+#[test]
+fn canonical_validation_matches_strict_corpus() {
+    use proptest::strategy::ValueTree;
+    use proptest::test_runner::{Config, RngSeed, TestRunner};
+    use std::collections::BTreeSet;
+    let cwd = std::env::current_dir().expect("runtime working directory");
+    let root = cwd
+        .ancestors()
+        .find(|p| p.join("packages/interchange/tests/corpus/rfc8949-vectors.json").is_file())
+        .expect("runtime workspace ancestor");
+    let corpus: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join("packages/interchange/tests/corpus/rfc8949-vectors.json")).expect("runtime corpus"),
+    )
+    .expect("corpus JSON");
+    let rows = corpus.as_array().expect("corpus array");
+    assert_eq!(rows.len(), 119, "unchanged canonical and refusal corpus");
+    let mut inputs = BTreeSet::new();
+    for row in rows.iter().rev() {
+        let hex = row["hex"].as_str().expect("hex string");
+        let bytes: Vec<_> = hex
+            .as_bytes()
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|pair| u8::from_str_radix(std::str::from_utf8(pair).expect("ASCII hex"), 16).expect("hex byte"))
+            .collect();
+        canonical_validation_compare(&bytes);
+        inputs.insert(bytes);
+    }
+    let corpus_distinct = inputs.len();
+    let mut runner = TestRunner::new(Config {
+        rng_seed: RngSeed::Fixed(731),
+        ..Config::default()
+    });
+    let strategy = any_value();
+    let mut generated = BTreeSet::new();
+    for _ in 0..4096 {
+        let bytes = strategy
+            .new_tree(&mut runner)
+            .expect("existing generator")
+            .current()
+            .to_canonical_bytes();
+        canonical_validation_compare(&bytes);
+        inputs.insert(bytes.clone());
+        generated.insert(bytes.clone());
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        canonical_validation_compare(&trailing);
+        inputs.insert(trailing);
+        let truncated = bytes[..bytes.len() - 1].to_vec();
+        canonical_validation_compare(&truncated);
+        inputs.insert(truncated);
+        if generated.len() == 256 {
+            break;
+        }
+    }
+    assert_eq!(
+        generated.len(),
+        256,
+        "distinct generated values reached code before set insertion"
+    );
+    let strategy = prop::collection::vec(any::<u8>(), 0..24);
+    let mut arbitrary = BTreeSet::new();
+    for _ in 0..4096 {
+        let bytes = strategy
+            .new_tree(&mut runner)
+            .expect("existing arbitrary-byte strategy")
+            .current();
+        canonical_validation_compare(&bytes);
+        inputs.insert(bytes.clone());
+        arbitrary.insert(bytes);
+        if arbitrary.len() == 256 {
+            break;
+        }
+    }
+    assert_eq!(arbitrary.len(), 256, "distinct arbitrary inputs reached code unsorted");
+    cli_common::emit(&serde_json::json!({"kind":"canonical_validation_inputs", "corpus":rows.len(), "corpus_distinct":corpus_distinct, "generated_distinct":generated.len(), "arbitrary_distinct":arbitrary.len(), "all_distinct":inputs.len(), "sorted_before_execution":false})).expect("test evidence output");
+}
+
+/// Claim: The borrowed validator exposes recipe and embedded-input spans with their original offsets and depths, allowing content inspection without payload allocation; partial events do not turn a trailing-byte refusal into success.
+/// ´claim:encoding:canonical-validation-borrows-content´
+/// ´test:integration:canonical-validation-borrows-content´
+#[test]
+fn canonical_validation_borrows_content() {
+    assert!(
+        matches!(
+            Value::validate_canonical_bytes(
+                &[0x18, 0],
+                4096,
+                &mut pn_interchange::CanonicalUsage::default(),
+                |_| Ok(()),
+                |_| {}
+            ),
+            Err(pn_interchange::DecodeError::NonPreferredHead { offset: 0 })
+        ),
+        "budgeted validation refuses a nonpreferred integer"
+    );
+    let bytes = [0x83, 0x61, b'r', 0x41, 7, 0xa1, 0, 0xc1, 0xf6];
+    let mut usage = pn_interchange::CanonicalUsage::default();
+    let mut events = Vec::new();
+    Value::validate_canonical_bytes(
+        &bytes,
+        4096,
+        &mut usage,
+        |_| Ok(()),
+        |item| {
+            assert!(
+                std::ptr::eq(item.bytes.as_ptr(), bytes[item.offset..].as_ptr()),
+                "original input storage"
+            );
+            events.push((
+                item.offset,
+                item.depth,
+                item.major,
+                item.argument,
+                item.payload_offset,
+                item.bytes.len(),
+            ));
+        },
+    )
+    .expect("canonical content fixture");
+    assert_eq!(
+        events,
+        [
+            (1, 2, 3, 1, 1, 2),
+            (3, 2, 2, 1, 1, 2),
+            (6, 3, 0, 0, 1, 1),
+            (8, 4, 7, 22, 1, 1),
+            (7, 3, 6, 1, 1, 2),
+            (5, 2, 5, 1, 1, 4),
+            (0, 1, 4, 3, 1, 9)
+        ]
+    );
+    let mut trailing = bytes.to_vec();
+    trailing.push(0);
+    assert!(matches!(
+        Value::validate_canonical_bytes(&trailing, 4096, &mut usage, |_| Ok(()), |_| {}),
+        Err(pn_interchange::DecodeError::TrailingBytes { .. })
+    ));
+    assert!(usage.allocation_calls > 0, "refusal retains earlier stack requests");
+}

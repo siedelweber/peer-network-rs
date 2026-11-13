@@ -77,6 +77,26 @@ pub enum ValueError {
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum DecodeError {
+    /// The caller's shared meter refused a strict validation reservation.
+    #[error("canonical reservation refused at byte {offset}")]
+    CanonicalReservation {
+        /// Head that required the reservation.
+        offset: usize,
+    },
+    /// A strict validation reservation would exceed the caller's ceiling.
+    #[error("canonical allocation limit {limit} exceeded at byte {offset}")]
+    CanonicalLimit {
+        /// Caller-declared cumulative requested bytes.
+        limit: usize,
+        /// Head that required the frame reservation.
+        offset: usize,
+    },
+    /// The allocator refused a budgeted strict validation reservation.
+    #[error("canonical allocation refused at byte {offset}")]
+    CanonicalAllocation {
+        /// Head that required the reservation.
+        offset: usize,
+    },
     /// A declared transport resource ceiling would be exceeded.
     #[error("transport {resource} limit {limit} exceeded at byte {offset}")]
     TransportLimit {

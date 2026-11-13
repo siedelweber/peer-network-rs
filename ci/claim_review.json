@@ -4531,6 +4531,22 @@
       "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
     },
     {
+      "operation": "pn-interchange::decode::budget_tests::canonical_validation_obeys_shared_meter",
+      "path": "packages/interchange/src/decode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-validation-shared-meter",
+      "before": "",
+      "after": "Claim: The caller can refuse each successive reservation of a nested strict input before its reservation-site execution, with exact prior usage retained; visitor charges can exhaust the same meter before a later reservation.",
+      "review": "The differential control compares strict acceptance and refusal classes before input deduplication. The reservation witness observes the route reservation site, not allocations that bypass it; it checks precharging, exact usage, ceilings and caller refusal at each request. Borrowed content needing no owned buffer is a reviewed source property, not an executed allocator observation. Borrowed-span controls compare input addresses, bytes, heads and nesting. These are finite codec and test-quality witnesses, not PostgreSQL or publication admission."
+    },
+    {
+      "operation": "pn-interchange::decode::budget_tests::canonical_validation_reserves_before_allocation",
+      "path": "packages/interchange/src/decode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-validation-reserves-before-allocation",
+      "before": "",
+      "after": "Claim: Every request observed at the strict validation reservation site is charged before execution and reported exactly, including on refusal; zero-ceiling scalar and empty-container controls observe no request at that site.",
+      "review": "The differential control compares strict acceptance and refusal classes before input deduplication. The reservation witness observes the route reservation site, not allocations that bypass it; it checks precharging, exact usage, ceilings and caller refusal at each request. Borrowed content needing no owned buffer is a reviewed source property, not an executed allocator observation. Borrowed-span controls compare input addresses, bytes, heads and nesting. These are finite codec and test-quality witnesses, not PostgreSQL or publication admission."
+    },
+    {
       "operation": "pn-interchange::deterministic_encoding::float_acquisition_refuses_noncanonical_nans",
       "path": "packages/interchange/tests/deterministic_encoding.rs",
       "claim": "INTERCHANGE::claim:encoding:float-acquisition-refuses-noncanonical-nans",
@@ -4633,6 +4649,22 @@
       "before": "A chain of tags alone: the recursion the value model carries without\nan array or a map anywhere to intercept it.",
       "after": "Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, witnessing tag-only traversal and teardown without the call stack.",
       "review": "Read the deep-chain construction, decode, length or byte equality and explicit drop; the fixture witnesses iterative traversal and teardown, not a declared maximum depth."
+    },
+    {
+      "operation": "pn-interchange::properties::canonical_validation_borrows_content",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-validation-borrows-content",
+      "before": "",
+      "after": "Claim: The borrowed validator exposes recipe and embedded-input spans with their original offsets and depths, allowing content inspection without payload allocation; partial events do not turn a trailing-byte refusal into success.",
+      "review": "The differential control compares strict acceptance and refusal classes before input deduplication. The reservation witness observes the route reservation site, not allocations that bypass it; it checks precharging, exact usage, ceilings and caller refusal at each request. Borrowed content needing no owned buffer is a reviewed source property, not an executed allocator observation. Borrowed-span controls compare input addresses, bytes, heads and nesting. These are finite codec and test-quality witnesses, not PostgreSQL or publication admission."
+    },
+    {
+      "operation": "pn-interchange::properties::canonical_validation_matches_strict_corpus",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-validation-matches-strict-corpus",
+      "before": "",
+      "after": "Claim: Budgeted borrowed validation and the existing strict decoder agree in both directions on every retained canonical/refusal corpus row, distinct generated whole-model values with truncation and trailing-data mutations, and the existing arbitrary-byte strategy; completed item spans preserve canonical bytes.",
+      "review": "The differential control compares strict acceptance and refusal classes before input deduplication. The reservation witness observes the route reservation site, not allocations that bypass it; it checks precharging, exact usage, ceilings and caller refusal at each request. Borrowed content needing no owned buffer is a reviewed source property, not an executed allocator observation. Borrowed-span controls compare input addresses, bytes, heads and nesting. These are finite codec and test-quality witnesses, not PostgreSQL or publication admission."
     },
     {
       "operation": "pn-interchange::properties::one_spelling_string_equality_is_byte_equality",

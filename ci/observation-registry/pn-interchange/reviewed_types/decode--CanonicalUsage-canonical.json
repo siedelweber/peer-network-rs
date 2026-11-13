@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "decode::CanonicalUsage",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/decode.rs",
+    "syntax": "# [doc = \" Decoder reservations made by strict borrowed validation, including on refusal.\"] # [doc = \" Observation and allocations made by the caller's visitor are outside these counters.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] # [derive (Default , Debug)] pub struct CanonicalUsage { # [doc = \" Number of actual reservation requests.\"] pub allocation_calls : usize , # [doc = \" Cumulative requested bytes, including complete replacement capacities.\"] pub allocation_bytes : usize , }"
+  }
+}

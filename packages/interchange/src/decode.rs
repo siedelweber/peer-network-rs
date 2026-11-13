@@ -55,6 +55,38 @@ enum Frame {
 /// primitive costing the attacker nine bytes.
 const CONTAINER_CAPACITY_BOUND: u64 = 4;
 
+/// Decoder reservations made by strict borrowed validation, including on refusal.
+/// Observation and allocations made by the caller's visitor are outside these counters.
+/// (´amend:interchange:canonical-budget´)
+#[derive(Default, Debug)]
+pub struct CanonicalUsage {
+    /// Number of actual reservation requests.
+    pub allocation_calls: usize,
+    /// Cumulative requested bytes, including complete replacement capacities.
+    pub allocation_bytes: usize,
+}
+
+/// A completed canonical item's borrowed encoding and already checked head.
+/// Events are provisional until the entire validation call succeeds.
+/// Major type, argument and payload offset use the CBOR head vocabulary;
+/// the payload includes child encodings for containers and tags.
+/// (´amend:interchange:canonical-budget´)
+#[derive(Clone, Copy, Debug)]
+pub struct CanonicalItem<'a> {
+    /// Complete original item bytes, with no repaired or re-encoded spelling.
+    pub bytes: &'a [u8],
+    /// Item head offset in the original input.
+    pub offset: usize,
+    /// Root is depth one; completion events visit children before parents.
+    pub depth: usize,
+    /// Checked CBOR major type.
+    pub major: u8,
+    /// Checked head argument (including a tag number or container length).
+    pub argument: u64,
+    /// Byte offset of the payload within this item's encoding.
+    pub payload_offset: usize,
+}
+
 /// Mandatory caller declarations for one transient API message.
 ///
 /// There is no production default. Bytes count received input and cumulative
@@ -93,10 +125,16 @@ pub struct TransportUsage {
     pub work: usize,
 }
 
-/// Strict is selected explicitly by both canonical entry points. Transport
-/// cannot change that selection or supply limits to the canonical language.
+/// Owned canonical decoding and borrowed validation share the strict grammar.
+/// Transport cannot change either route's canonical acceptance.
 enum ReadPolicy<'a> {
     Strict,
+    Validate {
+        allocation_bytes: usize,
+        usage: &'a mut CanonicalUsage,
+        reservation: &'a mut dyn FnMut(usize) -> Result<(), ()>,
+        visitor: &'a mut dyn FnMut(CanonicalItem<'_>),
+    },
     Transport {
         limits: TransportLimits,
         usage: &'a mut TransportUsage,
@@ -104,7 +142,55 @@ enum ReadPolicy<'a> {
 }
 
 impl ReadPolicy<'_> {
+    fn tagged(&self, number: u64, value: Value) -> Value {
+        // Reviewed validation property: no owned tag box; see read_item's review boundary.
+        if self.validation() {
+            Value::Null
+        } else {
+            Value::Tag(Tag::new(number, value))
+        }
+    }
+
+    fn map_entry(
+        &mut self,
+        entries: &mut Vec<(Value, Value)>,
+        pair: (Value, Value),
+        remaining: Option<usize>,
+        index: usize,
+        offset: usize,
+    ) -> Result<(), DecodeError> {
+        if self.validation() {
+            // Reviewed validation property: no entry buffer growth; re-review changes here.
+            return Ok(());
+        }
+        self.reserve(entries, 1, remaining, offset)?;
+        if self.transport() {
+            entries.insert(index, pair);
+        } else {
+            entries.push(pair);
+        }
+        Ok(())
+    }
+
+    fn key_position(
+        &mut self,
+        entries: &[(Value, Value)],
+        value: &Value,
+        start: usize,
+        end: usize,
+    ) -> Result<(usize, usize), DecodeError> {
+        if self.transport() {
+            Ok((transport_key_position(entries, value, self, start)?, 0))
+        } else {
+            Ok((start, end))
+        }
+    }
+
     fn array(&self, items: Vec<Value>) -> Value {
+        // Reviewed validation property: no owned finalization; re-review changes here.
+        if self.validation() {
+            return Value::Null;
+        }
         Value::Array(if self.transport() {
             Array::from_decoded(items)
         } else {
@@ -113,6 +199,10 @@ impl ReadPolicy<'_> {
     }
 
     fn map(&self, entries: Vec<(Value, Value)>) -> Value {
+        // Reviewed validation property: no owned finalization; re-review changes here.
+        if self.validation() {
+            return Value::Null;
+        }
         Value::Map(if self.transport() {
             Map::from_transport(entries)
         } else {
@@ -121,6 +211,27 @@ impl ReadPolicy<'_> {
     }
     fn transport(&self) -> bool {
         matches!(self, Self::Transport { .. })
+    }
+
+    fn validation(&self) -> bool {
+        matches!(self, Self::Validate { .. })
+    }
+
+    fn completed(&mut self, input: &[u8], start: usize, end: usize, depth: usize) -> Result<(), DecodeError> {
+        if let Self::Validate { visitor, .. } = self {
+            // Reuse the strict head reader; this does not walk or allocate a value.
+            let mut payload = start;
+            let head = read_head(input, &mut payload)?;
+            visitor(CanonicalItem {
+                bytes: &input[start..end],
+                offset: start,
+                depth,
+                major: head.major,
+                argument: head.argument,
+                payload_offset: payload - start,
+            });
+        }
+        Ok(())
     }
 
     fn limit(value: usize, limit: usize, resource: &'static str, offset: usize) -> Result<(), DecodeError> {
@@ -181,6 +292,38 @@ impl ReadPolicy<'_> {
         if length <= values.capacity() {
             return Ok(());
         }
+        if let Self::Validate {
+            allocation_bytes,
+            usage,
+            reservation,
+            ..
+        } = self
+        {
+            let capacity = values.capacity().saturating_mul(2).max(length);
+            let amount = capacity
+                .checked_mul(std::mem::size_of::<T>())
+                .ok_or(DecodeError::CanonicalLimit {
+                    limit: *allocation_bytes,
+                    offset,
+                })?;
+            let next = usage
+                .allocation_bytes
+                .checked_add(amount)
+                .ok_or(DecodeError::CanonicalLimit {
+                    limit: *allocation_bytes,
+                    offset,
+                })?;
+            if next > *allocation_bytes {
+                return Err(DecodeError::CanonicalLimit {
+                    limit: *allocation_bytes,
+                    offset,
+                });
+            }
+            reservation(amount).map_err(|()| DecodeError::CanonicalReservation { offset })?;
+            usage.allocation_bytes = next;
+            usage.allocation_calls += 1;
+            return validation_reserve(values, capacity, usage, offset);
+        }
         self.work(values.len(), offset)?;
         if let Self::Transport { limits, usage } = self {
             // Doubling amortizes relocation without trusting a declared count
@@ -232,6 +375,61 @@ impl ReadPolicy<'_> {
 }
 
 impl Value {
+    /// Validate strict canonical membership without constructing an owned value.
+    /// The caller supplies the complete allocation ceiling; there is no default.
+    /// Usage is reset at entry and retained on success and refusal. The only
+    /// reservations are the iterative frame stack; content and item events borrow
+    /// the input. The visitor must budget its own allocations and must not treat
+    /// provisional events as evidence of complete membership.
+    /// Each reservation requires both the ceiling and `reservation` to admit
+    /// its exact requested bytes before charging usage and executing the request.
+    /// A callback refusal retains usage for previously admitted requests only.
+    /// (´amend:interchange:canonical-budget´)
+    /// # Errors
+    /// Retains strict syntax refusal classes; budget refusals are `CanonicalLimit`
+    /// for the ceiling, `CanonicalReservation` for the caller's refusal, and
+    /// `CanonicalAllocation` for a failed admitted allocator request.
+    /// # Panics
+    /// A panicking callback propagates with usage at the earlier admitted requests.
+    pub fn validate_canonical_bytes(
+        bytes: &[u8],
+        allocation_bytes: usize,
+        usage: &mut CanonicalUsage,
+        mut reservation: impl FnMut(usize) -> Result<(), ()>,
+        mut visitor: impl FnMut(CanonicalItem<'_>),
+    ) -> Result<(), DecodeError> {
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "decode::Value::validate_canonical_bytes",
+            &(
+                bytes,
+                allocation_bytes,
+                "reservation and item callbacks consume public input; executable capabilities",
+            ),
+        );
+        *usage = CanonicalUsage::default();
+        let result = (|| {
+            let mut policy = ReadPolicy::Validate {
+                allocation_bytes,
+                usage,
+                reservation: &mut reservation,
+                visitor: &mut visitor,
+            };
+            let (_, consumed) = decode_one(bytes, &mut policy)?;
+            if consumed != bytes.len() {
+                return Err(DecodeError::TrailingBytes {
+                    offset: consumed,
+                    count: bytes.len() - consumed,
+                });
+            }
+            Ok(())
+        })();
+        tracing::event!(tracing::Level::TRACE, canonical_usage = ?usage);
+        let result = result.inspect_err(|_| tracing::event!(tracing::Level::TRACE, outcome = "refusal"));
+        scope.finish(&result);
+        result
+    }
     /// Decode a bounded transient API value, never a canonical document.
     ///
     /// The caller supplies every ceiling; `usage` is reset for this invocation
@@ -336,6 +534,16 @@ impl Value {
     }
 }
 
+fn validation_reserve<T>(values: &mut Vec<T>, capacity: usize, usage: &CanonicalUsage, offset: usize) -> Result<(), DecodeError> {
+    // This observes this reservation site, not allocations that bypass it.
+    #[cfg(test)]
+    budget_tests::requested(capacity * std::mem::size_of::<T>(), usage);
+    let _ = usage;
+    values
+        .try_reserve_exact(capacity - values.len())
+        .map_err(|_| DecodeError::CanonicalAllocation { offset })
+}
+
 fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize), DecodeError> {
     let mut position = 0usize;
     let mut stack: Vec<Frame> = Vec::new();
@@ -354,12 +562,13 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
         };
 
         loop {
+            policy.completed(input, value_start, position, stack.len() + 1)?;
             let Some(frame) = stack.pop() else {
                 return Ok((value, position));
             };
             match frame {
                 Frame::Tag { number, start } => {
-                    value = Value::Tag(Tag::new(number, value));
+                    value = policy.tagged(number, value);
                     value_start = start;
                 }
                 Frame::Array {
@@ -368,8 +577,10 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
                     indefinite,
                     start,
                 } => {
-                    policy.reserve(&mut items, 1, (!indefinite).then_some(remaining), value_start)?;
-                    items.push(value);
+                    if !policy.validation() {
+                        policy.reserve(&mut items, 1, (!indefinite).then_some(remaining), value_start)?;
+                        items.push(value);
+                    }
                     let remaining = if indefinite { remaining } else { remaining - 1 };
                     if !indefinite && remaining == 0 {
                         value = policy.array(items);
@@ -393,11 +604,7 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
                     start,
                 } => match pending_key {
                     None => {
-                        let next_key = if policy.transport() {
-                            Some((transport_key_position(&entries, &value, policy, value_start)?, 0))
-                        } else {
-                            Some((value_start, position))
-                        };
+                        let next_key = Some(policy.key_position(&entries, &value, value_start, position)?);
                         if !policy.transport() {
                             strict_key_order(input, previous_key, value_start, position)?;
                         }
@@ -412,13 +619,13 @@ fn decode_one(input: &[u8], policy: &mut ReadPolicy<'_>) -> Result<(Value, usize
                         continue 'item;
                     }
                     Some(key) => {
-                        policy.reserve(&mut entries, 1, (!indefinite).then_some(remaining), value_start)?;
-                        if policy.transport() {
-                            let index = previous_key.map_or(0, |(index, _)| index);
-                            entries.insert(index, (key, value));
-                        } else {
-                            entries.push((key, value));
-                        }
+                        policy.map_entry(
+                            &mut entries,
+                            (key, value),
+                            (!indefinite).then_some(remaining),
+                            previous_key.map_or(0, |(index, _)| index),
+                            value_start,
+                        )?;
                         let remaining = if indefinite { remaining } else { remaining - 1 };
                         if !indefinite && remaining == 0 {
                             value = policy.map(entries);
@@ -589,6 +796,9 @@ fn append_payload(
 // Justified: the initial capacity bound is four and fits every supported pointer width.
 #[allow(clippy::cast_possible_truncation)]
 fn read_item(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>, nesting: usize) -> Result<Item, DecodeError> {
+    // Reviewed property: validation bypasses payload copies and owned containers.
+    // A payload copy reintroduced here would pass every reservation-site control;
+    // changes to these gates, tagged, array, map or map_entry require re-review.
     let start = *position;
     let head = read_head_policy(input, position, policy)?;
     let Head {
@@ -603,13 +813,21 @@ fn read_item(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>, ne
         2 | 3 if policy.transport() => Item::Complete(read_transport_string(input, position, &head, policy, nesting, start)?),
         2 => {
             let payload = read_payload(input, position, argument)?;
-            Item::Complete(Value::Bytes(Bytes::from(payload.to_vec())))
+            Item::Complete(if policy.validation() {
+                Value::Null
+            } else {
+                Value::Bytes(Bytes::from(payload.to_vec()))
+            })
         }
         3 => {
             let payload_start = *position;
             let payload = read_payload(input, position, argument)?;
             match std::str::from_utf8(payload) {
-                Ok(text) => Item::Complete(Value::Text(Text::from(text.to_owned()))),
+                Ok(text) => Item::Complete(if policy.validation() {
+                    Value::Null
+                } else {
+                    Value::Text(Text::from(text.to_owned()))
+                }),
                 Err(e) => {
                     return Err(DecodeError::InvalidUtf8 {
                         offset: payload_start + e.valid_up_to(),
@@ -624,9 +842,13 @@ fn read_item(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>, ne
                 return Err(DecodeError::Truncated { offset: input.len() });
             }
             match usize::try_from(argument) {
-                Ok(0) if !indefinite => Item::Complete(Value::Array(Array::new([]))),
+                Ok(0) if !indefinite => Item::Complete(if policy.validation() {
+                    Value::Null
+                } else {
+                    Value::Array(Array::new([]))
+                }),
                 Ok(count) => Item::Container(Frame::Array {
-                    items: if policy.transport() {
+                    items: if policy.transport() || policy.validation() {
                         Vec::new()
                     } else {
                         Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize))
@@ -647,9 +869,13 @@ fn read_item(input: &[u8], position: &mut usize, policy: &mut ReadPolicy<'_>, ne
                 return Err(DecodeError::Truncated { offset: input.len() });
             }
             match usize::try_from(argument) {
-                Ok(0) if !indefinite => Item::Complete(Value::Map(Map::from_sorted(Vec::new()))),
+                Ok(0) if !indefinite => Item::Complete(if policy.validation() {
+                    Value::Null
+                } else {
+                    Value::Map(Map::from_sorted(Vec::new()))
+                }),
                 Ok(count) => Item::Container(Frame::Map {
-                    entries: if policy.transport() {
+                    entries: if policy.transport() || policy.validation() {
                         Vec::new()
                     } else {
                         Vec::with_capacity(count.min(CONTAINER_CAPACITY_BOUND as usize))
@@ -810,3 +1036,6 @@ fn read_payload<'a>(input: &'a [u8], position: &mut usize, len: u64) -> Result<&
 fn remaining_bytes(input: &[u8], position: usize) -> u64 {
     (input.len() - position) as u64
 }
+
+#[cfg(test)]
+mod budget_tests;
