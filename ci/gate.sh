@@ -55,7 +55,7 @@ trap 'python3 -B ci/wallet_elements.py stop-all --root "$PN_WALLET_TEST_ROOT"; p
 # Signal cleanup waits for the adapter to terminate and reap its command tree.
 active_pid=
 gate_signal() {
-    trap '' TERM INT
+    trap '' TERM INT HUP
     local cleanup_status=0
     if [ -n "$active_pid" ]; then
         kill -s "$(($1 - 128))" "$active_pid" 2>/dev/null || true
@@ -69,6 +69,7 @@ gate_signal() {
 }
 trap 'gate_signal 143' TERM
 trap 'gate_signal 130' INT
+trap 'gate_signal 129' HUP
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
 quiet_window() {

@@ -153,7 +153,7 @@ class Round:
         start = time.time()
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
         try:
-            result = subprocess.run(full, cwd=self.root, env=dict(clean, **(environment or {})),
+            result = build_graph.cancellable(full, cwd=self.root, env=dict(clean, **(environment or {})),
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
             status, output = result.returncode, result.stdout
         except OSError as error:
@@ -162,9 +162,12 @@ class Round:
         if self.log:
             with self.log.open('a') as stream:
                 stream.write(output)
-        append(self.store/'commands.jsonl', dict(argv=full, started=start, wall=time.time()-start,
+        recorded = ['PN_GATE_STORAGE_TOKEN=[redacted]' if word.startswith('PN_GATE_STORAGE_TOKEN=') else word for word in full]
+        append(self.store/'commands.jsonl', dict(argv=recorded, started=start, wall=time.time()-start,
             user=after.ru_utime-before.ru_utime, system=after.ru_stime-before.ru_stime, status=status))
-        print('GATE-ROUND-COMMAND '+json.dumps(dict(argv=full,status=status,wall=time.time()-start)), flush=True)
+        print('GATE-ROUND-COMMAND '+json.dumps(dict(argv=recorded,status=status,wall=time.time()-start)), flush=True)
+        if status < 0:
+            raise InterruptedError('round command interrupted by signal '+str(-status))
         return status, output
 
     def require(self, command, **options):
@@ -177,7 +180,10 @@ class Round:
         identity = dict(label=self.args.label, base=self.args.base, source=self.args.source)
         with round_lock(self.store.parent, identity):
             from isolation import storage_lock, StorageBusy
-            directory = Path(self.require(['python3','-B','ci/isolation.py','storage-root'],build=True))
+            status, output = self.command(['python3','-B','ci/isolation.py','storage-root'],build=True)
+            if status:
+                raise Busy('storage preflight refused: '+output.strip())
+            directory = Path(output.strip())
             if not directory.is_absolute():
                 raise Refusal('build environment storage root must be absolute')
             try:
@@ -234,7 +240,7 @@ class Round:
             differences = configuration_differences(priming.get('identity', {}), identity, self.root)
             record = dict(reason='configuration key differs from priming', expected=priming['configuration_key'],
                           observed=key, differences=differences)
-            if differences and all(row['kind'] == 'invoker' for row in differences):
+            if priming.get('identity') and differences and all(row['kind'] == 'invoker' for row in differences):
                 append(self.store/'preparations.jsonl',record)
                 print('GATE-ROUND-RESTARTABLE '+json.dumps(record,sort_keys=True),flush=True)
                 return 5

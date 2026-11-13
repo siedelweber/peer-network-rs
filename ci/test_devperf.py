@@ -208,7 +208,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(declaration_environment(),foreign,'package runner restores the enclosing declaration')
 
     def test_series_archive_list(self):
-        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log.
+        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live.
         ´claim:devperf:series-archive-list´
         ´test:integration:test-series-archive-list´
         """
@@ -878,7 +878,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots and ordinary gate entry before declaration. Controlled rounds compare named key members before reset, ending source differences and refusing invoker differences restartably, while retaining label-state exclusion.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -889,19 +889,29 @@ class Performance(unittest.TestCase):
         import io
         with tempfile.TemporaryDirectory() as directory:
             env=dict(PN_ISOLATION_ROOT=directory,CARGO_TARGET_DIR=directory+'/target')
-            with patch.dict(os.environ,env):
+            root=Path(directory)/'tree';root.mkdir()
+            import shutil
+            shutil.copytree(Path(__file__).parent,root/'ci')
+            subprocess.run(['git','init','-q',str(root)],check=True)
+            with patch.dict(os.environ,env),patch('isolation.Path.cwd',return_value=root):
                 os.environ.pop('PN_GATE_STORAGE_TOKEN',None)
-                root=Path.cwd();storage=storage_root(root)
+                storage=storage_root(root)
                 with storage_lock(storage,'series') as token:
                     output=io.StringIO()
                     with redirect_stdout(output):
                         self.assertEqual(gate_storage(['false']),5,'held storage refuses without running workload')
                     self.assertIn('holder=series',output.getvalue(),'storage refusal names holder kind')
                     child_env=dict(os.environ);child_env.pop('PN_GATE_PLAN',None)
-                    child=subprocess.run(['bash',str(Path(__file__).with_name('gate.sh'))],env=child_env,capture_output=True,text=True)
+                    child=subprocess.run(['bash',str(Path(__file__).with_name('gate.sh'))],cwd=root,env=child_env,capture_output=True,text=True)
                     self.assertEqual(child.returncode,5,'gate entry acquires storage exclusion before declaration')
                     self.assertIn('GATE-STORAGE-REFUSED',child.stdout,'entry reports its own uncounted refusal')
                     self.assertNotIn('GATE-DECLARED',child.stdout,'held storage writes no declaration')
+                    before = sorted(str(p.relative_to(root)) for p in root.rglob('*'))
+                    child=subprocess.run([sys.executable,'-B',str(Path(__file__).with_name('precheck.py'))],cwd=root,env=child_env,capture_output=True,text=True)
+                    self.assertEqual(child.returncode,5,'pre-check takes storage exclusion before any check')
+                    self.assertIn('holder=series',child.stdout,'pre-check refusal names the holder')
+                    self.assertNotIn('PRECHECK step=',child.stdout,'busy pre-check performs no stage')
+                    self.assertEqual(sorted(str(p.relative_to(root)) for p in root.rglob('*')),before,'busy pre-check leaves checkout unchanged')
                     with patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token), redirect_stdout(io.StringIO()):
                         self.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'series token joins held storage without reacquiring')
                     with patch.dict(os.environ,PN_GATE_STORAGE_TOKEN='wrong'), redirect_stdout(io.StringIO()):
@@ -911,7 +921,8 @@ class Performance(unittest.TestCase):
                 with redirect_stdout(io.StringIO()):
                     self.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'unheld storage executes and releases')
                 with storage_lock(storage,'gate'): pass
-        from round_fixtures import controls
+        from round_fixtures import controls, storage_controls
+        storage_controls(self)
         controls(self,'guards')
         from build_graph import declare_run
         invoke = declare_run

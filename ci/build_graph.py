@@ -178,6 +178,17 @@ def become_child_subreaper():
         raise ValueError('cannot establish command-tree subreaper: '+os.strerror(ctypes.get_errno()))
 
 
+def parent_death(parent):
+    """Arm Linux parent death before exec, including the fork/arm race."""
+    import ctypes
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(1, signal.SIGTERM, 0, 0, 0) != 0:
+        raise OSError(ctypes.get_errno(), 'cannot bind command to parent lifetime')
+    if os.getppid() != parent:
+        os.kill(os.getpid(), signal.SIGTERM)
+
+
 def cancellable(argv, *, kill_after=5, reap_tree=False, **kwargs):
     """Forward termination through each adapter boundary and reap its child."""
     child = None
@@ -190,11 +201,13 @@ def cancellable(argv, *, kill_after=5, reap_tree=False, **kwargs):
                 os.killpg(child.pid, number)
             except ProcessLookupError:
                 pass
-    old = {number: signal.signal(number, terminate) for number in (signal.SIGTERM, signal.SIGINT)}
+    old = {number: signal.signal(number, terminate) for number in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP)}
     try:
         if reap_tree:
             become_child_subreaper()
-        child = subprocess.Popen(argv, start_new_session=True, **kwargs)
+        parent = os.getpid()
+        bound = [sys.executable, "-B", str(Path(__file__).resolve()), "parent-bound", str(parent), *argv]
+        child = subprocess.Popen(bound, start_new_session=True, **kwargs)
         if pending:
             terminate(pending[0], None)
         while True:
@@ -2633,6 +2646,9 @@ def main():
 
 if __name__ == '__main__':
     try:
+        if sys.argv[1:2] == ["parent-bound"]:
+            parent_death(int(sys.argv[2]))
+            os.execvpe(sys.argv[3], sys.argv[3:], os.environ)
         sys.exit(main())
     except (OSError, ValueError, KeyError, TypeError) as error:
         print('BUILD-GRAPH-ERROR '+str(error), file=sys.stderr)

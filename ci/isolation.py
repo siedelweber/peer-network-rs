@@ -37,6 +37,44 @@ class StorageBusy(ValueError):
     """An uncounted gate refusal before declaration or measurement."""
 
 
+def storage_binding(root):
+    """Bind all three retained locations; checkout metadata survives clean."""
+    root = root.resolve()
+    target = Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()
+    directory = storage_root(root)
+    metadata = Path(subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--absolute-git-dir'], text=True).strip())
+    expected = dict(checkout=str(root), target=str(target), storage=str(directory))
+    records = [target/'.gate-storage-owner.json', directory/'.gate-storage-owner.json', metadata/'gate-storage-owner.json']
+    # Serialize first use on the checkout; exclusive target creation also
+    # arbitrates two different checkouts racing for an unowned target.
+    with (metadata/'gate-storage-binding.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        for record in records:
+            if record.exists():
+                try:
+                    observed = json.loads(record.read_text())
+                except (OSError, ValueError) as error:
+                    raise ValueError('storage binding unreadable: '+str(record)) from error
+                differences = [key for key in expected if not isinstance(observed, dict) or observed.get(key) != expected[key]]
+                if differences:
+                    raise ValueError('storage binding differs members='+','.join(differences)+' record='+str(record))
+        for record in records:
+            record.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                with record.open('x') as output:
+                    json.dump(expected, output); output.write('\n')
+            except FileExistsError:
+                pass
+            try:
+                observed = json.loads(record.read_text())
+            except (OSError, ValueError) as error:
+                raise ValueError('storage binding unreadable: '+str(record)) from error
+            differences = [key for key in expected if not isinstance(observed, dict) or observed.get(key) != expected[key]]
+            if differences:
+                raise ValueError('storage binding differs members='+','.join(differences)+' record='+str(record))
+    return directory
+
+
 @contextmanager
 def storage_lock(directory, kind, identity=None):
     """Keep one stable exclusion inode outside every checkout clean."""
@@ -67,7 +105,7 @@ def storage_lock(directory, kind, identity=None):
 
 def storage_entry(root, token):
     """Check the command's cooperative token and held storage inode."""
-    with (storage_root(root)/'.gate-storage.lock').open('r') as stream:
+    with (storage_binding(root)/'.gate-storage.lock').open('r') as stream:
         row = json.load(stream)
         if not token or not secrets.compare_digest(str(row.get('token', '')), token):
             raise ValueError('storage lock token differs')
@@ -97,12 +135,12 @@ def gate_storage(command):
             storage_entry(root, token)
             print('GATE-STORAGE-LOCK action=joined kind=series', flush=True)
             return invoke(token)
-        with storage_lock(storage_root(root), 'gate') as acquired:
+        with storage_lock(storage_binding(root), 'gate') as acquired:
             return invoke(acquired)
     except StorageBusy as error:
         print('GATE-STORAGE-REFUSED status=5 counted=false '+str(error), flush=True)
         return 5
-    except (OSError, ValueError, TypeError) as error:
+    except (OSError, ValueError, TypeError, subprocess.SubprocessError) as error:
         print('GATE-STORAGE-REFUSED status=5 counted=false reason='+str(error), flush=True)
         return 5
 
@@ -553,7 +591,11 @@ def built_executable(output):
 
 if __name__ == '__main__':
     if sys.argv[1:] == ['storage-root']:
-        print(storage_root(Path.cwd()))
+        try:
+            print(storage_binding(Path.cwd()))
+        except (OSError, ValueError, TypeError, subprocess.SubprocessError) as error:
+            print('GATE-STORAGE-REFUSED status=5 counted=false reason='+str(error), flush=True)
+            raise SystemExit(5)
         raise SystemExit(0)
     if sys.argv[1:] == ['storage-entry']:
         storage_entry(Path.cwd(), storage_token())

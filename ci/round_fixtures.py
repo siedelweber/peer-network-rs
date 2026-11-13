@@ -53,7 +53,7 @@ def controls(test, group):
             if command == ['git','status','--porcelain']: return 0,state['dirty']
             if command[:2] == ['git','merge-base']: return state['ancestor'],''
             if command == ['python3','-B','ci/run_tests.py','prepare']: return state['base_build'],''
-            if command[-1] == 'storage-root': return 0,str(area/'storage')
+            if command[-1] == 'storage-root': return state.get('storage_status',0),state.get('storage_output',str(area/'storage'))
             if command[-1] == 'series-identity': return 0,json.dumps(dict(key=state['key'],identity=state.get('identity',dict(configuration='fixture'))))
             if command[-1] == 'series-owner-heads': return 0,json.dumps(state.get('owners',dict(kept='source')))
             if command == ['bash','ci/gate.sh']:
@@ -86,6 +86,11 @@ def controls(test, group):
             priming = dict(base='base',source='source',configuration_key='a'*64,identity=dict(configuration='fixture'),cache='warm',status=0,complete=True)
             def prime(value=priming): write(round.store/'priming.json',value)
             if group == 'guards':
+                state.update(storage_status=5,storage_output='GATE-STORAGE-REFUSED members=target,storage')
+                with refuses(test,'members=target,storage',message='round binding refusal preserves differing members'):
+                    round.run()
+                test.assertFalse(any(c[0][:2]==['git','reset'] for c in calls),'binding refusal precedes every reset')
+                state.pop('storage_status');state.pop('storage_output')
                 from build_graph import retained_owner_heads
                 owners=area/'owners';owners.mkdir()
                 for name in ('kept','swept'):
@@ -115,6 +120,12 @@ def controls(test, group):
                 test.assertFalse((round.store/'ended.json').exists(),'invoker mistake cannot end label')
                 test.assertFalse(any(c[0][:2]==['git','reset'] for c in calls),'invoker key refusal precedes resets')
                 test.assertEqual(json.loads((round.store/'preparations.jsonl').read_text().splitlines()[-1])['differences'],[dict(member='lineage',kind='invoker')],'restartable key refusal names member')
+                legacy = dict(priming); legacy.pop('identity')
+                prime(legacy)
+                state['identity'] = dict(lineage='other')
+                test.assertEqual(round.run(),4,'legacy priming cannot justify invoker restartability')
+                test.assertTrue((round.store/'ended.json').exists(),'legacy priming mismatch ends label')
+                (round.store/'ended.json').unlink(); prime()
                 from series_round import configuration_differences
                 for member in ('node','toolchain','runtime','cargo_home_config'):
                     test.assertEqual(configuration_differences({member:1},{member:2},root),[dict(member=member,kind='invoker')],'execution context is invoker-owned: '+member)
@@ -309,3 +320,96 @@ def controls(test, group):
                     status,output=production_command(round,[sys.executable,str(probe)],environment=dict(PN_GATE_ENTRY='declared'))
                 test.assertEqual(status,0,'host receipt command runs')
                 test.assertEqual(json.loads(output)['members'],dict(PN_GATE_ENTRY='declared'),'host commands also remove every foreign declaration member')
+                import io
+                from contextlib import redirect_stdout
+                round.storage_token='live-fixture-token'
+                printed=io.StringIO()
+                with redirect_stdout(printed):
+                    status,_=production_command(round,[sys.executable,'-c','pass'],build=True)
+                recorded=json.loads((round.store/'commands.jsonl').read_text().splitlines()[-1])['argv']
+                test.assertNotIn('PN_GATE_STORAGE_TOKEN=live-fixture-token',recorded,'retained command masks the live storage token')
+                test.assertNotIn('live-fixture-token',printed.getvalue(),'printed command masks the live storage token')
+                test.assertIn('PN_GATE_STORAGE_TOKEN=[redacted]',recorded,'record keeps an explicitly non-replayable token marker')
+                import os, subprocess
+                from isolation import storage_binding, storage_lock
+                subprocess.run(['git','init','-q',str(root)],check=True)
+                args.build_prefix=['env']
+                with patch.dict(os.environ,CARGO_TARGET_DIR=str(area/'target'),PN_ISOLATION_ROOT=str(area/'isolation')):
+                    bound=storage_binding(root)
+                    with storage_lock(bound,'series') as token:
+                        round.storage_token=token
+                        code='import sys; sys.path.insert(0,'+repr(str(Path(__file__).resolve().parent))+'); from isolation import storage_entry,storage_token; from pathlib import Path; storage_entry(Path.cwd(),storage_token())'
+                        with redirect_stdout(io.StringIO()):
+                            status,_=production_command(round,[sys.executable,'-B','-c',code],build=True)
+                        test.assertEqual(status,0,'original command can join its live storage holder')
+                        recorded=json.loads((round.store/'commands.jsonl').read_text().splitlines()[-1])['argv']
+                        replay=subprocess.run(recorded,cwd=root,capture_output=True,text=True)
+                        test.assertNotEqual(replay.returncode,0,'recorded vector cannot replay the live storage token')
+                        test.assertIn('storage lock token differs',replay.stderr,'replayed vector fails at token validation')
+
+
+def storage_controls(test):
+    """Exercise ownership and holder death with real processes and lock files."""
+    import os
+    import signal
+    import subprocess
+    from isolation import storage_binding, storage_lock
+    with tempfile.TemporaryDirectory() as temporary:
+        area=Path(temporary);root=area/'tree';root.mkdir()
+        subprocess.run(['git','init','-q',str(root)],check=True)
+        env=dict(CARGO_TARGET_DIR=str(area/'target'),PN_ISOLATION_ROOT=str(area/'owners'))
+        with patch.dict(os.environ,env):
+            directory=storage_binding(root)
+            test.assertEqual(storage_binding(root),directory,'bound storage can be reused by its checkout')
+            for field,value,member in [('CARGO_TARGET_DIR',str(area/'other-target'),'target'),('PN_ISOLATION_ROOT',str(area/'other-storage'),'storage')]:
+                with patch.dict(os.environ,{field:value}):
+                    try:storage_binding(root)
+                    except ValueError as error:test.assertIn(member,str(error),'binding refusal names changed '+member)
+                    else:test.fail('binding refuses changed '+member)
+                    refused=subprocess.run([sys.executable,'-B',str(Path(__file__).with_name('isolation.py')),'storage-root'],cwd=root,capture_output=True,text=True)
+                    test.assertEqual(refused.returncode,5,'storage lookup has its own uncounted refusal')
+                    test.assertIn('GATE-STORAGE-REFUSED',refused.stdout,'storage lookup reports its refusal without traceback')
+                    test.assertIn(member,refused.stdout,'storage lookup names the differing member')
+            other=area/'other';other.mkdir();subprocess.run(['git','init','-q',str(other)],check=True)
+            try:storage_binding(other)
+            except ValueError as error:test.assertIn('checkout',str(error),'shared target refusal names checkout')
+            else:test.fail('target cannot be shared by different checkouts')
+            with patch.dict(os.environ,CARGO_TARGET_DIR=str(area/'fresh-target'),PN_ISOLATION_ROOT=str(area/'fresh-storage')):
+                try:storage_binding(root)
+                except ValueError as error:test.assertIn('target',str(error),'checkout binding names simultaneous target and storage change')
+                else:test.fail('checkout binding refuses simultaneous target and storage change')
+        child_code='import os,time,pathlib; pathlib.Path("child-ready").write_text(str(os.getpid())); time.sleep(60)'
+        ci=str(Path(__file__).resolve().parent)
+        armed=subprocess.run([sys.executable,'-B',str(Path(ci)/'build_graph.py'),'parent-bound','-1',sys.executable,'-c','pass'],capture_output=True,text=True)
+        test.assertEqual(armed.returncode,-signal.SIGTERM,'parent change before arming prevents workload exec')
+        gate=(Path(ci)/'gate.sh').read_text()
+        handlers=gate[gate.index('active_pid='):gate.index('source ci/gate_resources.sh')]
+        stopped=subprocess.run(['bash'],input=handlers+'\nkill -HUP $$\nexit 0\n',capture_output=True,text=True)
+        test.assertEqual(stopped.returncode,129,'gate hang-up reaches its cleanup handler')
+        def alive(pid):
+            path=Path('/proc')/str(pid)/'stat'
+            return path.exists() and path.read_text().split(') ',1)[1][0]!='Z'
+        for mode,number in [('storage',signal.SIGKILL),('storage',signal.SIGHUP),('series',signal.SIGTERM)]:
+            ready=root/'child-ready';ready.unlink(missing_ok=True)
+            if mode=='storage':
+                code='from isolation import gate_storage; raise SystemExit(gate_storage('+repr([sys.executable,'-c',child_code])+'))'
+            else:
+                code='from series_round import Round; from pathlib import Path; from types import SimpleNamespace; r=Round.__new__(Round); r.root=Path.cwd(); r.store=Path('+repr(str(area))+'); r.log=None; r.storage_token=None; r.args=SimpleNamespace(build_prefix=[]); r.command('+repr([sys.executable,'-c',child_code])+')'
+            child_env=dict(os.environ,**env,PYTHONPATH=ci);child_env.pop('PN_GATE_STORAGE_TOKEN',None)
+            holder=subprocess.Popen([sys.executable,'-B','-c',code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            pid=None
+            try:
+                deadline=time.monotonic()+10
+                while not ready.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
+                test.assertTrue(ready.exists(),'holder control reaches its gate-shaped child: '+mode)
+                pid=int(ready.read_text());holder.send_signal(number)
+                deadline=time.monotonic()+5
+                while alive(pid) and time.monotonic()<deadline:time.sleep(.01)
+                test.assertFalse(alive(pid),'holder termination ends its running child: '+mode+' '+str(number))
+                holder.communicate(timeout=10)
+                if mode=='storage' and number==signal.SIGHUP:
+                    test.assertEqual(holder.returncode,129,'hang-up is forwarded and reaped by the holder')
+                with storage_lock(directory,'gate'):pass
+            finally:
+                if holder.poll() is None:holder.kill();holder.communicate()
+                if pid and alive(pid):os.kill(pid,signal.SIGKILL)

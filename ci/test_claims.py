@@ -628,7 +628,7 @@ class Evidence(unittest.TestCase):
                 diagnostics = []
                 for args in (['--only', 'datasets'], ['--run-checker', 'documents', '--', 'generate', '--check']):
                     output = io.StringIO()
-                    with patch('sys.argv', ['ci/precheck.py', *args]), patch('precheck.Path.cwd', return_value=root), patch.dict(os.environ, CARGO_TARGET_DIR=str(target), LINTER_BIN='/fixture/linter'), patch('precheck.prepare_checker', return_value=binary), patch('precheck.subprocess.run', wraps=subprocess.run) as run, redirect_stderr(output), redirect_stdout(io.StringIO()):
+                    with patch('sys.argv', ['ci/precheck.py', '--storage-locked', *args]), patch('isolation.storage_entry'), patch('precheck.Path.cwd', return_value=root), patch.dict(os.environ, CARGO_TARGET_DIR=str(target), LINTER_BIN='/fixture/linter'), patch('precheck.prepare_checker', return_value=binary), patch('precheck.subprocess.run', wraps=subprocess.run) as run, redirect_stderr(output), redirect_stdout(io.StringIO()):
                         self.assertEqual(precheck.main(), 2)
                     self.assertFalse(any(call.args[0][0] == str(binary) for call in run.call_args_list))
                     diagnostics.append(next(line for line in output.getvalue().splitlines() if line.startswith('CHECKER-STRUCTURAL-ERROR')))
@@ -727,7 +727,7 @@ class Evidence(unittest.TestCase):
                     Path('docs/inputs/specification-progress.toml').write_text(tracker_input('.', dict(claims=[], obligations=[])))
                     self.assertEqual(main(['registration']), 0)
                     import precheck
-                    with patch('sys.argv', ['ci/precheck.py', '--only', 'linter']), patch.dict(os.environ, {'LINTER_BIN': '/fixture/linter'}), patch('precheck.subprocess.run', return_value=SimpleNamespace(returncode=-15)):
+                    with patch('sys.argv', ['ci/precheck.py', '--storage-locked', '--only', 'linter']), patch('isolation.storage_entry'), patch.dict(os.environ, {'LINTER_BIN': '/fixture/linter'}), patch('precheck.cancellable', return_value=SimpleNamespace(returncode=-15)):
                         self.assertEqual(precheck.main(), 143)
 
                     # Every static refusal is identical before and after the

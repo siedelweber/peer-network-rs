@@ -358,8 +358,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-archive-list",
       "before": "",
-      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log.",
-      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
+      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log. Recorded and printed command vectors mask the storage token; replay of the retained vector refuses while its original holder is live.",
+      "review": "Conformance controls run the production command, inspect its retained and printed vectors, and replay the retained vector against a live holder. Robustness controls retain archive boundaries and path diagnostics. The cooperative token is not an authentication boundary against the account."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
@@ -390,8 +390,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
-      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots and ordinary gate entry before declaration. Controlled rounds compare named key members before reset, ending source differences and refusing invoker differences restartably, while retaining label-state exclusion.",
-      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
+      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion.",
+      "review": "Conformance and robustness controls execute the storage and entry paths with real temporary lock files and bounded child processes; their assertions cover only cooperative exclusion and the stated controlled lifetime and identity refusals, not noncooperating account processes."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",

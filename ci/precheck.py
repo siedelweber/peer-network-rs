@@ -10,6 +10,8 @@ import subprocess
 import sys
 import time
 
+from build_graph import cancellable
+
 
 CHECKERS = {
     'documents': ('gate/documents', ['-p', 'documents', '--bin', 'documents']),
@@ -61,8 +63,8 @@ def prepare_checker(root, target, name):
     binary = target/CHECKERS[name][0]
     binding = binary.with_suffix('.prepared.json')
     binding.unlink(missing_ok=True)
-    subprocess.run(['cargo', 'build', '--offline', '--locked', '--profile', 'gate', *CHECKERS[name][1]],
-                   cwd=root, env=dict(os.environ, CARGO_TARGET_DIR=str(target)), check=True)
+    cancellable(['cargo', 'build', '--offline', '--locked', '--profile', 'gate', *CHECKERS[name][1]],
+                cwd=root, env=dict(os.environ, CARGO_TARGET_DIR=str(target))).check_returncode()
     state = prepared_state(root, target, name)
     temporary = binding.with_suffix('.'+str(os.getpid())+'.tmp')
     temporary.write_text(json.dumps(state, sort_keys=True)+'\n')
@@ -84,6 +86,15 @@ def commands(target, linter):
 
 
 def main():
+    from isolation import gate_storage, storage_entry, storage_token
+    if sys.argv[1:2] != ['--storage-locked']:
+        return gate_storage([sys.executable, '-B', str(Path(__file__).resolve()), '--storage-locked', *sys.argv[1:]])
+    try:
+        storage_entry(Path.cwd(), storage_token())
+    except (OSError, ValueError, TypeError) as error:
+        print('GATE-STORAGE-REFUSED status=5 counted=false reason='+str(error), flush=True)
+        return 5
+    del sys.argv[1]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--prepare-checkers', action='store_true', help='explicit build preparation; not a registration pre-check')
     parser.add_argument('--run-checker', choices=CHECKERS, help='gate build-and-check route')
@@ -104,7 +115,7 @@ def main():
             binary = check_prepared(Path.cwd(), target, args.run_checker)
             arguments = args.checker_args
             if arguments[:1] == ['--']: arguments = arguments[1:]
-            return subprocess.run([str(binary), *arguments], check=False).returncode
+            return cancellable([str(binary), *arguments]).returncode
         linter = os.environ.get('LINTER_BIN')
         if not linter:
             raise ValueError('LINTER_BIN must name the deployed linter')
@@ -115,9 +126,11 @@ def main():
             before = time.time()
             if name in {'datasets', 'documents', 'observations'}:
                 check_prepared(Path.cwd(), target, 'observations' if name == 'observations' else 'documents')
-            result = subprocess.run(argv, check=False)
+            result = cancellable(argv)
             print(f'PRECHECK step={name} status={result.returncode} start={before:.9f} end={time.time():.9f}', flush=True)
             status = max(status, result.returncode if result.returncode >= 0 else 128-result.returncode)
+            if result.returncode < 0:
+                break
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         print('PRECHECK-STRUCTURAL-ERROR '+str(error), file=sys.stderr)
         status = 2
