@@ -7,6 +7,6 @@
     "path": "packages/secret-home/src/lib.rs",
     "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq)]",
     "class_decision": "secret-home-private",
-    "expansion_review": "The only derive is the content-free Error enum: Copy, Clone, Debug and equality contain no secret or pointer. Home, Protection and Staging have handwritten constant Debug; no encoder is derived."
+    "expansion_review": "The content-free Error and CompletionError enums derive Copy, Clone, Debug and equality over public failure classes and cleanup flags only. No secret, pointer, slice or encoder is derived; owning carriers retain handwritten constant Debug."
   }
 }

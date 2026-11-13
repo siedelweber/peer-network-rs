@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "CompletionError",
+    "package": "pn-secret-home",
+    "path": "packages/secret-home/src/lib.rs",
+    "syntax": "# [doc = \" Content-free completion failure; both cleanup results remain distinguishable.\"] # [doc = \" (´[ROOT-amend:crypto:secret-home]´)\"] # [derive (Debug , Clone , Copy , PartialEq , Eq)] pub enum CompletionError { Ownership , Cleanup { unlock : bool , unmap : bool } , }"
+  }
+}

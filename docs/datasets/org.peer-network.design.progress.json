@@ -39826,10 +39826,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39844,7 +39844,7 @@
           "exact_digits": 32
         }
       },
-      "total": 3
+      "total": 4
     },
     {
       "category": "record-coverage",

@@ -235,7 +235,7 @@ impl Protection {
         }
         home.protect()?;
         home.lock()?;
-        fill(&mut home.checked_bytes()[..size])?;
+        fill(&mut home.checked_bytes()?[..size])?;
         Ok(home)
     }
 }
@@ -279,6 +279,8 @@ pub struct Home {
     len: usize,
     process: ProcessIdentity,
     locked: bool,
+    released: bool,
+    completion: Option<Result<(), CompletionError>>,
 }
 
 impl std::fmt::Debug for Home {
@@ -308,12 +310,18 @@ impl Home {
             len,
             process,
             locked: false,
+            released: false,
+            completion: None,
         })
     }
 
     // Justified: Only the owned complete mapping receives fork and dump exclusion advice.
     #[expect(unsafe_code, reason = "owned mapping advice")]
     fn protect(&mut self) -> Result<(), Error> {
+        #[cfg(test)]
+        if tests::refuse_advice() {
+            return Err(Error::Advice);
+        }
         for advice in [Advice::LinuxDontDump, Advice::LinuxDontFork] {
             // SAFETY: This single owner holds the live page-aligned mapping with its original full length; no slice exists and neither advice changes the parent's readable/writable mapping.
             // (´[ROOT-cav:crypto:home-advice]´)
@@ -333,12 +341,14 @@ impl Home {
     }
 
     // Justified: Operations establish the process identity before borrowing private mapping bytes.
-    fn checked_bytes(&mut self) -> &mut [u8] {
-        assert!(
-            self.process.is_current(),
-            "mapping belongs to another process or identity is unavailable"
-        );
-        self.bytes()
+    fn checked_bytes(&mut self) -> Result<&mut [u8], Error> {
+        let current = self.process.is_current();
+        #[cfg(test)]
+        let current = current && !tests::refuse_ownership();
+        if !current {
+            return Err(Error::Process);
+        }
+        Ok(self.bytes())
     }
 
     // Justified: The sole private byte view lends the owned initialized mapping after the caller's identity check.
@@ -358,6 +368,10 @@ impl Home {
     // Justified: Unlock follows full-allocation erasure and the end of every byte borrow.
     #[expect(unsafe_code, reason = "owned mapping unlock")]
     fn unlock(&mut self) -> Result<(), rustix::io::Errno> {
+        #[cfg(test)]
+        if let Some(result) = tests::before_unlock() {
+            return result;
+        }
         // SAFETY: This single owner still holds the live page-aligned mapping and its original full length; all byte borrows have ended and the mapping has not been released.
         // (´[ROOT-cav:crypto:home-unlock]´)
         unsafe { rustix::mm::munlock(self.pointer, self.len) }
@@ -366,6 +380,10 @@ impl Home {
     // Justified: Release only the original owned mapping after erasure, with no surviving byte references.
     #[expect(unsafe_code, reason = "owned mapping release")]
     fn unmap(&mut self) -> Result<(), rustix::io::Errno> {
+        #[cfg(test)]
+        if let Some(result) = tests::before_unmap() {
+            return result;
+        }
         // SAFETY: This single owner releases its original page-aligned mapping and full length exactly once; no Rust reference survives and no later operation uses the pointer.
         // (´[ROOT-cav:crypto:home-unmap]´)
         unsafe { rustix::mm::munmap(self.pointer, self.len) }
@@ -375,8 +393,15 @@ impl Home {
 impl Drop for Home {
     /// Justified: Destruction erases in place before unlock and release without observing secret data.
     fn drop(&mut self) {
+        if self.completion.is_some() {
+            #[cfg(test)]
+            if !self.released && self.process.is_current() {
+                tests::observe_retained(self.bytes());
+            }
+            return;
+        }
         // DONTFORK removes the mapping in a child. An inherited handle must not touch it.
-        if !self.process.is_current() {
+        if self.released || !self.process.is_current() {
             return;
         }
         if !self.pointer.is_null() {
@@ -384,13 +409,93 @@ impl Drop for Home {
             #[cfg(test)]
             tests::observe_erased(self.bytes());
         }
-        if self.locked {
-            let _ = self.unlock();
-        }
-        let _ = self.unmap();
-        RESERVED.fetch_sub(self.len, Ordering::SeqCst);
+        let _ = self.release();
     }
 }
 
 #[cfg(test)]
 mod tests;
+
+/// Content-free completion failure; both cleanup results remain distinguishable.
+/// (´[ROOT-amend:crypto:secret-home]´)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CompletionError {
+    Ownership,
+    Cleanup { unlock: bool, unmap: bool },
+}
+
+impl std::fmt::Display for CompletionError {
+    /// Justified: Completion diagnostics format only a fixed public failure class.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Ownership => "home ownership unconfirmed",
+            Self::Cleanup { .. } => "home cleanup unconfirmed",
+        })
+    }
+}
+
+impl std::error::Error for CompletionError {}
+
+impl Home {
+    /// Consume the home and confirm erasure, unlock and release, without exporting bytes.
+    /// A refused attempt is not retried by Drop; its unreleased mapping remains reserved.
+    /// (´[ROOT-amend:crypto:secret-home]´)
+    /// # Errors
+    /// Returns ownership refusal before byte access, or both unconfirmed cleanup flags.
+    #[tracing::instrument(
+        name = "amend:crypto:secret-home",
+        fields(
+            execution_owner = "SECRETHOME",
+            claim_owner = "ROOT",
+            claim_label = "amend:crypto:secret-home",
+            source_item = "Home::complete"
+        ),
+        ret
+    )]
+    pub fn complete(mut self) -> Result<(), CompletionError> {
+        self.finish()
+    }
+
+    // Justified: Cache the content-free result so consuming completion and fallback destruction never repeat an attempt.
+    fn finish(&mut self) -> Result<(), CompletionError> {
+        if let Some(result) = self.completion {
+            return result;
+        }
+        let result = self.finish_once();
+        self.completion = Some(result);
+        result
+    }
+
+    // Justified: The checked slice establishes ownership once and erases the entire allocation without exporting it.
+    fn finish_once(&mut self) -> Result<(), CompletionError> {
+        let bytes = self.checked_bytes().map_err(|_| CompletionError::Ownership)?;
+        bytes.zeroize();
+        #[cfg(test)]
+        tests::observe_erased(bytes);
+        self.release()
+    }
+
+    // Justified: Cleanup follows erasure; only successful unmapping releases the allocation reservation.
+    fn release(&mut self) -> Result<(), CompletionError> {
+        if self.released {
+            return Ok(());
+        }
+        let unlock = self.locked && self.unlock().is_err();
+        if !unlock {
+            self.locked = false;
+        }
+        let unmap = self.unmap().is_err();
+        if !unmap {
+            self.released = true;
+            self.locked = false;
+            RESERVED.fetch_sub(self.len, Ordering::SeqCst);
+            #[cfg(test)]
+            tests::released();
+        }
+        if unlock || unmap {
+            Err(CompletionError::Cleanup { unlock, unmap })
+        } else {
+            Ok(())
+        }
+    }
+}

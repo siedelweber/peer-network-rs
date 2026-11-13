@@ -5372,6 +5372,30 @@
       "review": "A partial-fill error returns Entropy and releases the reservation; oversized import zeroes caller staging, zero length refuses, real OS acquisition succeeds, and a full declared mapping budget excludes a second allocation."
     },
     {
+      "operation": "pn-secret-home::tests::completion_controls",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-completion-orders-erasure-and-confirms-release",
+      "before": "",
+      "after": "Consuming completion checks ownership before bytes, erases a full page before\ncleanup, returns each injected cleanup failure and retains failed live reservations.\nAn advice refusal during acquisition also releases its zero-initialized page.\nThese finite Linux and injected results do not establish installed sandbox behavior.",
+      "review": "Six isolated child cases exercise successful completion, synthetic ownership refusal on an actually owned mapping, advice refusal before fill, independent unlock/unmap failures and their conjunction. Full-page erasure and syscall order, retained mapping presence, locked bytes and reservations are asserted; the retained-byte observer checks real ownership inside Drop. This does not claim installed sandbox behavior."
+    },
+    {
+      "operation": "pn-secret-home::tests::completion_diagnostics",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-completion-errors-contain-no-private-bytes",
+      "before": "",
+      "after": "Completion errors expose only public classes through Debug, Display, source\nand a real tracing subscriber for the consuming operation with a private sentinel.",
+      "review": "A private sentinel is placed in the owned mapping; separate children inject ownership refusal and both cleanup failures, and both new error variants are checked through exact Debug and Display, an empty source chain and a real tracing subscriber recording the public consuming operation. The error contains only public flags; no sentinel is emitted."
+    },
+    {
+      "operation": "pn-secret-home::tests::completion_repeat",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:home-completion-never-releases-twice",
+      "before": "",
+      "after": "Repeated internal completion and subsequent consuming completion return the\ncached result; successful and failed release each perform one syscall attempt\nand change reservations only after confirmed unmap.",
+      "review": "Success and failed-unmap children call the private cached completion twice and then the public consuming operation. They require a single erase/unlock/unmap sequence and one reservation decrement only on success. The syscall seam intercepts duplicate unmap before the real syscall so the duplicate-release mutant is safe to execute."
+    },
+    {
       "operation": "pn-secret-home::tests::descriptor_exhaustion",
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:home-drop-survives-descriptor-exhaustion",

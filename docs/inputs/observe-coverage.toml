@@ -92,11 +92,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-secret-home"
-operations = 9
-instrumented = 3
-exceptions = 6
+operations = 11
+instrumented = 4
+exceptions = 7
 helpers = 0
-generators = 1
+generators = 2
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]

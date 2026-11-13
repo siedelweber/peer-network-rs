@@ -4267,7 +4267,10 @@
         "pn-secret-home::tests::namespace_identity",
         "pn-secret-home::tests::no_deref",
         "pn-secret-home::tests::descriptor_exhaustion",
-        "pn-secret-home::tests::foreign_pid"
+        "pn-secret-home::tests::foreign_pid",
+        "pn-secret-home::tests::completion_controls",
+        "pn-secret-home::tests::completion_repeat",
+        "pn-secret-home::tests::completion_diagnostics"
       ],
       "implementation": "pn-secret-home-rust",
       "kind": "suite",
