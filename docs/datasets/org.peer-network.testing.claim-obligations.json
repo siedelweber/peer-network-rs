@@ -955,6 +955,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "The ordered credential cuts preserve host vectors and bounds, pass their scoped controls and source-local census, and join the independently required installation evidence without a secret byte export or additional unsafe site.",
+      "closing_step": "Ordered credential cuts before executable startup",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "Shared derivation and registered edges, checked completion, protected generator consumer inventory, executable and test-only models, delivered-set integration and installation witnesses.",
+      "name": "ROOT::dec:observe:credential-packages",
+      "owner": "Foundation implementer, storage reviewer and secret-boundary reviewer",
+      "path": "adr/016-observability.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export.",
       "closing_step": "Credential bootstrap before executable startup",
       "hold": "ROOT::open:design:secret-integrations",
