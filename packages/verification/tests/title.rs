@@ -16,7 +16,7 @@ fn title_exhaustive() {
 use pn_testkit::proptest::{self, prelude::*};
 
 fn configuration() -> proptest::test_runner::Config {
-    let mut config = pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/title.txt"));
+    let mut config = pn_testkit::property_config("proptest-regressions/title.txt");
     match std::env::var("PN_PROPERTY_SEED_PN_VERIFICATION") {
         Ok(seed) => config.rng_seed = proptest::test_runner::RngSeed::Fixed(seed.parse().unwrap()),
         Err(std::env::VarError::NotPresent) => assert!(

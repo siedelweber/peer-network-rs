@@ -100,12 +100,23 @@ def test_item_ranges(code):
     return ranges
 
 
-def test_sources(sources):
+def support_item_ranges(source, code):
+    from testkit_guard import FEATURE_CLASSES
+    features = {name for rows in FEATURE_CLASSES.values() for name, kind in rows.items() if kind == 'development-only'}
+    ranges = []
+    for match in re.finditer(r'#\s*!?\s*\[\s*cfg(?:_attr)?\s*\([^]]*\)\s*\]', code):
+        if features.intersection(re.findall(r'\bfeature\s*=\s*"([^"]+)"', source[match.start():match.end()])):
+            end = len(code) if '!' in match.group().split('[')[0] else item_end(code, match.end())
+            ranges.append((match.start(), end))
+    return ranges
+
+
+def test_sources(sources, include_support=False):
     edges = []
     marked = {path for path in sources if any(part in {"tests", "harness", "harnesses"} for part in path.parts)}
     for path, source in sources.items():
         code = rust_code(source)
-        ranges = test_item_ranges(code)
+        ranges = test_item_ranges(code) + (support_item_ranges(source, code) if include_support else [])
         bases = [path.parent]
         if path.stem not in {"lib", "main", "mod"}:
             bases.append(path.with_suffix(""))
@@ -203,7 +214,43 @@ def redirected_streams(code):
     return code
 
 
-def source_findings(path, source, mode, forced_test=False):
+def compile_time_path_findings(path, source, forced_test=False):
+    """Reject path-producing compile-time macros in tests, except embedded bytes."""
+    code = rust_code(source)
+    ranges = test_item_ranges(code) + support_item_ranges(source, code)
+    whole = forced_test or any(part in {'tests', 'harness', 'harnesses'} for part in path.parts)
+    whole |= path.parts[:3] == ('packages', 'testkit', 'src')
+    def end_of_macro(start):
+        pairs = {'(': ')', '[': ']', '{': '}'}
+        stack = []
+        for offset in range(start, len(code)):
+            char = code[offset]
+            if char in pairs: stack.append(pairs[char])
+            elif stack and char == stack[-1]:
+                stack.pop()
+                if not stack: return offset + 1
+        return len(code)
+    embedded = [(m.start(), end_of_macro(m.end()-1)) for m in re.finditer(r'\binclude_(?:str|bytes)\s*!\s*[({\[]', code)]
+    names = {'env', 'option_env', 'file'}
+    for match in re.finditer(r'\b(?:env|option_env|file)\s+as\s+(\w+)', code):
+        names.add(match.group(1))
+    findings = []
+    for match in re.finditer(r'\b('+ '|'.join(sorted(names)) +r')\s*!\s*[({\[]', code):
+        if not whole and not any(start <= match.start() < end for start, end in ranges): continue
+        if any(start < match.start() < end for start, end in embedded): continue
+        arguments = source[match.end():end_of_macro(match.end()-1)-1].strip()
+        literal = re.fullmatch(r'(?:r(\#*)"([A-Za-z_0-9-]+)"\1|"([A-Za-z_0-9-]+)")\s*,?', arguments)
+        variable = (literal.group(2) or literal.group(3)) if literal else None
+        metadata = {'CARGO_PKG_NAME', 'CARGO_PKG_VERSION', 'CARGO_PKG_VERSION_MAJOR',
+                    'CARGO_PKG_VERSION_MINOR', 'CARGO_PKG_VERSION_PATCH', 'CARGO_PKG_VERSION_PRE',
+                    'CARGO_PKG_AUTHORS', 'CARGO_PKG_DESCRIPTION', 'CARGO_PKG_HOMEPAGE',
+                    'CARGO_PKG_REPOSITORY', 'CARGO_PKG_LICENSE', 'CARGO_PKG_RUST_VERSION'}
+        if match.group(1) not in {'env', 'option_env'} or variable not in metadata:
+            findings.append(f'compile-time test path at line {source[:match.start()].count(chr(10))+1}; use the runtime test-support resolver')
+    return findings
+
+
+def source_findings(path, source, mode, forced_test=False, forced_support=False):
     code = rust_code(source)
     if mode == "printing":
         code = redirected_streams(code)
@@ -240,7 +287,7 @@ def source_findings(path, source, mode, forced_test=False):
             for match in re.finditer(pattern, code)
         )
         return ["uncontrolled printing, stream handle or exit"] if forbidden_import or forbidden_call else []
-    findings = []
+    findings = compile_time_path_findings(path, source, forced_test or forced_support)
     test_ranges = test_item_ranges(code)
     for match in re.finditer(r"#\s*(!?)\s*\[([^]]*)\]", code, re.S):
         body = match.group(2)
@@ -717,17 +764,30 @@ def main():
     tracked = git("ls-files", "-z")
     tracked.check_returncode()
     sources = {}
+    vendor_sources = {}
+    workspace_members = None
     for raw_path in tracked.stdout.split(b"\0"):
         if not raw_path:
             continue
         path = pathlib.Path(os.fsdecode(raw_path))
         if path.parts[0] != "vendor" and path.suffix == ".rs":
             sources[path] = path.read_text()
+        elif mode == "suppressions" and path.suffix == ".rs":
+            if workspace_members is None:
+                workspace_members = tuple(pathlib.Path(member) for member in tomllib.loads(pathlib.Path('Cargo.toml').read_text())['workspace']['members'])
+            if any(path.is_relative_to(member) for member in workspace_members):
+                vendor_sources[path] = path.read_text()
     tests = test_sources(sources)
+    support = test_sources(sources, include_support=True)
     failed = False
+    vendor_tests = test_sources(vendor_sources, include_support=True)
+    for path, source in vendor_sources.items():
+        for finding in compile_time_path_findings(path, source, path in vendor_tests):
+            print(f"{path}: {finding}")
+            failed = True
     exposures = []
     for path, source in sources.items():
-        for finding in source_findings(path, source, mode, path in tests):
+        for finding in source_findings(path, source, mode, path in tests, path in support):
             print(f"{path}: {finding}")
             failed = True
         if mode == "suppressions":

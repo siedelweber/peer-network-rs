@@ -669,7 +669,7 @@ fn generated_literal_corpus() {
 use pn_testkit::proptest::{self, prelude::*};
 
 fn configuration() -> proptest::test_runner::Config {
-    let mut config = pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/compiler-regressions.txt"));
+    let mut config = pn_testkit::property_config("tests/compiler-regressions.txt");
     match std::env::var("PN_PROPERTY_SEED_PN_EPOCH") {
         Ok(seed) => config.rng_seed = proptest::test_runner::RngSeed::Fixed(seed.parse().unwrap()),
         Err(std::env::VarError::NotPresent) => assert!(

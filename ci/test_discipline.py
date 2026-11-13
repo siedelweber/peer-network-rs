@@ -832,6 +832,41 @@ class HashCitations(unittest.TestCase):
 
 
 class SourceDiscipline(unittest.TestCase):
+    def test_runtime_test_paths(self):
+        """Test-quality controls reject compile-time path macros and aliases in test/support items, while runtime lookups, metadata and embedded fixture contents remain allowed.
+        ´claim:discipline:test-paths-require-runtime-sources´
+        ´test:integration:test-runtime-test-paths´
+        """
+        from discipline import compile_time_path_findings
+        path = Path('packages/probe/tests/path.rs')
+        for expression in ['env!("CARGO_MANIFEST_DIR")', 'option_env!(r#"OUT_DIR"#)',
+                           'env!("CARGO_BIN_EXE_probe")', 'env!("CUSTOM_ROOT")',
+                           'env!("CARGO_TARGET_TMPDIR")', 'env!("RUSTC")', 'env!("CUSTOM")',
+                           'env!(concat!("CARGO_", "MANIFEST_DIR"))', 'file!()']:
+            with self.subTest(expression=expression):
+                source = 'fn path() { let value = '+expression+'; read(value); }'
+                self.assertTrue(compile_time_path_findings(path, source))
+                self.assertTrue(compile_time_path_findings(Path('vendor/probe/tests/path.rs'), source))
+                self.assertTrue(compile_time_path_findings(Path('packages/testkit/src/lib.rs'), source))
+                self.assertTrue(compile_time_path_findings(Path('packages/probe/src/lib.rs'), '#[cfg(test)] mod tests { '+source+' }'))
+                self.assertTrue(compile_time_path_findings(Path('packages/probe/src/lib.rs'), '#[cfg(feature = "test-support")] mod support { '+source+' }'))
+                self.assertTrue(compile_time_path_findings(Path('packages/probe/src/lib.rs'), '#[cfg(feature = "fuzzing")] mod support { '+source+' }'))
+                self.assertTrue(compile_time_path_findings(Path('packages/probe/src/lib.rs'), '#[cfg(feature = "observation-test-hook")] mod support { '+source+' }'))
+                self.assertFalse(compile_time_path_findings(Path('packages/probe/src/lib.rs'), '#[cfg(feature = "development-network")] mod production { '+source+' }'))
+                self.assertFalse(compile_time_path_findings(Path('packages/probe/src/lib.rs'), source))
+                self.assertTrue(compile_time_path_findings(Path('packages/probe/src/helper.rs'), source, True))
+        self.assertTrue(compile_time_path_findings(path, 'use std::env as build_value; fn path() { build_value!("CARGO_MANIFEST_DIR"); }'))
+        for source in ['fn path() { std::env::var_os("CARGO_MANIFEST_DIR"); }',
+                       'const VERSION: &str = env!("CARGO_PKG_VERSION");',
+                       'const DATA: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/fixture"));',
+                       'const DATA: &[u8] = include_bytes! { concat!(env!("OUT_DIR"), "/fixture") };',
+                       '// env!("CARGO_MANIFEST_DIR")\nconst TEXT: &str = r#"file!()"#;']:
+            self.assertEqual(compile_time_path_findings(path, source), [])
+        self.assertTrue(source_findings(path, 'fn probe() { env!("CARGO_MANIFEST_DIR"); }', 'suppressions'))
+        sources = {Path('packages/probe/src/lib.rs'): '#[cfg(feature = "test-support")] mod support;',
+                   Path('packages/probe/src/support.rs'): 'fn path() { env!("CARGO_MANIFEST_DIR"); }'}
+        self.assertIn(Path('packages/probe/src/support.rs'), test_sources(sources, include_support=True))
+
     def test_build_policy(self):
         """Gate profile drift and disabled runtime checks fail structural policy.
         ´claim:devperf:gate-profile-guards´

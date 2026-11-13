@@ -263,7 +263,7 @@ fn invalid_curve_encodings() {
 }
 
 proptest! {
-    #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/layout.txt")))]
+    #![proptest_config(pn_testkit::property_config("proptest-regressions/layout.txt"))]
     /// Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while the fuzzing feature compares codec acceptance and projections independently of preflight for arbitrary bytes, mutated fixtures, dynafed headers, proofs and explicit nonces within declared limits.
     /// ´claim:wallet:bounded-decoder-campaign-retains-layouts´
     /// ´test:integration:decoder-campaign´

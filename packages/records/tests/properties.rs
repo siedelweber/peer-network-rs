@@ -7,7 +7,7 @@ mod checks;
 use pn_testkit::proptest::{self, prelude::*};
 
 proptest! {
-    #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
+    #![proptest_config(pn_testkit::property_config("proptest-regressions/properties.txt"))]
     /// Claim: For generated finite causal DAGs, naive transitive search agrees with every closure and its exact proposal identity set; original, reversed and shuffled presentations preserve the work count, and adding a proposal increases work.
     /// ´claim:acts:generated-closures-match-independent-search´
     /// ´test:integration:closure-model´
@@ -28,7 +28,7 @@ proptest! {
 }
 
 proptest! {
-    #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
+    #![proptest_config(pn_testkit::property_config("proptest-regressions/properties.txt"))]
     /// Claim: Over bounded shared integer inputs, the inner exact-value checks establish co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values, action-count door outlays with independently varying per-action coordinates, and exact sign, unit and floor refusals; no fence evaluation is asserted.
     /// ´claim:numerics:generated-numeric-coordinates-retain-their-laws´
     /// ´test:integration:numeric-coordinates´
@@ -40,7 +40,7 @@ proptest! {
 mod burn_checks;
 
 proptest! {
-    #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
+    #![proptest_config(pn_testkit::property_config("proptest-regressions/properties.txt"))]
     /// Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause and expected retained prefix, or no prefix at validation, in original and reversed presentation order under fixture proof verification.
     /// ´claim:burn:generated-marker-corruptions-retain-typed-causes´
     /// ´test:integration:marker-recognition´

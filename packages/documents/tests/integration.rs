@@ -198,7 +198,10 @@ fn package_pin_projection(root: &Path) -> Result<()> {
 
 fn registry_pin_correspondence() -> Result<()> {
     let constants: serde_json::Value = serde_json::from_str(&fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
+        pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace(
+            "docs/datasets/org.peer-network.design.constants.json",
+        ))
+        .unwrap(),
     )?)?;
     let floor = constants["rows"]
         .as_array()
@@ -211,7 +214,7 @@ fn registry_pin_correspondence() -> Result<()> {
         floor["definition"]["expr"].as_str().ok_or("floor expression")?
     );
     let input: toml::Value = toml::from_str(&fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/inputs/numbers.toml"),
+        pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("docs/inputs/numbers.toml")).unwrap(),
     )?)?;
     let rows = input["rows"].as_array().ok_or("registry rows")?;
     let pin = rows
@@ -390,7 +393,7 @@ fn directed_number_displays() -> Result<()> {
 /// ´test:integration:repository-fixed-point´
 #[test]
 fn repository_fixed_point() -> Result<()> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let root = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap();
     for _ in 0..2 {
         assert_eq!(
             documents::run(&root, Operation::Generate { check: true })?.findings,
@@ -434,7 +437,7 @@ fn retained_sample_refusal(root: &Path) -> Result<()> {
 /// ´test:integration:tracker-replacement-artifacts´
 #[test]
 fn tracker_replacement_artifacts() -> Result<()> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let root = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap();
     let script = r#"
 import json, os, sys
 from pathlib import Path
@@ -476,7 +479,7 @@ assert all((root/name).read_bytes() == content for name,content in expected.item
     let output = Command::new("python3")
         .args(["-B", "-c", script])
         .arg(&root)
-        .arg(env!("CARGO_BIN_EXE_documents"))
+        .arg(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
         .output()?;
     assert!(
         output.status.success(),
@@ -579,7 +582,7 @@ fn text_output() -> Result<()> {
 /// ´test:integration:release-premises´
 #[test]
 fn release_premises() -> Result<()> {
-    let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let repository = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap();
     for document in ["inventory", "questions"] {
         let directory = fixture()?;
         let root = directory.path();
@@ -644,7 +647,7 @@ fn release_premises() -> Result<()> {
 fn declaration_authority() -> Result<()> {
     let directory = fixture()?;
     let root = directory.path();
-    let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let repository = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap();
     for input in ["records", "kinds-registry", "linter-reserved", "linter-policies"] {
         fs::copy(
             repository.join(format!("docs/inputs/{input}.toml")),
@@ -957,7 +960,9 @@ fn control_records() -> Result<()> {
         ("--version", 0, "version"),
         ("--unknown", 2, "usage_error"),
     ] {
-        let output = Command::new(env!("CARGO_BIN_EXE_documents")).arg(argument).output()?;
+        let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+            .arg(argument)
+            .output()?;
         assert_eq!(output.status.code(), Some(status));
         assert_eq!(output.stdout, b"");
         let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;
@@ -976,7 +981,8 @@ fn terminal_refusal() -> Result<()> {
     let script = "import os,pty,subprocess,sys,json\nm,s=pty.openpty()\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'write'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\nassert p.returncode==2\nrecords=[json.loads(line) for line in p.stderr.splitlines()]\nassert sum(r.get('kind')=='tty_refusal' for r in records)==1\ntry:\n data=os.read(m,4096)\nexcept OSError:\n data=b''\nassert data==b''\nos.close(m)\n";
     assert!(
         Command::new("python3")
-            .args(["-c", script, env!("CARGO_BIN_EXE_documents")])
+            .args(["-c", script])
+            .arg(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
             .arg(directory.path())
             .status()?
             .success()
@@ -1009,11 +1015,13 @@ fn complete_capture(stderr: &[u8]) -> Result<Vec<serde_json::Value>> {
 }
 
 fn invoke(root: &Path, operation: &str) -> Result<std::process::Output> {
-    Ok(Command::new(env!("CARGO_BIN_EXE_documents"))
-        .arg("--root")
-        .arg(root)
-        .arg(operation)
-        .output()?)
+    Ok(
+        Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+            .arg("--root")
+            .arg(root)
+            .arg(operation)
+            .output()?,
+    )
 }
 
 /// Claim: a clean binary check emits exactly one JSON result line and status zero.
@@ -1187,7 +1195,7 @@ fn atomic_refresh() -> Result<()> {
 fn record_authority() -> Result<()> {
     let directory = fixture()?;
     let root = directory.path();
-    let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let repository = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap();
     fs::create_dir_all(root.join("docs/templates/adr"))?;
     fs::create_dir_all(root.join("docs/fragments"))?;
     fs::copy(
@@ -1366,7 +1374,7 @@ fn record_observed_row() -> Result<()> {
 #[test]
 fn git_required() -> Result<()> {
     let directory = fixture()?;
-    let output = Command::new(env!("CARGO_BIN_EXE_documents"))
+    let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
         .env("PATH", "")
         .arg("--root")
         .arg(directory.path())

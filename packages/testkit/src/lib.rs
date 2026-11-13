@@ -6,6 +6,9 @@
 use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
 
+mod paths;
+pub use paths::{RuntimePath, runtime_path};
+
 /// Reviewed strategy and value-tree shrinking implementation for consumers.
 /// (´def:testkit:property-config´)
 pub use proptest;
@@ -15,10 +18,23 @@ pub use proptest;
 /// The gate supplies the seed, cases, algorithm, fork, timeout and shrink limits;
 /// local callers use that same environment interface. Only the corpus is replaced.
 /// (´def:testkit:property-config´)
+///
+/// # Panics
+/// Panics only if runtime path resolution refuses the corpus or its path is not UTF-8.
+/// The resolved string lives until process exit because proptest requires a static path.
 #[must_use]
 pub fn property_config(corpus: &'static str) -> proptest::test_runner::Config {
+    let path = runtime_path(RuntimePath::Package(corpus)).unwrap_or_else(|error| panic!("{error}"));
+    let path = path.into_os_string().into_string().unwrap_or_else(|found| {
+        panic!(
+            "expected a UTF-8 regression path for proptest; found {}; run the tests in a UTF-8 workspace path",
+            found.to_string_lossy()
+        )
+    });
     proptest::test_runner::Config {
-        failure_persistence: Some(Box::new(proptest::test_runner::FileFailurePersistence::Direct(corpus))),
+        failure_persistence: Some(Box::new(proptest::test_runner::FileFailurePersistence::Direct(Box::leak(
+            path.into_boxed_str(),
+        )))),
         ..proptest::test_runner::Config::default()
     }
 }
@@ -231,7 +247,7 @@ mod tests {
         let config = proptest::test_runner::Config {
             rng_seed: RngSeed::Fixed(17),
             failure_persistence: None,
-            ..property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/controlled.txt"))
+            ..property_config("proptest-regressions/controlled.txt")
         };
         let run = || {
             let visited = std::cell::RefCell::new(Vec::new());

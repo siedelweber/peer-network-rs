@@ -224,6 +224,14 @@
         {
           "owner": "ROOT",
           "target": "RECORDS"
+        },
+        {
+          "owner": "DOCUMENTS",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "EXECWRAP",
+          "target": "TESTKIT"
         }
       ],
       "name": "declaration",

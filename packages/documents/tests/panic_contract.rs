@@ -5,7 +5,8 @@ use std::process::Command;
 /// ´test:integration:panic-proxy´
 #[test]
 fn panic_proxy() -> documents::Result<()> {
-    let output = Command::new(env!("CARGO_BIN_EXE_documents-panic-probe")).output()?;
+    let output =
+        Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents-panic-probe")).unwrap()).output()?;
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, b"");
     let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;

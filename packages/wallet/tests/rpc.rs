@@ -166,7 +166,7 @@ fn provisioning_refusals() {
         .args(["-B", "ci/wallet_elements.py", "start", "--root"])
         .arg(root().with_file_name(format!("wallet-unset-{}", std::process::id())))
         .env_remove("PN_ELEMENTS_BIN")
-        .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .current_dir(pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap())
         .output()
         .unwrap();
     assert_eq!(unset.status.code(), Some(2));
@@ -315,7 +315,7 @@ fn producer(action: &str, directory: &std::path::Path, arguments: &[&str]) -> st
             "PN_GATE_CASE",
             format!("pn-wallet::rpc::{}", std::thread::current().name().unwrap_or("unnamed")),
         )
-        .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .current_dir(pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap())
         .output()
         .unwrap()
 }

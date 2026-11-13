@@ -14,7 +14,10 @@ fn bits(id: NumberId) -> u32 {
 fn published(key: &str) -> String {
     let rows: serde_json::Value = serde_json::from_str(
         &std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/datasets/org.peer-network.design.constants.json"),
+            pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace(
+                "docs/datasets/org.peer-network.design.constants.json",
+            ))
+            .unwrap(),
         )
         .unwrap(),
     )

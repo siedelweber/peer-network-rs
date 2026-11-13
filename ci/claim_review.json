@@ -602,6 +602,14 @@
       "review": "Read the real reachable and unreachable Git controls and the historical-input controls: changed working bytes retain the historical result, while wrong digest, missing file and missing declaration refuse."
     },
     {
+      "operation": "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:test-paths-require-runtime-sources",
+      "before": "",
+      "after": "Test-quality controls reject compile-time path macros and aliases in test/support items, while runtime lookups, metadata and embedded fixture contents remain allowed.",
+      "review": "Read the rejected variable, alias, indirect-name and file macro cases in integration, support, inline and externally discovered test scopes, and the accepted embedded-content and metadata controls. This establishes the lexical rule, not arbitrary macro data flow."
+    },
+    {
       "operation": "ci::test_discipline.SourceDiscipline.test_suppressions",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
@@ -5338,6 +5346,14 @@
       "before": "",
       "after": "The secret mapping owner has neither Copy, Clone nor Display, and Debug is\nconstant across different imported bytes; process bootstrap diagnostics are constant too.",
       "review": "Safe trait ambiguity fails to compile if Home or Staging gains Copy, Clone or Display; two different fixture inputs produce the same exact Home Debug. This detects diagnostics and trait regressions, not all physical copies."
+    },
+    {
+      "operation": "pn-testkit::paths::tests::workspace_relocation",
+      "path": "packages/testkit/src/paths.rs",
+      "claim": "TESTKIT::claim:testkit:runtime-workspace-controls-paths",
+      "before": "",
+      "after": "Claim: A subprocess of the already built helper reads a distinct runtime workspace's marker, selects its runtime binary path, and refuses an absent source or foreign workspace without reading the build tree.",
+      "review": "Read the child marker assertion, runtime package and executable selections, escape and missing executable refusals, and absent/foreign subprocess controls. This establishes test quality for the resolver, not authentication of runner input."
     },
     {
       "operation": "pn-testkit::public::runner_results",

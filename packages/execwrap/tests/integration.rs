@@ -8,7 +8,7 @@ use std::path::Path;
 use std::process::{Command, Output};
 
 fn execwrap() -> Command {
-    let mut command = Command::new(env!("CARGO_BIN_EXE_execwrap"));
+    let mut command = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("execwrap")).unwrap());
     command.env("PN_OBSERVE_LEVEL", "trace");
     command
 }

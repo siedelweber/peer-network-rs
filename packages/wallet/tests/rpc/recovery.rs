@@ -87,7 +87,7 @@ fn configure(node: &Node, identity: &Identity, intersection: bool, methods: &str
         .args(["-B", "ci/wallet_elements.py", "study-auth", "--root"])
         .arg(&node.root)
         .args(["--study-methods", methods])
-        .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .current_dir(pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("")).unwrap())
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped());

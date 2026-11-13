@@ -554,6 +554,7 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
+        "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",
         "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
         "ci::test_discipline.HashCitations.test_artifact_vector",
@@ -4270,6 +4271,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-testkit::paths::tests::workspace_relocation",
         "pn-testkit::tests::property_configuration",
         "pn-testkit::tests::replay_and_shrink",
         "pn-testkit::tests::duplicate_roster",
