@@ -2746,6 +2746,19 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Reviewed current-source real-server controls and the separately required installed-server witnesses; no test configuration stands for the deployment.",
+      "closing_step": "Real-server credential cut and installation before executable admission",
+      "hold": "ROOT::open:observe:credential-installation",
+      "missing": "The real-server credential cut must inspect the disposable server's host-based authentication rules and refuse a wrong password and another account's local-socket connection. Installation must repeat both refusals and inspect its own server rules, with every connection including administrator provisioning authenticated by the salted-challenge mechanism and no account-trusting rule.",
+      "name": "ROOT::req:storage:server-authentication",
+      "owner": "Storage implementer, deployment administrator and independent integration reviewer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "claims": [
         "EPOCH::claim:admission:candidate-context-retains-separate-authority"
       ],
@@ -4004,7 +4017,7 @@
       "closing_condition": "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export.",
       "closing_step": "Credential bootstrap before executable startup",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Generation and entropy failure, exact-length/EOF with same-invocation supervisor completion, checked cleanup limits, no-plaintext-server and succeeding/failing verifier sentinels across all statement-text controls and views, distinct initialization/rotation authorization, unconsumed-start refusal, marker/selection equality and both endings, single superseded-set retention/discard, permission, restart and role/rotation recovery controls with runtime mutants; separate supervisor, publication, account and durability installation witnesses.",
+      "missing": "Generation and entropy failure, exact framing with same-invocation supervisor completion and publication sealed length measure witnesses under the full declared premise of (`dec:observe:first-start-route`), missing/name/extra passed-descriptor refusals, server authentication rules and wrong-password/other-account socket refusals, no-replace ending collision controls, checked cleanup limits, no-plaintext-server and succeeding/failing verifier sentinels across all statement-text controls and views, distinct initialization/rotation authorization, unconsumed-start refusal, marker/selection equality and both endings, single superseded-set retention/discard, permission, restart and role/rotation recovery controls with runtime mutants; separate supervisor, publication, account and durability installation witnesses.",
       "name": "ROOT::verif:observe:credential-bootstrap",
       "owner": "Foundation implementer, deployment administrator and repository reviewer",
       "path": "adr/016-observability.md",

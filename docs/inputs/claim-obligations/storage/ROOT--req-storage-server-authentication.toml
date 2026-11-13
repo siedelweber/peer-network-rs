@@ -1,0 +1,11 @@
+name = "ROOT::req:storage:server-authentication"
+witnessed_labels = []
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:observe:credential-installation"
+owner = "Storage implementer, deployment administrator and independent integration reviewer"
+missing = "The real-server credential cut must inspect the disposable server's host-based authentication rules and refuse a wrong password and another account's local-socket connection. Installation must repeat both refusals and inspect its own server rules, with every connection including administrator provisioning authenticated by the salted-challenge mechanism and no account-trusting rule."
+closing_condition = "Reviewed current-source real-server controls and the separately required installed-server witnesses; no test configuration stands for the deployment."
+closing_step = "Real-server credential cut and installation before executable admission"
