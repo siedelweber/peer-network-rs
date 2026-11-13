@@ -6,6 +6,6 @@ claims = []
 realizers = []
 hold = "ROOT::open:design:secret-integrations"
 owner = "Foundation implementer, deployment administrator and repository reviewer"
-missing = "Protected initializer and direct store handoff, reviewed source-local exits, stage-specific consumers and the deployed credential-store contract."
+missing = "Unprivileged protected generator and descriptor handoffs, supervisor sealing and administrator publication, verifier-only role provisioning, source-local exits and rehearsed delivery/wiring contract."
 closing_condition = "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export."
 closing_step = "Credential bootstrap before executable startup"
