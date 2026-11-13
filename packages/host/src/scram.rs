@@ -6,8 +6,9 @@ use crate::{
 };
 use base64::{Engine, engine::general_purpose::STANDARD};
 use hmac::{Hmac, KeyInit, Mac};
+use pn_credential_derivation::{Input, Output};
 use secrecy::{ExposeSecret, ExposeSecretMut, SecretBox};
-use sha2::{Digest, Sha256};
+use sha2::Sha256;
 
 const DERIVATION_LIMIT: usize = 2;
 static DERIVATIONS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(DERIVATION_LIMIT);
@@ -61,17 +62,13 @@ fn attribute(message: &[u8], key: u8) -> Result<&[u8], Refusal> {
 // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
-    let mut state = Hmac::<Sha256>::new_from_slice(key).map_err(|_| Refusal::ScramFormat)?;
-    state.update(bytes);
     let mut output = SecretBox::new(Box::new([0; 32]));
-    sha2::digest::FixedOutput::finalize_into(
-        state,
-        output
-            .expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-mac-1]´) */)
-            .as_mut_slice()
-            .try_into()
-            .map_err(|_| Refusal::ScramFormat)?,
-    );
+    pn_credential_derivation::mac(
+        Input(key),
+        Input(bytes),
+        Output(output.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-mac-1]´) */)),
+    )
+    .map_err(|_| Refusal::ScramFormat)?;
     Ok(output)
 }
 // Caveat: The authentication frame is borrowed for code validation and returned as the remaining payload through denied expose_auth; the borrow ends with its separately labelled caller use because framing requires slice selection.
@@ -129,11 +126,11 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
             }
         }
         let mut salted = SecretBox::new(Box::new([0; 32]));
-        pbkdf2::pbkdf2::<Hmac<Sha256>>(
-            password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-3]´) */),
-            salt.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-4]´) */),
+        pn_credential_derivation::salted_password(
+            Input(password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-3]´) */)),
+            Input(salt.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-4]´) */)),
             iterations,
-            salted.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derive-1]´) */),
+            Output(salted.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derive-1]´) */)),
         )
         .map_err(|_| Refusal::ScramFormat)?;
         Ok(salted)
@@ -243,14 +240,11 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         b"Client Key",
     )?;
     let mut stored = SecretBox::new(Box::new([0; 32]));
-    Digest::finalize_into(
-        Sha256::new_with_prefix(client_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-4]´) */)),
-        stored
-            .expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-login-5]´) */)
-            .as_mut_slice()
-            .try_into()
-            .map_err(|_| Refusal::ScramFormat)?,
-    );
+    pn_credential_derivation::stored_key(
+        Input(client_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-4]´) */)),
+        Output(stored.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-login-5]´) */)),
+    )
+    .map_err(|_| Refusal::ScramFormat)?;
     let server_key = mac(
         salted.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-6]´) */),
         b"Server Key",

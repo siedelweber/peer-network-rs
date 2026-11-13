@@ -13,6 +13,7 @@ from devperf import StructuralError
 FEATURE_CLASSES = {
     'cli-common': {'observation-test-hook': 'development-only'},
     'documents': {}, 'execwrap': {}, 'pn-act-authentication': {}, 'pn-act-profile': {},
+    'pn-credential-derivation': {},
     'pn-epoch': {'default': 'production', 'test-support': 'development-only'},
     'pn-graph': {},
     'pn-host': {'default': 'production', 'development-network': 'production'},

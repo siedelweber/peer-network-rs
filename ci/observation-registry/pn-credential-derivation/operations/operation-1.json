@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-credential-derivation",
+    "path": "packages/credential-derivation/src/lib.rs",
+    "item": "<Output < '_ > as std :: fmt :: Debug>::fmt",
+    "owner": "DERIVATION",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::dec:observe:credential-packages",
+    "mode": "exception",
+    "shape": "shape-credential-derivation",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "recursion",
+      "justification": "Justified: Formatting a primitive destination records its role and constant representation without inspecting its bytes.",
+      "witness": "DERIVATION::claim:crypto:derivation-refuses-without-output-or-private-diagnostics",
+      "boundary": "pn-credential-derivation::packages/credential-derivation/src/lib.rs::salted_password",
+      "class_decision": "credential-derivation-private"
+    }
+  },
+  "review": {
+    "operation": "pn-credential-derivation::packages/credential-derivation/src/lib.rs::<Output < '_ > as std :: fmt :: Debug>::fmt",
+    "body": "{ f . write_str (\"CredentialOutput([REDACTED])\") }",
+    "class_decision": "credential-derivation-private",
+    "item_premise": "The borrowed operations write only caller-owned destinations, Error has no payload, and no result contains private bytes. Inputs remain protected by their caller. The two manual Debug implementations emit fixed role markers without reading or formatting the borrowed bytes; they perform no primitive derivation.",
+    "assessments": {
+      "full_recording": "credential-derivation-review",
+      "secret_flow": "credential-derivation-review",
+      "exposure_consumers": "credential-derivation-review"
+    }
+  }
+}

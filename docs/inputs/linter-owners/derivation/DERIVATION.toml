@@ -1,0 +1,4 @@
+name = "DERIVATION"
+position = 16
+partitions = [{ position = 20, value = { name = "credential-derivation-package", owner = "DERIVATION", pattern = '%s"packages/credential-derivation/" *VCHAR' } }]
+may_cite = [{ position = 56, value = { owner = "DERIVATION", target = "ROOT" } }]

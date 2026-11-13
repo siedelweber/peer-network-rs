@@ -78,6 +78,7 @@
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
 | pn-act-profile | 26 | 23 | 3 | 0 | 11 |
+| pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
 | pn-host | 205 | 33 | 172 | 0 | 160 |

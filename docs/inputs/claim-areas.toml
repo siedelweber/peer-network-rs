@@ -2,6 +2,13 @@ namespace = "org.peer-network.testing.claim-areas"
 version = [1, 0, 0]
 
 [[rows]]
+owner = "DERIVATION"
+area = "crypto"
+stake = "A wrong key role, work factor or verifier framing changes the credential the caller provisions or uses."
+register = "DERIVATION::sec:derivation:crypto"
+contract = "DERIVATION::def:derivation:scope"
+
+[[rows]]
 owner = "CLICOMMON"
 area = "cli"
 stake = "If shared CLI claims fail, callers can misclassify exits, expose secrets in control records, or publish incorrect report bytes, permissions and success stamps."

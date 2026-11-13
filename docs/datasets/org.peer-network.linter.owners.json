@@ -232,6 +232,14 @@
         {
           "owner": "EXECWRAP",
           "target": "TESTKIT"
+        },
+        {
+          "owner": "DERIVATION",
+          "target": "ROOT"
+        },
+        {
+          "owner": "HOST",
+          "target": "DERIVATION"
         }
       ],
       "name": "declaration",
@@ -251,7 +259,8 @@
         "VENDOR",
         "ACTPROFILE",
         "SECRETHOME",
-        "ACTAUTH"
+        "ACTAUTH",
+        "DERIVATION"
       ],
       "partitions": [
         {
@@ -353,6 +362,11 @@
           "name": "act-authentication-package",
           "owner": "ACTAUTH",
           "pattern": "%s\"packages/act-authentication/\" *VCHAR"
+        },
+        {
+          "name": "credential-derivation-package",
+          "owner": "DERIVATION",
+          "pattern": "%s\"packages/credential-derivation/\" *VCHAR"
         }
       ],
       "root_owner": "ROOT"

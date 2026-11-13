@@ -1,0 +1,18 @@
+[package]
+name = "pn-credential-derivation"
+description = "Borrowed salted-challenge derivation into caller-owned output"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+version.workspace = true
+
+[dependencies]
+hmac = { version = "=0.13.0", default-features = false, features = ["zeroize"] }
+pbkdf2 = { version = "=0.13.0", default-features = false, features = ["hmac"] }
+sha2.workspace = true
+base64 = { version = "=0.23.1", default-features = false }
+tracing.workspace = true
+
+[lints]
+workspace = true

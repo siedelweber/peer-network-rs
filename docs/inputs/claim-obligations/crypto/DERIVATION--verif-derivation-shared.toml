@@ -1,0 +1,13 @@
+name = "DERIVATION::verif:derivation:shared"
+witnessed_labels = []
+path = "packages/credential-derivation/README.md"
+status = "scoped-supported"
+claims = ["DERIVATION::claim:crypto:derivation-matches-independent-vectors", "DERIVATION::claim:crypto:derivation-refuses-without-output-or-private-diagnostics"]
+realizers = []
+premises = "Finite public vectors and boundary controls; host regression obligations remain separately owned."
+evidence_paragraph = "DERIVATION::sec:derivation:crypto"
+hold = ""
+owner = "Credential derivation implementer and storage reviewer"
+missing = "Outside scope: protected-home consumer, generator, entropy and installation custody."
+closing_condition = "Independent vectors and finite refusal/diagnostic controls pass."
+closing_step = "Shared derivation implementation."

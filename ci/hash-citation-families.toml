@@ -2,6 +2,17 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "credential-independent-vectors"
+group = "public credential fixtures"
+measures = "Public fixture operands, independently reconstructed derived keys and verifier text, and the same fixed verifier work factor in its implementation and description"
+producer = "ci/credential_vectors.py using Python hashlib, hmac and base64"
+establishment = "defined"
+reader = "credential-vectors"
+source = "packages/credential-derivation/src/tests/vectors.rs"
+definition = "Reconstruct every byte without the Rust library, host or their helpers; refuse any difference in the entire generated fixture source before accounting literals."
+paths = ["packages/credential-derivation/src/tests/vectors.rs", "packages/credential-derivation/src/lib.rs", "packages/credential-derivation/README.md", "docs/templates/packages/credential-derivation/README.md.j2", "ci/observation-registry/pn-credential-derivation/operations/operation-5.json"]
+
+[[rows]]
 family = "authentication-signature-publication"
 group = "public verification golden values"
 measures = "Published operands and expected results, malformed point operands and the independent equation constants"

@@ -815,6 +815,8 @@ pub enum OperationKind {
     ActProfile,
     /// Locked secret mapping acquisition.
     SecretHome,
+    /// Borrowed credential primitive accounting.
+    CredentialDerivation,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -833,6 +835,7 @@ impl OperationKind {
             Self::Epoch => "epoch__root__sig__design__epoch",
             Self::ActProfile => "actprofile__root__amend__decomposition__act_profile",
             Self::SecretHome => "secrethome__root__amend__crypto__secret_home",
+            Self::CredentialDerivation => "derivation__root__dec__observe__credential_packages",
         }
     }
     const fn label(self) -> &'static str {
@@ -848,6 +851,7 @@ impl OperationKind {
             Self::Epoch => "sig:design:epoch",
             Self::ActProfile => "amend:decomposition:act-profile",
             Self::SecretHome => "amend:crypto:secret-home",
+            Self::CredentialDerivation => "dec:observe:credential-packages",
         }
     }
     const fn owner(self) -> &'static str {
@@ -862,6 +866,7 @@ impl OperationKind {
             Self::Epoch => "EPOCH",
             Self::ActProfile => "ACTPROFILE",
             Self::SecretHome => "SECRETHOME",
+            Self::CredentialDerivation => "DERIVATION",
             _ => "CLICOMMON",
         }
     }
@@ -1247,6 +1252,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("EPOCH") => Some(OperationKind::Epoch),
                     Some("ACTPROFILE") => Some(OperationKind::ActProfile),
                     Some("SECRETHOME") => Some(OperationKind::SecretHome),
+                    Some("DERIVATION") => Some(OperationKind::CredentialDerivation),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

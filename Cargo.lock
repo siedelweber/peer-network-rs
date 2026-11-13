@@ -1695,6 +1695,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "pn-credential-derivation"
+version = "0.1.0"
+dependencies = [
+ "base64 0.23.1",
+ "hmac",
+ "pbkdf2",
+ "sha2",
+ "tracing",
+]
+
+[[package]]
 name = "pn-epoch"
 version = "0.1.0"
 dependencies = [
@@ -1735,6 +1746,7 @@ dependencies = [
  "hmac",
  "metrics",
  "pbkdf2",
+ "pn-credential-derivation",
  "pn-epoch",
  "pn-interchange",
  "pn-records",

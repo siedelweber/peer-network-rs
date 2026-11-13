@@ -45,6 +45,7 @@
   - pn-interchange (infrastructure)
   - reviewed PostgreSQL client (infrastructure)
   - pn-wallet (optional development-network feature) (infrastructure)
+  - pn-credential-derivation (infrastructure)
 - pn-replay
   - pn-act-profile
   - pn-records
@@ -59,6 +60,12 @@
   - pn-readouts
   - pn-host
   - pn-replay
+- pn-credential-derivation
+  - reviewed hmac
+  - reviewed pbkdf2
+  - reviewed sha2
+  - reviewed base64
+  - tracing
 - pn
   - pn-host
   - pn-records
@@ -116,6 +123,7 @@
 
 | Infrastructure crate | Role | Direct prerequisites | Optional prerequisites |
 | --- | --- | --- | --- |
+| pn-credential-derivation | Shared borrowed salted-challenge primitives and verifier formatting | reviewed hmac, reviewed pbkdf2, reviewed sha2, reviewed base64, tracing | None |
 | pn | Node schema, service and lifecycle | pn-host, pn-records, pn-interchange | pn-readouts |
 | pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client, pn-act-authentication | None |
 | pn-client | GraphQL node counterpart and client workflows | pn-wallet, pn-records, pn-interchange, pn-act-profile | None |

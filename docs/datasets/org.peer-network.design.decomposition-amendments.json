@@ -20,6 +20,18 @@
       "added_crates": [
         {
           "dependencies": [
+            "reviewed hmac",
+            "reviewed pbkdf2",
+            "reviewed sha2",
+            "reviewed base64",
+            "tracing"
+          ],
+          "name": "pn-credential-derivation",
+          "optional": [],
+          "role": "Shared borrowed salted-challenge primitives and verifier formatting"
+        },
+        {
+          "dependencies": [
             "pn-host",
             "pn-records",
             "pn-interchange"
@@ -69,7 +81,8 @@
       ],
       "host_dependencies": [
         "reviewed PostgreSQL client",
-        "pn-wallet (optional development-network feature)"
+        "pn-wallet (optional development-network feature)",
+        "pn-credential-derivation"
       ],
       "name": "infrastructure",
       "refinements": [

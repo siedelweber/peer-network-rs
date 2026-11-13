@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Input",
+    "package": "pn-credential-derivation",
+    "path": "packages/credential-derivation/src/lib.rs",
+    "syntax": "# [doc = \" A caller's already authorized primitive input borrow, consumed by one call.\"] # [doc = \" This view acquires no secret and provides no access to a protected container.\"] # [doc = \" (\u00b4def:derivation:borrows\u00b4)\"] pub struct Input < 'a > (pub & 'a [u8]) ;"
+  }
+}

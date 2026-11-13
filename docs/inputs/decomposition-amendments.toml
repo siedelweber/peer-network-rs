@@ -12,8 +12,9 @@ consumer = "pn-replay"
 [[rows]]
 name = "infrastructure"
 status = "accepted"
-host_dependencies = ["reviewed PostgreSQL client", "pn-wallet (optional development-network feature)"]
+host_dependencies = ["reviewed PostgreSQL client", "pn-wallet (optional development-network feature)", "pn-credential-derivation"]
 added_crates = [
+  { name = "pn-credential-derivation", role = "Shared borrowed salted-challenge primitives and verifier formatting", dependencies = ["reviewed hmac", "reviewed pbkdf2", "reviewed sha2", "reviewed base64", "tracing"], optional = [] },
   { name = "pn", role = "Node schema, service and lifecycle", dependencies = ["pn-host", "pn-records", "pn-interchange"], optional = ["pn-readouts"] },
   { name = "pn-wallet", role = "Only Elements integration; chain evidence and wallet spending/recovery", dependencies = ["reviewed Elements RPC client", "pn-act-authentication"], optional = [] },
   { name = "pn-client", role = "GraphQL node counterpart and client workflows", dependencies = ["pn-wallet", "pn-records", "pn-interchange", "pn-act-profile"], optional = [] },

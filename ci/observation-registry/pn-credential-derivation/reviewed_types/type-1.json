@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Output",
+    "package": "pn-credential-derivation",
+    "path": "packages/credential-derivation/src/lib.rs",
+    "syntax": "# [doc = \" A caller's already authorized protected destination borrow, consumed by one call.\"] # [doc = \" No destination is allocated or returned by this library.\"] # [doc = \" (\u00b4def:derivation:borrows\u00b4)\"] pub struct Output < 'a > (pub & 'a mut [u8]) ;"
+  }
+}

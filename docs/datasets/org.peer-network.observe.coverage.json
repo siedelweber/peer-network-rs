@@ -367,6 +367,78 @@
       "operations": 26
     },
     {
+      "exceptions": 2,
+      "generators": 1,
+      "helpers": 0,
+      "instrumented": 4,
+      "name": "pn-credential-derivation",
+      "number_forms": {
+        "exceptions": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "generators": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "helpers": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "instrumented": {
+          "exact": "4",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "operations": {
+          "exact": "6",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exceptions": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "generators": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "helpers": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "instrumented": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "operations": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "operations": 6
+    },
+    {
       "exceptions": 24,
       "generators": 149,
       "helpers": 0,

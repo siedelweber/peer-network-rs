@@ -8,6 +8,24 @@
   "rows": [
     {
       "claims": [
+        "DERIVATION::claim:crypto:derivation-matches-independent-vectors",
+        "DERIVATION::claim:crypto:derivation-refuses-without-output-or-private-diagnostics"
+      ],
+      "closing_condition": "Independent vectors and finite refusal/diagnostic controls pass.",
+      "closing_step": "Shared derivation implementation.",
+      "evidence_paragraph": "DERIVATION::sec:derivation:crypto",
+      "hold": "",
+      "missing": "Outside scope: protected-home consumer, generator, entropy and installation custody.",
+      "name": "DERIVATION::verif:derivation:shared",
+      "owner": "Credential derivation implementer and storage reviewer",
+      "path": "packages/credential-derivation/README.md",
+      "premises": "Finite public vectors and boundary controls; host regression obligations remain separately owned.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "EPOCH::claim:admission:live-publication-retains-marker-registration",
         "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments",
         "EPOCH::claim:admission:finality-loss-freezes-live-publication"

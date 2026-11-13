@@ -39576,6 +39576,40 @@
     },
     {
       "category": "record-coverage",
+      "exact_citing": 0,
+      "name": "pn-credential-derivation",
+      "number_forms": {
+        "exact_citing": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "7",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "7",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exact_citing": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "total": 7
+    },
+    {
+      "category": "record-coverage",
       "exact_citing": 19,
       "name": "pn-epoch",
       "number_forms": {

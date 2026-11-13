@@ -7,6 +7,13 @@
   ],
   "rows": [
     {
+      "area": "crypto",
+      "contract": "DERIVATION::def:derivation:scope",
+      "owner": "DERIVATION",
+      "register": "DERIVATION::sec:derivation:crypto",
+      "stake": "A wrong key role, work factor or verifier framing changes the credential the caller provisions or uses."
+    },
+    {
       "area": "cli",
       "contract": "CLICOMMON::sec:clicommon:area-cli",
       "owner": "CLICOMMON",

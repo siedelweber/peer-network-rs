@@ -651,6 +651,54 @@
       "policy": "profile.claims-conform"
     },
     {
+      "owner": "DERIVATION",
+      "policy": "labels.citations-import-form"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.citations-imported-resolve"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.citations-layer-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.citations-local-resolve"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.generated-regions-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.heads-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.mints-kind-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.mints-unique"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.mints-well-formed"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "labels.outlines-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "profile.tests-conform"
+    },
+    {
+      "owner": "DERIVATION",
+      "policy": "profile.claims-conform"
+    },
+    {
       "owner": "SECRETHOME",
       "policy": "labels.citations-import-form"
     },

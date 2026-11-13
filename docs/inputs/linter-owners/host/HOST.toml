@@ -1,4 +1,4 @@
 "name" = "HOST"
 "position" = 8
 "partitions" = [{ "position" = 3, "value" = { "name" = "host-package", "owner" = "HOST", "pattern" = "%s\"packages/host/\" *VCHAR" } }]
-"may_cite" = [{ "position" = 13, "value" = { "owner" = "HOST", "target" = "WALLET" } }, { "position" = 14, "value" = { "owner" = "HOST", "target" = "INTERCHANGE" } }, { "position" = 15, "value" = { "owner" = "HOST", "target" = "RECORDS" } }, { "position" = 16, "value" = { "owner" = "HOST", "target" = "EPOCH" } }, { "position" = 17, "value" = { "owner" = "HOST", "target" = "ROOT" } }, { "position" = 18, "value" = { "owner" = "HOST", "target" = "CLICOMMON" } }]
+"may_cite" = [{ "position" = 57, "value" = { "owner" = "HOST", "target" = "DERIVATION" } }, { "position" = 13, "value" = { "owner" = "HOST", "target" = "WALLET" } }, { "position" = 14, "value" = { "owner" = "HOST", "target" = "INTERCHANGE" } }, { "position" = 15, "value" = { "owner" = "HOST", "target" = "RECORDS" } }, { "position" = 16, "value" = { "owner" = "HOST", "target" = "EPOCH" } }, { "position" = 17, "value" = { "owner" = "HOST", "target" = "ROOT" } }, { "position" = 18, "value" = { "owner" = "HOST", "target" = "CLICOMMON" } }]

@@ -76,6 +76,13 @@
       "name": "pn-act-profile-rust"
     },
     {
+      "contract": "borrowed salted-challenge primitives and exact verifier formatting",
+      "edition": "credential-derivation-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-credential-derivation-rust"
+    },
+    {
       "contract": "boundary compiler parameters, final ledger, declared conserved numeric procedures and finite candidate admission/closure",
       "edition": "0.1",
       "evidence": "pure",
@@ -1811,6 +1818,20 @@
       "kind": "suite",
       "level": "unit",
       "name": "pn-act-profile",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-credential-derivation::tests::independent_vectors",
+        "pn-credential-derivation::tests::bounds_and_representations"
+      ],
+      "implementation": "pn-credential-derivation-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-credential-derivation::unit",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

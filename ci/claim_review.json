@@ -2234,6 +2234,22 @@
       "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
     },
     {
+      "operation": "pn-credential-derivation::tests::bounds_and_representations",
+      "path": "packages/credential-derivation/src/tests.rs",
+      "claim": "DERIVATION::claim:crypto:derivation-refuses-without-output-or-private-diagnostics",
+      "before": "",
+      "after": "Claim: The finite length and work-factor controls refuse before modifying the caller's destination, and borrowed private representations remain constant.",
+      "review": "The assertions compare public fixture bytes independently reconstructed without Rust helpers, or isolate the finite bound and constant-representation guards. Scope excludes protected consumer custody and primitive-stack erasure."
+    },
+    {
+      "operation": "pn-credential-derivation::tests::independent_vectors",
+      "path": "packages/credential-derivation/src/tests.rs",
+      "claim": "DERIVATION::claim:crypto:derivation-matches-independent-vectors",
+      "before": "",
+      "after": "Claim: Three public inputs match independently reconstructed salted passwords and distinct client/server/stored keys; both admitted verifier inputs match every framed output byte.",
+      "review": "The assertions compare public fixture bytes independently reconstructed without Rust helpers, or isolate the finite bound and constant-representation guards. Scope excludes protected consumer custody and primitive-stack erasure."
+    },
+    {
       "operation": "pn-epoch::base::base_holds",
       "path": "packages/epoch/tests/base.rs",
       "claim": "EPOCH::claim:compiler:irrational-base-entries-retain-their-evidence-gap",

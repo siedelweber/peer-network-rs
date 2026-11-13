@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Error",
+    "package": "pn-credential-derivation",
+    "path": "packages/credential-derivation/src/lib.rs",
+    "syntax": "# [doc = \" Content-free refusal; neither variant retains input or dependency diagnostics.\"] # [doc = \" (\u00b4def:derivation:scope\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Error { Bound , Primitive , }"
+  }
+}

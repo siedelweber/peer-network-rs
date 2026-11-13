@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Error",
+    "kind": "derive",
+    "package": "pn-credential-derivation",
+    "path": "packages/credential-derivation/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "credential-derivation-private",
+    "expansion_review": "Error derives only payload-free Copy, Clone, Debug and equality; borrowed views have handwritten constant Debug and no serialization or byte conversion."
+  }
+}
