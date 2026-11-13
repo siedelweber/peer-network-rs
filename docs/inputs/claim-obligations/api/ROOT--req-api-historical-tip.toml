@@ -1,0 +1,11 @@
+name = "ROOT::req:api:historical-tip"
+witnessed_labels = []
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::req:api:historical-tip"
+owner = "Deployment publisher and host historical-read implementer"
+missing = "Declared tip selection, single-tip first-instance behavior, multiple-tip and unknown-tip refusal controls."
+closing_condition = "The historical-read cut consumes the published selection and witnesses DefaultTipUnspecified and MissingTip separately without inferring a branch from store placement."
+closing_step = "One historical public read, before serving retained result bytes."

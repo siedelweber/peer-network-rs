@@ -162,14 +162,14 @@
         "HOST::claim:history:admitted-carrier-preserves-exact-projections"
       ],
       "closing_condition": "Carrier projections, unused-declaration and complete-content controls pass; the real PostgreSQL operation remains held.",
-      "closing_step": "Bite 8-e-memory carrier portion.",
+      "closing_step": "Single-chain memory carrier evidence; tree counterpart owed separately.",
       "evidence_paragraph": "HOST::verif:history:admitted-carrier",
       "hold": "",
       "missing": "Outside scope: memory and PostgreSQL transactions, historical reads, concurrency, durability, privileges, rebuild and independent re-admission.",
       "name": "HOST::verif:history:admitted-carrier",
       "owner": "Host storage implementer",
       "path": "packages/host/README.md",
-      "premises": "The host publication fixture supplies already-admitted public packages under its declared verifier. Carrier projection conveys no new authentication, finality or persistence authority.",
+      "premises": "Implemented single-chain representation only; no tree evidence. The host publication fixture supplies already-admitted public packages under its declared verifier. Carrier projection conveys no new authentication, finality or persistence authority.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -179,14 +179,14 @@
         "HOST::claim:history:admitted-memory-transaction-is-atomic"
       ],
       "closing_condition": "Every reference refusal and staged-write boundary, complete retry, vintage and selected-use guard control passes; runtime mutants fail.",
-      "closing_step": "Bite 8-e-memory transaction portion.",
+      "closing_step": "Single-chain memory transaction evidence; tree counterpart owed separately.",
       "evidence_paragraph": "HOST::verif:history:admitted-memory",
       "hold": "",
       "missing": "Outside scope: bounded admitted reads, PostgreSQL transaction, real-session concurrency, durability, privileges, commit uncertainty, rebuild and independent re-admission.",
       "name": "HOST::verif:history:admitted-memory",
       "owner": "Host storage implementer",
       "path": "packages/host/README.md",
-      "premises": "The public host fixture supplies admitted packages; the memory adapter exercises the shared contract roster without a server or durability claim.",
+      "premises": "Implemented single-chain representation only; no tree evidence. The public host fixture supplies admitted packages; the memory adapter exercises the shared contract roster without a server or durability claim.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -196,14 +196,14 @@
         "HOST::claim:history:admitted-reads-preserve-bounded-history"
       ],
       "closing_condition": "Historical values, exact read boundaries, pre-operation limits and corrupt-count refusals pass; the three runtime mutants fail.",
-      "closing_step": "Bite 8-e-memory retained reads.",
+      "closing_step": "Single-chain memory retained reads evidence; tree counterpart owed separately.",
       "evidence_paragraph": "HOST::verif:history:admitted-reads",
       "hold": "",
       "missing": "Outside scope: PostgreSQL, real-session concurrency, durability, privileges, commit uncertainty, public rebuild and independent re-admission.",
       "name": "HOST::verif:history:admitted-reads",
       "owner": "Host storage implementer",
       "path": "packages/host/README.md",
-      "premises": "The memory adapter supplies immutable admitted values and a test-only corruption and metering seam; shared publication fixtures are restored through the public verifier.",
+      "premises": "Implemented single-chain representation only; no tree evidence. The memory adapter supplies immutable admitted values and a test-only corruption and metering seam; shared publication fixtures are restored through the public verifier.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -2618,6 +2618,19 @@
       "premises": "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "The historical-read cut consumes the published selection and witnesses DefaultTipUnspecified and MissingTip separately without inferring a branch from store placement.",
+      "closing_step": "One historical public read, before serving retained result bytes.",
+      "hold": "ROOT::req:api:historical-tip",
+      "missing": "Declared tip selection, single-tip first-instance behavior, multiple-tip and unknown-tip refusal controls.",
+      "name": "ROOT::req:api:historical-tip",
+      "owner": "Deployment publisher and host historical-read implementer",
+      "path": "adr/018-public-api.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {
