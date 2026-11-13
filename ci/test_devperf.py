@@ -178,6 +178,31 @@ class Performance(unittest.TestCase):
             with patch('run_ci.run_suite',side_effect=ValueError('fixture failure')):
                 with self.assertRaisesRegex(ValueError,'fixture failure'):run_ci.main('fixture')
             self.assertEqual(declaration_environment(),foreign,'enclosing declaration restored after failure')
+            def package_probe(action):
+                import subprocess
+                with tempfile.TemporaryDirectory() as directory:
+                    root=Path(directory)/'repo';root.mkdir()
+                    for argv in (['git','init','--quiet'],['git','-c','user.name=Fixture','-c','user.email=fixture@example.invalid',
+                                 '-c','commit.gpgsign=false','commit','--quiet','--allow-empty','-m','fixture']):
+                        subprocess.run(argv,cwd=root,check=True,capture_output=True)
+                    driver=root/'probe.py'
+                    driver.write_text('import sys, os\nfrom pathlib import Path\nimport subprocess\n'
+                        +f'sys.path.insert(0,{str(Path(__file__).resolve().parent)!r})\n'
+                        +'from build_graph import declaration_environment\nfrom isolation import workspace\n'
+                        +'assert not declaration_environment(), "package child inherited enclosing declaration"\n'
+                        +'root=Path(__file__).parent\nsource=subprocess.check_output(["git","-C",str(root),"rev-parse","HEAD"],text=True).strip()\n'
+                        +'with workspace(root,"package-fixture",source) as (tree,target):\n'
+                        +'    assert (tree/".git").exists(), "package fixture workspace did not open"\n')
+                    env=dict(os.environ,CARGO_TARGET_DIR=str(root.parent/'target'),PN_ISOLATION_ROOT=str(root.parent/'isolation'))
+                    env.pop('PN_GATE_SETUP_LOG',None)  # This fixture owns no gate setup sidecar.
+                    with (root/'stdout').open('w') as out,(root/'stderr').open('w') as err:
+                        # Use the production subprocess boundary, as nextest and doctests do.
+                        result=run_tests.invoke([sys.executable,'-B',str(driver)],out,err,env=env)
+                    self.assertEqual(result.returncode,0,'package runner clears declarations before child helpers: '+(root/'stderr').read_text())
+                return 0
+            with patch('run_tests.split_main',side_effect=package_probe):
+                self.assertEqual(run_tests.main('fast'),0,'package tiers enter the shared fixture boundary')
+            self.assertEqual(declaration_environment(),foreign,'package runner restores the enclosing declaration')
 
     def test_series_archive_list(self):
         """The archive manifest preserves closed-attempt evidence and excludes service state and recursive workspace contents.

@@ -409,6 +409,13 @@ def split_main(action):
 
 
 def main(action=None):
+    # Package tests and every helper they spawn share the Python suite boundary.
+    from run_ci import fixture_environment
+    with fixture_environment():
+        return run_main(action)
+
+
+def run_main(action=None):
     if action is not None:
         return split_main(action)
     policy_path = Path(__file__).with_name('nextest.toml')
