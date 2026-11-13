@@ -393,6 +393,12 @@ assert (root/'payload').read_text() == 'committed'
                             self.assertEqual((target/'retained').read_text(),'owned cache')
                         with workspace(root, owner, series_source) as (fresh,target):
                             self.assertTrue(marker.exists(), 'one sample resets an owner once')
+                with patch.dict(os.environ, PN_GATE_SAMPLE='import-transition', PN_IMPORT_BASE=source, PN_GATE_STEP='fixture', PN_BUILDGRAPH_RUN='sweep-probe', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=series_source):
+                    bind_setup(lane/'sample-setup.jsonl',series_source,'sweep-probe','fixture')
+                    with patch('isolation.cache_policy',return_value={'owner_target_ceiling_bytes':1}), patch('isolation.bound_target',return_value=True):
+                        with workspace(root,owner,series_source):pass
+                    transition=json.loads((lane/'sample-transitions.jsonl').read_text().splitlines()[-1])
+                    self.assertIs(transition.get('swept_target'),True,'owner receipt preserves the reported target sweep')
                 with patch.dict(os.environ, PN_GATE_SAMPLE='import-transition', PN_IMPORT_BASE=source, PN_GATE_STEP='fixture', PN_BUILDGRAPH_RUN='refusal-probe', PN_GATE_SETUP_LOG=str(lane/'sample-setup.jsonl'), PN_GATE_SETUP_SOURCE=series_source):
                     bind_setup(lane/'sample-setup.jsonl',series_source,'refusal-probe','fixture')
                     alternates=isolated/'.git/objects/info/alternates'

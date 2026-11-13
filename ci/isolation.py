@@ -33,6 +33,80 @@ def storage_root(root):
     return base/hashlib.sha256(str(root).encode()).hexdigest()
 
 
+class StorageBusy(ValueError):
+    """An uncounted gate refusal before declaration or measurement."""
+
+
+@contextmanager
+def storage_lock(directory, kind, identity=None):
+    """Keep one stable exclusion inode outside every checkout clean."""
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory/'.gate-storage.lock').open('a+') as stream:
+        try:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            stream.seek(0)
+            try:
+                holder = json.loads(stream.read()).get('kind', 'unavailable')
+            except (ValueError, AttributeError):
+                holder = 'unavailable'
+            if holder not in ('series', 'gate'):
+                holder = 'unavailable'
+            raise StorageBusy('holder='+holder) from error
+        token = secrets.token_hex(32)
+        os.fchmod(stream.fileno(), 0o600)
+        stream.seek(0); stream.truncate()
+        stream.write(json.dumps(dict(kind=kind, token=token, identity=identity))+'\n'); stream.flush()
+        print('GATE-STORAGE-LOCK action=acquired kind='+kind, flush=True)
+        try:
+            yield token
+        finally:
+            fcntl.flock(stream, fcntl.LOCK_UN)
+            print('GATE-STORAGE-LOCK action=released kind='+kind, flush=True)
+
+
+def storage_entry(root, token):
+    """Check the command's cooperative token and held storage inode."""
+    with (storage_root(root)/'.gate-storage.lock').open('r') as stream:
+        row = json.load(stream)
+        if not token or not secrets.compare_digest(str(row.get('token', '')), token):
+            raise ValueError('storage lock token differs')
+        try:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return
+    raise ValueError('storage lock is not held')
+
+
+def storage_token():
+    """Read the cooperative entry token through the declaration carrier."""
+    from build_graph import declaration_environment
+    return declaration_environment().get('PN_GATE_STORAGE_TOKEN')
+
+
+def gate_storage(command):
+    """Acquire before declaration, or enter the series command's held lock."""
+    root = Path.cwd()
+    token = storage_token()
+    def invoke(value):
+        result = cancellable(command, kill_after=None, close_fds=True,
+                             env=os.environ | {'PN_GATE_STORAGE_TOKEN': value}).returncode
+        return 128-result if result < 0 else result
+    try:
+        if token:
+            storage_entry(root, token)
+            print('GATE-STORAGE-LOCK action=joined kind=series', flush=True)
+            return invoke(token)
+        with storage_lock(storage_root(root), 'gate') as acquired:
+            return invoke(acquired)
+    except StorageBusy as error:
+        print('GATE-STORAGE-REFUSED status=5 counted=false '+str(error), flush=True)
+        return 5
+    except (OSError, ValueError, TypeError) as error:
+        print('GATE-STORAGE-REFUSED status=5 counted=false reason='+str(error), flush=True)
+        return 5
+
+
 def allocated(paths):
     """Measure allocated cache bytes, including hard-linked artifacts once."""
     existing = [str(path) for path in paths if path.exists()]
@@ -339,8 +413,10 @@ def workspace(root, name, source):
         cold_target = not target.is_dir()
         target.mkdir(parents=True, exist_ok=True)
         policy = cache_policy(tree)
+        swept_target = False
         if policy:
-            cold_target |= bound_target(target, policy['owner_target_ceiling_bytes'], name)
+            swept_target = bound_target(target, policy['owner_target_ceiling_bytes'], name)
+            cold_target |= swept_target
         for obsolete in target.parent.iterdir():
             if obsolete != target and obsolete.is_dir():
                 shutil.rmtree(obsolete)
@@ -372,7 +448,7 @@ def workspace(root, name, source):
                 calls=len(rows), scope='compile-only; mixed Cargo-and-run reported separately')), flush=True)
             if transition is not None:
                 row = dict(owner=name, base=transition, source=source, run=os.environ['PN_BUILDGRAPH_RUN'],
-                    step=os.environ.get('PN_GATE_STEP'), cold_target=cold_target, layout_changed=layout_changed,
+                    step=os.environ.get('PN_GATE_STEP'), cold_target=cold_target, swept_target=swept_target, layout_changed=layout_changed,
                     reset_wall_s=reset_wall, compile_wall_s=sum(row['wall'] for row in rows if row.get('compile_only')),
                     compile_cpu_s=sum(row['own_cpu'] for row in rows if row.get('compile_only')))
                 destination = Path(os.environ['PN_GATE_SETUP_LOG'])
@@ -476,6 +552,14 @@ def built_executable(output):
 
 
 if __name__ == '__main__':
+    if sys.argv[1:] == ['storage-root']:
+        print(storage_root(Path.cwd()))
+        raise SystemExit(0)
+    if sys.argv[1:] == ['storage-entry']:
+        storage_entry(Path.cwd(), storage_token())
+        raise SystemExit(0)
+    if len(sys.argv) > 2 and sys.argv[1] == 'gate-storage':
+        raise SystemExit(gate_storage(sys.argv[2:]))
     if sys.argv[1:] == ['bind-setup']:
         bind_setup(Path(os.environ['PN_GATE_SETUP_LOG']), os.environ['PN_GATE_SETUP_SOURCE'],
                    os.environ['PN_BUILDGRAPH_RUN'], os.environ['PN_GATE_STEP'])

@@ -53,7 +53,8 @@ def controls(test, group):
             if command == ['git','status','--porcelain']: return 0,state['dirty']
             if command[:2] == ['git','merge-base']: return state['ancestor'],''
             if command == ['python3','-B','ci/run_tests.py','prepare']: return state['base_build'],''
-            if command[-1] == 'series-key': return 0,state['key']
+            if command[-1] == 'storage-root': return 0,str(area/'storage')
+            if command[-1] == 'series-identity': return 0,json.dumps(dict(key=state['key'],identity=state.get('identity',dict(configuration='fixture'))))
             if command[-1] == 'series-owner-heads': return 0,json.dumps(state.get('owners',dict(kept='source')))
             if command == ['bash','ci/gate.sh']:
                 write(root/'.lane/gate-baseline.json',dict(cache=dict(state='warm',compiled=dict(primary=[],lint=[]) if state['complete'] else {})))
@@ -82,7 +83,7 @@ def controls(test, group):
 
         with patch('series_round.Round.command',command),patch('build_graph.series_count',return_value=5),patch('build_graph.series_policy',return_value=dict(series_attempts_per_ordinal=3 if group=='guards' else 100,series_absolute_pressure=.1)):
             round = Round(root,args)
-            priming = dict(base='base',source='source',configuration_key='a'*64,cache='warm',status=0,complete=True)
+            priming = dict(base='base',source='source',configuration_key='a'*64,identity=dict(configuration='fixture'),cache='warm',status=0,complete=True)
             def prime(value=priming): write(round.store/'priming.json',value)
             if group == 'guards':
                 from build_graph import retained_owner_heads
@@ -98,8 +99,10 @@ def controls(test, group):
                     with refuses(test,message,message='sample refuses priming '+field): round.run()
                 (round.store/'priming.json').unlink()
                 with refuses(test,'green',message='missing priming refuses'): round.run()
-                prime();state['key']='b'*64
+                prime();state['key']='b'*64;state['identity']=dict(configuration='changed');calls.clear()
                 test.assertEqual(round.run(),4,'key mismatch ends the label before an attempt')
+                test.assertFalse(any(c[0][:2]==['git','reset'] for c in calls),'source key refusal precedes every reset')
+                test.assertEqual(json.loads((round.store/'ended.json').read_text())['differences'],[dict(member='configuration',kind='source')],'source key refusal names differing members')
                 test.assertTrue((round.store/'ended.json').is_file(),'changed key retains an end record')
                 test.assertEqual(json.loads((round.store/'ended.json').read_text())['reason'],'configuration key differs from priming','changed key records the terminal cause')
                 test.assertEqual(json.loads((round.store/'ended.json').read_text())['observed'],'b'*64,'end records observed key')
@@ -107,6 +110,26 @@ def controls(test, group):
                 test.assertFalse(any(c[0]==['bash','ci/gate.sh'] for c in calls),'preflight refuses before measured gate')
                 with refuses(test,'ended',message='changed key label cannot resume'): round.run()
                 (round.store/'ended.json').unlink()
+                state['identity']=dict(configuration='fixture',lineage='other');calls.clear()
+                test.assertEqual(round.run(),5,'invoker key mismatch is restartable')
+                test.assertFalse((round.store/'ended.json').exists(),'invoker mistake cannot end label')
+                test.assertFalse(any(c[0][:2]==['git','reset'] for c in calls),'invoker key refusal precedes resets')
+                test.assertEqual(json.loads((round.store/'preparations.jsonl').read_text().splitlines()[-1])['differences'],[dict(member='lineage',kind='invoker')],'restartable key refusal names member')
+                from series_round import configuration_differences
+                for member in ('node','toolchain','runtime','cargo_home_config'):
+                    test.assertEqual(configuration_differences({member:1},{member:2},root),[dict(member=member,kind='invoker')],'execution context is invoker-owned: '+member)
+                for member in ('configuration','tiers','accounting','profiles','new-member'):
+                    test.assertNotEqual(configuration_differences({member:1},{member:2},root)[0]['kind'],'invoker','source or unknown key member ends: '+member)
+                test.assertEqual([r['kind'] for r in configuration_differences({},dict(cargo_config=[[str(root/'.cargo/config'),'x']]),root)],['source'],'checkout Cargo configuration is source-owned')
+                test.assertEqual([r['kind'] for r in configuration_differences({},dict(cargo_config=[[str(area/'.cargo/config'),'x']]),root)],['invoker'],'ancestor Cargo configuration is invoker-owned')
+                state['identity']=dict(configuration='fixture');state['key']='a'*64
+                from isolation import storage_lock
+                with storage_lock(area/'storage','gate'):
+                    before=len(calls)
+                    with refuses(test,'holder=gate',message='storage exclusion crosses evidence roots'):
+                        other=SimpleNamespace(**vars(args));other.directory=area/'other-evidence'
+                        Round(root,other).run()
+                    test.assertFalse(any(c[0][:2]==['git','reset'] for c in calls[before:]),'storage refusal precedes reset')
                 from series_round import round_lock
                 with round_lock(args.directory,dict(label='other',base='other',source='other')):
                     before=list(calls)
@@ -159,18 +182,20 @@ def controls(test, group):
                 test.assertEqual(round.run(),0,'green complete priming succeeds')
                 expected=[['git','reset','--hard','base'],['python3','-B','ci/run_tests.py','prepare'],
                     ['python3','-B','ci/discipline.py','clippy'],['git','reset','--hard','source'],
-                    ['git','clean','-fdx','-e','/.lane/build-graph/'],['python3','-B','ci/build_graph.py','series-key'],['bash','ci/gate.sh']]
+                    ['git','clean','-fdx','-e','/.lane/build-graph/'],['bash','ci/gate.sh']]
+                expected.insert(0,['python3','-B','ci/build_graph.py','series-identity'])
                 selected=[c[0] for c in calls if c[0] in expected]
                 test.assertEqual(selected,expected,'priming pays the exact base-build/source-reset sequence')
                 test.assertFalse((round.store/'ledger.jsonl').exists(),'priming is not an attempt')
                 test.assertTrue(json.loads((round.store/'priming.json').read_text())['complete'],'priming retains complete compilation')
+                test.assertEqual(json.loads((round.store/'priming.json').read_text())['identity'],dict(configuration='fixture'),'priming retains identity members beside key')
                 test.assertEqual(json.loads((round.store/'priming.json').read_text())['owners'],dict(kept='source'),'priming records actual retained owner heads')
                 with refuses(test,'already',message='priming record cannot be overwritten'): round.run()
                 args.mode='sample';args.ordinal=1;calls.clear()
                 state['gate']=1
                 test.assertEqual(round.run(),1,'red gate remains red after completed close and archive')
                 operations=[c[0][3:] for c in calls if c[0][:3]==['python3','-B','ci/build_graph.py']]
-                test.assertEqual([c[0] for c in operations],['series-owner-heads','series-key','series-idle','series-idle','series-close','series-archive-list'],'red gate still ends closes and archives')
+                test.assertEqual([c[0] for c in operations],['series-identity','series-owner-heads','series-idle','series-idle','series-close','series-archive-list'],'red gate still ends closes and archives')
                 ledger=json.loads((round.store/'ledger.jsonl').read_text())
                 test.assertEqual(ledger['gate_status'],1,'ledger retains original red status')
                 test.assertEqual(ledger['declared_identity'],{k:priming[k] for k in ('base','source','configuration_key','cache')},'ledger carries label identity')

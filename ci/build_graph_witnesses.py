@@ -87,7 +87,8 @@ def exercise(case):
         stale_info['meson_version']['full'] = '0.0.0-version-witness'
         info.write_text(json.dumps(stale_info))
         case.assertEqual(prepare(meson, build, root), 0)
-        case.assertEqual(json.loads(info.read_text())['meson_version'], original_info['meson_version'])
+        case.assertEqual(json.loads(info.read_text())['meson_version'], original_info['meson_version'],'fresh setup restores the answering version')
+        case.assertTrue(build.with_name(build.name+'.displaced').exists(),'version mismatch displaces the previous graph')
         print('GRAPH-WITNESS meson-version-match=reused meson-version-mismatch=setup')
 
         from contextlib import redirect_stdout
@@ -118,6 +119,58 @@ def exercise(case):
                 case.assertEqual(prepare(meson,build,root),0,'single-directory mismatch configures')
             case.assertIn('action=setup',output.getvalue(),member+' mismatch alone forbids reuse')
             case.assertIn('"differed": ["'+member+'"]',output.getvalue(),member+' mismatch is recorded separately')
+        for content in ('not json', '[]', '{}', '{"directories": [], "meson_version": {"full": "x"}}', json.dumps(dict(directories=dict(source=chr(0)),meson_version=dict(full='x')))):
+            info.write_text(content)
+            output = io.StringIO()
+            try:
+                with redirect_stdout(output):
+                    status = prepare(meson,build,root)
+            except Exception as error:
+                case.fail('invalid introspection must be displaced rather than raise: '+repr(error))
+            case.assertEqual(status,0,'invalid introspection receives fresh setup')
+            case.assertIn('introspection-unreadable-or-invalid',output.getvalue(),'binding names invalid record')
+            case.assertIn('action=setup',output.getvalue(),'invalid record cannot reuse')
+        read_text = Path.read_text
+        unread = [True]
+        def unread_once(path, *args, **kwargs):
+            if path == info and unread[0]:
+                unread[0] = False
+                raise PermissionError('controlled unreadable introspection')
+            return read_text(path,*args,**kwargs)
+        try:
+            with patch.object(Path,'read_text',unread_once), redirect_stdout(io.StringIO()) as output:
+                status=prepare(meson,build,root)
+        except Exception as error:
+            case.fail('unreadable introspection must recover without traceback: '+repr(error))
+        case.assertEqual(status,0,'unreadable introspection is displaced')
+        case.assertIn('introspection-unreadable-or-invalid',output.getvalue(),'unreadable binding reason is retained')
+        rules=build/'build.ninja'
+        rules.write_text(rules.read_text().replace('--root '+str(root),'--root '+str(root/'foreign')))
+        with redirect_stdout(io.StringIO()) as output:
+            case.assertEqual(prepare(meson,build,root),0,'foreign census rules receive fresh setup')
+        case.assertIn('census-rule-root-differs',output.getvalue(),'rules binding is checked even when introspection matches')
+        rules.unlink()
+        def failed_setup(command, **options):
+            if len(command)>1 and command[1]=='setup':
+                build.mkdir();(build/'partial').write_text('interrupted setup')
+                return type('Result',(),dict(returncode=1))()
+            return run(command,**options)
+        with patch('build_graph.run',side_effect=failed_setup), redirect_stdout(io.StringIO()):
+            case.assertEqual(prepare(meson,build,root),1,'setup failure retains its failure status')
+        with redirect_stdout(io.StringIO()) as output:
+            case.assertEqual(prepare(meson,build,root),0,'partial setup is displaced on the next attempt')
+        case.assertIn('graph-incomplete',output.getvalue(),'partial graph refusal is explicit')
+        case.assertFalse((build/'partial').exists(),'partial setup is removed from the live graph')
+        case.assertEqual(len(list(build.parent.glob(build.name+'.displaced*'))),1,'at most one displaced graph is kept')
+        build.with_name(build.name+'.displaced-old').mkdir()
+        with redirect_stdout(io.StringIO()):
+            case.assertEqual(prepare(meson,build,root),0,'bound live graph remains reusable during pruning')
+        case.assertEqual(len(list(build.parent.glob(build.name+'.displaced*'))),1,'reuse also bounds historical displaced graphs')
+        shutil.rmtree(build)
+        build.symlink_to(root/'absent-graph',target_is_directory=True)
+        with redirect_stdout(io.StringIO()):
+            case.assertEqual(prepare(meson,build,root),0,'dangling graph link receives fresh setup')
+        case.assertTrue(build.with_name(build.name+'.displaced').is_symlink(),'dangling graph is displaced without following its target')
         with tempfile.TemporaryDirectory() as invalid:
             invalid_build=Path(invalid)/'build'
             from types import SimpleNamespace

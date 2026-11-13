@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # Run every foundation check and report one final verdict.
 set -u
+if [ "${1:-}" = --gate-storage-locked ]; then
+    python3 -B ci/isolation.py storage-entry || exit 5
+    shift
+elif [ "${1:-}" != --gate-target-locked ]; then
+    exec python3 -B ci/isolation.py gate-storage bash "$0" --gate-storage-locked "$@"
+fi
 if [ "${1:-}" = --gate-target-locked ]; then
     python3 -B ci/isolation.py locked-entry || exit 2
+    python3 -B ci/isolation.py storage-entry || exit 5
     unset PN_GATE_LOCK_FD PN_GATE_LOCK_TOKEN
 else
     python3 -B ci/build_graph.py declare || exit 2

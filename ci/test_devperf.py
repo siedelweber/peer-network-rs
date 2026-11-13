@@ -154,9 +154,10 @@ class Performance(unittest.TestCase):
         """
         import run_ci
         from build_graph import DECLARATION_VARIABLES,declaration_environment,declare_run,series_idle
+        from isolation import storage_token
         import ast,inspect,re
         names=set()
-        for function in (declare_run,series_idle):
+        for function in (declare_run,series_idle,storage_token):
             tree=ast.parse(inspect.getsource(function))
             names.update(n.value for n in ast.walk(tree) if isinstance(n,ast.Constant) and isinstance(n.value,str)
                          and re.fullmatch(r'PN_[A-Z_]+',n.value))
@@ -207,7 +208,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(declaration_environment(),foreign,'package runner restores the enclosing declaration')
 
     def test_series_archive_list(self):
-        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics carrying private absolute paths.
+        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log.
         ´claim:devperf:series-archive-list´
         ´test:integration:test-series-archive-list´
         """
@@ -241,12 +242,27 @@ class Performance(unittest.TestCase):
             finally:
                 os.chdir(previous)
             self.assertEqual(retained.read_text(),private,'local diagnostic preserves the original refusal evidence')
+            import wallet_elements as wallet
+            from unittest.mock import MagicMock
+            from contextlib import redirect_stderr
+            import io, errno
+            connection=MagicMock();connection.getresponse.return_value.status=500
+            connection.getresponse.return_value.read.return_value=json.dumps(dict(jsonrpc='2.0',id=1,error=dict(code=-4,message='wallet '+str(daemon/'wallet')+' refused'))).encode()
+            diagnostic=io.StringIO()
+            with patch.object(wallet.http.client,'HTTPConnection',return_value=connection), patch.object(wallet,'wallet_progress',return_value=dict(wallet=1,chain=2)), patch.object(wallet.shutil,'copyfile',side_effect=OSError(errno.EACCES,'copy failed',str(daemon/'elementsregtest/debug.log'))), redirect_stderr(diagnostic):
+                try: wallet.rpc(dict(port=1,producer='fixture',rpc_log=str(daemon/'rpc.log')),'destroyamount')
+                except RuntimeError: pass
+                else: self.fail('controlled daemon refusal must refuse')
+            step=lane/'gate-refusal.log';step.write_text(diagnostic.getvalue())
+            self.assertIn('errno=13',step.read_text(),'copy refusal prints only its error number')
+            self.assertIn('[fixture-data]/wallet refused',step.read_text(),'daemon path is replaced before archived output')
+            self.assertNotIn(str(daemon),step.read_text(),'both diagnostic routes remove the data directory')
             manifest=series_archive_list(root,log)
             self.assertNotIn(str(retained),[r['source'] for r in manifest['files']],'private daemon diagnostic is outside archive patterns')
             self.assertTrue(all(private not in Path(r['source']).read_text() for r in manifest['files']),'archive contents carry no retained private daemon path')
             wanted={'series-attempt.json','gate-series-host-start.json','gate-series-host-end.json','gate-series-end.json',
                 'gate-declaration.json','tier-tests/manifest.json','tier-tests/build.stderr','gate-example-transitions.jsonl',
-                'gate-example-transitions.binding.json','round.log'}
+                'gate-example-transitions.binding.json','gate-refusal.log','round.log'}
             self.assertEqual({row['destination'] for row in manifest['files']},wanted,'manifest is the exact nonrecursive evidence set')
             destination=root/'archive';destination.mkdir()
             for row in manifest['files']:
@@ -592,15 +608,21 @@ class Performance(unittest.TestCase):
             check_series_records(series_records(),ledger_change=lambda rows:rows.append(rows[0]))
 
     def test_series_owner_targets(self):
-        """Series membership refuses cold, swept and foreign owner targets.
+        """Series membership names each cold, swept, unobserved or foreign owner and its failing condition.
         ´claim:devperf:series-owner-targets´
         ´test:integration:test-series-owner-targets´
         """
-        for key,value in [('cold_target',True),('layout_changed',True),('cold_target',None),('run','foreign'),('base','foreign')]:
+        for key,value,cause in [('cold_target',True,'cold-or-swept'),('layout_changed',True,'layout-changed'),('cold_target',None,'unobserved-cold_target'),('layout_changed',None,'unobserved-layout_changed'),('run','foreign','foreign-run'),('base','foreign','foreign-base'),('source','foreign','foreign-source')]:
             rows=series_records();rows[1]['owners'][0][key]=value
+            rows[1]['owners'][0]['owner']='owner-witness'
             status,result=check_series_records(rows)
             self.assertEqual(status,4,'every owner retains its primed target: '+key)
-            self.assertIn('owner target',result['excluded'][0]['reason'],'owner refusal is named')
+            self.assertIn('owner=owner-witness cause='+cause,result['excluded'][0]['reason'],'owner refusal names its exact condition: '+key)
+        for swept,cause in ((True,'swept'),(False,'cold')):
+            rows=series_records();rows[1]['owners'][0].update(owner='owner-witness',cold_target=True,swept_target=swept)
+            status,result=check_series_records(rows)
+            self.assertEqual(status,4,'reported sweep or cold target remains excluded')
+            self.assertIn('owner=owner-witness cause='+cause,result['excluded'][0]['reason'],'reported sweep is distinguished from a cold target')
 
     def test_series_outliers(self):
         """Series pressure uses an absolute bound, a frozen median and a finite attempt cap.
@@ -676,7 +698,7 @@ class Performance(unittest.TestCase):
 
 
     def test_series_terminal_attempt(self):
-        """Terminal attempts preserve interrupted runs and refuse an unclosed entry.
+        """Controlled rounds retain priming identity members, preserve interrupted runs, close red attempts and refuse an unclosed entry.
         ´claim:devperf:series-terminal-attempt´
         ´test:integration:test-series-terminal-attempt´
         """
@@ -749,7 +771,9 @@ class Performance(unittest.TestCase):
             self.assertEqual(series_owners(root,declaration,'run'),[row],'sample reads bound transitions, not log lines')
             self.assertEqual(series_owners(root,declaration,'other'),[],'another invocation cannot borrow transitions')
             path.write_text(json.dumps(dict(row,step='foreign'))+'\n')
-            with self.assertRaisesRegex(ValueError,'foreign owner',msg='foreign row in current sidecar must refuse'):series_owners(root,declaration,'run')
+            with self.assertRaisesRegex(ValueError,'owner=real cause=foreign-step',msg='foreign row names its owner and binding condition'):series_owners(root,declaration,'run')
+            path.write_text(json.dumps(dict(row,base='foreign'))+'\n')
+            with self.assertRaisesRegex(ValueError,'owner=real cause=foreign-base',msg='foreign base names its owner and condition'):series_owners(root,declaration,'run')
 
     def test_reference_written_identity(self):
         """Written raw measurements remain addressable and comparable when reference margins are declared.
@@ -854,10 +878,39 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members before printing a sample declaration; the round holds an evidence-root lock through execution, refuses concurrent entry before preparation, and ends a changed-key label without a measured attempt.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots and ordinary gate entry before declaration. Controlled rounds compare named key members before reset, ending source differences and refusing invoker differences restartably, while retaining label-state exclusion.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
+        import subprocess
+        import sys
+        from isolation import storage_lock, storage_root, gate_storage
+        from contextlib import redirect_stdout
+        import io
+        with tempfile.TemporaryDirectory() as directory:
+            env=dict(PN_ISOLATION_ROOT=directory,CARGO_TARGET_DIR=directory+'/target')
+            with patch.dict(os.environ,env):
+                os.environ.pop('PN_GATE_STORAGE_TOKEN',None)
+                root=Path.cwd();storage=storage_root(root)
+                with storage_lock(storage,'series') as token:
+                    output=io.StringIO()
+                    with redirect_stdout(output):
+                        self.assertEqual(gate_storage(['false']),5,'held storage refuses without running workload')
+                    self.assertIn('holder=series',output.getvalue(),'storage refusal names holder kind')
+                    child_env=dict(os.environ);child_env.pop('PN_GATE_PLAN',None)
+                    child=subprocess.run(['bash',str(Path(__file__).with_name('gate.sh'))],env=child_env,capture_output=True,text=True)
+                    self.assertEqual(child.returncode,5,'gate entry acquires storage exclusion before declaration')
+                    self.assertIn('GATE-STORAGE-REFUSED',child.stdout,'entry reports its own uncounted refusal')
+                    self.assertNotIn('GATE-DECLARED',child.stdout,'held storage writes no declaration')
+                    with patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token), redirect_stdout(io.StringIO()):
+                        self.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'series token joins held storage without reacquiring')
+                    with patch.dict(os.environ,PN_GATE_STORAGE_TOKEN='wrong'), redirect_stdout(io.StringIO()):
+                        self.assertEqual(gate_storage([sys.executable,'-c','pass']),5,'foreign token cannot join storage exclusion')
+                with patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token), redirect_stdout(io.StringIO()):
+                    self.assertEqual(gate_storage([sys.executable,'-c','pass']),5,'stale token cannot replace held exclusion')
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'unheld storage executes and releases')
+                with storage_lock(storage,'gate'): pass
         from round_fixtures import controls
         controls(self,'guards')
         from build_graph import declare_run

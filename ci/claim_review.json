@@ -358,8 +358,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-archive-list",
       "before": "",
-      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics carrying private absolute paths.",
-      "review": "The fixture retains original daemon bytes with an absolute-path sentinel and runs the production archive list; no listed content contains that sentinel. This witnesses archive exclusion, not filtering of all possible diagnostic channels."
+      "after": "The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics; controlled failed copies report errno only and daemon path messages are marked in the archived step log.",
+      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_battery_patterns",
@@ -390,8 +390,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
-      "after": "Series declarations refuse missing and malformed members before printing a sample declaration; the round holds an evidence-root lock through execution, refuses concurrent entry before preparation, and ends a changed-key label without a measured attempt.",
-      "review": "The controlled round uses the real advisory lock and refuses concurrent acquisition before commands; key mismatch ends its label and records its cause before a plan. These are robustness controls, not measured series admission."
+      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots and ordinary gate entry before declaration. Controlled rounds compare named key members before reset, ending source differences and refusing invoker differences restartably, while retaining label-state exclusion.",
+      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",
@@ -438,8 +438,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-owner-targets",
       "before": "",
-      "after": "Series membership refuses cold, swept and foreign owner targets.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "after": "Series membership names each cold, swept, unobserved or foreign owner and its failing condition.",
+      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_plan_join",
@@ -486,8 +486,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-terminal-attempt",
       "before": "",
-      "after": "Terminal attempts preserve interrupted runs and refuse an unclosed entry.",
-      "review": "Read the named assertions against terminal attempt receipts and the membership predicate. Order is recorded start order, not selected outcome; failed or incomplete measurements never size a ceiling. Proposed bounds are fixture inputs, not measured policy values."
+      "after": "Controlled rounds retain priming identity members, preserve interrupted runs, close red attempts and refuse an unclosed entry.",
+      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_written_observations",
@@ -766,8 +766,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
       "before": "Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass.",
-      "after": "Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass; reuse requires the matching configuring version and resolved source and build directories. A copied configured graph is displaced and freshly set up, and its census refuses an undeclared tracked file added only to the copy; each directory mismatch alone also requires setup.",
-      "review": "The real configured fixture graph is copied with its index, then gains an undeclared file only at the destination. Fresh setup and destination census refusal witness relocation robustness; separate source and build mismatches witness both binding members."
+      "after": "Claim: Real configured graphs refuse undeclared tracked inputs after relocation; reuse requires resolved directories, the configuring version and the generated census root. Invalid and unreadable introspection and interrupted setup are displaced and repaired, at most one displaced graph remains, and incidence controls refuse stale, duplicate, unconnected or excluded inputs and incomplete steps.",
+      "review": "Conformance and robustness controls execute the stated production path with controlled records and failures; assertions name the violated boundary. These witnesses establish neither quiet-series admission nor protection against noncooperating processes of the account."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_build_graph_completion",

@@ -225,7 +225,7 @@ class Conformance(unittest.TestCase):
         self.assertTrue(all('root/src/lib.rs' in json.dumps(f) for f in row['findings']))
 
     def test_build_graph_census(self):
-        """Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass; reuse requires the matching configuring version and resolved source and build directories. A copied configured graph is displaced and freshly set up, and its census refuses an undeclared tracked file added only to the copy; each directory mismatch alone also requires setup.
+        """Claim: Real configured graphs refuse undeclared tracked inputs after relocation; reuse requires resolved directories, the configuring version and the generated census root. Invalid and unreadable introspection and interrupted setup are displaced and repaired, at most one displaced graph remains, and incidence controls refuse stale, duplicate, unconnected or excluded inputs and incomplete steps.
         ´claim:discipline:build-graph-census-accounts-for-tracked-inputs´
         ´test:integration:test-build-graph-census´
         """

@@ -42,6 +42,31 @@ def round_lock(directory, identity):
             fcntl.flock(stream, fcntl.LOCK_UN)
 
 
+# Closed identity ownership: an unknown member cannot be corrected by a prefix.
+SOURCE_KEY_MEMBERS = frozenset(('configuration', 'tiers', 'accounting', 'profiles'))
+INVOKER_KEY_MEMBERS = frozenset(('lineage', 'node', 'toolchain', 'runtime', 'cargo_home_config'))
+
+
+def configuration_differences(before, after, root):
+    """Name every changed identity member and who can correct it."""
+    result = []
+    for name in sorted(set(before) | set(after)):
+        if before.get(name) == after.get(name):
+            continue
+        if name == 'cargo_config':
+            old, new = dict(before.get(name, [])), dict(after.get(name, []))
+            for path in sorted(set(old) | set(new)):
+                if old.get(path) != new.get(path):
+                    kind = 'source' if Path(path).resolve().is_relative_to(root.resolve()) else 'invoker'
+                    result.append(dict(member=name+'['+path+']', kind=kind))
+        else:
+            kind = 'invoker' if name in INVOKER_KEY_MEMBERS else 'source'
+            if name not in SOURCE_KEY_MEMBERS | INVOKER_KEY_MEMBERS:
+                kind = 'unknown'
+            result.append(dict(member=name, kind=kind))
+    return result
+
+
 def argv(value):
     result = json.loads(value)
     if not isinstance(result, list) or not result or any(not isinstance(x, str) or not x for x in result):
@@ -102,6 +127,7 @@ class Round:
             raise Refusal('repeat requires its obligation and only repeat accepts one')
         self.log = None
         self.planned = None
+        self.storage_token = None
 
     def check_store(self):
         """Reconcile label state only while the round lock is held."""
@@ -117,6 +143,9 @@ class Round:
 
     def command(self, command, environment=None, build=False):
         """Each command retains its output, status, wall and reaped CPU."""
+        environment = dict(environment or {})
+        if self.storage_token:
+            environment['PN_GATE_STORAGE_TOKEN'] = self.storage_token
         clean = {key:value for key,value in os.environ.items() if key not in build_graph.DECLARATION_VARIABLES}
         unset = [word for key in build_graph.DECLARATION_VARIABLES for word in ('-u',key)]
         full = (self.args.build_prefix+['env']+unset+[key+'='+value for key,value in (environment or {}).items()]+command
@@ -147,8 +176,20 @@ class Round:
     def run(self):
         identity = dict(label=self.args.label, base=self.args.base, source=self.args.source)
         with round_lock(self.store.parent, identity):
-            self.check_store()
-            return self.locked_run()
+            from isolation import storage_lock, StorageBusy
+            directory = Path(self.require(['python3','-B','ci/isolation.py','storage-root'],build=True))
+            if not directory.is_absolute():
+                raise Refusal('build environment storage root must be absolute')
+            try:
+                with storage_lock(directory, 'series', identity) as token:
+                    self.storage_token = token
+                    try:
+                        self.check_store()
+                        return self.locked_run()
+                    finally:
+                        self.storage_token = None
+            except StorageBusy as error:
+                raise Busy('storage lock '+str(error)) from error
 
     def locked_run(self):
         try:
@@ -185,6 +226,23 @@ class Round:
             obligation = json.loads(args.repeat_of.read_text())
             if obligation['base'] != base or obligation['source'] != source:
                 raise Refusal('repeat transition differs from obligation')
+        observed = json.loads(self.require(['python3','-B','ci/build_graph.py','series-identity'],build=True))
+        key, identity = observed['key'], observed['identity']
+        if not isinstance(identity, dict) or not re.fullmatch('[0-9a-f]{64}',key):
+            raise Refusal('configuration key is malformed')
+        if args.mode == 'sample' and key != priming['configuration_key']:
+            differences = configuration_differences(priming.get('identity', {}), identity, self.root)
+            record = dict(reason='configuration key differs from priming', expected=priming['configuration_key'],
+                          observed=key, differences=differences)
+            if differences and all(row['kind'] == 'invoker' for row in differences):
+                append(self.store/'preparations.jsonl',record)
+                print('GATE-ROUND-RESTARTABLE '+json.dumps(record,sort_keys=True),flush=True)
+                return 5
+            write(self.store/'ended.json',record)
+            print('GATE-ROUND-ENDED '+json.dumps(record,sort_keys=True),flush=True)
+            return 4
+        if obligation and key != obligation['configuration_key']:
+            raise Refusal('repeat configuration differs from obligation')
         if args.mode == 'sample':
             heads = json.loads(self.require(['python3','-B','ci/build_graph.py','series-owner-heads'],build=True))
             if any(head not in (base,source) for head in heads.values()):
@@ -211,16 +269,6 @@ class Round:
             self.require(['git','reset','--hard',source])
         print('GATE-ROUND-BASE-BUILD base='+base+' source='+source+' status=0',flush=True)
         self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
-        key = self.require(['python3','-B','ci/build_graph.py','series-key'],build=True)
-        if not re.fullmatch('[0-9a-f]{64}',key):
-            raise Refusal('configuration key is malformed')
-        if args.mode == 'sample' and key != priming['configuration_key']:
-            write(self.store/'ended.json',dict(reason='configuration key differs from priming',
-                expected=priming['configuration_key'],observed=key))
-            print('GATE-ROUND-ENDED configuration key differs from priming',flush=True)
-            return 4
-        if obligation and key != obligation['configuration_key']:
-            raise Refusal('repeat configuration differs from obligation')
         environment = dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=entry,PN_GATE_SAMPLE='import',
             PN_IMPORT_BASE=base,PN_GATE_SERIES=args.label,PN_GATE_ORDINAL=str(args.ordinal or 1),
             PN_GATE_CONTAINER_LIST=json.dumps(args.container_list),PN_GATE_SERVICE_LIST=json.dumps(args.service_list))
@@ -258,7 +306,7 @@ class Round:
             pending = json.loads(pending_path.read_text()) if pending_path.exists() else {}
             cache = pending.get('cache',{})
             complete = cache.get('state') in ('warm','cold') and set(cache.get('compiled',{})) == {'primary','lint'} and all(isinstance(v,list) for v in cache.get('compiled',{}).values())
-            record = dict(base=base,source=source,configuration_key=key,cache=cache.get('state'),
+            record = dict(base=base,source=source,configuration_key=key,identity=identity,cache=cache.get('state'),
                 status=status,compiled=cache.get('compiled'),complete=complete,entry=entry,log=str(self.log),
                 owners=json.loads(self.require(['python3','-B','ci/build_graph.py','series-owner-heads'],build=True)))
             write(priming_path,record)
@@ -276,7 +324,7 @@ class Round:
         if obligation:
             discharge, _ = self.command(['python3','-B','ci/build_graph.py','repeat-close',str(args.repeat_of.resolve()),str(self.root/'.lane')],environment=environment)
         exclusion = None
-        if args.mode == 'sample' and not end and not close:
+        if args.mode == 'sample' and not end:
             try:
                 attempt = json.loads((self.root/'.lane/series-attempt.json').read_text())
                 receipt = attempt['receipt']

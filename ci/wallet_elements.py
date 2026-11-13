@@ -136,7 +136,7 @@ def retain_failure(config):
         shutil.copyfile(root/'elementsregtest'/'debug.log', target)
         return str(target)
     except OSError as error:
-        return 'unavailable: '+str(error)[:RPC_DIAGNOSTIC_CHARS]
+        return 'unavailable: errno='+str(error.errno)
 
 
 def wait_wallet(config, wallet='producer'):
@@ -196,6 +196,8 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
             error = value['error']
             code = error.get('code') if isinstance(error, dict) else None
             message = error.get('message') if isinstance(error, dict) else error
+            if config.get('rpc_log'):
+                message = str(message).replace(str(Path(config['rpc_log']).parent), '[fixture-data]')
             reason = ('Elements harness RPC refused: '+method+
                       ' code='+diagnostic_text(code)+' message='+diagnostic_text(message))
             if diagnose:

@@ -12,6 +12,7 @@ from pathlib import Path, PurePosixPath
 import re
 import resource
 import signal
+import shlex
 import shutil
 import subprocess
 import sys
@@ -401,6 +402,46 @@ def check(root, graph_path, report_path):
     return status
 
 
+def graph_binding(build, root, version):
+    """Observe introspection and the census command without executing that command."""
+    expected = dict(source=str(root.resolve()), build=str(build.resolve()))
+    directories, resolved, configured, reasons = {}, {}, None, []
+    try:
+        recorded = json.loads((build/'meson-info/meson-info.json').read_text())
+        directories = recorded['directories']
+        configured = recorded['meson_version']['full']
+        if not isinstance(directories, dict) or not isinstance(configured, str):
+            raise ValueError('record shape')
+        resolved = {name:str(Path(value).resolve()) for name,value in directories.items()
+                    if name in expected and isinstance(value,str)}
+    except (OSError, ValueError, KeyError, TypeError):
+        directories = {}
+        reasons.append('introspection-unreadable-or-invalid')
+    differed = [name for name, value in expected.items() if resolved.get(name) != value]
+    if differed:
+        reasons.append('directories-differ')
+    if configured != version:
+        reasons.append('version-differs')
+    if not (build/'meson-private/coredata.dat').is_file() or not (build/'build.ninja').is_file():
+        reasons.append('graph-incomplete')
+    roots = []
+    if (build/'build.ninja').is_file():
+        try:
+            commands = run(['ninja','-C',str(build),'-t','commands','tracked-census.json'],capture_output=True,text=True)
+            if commands.returncode:
+                raise ValueError('rules unreadable')
+            for line in commands.stdout.splitlines():
+                words = shlex.split(line)
+                if 'check' in words and '--root' in words:
+                    roots.append(str(Path(words[words.index('--root')+1]).resolve()))
+        except (OSError, ValueError, IndexError):
+            reasons.append('rules-unreadable')
+    if roots != [str(root.resolve())]:
+        reasons.append('census-rule-root-differs')
+    return dict(expected=expected, recorded=directories, differed=differed, reasons=reasons,
+                configured=configured, census_roots=roots)
+
+
 def prepare(meson, build, root):
     """Bind reused configuration to the answering Meson once per gate."""
     result = run([meson, '--version'], capture_output=True, text=True)
@@ -411,34 +452,30 @@ def prepare(meson, build, root):
     version = result.stdout.strip()
     if not version or len(version.splitlines()) != 1:
         raise ValueError('Meson returned no single version')
-    info = build/'meson-info/meson-info.json'
-    recorded = json.loads(info.read_text()) if info.exists() else {}
-    configured = recorded.get('meson_version', {}).get('full')
-    expected = dict(source=str(root.resolve()), build=str(build.resolve()))
-    directories = recorded.get('directories', {})
-    differed = [name for name, value in expected.items()
-                if not isinstance(directories.get(name), str) or
-                Path(directories[name]).resolve() != Path(value)]
-    exists = (build/'build.ninja').exists()
+    binding = graph_binding(build, root, version)
     displaced = None
-    if exists and differed:
-        displaced = build.with_name(build.name+'.displaced-'+uuid.uuid4().hex)
+    old_graphs = sorted(build.parent.glob(build.name+'.displaced*'), key=lambda path:path.lstat().st_mtime_ns, reverse=True)
+    for old in old_graphs[1:] if not binding['reasons'] else old_graphs:
+        if old.is_dir() and not old.is_symlink():
+            shutil.rmtree(old)
+        else:
+            old.unlink()
+    if binding['reasons'] and (build.exists() or build.is_symlink()):
+        displaced = build.with_name(build.name+'.displaced')
         build.rename(displaced)
-        exists = False
-    print('BUILD-MESON-BINDING '+json.dumps(dict(expected=expected, recorded=directories,
-        differed=differed, displaced=str(displaced) if displaced else None)), flush=True)
-    action = 'setup' if not exists else ('reuse' if configured == version else 'wipe-setup')
+    print('BUILD-MESON-BINDING '+json.dumps(dict(binding, displaced=str(displaced) if displaced else None)), flush=True)
+    configured = binding['configured']
+    action = 'setup' if binding['reasons'] else 'reuse'
     print(f'BUILD-MESON version={version} configured={configured} action={action}', flush=True)
     if action != 'reuse':
-        command = [meson, 'setup', *(['--wipe'] if exists else []), str(build), str(root)]
+        command = [meson, 'setup', str(build), str(root)]
         if run(command).returncode:
             return 1
-        if json.loads(info.read_text())['meson_version']['full'] != version:
-            raise ValueError('configured Meson version differs from answering binary')
-        actual = json.loads(info.read_text()).get('directories', {})
-        if any(not isinstance(actual.get(name), str) or Path(actual[name]).resolve() != Path(value)
-               for name, value in expected.items()):
+        actual = graph_binding(build, root, version)
+        if actual['differed']:
             raise ValueError('configured Meson directories differ from current checkout')
+        if actual['reasons']:
+            raise ValueError('configured graph is incomplete or unbound: '+','.join(actual['reasons']))
     return 0
 
 
@@ -665,7 +702,7 @@ DECLARATION_VARIABLES = (
     'PN_GATE_PLAN', 'PN_GATE_ENTRY', 'PN_GATE_FIRST_CACHE', 'PN_GATE_SAMPLE',
     'PN_IMPORT_BASE', 'PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_GATE_SERIES_COUNT',
     'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE', 'PN_GATE_REPEAT_OF',
-    'PN_GATE_CONTAINER_LIST', 'PN_GATE_SERVICE_LIST',
+    'PN_GATE_CONTAINER_LIST', 'PN_GATE_SERVICE_LIST', 'PN_GATE_STORAGE_TOKEN',
 )
 
 
@@ -814,14 +851,16 @@ def series_receipt(root, boundary):
         record['owners'] = series_owners(root, declaration, record['run'])
         record['whole'] = json.loads((root/'.lane/gate-wall.json').read_text())
         record['status'] = 'complete'
-        if any(row['cold_target'] or row['layout_changed'] for row in record['owners']):
+        owner_reason = series_owner_refusal(record) if record['owners'] else None
+        if owner_reason:
             record['status'] = 'refused-owner-target'
+            record['refusal'] = owner_reason
         if record['observed_cache'] != declaration['cache'] or record['observed_key'] != declaration['configuration_key']:
             record['status'] = 'refused-identity'
     (root/('.lane/gate-series-'+boundary+'.json')).write_text(json.dumps(record, sort_keys=True)+'\n')
     print('GATE-SERIES '+json.dumps(record, sort_keys=True), flush=True)
     if boundary == 'end' and record['status'] != 'complete':
-        raise ValueError('series sample differs from declared configuration, cache or retained owner target')
+        raise ValueError(record.get('refusal', 'series sample differs from declared configuration or cache'))
 
 
 def series_comparison(pending):
@@ -870,9 +909,10 @@ def series_owners(root, declaration, invocation):
         for line in path.read_text().splitlines():
             row = json.loads(line)
             if any(row.get(key) != binding.get(key) for key in ('run','source','step')):
-                raise ValueError('foreign owner transition in bound receipt')
+                members = ','.join(key for key in ('run','source','step') if row.get(key) != binding.get(key))
+                raise ValueError('foreign owner transition in bound receipt owner='+str(row.get('owner','unavailable'))+' cause=foreign-'+members)
             if row.get('base') != declaration['base']:
-                raise ValueError('owner transition differs from series base')
+                raise ValueError('owner transition differs from series base owner='+str(row.get('owner','unavailable'))+' cause=foreign-base')
             rows.append(row)
     return rows
 
@@ -982,6 +1022,26 @@ def series_ledger(label, ledger):
     return entries
 
 
+def series_owner_refusal(row):
+    """Describe the owner observation that prevents membership."""
+    declaration = row['declaration']
+    if not row.get('owners'):
+        return 'series owner=unavailable cause=unobserved'
+    for owner in row['owners']:
+        name = owner.get('owner', 'unavailable')
+        for member in ('cold_target', 'layout_changed'):
+            if owner.get(member) is not False:
+                cause = 'layout-changed' if member == 'layout_changed' else (
+                    'swept' if owner.get('swept_target') is True else 'cold' if owner.get('swept_target') is False else 'cold-or-swept')
+                if owner.get(member) is not True:
+                    cause = 'unobserved-'+member
+                return 'series owner='+str(name)+' cause='+cause
+        for member, expected in (('base',declaration['base']),('source',declaration['source']),('run',row.get('run'))):
+            if owner.get(member) != expected:
+                return 'series owner='+str(name)+' cause=foreign-'+member
+    return None
+
+
 def series_member(row, first):
     """Validate a completed measurement before it can affect sampling policy."""
     declaration = row['declaration']
@@ -992,6 +1052,8 @@ def series_member(row, first):
         raise ValueError('series plan or count disagrees with declaration')
     if declaration['base'] == declaration['source']:
         raise ValueError('series base equals source')
+    if row.get('status') == 'refused-owner-target':
+        raise ValueError(series_owner_refusal(row) or 'owner refusal lacks its observation')
     if row.get('status') != 'complete' or row.get('observed_key') != declaration['configuration_key'] or row.get('observed_cache') != declaration['cache']:
         raise ValueError('series sample is incomplete or refused')
     if type(row.get('whole', {}).get('status')) is not int or row['whole']['status'] != 0:
@@ -1004,9 +1066,9 @@ def series_member(row, first):
         refusal = series_idle_refusal(idle)
         if refusal:
             raise ValueError(boundary+' '+refusal)
-    if not row.get('owners') or any(owner.get('cold_target') is not False or owner.get('layout_changed') is not False
-            or owner.get('base') != declaration['base'] or owner.get('source') != declaration['source'] or owner.get('run') != row.get('run') for owner in row['owners']):
-        raise ValueError('series owner target is cold, swept, unobserved or foreign')
+    owner_reason = series_owner_refusal(row)
+    if owner_reason:
+        raise ValueError(owner_reason)
     pressure = row.get('whole', {}).get('stall')
     if type(pressure) not in (int,float) or not math.isfinite(pressure) or not 0 <= pressure <= 1:
         raise ValueError('series whole pressure is unavailable')
@@ -2424,6 +2486,7 @@ def main():
     sub.add_parser('declare')
     sub.add_parser('instruction-probe')
     sub.add_parser('series-key')
+    sub.add_parser('series-identity')
     sub.add_parser('series-owner-heads')
     check_series = sub.add_parser('series-check')
     check_series.add_argument('label')
@@ -2472,6 +2535,11 @@ def main():
     args = parser.parse_args()
     if args.action == 'series-owner-heads':
         print(json.dumps(retained_owner_heads(Path.cwd()),sort_keys=True))
+        return 0
+    if args.action == 'series-identity':
+        from harness import load
+        identity = reference_identity(Path.cwd(), load())
+        print(json.dumps(dict(identity=identity,key=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest())))
         return 0
     if args.action == 'series-key':
         from harness import load
