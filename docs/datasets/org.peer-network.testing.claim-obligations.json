@@ -3950,7 +3950,7 @@
       "closing_condition": "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export.",
       "closing_step": "Credential bootstrap before executable startup",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Generation and entropy failure, exact-length/EOF with same-invocation supervisor completion, checked cleanup limits, no-plaintext-server and verifier-log sentinels, authorization/marker, permission, restart and role/rotation recovery controls with runtime mutants; separate supervisor, publication, account and durability installation witnesses.",
+      "missing": "Generation and entropy failure, exact-length/EOF with same-invocation supervisor completion, checked cleanup limits, no-plaintext-server and succeeding/failing verifier sentinels across all statement-text controls and views, distinct initialization/rotation authorization, unconsumed-start refusal, marker/selection equality and both endings, single superseded-set retention/discard, permission, restart and role/rotation recovery controls with runtime mutants; separate supervisor, publication, account and durability installation witnesses.",
       "name": "ROOT::verif:observe:credential-bootstrap",
       "owner": "Foundation implementer, deployment administrator and repository reviewer",
       "path": "adr/016-observability.md",
