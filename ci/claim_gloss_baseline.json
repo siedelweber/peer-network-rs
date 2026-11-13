@@ -1242,6 +1242,7 @@
     "pn-interchange::transport::transport_limits_precede_reservations": "",
     "pn-interchange::transport::transport_refusals_retain_valid_controls": "",
     "pn-interchange::transport::transport_variants_preserve_values": "",
+    "pn-interchange::value::text_tests::text_exact_storage": "",
     "pn-interchange::vectors::canonical_rows_decode_reencode_identically_and_roundtrip": "Claim: Every canonical vector of the standard decodes, re-encodes to the same bytes, and round-trips.",
     "pn-interchange::vectors::corpus_has_the_seeded_shape": "Claim: The vector corpus still holds the 67 canonical rows and 26 refusals it was seeded with.",
     "pn-interchange::vectors::refusal_rows_are_refused_with_a_located_error": "Claim: Every refusal vector is refused inside its own bytes and as the variant its reason names.",

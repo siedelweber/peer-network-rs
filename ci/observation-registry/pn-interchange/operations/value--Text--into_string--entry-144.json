@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-interchange::packages/interchange/src/value.rs::value::Text::into_string",
-    "body": "{ self . 0 . into_string () }",
+    "body": "{ self . 0 }",
     "class_decision": "public-interchange",
     "item_premise": "This body inherits the public-interchange decision for value::Text::into_string.",
     "assessments": {

@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-interchange::packages/interchange/src/value.rs::value::<Text as From < String >>::from",
-    "body": "{ Text (s . into_boxed_str ()) }",
+    "body": "{ Text (s . into_boxed_str () . into_string ()) }",
     "class_decision": "public-interchange",
     "item_premise": "This body inherits the public-interchange decision for value::<Text as From < String >>::from.",
     "assessments": {

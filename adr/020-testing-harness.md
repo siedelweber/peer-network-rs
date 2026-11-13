@@ -165,7 +165,7 @@
 | pn-host::public | active | public-surface | pn-host-rust | fast | 14 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
-| pn-interchange | active | unit | pn-interchange-rust | fast | 241 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 242 |
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | pn-interchange::benchmark_correctness | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |

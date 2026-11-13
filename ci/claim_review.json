@@ -4931,6 +4931,14 @@
       "review": "Read the transport fixtures and paired controls against rule:api:message-decoding. The assertions establish the named finite codec behavior and reservation counters, not an API deployment, canonical document acceptance through transport, or a paper theorem."
     },
     {
+      "operation": "pn-interchange::value::text_tests::text_exact_storage",
+      "path": "packages/interchange/src/value.rs",
+      "claim": "INTERCHANGE::claim:encoding:text-exact-storage",
+      "before": "",
+      "after": "Claim: Four text fixtures exercise exact capacity through every legacy text constructor and clone, literal borrowed and owned bytes, pointer-preserving extraction and canonical round trips.",
+      "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
+    },
+    {
       "operation": "pn-interchange::vectors::corpus_has_the_seeded_shape",
       "path": "packages/interchange/tests/vectors.rs",
       "claim": "INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts",

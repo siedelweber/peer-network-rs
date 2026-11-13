@@ -651,13 +651,28 @@ impl AsRef<[u8]> for Bytes {
 /// let err = Text::try_from(vec![0x61, 0xff]).expect_err("0xff starts no sequence");
 /// assert!(matches!(err, ValueError::InvalidUtf8 { offset: 1 }));
 /// ```
-#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
-pub struct Text(Box<str>);
+/// Owned string storage costs one additional machine word over a boxed slice;
+/// every text has capacity equal to length, and the enclosing Value does not grow.
+/// (´amend:interchange:canonical-budget´)
+#[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
+pub struct Text(String);
+
+const _: () = assert!(mem::size_of::<Text>() == 3 * mem::size_of::<usize>());
+const _: () = assert!(mem::size_of::<Value>() == 4 * mem::size_of::<usize>());
+
+impl Clone for Text {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
+    /// Exact boxed storage followed by the documented allocation-free ownership move.
+    /// (´amend:interchange:canonical-budget´)
+    fn clone(&self) -> Self {
+        Self(Box::<str>::from(self.0.as_str()).into_string())
+    }
+}
 
 impl Text {
     /// Already validated and allocated text from the bounded decoder.
     pub(crate) fn from_decoded(text: Box<str>) -> Self {
-        Self(text)
+        Self(text.into_string())
     }
     /// The payload.
     ///
@@ -700,7 +715,7 @@ impl Text {
         ret
     )]
     pub fn into_string(self) -> String {
-        self.0.into_string()
+        self.0
     }
 }
 
@@ -716,7 +731,7 @@ impl From<String> for Text {
         ret
     )]
     fn from(s: String) -> Text {
-        Text(s.into_boxed_str())
+        Text(s.into_boxed_str().into_string())
     }
 }
 
@@ -1696,4 +1711,36 @@ fn single_to_f64(bits: u32) -> f64 {
         return f64::from_bits(sign | 0x7ff0_0000_0000_0000 | mantissa);
     }
     f64::from(f32::from_bits(bits))
+}
+
+#[cfg(test)]
+mod text_tests {
+    use super::{Text, Value};
+
+    /// Claim: Four text fixtures exercise exact capacity through every legacy text constructor and clone, literal borrowed and owned bytes, pointer-preserving extraction and canonical round trips.
+    /// ´claim:encoding:text-exact-storage´
+    /// ´test:unit:text-exact-storage´
+    #[test]
+    fn text_exact_storage() {
+        for source in ["", "a", "é", "a moderately long text"] {
+            let mut spare = String::with_capacity(source.len() + 31);
+            spare.push_str(source);
+            let text = Text::from(spare);
+            assert_eq!(text.0.capacity(), text.0.len(), "legacy text has exact storage");
+            let decoded = Text::from_decoded(Box::<str>::from(source));
+            assert_eq!(decoded.0.capacity(), decoded.0.len(), "decoded text has exact storage");
+            let converted = Text::try_from(source.as_bytes().to_vec()).unwrap();
+            assert_eq!(converted.0.capacity(), converted.0.len(), "byte conversion has exact storage");
+            let cloned = text.clone();
+            assert_eq!(cloned.0.capacity(), cloned.0.len(), "cloned text has exact storage");
+            assert_eq!(Text::default().0.capacity(), 0);
+            let pointer = text.as_str().as_ptr();
+            let owned = text.into_string();
+            assert_eq!(owned.as_ptr(), pointer, "owned extraction moves the allocation");
+            assert_eq!(owned.as_bytes(), source.as_bytes());
+            let value = Value::Text(decoded);
+            let bytes = value.to_canonical_bytes();
+            assert_eq!(Value::from_canonical_bytes(&bytes).unwrap(), value);
+        }
+    }
 }
