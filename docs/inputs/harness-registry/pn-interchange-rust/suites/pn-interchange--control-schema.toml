@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-interchange::control_schema"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::control_schema::source_record_agreement", "pn-interchange::control_schema::artifact_fixed_point", "pn-interchange::control_schema::envelope_refusals", "pn-interchange::control_schema::source_retention"]

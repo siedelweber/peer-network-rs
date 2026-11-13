@@ -78,6 +78,7 @@
 
 mod accept;
 mod cddl;
+pub mod control_schema;
 mod decode;
 mod encode;
 mod envelope;

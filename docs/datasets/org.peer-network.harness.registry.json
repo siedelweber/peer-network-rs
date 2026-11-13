@@ -3611,6 +3611,22 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::control_schema::source_record_agreement",
+        "pn-interchange::control_schema::artifact_fixed_point",
+        "pn-interchange::control_schema::envelope_refusals",
+        "pn-interchange::control_schema::source_retention"
+      ],
+      "implementation": "pn-interchange-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-interchange::control_schema",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
         "pn-interchange::deterministic_encoding::a_declared_count_beyond_the_input_is_truncation_rather_than_an_allocation",
         "pn-interchange::deterministic_encoding::construction_sorts_and_the_encoder_does_not",
         "pn-interchange::deterministic_encoding::every_proper_prefix_of_a_fixture_is_truncated",

@@ -274,11 +274,11 @@ paths = ["packages/interchange/fuzz/Cargo.lock"]
 family = "interchange-numeric-data"
 group = "interchange implementation and vendored engine"
 measures = "Numeric constants, character escapes, and ABNF terminals; not identities"
-producer = "Rust and RFC 8610 grammar literals"
+producer = "Rust, Python and RFC 8610 grammar literals"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer constants denote their numeric value, escapes denote code units including refusal witnesses, binary literals denote bits, and ABNF ranges denote code points. Bounds are checked; bare identity-shaped strings are excluded."
-paths = ["packages/interchange/**/*.rs", "packages/interchange/tests/corpus/*.json", "packages/interchange/tests/corpus/*.txt", "packages/interchange/tests/corpus/*.cddl", "vendor/regexml/**/*.rs", "vendor/regexml/**/*.snap", "docs/templates/adr/009-*.md.j2", "docs/templates/adr/010-*.md.j2", "docs/templates/adr/011-*.md.j2", "docs/templates/adr/012-*.md.j2", "adr/009-*.md", "adr/010-*.md", "adr/011-*.md", "adr/012-*.md"]
+paths = ["packages/interchange/**/*.rs", "packages/interchange/tests/control_vectors.py", "packages/interchange/tests/corpus/*.json", "packages/interchange/tests/corpus/*.txt", "packages/interchange/tests/corpus/*.cddl", "vendor/regexml/**/*.rs", "vendor/regexml/**/*.snap", "docs/templates/adr/009-*.md.j2", "docs/templates/adr/010-*.md.j2", "docs/templates/adr/011-*.md.j2", "docs/templates/adr/012-*.md.j2", "adr/009-*.md", "adr/010-*.md", "adr/011-*.md", "adr/012-*.md"]
 
 [[rows]]
 family = "interchange-vector-data"
@@ -1203,3 +1203,14 @@ reader = "authentication-v2-fixtures"
 source = "packages/act-authentication/tests/v2-golden.json"
 definition = "The independent route regenerates every committed value without calling Rust or production helpers. Inputs are public deterministic fixtures and establish no entropy, signature validity, membership or authenticated anchor. The material actor key differs from the key named by the author identifier: this is not an author-binding fixture and establishes no content-opening existence."
 paths = ["packages/act-authentication/tests/v2-golden.json"]
+
+[[rows]]
+family = "control-schema-vectors"
+group = "public control envelope fixtures"
+measures = "Canonical envelope bytes and refusals, not digests"
+producer = "packages/interchange/tests/control_vectors.py with independent RFC 8949 framing"
+establishment = "defined"
+reader = "control-schema-vectors"
+source = "packages/interchange/tests/corpus/control-schema.json"
+definition = "Regenerate and compare the entire corpus without Rust or production helpers. Alternate roles and special text are test vectors, never artifacts at reserved coordinates. Exact UTF-8 source carriage asserts no SDL validity or served operation."
+paths = ["packages/interchange/tests/corpus/control-schema.json"]

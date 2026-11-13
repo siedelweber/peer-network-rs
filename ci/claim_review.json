@@ -4587,6 +4587,38 @@
       "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
     },
     {
+      "operation": "pn-interchange::control_schema::artifact_fixed_point",
+      "path": "packages/interchange/tests/control_schema.rs",
+      "claim": "INTERCHANGE::claim:documents:control-artifact-fixed-point",
+      "before": "",
+      "after": "Claim: Conformance exercises the registered generator logic for argument refusals, publication and comparison in a fresh runtime directory, matching the committed artifact and independent bytes while retaining the complete source.",
+      "review": "Finite original-byte controls establish only the named carriage property. Independent Python framing is checked by the hash audit, not by a Rust subprocess; no SDL parser, executable schema, supported operation or served edition is inferred."
+    },
+    {
+      "operation": "pn-interchange::control_schema::envelope_refusals",
+      "path": "packages/interchange/tests/control_schema.rs",
+      "claim": "INTERCHANGE::claim:documents:control-envelope-refusals",
+      "before": "",
+      "after": "Claim: Robustness compares each original corpus input with its named refusal and the closed theory, including other roles, editions, content shapes and malformed document bytes.",
+      "review": "Finite original-byte controls establish only the named carriage property. Independent Python framing is checked by the hash audit, not by a Rust subprocess; no SDL parser, executable schema, supported operation or served edition is inferred."
+    },
+    {
+      "operation": "pn-interchange::control_schema::source_record_agreement",
+      "path": "packages/interchange/tests/control_schema.rs",
+      "claim": "INTERCHANGE::claim:documents:control-source-record-agreement",
+      "before": "",
+      "after": "Claim: Conformance compares the input and rendered record with the authored fenced source byte for byte, including its final newline.",
+      "review": "Finite original-byte controls establish only the named carriage property. Independent Python framing is checked by the hash audit, not by a Rust subprocess; no SDL parser, executable schema, supported operation or served edition is inferred."
+    },
+    {
+      "operation": "pn-interchange::control_schema::source_retention",
+      "path": "packages/interchange/tests/control_schema.rs",
+      "claim": "INTERCHANGE::claim:documents:control-source-retention",
+      "before": "",
+      "after": "Claim: Conformance retains every accepted corpus text byte, including control characters, distinct Unicode spellings, LF, CR, CRLF and absent or present terminal newlines.",
+      "review": "Finite original-byte controls establish only the named carriage property. Independent Python framing is checked by the hash audit, not by a Rust subprocess; no SDL parser, executable schema, supported operation or served edition is inferred."
+    },
+    {
       "operation": "pn-interchange::decode::budget_tests::canonical_validation_obeys_shared_meter",
       "path": "packages/interchange/src/decode/budget_tests.rs",
       "claim": "INTERCHANGE::claim:encoding:canonical-validation-shared-meter",

@@ -339,10 +339,13 @@ namespace = "org.peer-network.test.api-control-schema"
 major = 1
 minor = 0
 theory = "GraphQL SDL text"
-status = "envelope theory assigned in design; artifact and executable conformance not implemented"
+status = "control schema envelope and exact source carriage implemented; executable conformance not implemented"
 allocator = "repository maintainers for the centralized test deployment"
 owner = "API implementer and repository reviewer"
 
+source = "packages/interchange/schema/control.graphql"
+artifact = "packages/interchange/schema/control.cbor"
+generator = "cargo run --locked --profile gate -p pn-interchange --example control_schema -- . write"
 [[rows]]
 name = "api-control-register"
 category = "api-allocation"

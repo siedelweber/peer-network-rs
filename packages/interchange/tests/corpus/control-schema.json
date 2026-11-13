@@ -1,0 +1,224 @@
+[
+  {
+    "name": "text-0",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000278f6736368656d61207b0a202071756572793a20436f6e74726f6c51756572790a20206d75746174696f6e3a20436f6e74726f6c4d75746174696f6e0a7d0a0a7479706520436f6e74726f6c5175657279207b0a2020756e617661696c61626c653a20426f6f6c65616e0a7d0a0a7479706520436f6e74726f6c4d75746174696f6e207b0a202073746172743a20436f6e74726f6c5374617274526573756c74210a7d0a0a7479706520436f6e74726f6c5374617274526573756c74207b0a202072656164793a20426f6f6c65616e210a202065646974696f6e3a20537472696e67210a20206661696c7572653a20537472696e670a7d0a",
+    "expected": "accepted",
+    "source": "schema {\n  query: ControlQuery\n  mutation: ControlMutation\n}\n\ntype ControlQuery {\n  unavailable: Boolean\n}\n\ntype ControlMutation {\n  start: ControlStartResult!\n}\n\ntype ControlStartResult {\n  ready: Boolean!\n  edition: String!\n  failure: String\n}\n"
+  },
+  {
+    "name": "text-1",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000260",
+    "expected": "accepted",
+    "source": ""
+  },
+  {
+    "name": "text-2",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000272225c0900c3a92065cc8120cea920f09f9880",
+    "expected": "accepted",
+    "source": "\"\\\t\u0000\u00e9 e\u0301 \u03a9 \ud83d\ude00"
+  },
+  {
+    "name": "text-3",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000263610a62",
+    "expected": "accepted",
+    "source": "a\nb"
+  },
+  {
+    "name": "text-4",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000263610d62",
+    "expected": "accepted",
+    "source": "a\rb"
+  },
+  {
+    "name": "text-5",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000264610d0a62",
+    "expected": "accepted",
+    "source": "a\r\nb"
+  },
+  {
+    "name": "text-6",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000264610a620a",
+    "expected": "accepted",
+    "source": "a\nb\n"
+  },
+  {
+    "name": "text-7",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000264610d620d",
+    "expected": "accepted",
+    "source": "a\rb\r"
+  },
+  {
+    "name": "text-8",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000266610d0a620d0a",
+    "expected": "accepted",
+    "source": "a\r\nb\r\n"
+  },
+  {
+    "name": "patch",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018301001bffffffffffffffff0260",
+    "expected": "accepted",
+    "source": ""
+  },
+  {
+    "name": "api-control-register",
+    "bytes": "a300782a6f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d726567697374657201830100000260",
+    "expected": "role",
+    "source": null
+  },
+  {
+    "name": "api-node-schema",
+    "bytes": "a30078256f72672e706565722d6e6574776f726b2e746573742e6170692d6e6f64652d736368656d6101830100000260",
+    "expected": "role",
+    "source": null
+  },
+  {
+    "name": "api-node-register",
+    "bytes": "a30078276f72672e706565722d6e6574776f726b2e746573742e6170692d6e6f64652d726567697374657201830100000260",
+    "expected": "role",
+    "source": null
+  },
+  {
+    "name": "major",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830200000260",
+    "expected": "edition",
+    "source": null
+  },
+  {
+    "name": "minor",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830101000260",
+    "expected": "edition",
+    "source": null
+  },
+  {
+    "name": "extra",
+    "bytes": "a40078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018301000002600360",
+    "expected": "content",
+    "source": null
+  },
+  {
+    "name": "missing",
+    "bytes": "a20078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d610183010000",
+    "expected": "content",
+    "source": null
+  },
+  {
+    "name": "wrong-key",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000360",
+    "expected": "content",
+    "source": null
+  },
+  {
+    "name": "wrong-type",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000200",
+    "expected": "content",
+    "source": null
+  },
+  {
+    "name": "no-role",
+    "bytes": "a201830100000260",
+    "expected": "missing-role",
+    "source": null
+  },
+  {
+    "name": "no-edition",
+    "bytes": "a20078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d610260",
+    "expected": "missing-edition",
+    "source": null
+  },
+  {
+    "name": "role-type",
+    "bytes": "a3000001830100000260",
+    "expected": "label-type",
+    "source": null
+  },
+  {
+    "name": "role-label",
+    "bytes": "a30067696e76616c696401830100000260",
+    "expected": "label",
+    "source": null
+  },
+  {
+    "name": "version-short",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018201000260",
+    "expected": "version",
+    "source": null
+  },
+  {
+    "name": "version-type",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d610183010061300260",
+    "expected": "version",
+    "source": null
+  },
+  {
+    "name": "trailing",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d610183010000026000",
+    "expected": "trailing",
+    "source": null
+  },
+  {
+    "name": "truncated",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018301000002",
+    "expected": "truncated",
+    "source": null
+  },
+  {
+    "name": "nonpreferred",
+    "bytes": "b8030078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000260",
+    "expected": "nonpreferred",
+    "source": null
+  },
+  {
+    "name": "invalid-utf8",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000261ff",
+    "expected": "utf8",
+    "source": null
+  },
+  {
+    "name": "duplicate-key",
+    "bytes": "a40078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018301000002600260",
+    "expected": "duplicate-key",
+    "source": null
+  },
+  {
+    "name": "unsorted-keys",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6102600183010000",
+    "expected": "unsorted-keys",
+    "source": null
+  },
+  {
+    "name": "indefinite-length",
+    "bytes": "bf0078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000260ff",
+    "expected": "indefinite-length",
+    "source": null
+  },
+  {
+    "name": "not-a-map",
+    "bytes": "80",
+    "expected": "not-a-map",
+    "source": null
+  },
+  {
+    "name": "tagged-content",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d61018301000002c060",
+    "expected": "content",
+    "source": null
+  },
+  {
+    "name": "non-integer-key",
+    "bytes": "a40078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000260617860",
+    "expected": "non-integer-key",
+    "source": null
+  },
+  {
+    "name": "unpaired-high-surrogate",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000263eda080",
+    "expected": "utf8",
+    "source": null
+  },
+  {
+    "name": "unpaired-low-surrogate",
+    "bytes": "a30078286f72672e706565722d6e6574776f726b2e746573742e6170692d636f6e74726f6c2d736368656d6101830100000263edb080",
+    "expected": "utf8",
+    "source": null
+  }
+]

@@ -1,0 +1,18 @@
+schema {
+  query: ControlQuery
+  mutation: ControlMutation
+}
+
+type ControlQuery {
+  unavailable: Boolean
+}
+
+type ControlMutation {
+  start: ControlStartResult!
+}
+
+type ControlStartResult {
+  ready: Boolean!
+  edition: String!
+  failure: String
+}

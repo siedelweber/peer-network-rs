@@ -284,6 +284,14 @@ def establish(root, rule):
         text = relative_file(root, rule['source']).read_text()
         values = {match.group() for match in occurrences(text)}
         return lambda candidate, _line: candidate in values
+    if kind == "control-schema-vectors" and standing == "defined":
+        import runpy
+        expected = runpy.run_path(str(root/'packages/interchange/tests/control_vectors.py'))['encoded'](root)
+        actual = relative_file(root, rule['source']).read_bytes()
+        if actual != expected:
+            raise ValueError('independent control schema vectors differ')
+        values = {match.group() for match in occurrences(actual.decode())}
+        return lambda candidate, _line: candidate in values
     if kind == "credential-vectors" and standing == "defined":
         from credential_vectors import check
         check(root)

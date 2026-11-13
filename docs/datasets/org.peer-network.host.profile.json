@@ -538,13 +538,16 @@
     },
     {
       "allocator": "repository maintainers for the centralized test deployment",
+      "artifact": "packages/interchange/schema/control.cbor",
       "category": "api-allocation",
+      "generator": "cargo run --locked --profile gate -p pn-interchange --example control_schema -- . write",
       "major": 1,
       "minor": 0,
       "name": "api-control-schema",
       "namespace": "org.peer-network.test.api-control-schema",
       "owner": "API implementer and repository reviewer",
-      "status": "envelope theory assigned in design; artifact and executable conformance not implemented",
+      "source": "packages/interchange/schema/control.graphql",
+      "status": "control schema envelope and exact source carriage implemented; executable conformance not implemented",
       "theory": "GraphQL SDL text"
     },
     {

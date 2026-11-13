@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "control_schema::Refusal",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_schema.rs",
+    "syntax": "# [doc = \" Refusal of canonical document membership or the closed control-schema theory.\"] # [doc = \" (´[ROOT-dec:api:schema]´)\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum Refusal { # [doc = \" The complete original bytes are not a canonical document.\"] # [error (\"control schema document: {0}\")] Document (# [from] EnvelopeError) , # [doc = \" Another role cannot supply this schema.\"] # [error (\"expected the control schema namespace\")] Role , # [doc = \" Only the assigned major/minor is implemented; patch is unconstrained.\"] # [error (\"expected control schema major one and minor zero\")] Edition , # [doc = \" Exactly key two with text is required.\"] # [error (\"expected exactly one text content field at key two\")] Content , }"
+  }
+}

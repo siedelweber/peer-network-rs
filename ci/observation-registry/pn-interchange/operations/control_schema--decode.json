@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_schema.rs",
+    "item": "control_schema::decode",
+    "owner": "INTERCHANGE",
+    "signature": "fn decode (bytes : & [u8]) -> Result < String , Refusal >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/control_schema.rs::control_schema::decode",
+    "body": "{ let document = Document :: from_canonical_bytes (bytes) ? ; if document . envelope () . label () . as_str () != NAMESPACE { return Err (Refusal :: Role) ; } let edition = document . envelope () . version () ; if edition . major () != 1 || edition . minor () != 0 { return Err (Refusal :: Edition) ; } if document . content () . len () != 1 { return Err (Refusal :: Content) ; } let Some (Value :: Text (source)) = document . content () . get (2) else { return Err (Refusal :: Content) ; } ; Ok (source . as_str () . to_owned ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "The complete schema source and original envelope bytes are public and recorded with the complete result or typed refusal. Exact role, edition and content checks establish carriage only. No private value, parser, digest or executable operation crosses this boundary.",
+    "assessments": {
+      "full_recording": "review-066",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_schema.rs",
+    "item": "control_schema::encode",
+    "owner": "INTERCHANGE",
+    "signature": "fn encode (source : & str) -> Result < Vec < u8 > , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/control_schema.rs::control_schema::encode",
+    "body": "{ let label = NamespaceLabel :: parse (NAMESPACE) . map_err (EnvelopeError :: BadLabel) ? ; let mut content = Content :: new () ; content . insert (ContentKey :: new (2) ? , Value :: Text (source . to_owned () . into ())) ; Ok (Document :: new (Envelope :: new (label , Version :: new (1 , 0 , 0)) , content) . to_canonical_bytes ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "The complete schema source and original envelope bytes are public and recorded with the complete result or typed refusal. Exact role, edition and content checks establish carriage only. No private value, parser, digest or executable operation crosses this boundary.",
+    "assessments": {
+      "full_recording": "review-066",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}
