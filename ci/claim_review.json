@@ -5392,8 +5392,8 @@
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:home-completion-orders-erasure-and-confirms-release",
       "before": "",
-      "after": "Consuming completion checks ownership before bytes, erases a full page before\ncleanup, returns each injected cleanup failure and retains failed live reservations.\nAn advice refusal during acquisition also releases its zero-initialized page.\nThese finite Linux and injected results do not establish installed sandbox behavior.",
-      "review": "Six isolated child cases exercise successful completion, synthetic ownership refusal on an actually owned mapping, advice refusal before fill, independent unlock/unmap failures and their conjunction. Full-page erasure and syscall order, retained mapping presence, locked bytes and reservations are asserted; the retained-byte observer checks real ownership inside Drop. This does not claim installed sandbox behavior."
+      "after": "Consuming completion checks ownership before bytes, erases a full page before\ncleanup, returns each injected cleanup failure and retains failed live reservations.\nAn advice refusal releases its zero-initialized page; failed destructor unmap\nretains the erased page and reservation. A substituted foreign PID refuses\ncompletion without an erase or release attempt.\nThese finite Linux and injected results do not establish installed sandbox behavior.",
+      "review": "Eight isolated child cases retain the six completion/protection controls and add ordinary destructor unmap failure plus completion under a substituted foreign PID. The destructor child asserts erasure and ordered unlock/unmap, retained mapping presence, released lock and unchanged reservation; the foreign PID uses the real identity predicate without the synthetic ownership seam and requires Ownership, no mapping event and retained mapping, lock and reservation. No fork, installed sandbox policy or inspection of a foreign-owned mapping is claimed."
     },
     {
       "operation": "pn-secret-home::tests::completion_diagnostics",
@@ -5408,8 +5408,8 @@
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:home-completion-never-releases-twice",
       "before": "",
-      "after": "Repeated internal completion and subsequent consuming completion return the\ncached result; successful and failed release each perform one syscall attempt\nand change reservations only after confirmed unmap.",
-      "review": "Success and failed-unmap children call the private cached completion twice and then the public consuming operation. They require a single erase/unlock/unmap sequence and one reservation decrement only on success. The syscall seam intercepts duplicate unmap before the real syscall so the duplicate-release mutant is safe to execute."
+      "after": "Repeated internal completion and subsequent consuming completion return the\ncached result; successful and failed release each perform one syscall attempt\nand change reservations only after confirmed unmap. The checked byte gate\nrefuses the released home before constructing a slice.",
+      "review": "Success and failed-unmap children call the private cached completion twice and then the public consuming operation. They require a single erase/unlock/unmap sequence and one reservation decrement only on success. The syscall seam intercepts duplicate unmap before the real syscall so the duplicate-release mutant is safe to execute. After successful release the checked accessor returns the existing content-free Mapping error; removing the cache return then fails repeat-result equality without constructing an unmapped slice."
     },
     {
       "operation": "pn-secret-home::tests::descriptor_exhaustion",

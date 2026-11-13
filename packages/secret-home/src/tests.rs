@@ -127,7 +127,9 @@ fn present(address: usize) -> bool {
 
 /// Consuming completion checks ownership before bytes, erases a full page before
 /// cleanup, returns each injected cleanup failure and retains failed live reservations.
-/// An advice refusal during acquisition also releases its zero-initialized page.
+/// An advice refusal releases its zero-initialized page; failed destructor unmap
+/// retains the erased page and reservation. A substituted foreign PID refuses
+/// completion without an erase or release attempt.
 /// These finite Linux and injected results do not establish installed sandbox behavior.
 /// ´claim:crypto:home-completion-orders-erasure-and-confirms-release´
 /// ´test:unit:completion-controls´
@@ -135,7 +137,16 @@ fn present(address: usize) -> bool {
 fn completion_controls() {
     let Some(case) = child_case(
         "tests::completion_controls",
-        &["ok", "ownership", "unlock", "unmap", "both", "advice"],
+        &[
+            "ok",
+            "ownership",
+            "unlock",
+            "unmap",
+            "both",
+            "advice",
+            "drop-unmap",
+            "foreign",
+        ],
     ) else {
         return;
     };
@@ -166,7 +177,11 @@ fn completion_controls() {
     assert_eq!(len, protection.page, "one-page allocation");
     assert_eq!(RESERVED.load(Ordering::SeqCst), reserved + len, "mapped reservation");
     assert_eq!(locked_kib(), locked + len / 1024, "locked allocation");
-    set_fault(&case);
+    set_fault(if case == "drop-unmap" { "unmap" } else { &case });
+    if matches!(case.as_str(), "drop-unmap" | "foreign") {
+        completion_retention(&case, home, reserved, locked);
+        return;
+    }
     let result = home.complete();
     let expected = match case.as_str() {
         "ownership" => Err(CompletionError::Ownership),
@@ -217,9 +232,43 @@ fn completion_controls() {
     // Deliberately retained mappings end with this isolated child, without another owner.
 }
 
+// Justified: Retained-home child controls observe public mapping accounting and ordered fixture events.
+fn completion_retention(case: &str, mut home: Home, reserved: usize, locked: usize) {
+    let address = home.pointer as usize;
+    let len = home.len;
+    if case == "drop-unmap" {
+        drop(home);
+        assert!(present(address), "destructor failed unmap retains mapping");
+        assert_eq!(
+            RESERVED.load(Ordering::SeqCst),
+            reserved + len,
+            "destructor retains reservation"
+        );
+        assert_eq!(locked_kib(), locked, "destructor unlock succeeds");
+        FAULT.with_borrow(|state| {
+            assert!(state.erased, "destructor erases before failed release");
+            assert_eq!(state.events, ["erase", "unlock", "unmap"], "destructor release order");
+        });
+        return;
+    }
+    if case == "foreign" {
+        home.process.pid ^= 1;
+        assert_eq!(home.complete(), Err(CompletionError::Ownership), "foreign completion refuses");
+        assert!(present(address), "foreign completion retains mapping");
+        assert_eq!(
+            RESERVED.load(Ordering::SeqCst),
+            reserved + len,
+            "foreign completion retains reservation"
+        );
+        assert_eq!(locked_kib(), locked + len / 1024, "foreign completion retains lock");
+        FAULT.with_borrow(|state| assert!(state.events.is_empty(), "foreign completion touches no mapping operation"));
+    }
+}
+
 /// Repeated internal completion and subsequent consuming completion return the
 /// cached result; successful and failed release each perform one syscall attempt
-/// and change reservations only after confirmed unmap.
+/// and change reservations only after confirmed unmap. The checked byte gate
+/// refuses the released home before constructing a slice.
 /// ´claim:crypto:home-completion-never-releases-twice´
 /// ´test:unit:completion-repeat´
 #[test]
@@ -235,6 +284,13 @@ fn completion_repeat() {
     let len = home.len;
     set_fault(&case);
     let first = home.finish();
+    if case == "ok" {
+        assert_eq!(
+            home.checked_bytes().unwrap_err(),
+            Error::Mapping,
+            "released home refuses byte access"
+        );
+    }
     assert_eq!(home.finish(), first, "repeat result");
     assert_eq!(home.complete(), first, "consuming repeat result");
     FAULT.with_borrow(|state| assert_eq!(state.events, ["erase", "unlock", "unmap"], "no duplicate release"));

@@ -22,7 +22,7 @@
     "operation": "pn-secret-home::packages/secret-home/src/lib.rs::<Home as Drop>::drop",
     "body": "{ if self . completion . is_some () { # [cfg (test)] if ! self . released && self . process . is_current () { tests :: observe_retained (self . bytes ()) ; } return ; } if self . released || ! self . process . is_current () { return ; } if ! self . pointer . is_null () { self . erase () ; # [cfg (test)] tests :: observe_erased (self . bytes ()) ; } let _ = self . release () ; }",
     "class_decision": "secret-home-private",
-    "item_premise": "Home and Staging have constant Debug. Completion erases the complete checked mapping, returns only ownership or cleanup flags, and caches release state. Its instrumented inputs and output contain no private byte; the real subscriber and error-format controls witness the finite sentinel case. No derivation, output descriptor or installation contract is admitted.",
+    "item_premise": "Ordinary destruction checks ownership once before touching a live mapping, erases the full allocation, and attempts best-effort unlock and unmap. Only confirmed unmap decrements the reservation; failed unmap retains it. A cached completion outcome causes no production mapping action or retry. The test-only retained observer independently checks real ownership before inspecting fixture bytes. No pointer or raw byte slice crosses an observed boundary; Home emits constant Debug and destruction returns no diagnostic.",
     "assessments": {
       "full_recording": "secret-home-review",
       "secret_flow": "secret-home-review",

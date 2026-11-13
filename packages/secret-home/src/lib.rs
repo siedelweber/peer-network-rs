@@ -340,8 +340,11 @@ impl Home {
         Ok(())
     }
 
-    // Justified: Operations establish the process identity before borrowing private mapping bytes.
+    // Justified: Operations require a live allocation and establish process identity before borrowing private mapping bytes.
     fn checked_bytes(&mut self) -> Result<&mut [u8], Error> {
+        if self.released {
+            return Err(Error::Mapping);
+        }
         let current = self.process.is_current();
         #[cfg(test)]
         let current = current && !tests::refuse_ownership();
