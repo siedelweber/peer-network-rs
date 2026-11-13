@@ -354,6 +354,96 @@ def controls(test, group):
                         test.assertIn('storage lock token differs',replay.stderr,'replayed vector fails at token validation')
 
 
+def import_controls(test):
+    """Exercise staged objects and import sequencing against a real tiny repository."""
+    import os
+    import subprocess
+    from import_gate import Import, stage, validate_stage, ADAPTER_FILES
+    from isolation import storage_binding
+    with tempfile.TemporaryDirectory() as temporary:
+        area=Path(temporary);root=area/'tree';root.mkdir();ci=root/'ci';ci.mkdir()
+        def git(*words):
+            return subprocess.check_output(['git',*words],cwd=root,text=True).strip()
+        git('init','-q');git('config','user.name','Fixture');git('config','user.email','fixture@example.invalid');git('config','commit.gpgsign','false')
+        (root/'.gitignore').write_text('.lane/\n')
+        for name in ADAPTER_FILES:(ci/name).write_text('# candidate object '+name+'\n')
+        git('add','.');git('commit','-qm','base');base=git('rev-parse','HEAD')
+        (ci/'import_gate.py').write_text('# later candidate object\n');git('commit','-qam','source');source=git('rev-parse','HEAD')
+        git('reset','--hard',base)
+        staged=stage(root,source,area/'staged')
+        test.assertEqual((staged/'import_gate.py').read_text(),'# later candidate object\n','import stages candidate object rather than base checkout')
+        test.assertEqual({p.name for p in staged.iterdir()},set(ADAPTER_FILES),'import stages complete self-contained adapter')
+        validate_stage(root,source,staged)
+        (staged/'isolation.py').write_text('# another adapter\n')
+        with refuses(test,'staged adapter differs','staged re-entry refuses a substituted adapter'):
+            validate_stage(root,source,staged)
+        args=SimpleNamespace(base=base,source=source,directory=area/'evidence',build_prefix=['fixture-build'],container_list=['containers'],service_list=['services'])
+        state=dict(precheck=0,gate=0,busy=False,crash=False);calls=[]
+        class Controlled(Import):
+            def command(self,command,environment=None,build=False):
+                calls.append((command,environment,build))
+                if command[0]=='git':return 0,git(*command[1:])
+                if command[0]=='ps':return 0,''
+                if command==['containers']:return 0,'[{}]' if state['busy'] else '[]'
+                if command==['services']:return 0,'[]'
+                if command[-1]=='storage-root':return 0,str(storage_binding(root))
+                if command[-1]=='ci/precheck.py':
+                    test.assertEqual(git('rev-parse','HEAD'),self.args.source,'import switches before pre-check')
+                    return state['precheck'],'PRECHECK-EXIT='+str(state['precheck'])
+                if command==['bash','ci/gate.sh']:
+                    test.assertEqual(environment,dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=environment['PN_GATE_ENTRY'],PN_GATE_SAMPLE='import',PN_IMPORT_BASE=base),'import owns complete declaration')
+                    if state['crash']:raise InterruptedError('controlled loss')
+                    lane=root/'.lane';lane.mkdir(exist_ok=True)
+                    (lane/'gate-declaration.json').write_text(json.dumps(environment))
+                    return state['gate'],'GATE-EXIT='+str(state['gate'])
+                test.fail('unexpected import command: '+repr(command))
+        env=dict(CARGO_TARGET_DIR=str(area/'target'),PN_ISOLATION_ROOT=str(area/'storage'))
+        with patch.dict(os.environ,env):
+            with refuses(test,'outside checkout','import refuses in-checkout evidence'):
+                Import(root,SimpleNamespace(**(vars(args)|dict(directory=root/'evidence'))))
+            saved=args.build_prefix;args.build_prefix=[sys.executable,str(ci/'import_gate.py')]
+            try:
+                try:Controlled(root,args).run()
+                except ValueError as error:test.assertIn('inside checkout',str(error),'import refuses mutable build prefix')
+                else:test.fail('import refuses in-checkout build-prefix driver')
+            finally:args.build_prefix=saved
+            same=SimpleNamespace(**(vars(args)|dict(source=base,directory=area/'same')))
+            with refuses(test,'equals source','import refuses equal commits'):Controlled(root,same).run()
+            (root/'dirty').write_text('uncommitted')
+            with refuses(test,'clean base','import refuses dirty checkout'):Controlled(root,args).run()
+            (root/'dirty').unlink()
+            state['busy']=True
+            with refuses(test,'host preflight','import refuses busy host before switch'):Controlled(root,args).run()
+            test.assertEqual(git('rev-parse','HEAD'),base,'busy import leaves checkout untouched')
+            test.assertFalse((args.directory/'plans.jsonl').exists(),'busy import has no plan')
+            state['busy']=False
+            test.assertEqual(Controlled(root,args).run(),0,'import executes switch pre-check and gate')
+            commands=[row[0] for row in calls]
+            test.assertLess(commands.index(['python3','-B','ci/precheck.py']),commands.index(['bash','ci/gate.sh']),'import pre-check precedes gate')
+            rows=[json.loads(x) for x in (args.directory/'ledger.jsonl').read_text().splitlines()]
+            test.assertEqual(rows[-1]['gate_status'],0,'import ledger records gate verdict')
+            test.assertTrue((Path(rows[-1]['evidence'])/'gate-declaration.json').exists(),'import preserves declared evidence outside checkout')
+            with refuses(test,'not rerun','completed import cannot be selected again'):Controlled(root,args).run()
+            for kind in ('precheck','gate-refusal','interrupted'):
+                git('reset','--hard',base);git('clean','-fdx');calls.clear()
+                args.directory=area/kind
+                state.update(precheck=1 if kind=='precheck' else 0,gate=5 if kind=='gate-refusal' else 0,crash=kind=='interrupted')
+                if kind=='interrupted':
+                    try:Controlled(root,args).run()
+                    except InterruptedError:pass
+                    else:test.fail('import interruption is not an ordinary verdict')
+                    test.assertTrue((args.directory/'active.json').exists(),'interrupted import keeps active evidence')
+                    calls.clear()
+                    state['crash']=False
+                    with refuses(test,'interrupted import reconciled','next import reconciles interruption without rerun'):Controlled(root,args).run()
+                    test.assertFalse(any(row[0][:2]==['git','reset'] for row in calls),'reconciliation never resets checkout')
+                    result=json.loads((args.directory/'ledger.jsonl').read_text().splitlines()[-1])
+                    test.assertEqual(result['outcome'],'interrupted','interruption remains explicit in ledger')
+                else:
+                    test.assertEqual(Controlled(root,args).run(),1 if kind=='precheck' else 5,'import preserves failed or uncounted status')
+                    if kind=='precheck':test.assertFalse(any(row[0]==['bash','ci/gate.sh'] for row in calls),'failed pre-check prevents gate')
+
+
 def storage_controls(test):
     """Exercise ownership and holder death with real processes and lock files."""
     import os
@@ -426,7 +516,7 @@ def storage_controls(test):
                 try:storage_binding(root)
                 except ValueError as error:test.assertIn('target',str(error),'checkout binding names simultaneous target and storage change')
                 else:test.fail('checkout binding refuses simultaneous target and storage change')
-        child_code='import os,time,pathlib; pathlib.Path("child-ready").write_text(str(os.getpid())); time.sleep(60)'
+        child_code='import os,time,pathlib; p=pathlib.Path("child-ready"); q=p.with_suffix(".pending"); q.write_text(str(os.getpid())); q.replace(p); time.sleep(60)'
         ci=str(Path(__file__).resolve().parent)
         armed=subprocess.run([sys.executable,'-B',str(Path(ci)/'build_graph.py'),'parent-bound','-1',sys.executable,'-c','pass'],capture_output=True,text=True)
         test.assertEqual(armed.returncode,-signal.SIGTERM,'parent change before arming prevents workload exec')
@@ -436,12 +526,15 @@ def storage_controls(test):
         test.assertEqual(stopped.returncode,129,'gate hang-up reaches its cleanup handler')
         def alive(pid):
             path=Path('/proc')/str(pid)/'stat'
-            return path.exists() and path.read_text().split(') ',1)[1][0]!='Z'
+            try:
+                return path.read_text().split(') ',1)[1][0]!='Z'
+            except (FileNotFoundError, ProcessLookupError):
+                return False
         # The joined entry has no parent relationship to the holder: this
         # stands in for a prefix which leaves its workload running.
         token_path=area/'holder-token';ready=root/'child-ready'
         ready.unlink(missing_ok=True)
-        holder_code='from isolation import storage_lock; from pathlib import Path; import time; c=storage_lock(Path('+repr(str(directory))+'),"series"); token=c.__enter__(); Path('+repr(str(token_path))+').write_text(token); time.sleep(60)'
+        holder_code='from isolation import storage_lock; from pathlib import Path; import time; c=storage_lock(Path('+repr(str(directory))+'),"series"); token=c.__enter__(); p=Path('+repr(str(token_path))+'); q=p.with_suffix(".pending"); q.write_text(token); q.replace(p); time.sleep(60)'
         child_env=dict(os.environ,**env,PYTHONPATH=ci);child_env.pop('PN_GATE_STORAGE_TOKEN',None)
         holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
         joined=None;pid=None
@@ -466,6 +559,36 @@ def storage_controls(test):
             if holder.poll() is None:holder.kill();holder.communicate()
             if joined is not None and joined.poll() is None:joined.kill();joined.communicate()
             if pid and alive(pid):os.kill(pid,signal.SIGKILL)
+        for failure in ('ignores-term','foreign-token','unreadable-record'):
+            token_path.unlink(missing_ok=True);ready.unlink(missing_ok=True)
+            workload = ('import signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); ' if failure=='ignores-term' else '')+child_code
+            holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            joined=None;pid=None
+            try:
+                deadline=time.monotonic()+10
+                while not token_path.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
+                test.assertTrue(token_path.exists(),'watch branch establishes holder: '+failure)
+                code='from isolation import gate_storage; raise SystemExit(gate_storage('+repr([sys.executable,'-c',workload])+'))'
+                joined=subprocess.Popen([sys.executable,'-B','-c',code],cwd=root,env=dict(child_env,PN_GATE_STORAGE_TOKEN=token_path.read_text()),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+                deadline=time.monotonic()+10
+                while not ready.exists() and joined.poll() is None and time.monotonic()<deadline:time.sleep(.01)
+                test.assertTrue(ready.exists(),'watch branch reaches workload: '+failure)
+                pid=int(ready.read_text());started=time.monotonic()
+                if failure=='ignores-term':holder.kill();holder.communicate()
+                else:
+                    (directory/'.gate-storage.lock').write_text(json.dumps(dict(token='foreign',kind='series')) if failure=='foreign-token' else '{')
+                deadline=started+7
+                while (alive(pid) or joined.poll() is None) and time.monotonic()<deadline:time.sleep(.01)
+                test.assertFalse(alive(pid),'watch ends workload on '+failure+' within seven seconds')
+                test.assertIsNotNone(joined.poll(),'watch ends entry on '+failure+' within seven seconds')
+                output,_=joined.communicate()
+                test.assertEqual(joined.returncode,5,'watch evidence failure is uncounted: '+failure)
+                if failure=='ignores-term':
+                    test.assertGreaterEqual(time.monotonic()-started,5,'TERM-ignoring control reaches escalation grace')
+            finally:
+                if pid and alive(pid):os.kill(pid,signal.SIGKILL)
+                if holder.poll() is None:holder.kill();holder.communicate()
+                if joined is not None and joined.poll() is None:joined.kill();joined.communicate()
         for mode,number in [('storage',signal.SIGKILL),('storage',signal.SIGHUP),('series',signal.SIGTERM)]:
             ready=root/'child-ready';ready.unlink(missing_ok=True)
             if mode=='storage':

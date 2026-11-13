@@ -2261,8 +2261,8 @@ def repeat_obligation(root, pending, whole, tiers, declared):
             omitted = nonrepeatable if scope == 'whole' else [name for name in nonrepeatable if name in measurement.get('steps',[])]
             request['not_repeatable'] = [dict(step=name, reason='owner cache history is not prepared by the controller') for name in omitted]
             if omitted:
-                request['required'] = False
-                request['transition_compiling_steps'] = []
+                print('GATE-REPEAT-NOT-REPEATABLE '+json.dumps(dict(scope=scope, steps=request['not_repeatable'],
+                    disposition='unresolved-until-quiet-measurement'),sort_keys=True),flush=True)
             scopes.append(request)
     if not scopes:return None
     policy = series_policy()
