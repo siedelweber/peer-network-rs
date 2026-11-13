@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::content_pre_digest",
+    "owner": "ACTPROFILE",
+    "signature": "fn content_pre_digest (id : & ActId , pair : & ContentPair) -> Result < ContentPreDigest , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::content_pre_digest",
+    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } nonce_format (id , & pair . nonce) ? ; payload_length (& pair . payload) ? ; Ok (ContentPreDigest { act : id . clone () , bytes : hash (PROPOSAL_RECIPE , \"PN-content-pre-v2\" , vec ! [public (identifier (id)) , SecretValue :: Bytes (pair . nonce . clone ()) , SecretValue :: Bytes (pair . payload . clone ()) ,] ,) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

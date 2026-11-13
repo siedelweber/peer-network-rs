@@ -3,6 +3,7 @@
 //! (´def:profile:scope´)
 
 mod projection;
+pub mod v2;
 pub use projection::body_from_projection;
 
 use pn_interchange::{Array, Bytes, SecretValue, Text, Value};
@@ -199,7 +200,7 @@ fn salt_format(salt: &SecretSlice<u8>) -> Result<(), ProfileError> {
     }
     Ok(())
 }
-// Caveat: Payload bytes are borrowed only to enforce the independent byte bound and original empty-state request; the borrow ends with the check and no payload content is observed.
+// Caveat: Protected bytes are borrowed only to enforce the payload bound, original empty-state request or exact content-pre-digest width; the borrow ends with the length check and no byte content is observed.
 // (´[ROOT-cav:observe:secret-profile-payload-length]´)
 // Justified: The protected container's length is needed before projection allocation; only the permitted size and empty predicate leave this borrow.
 #[allow(clippy::disallowed_methods)]

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v2::ContentPreDigest",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "syntax": "# [doc = \" Opaque, secret-owned content pre-digest supplied on the proposal path.\"] # [doc = \" Its presence does not prove an opening exists. (´def:profile:version-two´)\"] # [derive (Debug)] pub struct ContentPreDigest { pub act : ActId , pub bytes : SecretSlice < u8 > , }"
+  }
+}

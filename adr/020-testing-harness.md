@@ -94,7 +94,7 @@
 | planned-replay | held | held | none | service | 0 |
 | planned-storage | held | held | none | service | 0 |
 | pn-act-authentication | active | unit | pn-act-authentication-rust | fast | 2 |
-| pn-act-authentication::encoding | active | public-surface | pn-act-authentication-rust | fast | 3 |
+| pn-act-authentication::encoding | active | public-surface | pn-act-authentication-rust | fast | 8 |
 | pn-act-authentication::public | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-authentication::signatures | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |

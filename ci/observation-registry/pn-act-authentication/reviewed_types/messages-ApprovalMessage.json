@@ -4,6 +4,6 @@
     "item": "messages::ApprovalMessage",
     "package": "pn-act-authentication",
     "path": "packages/act-authentication/src/messages.rs",
-    "syntax": "# [doc = \" Recipe-specific public message; no other role converts into this type.\"] # [doc = \" (´def:authentication:messages´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ApprovalMessage ([u8 ; 32]) ;"
+    "syntax": "# [doc = \" Recipe-specific public message; no other role converts into this type.\"] # [doc = \" (´def:authentication:messages´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ApprovalMessage (pub (crate) [u8 ; 32]) ;"
   }
 }

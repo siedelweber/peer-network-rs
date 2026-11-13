@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::body_from_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_from_projection (value : & Value) -> Result < ProposalBody , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::body_from_projection",
+    "body": "{ let Value :: Array (fields) = value else { return Err (ProfileError :: Representation) ; } ; if fields . as_slice () . len () != 11 { return Err (ProfileError :: Representation) ; } let Value :: Bytes (point) = & fields . as_slice () [1] else { return Err (ProfileError :: Representation) ; } ; let retirement_point = point . as_slice () . try_into () . map_err (| _ | ProfileError :: Representation) ? ; let original = array (fields . as_slice () . iter () . enumerate () . filter (| (i , _) | * i != 1) . map (| (_ , value) | value . clone ()) ,) ; let body = ProposalBody { structural : super :: body_from_projection (& original) ? , retirement_point , } ; if body_projection (& body) ? != * value { return Err (ProfileError :: Representation) ; } Ok (body) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

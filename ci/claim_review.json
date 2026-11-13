@@ -2098,6 +2098,46 @@
       "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added. The added exact refusals witness unknown recipes, malformed prefixed hosts or local marker conditions, as named by this claim; no stronger authority is inferred."
     },
     {
+      "operation": "pn-act-authentication::encoding::v2_cases::dependency_proof",
+      "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-two-dependency-proof",
+      "before": "",
+      "after": "Conformance and robustness: three-part dependency openings match supplied\nanchors for zero, two and 1024 dependencies; changed parts do not match.\nNeither private nonce is an opening input or an authenticity conclusion.",
+      "review": "The opening contains only I,D,S_D; tests compare against independently generated P,C_D, change each opening component and refuse a substituted proposal recipe. Supplied anchors are not authenticated."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v2_cases::golden_values",
+      "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-two-golden-values",
+      "before": "",
+      "after": "Conformance: three distinct unsorted fixtures match independent recipe,\nheader, material and role-message bytes; no signature or entropy is tested.",
+      "review": "The three cases recompute P from both complete Actor openings and opaque hY, compare C_Y, all header/material bytes and all three role messages, and check absent, matching and mismatching optional carriage."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v2_cases::header_domain_refusals",
+      "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-two-header-domain-refusals",
+      "before": "",
+      "after": "Robustness: a foreign namespace and a changed recipe in each of the\nthree commitment keys refuse with the specific representation error.\nEach negative preserves every other field of the admitted header.",
+      "review": "The namespace and each of keys 3, 5 and 6 change one domain field while retaining the other canonical header values; the assertion names the exact expected refusal."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v2_cases::header_field_refusals",
+      "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-two-header-comparison-refuses-each-field",
+      "before": "",
+      "after": "Robustness: each original field and each duplicated disclosure field has\nits distinct refusal; malformed material and its edition also refuse.\nEach negative changes one field after an equal positive control.",
+      "review": "Fourteen single-field changes compare original parts and disclosure against a positively accepted header, asserting each exact refusal. No signature, actor binding or content-opening existence is inferred."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v2_cases::refusals",
+      "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-two-refusals",
+      "before": "",
+      "after": "Robustness: missing retirement data, wrong editions and independently\nsupplied conflicting identity or retirement fields refuse, without upgrade.",
+      "review": "The assertions require exact refusals for a missing retirement field, unsupported header and material editions, every missing header key and conflicting original identity or retirement data. Existing v1 and v2 decoders reject the other edition."
+    },
+    {
       "operation": "pn-act-authentication::public::asset_identifiers",
       "path": "packages/act-authentication/tests/public.rs",
       "claim": "ACTAUTH::claim:authentication:asset-identifiers-match-daemon",

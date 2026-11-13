@@ -3,6 +3,7 @@
 //! module separately parses keys and checks fixed-message signatures.
 //! (´def:authentication:public-evidence´)
 
+pub mod v2;
 pub mod verification;
 
 use sha2::{Digest, Sha256};

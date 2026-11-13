@@ -43,6 +43,27 @@
     },
     {
       "conditional_on": "",
+      "reason": "The pure commitment and comparison implement the admitted framing, not host entropy or custody.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::def:profile:version-two",
+      "target": "ROOT::amend:identity:act-content-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The pure supplied-input recipe implements the admitted framing, not entropy or private custody.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::def:profile:version-two",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The optional contribution remains absent and held; no derivation or entropy claim is implemented.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::def:profile:version-two",
+      "target": "ROOT::open:identity:host-contribution-option"
+    },
+    {
+      "conditional_on": "",
       "reason": "the explicit exclusions from this finite claim",
       "relation": "realizes",
       "source": "EPOCH::claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees",

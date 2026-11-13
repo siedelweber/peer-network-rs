@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v2::ComputedProposalCommitment",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "syntax": "# [doc = \" A proposal computed with the Actor's two complete private openings.\"] # [doc = \" (´def:profile:version-two´)\"] # [derive (Debug)] pub struct ComputedProposalCommitment (ProposalCommitment) ;"
+  }
+}

@@ -76,8 +76,8 @@
 | cli-common | 113 | 30 | 80 | 3 | 42 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn-act-authentication | 25 | 25 | 0 | 0 | 16 |
-| pn-act-profile | 15 | 12 | 3 | 0 | 7 |
+| pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
+| pn-act-profile | 26 | 23 | 3 | 0 | 11 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
 | pn-host | 205 | 33 | 172 | 0 | 160 |
@@ -444,7 +444,7 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-salt-format` In `packages/act-profile/src/lib.rs`, function `salt_format`: The host salt is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy. Source method: `expose_secret`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-length` In `packages/act-profile/src/lib.rs`, function `payload_length`: Payload bytes are borrowed only to enforce the independent byte bound and original empty-state request; the borrow ends with the check and no payload content is observed. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-length` In `packages/act-profile/src/lib.rs`, function `payload_length`: Protected bytes are borrowed only to enforce the payload bound, original empty-state request or exact content-pre-digest width; the borrow ends with the length check and no byte content is observed. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-dependency-projection` In `packages/act-profile/src/lib.rs`, function `dependencies`: The dependency list is borrowed for identifier validation, strict records ordering and projection into private canonical fields; its borrow ends before encoding and no ordinary Value contains its identifiers. Source method: `expose_secret`. Production boundary.
 
@@ -473,6 +473,10 @@
 **Caveat (Explicit secret exit)** · `cav:observe:secret-study-auth-format` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The protected authorization spelling is borrowed only to construct the secret-owned request; formatting cannot consume the secret carrier directly. Source method: `expose_secret`. Fixture-only boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-study-request-write` In `packages/wallet/tests/rpc/recovery.rs`, function `rpc`: The secret-owned HTTP request leaves its carrier only at the test daemon socket write; the daemon is the intended credential consumer. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-received-content` In `packages/act-profile/src/v2.rs`, function `same_content`: The received content pre-digest is borrowed only for a fixed-width equality check; no byte leaves the comparison; this item-local exit remains until a workspace-owned container offers verdict-only equality, and a second comparison site must use that container without adding a new borrow pair; container ownership is a separate decision. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-recomputed-content` In `packages/act-profile/src/v2.rs`, function `same_content`: The recomputed content pre-digest is borrowed only for a fixed-width equality check; no byte leaves the comparison; this item-local exit remains until a workspace-owned container offers verdict-only equality, and a second comparison site must use that container without adding a new borrow pair; container ownership is a separate decision. Source method: `expose_secret`. Production boundary.
 
 
 

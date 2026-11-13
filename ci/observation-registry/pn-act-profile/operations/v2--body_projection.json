@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::body_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_projection (body : & ProposalBody) -> Result < Value , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::body_projection",
+    "body": "{ let Value :: Array (original) = super :: body_projection (& body . structural) ? else { return Err (ProfileError :: Representation) ; } ; let mut fields = original . as_slice () . to_vec () ; fields . insert (1 , Value :: Bytes (Bytes :: from (body . retirement_point . to_vec ()))) ; let result = array (fields) ; if result . canonical_len () > 1_048_576 { return Err (ProfileError :: Bound) ; } Ok (result) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

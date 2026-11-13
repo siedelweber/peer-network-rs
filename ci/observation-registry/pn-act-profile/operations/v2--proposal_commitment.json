@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::proposal_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn proposal_commitment (body : & ProposalBody , content : & ContentPreDigest , nonce : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < ProposalCommitment , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::proposal_commitment",
+    "body": "{ let projected = body_projection (body) ? ; let id = & body . structural . id ; nonce_format (id , nonce) ? ; let (dependencies , count) = dependencies (list , Some (id)) ? ; if body . structural . dependency == DependencyRequest :: FullEmpty && count != 0 { return Err (ProfileError :: Representation) ; } let content = received (id , content) ? ; let dependency = hash (PROPOSAL_RECIPE , \"PN-dependency-pre-v2\" , vec ! [public (identifier (id)) , SecretValue :: Bytes (nonce . clone ()) , dependencies] ,) ? ; let digest = hash (PROPOSAL_RECIPE , \"PN-act-proposal-v2\" , vec ! [public (projected) , content , SecretValue :: Bytes (dependency)] ,) ? ; Ok (ProposalCommitment { recipe : PROPOSAL_RECIPE . into () , bytes : publish (& digest) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

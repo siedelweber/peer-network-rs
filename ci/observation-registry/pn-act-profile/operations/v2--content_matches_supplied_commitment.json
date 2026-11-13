@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::content_matches_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn content_matches_supplied_commitment (id : & ActId , proposal : & ProposalCommitment , recorded : & ContentCommitment , salt : & SecretSlice < u8 > , pair : & ContentPair ,) -> Result < () , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::content_matches_supplied_commitment",
+    "body": "{ if recorded . recipe != CONTENT_RECIPE { return Err (ProfileError :: Recipe) ; } let content = content_pre_digest (id , pair) ? ; if content_commitment (id , proposal , salt , & content) ? != * recorded { return Err (ProfileError :: Mismatch) ; } Ok (()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

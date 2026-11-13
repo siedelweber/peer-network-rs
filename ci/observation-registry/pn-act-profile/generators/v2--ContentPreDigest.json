@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v2::ContentPreDigest",
+    "kind": "derive",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "act-profile-private",
+    "expansion_review": "Clone and equality preserve the unchanged structural body and separate retirement point. Debug records public identity and final residues in full; secrecy carriers redact both optional content fields and the content pre-digest. The private computed-proposal field retains its construction boundary; no codec, hash or secret exposure is generated."
+  }
+}

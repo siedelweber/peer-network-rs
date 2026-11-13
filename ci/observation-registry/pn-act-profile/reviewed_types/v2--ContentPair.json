@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v2::ContentPair",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "syntax": "# [doc = \" Optional carriage is this whole pair, never payload bytes alone.\"] # [doc = \" (´def:profile:version-two´)\"] # [derive (Debug)] pub struct ContentPair { pub payload : SecretSlice < u8 > , pub nonce : SecretSlice < u8 > , }"
+  }
+}

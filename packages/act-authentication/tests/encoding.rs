@@ -2,6 +2,9 @@ use pn_act_authentication::*;
 use pn_interchange::{Array, Map, Value};
 use std::collections::BTreeSet;
 
+#[path = "encoding/v2_cases.rs"]
+mod v2_cases;
+
 fn hex(text: &str) -> Vec<u8> {
     text.as_bytes()
         .as_chunks::<2>()

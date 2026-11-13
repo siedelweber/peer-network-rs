@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "item": "v2::dependency_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn dependency_commitment (id : & ActId , proposal : & ProposalCommitment , salt : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < DependencyCommitment , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-two",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::dependency_commitment",
+    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } salt_format (salt) ? ; let (list , _) = dependencies (list , None) ? ; let digest = hash (DEPENDENCY_RECIPE , \"PN-dependency-v2\" , vec ! [public (identifier (id)) , anchor (proposal) ?, SecretValue :: Bytes (salt . clone ()) , list ,] ,) ? ; Ok (DependencyCommitment { recipe : DEPENDENCY_RECIPE . into () , bytes : publish (& digest) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

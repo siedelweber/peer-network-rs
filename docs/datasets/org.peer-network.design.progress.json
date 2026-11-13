@@ -39520,40 +39520,6 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "9",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "9",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "exact_citing": {
-          "display": "exact",
-          "exact_digits": 32
-        },
-        "total": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      },
-      "total": 9
-    },
-    {
-      "category": "record-coverage",
-      "exact_citing": 0,
-      "name": "pn-act-profile",
-      "number_forms": {
-        "exact_citing": {
-          "exact": "0",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "0",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "total": {
           "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
@@ -39573,6 +39539,40 @@
         }
       },
       "total": 11
+    },
+    {
+      "category": "record-coverage",
+      "exact_citing": 0,
+      "name": "pn-act-profile",
+      "number_forms": {
+        "exact_citing": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "12",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exact_citing": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "total": 12
     },
     {
       "category": "record-coverage",
@@ -39962,10 +39962,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 704",
+          "exact": "1 706",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 704",
+          "num": "1 706",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39980,7 +39980,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1704
+      "total": 1706
     },
     {
       "category": "record-coverage",

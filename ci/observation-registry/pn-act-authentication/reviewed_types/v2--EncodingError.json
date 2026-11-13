@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v2::EncodingError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v2.rs",
+    "syntax": "# [doc = \" Representation and comparison refusals, not signature verdicts. (´def:authentication:version-two´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum EncodingError { # [error (\"noncanonical encoding\")] Canonical , # [error (\"verified header bytes differ\")] HeaderBytes , # [error (\"representation bound exceeded\")] Bound , # [error (\"unsupported authentication edition\")] Edition , # [error (\"invalid authentication shape\")] Shape , # [error (\"unsupported commitment recipe\")] Recipe , # [error (\"proposal body differs\")] Body , # [error (\"proposal commitment differs\")] Proposal , # [error (\"content commitment differs\")] Content , # [error (\"dependency commitment differs\")] Dependency , # [error (\"Actor signature differs\")] ActorSignature , # [error (\"content edition differs\")] ContentEdition , # [error (\"dependency edition differs\")] DependencyEdition , }"
+  }
+}

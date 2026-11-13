@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v2::ProposalBody",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v2.rs",
+    "syntax": "# [doc = \" The structural proposal and its separate handshake retirement point.\"] # [doc = \" The point never enters `ActId` equality. (´def:profile:version-two´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ProposalBody { pub structural : super :: ProposalBody , pub retirement_point : [u8 ; 32] , }"
+  }
+}

@@ -1746,6 +1746,11 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-act-authentication::encoding::v2_cases::golden_values",
+        "pn-act-authentication::encoding::v2_cases::refusals",
+        "pn-act-authentication::encoding::v2_cases::dependency_proof",
+        "pn-act-authentication::encoding::v2_cases::header_field_refusals",
+        "pn-act-authentication::encoding::v2_cases::header_domain_refusals",
         "pn-act-authentication::encoding::canonical_header_material",
         "pn-act-authentication::encoding::role_messages",
         "pn-act-authentication::encoding::header_comparison"

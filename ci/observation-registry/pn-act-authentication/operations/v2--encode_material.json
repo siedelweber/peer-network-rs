@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v2.rs",
+    "item": "v2::encode_material",
+    "signature": "fn encode_material (material : & AuthenticationMaterial) -> Result < Vec < u8 > , EncodingError >",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:version-two",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v2.rs::v2::encode_material",
+    "class_decision": "authentication-public",
+    "body": "{ if ! host (& material . host_identity) { return Err (EncodingError :: Shape) ; } Ok (array ([text (AUTHENTICATION_EDITION) , bytes (& material . run) , bytes (& material . actor_key) , text (& material . host_identity) , bytes (& material . host_key) ,]) . to_canonical_bytes ()) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+  }
+}

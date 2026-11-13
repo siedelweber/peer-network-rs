@@ -42,7 +42,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls in code; records state those recipes; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
@@ -1160,3 +1160,14 @@ reader = "authentication-encoding-fixtures"
 source = "packages/act-authentication/tests/encoding-golden.json"
 definition = "The reader independently recomputes every retained canonical value and message before admitting their exact public fixture spellings. Supplied nonces, repeated author atoms and signature bytes are operands, not digest claims or valid signatures."
 paths = ["packages/act-authentication/tests/encoding-golden.json"]
+
+[[rows]]
+family = "authentication-version-two-fixtures"
+group = "public authentication encoding fixtures"
+measures = "Independent version-two preimages, commitments, header, material and role messages"
+producer = "Independent Python standard-library framing and SHA-256"
+establishment = "defined"
+reader = "authentication-v2-fixtures"
+source = "packages/act-authentication/tests/v2-golden.json"
+definition = "The independent route regenerates every committed value without calling Rust or production helpers. Inputs are public deterministic fixtures and establish no entropy, signature validity, membership or authenticated anchor. The material actor key differs from the key named by the author identifier: this is not an author-binding fixture and establishes no content-opening existence."
+paths = ["packages/act-authentication/tests/v2-golden.json"]

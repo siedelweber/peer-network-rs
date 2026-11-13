@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v2::VerifiedHeader",
+    "kind": "derive",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v2.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "authentication-public",
+    "expansion_review": "Clone and equality preserve the complete public header, original body, retained bytes, keys and typed refusals. Debug records these public values in full. Error derivation names representation refusals only; no signature operation, authority predicate, codec or secret access is generated."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v2.rs",
+    "item": "v2::decode_header",
+    "signature": "fn decode_header (input : & [u8]) -> Result < VerifiedHeader , EncodingError >",
+    "owner": "ACTAUTH",
+    "claim": "ACTAUTH::def:authentication:version-two",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v2.rs::v2::decode_header",
+    "class_decision": "authentication-public",
+    "body": "{ let value = canonical (input) ? ; let Value :: Map (map) = & value else { return Err (EncodingError :: Shape) ; } ; let fields : Vec < _ > = map . iter () . collect () ; if fields . len () != 9 || fields . iter () . zip (0_u64 ..) . any (| ((k , _) , i) | * * k != Value :: Unsigned (i)) { return Err (EncodingError :: Shape) ; } let f = | i : usize | fields [i] . 1 ; if string (f (0)) ? != HEADER_NAMESPACE { return Err (EncodingError :: Shape) ; } if f (1) != & array ([Value :: Unsigned (2) , Value :: Unsigned (0) , Value :: Unsigned (0)]) { return Err (EncodingError :: Edition) ; } let parts = HeaderParts { body : pn_act_profile :: v2 :: body_from_projection (f (2)) . map_err (| _ | EncodingError :: Body) ? , commitments : ActCommitments { proposal : ProposalCommitment { recipe : PROPOSAL_RECIPE . into () , bytes : read_pair (f (3) , PROPOSAL_RECIPE) ? , } , content : ContentCommitment { recipe : CONTENT_RECIPE . into () , bytes : read_pair (f (5) , CONTENT_RECIPE) ? , } , dependency : DependencyCommitment { recipe : DEPENDENCY_RECIPE . into () , bytes : read_pair (f (6) , DEPENDENCY_RECIPE) ? , } , } , actor_signature : fixed (f (4)) ? , content_edition : string (f (7)) ? . into () , dependency_edition : string (f (8)) ? . into () , } ; if header_value (& parts) ? != value { return Err (EncodingError :: Shape) ; } Ok (VerifiedHeader { parts , bytes : input . to_vec () , }) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public arguments and results are recorded, including retained bytes. This operation establishes representation or comparison only, never signature validity, secret possession or chain authority."
+  }
+}

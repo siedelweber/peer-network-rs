@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v2::EncodingError",
+    "kind": "derive",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v2.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "class_decision": "authentication-public",
+    "expansion_review": "Clone and equality preserve the complete public header, original body, retained bytes, keys and typed refusals. Debug records these public values in full. Error derivation names representation refusals only; no signature operation, authority predicate, codec or secret access is generated."
+  }
+}

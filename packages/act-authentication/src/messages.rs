@@ -4,7 +4,7 @@ use pn_interchange::Value;
 use pn_records::commitments::ProposalCommitment;
 use sha2::{Digest, Sha256};
 
-fn framed(recipe: &str, tag: &str, fields: Vec<Value>) -> [u8; 32] {
+pub(crate) fn framed(recipe: &str, tag: &str, fields: Vec<Value>) -> [u8; 32] {
     let mut hash = Sha256::new();
     hash.update(recipe.as_bytes());
     hash.update([0]);
@@ -15,7 +15,7 @@ fn framed(recipe: &str, tag: &str, fields: Vec<Value>) -> [u8; 32] {
 /// Recipe-specific public message; no other role converts into this type.
 /// (´def:authentication:messages´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct ProposalMessage([u8; 32]);
+pub struct ProposalMessage(pub(crate) [u8; 32]);
 impl ProposalMessage {
     /// Justified: Immutable byte access inherits the admitted message-producing operation.
     #[must_use]
@@ -38,7 +38,7 @@ impl ProposalMessage {
 /// Recipe-specific public message; no other role converts into this type.
 /// (´def:authentication:messages´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct SealMessage([u8; 32]);
+pub struct SealMessage(pub(crate) [u8; 32]);
 impl SealMessage {
     /// Justified: Immutable byte access inherits the admitted message-producing operation.
     #[must_use]
@@ -61,7 +61,7 @@ impl SealMessage {
 /// Recipe-specific public message; no other role converts into this type.
 /// (´def:authentication:messages´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct ApprovalMessage([u8; 32]);
+pub struct ApprovalMessage(pub(crate) [u8; 32]);
 impl ApprovalMessage {
     /// Justified: Immutable byte access inherits the admitted message-producing operation.
     #[must_use]
