@@ -8,6 +8,25 @@ use sha2::{Digest, Sha256};
 #[cfg(test)]
 mod tests;
 
+/// Largest borrowed primitive input admitted by the transport profile.
+/// (´def:derivation:primitives´)
+pub const INPUT_LIMIT: usize = 1_048_576;
+/// Lowest admitted password-derivation work factor.
+/// (´def:derivation:primitives´)
+pub const MIN_ITERATIONS: u32 = 4096;
+/// Highest admitted work factor, also the restricted verifier's factor.
+/// (´def:derivation:primitives´)
+pub const MAX_ITERATIONS: u32 = 600_000;
+/// Exact keyed and stored-key output length in bytes.
+/// (´def:derivation:primitives´)
+pub const KEY_LENGTH: usize = 32;
+/// Exact restricted verifier salt length in bytes.
+/// (´def:derivation:verifier´)
+pub const SALT_LENGTH: usize = 16;
+/// Exact restricted verifier text length, without a terminator.
+/// (´def:derivation:verifier´)
+pub const VERIFIER_LENGTH: usize = 135;
+
 /// A caller's already authorized primitive input borrow, consumed by one call.
 /// This view acquires no secret and provides no access to a protected container.
 /// (´def:derivation:borrows´)
@@ -55,7 +74,10 @@ pub enum Error {
     ret
 )]
 pub fn salted_password(password: Input<'_>, salt: Input<'_>, iterations: u32, output: Output<'_>) -> Result<(), Error> {
-    if password.0.len() > 1_048_576 || salt.0.len() > 1_048_576 || !(4096..=600_000).contains(&iterations) || output.0.len() != 32
+    if password.0.len() > INPUT_LIMIT
+        || salt.0.len() > INPUT_LIMIT
+        || !(MIN_ITERATIONS..=MAX_ITERATIONS).contains(&iterations)
+        || output.0.len() != KEY_LENGTH
     {
         return Err(Error::Bound);
     }
@@ -78,7 +100,7 @@ pub fn salted_password(password: Input<'_>, salt: Input<'_>, iterations: u32, ou
     ret
 )]
 pub fn mac(key: Input<'_>, message: Input<'_>, output: Output<'_>) -> Result<(), Error> {
-    if key.0.len() > 1_048_576 || message.0.len() > 1_048_576 || output.0.len() != 32 {
+    if key.0.len() > INPUT_LIMIT || message.0.len() > INPUT_LIMIT || output.0.len() != KEY_LENGTH {
         return Err(Error::Bound);
     }
     let mut state = Hmac::<Sha256>::new_from_slice(key.0).map_err(|_| Error::Primitive)?;
@@ -102,7 +124,7 @@ pub fn mac(key: Input<'_>, message: Input<'_>, output: Output<'_>) -> Result<(),
     ret
 )]
 pub fn stored_key(client_key: Input<'_>, output: Output<'_>) -> Result<(), Error> {
-    if client_key.0.len() != 32 || output.0.len() != 32 {
+    if client_key.0.len() != KEY_LENGTH || output.0.len() != KEY_LENGTH {
         return Err(Error::Bound);
     }
     Digest::finalize_into(
@@ -128,7 +150,11 @@ pub fn stored_key(client_key: Input<'_>, output: Output<'_>) -> Result<(), Error
     ret
 )]
 pub fn verifier(salt: Input<'_>, stored_key: Input<'_>, server_key: Input<'_>, output: Output<'_>) -> Result<(), Error> {
-    if salt.0.len() != 16 || stored_key.0.len() != 32 || server_key.0.len() != 32 || output.0.len() != 135 {
+    if salt.0.len() != SALT_LENGTH
+        || stored_key.0.len() != KEY_LENGTH
+        || server_key.0.len() != KEY_LENGTH
+        || output.0.len() != VERIFIER_LENGTH
+    {
         return Err(Error::Bound);
     }
     output.0[..21].copy_from_slice(b"SCRAM-SHA-256$600000:");

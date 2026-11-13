@@ -15,6 +15,22 @@ static DERIVATIONS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(D
 
 pub(crate) const ITERATIONS: std::ops::RangeInclusive<u32> = 4096..=600_000;
 
+// Keep the transport admission inside the shared primitive boundary before a permit or keyed operation.
+const _: () = {
+    assert!(
+        crate::secret::LIMIT == pn_credential_derivation::INPUT_LIMIT,
+        "host derivation input bound"
+    );
+    assert!(
+        *ITERATIONS.start() == pn_credential_derivation::MIN_ITERATIONS,
+        "host derivation minimum work"
+    );
+    assert!(
+        *ITERATIONS.end() == pn_credential_derivation::MAX_ITERATIONS,
+        "host derivation maximum work"
+    );
+};
+
 // Caveat: Private protocol bytes are encoded directly into protected storage until the base64 encoder returns; its destination API requires a mutable slice.
 // (´[ROOT-cav:observe:secret-host-scram-encode-buffer-1]´)
 // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.

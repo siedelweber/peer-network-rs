@@ -102,6 +102,45 @@ fn bounds_and_representations() {
         Err(Error::Bound)
     );
     assert_eq!(output, [17; 135], "each isolated bound leaves the destination unchanged");
+    let mut long_output = [17; 136];
+    assert_eq!(
+        salted_password(Input(b"fixture"), Input(b"salt"), 4096, Output(&mut long_output[..33])),
+        Err(Error::Bound),
+        "overlong salted output refuses"
+    );
+    assert_eq!(
+        mac(Input(b"key"), Input(b"message"), Output(&mut long_output[..33])),
+        Err(Error::Bound),
+        "overlong MAC output refuses"
+    );
+    assert_eq!(
+        stored_key(Input(&[0; 33]), Output(&mut long_output[..32])),
+        Err(Error::Bound),
+        "overlong client key refuses"
+    );
+    assert_eq!(
+        stored_key(Input(&[0; 32]), Output(&mut long_output[..33])),
+        Err(Error::Bound),
+        "overlong stored output refuses"
+    );
+    for (salt, stored, server, length, cause) in [
+        (17, 32, 32, 135, "overlong verifier salt refuses"),
+        (16, 33, 32, 135, "overlong stored key refuses"),
+        (16, 32, 33, 135, "overlong server key refuses"),
+        (16, 32, 32, 136, "overlong verifier output refuses"),
+    ] {
+        assert_eq!(
+            verifier(
+                Input(&[0; 17][..salt]),
+                Input(&[0; 33][..stored]),
+                Input(&[0; 33][..server]),
+                Output(&mut long_output[..length])
+            ),
+            Err(Error::Bound),
+            "{cause}"
+        );
+        assert_eq!(long_output, [17; 136], "overlong refusal does not write output");
+    }
     assert_eq!(format!("{:?}", Input(b"private-fixture")), "CredentialInput([REDACTED])");
     assert_eq!(format!("{:?}", Output(&mut output)), "CredentialOutput([REDACTED])");
     assert_eq!(format!("{:?}", Error::Bound), "Bound");

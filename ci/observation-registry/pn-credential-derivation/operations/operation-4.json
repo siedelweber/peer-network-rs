@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-credential-derivation::packages/credential-derivation/src/lib.rs::stored_key",
-    "body": "{ if client_key . 0 . len () != 32 || output . 0 . len () != 32 { return Err (Error :: Bound) ; } Digest :: finalize_into (Sha256 :: new_with_prefix (client_key . 0) , output . 0 . try_into () . map_err (| _ | Error :: Bound) ? ,) ; Ok (()) }",
+    "body": "{ if client_key . 0 . len () != KEY_LENGTH || output . 0 . len () != KEY_LENGTH { return Err (Error :: Bound) ; } Digest :: finalize_into (Sha256 :: new_with_prefix (client_key . 0) , output . 0 . try_into () . map_err (| _ | Error :: Bound) ? ,) ; Ok (()) }",
     "class_decision": "credential-derivation-private",
     "item_premise": "The borrowed operations write only caller-owned destinations, Error has no payload, and no result contains private bytes. Inputs remain protected by their caller. For salted_password, mac and stored_key, the host exit labels delimit the host borrows. The host residue disposition is limited to the primitive temporaries named by ROOT::amend:storage:scram-residue; it admits no unnamed temporary or new consumer.",
     "assessments": {

@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-credential-derivation::packages/credential-derivation/src/lib.rs::salted_password",
-    "body": "{ if password . 0 . len () > 1_048_576 || salt . 0 . len () > 1_048_576 || ! (4096 ..= 600_000) . contains (& iterations) || output . 0 . len () != 32 { return Err (Error :: Bound) ; } pbkdf2 :: pbkdf2 :: < Hmac < Sha256 > > (password . 0 , salt . 0 , iterations , output . 0) . map_err (| _ | Error :: Primitive) }",
+    "body": "{ if password . 0 . len () > INPUT_LIMIT || salt . 0 . len () > INPUT_LIMIT || ! (MIN_ITERATIONS ..= MAX_ITERATIONS) . contains (& iterations) || output . 0 . len () != KEY_LENGTH { return Err (Error :: Bound) ; } pbkdf2 :: pbkdf2 :: < Hmac < Sha256 > > (password . 0 , salt . 0 , iterations , output . 0) . map_err (| _ | Error :: Primitive) }",
     "class_decision": "credential-derivation-private",
     "item_premise": "The borrowed operations write only caller-owned destinations, Error has no payload, and no result contains private bytes. Inputs remain protected by their caller. For salted_password, mac and stored_key, the host exit labels delimit the host borrows. The host residue disposition is limited to the primitive temporaries named by ROOT::amend:storage:scram-residue; it admits no unnamed temporary or new consumer.",
     "assessments": {
