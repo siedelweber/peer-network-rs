@@ -1668,6 +1668,10 @@ def quiet_baseline(candidate, policy=None):
 
 def retain_baseline(root):
     """Publish only after the whole invocation is functionally green."""
+    declaration_path = root/'.lane/gate-declaration.json'
+    if declaration_path.exists() and json.loads(declaration_path.read_text()).get('sample') == 'import-transition':
+        print('GATE-BASELINE retained=false reason=series-evidence-only candidate_archived=false',flush=True)
+        return
     candidate = json.loads((root/'.lane/gate-baseline.json').read_text())
     path = Path(candidate.pop('path'))
     previous = candidate.pop('previous_statuses', None)

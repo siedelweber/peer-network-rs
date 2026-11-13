@@ -1,0 +1,246 @@
+"""Run a prepared gate round; scheduling and the external label lock belong to the invoker."""
+
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import resource
+import stat
+import subprocess
+import time
+
+import build_graph
+
+
+class Refusal(ValueError):
+    """A protocol refusal, not a verdict on the candidate."""
+
+
+def argv(value):
+    result = json.loads(value)
+    if not isinstance(result, list) or not result or any(not isinstance(x, str) or not x for x in result):
+        raise Refusal('command must be a nonempty JSON argument vector')
+    return result
+
+
+def write(path, value):
+    path.write_text(json.dumps(value, sort_keys=True)+'\n')
+
+
+def append(path, value):
+    with path.open('a') as stream:
+        stream.write(json.dumps(value, sort_keys=True)+'\n')
+
+
+def copy_manifest(manifest, destination):
+    """Copy only listed regular files, checking both names and observed sizes."""
+    destination.mkdir()
+    seen = set()
+    for row in manifest['files']:
+        name = Path(row['destination'])
+        if name.is_absolute() or '..' in name.parts or str(name) in seen:
+            raise Refusal('unsafe or duplicate archive destination')
+        seen.add(str(name))
+        source = Path(row['source'])
+        if any(parent.is_symlink() for parent in (source, *source.parents)):
+            raise Refusal('archive source traverses a link')
+        target = destination/name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        descriptor = os.open(source, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(descriptor, 'rb') as incoming, target.open('xb') as outgoing:
+            if not stat.S_ISREG(os.fstat(incoming.fileno()).st_mode):
+                raise Refusal('archive source is not a regular file')
+            while block := incoming.read(1024*1024):
+                outgoing.write(block)
+        if name != Path('round.log') and target.stat().st_size != row['bytes']:
+            raise Refusal('archive evidence size changed')
+
+
+class Round:
+    def __init__(self, root, args):
+        self.root, self.args = root.resolve(), args
+        if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,63}', args.label):
+            raise Refusal('invalid round label')
+        self.store = args.directory.resolve()/args.label
+        if self.store.is_relative_to(self.root) or self.root.is_relative_to(self.store):
+            raise Refusal('round evidence must live outside the checkout')
+        if any(path.is_symlink() for path in (args.directory, *args.directory.parents)):
+            raise Refusal('round evidence directory traverses a link')
+        self.store.mkdir(parents=True, exist_ok=True)
+        if (self.store/'ended.json').exists():
+            raise Refusal('ended label cannot be reused')
+        self.count = build_graph.series_count()
+        if args.mode == 'sample' and (args.ordinal is None or not 1 <= args.ordinal <= self.count):
+            raise Refusal('sample ordinal outside declared count')
+        if args.mode != 'sample' and args.ordinal is not None:
+            raise Refusal('only a sample has an ordinal')
+        if (args.mode == 'repeat') != (args.repeat_of is not None):
+            raise Refusal('repeat requires its obligation and only repeat accepts one')
+        self.log = None
+
+    def command(self, command, environment=None, build=False):
+        """Each command retains its output, status, wall and reaped CPU."""
+        full = (self.args.build_prefix+['env']+[key+'='+value for key,value in (environment or {}).items()]+command
+                if build else command)
+        start = time.time()
+        before = resource.getrusage(resource.RUSAGE_CHILDREN)
+        try:
+            result = subprocess.run(full, cwd=self.root, env=dict(os.environ, **(environment or {})),
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            status, output = result.returncode, result.stdout
+        except OSError as error:
+            status, output = 125, str(error)+'\n'
+        after = resource.getrusage(resource.RUSAGE_CHILDREN)
+        if self.log:
+            with self.log.open('a') as stream:
+                stream.write(output)
+        append(self.store/'commands.jsonl', dict(argv=full, started=start, wall=time.time()-start,
+            user=after.ru_utime-before.ru_utime, system=after.ru_stime-before.ru_stime, status=status))
+        print('GATE-ROUND-COMMAND '+json.dumps(dict(argv=full,status=status,wall=time.time()-start)), flush=True)
+        return status, output
+
+    def require(self, command, **options):
+        status, output = self.command(command, **options)
+        if status:
+            raise Refusal('round command failed: '+repr(command)+' status='+str(status))
+        return output.strip()
+
+    def run(self):
+        args = self.args
+        # The command is loaded from the candidate before either reset occurs.
+        source = self.require(['git','rev-parse','--verify',args.source+'^{commit}'])
+        base = self.require(['git','rev-parse','--verify',args.base+'^{commit}'])
+        if source == base:
+            raise Refusal('base equals source')
+        if self.require(['git','rev-parse','HEAD']) != source or self.require(['git','status','--porcelain']):
+            raise Refusal('round requires the clean source checkout')
+        self.require(['git','merge-base','--is-ancestor',base,source])
+        priming_path = self.store/'priming.json'
+        priming = json.loads(priming_path.read_text()) if priming_path.exists() else None
+        if args.mode == 'priming' and priming is not None:
+            raise Refusal('label already has a priming record')
+        if args.mode == 'sample' and (not priming or priming.get('status') != 0 or priming.get('complete') is not True
+                or priming.get('base') != base or priming.get('source') != source):
+            raise Refusal('sample requires green priming of this base and source')
+        obligation = None
+        if args.mode == 'repeat':
+            obligation = json.loads(args.repeat_of.read_text())
+            if obligation['base'] != base or obligation['source'] != source:
+                raise Refusal('repeat transition differs from obligation')
+        ledger_path = self.store/'ledger.jsonl'
+        previous = [json.loads(line) for line in ledger_path.read_text().splitlines()] if ledger_path.exists() else []
+        if args.mode == 'sample' and sum(row['ordinal'] == args.ordinal for row in previous) >= build_graph.series_policy()['series_attempts_per_ordinal']:
+            write(self.store/'ended.json',dict(reason='attempt cap exhausted',ordinal=args.ordinal))
+            raise Refusal('attempt cap exhausted; use a new label with its cause')
+        rounds = self.store/'rounds'
+        rounds.mkdir(exist_ok=True)
+        number = len(list(rounds.iterdir()))+1
+        entry = args.label+'-'+str(number)
+        self.log = rounds/(entry+'.log')
+        self.log.touch(exist_ok=False)
+        preparation = dict(PN_GATE_SAMPLE='import')
+        self.require(['git','reset','--hard',base])
+        try:
+            self.require(['python3','-B','ci/run_tests.py','prepare'],environment=preparation,build=True)
+            self.require(['python3','-B','ci/discipline.py','clippy'],environment=preparation,build=True)
+        finally:
+            self.require(['git','reset','--hard',source])
+        print('GATE-ROUND-BASE-BUILD base='+base+' source='+source+' status=0',flush=True)
+        self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
+        key = self.require(['python3','-B','ci/build_graph.py','series-key'],build=True)
+        if not re.fullmatch('[0-9a-f]{64}',key):
+            raise Refusal('configuration key is malformed')
+        if args.mode == 'sample' and key != priming['configuration_key']:
+            print('GATE-ROUND-RESTARTABLE configuration key differs before attempt',flush=True)
+            return 5
+        if obligation and key != obligation['configuration_key']:
+            raise Refusal('repeat configuration differs from obligation')
+        environment = dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=entry,PN_GATE_SAMPLE='import',
+            PN_IMPORT_BASE=base,PN_GATE_SERIES=args.label,PN_GATE_ORDINAL=str(args.ordinal or 1),
+            PN_GATE_CONTAINER_LIST=json.dumps(args.container_list),PN_GATE_SERVICE_LIST=json.dumps(args.service_list))
+        if args.mode == 'sample':
+            environment.update(PN_GATE_SAMPLE='import-transition',PN_GATE_SERIES_COUNT=str(self.count),
+                PN_GATE_SERIES_KEY=key,PN_GATE_SERIES_CACHE=priming['cache'])
+        if obligation:
+            environment.update(PN_GATE_SAMPLE=obligation['sample'],PN_GATE_REPEAT_OF=str(args.repeat_of.resolve()))
+            if obligation['sample'] == 'import-transition':
+                owed = json.loads((args.repeat_of.parent/'gate-baseline.json').read_text())
+                cache = owed['cache']['state']
+                if cache not in ('warm','cold'):
+                    raise Refusal('repeat requires the owed cache receipt')
+                environment.update(PN_GATE_SERIES_COUNT=str(self.count),PN_GATE_SERIES_KEY=key,PN_GATE_SERIES_CACHE=cache)
+        plan = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,start=time.time(),mode=args.mode)
+        append(self.store/('plans.jsonl' if args.mode == 'sample' else 'preparations.jsonl'),plan)
+        print('GATE-PLAN '+json.dumps(plan),flush=True)
+        if args.mode == 'priming':
+            status, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
+            pending_path = self.root/'.lane/gate-baseline.json'
+            pending = json.loads(pending_path.read_text()) if pending_path.exists() else {}
+            cache = pending.get('cache',{})
+            complete = cache.get('state') in ('warm','cold') and set(cache.get('compiled',{})) == {'primary','lint'} and all(isinstance(v,list) for v in cache.get('compiled',{}).values())
+            record = dict(base=base,source=source,configuration_key=key,cache=cache.get('state'),
+                status=status,compiled=cache.get('compiled'),complete=complete,entry=entry,log=str(self.log))
+            write(priming_path,record)
+            if status or not complete:
+                write(self.store/'ended.json',dict(reason='priming red or compilation receipt incomplete',entry=entry))
+                return 1 if status else 4
+            print('GATE-ROUND-PRIMED '+json.dumps(record),flush=True)
+            return 0
+        status, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','start'],environment=environment)
+        if status:
+            append(self.store/'preparations.jsonl',dict(entry=entry,aborted=True,reason='start receipt failed',status=status))
+            print('GATE-ROUND-ABORT entry='+entry+' reason=start-receipt-failed',flush=True)
+            return 4
+        gate = 125
+        if not status:
+            gate, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
+        end, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','end'],environment=environment)
+        close, _ = self.command(['python3','-B','ci/build_graph.py','series-close',str(gate)],environment=environment)
+        discharge = 0
+        if obligation:
+            discharge, _ = self.command(['python3','-B','ci/build_graph.py','repeat-close',str(args.repeat_of.resolve()),str(self.root/'.lane')],environment=environment)
+        archive_status, output = self.command(['python3','-B','ci/build_graph.py','series-archive-list','--round-log',str(self.log)])
+        sidecar_bytes = None
+        if archive_status == 0:
+            try:
+                manifest = json.loads(output)
+                manifests = self.store/'manifests'; manifests.mkdir(exist_ok=True)
+                write(manifests/(entry+'.json'),manifest)
+                archive = self.store/('archive' if args.mode == 'sample' else 'repeats')
+                archive.mkdir(exist_ok=True)
+                copy_manifest(manifest,archive/entry)
+                sidecar_bytes = next((row['bytes'] for row in manifest['files'] if row['destination']=='gate-baseline.json'),None)
+            except (OSError,ValueError,KeyError,TypeError) as error:
+                archive_status = 4
+                print('GATE-ROUND-ARCHIVE-REFUSED '+str(error),flush=True)
+        ledger = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,gate_status=gate,
+            end_status=end,close_status=close,archive_status=archive_status,sidecar_bytes=sidecar_bytes,
+            declared_identity=dict(base=base,source=source,configuration_key=key,cache=priming['cache'] if priming else 'unknown'))
+        append(self.store/('ledger.jsonl' if args.mode == 'sample' else 'repeat-ledger.jsonl'),ledger)
+        print('GATE-ROUND-CLOSED '+json.dumps(ledger),flush=True)
+        return 4 if status or end or close or archive_status or discharge else (1 if gate else 0)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--label',required=True)
+    parser.add_argument('--base',required=True)
+    parser.add_argument('--source',required=True)
+    parser.add_argument('--mode',choices=('priming','sample','repeat'),required=True)
+    parser.add_argument('--ordinal',type=int)
+    parser.add_argument('--repeat-of',type=Path)
+    parser.add_argument('--directory',type=Path,required=True)
+    parser.add_argument('--container-list',type=argv,required=True)
+    parser.add_argument('--service-list',type=argv,required=True)
+    parser.add_argument('--build-prefix',type=argv,required=True)
+    args = parser.parse_args()
+    try:
+        return Round(Path.cwd(),args).run()
+    except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
+        print('GATE-ROUND-REFUSED '+str(error),flush=True)
+        return 4
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

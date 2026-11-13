@@ -211,6 +211,8 @@ class Performance(unittest.TestCase):
         ´claim:devperf:series-archive-list´
         ´test:integration:test-series-archive-list´
         """
+        from round_fixtures import controls
+        controls(self,'copy')
         from build_graph import series_archive_list,series_close
         import shutil
         with tempfile.TemporaryDirectory() as directory:
@@ -665,6 +667,21 @@ class Performance(unittest.TestCase):
         ´claim:devperf:series-terminal-attempt´
         ´test:integration:test-series-terminal-attempt´
         """
+        from round_fixtures import controls
+        controls(self,'sequence')
+        controls(self,'failures')
+        controls(self,'repeat')
+        from build_graph import retain_baseline
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'.lane').mkdir()
+            (root/'.lane/gate-declaration.json').write_text(json.dumps(dict(sample='import-transition')))
+            output=io.StringIO()
+            try:
+                with redirect_stdout(output):retain_baseline(root)
+            except Exception as error:
+                self.fail('a sample cannot enter reference retention: '+repr(error))
+            self.assertIn('reason=series-evidence-only',output.getvalue(),'sample is archived only as series evidence')
         from build_graph import series_idle, series_close, series_check
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);lane=root/'.lane';lane.mkdir()
@@ -828,6 +845,8 @@ class Performance(unittest.TestCase):
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
+        from round_fixtures import controls
+        controls(self,'guards')
         from build_graph import declare_run
         invoke = declare_run
         env=dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY='entry',PN_GATE_SAMPLE='import-transition',PN_GATE_SERIES='fixture',PN_GATE_ORDINAL='1',PN_IMPORT_BASE='base',PN_GATE_SERIES_KEY='a'*64,PN_GATE_SERIES_CACHE='warm',PN_GATE_SERIES_COUNT='5')
