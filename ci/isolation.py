@@ -301,7 +301,8 @@ def workspace(root, name, source):
                 started = time.monotonic()
                 result = cancellable(['git', '-C', str(tree), 'checkout', '--quiet', '--force', '--detach', transition])
                 if result.returncode:
-                    raise ValueError('series owner base is unavailable: '+name)
+                    raise ValueError('series owner base is unavailable: '+name+
+                                     '; prime retained owners with an ordinary gate at the series source before sampling')
                 reset_wall = time.monotonic()-started
                 sample.write_text(invocation)
         # Older shared clones borrow objects that the parent may prune.

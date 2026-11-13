@@ -403,7 +403,7 @@ assert (root/'payload').read_text() == 'committed'
                     finally:alternates.unlink(missing_ok=True)
                     with patch.dict(os.environ, PN_BUILDGRAPH_RUN='base-refusal'), patch('isolation.import_base',return_value='0'*40):
                         bind_setup(lane/'sample-setup.jsonl',series_source,'base-refusal','fixture')
-                        with self.assertRaisesRegex(ValueError,'base is unavailable',msg='series refuses an unavailable owner base'):
+                        with self.assertRaisesRegex(ValueError,'base is unavailable: .*; prime retained owners with an ordinary gate at the series source before sampling',msg='series base refusal names the source-priming remedy'):
                             with workspace(root,owner,series_source):pass
                     with self.assertRaisesRegex(ValueError,'retained owner checkout',msg='series refuses a cold owner checkout'):
                         with workspace(root,'missing-owner',series_source):pass
