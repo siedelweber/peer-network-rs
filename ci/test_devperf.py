@@ -308,6 +308,12 @@ class Performance(unittest.TestCase):
             bad=copy.deepcopy(plans);bad[0][key]=value
             with self.assertRaisesRegex(ValueError,'plan ordinal or start',msg='plan join refuses '+key):
                 check_series_records(series_records(),plans=bad)
+        for bad in ([dict(plans[0],entry=''),*plans[1:]],[*plans,plans[0]]):
+            from build_graph import series_plans
+            with tempfile.TemporaryDirectory() as directory:
+                path=Path(directory)/'plans.jsonl';path.write_text('\n'.join(json.dumps(row) for row in bad))
+                with self.assertRaisesRegex(ValueError,'plan',msg='empty or duplicate plan entry refuses at its reader'):
+                    series_plans('fixture',path)
         bad=copy.deepcopy(plans);bad[0]['start']=float('nan')
         with self.assertRaisesRegex(ValueError,'malformed',msg='plan start must be finite'):
             check_series_records(series_records(),plans=bad)
@@ -336,6 +342,11 @@ class Performance(unittest.TestCase):
                 path.write_text(source.replace('series_policy_provisional = true','series_policy_provisional = '+value))
                 with self.assertRaisesRegex(StructuralError,'boolean provisional',msg='proposal standing cannot be unchecked text'):
                     budgets(path)
+            without_series='\n'.join(line for line in source.splitlines() if 'series_pressure_multiple =' not in line and 'series_policy_provisional =' not in line)
+            path.write_text(without_series)
+            try:legacy=budgets(path)
+            except StructuralError as error:self.fail('legacy budgets without series policy need no proposal standing: '+str(error))
+            self.assertIn('gate',legacy,'legacy gate budget remains readable')
 
     def test_series_boundary_services(self):
         """Both idle boundaries refuse unreadable services and any running service except the session bus.
@@ -377,7 +388,7 @@ class Performance(unittest.TestCase):
             root=Path(directory)
             env=dict(PN_GATE_SERIES='fixture',PN_GATE_ORDINAL='1',PN_GATE_ENTRY='entry',PN_GATE_CONTAINER_LIST='["containers"]',PN_GATE_SERVICE_LIST='["services","--json"]')
             def observed(argv,**kwargs):
-                content='100 90 collector\n90 80 wrapper\n80 1 supervisor\n1 0 init\n' if argv[0]=='ps' else '[]'
+                content='100 90 collector\n90 80 wrapper\n80 1 supervisor\n1 0 init\n' if isinstance(argv,list) and argv and argv[0]=='ps' else '[]'
                 return SimpleNamespace(returncode=0,stdout=content,stderr='')
             with patch.dict(os.environ,env),patch('build_graph.os.getpid',return_value=100),patch('build_graph.subprocess.run',side_effect=observed) as calls:
                 series_idle(root,'start')
@@ -390,9 +401,16 @@ class Performance(unittest.TestCase):
                 series_idle(root,'end')
             row=json.loads((root/'.lane/gate-series-host-end.json').read_text())
             self.assertEqual(row['services']['status'],'unavailable','failed service listing is recorded, not lost')
-            with patch.dict(os.environ,env),patch.dict(os.environ,PN_GATE_SERVICE_LIST='null'):
+            with patch.dict(os.environ,env),patch.dict(os.environ,PN_GATE_SERVICE_LIST='null'),patch('build_graph.subprocess.run',side_effect=observed):
                 with self.assertRaisesRegex(ValueError,'SERVICE_LIST',msg='missing command is a typed refusal'):
                     series_idle(root,'end')
+            for command in (None,'[]','{}','[""]','[1]','broken'):
+                bad=dict(env)
+                if command is None:bad.pop('PN_GATE_SERVICE_LIST')
+                else:bad['PN_GATE_SERVICE_LIST']=command
+                with patch.dict(os.environ,bad,clear=True),patch('build_graph.subprocess.run',side_effect=observed):
+                    with self.assertRaises(ValueError,msg='missing or malformed service command refuses '+str(command)):
+                        series_idle(root,'start')
 
     def test_series_declared_ledger_identity(self):
         """Every attempt is checked against the ledger declaration before it can anchor the label.
@@ -400,6 +418,17 @@ class Performance(unittest.TestCase):
         ´test:integration:test-series-declared-ledger-identity´
         """
         rows=series_records()
+        self.assertEqual(check_series_records(rows)[1]['declared_identity'],
+            {key:rows[0]['declaration'][key] for key in ('base','source','configuration_key','cache')},
+            'admitted output carries the checked identity for repeat closure')
+        from build_graph import series_check
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as directory:
+            archive=Path(directory)/'archive';archive.mkdir()
+            ledger=Path(directory)/'ledger';ledger.write_text('')
+            with redirect_stdout(io.StringIO()):
+                with self.assertRaisesRegex(ValueError,'series has no attempts',msg='an empty label refuses before producing an identity'):
+                    series_check('fixture',archive,ledger)
         for key,value in [('base','foreign'),('source','foreign'),('configuration_key','b'*64),('cache','cold')]:
             bad=copy.deepcopy(rows);first=bad[0];first['declaration'][key]=value
             if key in ('base','source'):first['owners'][0][key]=value
@@ -410,7 +439,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(status,0,'foreign first attempt cannot poison declared '+key)
             self.assertEqual(result['selected']['1'],'attempt-6','correct replacement anchors declared identity')
             self.assertIn('ledger declared identity',result['excluded'][0]['reason'],'external declaration decides the refusal')
-        for kind in ('missing','shape','cache','key','inconsistent'):
+        for kind in ('missing','shape','cache','key','inconsistent','extra','same'):
             def change(ledger):
                 if kind=='missing':ledger[0].pop('declared_identity')
                 if kind=='shape':ledger[0]['declared_identity']=[]
@@ -419,6 +448,10 @@ class Performance(unittest.TestCase):
                 if kind=='key':
                     for row in ledger:row['declared_identity']['configuration_key']='not-key'
                 if kind=='inconsistent':ledger[1]['declared_identity']['base']='different'
+                if kind=='extra':
+                    for row in ledger:row['declared_identity']['extra']='not-declared'
+                if kind=='same':
+                    for row in ledger:row['declared_identity']['base']=row['declared_identity']['source']
             with self.assertRaisesRegex(ValueError,'declared identity',msg='malformed or inconsistent ledger refuses '+kind):
                 check_series_records(rows,ledger_change=change)
         # The first structurally valid loaded attempt anchors identity, never the median.
@@ -938,10 +971,13 @@ class Performance(unittest.TestCase):
         ´claim:devperf:repeat-transition-compiles´
         ´test:integration:test-repeat-transition-compiles´
         """
-        from build_graph import repeat_compilation
+        from build_graph import repeat_compilation, repeat_compile_evidence
         rows=[dict(step='wallet-conformance',owner='wallet-conformance',cold_target=False,compiled=['Checking pn-wallet v0.1.0 (/fixture)'])]
         tiers={'service':dict(isolated_compiling_steps=rows)}
         self.assertEqual(repeat_compilation(dict(compiling_steps=[]),tiers),[],'recurring package check is not a cache rebuild')
+        evidence=repeat_compile_evidence({},tiers)
+        self.assertIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),evidence['exempted'],'observed exemption names versioned artifact')
+        self.assertNotIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),evidence['not_observed'],'observed recurring artifact is not missing')
         self.assertEqual(repeat_compilation(dict(compiling_steps=['clippy']),tiers),['clippy'],'lint cache compilation triggers')
         rows[0]['cold_target']=True
         self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a cold owner is not exempt as recurring work')
@@ -950,6 +986,10 @@ class Performance(unittest.TestCase):
         self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a new owner artifact triggers')
         rows[0]['compiled']=[]
         self.assertEqual(repeat_compilation({},tiers),[],'fresh owner invocation is not compilation')
+        self.assertIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),repeat_compile_evidence({},tiers)['not_observed'],'a vanished recurring compile is reported')
+        rows[0].pop('compiled')
+        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'absent compilation evidence triggers conservatively')
+        self.assertEqual(repeat_compile_evidence({},tiers)['unknown'],[('wallet-conformance','wallet-conformance')],'unknown is not observed compilation')
 
     def test_repeat_obligation_close(self):
         """One linked green quiet repeat discharges all scopes even over budget; foreign or loaded evidence refuses.
@@ -967,10 +1007,12 @@ class Performance(unittest.TestCase):
             whole=dict(classification='load-unresolved',excess_s=20)
             with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
                 request=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,tiers,declared)
-            self.assertEqual(len(output.getvalue().splitlines()),1,'one run owes one obligation for all scopes')
+            self.assertEqual(sum(line.startswith('GATE-QUIET-REPEAT ') for line in output.getvalue().splitlines()),1,'one run owes one obligation for all scopes')
+            self.assertIn('GATE-REPEAT-COMPILES ',output.getvalue(),'each owing run discloses exemptions and missing recurring entries')
             self.assertEqual(len(request['scopes']),2,'whole and tier scopes join one obligation')
             self.assertEqual(request['base'],'base','request preserves import base')
             self.assertTrue(request['required'],'excess share makes the obligation required')
+            self.assertEqual(request['whole_stall_at_most'],.08,'interim repeat bound is the absolute/floor minimum')
             obligation=lane/'gate-quiet-repeat.json'
             declaration.update(entry=request['entry'],repeat_of=request['obligation'])
             (lane/'gate-declaration.json').write_text(json.dumps(declaration))
@@ -990,6 +1032,26 @@ class Performance(unittest.TestCase):
                 try:repeat_close(obligation,lane)
                 except ValueError as error:self.fail('quiet regression must discharge: '+str(error))
             self.assertIn('GATE-QUIET-REPEAT-DISCHARGED',output.getvalue(),'quiet regression discharges, it need not be within budget')
+            for member,value in [('repeat_of','foreign'),('source','foreign'),('plan','refresh-second'),('sample','import-transition')]:
+                bad=dict(declaration);bad[member]=value;(lane/'gate-declaration.json').write_text(json.dumps(bad))
+                with self.assertRaisesRegex(ValueError,'identity',msg='repeat close refuses mismatched '+member):repeat_close(obligation,lane)
+            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
+            request['scopes'][0]['transition_compiling_steps']=['clippy']
+            obligation.write_text(json.dumps(request))
+            with self.assertRaisesRegex(ValueError,'compiling steps',msg='a warm repeat cannot discharge omitted compilation'):repeat_close(obligation,lane)
+            run['cache']['compiling_steps']=['clippy'];(lane/'gate-baseline.json').write_text(json.dumps(run))
+            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane)
+            request['scopes'][0]['transition_compiling_steps']=[];obligation.write_text(json.dumps(request))
+            request['scopes'][0]['transition_compiling_steps']=['owner-step'];obligation.write_text(json.dumps(request))
+            saved_tiers=copy.deepcopy(run['tiers'])
+            run['tiers']={'fixture':dict(isolated_compiling_steps=[dict(step='owner-step',owner='owner')])}
+            (lane/'gate-baseline.json').write_text(json.dumps(run))
+            with self.assertRaisesRegex(ValueError,'compiling steps',msg='unknown owner work cannot discharge compilation'):repeat_close(obligation,lane)
+            run['tiers']['fixture']['isolated_compiling_steps'][0]['compiled']=['Compiling fresh v1.0.0']
+            (lane/'gate-baseline.json').write_text(json.dumps(run))
+            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane)
+            run['tiers']=saved_tiers;(lane/'gate-baseline.json').write_text(json.dumps(run))
+            request['scopes'][0]['transition_compiling_steps']=[];obligation.write_text(json.dumps(request))
             for key,value,reason in [('stall',.2,'pressure'),('status',1,'functionally green')]:
                 bad=dict(whole);bad[key]=value;(lane/'gate-wall.json').write_text(json.dumps(bad))
                 with self.assertRaisesRegex(ValueError,reason,msg='nonadmitted repeat cannot discharge '+key):repeat_close(obligation,lane)
@@ -998,9 +1060,28 @@ class Performance(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'identity',msg='repeat must repay the same base transition'):repeat_close(obligation,lane)
             run['import_base']='base';(lane/'gate-baseline.json').write_text(json.dumps(run))
             admission=lane/'admission.json';admission.write_text(json.dumps(dict(outcome='admitted',frozen_median=.05,
+                declared_identity=dict(base='base',source='source',configuration_key='key',cache='warm'),
                 policy=dict(series_absolute_pressure=.1,series_relative_floor=.044,series_pressure_multiple=2))))
             whole['stall']=.07;(lane/'gate-wall.json').write_text(json.dumps(whole))
             with redirect_stdout(io.StringIO()):repeat_close(obligation,lane,admission)
+            good_admission=json.loads(admission.read_text())
+            for member,value in [('outcome','incomplete'),('frozen_median',None),('frozen_median',float('nan')),('frozen_median',2)]:
+                changed=copy.deepcopy(good_admission);changed[member]=value;admission.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,'completed series',msg='admission outcome and median must be valid'):repeat_close(obligation,lane,admission)
+            for member in ('configuration_key',):
+                changed=copy.deepcopy(good_admission);changed['declared_identity'][member]='foreign';admission.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,'admission identity',msg='admission must match obligation '+member):repeat_close(obligation,lane,admission)
+            compatible=copy.deepcopy(good_admission);compatible['declared_identity'].update(base='earlier-base',source='earlier-source')
+            admission.write_text(json.dumps(compatible))
+            with redirect_stdout(io.StringIO()):
+                try:repeat_close(obligation,lane,admission)
+                except ValueError as error:self.fail('compatible key includes lineage without requiring the same series transition: '+str(error))
+            for identity in (None,[],{}):
+                changed=copy.deepcopy(good_admission);changed['declared_identity']=identity;admission.write_text(json.dumps(changed))
+                try:
+                    with self.assertRaisesRegex(ValueError,'admission identity',msg='missing or malformed admission identity refuses'):repeat_close(obligation,lane,admission)
+                except (TypeError,AttributeError) as error:self.fail('admission identity needs a protocol refusal: '+str(error))
+            admission.write_text(json.dumps(good_admission))
             for member,value,reason in [('tree','foreign','identity'),('path','foreign/tree.json','identity')]:
                 changed=dict(run);changed[member]=value;(lane/'gate-baseline.json').write_text(json.dumps(changed))
                 with self.assertRaisesRegex(ValueError,reason,msg='repeat refuses foreign '+member):repeat_close(obligation,lane,admission)
@@ -1019,6 +1100,14 @@ class Performance(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'container',msg='another account container blocks discharge'):repeat_close(obligation,lane,admission)
             with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='wrong',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
                 with self.assertRaisesRegex(ValueError,'repeat declaration',msg='wrong repeat base refuses before work'):declare_run(root)
+            for change in ({'PN_GATE_ENTRY':'owing'},{'PN_GATE_PLAN':'refresh-second','PN_GATE_FIRST_CACHE':'warm'}):
+                env=dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='base',PN_GATE_REPEAT_OF=str(obligation));env.update(change)
+                with patch.dict(os.environ,env),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
+                    with self.assertRaisesRegex(ValueError,'repeat declaration',msg='repeat entry and plan belong to the obligation'):declare_run(root)
+            for member in ('source','sample'):
+                bad=copy.deepcopy(request);bad[member]='foreign';obligation.write_text(json.dumps(bad))
+                with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='base',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
+                    with self.assertRaisesRegex(ValueError,'repeat declaration',msg='repeat declaration refuses '+member):declare_run(root)
 
     def test_reference_incumbent_tree(self):
         """Retention uses the previous reference tree even when an unrelated peer has a lower stall.
@@ -1098,8 +1187,27 @@ class Performance(unittest.TestCase):
             missing=copy.deepcopy(new);missing['whole'].pop('stall')
             self.assertEqual(reference_judgment(missing,old)['reason'],'whole-gate-stall-unavailable','missing pressure cannot confirm or order a record')
             cold=copy.deepcopy(old);cold['cache']['state']='cold'
-            self.assertTrue(reference_judgment(new,cold)['decidable'],'observed warmth can replace a cold provisional reference')
+            precedence=reference_judgment(new,cold)
+            self.assertTrue(precedence['accepted'],'warm precedence still replaces cold')
+            self.assertFalse(precedence['decidable'],'cache precedence cannot confirm cost')
+            self.assertTrue(reference_provisional(dict(new,provisional=False,reference_judgment=precedence)),'cache precedence remains provisional')
+            with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.055'):
+                quality=reference_judgment(old,new)
+                self.assertTrue(quality['accepted'],'an under-ceiling candidate replaces an above-ceiling incumbent without a cost margin')
+                self.assertEqual(quality['reason'],'warm-replaces-above-ceiling-provisional','quality replacement states its ground')
+                self.assertFalse(quality['decidable'],'measurement quality makes no cost claim')
+                self.assertTrue(reference_provisional(dict(old,provisional=False,reference_judgment=quality)),'quality replacement cannot confirm')
+                boundary=copy.deepcopy(old);boundary['whole']['stall']=.055
+                self.assertTrue(reference_judgment(boundary,new)['accepted'],'ceiling equality is admitted')
+                self.assertFalse(reference_judgment(new,old)['accepted'],'above-ceiling candidate cannot take quality precedence')
             self.assertFalse(reference_judgment(new,old)['decidable'],'unsized CPU margin cannot confirm')
+            with patch('build_graph.peer_intersection',return_value=None):
+                self.assertFalse(reference_judgment(old,new)['decidable'],'no intersection and no stall margin cannot decide')
+                with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_MARGIN='.005'):
+                    self.assertTrue(reference_judgment(old,new)['accepted'],'stall lead exceeding the margin decides unavailable common work')
+                    self.assertFalse(reference_judgment(new,old)['accepted'],'higher stall never wins the margin route')
+                with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_MARGIN='.02'):
+                    self.assertFalse(reference_judgment(old,new)['accepted'],'stall lead inside the margin keeps the incumbent')
             with patch.dict(os.environ,PN_GATE_REFERENCE_NOISE_MARGIN='.1'):
                 self.assertEqual(reference_judgment(new,old)['reason'],'warm-peer-stall-policy-unavailable','CPU needs measured stall policy')
                 with patch.dict(os.environ,PN_GATE_REFERENCE_STALL_CEILING='.055',PN_GATE_REFERENCE_STALL_BAND='.02'):
@@ -1862,6 +1970,11 @@ wait
                 self.assertEqual(retained['whole'], result)
                 self.assertNotIn('previous_whole', retained)
                 self.assertIn('exit:'+str(status), run.call_args.args[0])
+            figures['baseline_provisional']=False
+            (lane/'gate-baseline.json').write_text(json.dumps(dict(source='fixture',tiers={'fast':figures})))
+            with patch('devperf.budgets',return_value=declared),patch('build_graph.subprocess.run',return_value=SimpleNamespace(returncode=0)),patch.dict(os.environ,PN_GATE_SOURCE='fixture',PN_GATE_PARALLEL='1'),patch('build_graph.quiet_baseline',return_value=True),patch('build_graph.reference_judgment',return_value=dict(accepted=True,decidable=False,reason='warm-replaces-above-ceiling-provisional')),redirect_stdout(io.StringIO()) as output:
+                wall_summary(root,0)
+            self.assertTrue(json.loads((lane/'gate-wall.json').read_text())['baseline_provisional'],'quality replacement wall agrees with provisional retention')
             (lane/'gate-resources.json').unlink()
             (lane/'gate-baseline.json').write_text(json.dumps(dict(source='fixture',tiers={})))
             output = io.StringIO()

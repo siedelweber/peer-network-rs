@@ -1109,7 +1109,7 @@ def series_check(label, archive, ledger, plans=None):
             pairs.append(dict(entries=[left_name,right_name], stalls=[left['whole']['stall'],right['whole']['stall']],
                               common_work_cpu_s=peer_intersection(evidence),
                               common_work_instructions=peer_intersection(evidence,instructions=True)))
-    result = dict(series=label, pairs=pairs, outcome='exhausted' if exhausted else 'incomplete' if median is None else 'repeat' if missing else 'admitted',
+    result = dict(series=label, declared_identity=next(iter(ledger_rows.values()),{}).get('declared_identity'), pairs=pairs, outcome='exhausted' if exhausted else 'incomplete' if median is None else 'repeat' if missing else 'admitted',
         selected={str(n):entry for n,(entry,_) in selected.items()}, excluded=excluded,
         frozen_median=median, policy=SERIES_POLICY, attempt_cap=SERIES_POLICY['series_attempts_per_ordinal'],
         evidence_strength=dict(compiled_sets='observed-nonempty' if first and any(first['compiled'].values()) else 'empty-equality-only',
@@ -1525,8 +1525,10 @@ def reference_judgment(candidate, previous):
         return dict(evidence, accepted=False, reason='whole-gate-stall-unavailable')
     if previous is None or candidate.get('cache',{}).get('state') != 'warm' or previous.get('cache',{}).get('state') != 'warm':
         accepted, reason = baseline_replacement(candidate, previous)
-        return dict(evidence, accepted=accepted, reason=reason,
-                    decidable=previous is not None and candidate.get('cache',{}).get('state') == 'warm')
+        return dict(evidence, accepted=accepted, reason=reason)
+    ceiling = policy['stall_ceiling']
+    if ceiling is not None and evidence['candidate_stall'] <= ceiling < evidence['previous_stall']:
+        return dict(evidence, accepted=True, reason='warm-replaces-above-ceiling-provisional')
     counts = peer_intersection([previous, candidate], instructions=True)
     costs = counts if counts is not None else peer_intersection([previous, candidate])
     evidence.update(costs=costs, metric='instructions' if counts is not None else 'cpu')
@@ -2090,16 +2092,31 @@ RECURRING_COMPILES = {
 
 def repeat_compilation(cache, tiers):
     """Cache compiles and owner compiles outside the named recurring set."""
+    return repeat_compile_evidence(cache, tiers)['transition_compiling_steps']
+
+
+def repeat_compile_evidence(cache, tiers):
+    """Expose recurring observations and missing evidence alongside triggers."""
     triggers = set(cache.get('compiling_steps', []))
+    observed, exempted, unknown = set(), set(), set()
     for tier in tiers.values():
         for row in tier.get('isolated_compiling_steps', []):
             allowed = RECURRING_COMPILES.get((row['step'],row['owner']), set())
-            for artifact in row.get('compiled') or []:
+            if not isinstance(row.get('compiled'), list):
+                triggers.add(row['step'])
+                unknown.add((row['step'],row['owner']))
+            for artifact in row['compiled'] if isinstance(row.get('compiled'), list) else []:
                 match = re.match(r'(?:Checking|Compiling) ([^ ]+) v([^ ]+)(?: |$)',artifact)
                 name = match[1]+'@'+match[2] if match else artifact.rsplit('#',1)[-1]
+                identity = (row['step'],row['owner'],name)
+                observed.add(identity)
                 if name not in allowed or row.get('cold_target'):
                     triggers.add(row['step'])
-    return sorted(triggers)
+                else:
+                    exempted.add(identity)
+    expected = {(step,owner,name) for (step,owner),names in RECURRING_COMPILES.items() for name in names}
+    return dict(transition_compiling_steps=sorted(triggers), exempted=sorted(exempted),
+                not_observed=sorted(expected-observed), unknown=sorted(unknown))
 
 
 def quiet_repeat(source, tree, scope, measurement, budget, compiling):
@@ -2117,10 +2134,12 @@ def repeat_obligation(root, pending, whole, tiers, declared):
     if not declaration_path.exists():
         return None
     declaration = json.loads(declaration_path.read_text())
+    compilation = repeat_compile_evidence(pending.get('cache',{}),tiers)
+    print('GATE-REPEAT-COMPILES '+json.dumps(compilation,sort_keys=True),flush=True)
     if declaration.get('repeat_of'):
         print('GATE-QUIET-REPEAT-PENDING obligation='+declaration['repeat_of']+' entry='+declaration['entry']+' close=repeat-close',flush=True)
         return None
-    compiling = repeat_compilation(pending.get('cache',{}),tiers)
+    compiling = compilation['transition_compiling_steps']
     scopes = []
     for scope, measurement in [('whole',whole),*tiers.items()]:
         budget = declared['whole-gate']['budget_ms']/1000 if scope == 'whole' else declared[measurement['budget']]['budget_ms']/1000 if measurement.get('budget') else None
@@ -2157,6 +2176,11 @@ def repeat_close(obligation, directory, admission=None):
         raise ValueError('quiet repeat identity differs from obligation')
     if whole.get('status') != 0 or not quiet_baseline(run):
         raise ValueError('quiet repeat is not functionally green with quiet boundaries')
+    required = {step for scope in request['scopes'] for step in scope['transition_compiling_steps']}
+    repeated = repeat_compile_evidence(run.get('cache',{}),run.get('tiers',{}))
+    unknown_steps = {step for step,owner in repeated['unknown']}
+    if not required <= set(repeated['transition_compiling_steps'])-unknown_steps:
+        raise ValueError('quiet repeat does not cover the obligation compiling steps')
     pressure=baseline_stall(dict(whole=whole))
     limit=request['whole_stall_at_most']
     if admission is not None:
@@ -2164,6 +2188,9 @@ def repeat_close(obligation, directory, admission=None):
         median=admitted.get('frozen_median')
         if admitted.get('outcome') != 'admitted' or type(median) not in (int,float) or not math.isfinite(median) or not 0 <= median <= 1:
             raise ValueError('quiet repeat admission is not a completed series check')
+        identity = admitted.get('declared_identity',{})
+        if not isinstance(identity,dict) or identity.get('configuration_key') != request['configuration_key']:
+            raise ValueError('quiet repeat admission identity differs from obligation')
         policy=admitted['policy']
         for name in ('series_absolute_pressure','series_relative_floor','series_pressure_multiple'):
             value=policy.get(name)
@@ -2254,8 +2281,11 @@ def wall_summary(root, status, interval=None):
         judgment = reference_judgment(pending, pending.get('previous_reference'))
         result['reference_judgment'] = judgment
         result['comparable_scope'] = 'whole-accounting-not-two-way-selection'
-        if quiet_baseline(pending, policy) and judgment['decidable']:
-            result['baseline_provisional'] = False
+        if quiet_baseline(pending, policy):
+            if judgment['decidable']:
+                result['baseline_provisional'] = False
+            elif judgment['accepted']:
+                result['baseline_provisional'] = True
         pending_path.write_text(json.dumps(pending)+'\n')
     (root/'.lane/gate-wall.json').write_text(json.dumps(result, indent=2)+'\n')
     fields = ' '.join(key+'='+('unavailable' if key == 'baseline_provisional' and value is None else
