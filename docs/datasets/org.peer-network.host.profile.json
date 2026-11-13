@@ -7,6 +7,17 @@
   ],
   "rows": [
     {
+      "assurance": "semantic computational equality; public fields only; complete content comparison and replay remain required",
+      "category": "identity",
+      "consumers": "commit, parent lookup, tip-relative read and public rebuild",
+      "name": "result-position",
+      "owner": "pn-host",
+      "producer": "admitted public carrier projection",
+      "recipe": "pn-host/result-position/v1",
+      "role": "PN-result-position-v1",
+      "status": "designed; vectors and implementation held on the tree-carrier cut"
+    },
+    {
       "allocator": "repository maintainers for the centralized test deployment",
       "category": "allocation",
       "major": 1,

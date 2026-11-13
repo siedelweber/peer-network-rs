@@ -2,6 +2,17 @@ namespace = "org.peer-network.host.profile"
 version = [1, 0, 0]
 
 [[rows]]
+name = "result-position"
+category = "identity"
+recipe = "pn-host/result-position/v1"
+role = "PN-result-position-v1"
+owner = "pn-host"
+producer = "admitted public carrier projection"
+consumers = "commit, parent lookup, tip-relative read and public rebuild"
+status = "designed; vectors and implementation held on the tree-carrier cut"
+assurance = "semantic computational equality; public fields only; complete content comparison and replay remain required"
+
+[[rows]]
 name = "deployment"
 category = "allocation"
 namespace = "org.peer-network.test.publication"
