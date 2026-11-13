@@ -1,6 +1,6 @@
 //! mod:module:encode
 //!
-//! The canonical encoder — total, with no failure mode.
+//! The canonical encoder — total legacy routes and additive resource-bounded encoding.
 //!
 //! Every `Value` is already a member of the data language, so the encoder
 //! has no canonicity decision left to make: it writes heads in preferred
@@ -12,7 +12,7 @@
 //! recursive encoder is a value the decoder will accept, since the data
 //! language bounds nesting nowhere.
 
-use crate::value::{Bytes, Float, Simple, Text, Value};
+use crate::value::{Float, Simple, Value};
 use secrecy::{ExposeSecret, ExposeSecretMut, SecretBox, SecretSlice, SecretString};
 
 /// The initial byte of a head: the major type, and the additional
@@ -187,16 +187,6 @@ impl Value {
     }
 }
 
-fn write_bytes(out: &mut Vec<u8>, bytes: &Bytes) {
-    write_head(out, 2, bytes.as_slice().len() as u64);
-    out.extend_from_slice(bytes.as_slice());
-}
-
-fn write_text(out: &mut Vec<u8>, text: &Text) {
-    write_head(out, 3, text.as_str().len() as u64);
-    out.extend_from_slice(text.as_str().as_bytes());
-}
-
 /// Work items borrow either public values or protected leaves.
 enum Node<'a> {
     Public(&'a Value),
@@ -210,33 +200,241 @@ fn write_nodes(root: Node<'_>, out: &mut Vec<u8>) {
             Node::Private(private) => {
                 write_private(private, out, &mut work);
             }
-            Node::Public(value) => match value {
-                Value::Unsigned(n) => write_head(out, 0, *n),
-                Value::Negative(n) => write_head(out, 1, n.argument()),
-                Value::Bytes(b) => write_bytes(out, b),
-                Value::Text(t) => write_text(out, t),
-                Value::Array(a) => {
-                    write_head(out, 4, a.len() as u64);
-                    work.extend(a.as_slice().iter().rev().map(Node::Public));
-                }
-                Value::Map(m) => {
-                    write_head(out, 5, m.len() as u64);
-                    for (key, item) in m.entries().iter().rev() {
-                        work.push(Node::Public(item));
-                        work.push(Node::Public(key));
-                    }
-                }
-                Value::Tag(t) => {
-                    write_head(out, 6, t.number());
-                    work.push(Node::Public(t.item()));
-                }
-                Value::Bool(false) => out.push(0xf4),
-                Value::Bool(true) => out.push(0xf5),
-                Value::Null => out.push(0xf6),
-                Value::Simple(s) => write_simple(out, *s),
-                Value::Float(f) => write_float(out, *f),
-            },
+            Node::Public(value) => {
+                // Legacy byte output and workspace policy cannot return a resource refusal.
+                let mut policy = WritePolicy::Legacy;
+                let _ = public_node(value, &mut PublicOutput::Bytes(out), &mut work, &mut policy);
+            }
         }
+    }
+}
+
+/// Requested storage for caller-budgeted canonical encoding, retained on refusal.
+/// Observation and caller callback allocations are outside these counters.
+/// (´amend:interchange:canonical-budget´)
+#[derive(Debug, Default)]
+pub struct EncodingUsage {
+    /// Number of admitted reservation requests.
+    pub allocation_calls: usize,
+    /// Sum of requested bytes, including full replacement capacities.
+    pub allocation_bytes: usize,
+}
+
+/// Resource refusal of canonical encoding; no input or partial output is returned.
+/// (´amend:interchange:canonical-budget´)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EncodingError {
+    /// Checked length arithmetic overflowed or the measured length exceeded the ceiling.
+    Length,
+    /// A storage request would exceed the caller's ceiling or its arithmetic range.
+    Limit,
+    /// The caller refused a reservation before execution.
+    Reservation,
+    /// An admitted allocator request failed.
+    Allocation,
+}
+
+enum WritePolicy<'a> {
+    Legacy,
+    Budget {
+        limit: usize,
+        usage: &'a mut EncodingUsage,
+        reservation: &'a mut dyn FnMut(usize) -> Result<(), ()>,
+    },
+}
+
+impl WritePolicy<'_> {
+    fn reserve<T>(&mut self, values: &mut Vec<T>, additional: usize) -> Result<(), EncodingError> {
+        let Self::Budget {
+            limit,
+            usage,
+            reservation,
+        } = self
+        else {
+            // Legacy push/extend retains its original growth, including protected output.
+            return Ok(());
+        };
+        let length = values.len().checked_add(additional).ok_or(EncodingError::Limit)?;
+        if length <= values.capacity() {
+            return Ok(());
+        }
+        let capacity = values.capacity().checked_mul(2).ok_or(EncodingError::Limit)?.max(length);
+        let amount = capacity.checked_mul(std::mem::size_of::<T>()).ok_or(EncodingError::Limit)?;
+        let next = usage.allocation_bytes.checked_add(amount).ok_or(EncodingError::Limit)?;
+        let calls = usage.allocation_calls.checked_add(1).ok_or(EncodingError::Limit)?;
+        if next > *limit {
+            return Err(EncodingError::Limit);
+        }
+        reservation(amount).map_err(|()| EncodingError::Reservation)?;
+        usage.allocation_bytes = next;
+        usage.allocation_calls = calls;
+        encoding_reserve(values, capacity, usage)
+    }
+}
+
+fn encoding_reserve<T>(values: &mut Vec<T>, capacity: usize, usage: &EncodingUsage) -> Result<(), EncodingError> {
+    // Site observation cannot see allocations bypassing this site.
+    #[cfg(test)]
+    budget_tests::requested(capacity * std::mem::size_of::<T>(), usage);
+    let _ = usage;
+    values
+        .try_reserve_exact(capacity - values.len())
+        .map_err(|_| EncodingError::Allocation)
+}
+
+enum PublicOutput<'a> {
+    Count { length: usize, ceiling: usize },
+    Bytes(&'a mut Vec<u8>),
+}
+
+impl PublicOutput<'_> {
+    fn count(&mut self, amount: usize) -> Result<(), EncodingError> {
+        if let Self::Count { length, ceiling } = self {
+            let next = length.checked_add(amount).ok_or(EncodingError::Length)?;
+            if next > *ceiling {
+                return Err(EncodingError::Length);
+            }
+            *length = next;
+        }
+        Ok(())
+    }
+
+    fn head(&mut self, major: u8, argument: u64) -> Result<(), EncodingError> {
+        self.count(head_len(argument))?;
+        if let Self::Bytes(out) = self {
+            write_head(out, major, argument);
+        }
+        Ok(())
+    }
+
+    fn bytes(&mut self, bytes: &[u8]) -> Result<(), EncodingError> {
+        self.count(bytes.len())?;
+        if let Self::Bytes(out) = self {
+            out.extend_from_slice(bytes);
+        }
+        Ok(())
+    }
+}
+
+fn public_node<'a>(
+    value: &'a Value,
+    out: &mut PublicOutput<'_>,
+    work: &mut Vec<Node<'a>>,
+    policy: &mut WritePolicy<'_>,
+) -> Result<(), EncodingError> {
+    // Borrowed payloads and children need no owned copies or finalization buffer.
+    // Reintroducing one bypasses every reservation-site control and needs re-review.
+    match value {
+        Value::Unsigned(n) => out.head(0, *n)?,
+        Value::Negative(n) => out.head(1, n.argument())?,
+        Value::Bytes(b) => {
+            out.head(2, b.as_slice().len() as u64)?;
+            out.bytes(b.as_slice())?;
+        }
+        Value::Text(t) => {
+            out.head(3, t.as_str().len() as u64)?;
+            out.bytes(t.as_str().as_bytes())?;
+        }
+        Value::Array(a) => {
+            let length = a.len();
+            out.head(4, length as u64)?;
+            policy.reserve(work, length)?;
+            work.extend(a.as_slice().iter().rev().map(Node::Public));
+        }
+        Value::Map(m) => {
+            out.head(5, m.len() as u64)?;
+            // Keep legacy pairwise pushes, rather than replacing its growth with extend.
+            for (key, item) in m.entries().iter().rev() {
+                policy.reserve(work, 2)?;
+                work.push(Node::Public(item));
+                work.push(Node::Public(key));
+            }
+        }
+        Value::Tag(t) => {
+            out.head(6, t.number())?;
+            policy.reserve(work, 1)?;
+            work.push(Node::Public(t.item()));
+        }
+        Value::Bool(false) => out.bytes(&[0xf4])?,
+        Value::Bool(true) => out.bytes(&[0xf5])?,
+        Value::Null => out.bytes(&[0xf6])?,
+        Value::Simple(s) => match out {
+            PublicOutput::Count { .. } => out.count(if s.get() < 24 { 1 } else { 2 })?,
+            PublicOutput::Bytes(bytes) => write_simple(bytes, *s),
+        },
+        Value::Float(f) => match out {
+            PublicOutput::Count { .. } => out.count(1 + f.width().argument_len())?,
+            PublicOutput::Bytes(bytes) => write_float(bytes, *f),
+        },
+    }
+    Ok(())
+}
+
+fn public_walk<'a>(
+    value: &'a Value,
+    output: &mut PublicOutput<'_>,
+    work: &mut Vec<Node<'a>>,
+    policy: &mut WritePolicy<'_>,
+) -> Result<(), EncodingError> {
+    policy.reserve(work, 1)?;
+    work.push(Node::Public(value));
+    while let Some(node) = work.pop() {
+        if let Node::Public(value) = node {
+            public_node(value, output, work, policy)?;
+        }
+    }
+    Ok(())
+}
+
+impl Value {
+    /// Encode the same canonical name with charged workspace and output.
+    /// Usage resets at entry and records admitted requests even on refusal.
+    /// (´amend:interchange:canonical-budget´)
+    /// # Errors
+    /// `Length` refuses checked length overflow or a measured name above the ceiling;
+    /// `Limit` refuses a reservation ceiling or arithmetic overflow; `Reservation`
+    /// is the caller's refusal; `Allocation` is a failed admitted allocator request.
+    /// # Panics
+    /// A panicking callback propagates with usage at the earlier admitted requests.
+    pub fn to_canonical_bytes_budgeted(
+        &self,
+        allocation_bytes: usize,
+        usage: &mut EncodingUsage,
+        mut reservation: impl FnMut(usize) -> Result<(), ()>,
+    ) -> Result<Vec<u8>, EncodingError> {
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "encode::Value::to_canonical_bytes_budgeted",
+            &(self, allocation_bytes, "reservation callback is an executable capability"),
+        );
+        *usage = EncodingUsage::default();
+        let result = (|| {
+            let mut policy = WritePolicy::Budget {
+                limit: allocation_bytes,
+                usage,
+                reservation: &mut reservation,
+            };
+            let mut work = Vec::new();
+            let mut count = PublicOutput::Count {
+                length: 0,
+                ceiling: allocation_bytes,
+            };
+            public_walk(self, &mut count, &mut work, &mut policy)?;
+            let PublicOutput::Count { length, .. } = count else {
+                return Err(EncodingError::Length);
+            };
+            let mut output = Vec::new();
+            policy.reserve(&mut output, length)?;
+            // The exact count and identical walk keep output and reused workspace from growing.
+            // An owned copy or alternate growth path would evade site controls and needs re-review.
+            public_walk(self, &mut PublicOutput::Bytes(&mut output), &mut work, &mut policy)?;
+            Ok(output)
+        })();
+        tracing::event!(tracing::Level::TRACE, encoding_usage = ?usage);
+        let result = result.inspect_err(|_| tracing::event!(tracing::Level::TRACE, outcome = "refusal"));
+        scope.finish(&result);
+        result
     }
 }
 
@@ -403,6 +601,25 @@ mod secret_tests {
         value.expose_secret(/* (´[ROOT-cav:observe:secret-interchange-fixture-equality]´) */).as_slice() == expected
     }
 
+    /// Claim: Protected encoding retains its legacy policy for public children, including the existing output bound and exact bytes, without a new secret loan.
+    /// ´claim:encoding:protected-encoding-retains-legacy-policy´
+    /// ´test:unit:protected-encoding-retains-legacy-policy´
+    #[test]
+    fn protected_encoding_retains_legacy_policy() {
+        let public = Value::Array(Array::new([Value::Unsigned(24), Value::Null]));
+        let expected = [0x82, 0x18, 0x18, 0xf6];
+        let protected = SecretValue::Public(public);
+        let output = protected.to_secret_canonical_bytes(expected.len()).unwrap();
+        assert!(
+            fixture_equal(&output, &expected),
+            "protected public child keeps legacy policy"
+        );
+        assert!(
+            protected.to_secret_canonical_bytes(expected.len() - 1).is_err(),
+            "protected ceiling unchanged"
+        );
+    }
+
     fn fixture() -> (SecretValue, Value) {
         let words = [
             "nonce-private-000",
@@ -481,3 +698,6 @@ mod secret_tests {
         }
     }
 }
+
+#[cfg(test)]
+mod budget_tests;

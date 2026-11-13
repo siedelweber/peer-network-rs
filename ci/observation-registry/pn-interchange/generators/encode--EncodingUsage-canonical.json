@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "encode::EncodingUsage",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [derive (Debug , Default)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "Derived fields are public resource refusals and encoding reservation counters. They carry no credentials. Observation allocations are outside the encoding budget."
+  }
+}

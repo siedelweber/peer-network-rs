@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::EncodingError",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" Resource refusal of canonical encoding; no input or partial output is returned.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] # [derive (Debug , Clone , Copy , PartialEq , Eq)] pub enum EncodingError { # [doc = \" Checked length arithmetic overflowed or the measured length exceeded the ceiling.\"] Length , # [doc = \" A storage request would exceed the caller's ceiling or its arithmetic range.\"] Limit , # [doc = \" The caller refused a reservation before execution.\"] Reservation , # [doc = \" An admitted allocator request failed.\"] Allocation , }"
+  }
+}

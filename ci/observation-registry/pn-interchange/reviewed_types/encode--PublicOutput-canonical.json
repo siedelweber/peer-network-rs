@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::PublicOutput",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "enum PublicOutput < 'a > { Count { length : usize , ceiling : usize } , Bytes (& 'a mut Vec < u8 >) , }"
+  }
+}

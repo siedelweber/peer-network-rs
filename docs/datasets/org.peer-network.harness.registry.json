@@ -3134,6 +3134,11 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::encode::secret_tests::protected_encoding_retains_legacy_policy",
+        "pn-interchange::encode::budget_tests::canonical_encoding_differential",
+        "pn-interchange::encode::budget_tests::canonical_encoding_length",
+        "pn-interchange::encode::budget_tests::canonical_encoding_callback",
+        "pn-interchange::encode::budget_tests::canonical_encoding_reservations",
         "pn-interchange::decode::budget_tests::canonical_validation_obeys_shared_meter",
         "pn-interchange::decode::budget_tests::canonical_validation_reserves_before_allocation",
         "pn-interchange::encode::secret_tests::protected_canonical_bytes",

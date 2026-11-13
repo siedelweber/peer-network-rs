@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::EncodingUsage",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" Requested storage for caller-budgeted canonical encoding, retained on refusal.\"] # [doc = \" Observation and caller callback allocations are outside these counters.\"] # [doc = \" (´amend:interchange:canonical-budget´)\"] # [derive (Debug , Default)] pub struct EncodingUsage { # [doc = \" Number of admitted reservation requests.\"] pub allocation_calls : usize , # [doc = \" Sum of requested bytes, including full replacement capacities.\"] pub allocation_bytes : usize , }"
+  }
+}

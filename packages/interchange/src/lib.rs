@@ -95,7 +95,7 @@ pub use cddl::{
     RestraintReport, Satisfaction, Theory, check_inclusion, global, satisfies, satisfies_global, satisfies_open,
 };
 pub use decode::{CanonicalItem, CanonicalUsage, TransportLimits, TransportUsage};
-pub use encode::{SecretEncodingLimit, SecretValue};
+pub use encode::{EncodingError, EncodingUsage, SecretEncodingLimit, SecretValue};
 pub use envelope::{Content, ContentKey, Document, Envelope, MAX_ENVELOPE_PREFIX};
 pub use error::{AcquireError, DecodeError, EnvelopeError, Error, LabelError, RegexpError, TheoryError, ValueError};
 pub use label::NamespaceLabel;

@@ -22,3 +22,4 @@ foreach row : local_inputs
 endforeach
 subdir('cddl')
 subdir('decode')
+subdir('encode')

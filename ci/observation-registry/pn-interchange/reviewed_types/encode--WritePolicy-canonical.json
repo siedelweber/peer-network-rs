@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::WritePolicy",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "enum WritePolicy < 'a > { Legacy , Budget { limit : usize , usage : & 'a mut EncodingUsage , reservation : & 'a mut dyn FnMut (usize) -> Result < () , () > , } , }"
+  }
+}

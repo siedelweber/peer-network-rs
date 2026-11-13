@@ -4611,12 +4611,52 @@
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
     },
     {
+      "operation": "pn-interchange::encode::budget_tests::canonical_encoding_callback",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-encoding-callback",
+      "before": "",
+      "after": "Claim: Each reservation position of one nested encoding can be refused by the caller before execution, with prior usage retained; a shared meter and a panicking callback preserve that boundary.",
+      "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::budget_tests::canonical_encoding_differential",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-encoding-differential",
+      "before": "",
+      "after": "Claim: A finite unsorted corpus spanning all item kinds, head-width boundaries, container shapes and nesting encodes to the unchanged canonical bytes and passes budgeted strict validation.",
+      "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::budget_tests::canonical_encoding_length",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-encoding-length",
+      "before": "",
+      "after": "Claim: The counting sink refuses an over-ceiling or overflowing length before output allocation, while adjacent admitted lengths remain exact.",
+      "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::budget_tests::canonical_encoding_reservations",
+      "path": "packages/interchange/src/encode/budget_tests.rs",
+      "claim": "INTERCHANGE::claim:encoding:canonical-encoding-reservations",
+      "before": "",
+      "after": "Claim: Encoding reservation-site observations show prior charging and exact usage on success and refusal, including each workspace growth and output reservation; no allocator outside the site is observed.",
+      "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
+    },
+    {
       "operation": "pn-interchange::encode::secret_tests::protected_canonical_bytes",
       "path": "packages/interchange/src/encode.rs",
       "claim": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",
       "before": "Claim: Protected canonical tuples match public canonical bytes while complete full-trace child captures record no protected field or encoded result; the public route still records its content and the private allocation bound refuses excess.",
       "after": "Claim: Secrecy-typed protected tuples and output match the public canonical bytes under complete traced execution, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
       "review": "Retires INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy in favor of INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree at this witness site. The witness checks byte agreement between the protected and public canonical routes, refusal at a one-byte private allocation bound, complete traced capture and the public-route positive for private-author-name. The private route carries secrecy-typed inputs and output through labelled exits; it makes no trace-absence claim."
+    },
+    {
+      "operation": "pn-interchange::encode::secret_tests::protected_encoding_retains_legacy_policy",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:protected-encoding-retains-legacy-policy",
+      "before": "",
+      "after": "Claim: Protected encoding retains its legacy policy for public children, including the existing output bound and exact bytes, without a new secret loan.",
+      "review": "Finite differential encoding and strict validation controls, reservation-site accounting and refusal controls, and protected legacy policy control. Site hooks observe only requests at those sites, not a whole-process allocator. Source review supplies the absence of bypass copies. Protected equality reuses the existing inventoried loan; no new secret exit. No storage admission is inferred."
     },
     {
       "operation": "pn-interchange::inclusion::a_reached_rule_chain_respelled_is_the_same_type",

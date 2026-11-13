@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::Value::to_canonical_bytes_budgeted",
+    "owner": "INTERCHANGE",
+    "signature": "fn to_canonical_bytes_budgeted (& self , allocation_bytes : usize , usage : & mut EncodingUsage , mut reservation : impl FnMut (usize) -> Result < () , () > ,) -> Result < Vec < u8 > , EncodingError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::Value::to_canonical_bytes_budgeted",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"encode::Value::to_canonical_bytes_budgeted\" , & (self , allocation_bytes , \"reservation callback is an executable capability\") ,) ; * usage = EncodingUsage :: default () ; let result = (| | { let mut policy = WritePolicy :: Budget { limit : allocation_bytes , usage , reservation : & mut reservation , } ; let mut work = Vec :: new () ; let mut count = PublicOutput :: Count { length : 0 , ceiling : allocation_bytes , } ; public_walk (self , & mut count , & mut work , & mut policy) ? ; let PublicOutput :: Count { length , .. } = count else { return Err (EncodingError :: Length) ; } ; let mut output = Vec :: new () ; policy . reserve (& mut output , length) ? ; public_walk (self , & mut PublicOutput :: Bytes (& mut output) , & mut work , & mut policy) ? ; Ok (output) }) () ; tracing :: event ! (tracing :: Level :: TRACE , encoding_usage = ? usage) ; let result = result . inspect_err (| _ | tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\")) ; scope . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "The public encoding boundary observes the public input, ceiling, result and exact reservation usage outside the encoding budget. Its shared counting/writing kernel borrows values. The ceiling and fallible caller meter admit workspace and output requests before site execution. Reservation-site controls do not observe bypass allocations; absence of owned payload copies is a reviewed source property. Existing protected encoding retains legacy allocation sites and every secret loan. The callback is an executable capability, not serializable input.",
+    "assessments": {
+      "full_recording": "review-047",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}
