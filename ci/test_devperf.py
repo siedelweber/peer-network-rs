@@ -168,6 +168,8 @@ class Performance(unittest.TestCase):
             self.assertEqual(os.environ.get('PN_GATE_STEP'),'owned-step','step accounting survives isolation')
             output=io.StringIO()
             suite=unittest.TestSuite(Performance(name) for name in ('test_whole_gate_warning','test_fixture_diagnostics'))
+            from test_host_runtime import HostRuntime
+            suite.addTest(HostRuntime('test_required_postgresql_directory'))
             result=unittest.TextTestRunner(stream=output).run(suite)
             self.assertTrue(result.wasSuccessful(),'nested declaration fixtures are independent: '+output.getvalue())
             return 0

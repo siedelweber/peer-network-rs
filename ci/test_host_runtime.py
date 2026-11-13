@@ -665,13 +665,14 @@ class HostRuntime(unittest.TestCase):
         ´test:integration:test-required-postgresql-directory´
         """
         for value in (None, ''):
-            env=dict(os.environ,LINTER_BIN=sys.executable)
+            env=dict(os.environ,LINTER_BIN=sys.executable,PN_GATE_PLAN='one-run',
+                     PN_GATE_ENTRY='fixture-postgresql-directory',PN_GATE_SAMPLE='import')
             env.pop('PN_POSTGRESQL_BIN',None)
             if value is not None:
                 env['PN_POSTGRESQL_BIN']=value
             result=subprocess.run(['bash','ci/gate.sh'],env=env,capture_output=True,check=False)
             self.assertEqual(result.returncode,2)
-            self.assertIn(b'PN_POSTGRESQL_BIN',result.stderr)
+            self.assertIn(b'PN_POSTGRESQL_BIN',result.stderr,'fixture declaration reaches the PostgreSQL refusal')
             self.assertNotIn(b'STEP=',result.stdout)
 
     def test_dependency_pins(self):
