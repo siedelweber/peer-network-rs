@@ -195,7 +195,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay. Unexpected RPC refusals retain the daemon log and quote bounded code, message and observed wallet/chain heights; expected refusals keep their result. The pinned daemon advertises the validation-queue barrier, and both fixture mining paths require a drained wallet at the chain height before dependent spends; stand-ins witness a lagging wallet, a failed barrier and unavailable observations without retrying a spend.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -260,6 +260,13 @@ class WalletBoundary(unittest.TestCase):
                 started = config['port']
                 wallet_elements.rpc(config, 'createwallet', ['producer', False, False, '', False, False])
                 wallet = wallet_elements.rpc(config, 'getwalletinfo')
+                wallet_elements.wait_wallet(config)
+                with self.assertRaisesRegex(RuntimeError, 'code="-32601" message="Method not found".*wallet_height="0" chain_height="0"'):
+                    wallet_elements.rpc(config, 'fixture_method_that_does_not_exist')
+                retained = Path('.lane/gate-elements-failure-wallet-port-race.log')
+                self.assertTrue(retained.stat().st_size > 0 and
+                                (root/'elementsregtest'/'debug.log').read_bytes().startswith(retained.read_bytes()),
+                                'unexpected refusal retains the original daemon log beside gate evidence')
                 self.assertFalse(wallet['descriptors'])
                 self.assertEqual(wallet['keypoolsize'], wallet_elements.PRODUCER_KEYPOOL)
                 self.assertEqual(wallet['keypoolsize_hd_internal'], wallet_elements.PRODUCER_KEYPOOL)
@@ -321,7 +328,9 @@ class WalletBoundary(unittest.TestCase):
                 diagnostic = io.StringIO()
                 ticks = [100, 100.25, 100.5] if outcome == 'timeout' else [100, 100.25]
                 with patch.object(wallet_elements.http.client, 'HTTPConnection', return_value=connection) as factory, \
-                     patch.object(wallet_elements.time, 'monotonic', side_effect=ticks), redirect_stderr(diagnostic):
+                     patch.object(wallet_elements.time, 'monotonic', side_effect=ticks), \
+                     patch.object(wallet_elements, 'wallet_progress', return_value=dict(wallet=0, chain=0)), \
+                     redirect_stderr(diagnostic):
                     if outcome == 'success':
                         self.assertEqual(wallet_elements.rpc(dict(port=1, producer='private credential sentinel'), method), 'fixture')
                     else:
@@ -331,13 +340,18 @@ class WalletBoundary(unittest.TestCase):
                 factory.assert_called_once_with('127.0.0.1', 1, timeout=expected)
                 connection.request.assert_called_once()
                 connection.close.assert_called_once()
+                lines = diagnostic.getvalue().splitlines(keepends=True)
+                if outcome == 'error':
+                    self.assertTrue(lines and lines[0].startswith('WALLET-RPC-REFUSED '),
+                                    'unexpected refusal is printed even if its caller catches it')
+                    self.assertIn('code="-1"', lines.pop(0), 'printed refusal retains the daemon code')
                 if administrative:
                     elapsed = '0.500000' if outcome == 'timeout' else '0.250000'
-                    self.assertEqual(diagnostic.getvalue(),
+                    self.assertEqual(''.join(lines),
                                      f'WALLET-RPC class=administrative method={method} outcome={outcome} '
                                      f'wall_s={elapsed} socket_bound_s={expected}\n')
                 else:
-                    self.assertEqual(diagnostic.getvalue(), '')
+                    self.assertEqual(''.join(lines), '')
 
         # A slow success is retained in the test root and printed at shutdown,
         # independent of whether the caller consumes its captured stderr.
@@ -367,6 +381,112 @@ class WalletBoundary(unittest.TestCase):
             self.assertEqual(row['steady_bound_s'], wallet_elements.RPC_TIMEOUT)
             self.assertEqual(row['administrative_bound_s'], wallet_elements.RPC_ADMIN_TIMEOUT)
             self.assertNotIn('private credential sentinel', retained+output.getvalue())
+
+        self._wallet_refusal_controls()
+        root = (Path('.lane')/'wallet-signed-barrier-control').resolve()
+        try:
+            with patch.object(wallet_elements, 'wait_wallet', wraps=wallet_elements.wait_wallet) as barrier:
+                wallet_elements.signed(root)
+            self.assertEqual(barrier.call_count, 5, 'each signed-fixture block drains before its dependent spend')
+        finally:
+            wallet_elements.stop(root)
+
+    def _wallet_refusal_controls(self):
+        """Controlled RPC responses witness diagnosis and the dependency barrier, not a daemon scheduling race."""
+        import wallet_elements as e
+        from unittest.mock import MagicMock, patch
+        from contextlib import redirect_stderr
+        import io
+        connection = MagicMock()
+        response = connection.getresponse.return_value
+        response.status = 500
+        response.read.return_value = json.dumps(dict(jsonrpc='2.0', id=1,
+            error=dict(code=-6, message='insufficient funds\n'+'x'*2000))).encode()
+        config = dict(port=1, producer='private sentinel')
+        with patch.object(e.http.client, 'HTTPConnection', return_value=connection), \
+             patch.object(e, 'wallet_progress', return_value=dict(wallet=4, chain=5)) as progress:
+            with self.assertRaises(RuntimeError) as failure:
+                e.rpc(config, 'destroyamount')
+            text = str(failure.exception)
+            self.assertIn('code="-6"', text, 'refusal reports daemon code')
+            self.assertIn('message="insufficient funds\\n', text, 'refusal reports quoted daemon message')
+            self.assertIn('wallet_height="4" chain_height="5"', text, 'refusal compares observed heights')
+            self.assertLess(len(text), 800, 'daemon refusal text is bounded')
+            self.assertNotIn('\n', text, 'daemon text cannot inject a log line')
+            self.assertNotIn('private sentinel', text, 'diagnosis does not print credentials')
+            connection.request.assert_called_once()
+            progress.reset_mock()
+            with redirect_stderr(io.StringIO()) as expected_output:
+                self.assertEqual(e.rpc(config, 'destroyamount', refusal=True), -6, 'expected refusal retains its result')
+            self.assertEqual(expected_output.getvalue(), '', 'expected refusal does not add a diagnostic')
+            progress.assert_not_called()
+
+        with patch.object(e, 'rpc', side_effect=[RuntimeError('diagnostic refused'), dict(blocks=5)]) as call:
+            heights = e.wallet_progress(config)
+            self.assertEqual(heights['chain'], 5, 'chain observation survives a wallet diagnostic refusal')
+            self.assertIn('unavailable: diagnostic refused', heights['wallet'], 'missing wallet height is explicit')
+            self.assertTrue(all(c.kwargs['diagnose'] is False for c in call.call_args_list),
+                            'diagnostic calls cannot recurse')
+
+        for mode in ('drain', 'behind', 'timeout', 'missing-help', 'unknown-height'):
+            with self.subTest(wallet_sync=mode):
+                state = dict(wallet=4, chain=5)
+                calls = []
+                def call(_config, method, params=None):
+                    calls.append(method)
+                    if method == 'help':
+                        return 'other method' if mode == 'missing-help' else 'syncwithvalidationinterfacequeue'
+                    if mode == 'timeout':
+                        state['wallet'] = state['chain']
+                        raise TimeoutError('queue socket bound')
+                    if mode == 'drain':
+                        state['wallet'] = state['chain']
+                    if mode == 'unknown-height':
+                        state['wallet'] = state['chain'] = 'unavailable'
+                with patch.object(e, 'rpc', side_effect=call), \
+                     patch.object(e, 'wallet_progress', side_effect=lambda *_: state.copy()), redirect_stderr(io.StringIO()) as output:
+                    if mode == 'drain':
+                        try:
+                            e.wait_wallet(config.copy())
+                        except RuntimeError as error:
+                            self.fail('queue barrier must release the held wallet before checking height: '+str(error))
+                        self.assertIn('wallet_height="5" chain_height="5"', output.getvalue(),
+                                      'barrier reports the processed height after draining')
+                    else:
+                        with self.assertRaisesRegex(RuntimeError, 'synchronization.*(help unavailable|wallet-processed-height-equals-chain-height)'):
+                            e.wait_wallet(config.copy())
+                self.assertEqual(calls, ['help'] if mode == 'missing-help' else ['help', 'syncwithvalidationinterfacequeue'],
+                                 'one bounded barrier follows capability confirmation; no spend is retried')
+
+        # Exercise both production mining routes with a wallet held behind by
+        # the stand-in until the barrier. This witnesses ordering, not a way to
+        # suspend the real daemon's wallet scheduler.
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            state = {'submitted': False}
+            def block_rpc(_config, method, params=None, **kwargs):
+                if method == 'combineblocksigs':
+                    return dict(complete=True, hex='fixture')
+                if method == 'submitblock':
+                    state['submitted'] = True
+                    return None
+                return 'fixture'
+            def barrier(_config):
+                self.assertTrue(state['submitted'], 'wallet barrier follows accepted block')
+                state['drained'] = True
+            with patch.object(e, 'producer', return_value=(config, 'challenge')), \
+                 patch.object(e, 'rpc', side_effect=block_rpc), patch.object(e, 'wait_wallet', side_effect=barrier):
+                e.sign_block(root, False)
+            self.assertTrue(state.get('drained'), 'shared authentication/settlement block path drains the wallet')
+
+        connection = MagicMock()
+        connection.getresponse.side_effect = TimeoutError('queue stalled')
+        with patch.object(e.http.client, 'HTTPConnection', return_value=connection) as factory:
+            with self.assertRaisesRegex(TimeoutError, 'syncwithvalidationinterfacequeue exceeded the 60 s socket bound'):
+                e.rpc(config, 'syncwithvalidationinterfacequeue')
+        factory.assert_called_once_with('127.0.0.1', 1, timeout=e.WALLET_SYNC_TIMEOUT)
+        connection.request.assert_called_once()
 
     def test_codec_pins(self):
         """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.

@@ -104,11 +104,73 @@ ADMIN_METHODS = frozenset(('createwallet', 'importprivkey'))
 # Each sequential fixture address request can replenish this small reserve.
 # Pre-generating the default legacy wallet pool does no useful fixture work.
 PRODUCER_KEYPOOL = 16
+RPC_DIAGNOSTIC_CHARS = 512
+WALLET_SYNC_TIMEOUT = 60
 
 
-def rpc(config, method, params=None, credential=None, refusal=False, detail=False, wallet=None):
+def diagnostic_text(value):
+    """Bound and quote daemon text so a refusal cannot forge another log line."""
+    return json.dumps(str(value)[:RPC_DIAGNOSTIC_CHARS], ensure_ascii=True)
+
+
+def wallet_progress(config, wallet=None):
+    """Read public heights without recursively diagnosing a failed diagnostic."""
+    result = {}
+    for name, method in [('wallet', 'getwalletinfo'), ('chain', 'getblockchaininfo')]:
+        try:
+            info = rpc(config, method, wallet=wallet if name == 'wallet' else None, diagnose=False)
+            result[name] = info['lastprocessedblock']['height'] if name == 'wallet' else info['blocks']
+        except Exception as error:
+            result[name] = 'unavailable: '+str(error)[:RPC_DIAGNOSTIC_CHARS]
+    return result
+
+
+def retain_failure(config):
+    """Keep the daemon's original log beside the gate's other evidence logs."""
+    if not config.get('rpc_log'):
+        return 'unavailable: fixture log path absent'
+    root = Path(config['rpc_log']).parent
+    target = Path('.lane')/('gate-elements-failure-'+root.name+'.log')
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(root/'elementsregtest'/'debug.log', target)
+        return str(target)
+    except OSError as error:
+        return 'unavailable: '+str(error)[:RPC_DIAGNOSTIC_CHARS]
+
+
+def wait_wallet(config, wallet='producer'):
+    """Drain validation callbacks once, then require the wallet's reported chain height.
+
+    This is a dependency barrier, not a retry of a refused spend. The daemon's
+    hidden RPC must advertise itself; no assumed delay substitutes for it.
+    """
+    method = 'syncwithvalidationinterfacequeue'
+    if not config.get('_wallet_sync_help'):
+        help_text = rpc(config, 'help', [method])
+        if not isinstance(help_text, str) or method not in help_text:
+            raise RuntimeError('Elements wallet synchronization RPC help unavailable')
+        config['_wallet_sync_help'] = True
+    failure = None
+    try:
+        rpc(config, method)
+    except Exception as error:
+        failure = error
+    progress = wallet_progress(config, wallet)
+    line = ('WALLET-SYNC condition=wallet-processed-height-equals-chain-height '
+            f'wallet_height={diagnostic_text(progress["wallet"])} chain_height={diagnostic_text(progress["chain"])} '
+            f'queue_socket_bound_s={WALLET_SYNC_TIMEOUT}')
+    print(line, file=sys.stderr, flush=True)
+    if failure is not None or not isinstance(progress['wallet'], int) or progress['wallet'] != progress['chain']:
+        raise RuntimeError('Elements wallet synchronization refused: '+line+
+                           (' cause='+diagnostic_text(failure) if failure is not None else '')) from failure
+
+
+def rpc(config, method, params=None, credential=None, refusal=False, detail=False, wallet=None, diagnose=True):
     administrative = method in ADMIN_METHODS
     timeout = RPC_ADMIN_TIMEOUT if administrative else RPC_TIMEOUT
+    if method == 'syncwithvalidationinterfacequeue':
+        timeout = WALLET_SYNC_TIMEOUT
     connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=timeout)
     credential = credential if credential is not None else config['producer']
     started = time.monotonic()
@@ -131,7 +193,18 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
             outcome = 'expected-refusal'
             return dict(code=value['error']['code'], message=value['error'].get('message')) if detail else value['error']['code']
         if 'error' in value:
-            raise RuntimeError('Elements harness RPC refused: '+method)
+            error = value['error']
+            code = error.get('code') if isinstance(error, dict) else None
+            message = error.get('message') if isinstance(error, dict) else error
+            reason = ('Elements harness RPC refused: '+method+
+                      ' code='+diagnostic_text(code)+' message='+diagnostic_text(message))
+            if diagnose:
+                progress = wallet_progress(config, wallet)
+                reason += (' wallet_height='+diagnostic_text(progress['wallet'])+
+                           ' chain_height='+diagnostic_text(progress['chain'])+
+                           ' daemon_log='+diagnostic_text(retain_failure(config)))
+                print('WALLET-RPC-REFUSED '+reason, file=sys.stderr, flush=True)
+            raise RuntimeError(reason)
         outcome = 'success'
         return value['result']
     except TimeoutError:
@@ -287,6 +360,7 @@ def signed(root):
         if not combined['complete'] or rpc(config, 'submitblock', [combined['hex']]) is not None:
             raise RuntimeError('Elements signed fixture refused')
         locator = rpc(config, 'getbestblockhash')
+        wait_wallet(config)
         blocks.append(locator)
         (root/('block-'+str(len(blocks))+'.hex')).write_text(rpc(config, 'getblock', [locator, 0]))
         return locator
@@ -514,6 +588,7 @@ def sign_block(root, exclude):
     combined = rpc(config, 'combineblocksigs', [proposed, signatures, challenge])
     if not combined['complete'] or rpc(config, 'submitblock', [combined['hex']]) is not None:
         raise RuntimeError('Elements settlement block refused')
+    wait_wallet(config)
 
 
 def settlement(root):
