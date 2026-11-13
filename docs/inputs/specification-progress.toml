@@ -1765,7 +1765,7 @@ rows = [
   { category = "record-coverage", name = "pn-epoch", total = 55, exact_citing = 19, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-graph", total = 78, exact_citing = 34, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-host", total = 27, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
-  { category = "record-coverage", name = "pn-interchange", total = 26, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
+  { category = "record-coverage", name = "pn-interchange", total = 27, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-readouts", total = 0, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-records", total = 51, exact_citing = 19, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
   { category = "record-coverage", name = "pn-replay", total = 0, exact_citing = 0, numeric_display = { total = { display = "exact", exact_digits = 32 }, exact_citing = { display = "exact", exact_digits = 32 } } },
