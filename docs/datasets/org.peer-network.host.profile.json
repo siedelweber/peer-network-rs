@@ -524,6 +524,50 @@
         "charge analytic premises, procedure, input and complete ridge record"
       ],
       "name": "ridge-evidence"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "api-allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "api-control-schema",
+      "namespace": "org.peer-network.test.api-control-schema",
+      "owner": "API implementer and repository reviewer",
+      "status": "envelope theory assigned in design; artifact and executable conformance not implemented",
+      "theory": "GraphQL SDL text"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "api-allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "api-control-register",
+      "namespace": "org.peer-network.test.api-control-register",
+      "owner": "API implementer and repository reviewer",
+      "status": "envelope theory assigned in design; artifact and executable conformance not implemented",
+      "theory": "TOML register text"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "api-allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "api-node-schema",
+      "namespace": "org.peer-network.test.api-node-schema",
+      "owner": "API implementer and repository reviewer",
+      "status": "envelope theory assigned in design; artifact and executable conformance not implemented",
+      "theory": "GraphQL SDL text"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "api-allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "api-node-register",
+      "namespace": "org.peer-network.test.api-node-register",
+      "owner": "API implementer and repository reviewer",
+      "status": "envelope theory assigned in design; artifact and executable conformance not implemented",
+      "theory": "TOML register text"
     }
   ]
 }

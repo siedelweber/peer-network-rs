@@ -320,3 +320,47 @@ fields = ["per-Actor lower/upper rate hull", "ordered attempts: rung, margined f
 name = "ridge-evidence"
 category = "nested-fields"
 fields = ["definition schema, inverse temperature, bleed squared and core power", "input bracket, depth ceiling and production/replay Work ceilings", "ordered primitive queries, subdivision cells, optional image and consumed Work", "floor comparison wall and floor variants, queries, verdict and Work", "charge analytic premises, procedure, input and complete ridge record"]
+
+[[rows]]
+name = "api-control-schema"
+category = "api-allocation"
+namespace = "org.peer-network.test.api-control-schema"
+major = 1
+minor = 0
+theory = "GraphQL SDL text"
+status = "envelope theory assigned in design; artifact and executable conformance not implemented"
+allocator = "repository maintainers for the centralized test deployment"
+owner = "API implementer and repository reviewer"
+
+[[rows]]
+name = "api-control-register"
+category = "api-allocation"
+namespace = "org.peer-network.test.api-control-register"
+major = 1
+minor = 0
+theory = "TOML register text"
+status = "envelope theory assigned in design; artifact and executable conformance not implemented"
+allocator = "repository maintainers for the centralized test deployment"
+owner = "API implementer and repository reviewer"
+
+[[rows]]
+name = "api-node-schema"
+category = "api-allocation"
+namespace = "org.peer-network.test.api-node-schema"
+major = 1
+minor = 0
+theory = "GraphQL SDL text"
+status = "envelope theory assigned in design; artifact and executable conformance not implemented"
+allocator = "repository maintainers for the centralized test deployment"
+owner = "API implementer and repository reviewer"
+
+[[rows]]
+name = "api-node-register"
+category = "api-allocation"
+namespace = "org.peer-network.test.api-node-register"
+major = 1
+minor = 0
+theory = "TOML register text"
+status = "envelope theory assigned in design; artifact and executable conformance not implemented"
+allocator = "repository maintainers for the centralized test deployment"
+owner = "API implementer and repository reviewer"

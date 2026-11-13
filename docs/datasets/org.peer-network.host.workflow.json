@@ -159,10 +159,10 @@
     {
       "category": "operation",
       "contract": "amend:api:node-package",
-      "inputs": "private typed bootstrap context outside public variables",
+      "inputs": "declared public shell bootstrap; any later private context stays outside public variables",
       "kind": "mutation",
       "name": "start",
-      "outcome": "listener start outcome through local executor",
+      "outcome": "checked bootstrap and shell readiness through the in-process local executor; no listener or store",
       "status": "planned; not served",
       "surface": "control"
     },
