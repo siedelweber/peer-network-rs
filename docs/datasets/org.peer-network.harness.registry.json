@@ -4296,7 +4296,10 @@
         "pn-secret-home::tests::foreign_pid",
         "pn-secret-home::tests::completion_controls",
         "pn-secret-home::tests::completion_repeat",
-        "pn-secret-home::tests::completion_diagnostics"
+        "pn-secret-home::tests::completion_diagnostics",
+        "pn-secret-home::tests::credential_vectors",
+        "pn-secret-home::tests::credential_refusals",
+        "pn-secret-home::tests::credential_diagnostics"
       ],
       "implementation": "pn-secret-home-rust",
       "kind": "suite",

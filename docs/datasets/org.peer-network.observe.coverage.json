@@ -799,25 +799,25 @@
       "operations": 118
     },
     {
-      "exceptions": 7,
-      "generators": 2,
+      "exceptions": 9,
+      "generators": 3,
       "helpers": 0,
-      "instrumented": 4,
+      "instrumented": 6,
       "name": "pn-secret-home",
       "number_forms": {
         "exceptions": {
-          "exact": "7",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "2",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -830,18 +830,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "4",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "11",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         }
@@ -868,7 +868,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 11
+      "operations": 15
     },
     {
       "exceptions": 23,

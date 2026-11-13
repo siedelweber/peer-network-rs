@@ -240,6 +240,10 @@
         {
           "owner": "HOST",
           "target": "DERIVATION"
+        },
+        {
+          "owner": "SECRETHOME",
+          "target": "DERIVATION"
         }
       ],
       "name": "declaration",

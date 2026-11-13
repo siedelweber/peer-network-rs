@@ -8,6 +8,7 @@ publish.workspace = true
 version.workspace = true
 
 [dependencies]
+pn-credential-derivation = { path = "../credential-derivation" }
 rustix.workspace = true
 zeroize.workspace = true
 getrandom.workspace = true

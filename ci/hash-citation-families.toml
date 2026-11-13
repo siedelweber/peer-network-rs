@@ -2,6 +2,17 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "protected-credential-independent-vectors"
+group = "public credential fixtures"
+measures = "Public fixture operands, independently reconstructed derived keys and verifier text, and the same fixed verifier work factor in its implementation and description"
+producer = "ci/home_vectors.py using Python hashlib, hmac and base64"
+establishment = "defined"
+reader = "protected-credential-vectors"
+source = "packages/secret-home/src/tests/vectors.rs"
+definition = "Reconstruct every byte without the Rust library, host or their helpers; refuse any difference in the entire generated fixture source before accounting literals."
+paths = ["packages/secret-home/src/tests/vectors.rs", "ci/home_vectors.py"]
+
+[[rows]]
 family = "credential-independent-vectors"
 group = "public credential fixtures"
 measures = "Public fixture operands, independently reconstructed derived keys and verifier text, and the same fixed verifier work factor in its implementation and description"
@@ -406,6 +417,16 @@ establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals construct public parser fixtures; no bare content identity is admitted."
 paths = ["packages/wallet/**/*.rs", "ci/wallet_elements.py"]
+
+[[rows]]
+family = "protected-password-hex-alphabet"
+group = "protected password encoding"
+measures = "The sixteen lowercase base-sixteen digits in numeric order, not an identity"
+producer = "The base-sixteen positional alphabet"
+establishment = "defined"
+reader = "hex-alphabet"
+definition = "Reconstruct the exact alphabet by formatting integers zero through fifteen in lowercase base sixteen. Refuse any different spelling or identity context."
+paths = ["packages/secret-home/src/lib.rs"]
 
 [[rows]]
 family = "wallet-hex-alphabet"

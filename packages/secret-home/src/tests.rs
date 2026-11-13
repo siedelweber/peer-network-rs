@@ -1,5 +1,195 @@
 use super::*;
 
+mod vectors;
+
+struct HomeVector {
+    entropy: [u8; 32],
+    salt: [u8; 16],
+    password: &'static [u8],
+    verifier: &'static [u8],
+}
+
+thread_local! {
+    static CORRUPT_CREDENTIAL: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+pub(super) fn corrupt_credential(credential: &mut Credential) {
+    if CORRUPT_CREDENTIAL.get() {
+        credential.password.checked_bytes().unwrap()[0] ^= 1;
+    }
+}
+
+fn fixture_credential(protection: &Protection, vector: &HomeVector) -> Result<Credential, CredentialError> {
+    let mut calls = 0;
+    let result = protection.credential_with(|bytes| {
+        calls += 1;
+        match calls {
+            1 => bytes.copy_from_slice(&vector.entropy),
+            2 => bytes.copy_from_slice(&vector.salt),
+            _ => panic!("only independent password and salt entropy requests"),
+        }
+        Ok(())
+    });
+    assert_eq!(calls, 2, "separate password and salt requests");
+    result
+}
+
+/// Three distinct unsorted public entropy inputs match independent password/verifier
+/// bytes through the protected constructor; each sequential role uses two locked
+/// pages, clears 263 scratch bytes and releases both reservations on completion.
+/// ´claim:crypto:protected-credentials-match-independent-vectors´
+/// ´test:unit:credential-vectors´
+#[test]
+fn credential_vectors() {
+    let Some(_) = child_case("tests::credential_vectors", &["vectors"]) else {
+        return;
+    };
+    let _serial = SERIAL.lock().unwrap();
+    let protection = protection();
+    assert_eq!(
+        std::mem::size_of::<Credential>(),
+        2 * std::mem::size_of::<Home>(),
+        "only two owning handles retained"
+    );
+    let mut distinct = std::collections::HashSet::new();
+    for vector in vectors::VECTORS {
+        assert!(distinct.insert(vector.entropy), "distinct unsorted fixture input");
+        let reserved = RESERVED.load(Ordering::SeqCst);
+        let locked = locked_kib();
+        let mut credential = fixture_credential(&protection, vector).unwrap();
+        assert_eq!(
+            credential.password.len + credential.verifier.len,
+            2 * protection.page,
+            "two-page locked budget"
+        );
+        assert_eq!(
+            RESERVED.load(Ordering::SeqCst),
+            reserved + 2 * protection.page,
+            "two reservations only"
+        );
+        assert_eq!(locked_kib(), locked + 2 * protection.page / 1024, "kernel locked budget");
+        assert_eq!(
+            &credential.password.checked_bytes().unwrap()[..64],
+            vector.password,
+            "independent 64-byte password framing"
+        );
+        let bytes = credential.verifier.checked_bytes().unwrap();
+        assert_eq!(&bytes[..135], vector.verifier, "independent 135-byte verifier framing");
+        assert!(bytes[151..].iter().all(|b| *b == 0), "derivation scratch erased");
+        assert_eq!(WORKSPACE_LENGTH - 151, 263, "declared protected scratch");
+        assert_eq!(credential.complete(), Ok(()), "both homes complete");
+        assert_eq!(RESERVED.load(Ordering::SeqCst), reserved, "both reservations released");
+        assert_eq!(locked_kib(), locked, "both mappings unlocked");
+    }
+    assert_eq!(distinct.len(), 3, "three distinct inputs executed without sorting");
+}
+
+/// A corrupted constructor pairing refuses before a credential can be returned;
+/// partial entropy and insufficient declared budget refuse without retained mappings.
+/// These finite injected cases do not establish the operating-system entropy quality.
+/// ´claim:crypto:protected-credentials-refuse-pairing-entropy-and-budget´
+/// ´test:unit:credential-refusals´
+#[test]
+fn credential_refusals() {
+    let Some(case) = child_case("tests::credential_refusals", &["pair", "entropy", "budget"]) else {
+        return;
+    };
+    let _serial = SERIAL.lock().unwrap();
+    let page = page_size().unwrap();
+    let protection = Protection::establish(if case == "budget" { page } else { 2 * page }).unwrap();
+    let reserved = RESERVED.load(Ordering::SeqCst);
+    if case == "budget" {
+        assert_eq!(
+            protection.credential().unwrap_err(),
+            CredentialError::Home(Error::Budget),
+            "one-page budget refuses"
+        );
+    } else if case == "entropy" {
+        let result = protection.credential_with(|bytes| {
+            bytes.fill(0x59);
+            Err(Error::Entropy)
+        });
+        assert_eq!(
+            result.unwrap_err(),
+            CredentialError::Home(Error::Entropy),
+            "partial entropy refuses"
+        );
+    } else {
+        CORRUPT_CREDENTIAL.set(true);
+        let result = fixture_credential(&protection, &vectors::VECTORS[0]);
+        CORRUPT_CREDENTIAL.set(false);
+        assert!(
+            matches!(result, Err(CredentialError::Pairing)),
+            "constructor rejects wrong pairing"
+        );
+    }
+    assert_eq!(RESERVED.load(Ordering::SeqCst), reserved, "refused credential releases homes");
+}
+
+/// Credential carriers have no implicit copy or byte view; actual wrong-pairing
+/// errors and tracing contain no fixture password or verifier, only fixed classes.
+/// ´claim:crypto:protected-credential-errors-and-traces-contain-no-private-bytes´
+/// ´test:unit:credential-diagnostics´
+#[test]
+fn credential_diagnostics() {
+    trait Ambiguous<A> {
+        fn probe() {}
+    }
+    impl<T: ?Sized> Ambiguous<()> for T {}
+    impl<T: Copy> Ambiguous<u8> for T {}
+    impl<T: Clone> Ambiguous<u16> for T {}
+    impl<T: ?Sized + std::fmt::Display> Ambiguous<u32> for T {}
+    impl<T: ?Sized + std::ops::Deref> Ambiguous<u64> for T {}
+    let Some(_) = child_case("tests::credential_diagnostics", &["private"]) else {
+        return;
+    };
+    let _serial = SERIAL.lock().unwrap();
+    let _ = <Credential as Ambiguous<_>>::probe;
+    let protection = protection();
+    let trace = Arc::new(std::sync::Mutex::new(String::new()));
+    CORRUPT_CREDENTIAL.set(true);
+    let error = tracing::subscriber::with_default(Trace(Arc::clone(&trace)), || {
+        fixture_credential(&protection, &vectors::VECTORS[0]).unwrap_err()
+    });
+    CORRUPT_CREDENTIAL.set(false);
+    assert_eq!(
+        format!("{error}"),
+        "credential pairing refused",
+        "constant credential Display"
+    );
+    assert_eq!(format!("{error:?}"), "Pairing", "constant credential Debug");
+    assert!(std::error::Error::source(&error).is_none(), "no private credential source");
+    let trace = trace.lock().unwrap();
+    let mut corrupted = vectors::VECTORS[0].password.to_vec();
+    corrupted[0] ^= 1;
+    assert!(
+        !trace.contains(std::str::from_utf8(&corrupted).unwrap()),
+        "no corrupted private password in trace"
+    );
+    assert!(
+        !trace.contains(&format!("{corrupted:?}")),
+        "no corrupted private bytes in trace"
+    );
+    assert!(
+        trace.contains("salted_password") && trace.contains("verifier"),
+        "primitive route traced"
+    );
+    for vector in vectors::VECTORS {
+        assert!(
+            !trace.contains(std::str::from_utf8(vector.password).unwrap()),
+            "no private password in trace"
+        );
+        assert!(
+            !trace.contains(std::str::from_utf8(vector.verifier).unwrap()),
+            "no private verifier in trace"
+        );
+        assert!(
+            !trace.contains(&format!("{:?}", vector.password)),
+            "no private byte slice in trace"
+        );
+    }
+}
+
 static SERIAL: std::sync::Mutex<()> = std::sync::Mutex::new(());
 static OBSERVE_ERASE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static ERASED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

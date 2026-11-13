@@ -5452,6 +5452,30 @@
       "review": "Success and failed-unmap children call the private cached completion twice and then the public consuming operation. They require a single erase/unlock/unmap sequence and one reservation decrement only on success. The syscall seam intercepts duplicate unmap before the real syscall so the duplicate-release mutant is safe to execute. After successful release the checked accessor returns the existing content-free Mapping error; removing the cache return then fails repeat-result equality without constructing an unmapped slice."
     },
     {
+      "operation": "pn-secret-home::tests::credential_diagnostics",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:protected-credential-errors-and-traces-contain-no-private-bytes",
+      "before": "",
+      "after": "Credential carriers have no implicit copy or byte view; actual wrong-pairing\nerrors and tracing contain no fixture password or verifier, only fixed classes.",
+      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+    },
+    {
+      "operation": "pn-secret-home::tests::credential_refusals",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:protected-credentials-refuse-pairing-entropy-and-budget",
+      "before": "",
+      "after": "A corrupted constructor pairing refuses before a credential can be returned;\npartial entropy and insufficient declared budget refuse without retained mappings.\nThese finite injected cases do not establish the operating-system entropy quality.",
+      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+    },
+    {
+      "operation": "pn-secret-home::tests::credential_vectors",
+      "path": "packages/secret-home/src/tests.rs",
+      "claim": "SECRETHOME::claim:crypto:protected-credentials-match-independent-vectors",
+      "before": "",
+      "after": "Three distinct unsorted public entropy inputs match independent password/verifier\nbytes through the protected constructor; each sequential role uses two locked\npages, clears 263 scratch bytes and releases both reservations on completion.",
+      "review": "Finite owning-package fixture, framing, reservation and constant-diagnostic assertions. The private test seam publishes no production view; primitive temporary disposition remains held for independent consumer review."
+    },
+    {
       "operation": "pn-secret-home::tests::descriptor_exhaustion",
       "path": "packages/secret-home/src/tests.rs",
       "claim": "SECRETHOME::claim:crypto:home-drop-survives-descriptor-exhaustion",

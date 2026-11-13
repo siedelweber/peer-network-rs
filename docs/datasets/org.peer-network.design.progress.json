@@ -39860,10 +39860,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "4",
+          "exact": "10",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39878,7 +39878,7 @@
           "exact_digits": 32
         }
       },
-      "total": 4
+      "total": 10
     },
     {
       "category": "record-coverage",
@@ -39996,10 +39996,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 717",
+          "exact": "1 718",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 717",
+          "num": "1 718",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40014,7 +40014,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1717
+      "total": 1718
     },
     {
       "category": "record-coverage",

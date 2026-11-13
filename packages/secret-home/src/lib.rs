@@ -502,3 +502,184 @@ impl Home {
         }
     }
 }
+
+const PASSWORD_LENGTH: usize = 64;
+const WORKSPACE_LENGTH: usize = 414;
+
+/// Content-free refusal of protected credential construction or completion.
+/// (´def:home:protected-verifier´)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CredentialError {
+    Home(Error),
+    Derivation,
+    Pairing,
+    Completion,
+}
+
+impl std::fmt::Display for CredentialError {
+    /// Justified: Credential diagnostics contain only constant failure classes.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Home(_) => "credential home refused",
+            Self::Derivation => "credential derivation refused",
+            Self::Pairing => "credential pairing refused",
+            Self::Completion => "credential completion unconfirmed",
+        })
+    }
+}
+
+impl std::error::Error for CredentialError {}
+
+/// One role's password and matching verifier, retained only in two protected homes.
+/// No byte accessor, output capability or implicit copy is admitted.
+/// (´def:home:protected-verifier´)
+pub struct Credential {
+    password: Home,
+    verifier: Home,
+}
+
+impl std::fmt::Debug for Credential {
+    /// Justified: The credential reports its role without reading either mapping.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Credential([REDACTED])")
+    }
+}
+
+impl Protection {
+    /// Construct one independent role password and its verifier in two locked pages.
+    /// The protected consumer remains held for its temporary-inventory review.
+    /// (´def:home:protected-verifier´)
+    /// # Errors
+    /// Refuses insufficient budget, protection or entropy failure, derivation or pairing failure.
+    #[tracing::instrument(
+        name = "amend:crypto:secret-home",
+        fields(
+            execution_owner = "SECRETHOME",
+            claim_owner = "ROOT",
+            claim_label = "amend:crypto:secret-home",
+            source_item = "Protection::credential"
+        ),
+        ret
+    )]
+    pub fn credential(&self) -> Result<Credential, CredentialError> {
+        self.credential_with(|bytes| getrandom::fill(bytes).map_err(|_| Error::Entropy))
+    }
+
+    // Justified: The private entropy seam fills only protected destinations; production selects the OS and tests supply public fixtures.
+    fn credential_with(&self, mut entropy: impl FnMut(&mut [u8]) -> Result<(), Error>) -> Result<Credential, CredentialError> {
+        if WORKSPACE_LENGTH > self.page || PASSWORD_LENGTH > self.page || self.budget / self.page < 2 {
+            return Err(CredentialError::Home(Error::Budget));
+        }
+        let password = self
+            .generate_with(PASSWORD_LENGTH, |bytes| {
+                entropy(&mut bytes[..32])?;
+                for i in (0..32).rev() {
+                    let mut value = bytes[i];
+                    bytes[2 * i] = b"0123456789abcdef"[usize::from(value >> 4)];
+                    bytes[2 * i + 1] = b"0123456789abcdef"[usize::from(value & 15)];
+                    value.zeroize();
+                }
+                Ok(())
+            })
+            .map_err(CredentialError::Home)?;
+        let verifier = self
+            .generate_with(WORKSPACE_LENGTH, |bytes| entropy(&mut bytes[135..151]))
+            .map_err(CredentialError::Home)?;
+        let mut credential = Credential { password, verifier };
+        credential.populate()?;
+        #[cfg(test)]
+        tests::corrupt_credential(&mut credential);
+        credential.check_pair()?;
+        Ok(credential)
+    }
+}
+
+impl Credential {
+    /// Erase and complete both homes, attempting both even when one refuses.
+    /// (´def:home:protected-verifier´)
+    /// # Errors
+    /// Reports unconfirmed completion if either home's checked completion refuses.
+    #[tracing::instrument(
+        name = "amend:crypto:secret-home",
+        fields(
+            execution_owner = "SECRETHOME",
+            claim_owner = "ROOT",
+            claim_label = "amend:crypto:secret-home",
+            source_item = "Credential::complete"
+        ),
+        ret
+    )]
+    pub fn complete(self) -> Result<(), CredentialError> {
+        let password = self.password.complete();
+        let verifier = self.verifier.complete();
+        if password.is_err() || verifier.is_err() {
+            Err(CredentialError::Completion)
+        } else {
+            Ok(())
+        }
+    }
+
+    // Justified: Protected derivation copies only between disjoint regions of the owned locked workspace and clears all working regions before returning.
+    fn populate(&mut self) -> Result<(), CredentialError> {
+        let password = self.password.checked_bytes().map_err(CredentialError::Home)?;
+        let workspace = self.verifier.checked_bytes().map_err(CredentialError::Home)?;
+        let (actual, rest) = workspace[..WORKSPACE_LENGTH].split_at_mut(135);
+        let (salt, work) = rest.split_at_mut(16);
+        let (keys, expected) = work.split_at_mut(128);
+        let result = derive_credential(&password[..PASSWORD_LENGTH], salt, keys, expected);
+        if result.is_ok() {
+            actual.copy_from_slice(expected);
+        }
+        work.zeroize();
+        result
+    }
+
+    // Justified: Pairing returns only a verdict after recomputation inside the same locked workspace; no compared byte leaves either home.
+    fn check_pair(&mut self) -> Result<(), CredentialError> {
+        let password = self.password.checked_bytes().map_err(CredentialError::Home)?;
+        let workspace = self.verifier.checked_bytes().map_err(CredentialError::Home)?;
+        let (actual, rest) = workspace[..WORKSPACE_LENGTH].split_at_mut(135);
+        let (salt, work) = rest.split_at_mut(16);
+        let (keys, expected) = work.split_at_mut(128);
+        let result = derive_credential(&password[..PASSWORD_LENGTH], salt, keys, expected).and_then(|()| {
+            let difference = actual
+                .iter()
+                .zip(expected.iter())
+                .fold(0_u8, |difference, (a, b)| difference | (a ^ b));
+            if difference == 0 {
+                Ok(())
+            } else {
+                Err(CredentialError::Pairing)
+            }
+        });
+        work.zeroize();
+        result
+    }
+}
+
+// Justified: Each primitive borrow ends with its call and every destination is a disjoint region of the caller's locked workspace.
+fn derive_credential(password: &[u8], salt: &[u8], keys: &mut [u8], verifier: &mut [u8]) -> Result<(), CredentialError> {
+    use pn_credential_derivation::{Input, Output};
+    let (salted, rest) = keys.split_at_mut(32);
+    let (client, rest) = rest.split_at_mut(32);
+    let (stored, server) = rest.split_at_mut(32);
+    // (´cav:home:primitive-password´)
+    pn_credential_derivation::salted_password(
+        Input(password),
+        Input(salt),
+        pn_credential_derivation::MAX_ITERATIONS,
+        Output(salted),
+    )
+    .map_err(|_| CredentialError::Derivation)?;
+    // (´cav:home:primitive-client´)
+    pn_credential_derivation::mac(Input(salted), Input(b"Client Key"), Output(client))
+        .map_err(|_| CredentialError::Derivation)?;
+    // (´cav:home:primitive-server´)
+    pn_credential_derivation::mac(Input(salted), Input(b"Server Key"), Output(server))
+        .map_err(|_| CredentialError::Derivation)?;
+    // (´cav:home:primitive-stored´)
+    pn_credential_derivation::stored_key(Input(client), Output(stored)).map_err(|_| CredentialError::Derivation)?;
+    // (´cav:home:primitive-verifier´)
+    pn_credential_derivation::verifier(Input(salt), Input(stored), Input(server), Output(verifier))
+        .map_err(|_| CredentialError::Derivation)
+}
