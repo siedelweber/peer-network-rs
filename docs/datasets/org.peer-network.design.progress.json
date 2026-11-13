@@ -33337,6 +33337,7 @@
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-content-admission",
         "ROOT::amend:identity:act-proposal-admission",
+        "ROOT::open:identity:host-contribution-option",
         "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
