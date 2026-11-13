@@ -1,6 +1,8 @@
-"""Run a prepared gate round; scheduling and the external label lock belong to the invoker."""
+"""Run a prepared gate round under an evidence-root lock; scheduling belongs to the invoker."""
 
 import argparse
+from contextlib import contextmanager
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -15,6 +17,29 @@ import build_graph
 
 class Refusal(ValueError):
     """A protocol refusal, not a verdict on the candidate."""
+
+
+class Busy(Refusal):
+    """A cooperating round or import holds the evidence-root lock."""
+
+
+@contextmanager
+def round_lock(directory, identity):
+    """Hold one stable advisory inode through preparation and evidence close."""
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory/'.series-round.lock').open('a+') as stream:
+        try:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise Busy('round or import holds the evidence-root lock') from error
+        stream.seek(0)
+        stream.truncate()
+        stream.write(json.dumps(identity, sort_keys=True)+'\n')
+        stream.flush()
+        try:
+            yield
+        finally:
+            fcntl.flock(stream, fcntl.LOCK_UN)
 
 
 def argv(value):
@@ -68,15 +93,6 @@ class Round:
         if any(path.is_symlink() for path in (args.directory, *args.directory.parents)):
             raise Refusal('round evidence directory traverses a link')
         self.store.mkdir(parents=True, exist_ok=True)
-        plans = self.store/'plans.jsonl'
-        ledger = self.store/'ledger.jsonl'
-        completed = {row['entry'] for row in map(json.loads,ledger.read_text().splitlines())} if ledger.exists() else set()
-        unfinished = [row['entry'] for row in map(json.loads,plans.read_text().splitlines())
-                      if row['entry'] not in completed] if plans.exists() else []
-        if unfinished or (self.store/'active.json').exists():
-            write(self.store/'ended.json',dict(reason='unfinished planned round',entries=unfinished))
-        if (self.store/'ended.json').exists():
-            raise Refusal('ended label cannot be reused')
         self.count = build_graph.series_count()
         if args.mode == 'sample' and (args.ordinal is None or not 1 <= args.ordinal <= self.count):
             raise Refusal('sample ordinal outside declared count')
@@ -86,6 +102,18 @@ class Round:
             raise Refusal('repeat requires its obligation and only repeat accepts one')
         self.log = None
         self.planned = None
+
+    def check_store(self):
+        """Reconcile label state only while the round lock is held."""
+        plans = self.store/'plans.jsonl'
+        ledger = self.store/'ledger.jsonl'
+        completed = {row['entry'] for row in map(json.loads,ledger.read_text().splitlines())} if ledger.exists() else set()
+        unfinished = [row['entry'] for row in map(json.loads,plans.read_text().splitlines())
+                      if row['entry'] not in completed] if plans.exists() else []
+        if unfinished or (self.store/'active.json').exists():
+            write(self.store/'ended.json',dict(reason='unfinished planned round',entries=unfinished))
+        if (self.store/'ended.json').exists():
+            raise Refusal('ended label cannot be reused')
 
     def command(self, command, environment=None, build=False):
         """Each command retains its output, status, wall and reaped CPU."""
@@ -117,6 +145,12 @@ class Round:
         return output.strip()
 
     def run(self):
+        identity = dict(label=self.args.label, base=self.args.base, source=self.args.source)
+        with round_lock(self.store.parent, identity):
+            self.check_store()
+            return self.locked_run()
+
+    def locked_run(self):
         try:
             return self.execute()
         except BaseException as error:
@@ -181,8 +215,10 @@ class Round:
         if not re.fullmatch('[0-9a-f]{64}',key):
             raise Refusal('configuration key is malformed')
         if args.mode == 'sample' and key != priming['configuration_key']:
-            print('GATE-ROUND-RESTARTABLE configuration key differs before attempt',flush=True)
-            return 5
+            write(self.store/'ended.json',dict(reason='configuration key differs from priming',
+                expected=priming['configuration_key'],observed=key))
+            print('GATE-ROUND-ENDED configuration key differs from priming',flush=True)
+            return 4
         if obligation and key != obligation['configuration_key']:
             raise Refusal('repeat configuration differs from obligation')
         environment = dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=entry,PN_GATE_SAMPLE='import',
@@ -292,6 +328,9 @@ def main():
     args = parser.parse_args()
     try:
         return Round(Path.cwd(),args).run()
+    except Busy as error:
+        print('GATE-ROUND-RESTARTABLE '+str(error),flush=True)
+        return 5
     except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
         print('GATE-ROUND-REFUSED '+str(error),flush=True)
         return 4

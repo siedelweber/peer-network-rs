@@ -207,7 +207,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(declaration_environment(),foreign,'package runner restores the enclosing declaration')
 
     def test_series_archive_list(self):
-        """The archive manifest preserves closed-attempt evidence and excludes service state and recursive workspace contents.
+        """The archive manifest preserves closed-attempt evidence and excludes service state, recursive workspace contents and retained daemon diagnostics carrying private absolute paths.
         ´claim:devperf:series-archive-list´
         ´test:integration:test-series-archive-list´
         """
@@ -230,7 +230,20 @@ class Performance(unittest.TestCase):
             (lane/'tier-tests/not-a-receipt').write_text('unused')
             (lane/'gate-example-transitions.jsonl').write_text('{}')
             (lane/'gate-example-transitions.binding.json').write_text('{}')
+            from wallet_elements import retain_failure
+            daemon = root/'private-daemon';(daemon/'elementsregtest').mkdir(parents=True)
+            private = str(daemon/'cookie')
+            (daemon/'elementsregtest/debug.log').write_text(private)
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                retained = root/retain_failure(dict(rpc_log=str(daemon/'rpc.log')))
+            finally:
+                os.chdir(previous)
+            self.assertEqual(retained.read_text(),private,'local diagnostic preserves the original refusal evidence')
             manifest=series_archive_list(root,log)
+            self.assertNotIn(str(retained),[r['source'] for r in manifest['files']],'private daemon diagnostic is outside archive patterns')
+            self.assertTrue(all(private not in Path(r['source']).read_text() for r in manifest['files']),'archive contents carry no retained private daemon path')
             wanted={'series-attempt.json','gate-series-host-start.json','gate-series-host-end.json','gate-series-end.json',
                 'gate-declaration.json','tier-tests/manifest.json','tier-tests/build.stderr','gate-example-transitions.jsonl',
                 'gate-example-transitions.binding.json','round.log'}
@@ -841,7 +854,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members before printing a sample declaration.
+        """Series declarations refuse missing and malformed members before printing a sample declaration; the round holds an evidence-root lock through execution, refuses concurrent entry before preparation, and ends a changed-key label without a measured attempt.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """

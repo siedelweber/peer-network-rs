@@ -412,8 +412,21 @@ def prepare(meson, build, root):
     if not version or len(version.splitlines()) != 1:
         raise ValueError('Meson returned no single version')
     info = build/'meson-info/meson-info.json'
-    configured = json.loads(info.read_text())['meson_version']['full'] if info.exists() else None
+    recorded = json.loads(info.read_text()) if info.exists() else {}
+    configured = recorded.get('meson_version', {}).get('full')
+    expected = dict(source=str(root.resolve()), build=str(build.resolve()))
+    directories = recorded.get('directories', {})
+    differed = [name for name, value in expected.items()
+                if not isinstance(directories.get(name), str) or
+                Path(directories[name]).resolve() != Path(value)]
     exists = (build/'build.ninja').exists()
+    displaced = None
+    if exists and differed:
+        displaced = build.with_name(build.name+'.displaced-'+uuid.uuid4().hex)
+        build.rename(displaced)
+        exists = False
+    print('BUILD-MESON-BINDING '+json.dumps(dict(expected=expected, recorded=directories,
+        differed=differed, displaced=str(displaced) if displaced else None)), flush=True)
     action = 'setup' if not exists else ('reuse' if configured == version else 'wipe-setup')
     print(f'BUILD-MESON version={version} configured={configured} action={action}', flush=True)
     if action != 'reuse':
@@ -422,6 +435,10 @@ def prepare(meson, build, root):
             return 1
         if json.loads(info.read_text())['meson_version']['full'] != version:
             raise ValueError('configured Meson version differs from answering binary')
+        actual = json.loads(info.read_text()).get('directories', {})
+        if any(not isinstance(actual.get(name), str) or Path(actual[name]).resolve() != Path(value)
+               for name, value in expected.items()):
+            raise ValueError('configured Meson directories differ from current checkout')
     return 0
 
 

@@ -81,12 +81,55 @@ def exercise(case):
         stamp = info.stat().st_mtime_ns
         case.assertEqual(prepare(meson, build, root), 0)
         case.assertEqual(info.stat().st_mtime_ns, stamp)
+        case.assertEqual(prepare(meson,build/'..'/build.name,root/'.'),0,'equivalent resolved directories reuse')
+        case.assertEqual(info.stat().st_mtime_ns,stamp,'equivalent paths do not reconfigure')
         stale_info = copy.deepcopy(original_info)
         stale_info['meson_version']['full'] = '0.0.0-version-witness'
         info.write_text(json.dumps(stale_info))
         case.assertEqual(prepare(meson, build, root), 0)
         case.assertEqual(json.loads(info.read_text())['meson_version'], original_info['meson_version'])
         print('GRAPH-WITNESS meson-version-match=reused meson-version-mismatch=setup')
+
+        from contextlib import redirect_stdout
+        import io
+        with tempfile.TemporaryDirectory() as moved:
+            copied = Path(moved)/'copy'
+            shutil.copytree(root, copied)
+            copied_build = copied/'.lane/build'
+            (copied/'undeclared.txt').write_text('only in copied checkout')
+            case.assertEqual(run(['git','-C',str(copied),'add','undeclared.txt']).returncode,0)
+            output = io.StringIO()
+            with redirect_stdout(output):
+                status = prepare(meson, copied_build, copied)
+            case.assertEqual(status,0,'copied graph configures successfully')
+            case.assertIn('action=setup',output.getvalue(),'copied graph cannot reuse the seed census')
+            binding = json.loads(next(line.removeprefix('BUILD-MESON-BINDING ') for line in output.getvalue().splitlines() if line.startswith('BUILD-MESON-BINDING ')))
+            case.assertEqual(binding['differed'],['source','build'],'binding evidence names both copied directories')
+            case.assertTrue(Path(binding['displaced']).is_dir(),'foreign configuration is preserved aside')
+            refused = run(['ninja','-C',str(copied_build),'tracked-census.json'],capture_output=True,text=True)
+            case.assertNotEqual(refused.returncode,0,'copied checkout census refuses its undeclared tracked file')
+            case.assertIn('undeclared.txt',refused.stdout+refused.stderr,'refusal names the copy-only input')
+        for member in ('source','build'):
+            altered = json.loads(info.read_text())
+            altered['directories'][member] = str(root/'elsewhere')
+            info.write_text(json.dumps(altered))
+            output = io.StringIO()
+            with redirect_stdout(output):
+                case.assertEqual(prepare(meson,build,root),0,'single-directory mismatch configures')
+            case.assertIn('action=setup',output.getvalue(),member+' mismatch alone forbids reuse')
+            case.assertIn('"differed": ["'+member+'"]',output.getvalue(),member+' mismatch is recorded separately')
+        with tempfile.TemporaryDirectory() as invalid:
+            invalid_build=Path(invalid)/'build'
+            from types import SimpleNamespace
+            def lying_setup(command, **_options):
+                if '--version' in command:
+                    return SimpleNamespace(returncode=0,stdout='fixture-version\n',stderr='')
+                location=invalid_build/'meson-info';location.mkdir(parents=True)
+                (location/'meson-info.json').write_text(json.dumps(dict(meson_version=dict(full='fixture-version'),directories=dict(source=str(root/'foreign'),build=str(invalid_build)))))
+                return SimpleNamespace(returncode=0)
+            with patch('build_graph.run',side_effect=lying_setup):
+                with case.assertRaisesRegex(ValueError,'directories differ',msg='successful setup must report the current directories'):
+                    prepare('fixture-meson',invalid_build,root)
 
         def compile_graph():
             return command(['ninja', '-C', str(build), 'tracked-census.json'])

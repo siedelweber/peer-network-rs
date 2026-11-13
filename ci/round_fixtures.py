@@ -99,16 +99,44 @@ def controls(test, group):
                 (round.store/'priming.json').unlink()
                 with refuses(test,'green',message='missing priming refuses'): round.run()
                 prime();state['key']='b'*64
-                test.assertEqual(round.run(),5,'key mismatch is restartable before an attempt')
+                test.assertEqual(round.run(),4,'key mismatch ends the label before an attempt')
+                test.assertTrue((round.store/'ended.json').is_file(),'changed key retains an end record')
+                test.assertEqual(json.loads((round.store/'ended.json').read_text())['reason'],'configuration key differs from priming','changed key records the terminal cause')
+                test.assertEqual(json.loads((round.store/'ended.json').read_text())['observed'],'b'*64,'end records observed key')
                 test.assertFalse((round.store/'plans.jsonl').exists(),'preflight refusal writes no attempt plan')
                 test.assertFalse(any(c[0]==['bash','ci/gate.sh'] for c in calls),'preflight refuses before measured gate')
+                with refuses(test,'ended',message='changed key label cannot resume'): round.run()
+                (round.store/'ended.json').unlink()
+                from series_round import round_lock
+                with round_lock(args.directory,dict(label='other',base='other',source='other')):
+                    before=list(calls)
+                    with refuses(test,'holds.*lock',message='concurrent round refuses the held lock'): round.run()
+                    test.assertEqual(calls,before,'lock refusal precedes every preparation command')
+                    import subprocess
+                    child=subprocess.run([sys.executable,'-B',str(Path(__file__).with_name('series_round.py')),
+                        '--label','fixture','--base','base','--source','source','--mode','sample','--ordinal','1',
+                        '--directory',str(args.directory),'--container-list','["fixture"]','--service-list','["fixture"]',
+                        '--build-prefix','["fixture"]'],cwd=root,capture_output=True,text=True)
+                    test.assertEqual(child.returncode,5,'busy round command has restartable status five')
+                    test.assertIn('holds the evidence-root lock',child.stdout,'busy command names cooperative exclusion')
+                def locked_execute():
+                    with refuses(test,'holds.*lock',message='round holds lock throughout execution'):
+                        with round_lock(args.directory,{}): pass
+                    test.assertEqual(json.loads((args.directory/'.series-round.lock').read_text()),dict(label='fixture',base='base',source='source'),'lock names the label transition')
+                    return 5
+                with patch.object(round,'execute',side_effect=locked_execute):
+                    test.assertEqual(round.run(),5,'lock wraps execution')
+                with round_lock(args.directory,{}): pass
+                with patch.object(round,'execute',side_effect=ValueError('controlled preflight')):
+                    with test.assertRaisesRegex(ValueError,'controlled preflight'):round.run()
+                with round_lock(args.directory,{}): pass
                 state['key']='a'*64
                 state['owners']=dict(kept='foreign');calls.clear()
                 test.assertEqual(round.run(),5,'foreign retained owner is restartable')
                 test.assertFalse(any(c[0][:3]==['git','reset','--hard'] for c in calls),'owner refusal precedes resets')
                 state['owners']=dict(kept='base')
                 write(round.store/'ended.json',dict(reason='ended'))
-                with refuses(test,'ended',message='ended labels never restart'): Round(root,args)
+                with refuses(test,'ended',message='ended labels never restart'): Round(root,args).run()
                 (round.store/'ended.json').unlink()
                 for field,value,pattern in [('label','../escape','label'),('ordinal',6,'ordinal'),('directory',root,'outside'),('repeat_of',area/'owed','repeat')]:
                     modified=SimpleNamespace(**vars(args));setattr(modified,field,value)
@@ -124,7 +152,7 @@ def controls(test, group):
                 with refuses(test,'command failed',message='failed base build refuses'): round.run()
                 test.assertEqual(calls[-1][0],['git','reset','--hard','source'],'failed base build restores source')
                 state['base_build']=0
-                (round.store/'ledger.jsonl').write_text(''.join(json.dumps(dict(ordinal=1))+'\n' for _ in range(3)))
+                (round.store/'ledger.jsonl').write_text(''.join(json.dumps(dict(ordinal=1,entry=str(i)))+'\n' for i in range(3)))
                 with refuses(test,'cap',message='cap closes label before another attempt'): round.run()
             elif group == 'sequence':
                 args.mode='priming';args.ordinal=None
@@ -168,7 +196,7 @@ def controls(test, group):
                 ledger=json.loads((round.store/'ledger.jsonl').read_text())
                 test.assertEqual(ledger['end_status'],4,'failed end status is retained separately')
                 test.assertTrue((round.store/'ended.json').exists(),'end failure ends label')
-                with refuses(test,'ended',message='failed evidence cannot resume label'):Round(root,args)
+                with refuses(test,'ended',message='failed evidence cannot resume label'):Round(root,args).run()
                 (round.store/'ended.json').unlink()
                 state['end']=0;state['archive']=4
                 test.assertEqual(round.run(),4,'archive failure is a protocol refusal')
@@ -194,17 +222,17 @@ def controls(test, group):
                 test.assertTrue((round.store/'ended.json').exists(),'close failure ends label')
                 (round.store/'ended.json').unlink()
                 write(round.store/'active.json',dict(entry='interrupted-priming'))
-                with refuses(test,'ended',message='active preparation ends label at next start'):Round(root,args)
+                with refuses(test,'ended',message='active preparation ends label at next start'):Round(root,args).run()
                 (round.store/'ended.json').unlink();(round.store/'active.json').unlink()
                 with (round.store/'plans.jsonl').open('a') as stream:stream.write(json.dumps(dict(series='fixture',entry='unfinished',ordinal=1,start=time.time()))+'\n')
-                with refuses(test,'ended',message='orphan plan ends label at next start'):Round(root,args)
+                with refuses(test,'ended',message='orphan plan ends label at next start'):Round(root,args).run()
                 test.assertIn('unfinished',json.loads((round.store/'ended.json').read_text())['entries'],'end preserves interrupted entry')
                 from build_graph import series_check
                 try:series_check('fixture',round.store/'archive',round.store/'ledger.jsonl',round.store/'plans.jsonl')
                 except ValueError as error:test.assertIn('planned attempt missing',str(error),'series checker refuses the interrupted command store')
                 else:test.fail('series checker must refuse unfinished planned attempt')
                 round.planned='exception-entry'
-                with patch.object(round,'execute',side_effect=ValueError('controlled failure')):
+                with patch.object(round,'check_store'),patch.object(round,'execute',side_effect=ValueError('controlled failure')):
                     with test.assertRaisesRegex(ValueError,'controlled failure'):round.run()
                 test.assertEqual(json.loads((round.store/'ended.json').read_text()).get('entry'),'exception-entry','caught post-plan failure ends label with its entry')
             elif group == 'repeat':

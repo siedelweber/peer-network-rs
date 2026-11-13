@@ -263,7 +263,7 @@ class WalletBoundary(unittest.TestCase):
                 wallet_elements.wait_wallet(config)
                 with self.assertRaisesRegex(RuntimeError, 'code="-32601" message="Method not found".*wallet_height="0" chain_height="0"'):
                     wallet_elements.rpc(config, 'fixture_method_that_does_not_exist')
-                retained = Path('.lane/gate-elements-failure-wallet-port-race.log')
+                retained = Path('.lane/private-elements-failure-wallet-port-race.log')
                 self.assertTrue(retained.stat().st_size > 0 and
                                 (root/'elementsregtest'/'debug.log').read_bytes().startswith(retained.read_bytes()),
                                 'unexpected refusal retains the original daemon log beside gate evidence')

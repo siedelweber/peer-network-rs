@@ -126,11 +126,11 @@ def wallet_progress(config, wallet=None):
 
 
 def retain_failure(config):
-    """Keep the daemon's original log beside the gate's other evidence logs."""
+    """Keep original local diagnostics outside the series archive's public log patterns."""
     if not config.get('rpc_log'):
         return 'unavailable: fixture log path absent'
     root = Path(config['rpc_log']).parent
-    target = Path('.lane')/('gate-elements-failure-'+root.name+'.log')
+    target = Path('.lane')/('private-elements-failure-'+root.name+'.log')
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(root/'elementsregtest'/'debug.log', target)
