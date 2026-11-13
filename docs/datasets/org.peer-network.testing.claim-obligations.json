@@ -954,6 +954,19 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export.",
+      "closing_step": "Credential bootstrap before executable startup",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "Protected initializer and direct store handoff, reviewed source-local exits, stage-specific consumers and the deployed credential-store contract.",
+      "name": "ROOT::dec:observe:first-start-route",
+      "owner": "Foundation implementer, deployment administrator and repository reviewer",
+      "path": "adr/016-observability.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "claims": [
         "ROOT::claim:discipline:public-bodies-require-parsed-boundaries",
         "ROOT::claim:discipline:semantic-review-is-bound-to-source"
@@ -3930,6 +3943,19 @@
       "premises": "Daemon-generated values and independent hashlib key digests; supplied prevouts and consensus validity remain premises.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Reviewed protected data flow and passing current-source gate controls, with the separately required installation evidence; no public secret API or ordinary export.",
+      "closing_step": "Credential bootstrap before executable startup",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "Crash, permission, partial-creation, restart and disclosure controls with runtime mutants, plus distinct-identity and durability installation witnesses.",
+      "name": "ROOT::verif:observe:credential-bootstrap",
+      "owner": "Foundation implementer, deployment administrator and repository reviewer",
+      "path": "adr/016-observability.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {

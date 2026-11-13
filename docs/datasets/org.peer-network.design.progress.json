@@ -39962,10 +39962,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 696",
+          "exact": "1 701",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 696",
+          "num": "1 701",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39980,7 +39980,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1696
+      "total": 1701
     },
     {
       "category": "record-coverage",
