@@ -4183,7 +4183,7 @@
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-finite-and-bounded",
       "before": "",
-      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it.",
+      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling.",
       "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
     },
     {

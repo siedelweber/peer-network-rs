@@ -351,6 +351,48 @@ def vectors():
         ('array-length-precheck', raw[:2]+b'\x9a\x00\x01\x86\xa1', 'Resource'),
     ]:
         add(name, good, error, fragment)
+    # Thirds have no representable endpoint touch; three halves supplies the
+    # exact touches with each inclusion flag. All verdicts retain their interval.
+    three_halves = 0x3ff8000000000000
+    negative_one = one | (1 << 63)
+    negative_half = half | (1 << 63)
+    negative_quarter = quarter | (1 << 63)
+    for threshold, bounds in (
+        (Fraction(2, 3), [(0, half), (half, one), (one, two)]),
+        (Fraction(3, 2), [(0, one), (one, three_halves), (one, two), (three_halves, two), (two, two+1)]),
+        (Fraction(-2, 3), [(two | (1 << 63), negative_one), (negative_one, negative_half), (negative_half, negative_quarter)]),
+    ):
+        for predicate in range(1, 6):
+            for number, (lower, upper) in enumerate(bounds):
+                for li in (False, True):
+                    for ui in (False, True):
+                        evaluated = interval(lower, upper, li, ui)
+                        v = base(evaluated)
+                        result = threshold_result(predicate, evaluated, threshold)
+                        v[4] = [None, None]
+                        v[6] = [predicate, q(threshold), result, 5]
+                        v[7][0][2] = result
+                        add(f'signed-threshold-{predicate}-{threshold}-{number}-{int(li)}{int(ui)}', v)
+    for scale in (1075, 1076):
+        threshold = Fraction(3, 1 << scale)
+        for predicate in range(1, 6):
+            v = base(interval(1))
+            result = threshold_result(predicate, v[7][0][1], threshold)
+            v[4] = [None, None]
+            v[6] = [predicate, q(threshold), result, 5]
+            v[7][0][2] = result
+            add(f'subnormal-threshold-{predicate}-{scale}', v)
+    v = base(interval(one)); v[4] = [None, None]; v[6] = [1, q(1), 0, 5]
+    v[5] = 1
+    add('threshold-adjusted-flag', v, 'Structure(Adjustment)')
+    v = copy.deepcopy(v); v[5] = 0; v[4] = [interval(one), interval(one)]
+    add('threshold-enclosure-pair', v, 'Structure(Adjustment)')
+    add('membership-wholly-above', base(interval(two), interval(0, one)))
+    raw = encode(good)
+    add('reserved-head', good, 'ItemKind', raw.replace(b'\x1b'+one.to_bytes(8, 'big'), b'\x1c'+one.to_bytes(8, 'big'), 1))
+    add('simple-undefined', good, 'ItemKind', raw.replace(b'\x08\xf6', b'\x08\xf7', 1))
+    add('negative-integer-unsigned', good, 'ItemKind', raw.replace(b'\x05\x00', b'\x05\x20', 1))
+    add('nested-map', good, 'ItemKind', raw.replace(b'\x02\x80', b'\x02\xa0', 1))
     return dict(provenance='Independent RFC 8949 integer encoder and exact Fraction cross-products; records exact-route rational cross-check; no native-law evidence.',
                 distinct_inputs=len({row['canonical'] for row in rows}), cases=rows)
 

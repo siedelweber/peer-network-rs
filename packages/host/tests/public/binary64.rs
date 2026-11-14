@@ -80,6 +80,30 @@ fn binary64_canonical_corpus() {
             let value = decoded.unwrap();
             assert_eq!(codec::encode(&value).unwrap(), bytes, "canonical bytes {}", row["case"]);
             let fields = value.fields();
+            let nodes = row["original_question"][0][1].as_array().unwrap();
+            assert_eq!(fields.question.nodes.len(), nodes.len(), "node count {}", row["case"]);
+            for (node, source) in fields.question.nodes.iter().zip(nodes) {
+                let code = match node {
+                    model::Node::Input(..) => 0_u64,
+                    model::Node::Coordinate(_) => 1_u64,
+                    model::Node::Constant(_) => 2_u64,
+                    model::Node::Negate(_) => 3_u64,
+                    model::Node::Add(..) => 4_u64,
+                    model::Node::Subtract(..) => 5_u64,
+                    model::Node::Multiply(..) => 6_u64,
+                    model::Node::Divide(..) => 7_u64,
+                    model::Node::SquareRoot(_) => 8_u64,
+                    model::Node::Logarithm(_) => 9_u64,
+                    model::Node::Exponential(_) => 10_u64,
+                    model::Node::Sigmoid(_) => 11_u64,
+                    model::Node::Tanh(_) => 12_u64,
+                    model::Node::Power(..) => 13_u64,
+                    model::Node::Derivative(..) => 14_u64,
+                    model::Node::Clamp(..) => 15_u64,
+                    model::Node::GeneralizedDerivative(..) => 16_u64,
+                };
+                assert_eq!(code, source[0].as_u64().unwrap(), "node vocabulary {}", row["case"]);
+            }
             let consumers = [
                 model::Consumer::Free,
                 model::Consumer::Value,
@@ -208,7 +232,7 @@ fn binary64_expected_question_binding() {
     assert_eq!(value.bind(&query), Err(model::Error::Question), "hypothesis substitution");
 }
 
-/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it.
+/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling.
 /// ´claim:host:binary64-finite-and-bounded´
 /// ´test:integration:binary64-finite-and-bounded´
 #[test]
@@ -249,6 +273,24 @@ fn binary64_finite_and_bounded() {
         .iter()
         .find(|r| r["case"] == "contained")
         .unwrap();
+    let carrier = named("contained");
+    let mut arithmetic = limits();
+    arithmetic.arithmetic.work = 1;
+    assert_eq!(
+        Carrier::new(carrier.fields().clone(), arithmetic.arithmetic.clone()),
+        Err(model::Error::Resource),
+        "carrier arithmetic ceiling"
+    );
+    assert_eq!(
+        codec::decode(&bytes, &arithmetic),
+        Err(Error::Structure(model::Error::Resource)),
+        "decoder arithmetic ceiling"
+    );
+    assert!(
+        Carrier::new(carrier.fields().clone(), limits().arithmetic).is_ok(),
+        "carrier test arithmetic ceiling"
+    );
+    assert!(codec::decode(&bytes, &limits()).is_ok(), "decoder test arithmetic ceiling");
     let counts = [
         bytes.len(),
         usize::try_from(row["reader_items"].as_u64().unwrap()).unwrap(),
