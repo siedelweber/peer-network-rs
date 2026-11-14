@@ -266,7 +266,7 @@ impl EncodingUsage {
     /// An allocator may supply capacity above the request. A byte or text transfer
     /// then refuses spare capacity; callers propagate that refusal and never shrink around it.
     /// Release constructed values with `Value::dispose` on success and every refusal path.
-    /// For partial `Vec<Value>` children, use `Value::Array(Array::take_reserved(children)).dispose()`;
+    /// For partial `Vec<Value>` children, use `Value::Array(Array::take_reserved(&mut children)).dispose()`;
     /// ordinary destruction may allocate traversal storage outside this meter.
     /// (´amend:interchange:canonical-budget´)
     /// # Errors

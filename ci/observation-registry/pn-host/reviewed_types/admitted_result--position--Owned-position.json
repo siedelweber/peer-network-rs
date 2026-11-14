@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::Owned",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "struct Owned (Option < Value >) ;"
+  }
+}

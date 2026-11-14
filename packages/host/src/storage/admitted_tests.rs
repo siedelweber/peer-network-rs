@@ -1,7 +1,7 @@
 #[path = "../../tests/public/publication/base.rs"]
-mod base;
+pub(crate) mod base;
 #[path = "../../tests/public/publication/fixture.rs"]
-mod fixture;
+pub(crate) mod fixture;
 
 fn shared_fixture() -> &'static (base::publication::AdmittedPackage, fixture::Check) {
     static FIXTURE: std::sync::OnceLock<(base::publication::AdmittedPackage, fixture::Check)> = std::sync::OnceLock::new();

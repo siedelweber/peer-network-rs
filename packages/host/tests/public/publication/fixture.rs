@@ -1,6 +1,6 @@
 use super::base::*;
 #[derive(Debug)]
-pub(super) struct Check {
+pub(crate) struct Check {
     candidates: Vec<package::CandidateInput>,
     procedures: Vec<pn_records::solve::Procedure>,
     numeric: NumericPolicy,
@@ -396,7 +396,7 @@ fn successor(
     frame.price = price.disclosure();
     (frame, second, state)
 }
-pub(super) fn complete() -> (publication::AdmittedPackage, Check) {
+pub(crate) fn complete() -> (publication::AdmittedPackage, Check) {
     let (closed, mut carrier, mut check) = fixture();
     let first = publication::assemble(&closed, carrier.clone(), &check).unwrap();
     let first_state =

@@ -407,8 +407,8 @@ measures = "CBOR simple-value initial bytes, not identities"
 producer = "RFC 8949 section 3.3 simple-value assignments"
 establishment = "defined"
 reader = "interchange-literal"
-definition = "The null, true and false byte escapes are assigned CBOR simple values in the restricted independent fixture encoder. They denote encoding bytes rather than hash identities; bare identity-shaped values remain excluded."
-paths = ["ci/storage_vectors.py"]
+definition = "The null, true and false byte escapes and empty-map head are assigned CBOR values in the restricted independent fixture encoders. They denote encoding bytes rather than hash identities; bare identity-shaped values remain excluded."
+paths = ["ci/storage_vectors.py", "ci/position_vectors.py"]
 
 [[rows]]
 family = "wallet-evaluated-archives"
@@ -1259,3 +1259,14 @@ establishment = "defined"
 reader = "interchange-literal"
 definition = "The initial byte encodes an array of three version components; the control changes the patch component of an otherwise decodable artifact and requires the embedding comparison to refuse it. This is an encoding constant, not an artifact digest or identity assignment."
 paths = ["packages/node/src/admission.rs"]
+
+[[rows]]
+family = "result-position-vectors"
+group = "public result position fixtures"
+measures = "Canonical position preimages and SHA-256 residues"
+producer = "ci/position_vectors.py with independent RFC 8949 framing and hashlib"
+establishment = "defined"
+reader = "result-position-vectors"
+source = "packages/host/src/admitted_result/position/vectors.json"
+definition = "Regenerate the seven distinct unsorted projection fixtures without the host carrier, its helpers or the interchange encoder. The root and ordinary child use the public admitted fixture; other cases control recognized marker projections. No transition continuity, settlement, store admission or collision proof is established."
+paths = ["packages/host/src/admitted_result/position/vectors.json"]

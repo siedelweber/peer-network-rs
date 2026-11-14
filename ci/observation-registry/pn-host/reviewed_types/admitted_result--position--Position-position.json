@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::Position",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [doc = \" A position retains an immutable borrow of its admitted causes, never a decoded capability.\"] # [doc = \" Construction of the retaining `AdmittedEpoch` remains outside this projection meter:\"] # [doc = \" that existing operation clones and re-encodes the complete disclosure.\"] # [doc = \" Observation and the caller's callback are outside the meter; no allocator census is claimed.\"] # [doc = \" (´[ROOT-amend:identity:result-position-recipe]´)\"] # [doc = \" ```compile_fail\"] # [doc = \" fn from_decoded(value: pn_epoch::publication::disclosures::Disclosure) {\"] # [doc = \"     pn_host::position::Position::from_package(&value, None,\"] # [doc = \"         pn_host::position::RECIPE, usize::MAX,\"] # [doc = \"         &mut pn_interchange::EncodingUsage::default(), |_| Ok(()));\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Debug)] pub struct Position < 'a > { package : & 'a AdmittedPackage , residue : [u8 ; 32] , parent : Option < [u8 ; 32] > , depth : u64 , }"
+  }
+}

@@ -278,6 +278,12 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "result-position-vectors" and standing == "defined":
+        from position_vectors import check
+        check(relative_file(root, rule['source']))
+        text = relative_file(root, rule['source']).read_text()
+        values = {match.group() for match in occurrences(text)}
+        return lambda candidate, _line: candidate in values
     if kind == "protected-credential-vectors" and standing == "defined":
         from home_vectors import check
         check(root)

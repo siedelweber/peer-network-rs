@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::Error",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [doc = \" Refusal leaves admission unchanged and produces no usable position.\"] # [doc = \" (´[ROOT-amend:identity:result-position-recipe]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Error { InvalidPosition , Representation (Representation) , UnsupportedPositionRecipe , }"
+  }
+}

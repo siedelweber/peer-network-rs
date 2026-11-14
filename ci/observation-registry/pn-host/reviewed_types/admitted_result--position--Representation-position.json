@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::Representation",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [doc = \" The representation cause is retained without a partial position.\"] # [doc = \" (´[ROOT-amend:identity:result-position-recipe]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Representation { Encoding (EncodingError) , Transfer (TransferError) , Range , }"
+  }
+}

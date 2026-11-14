@@ -2912,6 +2912,10 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::admitted_result::position::tests::tree_carrier_retention",
+        "pn-host::admitted_result::position::tests::position_budget",
+        "pn-host::admitted_result::position::tests::position_binding",
+        "pn-host::admitted_result::position::tests::position_vectors",
         "pn-host::secret::tests::length_metadata",
         "pn-host::config::tests::secret_json_grammar",
         "pn-host::tests::wire_filter_boundary",
@@ -2931,6 +2935,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "doctest::packages/host/src/admitted_result/position.rs - admitted_result::position::Position [example 1]",
         "doctest::packages/host/src/admitted_result.rs - admitted_result::AdmittedEpoch [example 1]",
         "doctest::packages/host/src/lib.rs - Session [example 1]",
         "doctest::packages/host/src/config.rs - config::Configuration [example 1]",

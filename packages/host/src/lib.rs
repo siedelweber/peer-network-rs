@@ -5,6 +5,9 @@
 #[path = "storage/admitted_tests.rs"]
 mod admitted_carrier_tests;
 mod admitted_result;
+/// Budgeted positions computed only from borrowed admitted packages.
+/// (´[ROOT-amend:identity:result-position-recipe]´)
+pub use admitted_result::position;
 mod config;
 pub mod publication;
 mod scram;

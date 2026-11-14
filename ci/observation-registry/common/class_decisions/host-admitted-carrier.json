@@ -6,12 +6,25 @@
     "premises": "The carrier projects an already admitted public package into complete canonical bytes, typed declaration uses and immutable debit vintages. These values and typed encoding or storage refusals contain no Session, credential or secret carrier. Projection performs no I/O and grants no admission or persistence authority. Public operations record their complete arguments and results; private projection and key helpers inherit those boundaries. No computation reads observation.",
     "membership": {
       "explicit": [
-        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::from_package",
         "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::bytes",
-        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::event",
-        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::declarations",
         "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::debits",
-        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::same_content"
+        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::declarations",
+        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::event",
+        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::from_package",
+        "pn-host::packages/host/src/admitted_result.rs::admitted_result::AdmittedEpoch::same_content",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<Children as Drop>::drop",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<CombinedUsage < '_ > as Drop>::drop",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<Error as From < EncodingError >>::from",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<Error as From < TransferError >>::from",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<Owned as Drop>::drop",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::depth",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::from_package",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::parent",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::residue",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Retained::bytes",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Retained::declarations",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Retained::event",
+        "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Retained::from_position"
       ]
     }
   }

@@ -8,6 +8,8 @@ use pn_interchange::{Document, Value};
 use pn_records::numerics::NumericContext;
 use std::fmt::Write;
 
+pub mod position;
+
 mod projection {
     //! Selection coordinates follow typed references, not the set of published declarations.
     //! (´[ROOT-amend:storage:admitted-correspondence]´)
@@ -23,8 +25,29 @@ mod projection {
         document: &'a Document,
         event: &'a EpochKey,
         rows: Vec<DeclarationUse>,
+        tree: Option<(&'a str, u64)>,
+        frame: Option<&'a pn_epoch::publication::Frame>,
     }
     impl Uses<'_> {
+        fn key(&self, suffix: &[&str], observation: bool) -> Result<String, CarrierError> {
+            let Some((identity, _)) = self.tree else {
+                return key(&self.event.scope, suffix);
+            };
+            let frame = self.frame.ok_or(CarrierError::Correspondence)?;
+            let policy = &frame.marker_policy;
+            let mut fields = Vec::new();
+            if observation {
+                fields.push(identity);
+            }
+            fields.extend([
+                &frame.marker_history.identity[..],
+                &policy.identity,
+                &policy.edition,
+                &policy.sequence,
+            ]);
+            fields.extend_from_slice(suffix);
+            key(&self.event.scope, &fields)
+        }
         fn push(&mut self, selected_at: u64, version: Version) -> Result<(), CarrierError> {
             storage::check(&version).map_err(CarrierError::Storage)?;
             if i64::try_from(selected_at).is_err() {
@@ -62,7 +85,7 @@ mod projection {
                 .ok_or(CarrierError::Correspondence)?;
             let version = Version {
                 family: Family::Rule,
-                key: key(&self.event.scope, &["declaration", &id.namespace, &id.name])?,
+                key: self.key(&["declaration", &id.namespace, &id.name], false)?,
                 edition: id.edition.to_string(),
                 announced_at: d.announced_at,
                 opens_at: d.effective_at,
@@ -93,7 +116,7 @@ mod projection {
             let d = self.declaration(&p.edition).ok_or(CarrierError::Correspondence)?;
             let version = Version {
                 family: Family::Constants,
-                key: key(&self.event.scope, &["constants", &d.id.namespace, &d.id.name])?,
+                key: self.key(&["constants", &d.id.namespace, &d.id.name], false)?,
                 edition: d.id.edition.to_string(),
                 announced_at: d.announced_at,
                 opens_at: d.effective_at,
@@ -125,32 +148,39 @@ mod projection {
             Ok(())
         }
         fn observation(&mut self, family: Family, suffix: &[&str], payload: Payload) -> Result<(), CarrierError> {
+            let coordinate = self.tree.map_or(self.event.boundary, |(_, depth)| depth);
             self.push(
-                self.event.boundary,
+                coordinate,
                 Version {
                     family,
-                    key: key(&self.event.scope, suffix)?,
-                    edition: self.event.boundary.to_string(),
-                    announced_at: self.event.boundary,
-                    opens_at: self.event.boundary,
+                    key: self.key(suffix, true)?,
+                    edition: self
+                        .tree
+                        .map_or_else(|| self.event.boundary.to_string(), |(id, _)| id.to_owned()),
+                    announced_at: coordinate,
+                    opens_at: coordinate,
                     payload: Some(payload),
                 },
             )
         }
     }
 
-    pub(super) fn declarations(
-        package: &AdmittedPackage,
-        document: &Document,
-        event: &EpochKey,
+    pub(super) fn declarations<'a>(
+        package: &'a AdmittedPackage,
+        document: &'a Document,
+        event: &'a EpochKey,
+        tree: Option<(&'a str, u64)>,
     ) -> Result<Vec<DeclarationUse>, CarrierError> {
         let mut uses = Uses {
             package,
             document,
             event,
             rows: Vec::new(),
+            tree,
+            frame: None,
         };
         for frame in &package.carrier().frames {
+            uses.frame = Some(frame);
             uses.effective("marker", "policy", frame.marker_policy.genesis_at)?;
             uses.effective("deployment", "genesis", frame.marker_policy.genesis_at)?;
             uses.rule(&frame.parameters.edition, frame.parameters.boundary)?;
@@ -365,7 +395,7 @@ impl AdmittedEpoch {
         }
         key(&event.scope, &[])?;
         let document = Document::from_canonical_bytes(&bytes).map_err(|_| CarrierError::Correspondence)?;
-        let declarations = projection::declarations(package, &document, &event)?;
+        let declarations = projection::declarations(package, &document, &event, None)?;
         let debits = debit_vintages(&disclosure, &document, &event.scope)?;
         Ok(Self {
             bytes,

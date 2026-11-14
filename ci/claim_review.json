@@ -3907,6 +3907,38 @@
       "review": "Read construction from the real admitted fixture and the exact EpochResultHeld result from PostgresStore opened through the supported secret-terminating PostgreSQL fixture. No epoch write is enabled."
     },
     {
+      "operation": "pn-host::admitted_result::position::tests::position_binding",
+      "path": "packages/host/src/admitted_result/position/tests.rs",
+      "claim": "HOST::claim:history:position-binding",
+      "before": "",
+      "after": "Claim: Position projection binds individual causal members and refuses invalid ordinary parent and acceptance shapes while evidence-only changes leave its bytes equal; transition shapes remain unsupported by the public carrier. The private genesis boundary refuses zero or multiple declarations, a guard unreachable through public admission.",
+      "review": "Independent preimage/residue conformance, finite component parent and acceptance robustness, request-site budget controls and complete retention checks. Only root and ordinary child are expressible admitted packages. No allocator census, transition admission, collision proof, settlement or store evidence. UTF-8 multi-member order is pinned independently; the zero/multiple-genesis refusal is witnessed only at its private boundary and is unreachable through public admission. Commitment and opening proof bytes differ, and an equivalent proof-only change preserves the position."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::position_budget",
+      "path": "packages/host/src/admitted_result/position/tests.rs",
+      "claim": "HOST::claim:history:position-budget",
+      "before": "",
+      "after": "Claim: One meter observes construction and encoding requests, exact and one-below ceilings, every callback refusal position of one admitted root and panic usage; these are reservation controls, not an allocator census.",
+      "review": "Independent preimage/residue conformance, finite component parent and acceptance robustness, request-site budget controls and complete retention checks. Only root and ordinary child are expressible admitted packages. No allocator census, transition admission, collision proof, settlement or store evidence."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::position_vectors",
+      "path": "packages/host/src/admitted_result/position/tests.rs",
+      "claim": "HOST::claim:history:position-vectors",
+      "before": "",
+      "after": "Claim: Seven distinct unsorted public projection inputs match independent canonical preimages and residues, including an admitted root and ordinary child; transition continuity is not fabricated.",
+      "review": "Independent preimage/residue conformance, finite component parent and acceptance robustness, request-site budget controls and complete retention checks. Only root and ordinary child are expressible admitted packages. No allocator census, transition admission, collision proof, settlement or store evidence. UTF-8 multi-member order is pinned independently; the zero/multiple-genesis refusal is witnessed only at its private boundary and is unreachable through public admission. Commitment and opening proof bytes differ, and an equivalent proof-only change preserves the position."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::tree_carrier_retention",
+      "path": "packages/host/src/admitted_result/position/tests.rs",
+      "claim": "HOST::claim:history:tree-carrier-retention",
+      "before": "",
+      "after": "Claim: The tree carrier retains complete admitted package bytes and qualifies all four observation families by the computed result while retaining original declaration coordinates; the existing chain carrier is unchanged.",
+      "review": "Independent preimage/residue conformance, finite component parent and acceptance robustness, request-site budget controls and complete retention checks. Only root and ordinary child are expressible admitted packages. No allocator census, transition admission, collision proof, settlement or store evidence."
+    },
+    {
       "operation": "pn-host::config::tests::secret_json_grammar",
       "path": "packages/host/src/config.rs",
       "claim": "HOST::claim:host:secret-json-has-one-field-interpretation",

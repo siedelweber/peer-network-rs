@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "item": "admitted_result::position::Position < 'a >::from_package",
+    "owner": "HOST",
+    "signature": "fn from_package (package : & 'a AdmittedPackage , parent : Option < & Self > , recipe : & str , ceiling : usize , usage : & mut EncodingUsage , mut reservation : impl FnMut (usize) -> Result < () , () > ,) -> Result < Self , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::from_package",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"admitted_result::position::Position < 'a >::from_package\" , & (package , parent , recipe , ceiling , \"reservation callback is an executable capability\" ,) ,) ; * usage = EncodingUsage :: default () ; let result = (| | { if recipe != RECIPE { return Err (Error :: UnsupportedPositionRecipe) ; } let input = Input :: admitted (package) ? ; let previous = parent . map (| p | Input :: admitted (p . package)) . transpose () ? ; input . validate (previous . as_ref ()) ? ; let depth = parent . map_or (Some (1) , | p | p . depth . checked_add (1)) . ok_or (Error :: InvalidPosition) ? ; signed (depth) ? ; let parent_id = parent . map (| p | p . residue) ; let mut builder = Builder { ceiling , usage , reservation : & mut reservation , } ; let bytes = builder . preimage (& input , previous . as_ref () , parent_id . as_ref ()) ? ; let residue = crate :: storage :: digest (RECIPE , & bytes) ; Ok (Self { package , residue , parent : parent_id , depth , }) }) () ; tracing :: event ! (tracing :: Level :: TRACE , projection_usage = ? usage) ; operation . finish (& result) ; result }",
+    "class_decision": "host-admitted-carrier",
+    "item_premise": "Borrowed admitted public causes, caller resource bounds, residue and exact admitted-request usage. Observation and callback execution are outside the projection budget. The callback is an executable capability, not serializable data. Retention separately clones and encodes public disclosures outside this meter. No store operation, credential, secret exit or mathematical admission.",
+    "assessments": {
+      "full_recording": "admitted-carrier-full_recording",
+      "secret_flow": "admitted-carrier-secret_flow",
+      "exposure_consumers": "admitted-carrier-exposure_consumers"
+    }
+  }
+}

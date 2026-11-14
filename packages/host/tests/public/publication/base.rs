@@ -34,7 +34,7 @@ impl ProcedureVerifier for Published {
         &self.0 == p
     }
 }
-pub(super) fn numeric() -> pn_records::numerics::NumericContext {
+pub(crate) fn numeric() -> pn_records::numerics::NumericContext {
     pn_records::numerics::NumericContext::new(
         d::limits::Limits::default(),
         pn_records::numerics::ComparisonLimits::new(1000, 1000),

@@ -15,7 +15,7 @@
       "producer": "admitted public carrier projection",
       "recipe": "pn-host/result-position/v1",
       "role": "PN-result-position-v1",
-      "status": "designed; vectors and implementation held on the tree-carrier cut"
+      "status": "implemented for roots and ordinary children; public transition continuity and store consumers remain held"
     },
     {
       "allocator": "repository maintainers for the centralized test deployment",
