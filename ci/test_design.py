@@ -422,6 +422,7 @@ class Correspondence(unittest.TestCase):
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
         (self.root / 'Cargo.toml').write_text('[workspace]\nmembers = ["vendor/example"]\n')
         (self.root / 'ci').mkdir()
+        (self.root / 'ci/paper-history.json').write_text('[]\n')
         (self.root / 'ci/vendor-packages.toml').write_text('[[packages]]\npath="vendor/example"\nmode="patch"\n')
         git(self.root, 'init', '--quiet')
         for name in PENDING_RENDERED_SPACING:
@@ -659,7 +660,7 @@ class Correspondence(unittest.TestCase):
                 self.assertIn('continuation line in rendered Markdown', result.stderr)
 
     def test_release_tags(self):
-        """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.
+        """Release identities are pinned; stale references refuse unless exactly bound as older historical facts in a closed class, with changed, transplanted, orphaned and duplicate bindings refused; only the two named source fixtures are exempt.
         ´claim:design:release-identities-are-pinned´
         ´test:integration:test-release-tags´
         """
@@ -687,6 +688,7 @@ class Correspondence(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('refused=0', result.stdout)
         self.assertEqual(PAPER_EDITION_FIXTURES, {'ci/test_design.py', 'packages/documents/tests/integration.rs'})
+        self.historical_release_bindings()
         for count, name in enumerate(sorted(PAPER_EDITION_FIXTURES), 1):
             fixture = self.root / name
             fixture.parent.mkdir(parents=True, exist_ok=True)
@@ -694,7 +696,7 @@ class Correspondence(unittest.TestCase):
             git(self.root, 'add', name)
             result = self.check()
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn(f'exempt={count} refused=0', result.stdout)
+            self.assertIn(f'exempt={count} historical=0 refused=0', result.stdout)
             probe = self.root / 'not-allow-listed.txt'
             probe.write_bytes(fixture.read_bytes())
             git(self.root, 'add', probe.name)
@@ -707,7 +709,42 @@ class Correspondence(unittest.TestCase):
             git(self.root, 'add', name)
         result = self.check()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('binary=2 exempt=2 refused=0', result.stdout)
+        self.assertIn('binary=2 exempt=2 historical=0 refused=0', result.stdout)
+
+    def historical_release_bindings(self):
+        from design import check_paper_editions, historical_references
+        source = 'Fixture derived from network-v0.1.0.'
+        row = dict(path='history.md', line=source, release='network-v0.1.0',
+                   **{'class': 'fixture-provenance'}, reason='Pins the fixture source.', derived_from='')
+        # Real files supply the line and path; the register reader still validates each row.
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'history.md'
+            other = Path(directory)/'other.md'
+            path.write_text(source+'\n')
+            other.write_text(source+'\n')
+            row['path'] = path.as_posix()
+            register = Path(directory)/'history.json'
+            def run(rows, paths):
+                register.write_text(json.dumps(rows))
+                with patch('design.PAPER_HISTORY', register):
+                    check_paper_editions(paths)
+            run([row], [path])
+            cases = [
+                ('unregistered stale mention', [], [path]),
+                ('registered historical line changed', [{**row, 'line': source+' changed'}], [path]),
+                ('historical text at another path', [row], [other]),
+                ('historical row matches no line', [row], []),
+                ('unknown historical class', [{**row, 'class': 'normative'}], [path]),
+                ('duplicate historical binding', [row, row], [path]),
+                ('unregistered stale mention', [{**row, 'path': other.as_posix(), 'line': 'Different source'}], [path]),
+            ]
+            for message, rows, paths in cases:
+                with self.subTest(historical=message), self.assertRaisesRegex(ValueError, message):
+                    run(rows, paths)
+            for release in (PAPER_TAG, 'network-v999.0.0'):
+                register.write_text(json.dumps([{**row, 'release': release}]))
+                with patch('design.PAPER_HISTORY', register), self.assertRaisesRegex(ValueError, 'release is not strictly older'):
+                    historical_references()
 
     def test_release_projections(self):
         """Release fields remain pinned, and only structural inventory rows may retain placeholders.

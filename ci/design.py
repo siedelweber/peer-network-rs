@@ -51,14 +51,43 @@ PAPER_EDITION_FIXTURES = {
     'packages/documents/tests/integration.rs',
 }
 
+PAPER_HISTORY = Path('ci/paper-history.json')
+PAPER_HISTORY_CLASSES = {'implemented-route', 'fixture-provenance', 'settled-question'}
+
+
+def historical_references():
+    """Read bindings of historical facts, never path exemptions."""
+    rows = json.loads(PAPER_HISTORY.read_text())
+    if not isinstance(rows, list):
+        raise ValueError('paper history: expected rows')
+    current = tuple(map(int, PAPER_TAG.removeprefix('network-v').split('.')))
+    for row in rows:
+        if not isinstance(row, dict) or set(row) != {'path', 'line', 'release', 'class', 'reason', 'derived_from'}:
+            raise ValueError('paper history: invalid row fields')
+        if not all(isinstance(value, str) for value in row.values()) or not row['reason'].strip():
+            raise ValueError('paper history: invalid row text')
+        version = re.fullmatch(r'network-v(\d+)\.(\d+)\.(\d+)', row['release'])
+        if version is None or tuple(map(int, version.groups())) >= current:
+            raise ValueError('paper history: release is not strictly older')
+        if row['class'] not in PAPER_HISTORY_CLASSES:
+            raise ValueError('paper history: unknown historical class')
+        if row['path'] in PAPER_EDITION_FIXTURES or row['path'] == PAPER_HISTORY.as_posix():
+            raise ValueError('paper history: invalid binding path')
+    return rows
+
 
 def check_paper_editions(paths):
     """Check tracked UTF-8 text without NUL bytes, except named source fixtures."""
-    checked = mentions = binary = exempt = 0
+    checked = mentions = binary = exempt = historical = 0
     findings = []
+    rows = historical_references()
+    matched = [0] * len(rows)
     for path in paths:
         if path.as_posix() in PAPER_EDITION_FIXTURES:
             exempt += 1
+            continue
+        if path == PAPER_HISTORY:
+            # This file is validated as bindings above and joined below, not prose.
             continue
         try:
             source = path.read_bytes().decode('utf-8')
@@ -69,11 +98,31 @@ def check_paper_editions(paths):
             binary += 1
             continue
         checked += 1
+        lines = source.splitlines()
         for number, mention in paper_edition_mentions(source):
             mentions += 1
             if mention.casefold() != PAPER_TAG.casefold():
-                findings.append(f'{path}:{number}: stale paper edition {mention} (current {PAPER_TAG})')
-    print(f'PAPER-EDITIONS files={checked} mentions={mentions} binary={binary} exempt={exempt} refused={len(findings)}')
+                matches = [i for i, row in enumerate(rows)
+                           if row['path'] == path.as_posix() and row['line'] == lines[number - 1]
+                           and row['release'] == mention]
+                if len(matches) == 1:
+                    matched[matches[0]] += 1
+                    historical += 1
+                elif len(matches) > 1:
+                    findings.append(f'{path}:{number}: duplicate historical binding')
+                elif any(row['line'] == lines[number - 1] and row['release'] == mention
+                         and row['path'] != path.as_posix() for row in rows):
+                    findings.append(f'{path}:{number}: historical text at another path')
+                elif any(row['path'] == path.as_posix() and row['release'] == mention for row in rows):
+                    findings.append(f'{path}:{number}: registered historical line changed')
+                else:
+                    findings.append(f'{path}:{number}: stale paper edition {mention} (current {PAPER_TAG}); unregistered stale mention')
+    for row, count in zip(rows, matched):
+        if count == 0:
+            findings.append(f'{row["path"]}: historical row matches no line')
+        elif count > 1:
+            findings.append(f'{row["path"]}: historical row matches repeated occurrences')
+    print(f'PAPER-EDITIONS files={checked} mentions={mentions} binary={binary} exempt={exempt} historical={historical} refused={len(findings)}')
     if findings:
         raise ValueError('\n'.join(findings))
 
