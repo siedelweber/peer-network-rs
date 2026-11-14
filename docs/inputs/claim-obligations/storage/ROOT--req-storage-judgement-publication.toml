@@ -1,0 +1,11 @@
+name = "ROOT::req:storage:judgement-publication"
+witnessed_labels = []
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Host publication and rebuild implementers and deployment declaration authority"
+missing = "External carrier, source and transport of each result generation and complete judgement are held."
+closing_condition = "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, generation, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and executable persistence admission."
+closing_step = "Public rebuild and executable persistence admission"

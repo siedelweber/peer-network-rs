@@ -1150,6 +1150,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Execute the shared memory and real-server generation/judgement roster and assertion-killed mutants, full-tree audit and complete public rebuild, then obtain independent storage admission; retain the deployment's explicit published minimum and breach response as inputs.",
+      "closing_step": "Tree memory commit, matching server cuts, full-tree audit and public rebuild before persistence admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Public generation declarations, atomic installation and recorded judgements are designed, not implemented. The greatest-installed-generation selection and immediate-parent minimum are writer-enforced and witnessed only by executed writer controls; audit and replay check consistency given recorded generations and do not prove their currency at admission. The immediate-parent minimum, inherited-use origin, unchanged retry, all-branch audit and deterministic public rebuild controls have not run.",
+      "name": "ROOT::dec:storage:branch-declaration-authority",
+      "owner": "Deployment declaration authority and host storage implementer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",
@@ -2810,6 +2823,32 @@
         "ROOT::verif:testing:foundation-admissions"
       ],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Specify and witness the authority publication and reader authentication route before public rebuild and executable persistence admission.",
+      "closing_step": "Public rebuild and executable persistence admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Reader authentication of the complete public generation declaration is held; database possession grants no authority.",
+      "name": "ROOT::req:storage:generation-authentication",
+      "owner": "Deployment declaration authority and host publication implementer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, generation, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and executable persistence admission.",
+      "closing_step": "Public rebuild and executable persistence admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "External carrier, source and transport of each result generation and complete judgement are held.",
+      "name": "ROOT::req:storage:judgement-publication",
+      "owner": "Host publication and rebuild implementers and deployment declaration authority",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {

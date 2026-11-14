@@ -1,0 +1,11 @@
+name = "ROOT::dec:storage:branch-declaration-authority"
+witnessed_labels = []
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Deployment declaration authority and host storage implementer"
+missing = "Public generation declarations, atomic installation and recorded judgements are designed, not implemented. The greatest-installed-generation selection and immediate-parent minimum are writer-enforced and witnessed only by executed writer controls; audit and replay check consistency given recorded generations and do not prove their currency at admission. The immediate-parent minimum, inherited-use origin, unchanged retry, all-branch audit and deterministic public rebuild controls have not run."
+closing_condition = "Execute the shared memory and real-server generation/judgement roster and assertion-killed mutants, full-tree audit and complete public rebuild, then obtain independent storage admission; retain the deployment's explicit published minimum and breach response as inputs."
+closing_step = "Tree memory commit, matching server cuts, full-tree audit and public rebuild before persistence admission"
