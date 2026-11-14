@@ -469,6 +469,10 @@ def import_failure_controls(test):
         inputs=root/'docs/inputs';inputs.mkdir(parents=True)
         for name in ('devperf-measurements.toml','devperf-budgets.toml'):
             (inputs/name).write_text('rows = []\n')
+        from source_sites import OWNERS
+        for owner in OWNERS:
+            manifest=root/'packages'/owner/'Cargo.toml';manifest.parent.mkdir(parents=True)
+            manifest.write_text('[package]\nname = "fixture"\nversion = "0.0.0"\n')
         git('add','.');git('commit','-qm','base');base=git('rev-parse','HEAD')
         (root/'candidate').write_text('candidate');git('add','.');git('commit','-qm','candidate');source=git('rev-parse','HEAD')
         env=dict(CARGO_TARGET_DIR=str(area/'target'),PN_ISOLATION_ROOT=str(area/'storage'))
@@ -789,7 +793,7 @@ def residue_controls(test, root, area, base, source, args):
         test.assertEqual(actual,4,'uncounted closing line is not a verdict')
         for phase,closing in [('precheck','PRECHECK-EXIT='+str(status)+' wall_s=1.0 execution=not-evaluated scope=all'),('gate','GATE-EXIT='+str(status))]:
             test.assertTrue(import_gate.verdict(status,closing+'\nGATE-STORAGE-LOCK action=released kind=gate\n',phase),'release line preserves the terminal verdict')
-    for name in ('LD_PRELOAD','LD_LIBRARY_PATH','BASH_ENV','ENV'):
+    for name in ('LD_PRELOAD','LD_LIBRARY_PATH','LD_AUDIT','BASH_ENV','ENV'):
         with test.assertRaisesRegex(ValueError,'startup assignment',msg='startup assignment refuses '+name):
             isolation.storage_driver(root,[sys.executable,name+'=relative'],prefix=True)
         runner=Round.__new__(Round);runner.root=root;runner.args=args;runner.store=area/('env-'+name);runner.store.mkdir();runner.log=None;runner.storage_token=None
@@ -809,13 +813,39 @@ def residue_controls(test, root, area, base, source, args):
     public=['--base',base,'--source',source,'--directory',str(area/'residue-entry'),'--container-list','["containers"]','--service-list','["services"]','--build-prefix',json.dumps(args.build_prefix),'--staged']
     with chdir(root),patch('import_gate.__file__',str(area/'outside/import_gate.py')),patch('import_gate.validate_stage'),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.Import.run',side_effect=series_round.Busy('controlled busy')),redirect_stdout(io.StringIO()):
         test.assertEqual(import_gate.main(),5,'entry maps busy to not run')
+    cleanup=area/'cleanup-child.py'
+    cleanup.write_text('''import json,subprocess,sys
+from pathlib import Path
+from contextlib import contextmanager
+from unittest.mock import patch
+sys.path.insert(0,sys.argv.pop(1))
+import import_gate
+status=int(sys.argv.pop(1))
+class Controlled(import_gate.Import):
+    def census(self):pass
+    def command(self,command,**options):
+        if command[0]=='git':return 0,subprocess.check_output(command,text=True).strip()
+        if command[-1]=='storage-root':return 0,str(Path.cwd().parent/'cleanup-storage')
+        if command[-1]=='ci/precheck.py':return 0,'PRECHECK-EXIT=0 wall_s=0.1 execution=not-evaluated scope=all'
+        return status,'GATE-EXIT='+str(status)
+@contextmanager
+def release(*args,**kwargs):
+    yield 'controlled-token'
+    raise OSError('controlled lock release failure')
+with patch('import_gate.Import',Controlled),patch('import_gate.__file__',str(Path(__file__))),patch('import_gate.validate_stage'),patch('isolation.storage_lock',release):
+    result=import_gate.main()
+sys.exit(result)
+''')
     for status in (0,1):
-        def released(runner):
-            runner.completed_result=dict(status=status,counted=True,outcome='complete')
-            raise OSError('controlled lock release failure')
-        with chdir(root),patch('import_gate.__file__',str(area/'outside/import_gate.py')),patch('import_gate.validate_stage'),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.Import.run',released),redirect_stdout(io.StringIO()) as output:
-            test.assertEqual(import_gate.main(),status,'cleanup failure preserves counted verdict')
-        test.assertIn('GATE-IMPORT-CLEANUP-ERROR',output.getvalue(),'cleanup failure remains visible')
+        arguments=list(public);arguments[arguments.index('--directory')+1]=str(area/('cleanup-real-'+str(status)))
+        child=subprocess.run([sys.executable,'-E','-s','-B',str(cleanup),str(Path(__file__).resolve().parent),str(status),*arguments],cwd=root,capture_output=True,text=True)
+        test.assertEqual(child.returncode,status,'real close preserves counted verdict after lock release failure')
+        test.assertTrue(child.stdout.rstrip().splitlines()[-1].startswith('GATE-IMPORT-CLEANUP-ERROR'),'real close reports cleanup after closing line')
+        with redirect_stdout(io.StringIO()):
+            actual=import_gate.import_status(child)
+        test.assertEqual(actual,status,'outer reader preserves closing verdict before cleanup line')
+        result=json.loads(next((area/('cleanup-real-'+str(status))).glob('import-*/result.json')).read_text())
+        test.assertEqual((result['status'],result['counted']),(status,True),'real cleanup retains complete result')
     roster={Path(name).stem for name in CONTROLLER_FILES}
     for name in CONTROLLER_FILES:
         tree=ast.parse(Path(__file__).with_name(name).read_text())
@@ -856,6 +886,22 @@ def residue_controls(test, root, area, base, source, args):
         driver.historical_run()
     test.assertFalse(any(x[:2]==['git','reset'] for x in calls),'missing pair performs no switch')
     driver.repeat_pair=lambda base,source:None
+    git('rm','packages/node/Cargo.toml');git('commit','-qm','source before owner')
+    missing_owner=git('rev-parse','HEAD')
+    git('reset','--hard',source)
+    driver.args.source=missing_owner;calls.clear()
+    with refuses(test,'historical-roster-not-repeatable','historical missing owner refuses by name'):
+        driver.historical_run()
+    test.assertFalse(any(x[:2]==['git','reset'] for x in calls),'missing owner performs no switch')
+    driver.args.source=base
+    output_driver=Round.__new__(Round);output_driver.root=root;output_driver.store=area/'early-output';output_driver.store.mkdir()
+    output_driver.log=None;output_driver.storage_token=None;output_driver.args=args
+    status,_=output_driver.command([sys.executable,'-c','import sys;print("early helper failure",flush=True);sys.exit(2)'])
+    test.assertEqual(status,2,'early helper keeps raw failure status')
+    command=json.loads((output_driver.store/'commands.jsonl').read_text().splitlines()[-1])
+    retained=Path(command['output_log'])
+    text=retained.read_bytes()[command['output_start']:command['output_end']].decode() if retained.exists() else ''
+    test.assertEqual(text,'early helper failure\n','early helper failure output is retained in evidence')
     (root/'dirty').write_text('dirty')
     with refuses(test,'producing-controller checkout','historical precondition refuses dirty checkout'):
         driver.historical_run()

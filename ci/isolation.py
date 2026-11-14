@@ -155,7 +155,7 @@ def storage_token():
     return declaration_environment().get('PN_GATE_STORAGE_TOKEN')
 
 
-PREFIX_STARTUP_VARIABLES = frozenset(('LD_PRELOAD', 'LD_LIBRARY_PATH', 'BASH_ENV', 'ENV'))
+PREFIX_STARTUP_VARIABLES = frozenset(('LD_PRELOAD', 'LD_LIBRARY_PATH', 'LD_AUDIT', 'BASH_ENV', 'ENV'))
 
 
 def storage_driver(root, command, prefix=False):

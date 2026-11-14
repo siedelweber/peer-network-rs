@@ -39,6 +39,7 @@ CONTROLLER_FILES = (
     'host_postgresql.py',
     'isolation.py',
     'policy_vectors.py',
+    'position_vectors.py',
     'properties.py',
     'provision_vendor.py',
     'registry_fragments.py',
@@ -260,12 +261,15 @@ class Round:
         except OSError as error:
             status, output = 125, str(error)+'\n'
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
-        if self.log:
-            with self.log.open('a') as stream:
-                stream.write(output)
+        output_log = self.log or self.store/'pre-entry.log'
+        with output_log.open('ab') as stream:
+            output_start = stream.tell()
+            stream.write(output.encode('utf-8'))
+            output_end = stream.tell()
         recorded = ['PN_GATE_STORAGE_TOKEN=[redacted]' if word.startswith('PN_GATE_STORAGE_TOKEN=') else word for word in full]
         append(self.store/'commands.jsonl', dict(argv=recorded, started=start, wall=time.time()-start,
-            user=after.ru_utime-before.ru_utime, system=after.ru_stime-before.ru_stime, status=status))
+            user=after.ru_utime-before.ru_utime, system=after.ru_stime-before.ru_stime, status=status,
+            output_log=str(output_log), output_start=output_start, output_end=output_end))
         print('GATE-ROUND-COMMAND '+json.dumps(dict(argv=recorded,status=status,wall=time.time()-start)), flush=True)
         if status < 0 and not getattr(self, 'raw_status', False):
             raise InterruptedError('round command interrupted by signal '+str(-status))
@@ -309,6 +313,7 @@ class Round:
             raise Refusal('historical repeat requires clean producing-controller checkout; inspect and restore after a killed run')
         base = self.require(['git','rev-parse','--verify',self.args.base+'^{commit}'])
         self.repeat_pair(base, source)
+        self.historical_roster(source)
         try:
             self.require(['git','reset','--hard',source])
             self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
@@ -317,6 +322,15 @@ class Round:
             self.require(['git','reset','--hard',previous])
             self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
             print('GATE-ROUND-RESTORED source='+previous,flush=True)
+
+    def historical_roster(self, source):
+        """Refuse an owing source missing a current owner before switching."""
+        from source_sites import OWNERS
+        paths = set(self.require(['git','ls-tree','-r','--name-only',source,'--','packages']).splitlines())
+        missing = sorted('packages/'+owner+'/Cargo.toml' for owner in OWNERS
+                         if 'packages/'+owner+'/Cargo.toml' not in paths)
+        if missing:
+            raise Refusal('historical-roster-not-repeatable: missing registered owner manifests: '+', '.join(missing))
 
     def locked_run(self):
         try:
