@@ -4,6 +4,8 @@ use std::process::Command;
 /// JSON and trace content in default and trace modes, and return a nonzero public refusal without private
 /// output for malformed metadata or a closed receiver. Receiver copies remain
 /// in the external fixture process and are never printed or written to a file.
+/// A full public-filled pipe remains unread through construction and termination;
+/// the terminated process emits no success object and only public JSON diagnostics.
 /// # Panics
 /// Panics if the runner omits the executable or a process violates the protocol.
 /// ´claim:generator:process-delivery-keeps-private-streams-out-of-public-output´
@@ -25,7 +27,7 @@ fn process_protocol() {
 
 fn launcher() -> &'static str {
     r"
-import os,sys,subprocess,json
+import os,sys,subprocess,json,fcntl,select,time,array,termios
 binary=sys.argv[1]
 child='''
 import os,sys,fcntl
@@ -73,6 +75,39 @@ for case in ('normal','reverse','default','missing','closed'):
         if p is not None and p.poll() is None: p.kill(); p.wait(timeout=5)
         for fd in (ar,aw,br,bw):
             if fd is not None: os.close(fd)
+ar,aw=os.pipe(); br,bw=os.pipe(); p=None
+try:
+    capacity=fcntl.fcntl(aw,fcntl.F_GETPIPE_SZ)
+    assert os.write(aw,b'Z'*capacity)==capacity, 'fixture fills the entire pipe'
+    p=subprocess.Popen([sys.executable,'-c',child,binary,str(aw),str(bw),'normal'],pass_fds=(aw,bw),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    os.close(aw); aw=None; os.close(bw); bw=None
+    diagnostic=b''; ready=False; construction=None; deadline=time.monotonic()+20
+    while time.monotonic()<deadline and p.poll() is None:
+        readable,_,_=select.select([p.stderr],[],[],0.1)
+        if readable:
+            diagnostic+=os.read(p.stderr.fileno(),65536)
+            for line in diagnostic.splitlines():
+                try: event=json.loads(line)
+                except ValueError: continue
+                detail=event.get('detail',{})
+                if detail.get('arguments',{}).get('source_item')=='Protection::credential':
+                    construction=event.get('operation_id')
+                if construction is not None and event.get('operation_id')==construction and event.get('event_kind')=='completion' and detail.get('outcome')=='success':
+                    ready=True
+        if ready: break
+    assert ready and p.poll() is None, 'full-pipe termination follows successful protected construction'
+    count=array.array('i',[0]); fcntl.ioctl(ar,termios.FIONREAD,count,True)
+    assert count[0]==capacity, 'reader retains the full pipe before termination'
+    p.terminate(); out,err=p.communicate(timeout=5); err=diagnostic+err
+    assert p.returncode!=0 and out==b'', 'terminated full-pipe process has no success object'
+    for line in err.splitlines(): json.loads(line)
+    assert b'password_bytes' not in out and b'verifier_bytes' not in out, 'termination publishes no success fields'
+    assert os.read(ar,capacity)==b'Z'*capacity and os.read(ar,1)==b'', 'no protected byte entered the full pipe'
+    assert os.read(br,1)==b'', 'termination precedes the verifier delivery'
+finally:
+    if p is not None and p.poll() is None: p.kill(); p.wait(timeout=5)
+    for fd in (ar,aw,br,bw):
+        if fd is not None: os.close(fd)
 print('process protocol passed')
 "
 }

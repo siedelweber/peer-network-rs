@@ -352,6 +352,18 @@ def credential_receiver_findings(sources):
         findings.append('named acquisition requires only its two fixed duplicate calls')
     if re.search(r'pub(?:\([^)]*\))?fnduplicate\(', code):
         findings.append('named acquisition duplicate helper must remain private')
+    entry = re.search(r'pubfnacquire_receivers\(\)->Result<\(PasswordReceiver,VerifierReceiver\),AcquisitionError>\{', code)
+    expected = 'pubfnacquire_receivers()->Result<(PasswordReceiver,VerifierReceiver),AcquisitionError>{ifATTEMPTED.swap(true,Ordering::SeqCst){returnErr(AcquisitionError::InvalidConvention);}acquire()}'
+    if entry is None or not code[entry.start():].startswith(expected) or len(re.findall(r'\bacquire\b', rust_code(sources[home]))) != 2:
+        findings.append('private acquisition requires the sole latched tail call')
+    module_code = rust_code(sources[home])
+    test_ranges = test_item_ranges(module_code)
+    if any(not any(start <= match.start() < end for start, end in test_ranges)
+           for match in re.finditer(r'\bmod\s+\w+\s*[;{]', module_code)):
+        findings.append('named delivery forbids non-test child modules')
+    public = re.findall(r'\bpub(?:\([^)]*\))?\s+(?:(?:async|const|unsafe)\s+)?(?:(?:fn|struct|enum|type|mod|use|static|const|trait)\s+)?(\w+)', rust_code(sources[home]))
+    if sorted(public) != sorted(('AcquisitionError', 'PasswordReceiver', 'VerifierReceiver', 'acquire_receivers', 'DeliveryError', 'accepted', 'kind', 'DeliveryFailure', 'deliver_password', 'deliver_verifier')):
+        findings.append('named delivery public item roster differs')
     generator = pathlib.Path('packages/credential-generator/src/main.rs')
     lib = pathlib.Path('packages/secret-home/src/lib.rs')
     home_tests = {p for p in test_sources(sources) if p.is_relative_to(home.parent.parent)}
@@ -679,6 +691,8 @@ def run_clippy(root, advisory=False):
 
 def cargo_config_findings(value):
     if isinstance(value, dict):
+        if any(key in value for key in ('source', 'patch', 'paths')):
+            return True
         return any("rustflags" in key.lower() or cargo_config_findings(item) for key, item in value.items())
     if isinstance(value, list):
         return any(cargo_config_findings(item) for item in value)
@@ -826,7 +840,7 @@ def main():
             path = pathlib.Path(os.fsdecode(name))
             if path.parent.name == ".cargo" and path.name in {"config", "config.toml"}:
                 if cargo_config_findings(tomllib.loads(path.read_text())):
-                    raise ValueError(f"{path}: tracked Cargo configuration may not carry rustflags or lint flags")
+                    raise ValueError(f"{path}: tracked Cargo configuration may not carry rustflags, lint flags, source replacement, patch tables or paths overrides")
         return 0
     if mode == "vendor-set":
         vendors = sorted((row['path'], row['name']) for row in vendor_packages(pathlib.Path.cwd()))

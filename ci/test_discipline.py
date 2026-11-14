@@ -129,6 +129,18 @@ class WorkspaceChecks(unittest.TestCase):
         path = Path('packages/secret-home/src/delivery.rs')
         source = path.read_text()
         self.assertEqual(credential_receiver_findings({path: source}), [], 'closed acquisition census')
+        changed = source + '\nfn another_route() { let _ = acquire(); }\n'
+        self.assertIn('private acquisition requires the sole latched tail call', credential_receiver_findings({path: changed}), 'private acquisition bypass refuses')
+        changed = source.replace('    acquire()\n}', '    let value = acquire();\n    value\n}')
+        self.assertIn('private acquisition requires the sole latched tail call', credential_receiver_findings({path: changed}), 'nonterminal acquisition refuses')
+        changed = source + '\npub fn alternate_route() {}\n'
+        self.assertIn('named delivery public item roster differs', credential_receiver_findings({path: changed}), 'additional public delivery item refuses')
+        changed = source + '\nimpl PasswordReceiver { pub fn kind(&self) {} }\n'
+        self.assertIn('named delivery public item roster differs', credential_receiver_findings({path: changed}), 'duplicated public delivery name refuses')
+        child = path.with_suffix('')/'child.rs'
+        for declaration in ('mod child;', 'mod child { fn bypass() { super::acquire(); } }'):
+            changed = source + '\n'+declaration+'\n'
+            self.assertIn('named delivery forbids non-test child modules', credential_receiver_findings({path: changed, child: 'fn bypass() { super::acquire(); }'}), 'non-test acquisition descendant refuses')
         for before, after in [
             ('duplicate(&process, 4)', 'duplicate(&process, 5)'),
             ('rustix::process::getpid()', 'another_process()'),
@@ -1282,7 +1294,7 @@ class SourceDiscipline(unittest.TestCase):
             self.assertTrue(source_findings(Path('src/lib.rs'), source, 'suppressions'))
 
     def test_cargo_config(self):
-        """tracked Cargo settings cannot supply rustflags or lint-level command flags.
+        """Tracked Cargo settings cannot supply lint flags or redirect source identity.
         ´claim:discipline:configuration-cannot-relax-lints´
         ´test:integration:test-cargo-config´
         """
@@ -1294,6 +1306,9 @@ class SourceDiscipline(unittest.TestCase):
         ]:
             self.assertTrue(cargo_config_findings(tomllib.loads(source)))
         self.assertFalse(cargo_config_findings(tomllib.loads('[build]\njobs = 2')))
+        self.assertTrue(cargo_config_findings(tomllib.loads('paths = ["elsewhere"]')), 'Cargo paths override refuses')
+        for source in ('[source.crates-io]\nreplace-with="elsewhere"', '[patch.crates-io]\nexample={path="elsewhere"}'):
+            self.assertTrue(cargo_config_findings(tomllib.loads(source)), 'Cargo source redirection refuses')
 
     def test_toolchain_versions(self):
         """Only the pinned dated nightly answering with the full declared compiler commit and both required components satisfies the compiler policy.

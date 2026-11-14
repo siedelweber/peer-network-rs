@@ -602,6 +602,14 @@
       "review": "Read the real reachable and unreachable Git controls and the historical-input controls: changed working bytes retain the historical result, while wrong digest, missing file and missing declaration refuse."
     },
     {
+      "operation": "ci::test_discipline.SourceDiscipline.test_cargo_config",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:configuration-cannot-relax-lints",
+      "before": "tracked Cargo settings cannot supply rustflags or lint-level command flags.",
+      "after": "Tracked Cargo settings cannot supply lint flags or redirect source identity.",
+      "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness. The tracked paths override list is separately refused; untracked configuration remains outside this census."
+    },
+    {
       "operation": "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-paths-require-runtime-sources",
@@ -639,7 +647,7 @@
       "claim": "ROOT::claim:discipline:credential-receiver-census-pins-first-entry",
       "before": "",
       "after": "One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.",
-      "review": "Read the finite startup or protected-delivery fixture and its named assertions; syscall denial and write outcome seams remain explicitly test-only and do not witness installation."
+      "review": "Read the finite startup or protected-delivery fixture and its named assertions; syscall denial and write outcome seams remain explicitly test-only and do not witness installation. The injected inline and file child modules refuse at the non-test module guard, and a duplicate public name refuses with multiplicity retained."
     },
     {
       "operation": "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
@@ -2310,8 +2318,8 @@
       "path": "packages/credential-generator/tests/process.rs",
       "claim": "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output",
       "before": "",
-      "after": "Fresh terminal processes deliver two exact ended streams, emit only public\nJSON and trace content in default and trace modes, and return a nonzero public refusal without private\noutput for malformed metadata or a closed receiver. Receiver copies remain\nin the external fixture process and are never printed or written to a file.\n# Panics\nPanics if the runner omits the executable or a process violates the protocol.",
-      "review": "Read the finite production-driver outcome tuples, test-only result and stream model, or process fixture as named; the external supervisor and physical installation remain outside these controls."
+      "after": "Fresh terminal processes deliver two exact ended streams, emit only public\nJSON and trace content in default and trace modes, and return a nonzero public refusal without private\noutput for malformed metadata or a closed receiver. Receiver copies remain\nin the external fixture process and are never printed or written to a file.\nA full public-filled pipe remains unread through construction and termination;\nthe terminated process emits no success object and only public JSON diagnostics.\n# Panics\nPanics if the runner omits the executable or a process violates the protocol.",
+      "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness."
     },
     {
       "operation": "pn-epoch::base::base_holds",
