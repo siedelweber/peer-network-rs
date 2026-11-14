@@ -642,12 +642,11 @@ fn publication_walk() {
     );
 }
 
-fn publication_boundaries(rotation: bool) {
-    let good = State::initial(rotation);
-    for phase in [
+fn phases() -> impl Iterator<Item = Phase> {
+    (0..=u8::MAX).map(Phase::Linked).chain([
         Phase::Empty,
+        Phase::Generating,
         Phase::Staged,
-        Phase::Linked(1),
         Phase::Marker,
         Phase::Complete,
         Phase::SelectionStaged,
@@ -655,7 +654,12 @@ fn publication_boundaries(rotation: bool) {
         Phase::Selected,
         Phase::Active,
         Phase::Discarded,
-    ] {
+    ])
+}
+
+fn publication_boundaries(rotation: bool) {
+    let good = State::initial(rotation);
+    for phase in phases().filter(|phase| *phase != Phase::Generating) {
         assert!(
             State { phase, ..good }.apply(Event::Receive(good_receipt())).is_none(),
             "receipt requires generating phase"
@@ -667,14 +671,9 @@ fn publication_boundaries(rotation: bool) {
         ..good
     };
     assert!(linked.apply(Event::Link).is_none(), "fifth publication link refuses");
-    for count in [1, 2, 3] {
+    for phase in phases().filter(|phase| *phase != Phase::Linked(4)) {
         assert!(
-            State {
-                phase: Phase::Linked(count),
-                ..linked
-            }
-            .apply(Event::Marker)
-            .is_none(),
+            State { phase, ..linked }.apply(Event::Marker).is_none(),
             "marker requires all four links"
         );
     }
@@ -689,15 +688,12 @@ fn activation_boundaries(rotation: bool) {
         ..complete(rotation)
     };
     assert!(ready.apply(Event::Select).is_some(), "complete selection prerequisites admit");
-    assert!(
-        State {
-            phase: Phase::Complete,
-            ..ready
-        }
-        .apply(Event::Select)
-        .is_none(),
-        "selection requires ready phase"
-    );
+    for phase in phases().filter(|phase| *phase != Phase::SelectionReady) {
+        assert!(
+            State { phase, ..ready }.apply(Event::Select).is_none(),
+            "selection requires ready phase"
+        );
+    }
     let selected = State {
         phase: Phase::Selected,
         ..ready
@@ -706,7 +702,12 @@ fn activation_boundaries(rotation: bool) {
         selected.apply(Event::Consume).is_some(),
         "complete consumption prerequisites admit"
     );
-    assert!(ready.apply(Event::Consume).is_none(), "consumption requires selected phase");
+    for phase in phases().filter(|phase| *phase != Phase::Selected) {
+        assert!(
+            State { phase, ..selected }.apply(Event::Consume).is_none(),
+            "consumption requires selected phase"
+        );
+    }
     if rotation {
         for (state, event, message) in [
             (
@@ -754,6 +755,12 @@ fn start_boundaries(selected: State) {
         ..selected
     };
     assert!(consumed.apply(Event::Start).is_some(), "complete start prerequisites admit");
+    for phase in phases().filter(|phase| *phase != Phase::Selected) {
+        assert!(
+            State { phase, ..consumed }.apply(Event::Start).is_none(),
+            "start requires selected phase"
+        );
+    }
     for (state, message) in [
         (
             State {

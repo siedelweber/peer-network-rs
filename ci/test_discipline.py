@@ -141,6 +141,13 @@ class WorkspaceChecks(unittest.TestCase):
         for declaration in ('mod child;', 'mod child { fn bypass() { super::acquire(); } }'):
             changed = source + '\n'+declaration+'\n'
             self.assertIn('named delivery forbids non-test child modules', credential_receiver_findings({path: changed, child: 'fn bypass() { super::acquire(); }'}), 'non-test acquisition descendant refuses')
+        for attribute in ('#[cfg(not(test))]', '#[cfg(any(test, unix))]', '#[cfg_attr(test, ignore)]'):
+            changed = source + '\n'+attribute+'\nmod child;\n'
+            self.assertIn('named delivery forbids non-test child modules', credential_receiver_findings({path: changed, child: 'fn bypass() { super::acquire(); }'}), 'test-looking acquisition descendant refuses')
+        changed = source + '\nmod r#child;\n'
+        self.assertIn('named delivery forbids non-test child modules', credential_receiver_findings({path: changed}), 'raw-identifier acquisition descendant refuses')
+        changed = source + '\n#[cfg(test)]\nmod r#child;\n'
+        self.assertNotIn('named delivery forbids non-test child modules', credential_receiver_findings({path: changed}), 'exact test configuration permits its child')
         for before, after in [
             ('duplicate(&process, 4)', 'duplicate(&process, 5)'),
             ('rustix::process::getpid()', 'another_process()'),
@@ -166,7 +173,7 @@ class WorkspaceChecks(unittest.TestCase):
                 changed = source+'\nimpl '+trait+' for '+role+' {}\n'
                 self.assertTrue(credential_receiver_findings({path:changed}), 'receiver conversion and duplication refuses')
             changed = source.replace('pub struct '+role+'(File);','pub struct '+role+'(pub File);')
-            self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver constructor refuses')
+            self.assertIn('receiver constructor must remain private: '+role, credential_receiver_findings({path:changed}), 'public receiver constructor refuses')
             self.assertTrue(credential_receiver_findings({path:changed+'\n// pub struct '+role+'(File);\n'}), 'comment cannot restore constructor privacy')
             changed = source+'\npub fn receiver(file: File) -> '+role+' { '+role+'(file) }\n'
             self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver-producing function refuses')

@@ -357,9 +357,10 @@ def credential_receiver_findings(sources):
     if entry is None or not code[entry.start():].startswith(expected) or len(re.findall(r'\bacquire\b', rust_code(sources[home]))) != 2:
         findings.append('private acquisition requires the sole latched tail call')
     module_code = rust_code(sources[home])
-    test_ranges = test_item_ranges(module_code)
+    test_ranges = [(match.start(), item_end(module_code, match.end()))
+                   for match in re.finditer(r'#\s*\[\s*cfg\s*\(\s*test\s*\)\s*\]', module_code)]
     if any(not any(start <= match.start() < end for start, end in test_ranges)
-           for match in re.finditer(r'\bmod\s+\w+\s*[;{]', module_code)):
+           for match in re.finditer(r'\bmod\s+(?:r#)?\w+\s*[;{]', module_code)):
         findings.append('named delivery forbids non-test child modules')
     public = re.findall(r'\bpub(?:\([^)]*\))?\s+(?:(?:async|const|unsafe)\s+)?(?:(?:fn|struct|enum|type|mod|use|static|const|trait)\s+)?(\w+)', rust_code(sources[home]))
     if sorted(public) != sorted(('AcquisitionError', 'PasswordReceiver', 'VerifierReceiver', 'acquire_receivers', 'DeliveryError', 'accepted', 'kind', 'DeliveryFailure', 'deliver_password', 'deliver_verifier')):
