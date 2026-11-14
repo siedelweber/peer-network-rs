@@ -1,0 +1,11 @@
+name = "ROOT::req:harness:transport-clock-evidence"
+witnessed_labels = []
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Wallet implementer and transport reviewer"
+missing = "A separately designed transport clock or deadline seam and controlled integration evidence; real-network wall-time envelopes are not claimed."
+closing_condition = "Review the transport-clock design and execute deterministic controls at the admitted interface without inferring wall-time conformance from a loaded run."
+closing_step = "Wallet transport-clock design and evidence cut"

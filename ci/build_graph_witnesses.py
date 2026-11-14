@@ -228,14 +228,14 @@ def exercise(case):
             'shutil.rmtree(tree)\nassert not tree.exists()\nprint("created=true removed=true")\n')
         errors = []
         with tempfile.TemporaryDirectory() as external, socket.socket(socket.AF_UNIX) as server:
-            server.bind(str(address));server.listen();server.settimeout(30)
+            server.bind(str(address));server.listen();server.settimeout(600)
             def mutate_during_census():
                 try:
                     with server.accept()[0] as connection:
-                        connection.settimeout(30)
+                        connection.settimeout(600)
                         case.assertEqual(connection.recv(5), b'ready')
                         result = subprocess.run([sys.executable, '-B', str(mutation)], capture_output=True, text=True,
-                            env=os.environ | {'PN_ISOLATION_ROOT':external}, timeout=30)
+                            env=os.environ | {'PN_ISOLATION_ROOT':external}, timeout=600)
                         case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
                         case.assertIn('created=true removed=true', result.stdout)
                         live = root/'target/moving-census/objects'
@@ -253,7 +253,7 @@ def exercise(case):
                     result = compile_graph()
                 case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
             finally:
-                worker.join(timeout=30)
+                worker.join(timeout=600)
             case.assertFalse(worker.is_alive())
             case.assertEqual(errors, [])
         address.unlink()

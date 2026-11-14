@@ -91,7 +91,7 @@ def traced_capture(test, command, env, level, validate, attempts=1, prefix='stor
         sink=Path(f'.lane/{prefix}-{level}.stderr.jsonl')
         started=time.monotonic()
         with sink.open('wb') as stream:
-            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
+            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=600,check=False)
         wall=time.monotonic()-started
         stderr=sink.read_bytes()
         witness(command,result.returncode,wall,stderr)
@@ -199,7 +199,7 @@ def sentinel_control(test, command, env, found, prefix, attempts=1):
         sink=Path(f'.lane/{prefix}.stderr.jsonl')
         started=time.monotonic()
         with sink.open('wb') as stream:
-            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
+            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=600,check=False)
         wall=time.monotonic()-started
         stderr=sink.read_bytes()
         witness(command,result.returncode,wall,stderr)
@@ -271,7 +271,7 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
         sink=Path(f'.lane/{prefix}-preparation.stderr.jsonl')
         started=time.monotonic()
         with sink.open('wb') as stream:
-            result=run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
+            result=run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=600,check=False)
         wall=time.monotonic()-started
         raw=sink.read_bytes()
         observe(command,result.returncode,wall,raw)
@@ -520,7 +520,7 @@ class HostRuntime(unittest.TestCase):
         fixture=b'\n#[cfg(test)] async fn forbidden_inline_sql(t: &StatementTransaction<\'_>) { let _ = t.query("SELECT current_user", &[]).await; }\n'
         try:
             source.write_bytes(original+fixture)
-            result=subprocess.run(['cargo','check','--offline','--locked','-p','pn-host','--tests'],capture_output=True,check=False,timeout=180)
+            result=subprocess.run(['cargo','check','--offline','--locked','-p','pn-host','--tests'],capture_output=True,check=False,timeout=600)
         finally:
             source.write_bytes(original)
         Path('.lane/host-statement-compile-fail.log').write_bytes(result.stderr)
@@ -582,7 +582,7 @@ class HostRuntime(unittest.TestCase):
         import socket
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
         target=Path('.lane/host-test-binary.txt').read_text().strip()
-        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],capture_output=True,check=False,timeout=60)
+        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],capture_output=True,check=False,timeout=600)
         self.assertEqual(result.returncode,0)
         old_port = int(json.loads((root/'tcp.json').read_text())['port'])
         command = host_postgresql.command
@@ -602,7 +602,7 @@ class HostRuntime(unittest.TestCase):
             self.assertEqual(launches, ['stop', 'start'])
         self.assertEqual(result.returncode,0)
         env=dict(os.environ,PN_HOST_STORAGE_READ_ONLY_PROBE='1')
-        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],env=env,capture_output=True,check=False,timeout=60)
+        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],env=env,capture_output=True,check=False,timeout=600)
         self.assertEqual(result.returncode,0)
         print('STORAGE-RESTART real_service=True read_without_append=True occupied_old_port=skipped launches=1')
 

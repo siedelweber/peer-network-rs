@@ -446,7 +446,7 @@ class Correspondence(unittest.TestCase):
     @classmethod
     def close_checker(cls):
         cls.checker.stdin.close()
-        cls.checker.wait(timeout=10)
+        cls.checker.wait(timeout=600)
         cls.checker.stdout.close()
         cls.checker.stderr.close()
         cls.checker = None

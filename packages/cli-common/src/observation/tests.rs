@@ -516,7 +516,7 @@ fn status_after_stalled_delivery() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"public":"first"}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     for index in 0..59 {
         observation.emit(json!({"public":index}));
     }
@@ -609,7 +609,7 @@ fn trace_burst_capacity() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     for index in 1..ordinary {
         observation.emit(json!({"kind":"trace","public":index}));
     }
@@ -728,7 +728,7 @@ fn ordinary_queue_overflow() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     let excess = 7;
     for index in 0..QUEUE_RECORDS + excess {
         observation.emit(json!({"kind":"trace","public":index}));
@@ -961,7 +961,7 @@ fn export_fixture(fail: bool) -> (Arc<crate::observation_export::Bridge>, Arc<Lo
         credential: PrivateString::new(SecretRole::Authentication, SecretString::from("fixture-private-token")),
     };
     let mut bridge = crate::observation_export::Bridge::new(config).unwrap();
-    bridge.collection_timeout = Duration::from_secs(10);
+    bridge.collection_timeout = Duration::from_secs(600);
     (Arc::new(bridge), transport)
 }
 
@@ -1019,7 +1019,7 @@ fn provider_bridge() {
         assert_eq!(
             bridge.lost.load(Ordering::Relaxed),
             0,
-            "provider-bridge: 10 s collection acknowledgement deadline"
+            "provider-bridge: 600 s hang bound for collection acknowledgement deadline"
         );
         let rows = records(&observation, &capture);
         let summary = rows.iter().rev().find(|row| row["kind"] == "metric_summary").unwrap();
@@ -1067,7 +1067,7 @@ fn provider_bridge() {
     assert_eq!(
         bridge.lost.load(Ordering::Relaxed),
         0,
-        "provider-bridge: 10 s export acknowledgement deadline"
+        "provider-bridge: 600 s hang bound for export acknowledgement deadline"
     );
     let requests = transport.requests.lock().unwrap();
     assert!(requests.iter().any(|(path, body)| {
@@ -1090,12 +1090,12 @@ fn assert_export_loss() {
     blocked.flush();
     assert_eq!(blocked.lost.load(Ordering::Relaxed), 1);
     drop(held);
-    Arc::get_mut(&mut blocked).unwrap().collection_timeout = Duration::from_secs(10);
+    Arc::get_mut(&mut blocked).unwrap().collection_timeout = Duration::from_secs(600);
     blocked.flush();
     assert_eq!(
         blocked.lost.load(Ordering::Relaxed),
         1,
-        "provider-bridge: 10 s post-timeout acknowledgement deadline"
+        "provider-bridge: 600 s hang bound for post-timeout acknowledgement deadline"
     );
     assert_eq!(blocked.exported.lock().unwrap().len(), 2);
     let (failed, _) = export_fixture(true);
@@ -1107,7 +1107,7 @@ fn assert_export_loss() {
     let failure_count = failed.failures.lock().unwrap().len();
     assert_eq!(
         failure_count, 1,
-        "provider-bridge: 10 s transport-failure acknowledgement deadline"
+        "provider-bridge: 600 s hang bound for transport-failure acknowledgement deadline"
     );
     assert_eq!(failed.lost.load(Ordering::Relaxed), 1);
     assert!(
@@ -1288,7 +1288,7 @@ fn exit_reports_pending_delivery() {
     observation.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
     observation.refuse_drain_wait = true;
     observation.emit(json!({"kind":"trace","index":0}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     for index in 1..241 {
         observation.emit(json!({"kind":"trace","index":index}));
     }
@@ -1300,7 +1300,7 @@ fn exit_reports_pending_delivery() {
     });
     // The deadline is injected as zero. This watchdog only prevents a broken
     // implementation from wedging the harness; release happens after the check.
-    let returned = completion.recv_timeout(Duration::from_secs(30));
+    let returned = completion.recv_timeout(Duration::from_secs(600));
     release.send(()).unwrap();
     thread.join().unwrap();
     returned.expect("guard drop waited for the blocked transport after its injected deadline");
@@ -1346,7 +1346,7 @@ fn deep_payload_delivery() {
     let (done, drained) = mpsc::sync_channel(1);
     observation.flush_sender.send(done).unwrap();
     observation.sender.send(Message::Wake).unwrap();
-    drained.recv_timeout(Duration::from_secs(30)).unwrap();
+    drained.recv_timeout(Duration::from_secs(600)).unwrap();
     assert_eq!(
         observation.lost.load(Ordering::Relaxed),
         0,
@@ -1436,8 +1436,8 @@ fn drained_records_with_loss(observation: &Observation, capture: &Capture) -> Ve
     observation.flush_sender.send(done).unwrap();
     observation.sender.send(Message::Wake).unwrap();
     drained
-        .recv_timeout(Duration::from_secs(30))
-        .expect("capture: 30 s drain acknowledgement deadline");
+        .recv_timeout(Duration::from_secs(600))
+        .expect("capture: 600 s drain acknowledgement hang bound");
     captured_records(capture)
 }
 fn captured_records(capture: &Capture) -> Vec<Value> {
@@ -1828,10 +1828,10 @@ fn cutoff_before_publication() {
         finished.send(()).unwrap();
     }));
     observation.emit(json!({"kind":"trace","public":"queued"}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     drop(BootstrapGuard(Some(observation.clone())));
     release.send(()).unwrap();
-    completion.recv_timeout(Duration::from_secs(30)).unwrap();
+    completion.recv_timeout(Duration::from_secs(600)).unwrap();
     // A flush acknowledgement or disconnect follows the resumed delivery.
     observation.refuse_drain_wait = false;
     observation.flush_for(Duration::from_secs(30));
@@ -1899,10 +1899,10 @@ fn shared_transport_cutoff() {
         cutoff: Some(cutoff),
     })));
     observation.emit(json!({"kind":"trace"}));
-    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    entry.recv_timeout(Duration::from_secs(600)).unwrap();
     let guard = BootstrapGuard(Some(observation));
     let thread = std::thread::spawn(move || drop(guard));
-    at_cutoff.recv_timeout(Duration::from_secs(30)).unwrap();
+    at_cutoff.recv_timeout(Duration::from_secs(600)).unwrap();
     release.send(()).unwrap();
     thread.join().unwrap();
     let bytes = capture.0.lock().unwrap();

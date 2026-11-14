@@ -529,13 +529,31 @@ mod tests {
             let mut request = [0; 1024];
             let count = stream.read(&mut request).unwrap_or(0);
             assert!(count <= request.len());
+            let mut sent = 0;
             for byte in bytes {
-                if stream.write_all(&[*byte]).is_err() {
-                    break;
-                }
+                // This acquisition drip is one-sided for the peer but bounded for the client: 42 bytes at 25 ms take 1.05 s nominally against a 100 ms deadline, so a starved correct client can lose the order; dripping until observed closure under hang containment is owed.
                 if drip {
                     std::thread::sleep(Duration::from_millis(25));
                 }
+                if stream.write_all(&[*byte]).is_err() {
+                    break;
+                }
+                sent += 1;
+            }
+            stream.shutdown(std::net::Shutdown::Write).ok();
+            if drip {
+                assert!(sent < bytes.len(), "single exchange deadline refuses before drip completes");
+                stream.set_read_timeout(Some(Duration::from_secs(600))).unwrap();
+                let mut sink = [0; 1024];
+                loop {
+                    match stream.read(&mut sink) {
+                        Ok(0) => break,
+                        Ok(_) => {}
+                        Err(error) if error.kind() == std::io::ErrorKind::ConnectionReset => break,
+                        Err(error) => panic!("HANG or I/O failure before peer closure: {error}"),
+                    }
+                }
+                assert!(count > 0, "deadline case reaches the controlled peer before closure");
             }
         });
         let stream = std::net::TcpStream::connect(address).unwrap();
@@ -546,22 +564,18 @@ mod tests {
             .header(header::CONNECTION, "close")
             .body(Full::new(Bytes::from_static(b"{}")))
             .unwrap();
-        // Framing cases assert refusals, not timing, so their budget sits far above the
-        // milliseconds these loopback exchanges ordinarily take, which keeps ordinary scheduling
-        // delay on a loaded node from turning a refusal into Deadline; a suspension longer than
-        // the bound would still exhaust it, and the case would then fail rather than pass. Only
-        // the drip runs against a short deadline, which its trickle always outlasts.
+        // Incomplete peer progress and the Deadline class decide this finite-script control; client starvation can lose that order, and the open-ended form is owed.
         let budget = if drip {
             Duration::from_millis(100)
         } else {
-            Duration::from_secs(60)
+            Duration::from_secs(600)
         };
         let result = exchange(stream, request, RpcLimits::default(), Instant::now() + budget, &mut None);
         server.join().unwrap();
         result
     }
 
-    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and slow progress cannot renew the one monotonic exchange deadline.
+    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and slow progress cannot renew the single exchange deadline: deadline-class refusal closes the dripping peer before its final byte; a real-network wall-time envelope is not claimed.
     /// ´claim:wallet:rpc-http-acquisition-is-bounded´
     /// ´test:unit:acquisition-cases´
     #[test]

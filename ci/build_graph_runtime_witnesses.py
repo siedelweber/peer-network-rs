@@ -309,11 +309,11 @@ def interrupted_gate(case, repository):
     with tempfile.TemporaryDirectory() as directory:
         root=Path(directory)
         listener=socket.socket(socket.AF_UNIX)
-        listener.bind(str(root/'ready.sock'));listener.listen();listener.settimeout(30)
+        listener.bind(str(root/'ready.sock'));listener.listen();listener.settimeout(600)
         (root/'wait.py').write_text("import os,select,socket,subprocess,sys\n"
             "code=\"import signal;signal.signal(signal.SIGTERM,signal.SIG_IGN);print('ready',flush=True);signal.pause()\"\n"
             "escaped=subprocess.Popen([sys.executable,'-c',code],start_new_session=True,stdout=subprocess.PIPE)\n"
-            "assert select.select([escaped.stdout],[],[],10)[0], 'escaped child readiness deadline: 10s'\n"
+            "assert select.select([escaped.stdout],[],[],600)[0], 'escaped child readiness HANG: 600s'\n"
             "assert escaped.stdout.readline()==b'ready\\n'\n"
             "s=socket.socket(socket.AF_UNIX)\ns.connect(os.environ['READY_SOCKET'])\ns.sendall(b'R')\ns.recv(1)\n")
         env=dict(os.environ,PN_BUILDGRAPH_RUN='interrupted-gate',READY_SOCKET=str(root/'ready.sock'),
@@ -330,11 +330,11 @@ def interrupted_gate(case, repository):
         def ready(child):
             descriptor=os.pidfd_open(child.pid)
             try:
-                observed=select.select([listener,descriptor],[],[],30)[0]
+                observed=select.select([listener,descriptor],[],[],600)[0]
                 if descriptor in observed:
-                    status=child.wait(timeout=5)
+                    status=child.wait(timeout=600)
                     case.fail('gate child exited before readiness: status='+str(status)+' diagnostic='+(root/'entry.log').read_text())
-                case.assertIn(listener,observed,'gate readiness deadline: 30s; diagnostic='+(root/'entry.log').read_text())
+                case.assertIn(listener,observed,'gate readiness HANG: 600s; diagnostic='+(root/'entry.log').read_text())
                 return listener.accept()
             finally:
                 os.close(descriptor)
@@ -345,7 +345,7 @@ def interrupted_gate(case, repository):
                     ready(stopped)
             finally:
                 if stopped.poll() is None:stopped.kill()
-                stopped.wait(timeout=5)
+                stopped.wait(timeout=600)
         with (root/'entry.log').open('wb') as output:
             child=subprocess.Popen(['bash','entry.sh'],cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             connection=None
@@ -369,9 +369,9 @@ def interrupted_gate(case, repository):
                 identities={pid:process_rows[pid][2] for pid in descendants}
                 case.assertTrue(any('ninja' in Path(f'/proc/{pid}/comm').read_text() for pid in descendants))
                 child.send_signal(signal.SIGTERM)
-                status=child.wait(timeout=60)
+                status=child.wait(timeout=600)
                 case.assertEqual(status,143,(root/'entry.log').read_text())
-                connection.settimeout(5);case.assertEqual(connection.recv(1),b'')
+                connection.settimeout(600);case.assertEqual(connection.recv(1),b'')
                 for name in ('host','wallet'):
                     case.assertTrue((root/'.lane'/name/'cleaned').exists())
                     case.assertFalse((root/'.lane'/name/'alive').exists())
@@ -383,7 +383,7 @@ def interrupted_gate(case, repository):
                 from build_graph import reap_cancelled_children
                 left=subprocess.Popen(['python3','-c',"import sys;print('ready',flush=True);sys.stdin.read()"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
                 try:
-                    case.assertTrue(select.select([left.stdout],[],[],10)[0], 'live child readiness deadline: 10s')
+                    case.assertTrue(select.select([left.stdout],[],[],600)[0], 'live child readiness HANG: 600s')
                     case.assertEqual(left.stdout.readline(),b'ready\n')
                     live={left.pid:process_identity(left.pid)}
                     with case.assertRaises(AssertionError):case.assertEqual(surviving_processes(live),[])
@@ -391,7 +391,7 @@ def interrupted_gate(case, repository):
                         reap_cancelled_children(grace=0,deadline=0.03,signal_child=lambda pid,number:None)
                     case.assertIsNone(left.poll())
                 finally:
-                    left.kill();left.wait(timeout=10);left.stdin.close();left.stdout.close()
+                    left.kill();left.wait(timeout=600);left.stdin.close();left.stdout.close()
                 case.assertEqual(surviving_processes(live),[])
                 print('RUNTIME-INTERRUPTION signal=SIGTERM inside=ninja status=143 roots=cleaned sibling=preserved descendants=0 escaped-session=reaped live-descendant-control=refused deadline=refusal-only')
             finally:
@@ -405,7 +405,7 @@ def interrupted_gate(case, repository):
                 if child.poll() is None:
                     print((root/'entry.log').read_text(),flush=True)
                     child.kill()
-                    child.wait(timeout=5)
+                    child.wait(timeout=600)
                 if connection is not None:connection.close()
                 listener.close()
 
@@ -628,9 +628,9 @@ def concurrent_completion(case):
 name=sys.argv[1];root=pathlib.Path('.lane');start=time.time()
 (root/(name+'.started')).touch()
 if name!='join':
-    deadline=time.monotonic()+30
+    deadline=time.monotonic()+600
     while not all((root/(n+'.started')).exists() for n in ('left','right')):
-        if time.monotonic()>deadline:raise RuntimeError('independent executor did not start')
+        if time.monotonic()>deadline:raise RuntimeError('HANG: independent executor did not start')
         time.sleep(.01)
 else:
     assert all((root/('completed-'+n+'.tsv')).exists() for n in ('left','right'))

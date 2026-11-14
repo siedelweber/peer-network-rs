@@ -9,7 +9,7 @@ use std::net::TcpStream;
 use std::path::PathBuf;
 use std::time::Duration;
 
-const METHODS: &str = "getblockcount,getwalletinfo,getnewaddress,getaddressinfo,createwallet,createrawtransaction,fundrawtransaction,signrawtransactionwithwallet,decoderawtransaction,gettransaction,getmempoolentry,listtransactions,listsinceblock,sendtoaddress,abandontransaction,help";
+const METHODS: &str = "getblockcount,listunspent,getsidechaininfo,getwalletinfo,getnewaddress,getaddressinfo,createwallet,createrawtransaction,fundrawtransaction,signrawtransactionwithwallet,decoderawtransaction,gettransaction,getmempoolentry,listtransactions,listsinceblock,sendtoaddress,abandontransaction,help";
 
 struct Identity(SecretString);
 struct Node {
@@ -219,7 +219,39 @@ fn raw_signing(node: &Node, identity: &Identity, address: &Value) -> Value {
     decoded["txid"].clone()
 }
 
-/// Claim: The real regtest daemon intersects per-user method whitelists, refuses stale credentials after rotation, preserves nonbroadcast wallet-created bytes across restart, and accepts distinct transactions with the same request comment; raw signed drafts are absent from wallet lookup, so these primitives do not establish the required request-unique recovery contract.
+fn require_funding(node: &Node, identity: &Identity, address: &Value) {
+    // Fan-out funding removes dependence on which outputs earlier self-payments
+    // consumed; no failure-point state establishes the cause of earlier refusals.
+    let fee_asset = call(node, identity, "getsidechaininfo", json!([]))["pegged_asset"].clone();
+    let probe = call(
+        node,
+        identity,
+        "createrawtransaction",
+        json!([[], [{address.as_str().unwrap(): "0.002"}]]),
+    );
+    let fee = call(node, identity, "fundrawtransaction", json!([probe, {"fee_rate": 1}]))["fee"].clone();
+    let coins = call(node, identity, "listunspent", json!([1]));
+    let ready = coins
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|coin| {
+            coin["asset"] == fee_asset
+                && coin["spendable"] == true
+                && coin["safe"] == true
+                && coin["confirmations"].as_u64().is_some_and(|n| n > 0)
+                && coin["amount"]
+                    .as_f64()
+                    .is_some_and(|amount| amount >= 0.002 + fee.as_f64().unwrap())
+        })
+        .count();
+    assert!(
+        ready >= 3,
+        "study funding precondition: three confirmed spendable fee-asset inputs required; found {ready}, fee={fee}"
+    );
+}
+
+/// Claim: With confirmed spendable fee-asset inputs checked before the concurrent sends, the real regtest daemon intersects per-user method whitelists, refuses stale credentials after rotation, preserves nonbroadcast wallet-created bytes across restart, and accepts distinct transactions with the same request comment; raw signed drafts are absent from wallet lookup, so these primitives do not establish the required request-unique recovery contract.
 /// ´claim:wallet:daemon-recovery-study-retains-capability-boundaries´
 /// ´test:integration:daemon-capabilities´
 #[test]
@@ -251,6 +283,7 @@ fn daemon_capabilities() {
     );
     let confidential = call(&node, &first, "getnewaddress", json!(["capability-study", "bech32"]));
     let address = call(&node, &first, "getaddressinfo", json!([confidential]))["unconfidential"].clone();
+    require_funding(&node, &first, &address);
     let draft = raw_signing(&node, &first, &address);
     let stored = send(&node, &first, &address, "study-restart", "0.001");
     let before = lookup(&node, &first, &stored);
@@ -282,6 +315,7 @@ fn daemon_capabilities() {
     );
     let page = call(&node, &rotated, "listtransactions", json!(["*", 1, 0, true]));
     assert_eq!(page.as_array().unwrap().len(), 1);
+    require_funding(&node, &rotated, &address);
     let (same, different) = std::thread::scope(|scope| {
         let a = scope.spawn(|| send(&node, &rotated, &address, "same-request", "0.001"));
         let b = scope.spawn(|| send(&node, &rotated, &address, "same-request", "0.001"));

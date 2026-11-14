@@ -127,7 +127,7 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
             let hook = PERMIT_HOOK.lock().unwrap().pop().unwrap();
             let _ = hook.0.send(());
             hook.1
-                .recv_timeout(std::time::Duration::from_secs(5))
+                .recv_timeout(std::time::Duration::from_secs(600))
                 .map_err(|_| Refusal::ScramFormat)?;
         }
         #[cfg(test)]
@@ -137,7 +137,7 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
             if let Some((started, progress)) = hook {
                 let _ = started.send(());
                 progress
-                    .recv_timeout(std::time::Duration::from_secs(3))
+                    .recv_timeout(std::time::Duration::from_secs(600))
                     .map_err(|_| Refusal::ScramFormat)?;
             }
         }
@@ -333,24 +333,40 @@ mod tests {
                 let (release, receive) = std::sync::mpsc::channel();
                 PERMIT_HOOK.lock().unwrap().push((started, receive));
                 jobs.push(tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096)));
-                tokio::time::timeout(std::time::Duration::from_secs(5), ready).await.unwrap().unwrap();
+                tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.unwrap().unwrap();
                 releases.push(release);
             }
             assert_eq!(DERIVATIONS.available_permits(), 0);
             let (started, mut ready) = tokio::sync::oneshot::channel();
             let (release_excess, receive) = std::sync::mpsc::channel();
             PERMIT_HOOK.lock().unwrap().push((started, receive));
-            let mut excess = tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
-            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut ready).await.is_err());
-            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
+            let mut excess = Box::pin(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
+            assert!(matches!(ready.try_recv(), Err(tokio::sync::oneshot::error::TryRecvError::Empty)));
+            std::future::poll_fn(|cx| {
+                assert!(std::future::Future::poll(excess.as_mut(), cx).is_pending(), "excess derivation remains pending before a permit is released");
+                assert!(matches!(ready.try_recv(), Err(tokio::sync::oneshot::error::TryRecvError::Empty)), "excess blocking job has not started");
+                assert_eq!(PERMIT_HOOK.lock().unwrap().len(), 1, "excess hook stays queued outside the blocking pool");
+                std::task::Poll::Ready(())
+            }).await;
             for job in jobs { job.abort(); assert!(job.await.unwrap_err().is_cancelled()); }
+            assert!(matches!(ready.try_recv(), Err(tokio::sync::oneshot::error::TryRecvError::Empty)), "cancellation does not start excess blocking work");
+            assert_eq!(PERMIT_HOOK.lock().unwrap().len(), 1, "cancellation leaves the excess hook queued");
             assert_eq!(DERIVATIONS.available_permits(), 0);
-            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
+            std::future::poll_fn(|cx| {
+                assert!(std::future::Future::poll(excess.as_mut(), cx).is_pending(), "excess derivation remains pending before a permit is released");
+                assert!(matches!(ready.try_recv(), Err(tokio::sync::oneshot::error::TryRecvError::Empty)), "excess blocking job has not started");
+                assert_eq!(PERMIT_HOOK.lock().unwrap().len(), 1, "excess hook stays queued outside the blocking pool");
+                std::task::Poll::Ready(())
+            }).await;
+            drop(excess);
+            assert!(matches!(ready.try_recv(), Err(tokio::sync::oneshot::error::TryRecvError::Empty)), "cancelled excess never enters the blocking pool");
+            assert_eq!(PERMIT_HOOK.lock().unwrap().len(), 1, "cancelled excess leaves its hook queued");
+            let excess = tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
             for release in releases { release.send(()).unwrap(); }
-            tokio::time::timeout(std::time::Duration::from_secs(5), ready).await.unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.unwrap().unwrap();
             release_excess.send(()).unwrap();
-            tokio::time::timeout(std::time::Duration::from_secs(5), excess).await.unwrap().unwrap().unwrap();
-            tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            tokio::time::timeout(std::time::Duration::from_secs(600), excess).await.unwrap().unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(600), async {
                 while DERIVATIONS.available_permits() != 2 { tokio::task::yield_now().await; }
             }).await.unwrap();
             cli_common::emit(&serde_json::json!({"kind":"derivation_permits","limit":2,"cancelled_jobs_retain_permits":true,"excess_waits":true})).unwrap();

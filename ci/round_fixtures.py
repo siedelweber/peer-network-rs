@@ -25,6 +25,59 @@ def refuses(test, pattern, message):
         test.fail(message+': no refusal')
 
 
+# Hang containment only: no successful control asserts an elapsed duration.
+# Ten minutes is deliberately separate from the watch's scheduling intervals.
+HANG_SECONDS = 600
+
+
+def await_event(test, event, child, description, *, exit_is_event=False):
+    """Await the named observation, diagnosing premature exit and hangs separately."""
+    import subprocess
+    def capture():
+        try:
+            return child.communicate(timeout=HANG_SECONDS)
+        except subprocess.TimeoutExpired as error:
+            raise TimeoutError(f'HANG draining child output: status={child.poll()} stdout={error.output!r} stderr={error.stderr!r}') from error
+    deadline = time.monotonic() + HANG_SECONDS
+    while not event():
+        if child.poll() is not None and not exit_is_event:
+            output, errors = capture()
+            test.fail(f'{description}: child exited status={child.returncode} stdout={output!r} stderr={errors!r}')
+        if time.monotonic() >= deadline:
+            if child.poll() is None:
+                child.kill()
+            output, errors = capture()
+            raise TimeoutError(f'HANG awaiting {description} after {HANG_SECONDS}s: status={child.returncode} stdout={output!r} stderr={errors!r}')
+        time.sleep(.01)
+
+
+def event_line(test, stream, child, errors):
+    """Read one pipe event with hang containment and child-exit diagnostics."""
+    import os
+    import select
+    end=time.monotonic()+HANG_SECONDS
+    line=bytearray()
+    while not line.endswith(b'\n'):
+        remaining=end-time.monotonic()
+        if remaining <= 0 or not select.select([stream.fileno()],[],[],max(0,remaining))[0]:
+            raise TimeoutError('HANG awaiting pipe event: '+errors.read_text())
+        byte=os.read(stream.fileno(),1)
+        if not byte:
+            child.join(HANG_SECONDS)
+            test.fail(f'pipe event absent: status={child.exitcode} stdout={bytes(line)!r} stderr={errors.read_text()!r}')
+        line.extend(byte)
+    return line.decode()
+
+
+def join_event(child):
+    """Join under hang containment, never asserting a completion duration."""
+    child.join(HANG_SECONDS)
+    if child.is_alive():
+        child.kill()
+        child.join(HANG_SECONDS)
+        raise TimeoutError('HANG awaiting supervisor exit')
+
+
 def controls(test, group):
     production_command = Round.command
     with tempfile.TemporaryDirectory() as temporary:
@@ -601,6 +654,21 @@ def storage_controls(test):
     import signal
     import subprocess
     from isolation import storage_binding, storage_lock
+    # Abnormal exit is distinct from absence of readiness; both streams survive.
+    child=subprocess.Popen([sys.executable,'-c','import sys;print("out-marker");print("err-marker",file=sys.stderr);sys.exit(7)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    with test.assertRaisesRegex(AssertionError, 'status=7.*out-marker.*err-marker'):
+        await_event(test, lambda: False, child, 'diagnostic control')
+    state={'status':None}
+    fake=SimpleNamespace(poll=lambda:state['status'], communicate=lambda **kw:('out-marker','err-marker'),
+                         kill=lambda:state.update(status=-9), returncode=-9)
+    with patch('round_fixtures.time.monotonic',side_effect=[0,HANG_SECONDS+1]):
+        with test.assertRaisesRegex(TimeoutError,'HANG.*status=-9.*out-marker.*err-marker'):
+            await_event(test,lambda:False,fake,'hang control')
+    test.assertEqual(state['status'],-9,'hang containment kills the unfinished child')
+    await_event(test,lambda:True,fake,'already observed event')
+    with patch.object(fake,'communicate',side_effect=subprocess.TimeoutExpired('fixture',HANG_SECONDS,output='partial-out',stderr='partial-err')):
+        with test.assertRaisesRegex(TimeoutError,'HANG draining.*partial-out.*partial-err'):
+            await_event(test,lambda:False,fake,'output drain control')
     with tempfile.TemporaryDirectory() as temporary:
         area=Path(temporary);root=area/'tree';root.mkdir()
         subprocess.run(['git','init','-q',str(root)],check=True)
@@ -676,7 +744,7 @@ def storage_controls(test):
                 try:storage_binding(root)
                 except ValueError as error:test.assertIn('target',str(error),'checkout binding names simultaneous target and storage change')
                 else:test.fail('checkout binding refuses simultaneous target and storage change')
-        child_code='import os,time,pathlib; p=pathlib.Path("child-ready"); q=p.with_suffix(".pending"); q.write_text(str(os.getpid())); q.replace(p); time.sleep(60)'
+        child_code='import os,signal,pathlib; p=pathlib.Path("child-ready"); q=p.with_suffix(".pending"); q.write_text(str(os.getpid())); q.replace(p); signal.pause()'
         ci=str(Path(__file__).resolve().parent)
         armed=subprocess.run([sys.executable,'-B',str(Path(ci)/'build_graph.py'),'parent-bound','-1',sys.executable,'-c','pass'],capture_output=True,text=True)
         test.assertEqual(armed.returncode,-signal.SIGTERM,'parent change before arming prevents workload exec')
@@ -694,24 +762,19 @@ def storage_controls(test):
         # stands in for a prefix which leaves its workload running.
         token_path=area/'holder-token';ready=root/'child-ready'
         ready.unlink(missing_ok=True)
-        holder_code='from isolation import storage_lock; from pathlib import Path; import time; c=storage_lock(Path('+repr(str(directory))+'),"series"); token=c.__enter__(); p=Path('+repr(str(token_path))+'); q=p.with_suffix(".pending"); q.write_text(token); q.replace(p); time.sleep(60)'
+        holder_code='from isolation import storage_lock; from pathlib import Path; import signal; c=storage_lock(Path('+repr(str(directory))+'),"series"); token=c.__enter__(); p=Path('+repr(str(token_path))+'); q=p.with_suffix(".pending"); q.write_text(token); q.replace(p); signal.pause()'
         child_env=dict(os.environ,**env,PYTHONPATH=ci);child_env.pop('PN_GATE_STORAGE_TOKEN',None)
         holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
         joined=None;pid=None
         try:
-            deadline=time.monotonic()+10
-            while not token_path.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
-            test.assertTrue(token_path.exists(),'watch control establishes holder')
+            await_event(test, token_path.exists, holder, 'watch control establishes holder')
             joined_code='from isolation import gate_storage; raise SystemExit(gate_storage('+repr([sys.executable,'-c',child_code])+'))'
             joined=subprocess.Popen([sys.executable,'-B','-c',joined_code],cwd=root,env=dict(child_env,PN_GATE_STORAGE_TOKEN=token_path.read_text()),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
-            deadline=time.monotonic()+10
-            while not ready.exists() and joined.poll() is None and time.monotonic()<deadline:time.sleep(.01)
-            test.assertTrue(ready.exists(),'independent joined workload starts')
-            pid=int(ready.read_text());started=time.monotonic();holder.kill();holder.communicate()
-            deadline=started+7
-            while (alive(pid) or joined.poll() is None) and time.monotonic()<deadline:time.sleep(.01)
+            await_event(test, ready.exists, joined, 'independent joined workload starts')
+            pid=int(ready.read_text());holder.kill();holder.communicate()
+            await_event(test, lambda: not alive(pid) and joined.poll() is not None, joined, 'watch ends workload and entry', exit_is_event=True)
             test.assertFalse(alive(pid),'lock watch ends workload behind non-relaying prefix')
-            test.assertIsNotNone(joined.poll(),'lock watch ends joined entry within polling and cleanup bound')
+            test.assertIsNotNone(joined.poll(),'lock watch ends joined entry after holder loss')
             output,_=joined.communicate()
             test.assertEqual(joined.returncode,5,'lost holder is uncounted status five')
             test.assertIn('reason=holder-lock-released',output,'lost holder names the lock release')
@@ -721,30 +784,33 @@ def storage_controls(test):
             if pid and alive(pid):os.kill(pid,signal.SIGKILL)
         for failure in ('ignores-term','foreign-token','unreadable-record','nonobject-record'):
             token_path.unlink(missing_ok=True);ready.unlink(missing_ok=True)
-            workload = ('import signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); ' if failure=='ignores-term' else '')+child_code
+            term_seen=root/'term-seen';term_seen.unlink(missing_ok=True)
+            workload = ('import signal,pathlib; signal.signal(signal.SIGTERM,lambda *_: pathlib.Path("term-seen").write_text("observed")); ' if failure=='ignores-term' else '')+child_code
+            if failure=='ignores-term':workload += '\nwhile True: signal.pause()'
             holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             joined=None;pid=None
             try:
-                deadline=time.monotonic()+10
-                while not token_path.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
-                test.assertTrue(token_path.exists(),'watch branch establishes holder: '+failure)
-                code='from isolation import gate_storage; raise SystemExit(gate_storage('+repr([sys.executable,'-c',workload])+'))'
+                await_event(test, token_path.exists, holder, 'watch branch establishes holder: '+failure)
+                code = ('from isolation import gate_storage, cancellable\n'
+                        'from unittest.mock import patch\n'
+                        'def checked_call(*args, **kwargs):\n'
+                        '    assert kwargs["kill_after"] == 5, "watch pins five-second escalation grace at its call"\n'
+                        '    return cancellable(*args, **kwargs)\n'
+                        'with patch("isolation.cancellable", side_effect=checked_call):\n'
+                        '    raise SystemExit(gate_storage('+repr([sys.executable,'-c',workload])+'))')
                 joined=subprocess.Popen([sys.executable,'-B','-c',code],cwd=root,env=dict(child_env,PN_GATE_STORAGE_TOKEN=token_path.read_text()),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
-                deadline=time.monotonic()+10
-                while not ready.exists() and joined.poll() is None and time.monotonic()<deadline:time.sleep(.01)
-                test.assertTrue(ready.exists(),'watch branch reaches workload: '+failure)
-                pid=int(ready.read_text());started=time.monotonic()
+                await_event(test, ready.exists, joined, 'watch branch reaches workload: '+failure)
+                pid=int(ready.read_text())
                 if failure=='ignores-term':holder.kill();holder.communicate()
                 else:
                     (directory/'.gate-storage.lock').write_text(json.dumps(dict(token='foreign',kind='series')) if failure=='foreign-token' else '[]' if failure=='nonobject-record' else '{')
-                deadline=started+7
-                while (alive(pid) or joined.poll() is None) and time.monotonic()<deadline:time.sleep(.01)
-                test.assertFalse(alive(pid),'watch ends workload on '+failure+' within seven seconds')
-                test.assertIsNotNone(joined.poll(),'watch ends entry on '+failure+' within seven seconds')
+                await_event(test, lambda: not alive(pid) and joined.poll() is not None, joined, 'watch ends workload and entry: '+failure, exit_is_event=True)
+                test.assertFalse(alive(pid),'watch ends workload on '+failure)
+                test.assertIsNotNone(joined.poll(),'watch ends entry on '+failure)
                 output,_=joined.communicate()
                 test.assertEqual(joined.returncode,5,'watch evidence failure is uncounted: '+failure)
                 if failure=='ignores-term':
-                    test.assertGreaterEqual(time.monotonic()-started,5,'TERM-ignoring control reaches escalation grace')
+                    test.assertTrue(term_seen.exists(),'TERM-retaining workload observes TERM before escalation ends it')
             finally:
                 if pid and alive(pid):os.kill(pid,signal.SIGKILL)
                 if holder.poll() is None:holder.kill();holder.communicate()
@@ -759,14 +825,11 @@ def storage_controls(test):
             holder=subprocess.Popen([sys.executable,'-B','-c',code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             pid=None
             try:
-                deadline=time.monotonic()+10
-                while not ready.exists() and holder.poll() is None and time.monotonic()<deadline:time.sleep(.01)
-                test.assertTrue(ready.exists(),'holder control reaches its gate-shaped child: '+mode)
+                await_event(test, ready.exists, holder, 'holder control reaches its gate-shaped child: '+mode)
                 pid=int(ready.read_text());holder.send_signal(number)
-                deadline=time.monotonic()+5
-                while alive(pid) and time.monotonic()<deadline:time.sleep(.01)
+                await_event(test, lambda: not alive(pid) and holder.poll() is not None, holder, 'holder and child end: '+mode, exit_is_event=True)
                 test.assertFalse(alive(pid),'holder termination ends its running child: '+mode+' '+str(number))
-                holder.communicate(timeout=10)
+                holder.communicate()
                 if mode=='storage' and number==signal.SIGHUP:
                     test.assertEqual(holder.returncode,129,'hang-up is forwarded and reaped by the holder')
                 with storage_lock(directory,'gate'):pass
@@ -913,11 +976,25 @@ sys.exit(result)
         command=json.loads((output_driver.store/'commands.jsonl').read_text().splitlines()[-1])
         retained=Path(command['output_log']).read_bytes()[command['output_start']:command['output_end']]
         test.assertEqual((command['status'],retained),(2,'out\ufffderr\ufffd'.encode()),'invalid helper text has a retained command row and byte range')
-    for delay in (0,0.3):
+    for deferred in (False,True):
+        popen=subprocess.Popen
+        calls=[]
+        def spawn(*args,**kwargs):
+            child=popen(*args,**kwargs)
+            communicate=child.communicate
+            def receive(*args,**kwargs):
+                calls.append('communicate')
+                if deferred and len(calls)==1:
+                    raise subprocess.TimeoutExpired('fixture',kwargs.get('timeout'))
+                return communicate(*args,**kwargs)
+            child.communicate=receive
+            return child
         try:
-            child=build_graph.cancellable([sys.executable,'-c',f'import os,sys,time;os.write(1,b"out\\xff");os.write(2,b"err\\xfe");time.sleep({delay});sys.exit(2)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            with patch('build_graph.subprocess.Popen',side_effect=spawn):
+                child=build_graph.cancellable([sys.executable,'-c','import os,sys;os.write(1,b"out\\xff");os.write(2,b"err\\xfe");sys.exit(2)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
         except UnicodeError:
             test.fail('adapter retains both invalid text streams across communicate waits')
+        test.assertGreaterEqual(len(calls),2 if deferred else 1,'injected wait reaches the communicate retry without relying on scheduling')
         test.assertEqual((child.returncode,child.stdout,child.stderr),(2,'out\ufffd','err\ufffd'),'adapter retains both invalid text streams across communicate waits')
     (root/'dirty').write_text('dirty')
     with refuses(test,'producing-controller checkout','historical precondition refuses dirty checkout'):

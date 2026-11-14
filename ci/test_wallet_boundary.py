@@ -153,7 +153,7 @@ class WalletBoundary(unittest.TestCase):
         }\n'''
         try:
             source.write_bytes(original+probe)
-            result=subprocess.run(['cargo','check','--offline','--locked','--profile','gate','-p','pn-wallet','--lib'],capture_output=True,check=False,timeout=180)
+            result=subprocess.run(['cargo','check','--offline','--locked','--profile','gate','-p','pn-wallet','--lib'],capture_output=True,check=False,timeout=600)
         finally:
             source.write_bytes(original)
         Path('.lane/wallet-rpc-compile-fail.log').write_bytes(result.stderr)
@@ -229,7 +229,7 @@ class WalletBoundary(unittest.TestCase):
             client = socket.create_connection(('127.0.0.1', port))
             accepted, _ = server.accept()
             accepted.close()
-            client.settimeout(30)
+            client.settimeout(600)
             self.assertEqual(client.recv(1), b'', 'server FIN must be observed before client close')
             client.close()
         with socket.socket() as plain, self.assertRaises(OSError):

@@ -2805,6 +2805,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Review the transport-clock design and execute deterministic controls at the admitted interface without inferring wall-time conformance from a loaded run.",
+      "closing_step": "Wallet transport-clock design and evidence cut",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "A separately designed transport clock or deadline seam and controlled integration evidence; real-network wall-time envelopes are not claimed.",
+      "name": "ROOT::req:harness:transport-clock-evidence",
+      "owner": "Wallet implementer and transport reviewer",
+      "path": "adr/020-testing-harness.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Publish the exact recipe, consumer decision, stale conditions and no-identity outcomes with the admitted class and its witnesses.",
       "closing_step": "First identity-class admission slice",
       "hold": "ROOT::open:testing:obligation-evidence",
@@ -3970,7 +3983,7 @@
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
       "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
       "hold": "",
-      "missing": "Outside scope: signed fixtures are now measured separately; recognition, settlement and spending remain held.",
+      "missing": "Outside scope: real connect/read wall-time envelopes are not claimed; the separate held transport-clock prerequisite owns their deterministic evidence. Signed fixtures are measured separately; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-http",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",

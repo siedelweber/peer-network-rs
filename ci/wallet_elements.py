@@ -508,10 +508,21 @@ def study_start(root):
     config, _ = producer(root)
     write_private(root/'study-endpoint.json', dict(port=config['port']))
     sign_block(root, False)
+    # One fan-out cannot consume its own sibling outputs, unlike sequential
+    # self-payments. This removes an assumption, not a diagnosis of an old failure.
+    amounts = {}
     for _ in range(5):
         address = rpc(config, "getaddressinfo", [rpc(config, "getnewaddress", ["study-reserve", "bech32"])])["unconfidential"]
-        rpc(config, "sendtoaddress", dict(address=address, amount="0.01", fee_rate=1))
+        amounts[address] = "0.01"
+    transaction = rpc(config, "sendmany", dict(dummy="", amounts=amounts, fee_rate=1))
     sign_block(root, False)
+    fee_asset = rpc(config, 'getsidechaininfo')['pegged_asset']
+    coins = [coin for coin in rpc(config, 'listunspent', [1])
+             if coin['txid'] == transaction and coin.get('address') in amounts
+             and coin['asset'] == fee_asset and coin['spendable'] and coin['safe']
+             and Decimal(str(coin['amount'])) == Decimal('0.01')]
+    if len(coins) != 5:
+        raise RuntimeError('study funding precondition: expected five confirmed spendable fan-out outputs; found '+str(len(coins)))
 
 
 def descriptor_start(root):

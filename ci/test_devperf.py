@@ -878,7 +878,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end within seven seconds of holder death, including a TERM-ignoring workload, or of foreign or unreadable watch evidence, even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, refuse busy hosts before switching, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, refuse busy hosts before switching, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -1649,6 +1649,7 @@ class Performance(unittest.TestCase):
         import sys
         from contextlib import redirect_stdout, redirect_stderr
         from isolation import gate_target
+        from round_fixtures import event_line, join_event
         root = Path(__file__).resolve().parent.parent
         with tempfile.TemporaryDirectory() as target:
             environment = dict(os.environ, CARGO_TARGET_DIR=target, TMPDIR=str(Path(target)/'absent'))
@@ -1662,7 +1663,7 @@ class Performance(unittest.TestCase):
                 self.assertEqual(gate_target([sys.executable, '-B', 'ci/isolation.py', 'locked-entry']), 0,
                                  'the supervisor must admit its own locked entry')
         with tempfile.TemporaryDirectory() as directory:
-            command = 'sleep 30 >/dev/null 2>&1 & echo $! > "$1"\nprintf "locked\\n"\nread -r release\n'
+            command = 'sleep infinity >/dev/null 2>&1 & echo $! > "$1"\nprintf "locked\\n"\nread -r release\n'
             pidfile = Path(directory)/'descendant'
             errors = Path(directory)/'stderr'
             output_read, output_write = os.pipe()
@@ -1685,8 +1686,8 @@ class Performance(unittest.TestCase):
             try:
                 with os.fdopen(output_read) as output, os.fdopen(release_write, 'w') as release:
                     try:
-                        self.assertRegex(output.readline(), r'^GATE-TARGET-LOCK wait_s=[0-9.]+ path=')
-                        self.assertEqual(output.readline(), 'locked\n')
+                        self.assertRegex(event_line(self, output, child, errors), r'^GATE-TARGET-LOCK wait_s=[0-9.]+ path=')
+                        self.assertEqual(event_line(self, output, child, errors), 'locked\n')
                         lock = str(Path(directory)/'.gate-target.lock')
                         with open(lock, 'a') as competing:
                             with self.assertRaises(BlockingIOError):
@@ -1694,8 +1695,8 @@ class Performance(unittest.TestCase):
                     finally:
                         release.write('release\n')
                         release.flush()
-                        child.join(10)
-                self.assertFalse(child.is_alive(), 'gate supervisor exceeded its exit deadline')
+                        join_event(child)
+                self.assertFalse(child.is_alive(), 'gate supervisor exit is observed')
                 self.assertEqual(child.exitcode, 0, errors.read_text())
                 with open(lock, 'a') as released:
                     os.kill(int(pidfile.read_text()), 0)
@@ -1703,12 +1704,12 @@ class Performance(unittest.TestCase):
             finally:
                 if child.is_alive():
                     child.terminate()
-                    child.join(10)
+                    join_event(child)
                 if pidfile.exists():
                     os.kill(int(pidfile.read_text()), signal.SIGTERM)
 
     def test_gate_cancel_cleanup(self):
-        """Cancellation retains target exclusion until a slow EXIT stop and its session finish.
+        """Cancellation pins the supervisor call to no escalation and retains target exclusion while EXIT stop waits for an explicit release event; service-stop and session-close events precede supervisor exit and lock acquisition.
         ´claim:devperf:gate-cancellation-retains-exclusion´
         ´test:integration:test-gate-cancel-cleanup´
         """
@@ -1718,14 +1719,15 @@ class Performance(unittest.TestCase):
         import sys
         import time
         from isolation import gate_target
+        from round_fixtures import event_line, join_event
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             ready_read, ready_write = os.pipe()
             release_read, release_write = os.pipe()
             command = '''trap 'trap - EXIT; trap "" TERM INT; printf "stopping\\n"; read -r release; kill -KILL "$service"; wait "$service"; printf "service-stopped\\n"; kill -KILL "$session"; wait "$session"; printf "session-closed\\n"' EXIT
 trap 'trap "" TERM INT; exit 143' TERM INT
-bash -c 'trap "" TERM INT; printf "service-ready\\n"; exec sleep 60' & service=$!
-bash -c 'trap "" TERM INT; printf "session-ready\\n"; exec sleep 60' & session=$!
+bash -c 'trap "" TERM INT; printf "service-ready\\n"; exec sleep infinity' & service=$!
+bash -c 'trap "" TERM INT; printf "session-ready\\n"; exec sleep infinity' & session=$!
 printf '%s %s\\n' "$service" "$session" > "$1"
 printf "ready\\n"
 wait
@@ -1740,29 +1742,33 @@ wait
                 with (root/'stderr').open('w') as errors:
                     os.dup2(errors.fileno(), 2)
                     os.environ['CARGO_TARGET_DIR'] = directory
-                    sys.exit(gate_target(['bash', '-c', command, 'fixture', str(root/'pids')]))
+                    from isolation import cancellable
+                    def checked_call(*args, **kwargs):
+                        self.assertIsNone(kwargs['kill_after'], 'target cleanup disables escalation at its call')
+                        return cancellable(*args, **kwargs)
+                    with patch('isolation.cancellable', side_effect=checked_call):
+                        sys.exit(gate_target(['bash', '-c', command, 'fixture', str(root/'pids')]))
             child = multiprocessing.get_context('fork').Process(target=supervise)
             child.start()
             os.close(ready_write)
             os.close(release_read)
             try:
                 with os.fdopen(ready_read) as events, (root/'.gate-target.lock').open('a') as lock:
-                    self.assertTrue(events.readline().startswith('GATE-TARGET-LOCK'))
-                    self.assertEqual({events.readline() for _ in range(3)}, {'ready\n', 'service-ready\n', 'session-ready\n'})
+                    self.assertTrue(event_line(self, events, child, root/'stderr').startswith('GATE-TARGET-LOCK'))
+                    self.assertEqual({event_line(self, events, child, root/'stderr') for _ in range(3)}, {'ready\n', 'service-ready\n', 'session-ready\n'})
                     pids = [int(pid) for pid in (root/'pids').read_text().split()]
                     self.assertEqual(len(pids), 2)
                     child.terminate()
-                    self.assertEqual(events.readline(), 'stopping\n')
-                    time.sleep(5.25)
+                    self.assertEqual(event_line(self, events, child, root/'stderr'), 'stopping\n')
                     self.assertTrue(child.is_alive(), 'supervisor killed the gate during EXIT stop')
                     for pid in pids:
                         os.kill(pid, 0)
                     with self.assertRaises(BlockingIOError):
                         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
                     os.write(release_write, b'release\n')
-                    self.assertEqual(events.readline(), 'service-stopped\n')
-                    self.assertEqual(events.readline(), 'session-closed\n')
-                    child.join(10)
+                    self.assertEqual(event_line(self, events, child, root/'stderr'), 'service-stopped\n')
+                    self.assertEqual(event_line(self, events, child, root/'stderr'), 'session-closed\n')
+                    join_event(child)
                     self.assertFalse(child.is_alive())
                     self.assertEqual(child.exitcode, 143)
                     for pid in pids:
@@ -1773,7 +1779,7 @@ wait
                 os.close(release_write)
                 if child.is_alive():
                     os.kill(child.pid, signal.SIGKILL)
-                    child.join(10)
+                    join_event(child)
 
     def test_target_retention(self):
         """Retention drops oversized incremental state before profile artifacts and preserves owner metadata; inclusive Cargo-and-run CPU stays apart from compile CPU.

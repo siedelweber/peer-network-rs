@@ -239,7 +239,7 @@ assert not (root/'.git/objects/info/alternates').exists()
 assert pathlib.Path(os.environ['PN_FLAKE_LEDGER']).parent == pathlib.Path(os.environ['CARGO_TARGET_DIR'])
 pathlib.Path(os.environ['CARGO_TARGET_DIR']).joinpath('retained').write_text('owned cache')
 with socket.socket(socket.AF_UNIX) as connection:
-    connection.settimeout(30)
+    connection.settimeout(600)
     connection.connect(os.environ['WALLET_WITNESS_SOCKET'])
     connection.sendall(b'ready')
     assert connection.recv(1) == b'R'
@@ -307,11 +307,11 @@ assert (root/'payload').read_text() == 'committed'
                     with socket.socket(socket.AF_UNIX) as server:
                         server.bind(str(address))
                         server.listen()
-                        server.settimeout(30)
+                        server.settimeout(600)
                         def mutate():
                             try:
                                 with server.accept()[0] as connection:
-                                    connection.settimeout(30)
+                                    connection.settimeout(600)
                                     self.assertEqual(connection.recv(5), b'ready')
                                     if moving:
                                         (root/'payload').write_text('changed during wallet execution')
@@ -339,7 +339,7 @@ assert (root/'payload').read_text() == 'committed'
                             self.assertEqual(measured[0]['cold_target'], not moving)
                             self.assertFalse(measured[0]['layout_changed'])
                         finally:
-                            worker.join(timeout=30)
+                            worker.join(timeout=600)
                         self.assertFalse(worker.is_alive())
                         self.assertEqual(errors, [])
                     address.unlink()

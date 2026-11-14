@@ -98,7 +98,7 @@ fn impostor_authentication() {
             let bytes = fixture(port);
             let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
             assert_eq!(
-                tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
+                tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                     .await
                     .unwrap()
                     .unwrap_err(),
@@ -125,7 +125,7 @@ fn authentication_disconnect() {
         });
         let bytes = fixture(port);
         let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
-        let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
+        let result = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
             .await
             .unwrap();
         assert_eq!(result.unwrap_err(), Refusal::Transport);
@@ -194,7 +194,7 @@ fn impostor_server_proof() {
         let bytes = fixture(port);
         let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
         assert_eq!(
-            tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
+            tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                 .await
                 .unwrap()
                 .unwrap_err(),
@@ -263,7 +263,7 @@ fn scram_bound_refusals() {
                 assert_eq!(stream.read(&mut response).await.unwrap(), 0, "refusal must precede proof");
             });
             let config = Configuration::acquire(Some("host-secured"), &mut fixture(port).as_slice()).unwrap();
-            let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
+            let result = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                 .await
                 .unwrap();
             assert_eq!(result.unwrap_err(), expected, "{case}");

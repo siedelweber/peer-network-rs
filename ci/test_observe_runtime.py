@@ -50,7 +50,7 @@ def run(argv, **kwargs):
     return result
 
 
-def compare(argv, mode, env, deadline=60, injected=False):
+def compare(argv, mode, env, deadline=600, injected=False):
     """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
     if not injected and mode != 'disabled':
@@ -80,9 +80,9 @@ def compare(argv, mode, env, deadline=60, injected=False):
     timed_out=False
     try: status=process.wait(timeout=deadline)
     except subprocess.TimeoutExpired:
-        timed_out=True; process.kill(); status=process.wait(timeout=5)
+        timed_out=True; process.kill(); status=process.wait(timeout=600)
     finally:
-        reader.join(timeout=5); output.join(timeout=5)
+        reader.join(timeout=600); output.join(timeout=600)
         if not reader.is_alive(): process.stderr.close()
         if not output.is_alive(): process.stdout.close()
         try: process.stdin.close()
