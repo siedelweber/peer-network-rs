@@ -377,19 +377,21 @@ def import_controls(test):
         (staged/'isolation.py').write_text('# another adapter\n')
         with refuses(test,'staged adapter differs','staged re-entry refuses a substituted adapter'):
             validate_stage(root,source,staged)
-        args=SimpleNamespace(base=base,source=source,directory=area/'evidence',build_prefix=['fixture-build'],container_list=['containers'],service_list=['services'])
+        args=SimpleNamespace(base=base,source=source,directory=area/'evidence',build_prefix=[sys.executable],container_list=['containers'],service_list=['services'])
         state=dict(precheck=0,gate=0,busy=False,crash=False);calls=[]
         class Controlled(Import):
             def command(self,command,environment=None,build=False):
                 calls.append((command,environment,build))
-                if command[0]=='git':return 0,git(*command[1:])
+                if command[0]=='git':
+                    if command[1:2]==['reset'] and state['crash']:raise InterruptedError('controlled loss')
+                    return 0,git(*command[1:])
                 if command[0]=='ps':return 0,''
                 if command==['containers']:return 0,'[{}]' if state['busy'] else '[]'
                 if command==['services']:return 0,'[]'
                 if command[-1]=='storage-root':return 0,str(storage_binding(root))
                 if command[-1]=='ci/precheck.py':
                     test.assertEqual(git('rev-parse','HEAD'),self.args.source,'import switches before pre-check')
-                    return state['precheck'],'PRECHECK-EXIT='+str(state['precheck'])
+                    return state['precheck'],'PRECHECK-EXIT='+str(state['precheck'])+' wall_s=0.1 execution=not-evaluated scope=all'
                 if command==['bash','ci/gate.sh']:
                     test.assertEqual(environment,dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=environment['PN_GATE_ENTRY'],PN_GATE_SAMPLE='import',PN_IMPORT_BASE=base),'import owns complete declaration')
                     if state['crash']:raise InterruptedError('controlled loss')
@@ -444,6 +446,149 @@ def import_controls(test):
                     if kind=='precheck':test.assertFalse(any(row[0]==['bash','ci/gate.sh'] for row in calls),'failed pre-check prevents gate')
 
 
+def import_failure_controls(test):
+    """Keep process refusals and entry failures separate from tree verdicts."""
+    import os
+    import subprocess
+    import import_gate
+    from contextlib import redirect_stdout, chdir
+    import io
+    from isolation import storage_driver, storage_lock, storage_binding
+    from series_round import round_lock
+    with tempfile.TemporaryDirectory() as temporary:
+        area=Path(temporary);root=area/'tree';root.mkdir();ci=root/'ci';ci.mkdir()
+        def git(*words):
+            return subprocess.check_output(['git',*words],cwd=root,text=True).strip()
+        git('init','-q');git('config','user.name','Fixture');git('config','user.email','fixture@example.invalid');git('config','commit.gpgsign','false')
+        (root/'.gitignore').write_text('.lane/\n')
+        from series_round import CONTROLLER_FILES
+        for name in sorted(set(import_gate.ADAPTER_FILES) | set(CONTROLLER_FILES)):
+            (ci/name).write_bytes(Path(__file__).with_name(name).read_bytes())
+        (ci/'precheck.py').write_text('print("PRECHECK-EXIT=0 wall_s=0.1 execution=not-evaluated scope=all")\n')
+        (ci/'gate.sh').write_text('echo GATE-EXIT=0\n')
+        inputs=root/'docs/inputs';inputs.mkdir(parents=True)
+        for name in ('devperf-measurements.toml','devperf-budgets.toml'):
+            (inputs/name).write_text('rows = []\n')
+        git('add','.');git('commit','-qm','base');base=git('rev-parse','HEAD')
+        (root/'candidate').write_text('candidate');git('add','.');git('commit','-qm','candidate');source=git('rev-parse','HEAD')
+        env=dict(CARGO_TARGET_DIR=str(area/'target'),PN_ISOLATION_ROOT=str(area/'storage'))
+        prefix=area/'prefix.py';prefix.write_text('import os,sys\nos.execvp(sys.argv[1],sys.argv[1:])\n')
+        args=SimpleNamespace(base=base,source=source,directory=area/'store',build_prefix=[sys.executable,str(prefix)],container_list=['containers'],service_list=['services'])
+        state=dict(phase='precheck',status=0,closing=True,exception=False)
+        class Controlled(import_gate.Import):
+            def command(self,command,environment=None,build=False):
+                if command[0]=='git':return 0,git(*command[1:])
+                if command[-1]=='storage-root':return 0,str(storage_binding(root))
+                phase='precheck' if command[-1]=='ci/precheck.py' else 'gate'
+                if state['exception'] and phase==state['phase']:raise RuntimeError('controlled exception')
+                status=state['status'] if phase==state['phase'] else 0
+                closed=state['closing'] if phase==state['phase'] else True
+                output=('PRECHECK-EXIT='+str(status)+' wall_s=0.1 execution=not-evaluated scope=all' if phase=='precheck' else 'GATE-EXIT='+str(status)) if closed else 'no verdict'
+                return status,output
+            def census(self):pass
+        with patch.dict(os.environ,env):
+            from series_round import Round
+            signal_runner=import_gate.Import(root,args)
+            try:
+                signal_status,_=Round.command(signal_runner,[sys.executable,'-c','import os,signal;os.kill(os.getpid(),signal.SIGTERM)'])
+            except Exception as error:signal_status=type(error).__name__
+            test.assertEqual(signal_status,-15,'import command retains a real child signal status')
+            for phase in ('precheck','gate'):
+                closing='PRECHECK-EXIT=1 wall_s=0.1 execution=not-evaluated scope=all' if phase=='precheck' else 'GATE-EXIT=1'
+                test.assertFalse(import_gate.verdict(1,closing+'\nTraceback: unexpected failure',phase),'embedded verdict is not a closing line: '+phase)
+                for status in (0,1,2,4,5,125,143,-15):
+                    for closing in (True,False):
+                        state.update(phase=phase,status=status,closing=closing,exception=False)
+                        args.directory=area/(phase+str(status)+str(closing))
+                        runner=Controlled(root,args)
+                        result=runner.run()
+                        expected=status if status in (0,1) and closing else 5 if status==5 else 4
+                        name=phase+' '+str(status)+' closing='+str(closing)
+                        test.assertEqual(result,expected,'import status class: '+name)
+                        row=json.loads(next(args.directory.glob('import-*/result.json')).read_text())
+                        test.assertEqual(row[phase+'_status'],status,'raw process status retained: '+name)
+                        test.assertEqual(row['counted'],expected in (0,1),'only terminal verdict is counted: '+name)
+                        if expected==4:
+                            state.update(status=0,closing=True)
+                            test.assertEqual(runner.run(),0,'non-verdict permits reviewed new invocation: '+name)
+                args.directory=area/(phase+'exception');state.update(phase=phase,exception=True)
+                test.assertEqual(Controlled(root,args).run(),4,'process exception is protocol refusal: '+phase)
+                row=json.loads(next(args.directory.glob('import-*/result.json')).read_text())
+                test.assertEqual(row['outcome'],'process-exception','exception has explicit uncounted result: '+phase)
+                state['exception']=False
+            args.directory=area/'reconcile';runner=Controlled(root,args)
+            result=runner.store/'import-completed';result.mkdir()
+            original=dict(entry=result.name,status=1,outcome='complete',counted=True)
+            (result/'result.json').write_text(json.dumps(original));(runner.store/'active.json').write_text(json.dumps(dict(entry=result.name)))
+            with refuses(test,'reconciled','existing completion is reconciled without execution'):runner.reconcile()
+            test.assertEqual(json.loads((result/'result.json').read_text()),original,'reconciliation preserves written result')
+            test.assertFalse((runner.store/'active.json').exists(),'reconciliation clears active entry')
+            test.assertTrue(json.loads((runner.store/'ledger.jsonl').read_text())['reconciled'],'reconciliation records retained completion')
+            args.directory=area/'busy-store';runner=Controlled(root,args)
+            with round_lock(runner.store,{}):
+                with refuses(test,'evidence-root lock','busy store refuses before execution'):runner.run()
+            args.directory=area/'busy-storage';runner=Controlled(root,args)
+            with storage_lock(storage_binding(root),'gate'):
+                with refuses(test,'holder=gate','busy storage refuses before execution'):runner.run()
+            link=area/'linked';link.symlink_to(area/'busy-store',target_is_directory=True)
+            with refuses(test,'traverses a link','linked store is refused'):
+                import_gate.Import(root,SimpleNamespace(**(vars(args)|dict(directory=link))))
+            for words,reason in [(['relative-driver'],'absolute'),([str(root/'candidate-only.py')],'inside checkout'),([sys.executable,'PATH=.:/bin'],'search path'),([sys.executable,'PATH='+str(root/'candidate-bin')],'search path')]:
+                with test.assertRaisesRegex(ValueError,reason,msg='prefix refuses '+repr(words)):
+                    storage_driver(root,words,prefix=True)
+            with patch.dict(os.environ,PATH='.:/bin'):
+                with test.assertRaisesRegex(ValueError,'search path',msg='inherited relative search path refuses before switch'):
+                    storage_driver(root,[sys.executable],prefix=True)
+            git('update-index','--chmod=+x','ci/import_gate.py');git('commit','-qm','nonregular')
+            with refuses(test,'regular object','staging refuses executable object mode'):
+                import_gate.stage(root,git('rev-parse','HEAD'),area/'nonregular')
+            git('reset','--hard',source)
+            from series_round import stage_controller, validate_controller, Round
+            staged=stage_controller(root,area/'controllers')
+            test.assertEqual(validate_controller(root,staged),source,'repeat controller binds its producing objects')
+            driver=Round.__new__(Round);driver.root=root;driver.controller=staged/'ci'
+            routed=driver.controller_command(['python3','-B','ci/build_graph.py','series-identity'])
+            test.assertEqual(routed,[sys.executable,'-E','-s','-B',str(staged/'ci/series_round.py'),'--controller-command','series-identity'],'historical identity uses outside current controller')
+            test.assertEqual(routed[-2:],['--controller-command','series-identity'],'historical identity reads workload data through current controller')
+            test.assertEqual(driver.controller_command(['python3','-B','ci/build_graph.py','series-identity'],build=True)[0],'python3','historical build uses the prefix interpreter')
+            driver.args=SimpleNamespace(source=base)
+            driver.require=lambda command:git(*command[1:])
+            seen=[]
+            def historical_work():
+                seen.append(git('rev-parse','HEAD'))
+                raise Refusal('controlled historical refusal')
+            driver.locked_run=historical_work
+            with refuses(test,'controlled historical refusal','historical refusal preserves its cause'):
+                driver.historical_run()
+            test.assertEqual(seen,[base],'historical workload enters the owing source')
+            test.assertEqual(git('rev-parse','HEAD'),source,'historical refusal restores the original checkout')
+            member=staged/'ci/build_graph.py';member.write_text(member.read_text()+'\n')
+            with refuses(test,'differs from its producing objects','repeat refuses altered controller'):
+                validate_controller(root,staged)
+            # Execute main with real staged children. The child uses tiny gate
+            # commands, but real object staging, both locks and checkout resets.
+            listing=area/'list.py';listing.write_text('print("[]")\n')
+            commands=area/'commands';commands.mkdir()
+            ps=commands/'ps';ps.write_text('#!'+sys.executable+'\n');ps.chmod(0o755)
+            poison=area/'poison';poison.mkdir();(poison/'json.py').write_text('raise RuntimeError("foreign interpreter path")\n')
+            public=['--base',base,'--source',source,'--directory',str(area/'entry'),
+                '--container-list',json.dumps([sys.executable,str(listing)]),'--service-list',json.dumps([sys.executable,str(listing)]),
+                '--build-prefix',json.dumps(args.build_prefix)]
+            with chdir(root),patch.object(sys,'argv',['import_gate.py',*public]),patch.dict(os.environ,PYTHONPATH=str(poison),PATH=str(commands)+os.pathsep+os.environ['PATH']),redirect_stdout(io.StringIO()) as output:
+                status=import_gate.main()
+                test.assertEqual(status,0,'entry stages and executes a real child ignoring interpreter path: '+output.getvalue())
+            test.assertIn('GATE-IMPORT-CLOSED ',output.getvalue(),'real entry returns a closing verdict')
+            test.assertTrue(list((area/'entry').glob('adapter-*/import_gate.py')),'entry actually stages candidate objects')
+            with chdir(root),patch('import_gate.__file__',str(ci/'import_gate.py')),patch('import_gate.Import.run',return_value=0),patch.object(sys,'argv',['import_gate.py',*public,'--staged']),redirect_stdout(io.StringIO()) as output:
+                test.assertEqual(import_gate.main(),4,'entry refuses checkout staged driver')
+            test.assertIn('inside checkout',output.getvalue(),'staged driver refusal is explicit')
+            for raw in (-15,2,125,143,1,0):
+                with chdir(root),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.build_graph.cancellable',return_value=SimpleNamespace(returncode=raw,stdout='')),redirect_stdout(io.StringIO()):
+                    test.assertEqual(import_gate.main(),4,'entry maps child without closing verdict: '+str(raw))
+            with chdir(root),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.stage',side_effect=RuntimeError('unexpected')),redirect_stdout(io.StringIO()):
+                test.assertEqual(import_gate.main(),4,'entry maps unexpected exception to protocol refusal')
+
+
 def storage_controls(test):
     """Exercise ownership and holder death with real processes and lock files."""
     import os
@@ -492,6 +637,15 @@ def storage_controls(test):
                 with patch('isolation.Path.cwd',return_value=root),patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token),redirect_stdout(output):
                     test.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'joined gate control succeeds')
                 test.assertIn('action=joined kind=gate',output.getvalue(),'join line prints real gate holder kind')
+                lock_record=directory/'.gate-storage.lock'
+                saved_record=lock_record.read_text();lock_record.write_text('[]')
+                try:
+                    with patch('isolation.Path.cwd',return_value=root),patch.dict(os.environ,PN_GATE_STORAGE_TOKEN=token),redirect_stdout(io.StringIO()) as refused:
+                        try:status=gate_storage([sys.executable,'-c','pass'])
+                        except Exception as error:status=type(error).__name__
+                        test.assertEqual(status,5,'non-object record refuses entry without traceback')
+                    test.assertIn('not an object',refused.getvalue(),'non-object entry refusal names malformed record')
+                finally:lock_record.write_text(saved_record)
             record=area/'target/.gate-storage-owner.json';original=record.read_text()
             record.write_text(json.dumps(dict(json.loads(original),checkout=str(area/'foreign-checkout'))))
             try:
@@ -559,7 +713,7 @@ def storage_controls(test):
             if holder.poll() is None:holder.kill();holder.communicate()
             if joined is not None and joined.poll() is None:joined.kill();joined.communicate()
             if pid and alive(pid):os.kill(pid,signal.SIGKILL)
-        for failure in ('ignores-term','foreign-token','unreadable-record'):
+        for failure in ('ignores-term','foreign-token','unreadable-record','nonobject-record'):
             token_path.unlink(missing_ok=True);ready.unlink(missing_ok=True)
             workload = ('import signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); ' if failure=='ignores-term' else '')+child_code
             holder=subprocess.Popen([sys.executable,'-B','-c',holder_code],cwd=root,env=child_env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
@@ -576,7 +730,7 @@ def storage_controls(test):
                 pid=int(ready.read_text());started=time.monotonic()
                 if failure=='ignores-term':holder.kill();holder.communicate()
                 else:
-                    (directory/'.gate-storage.lock').write_text(json.dumps(dict(token='foreign',kind='series')) if failure=='foreign-token' else '{')
+                    (directory/'.gate-storage.lock').write_text(json.dumps(dict(token='foreign',kind='series')) if failure=='foreign-token' else '[]' if failure=='nonobject-record' else '{')
                 deadline=started+7
                 while (alive(pid) or joined.poll() is None) and time.monotonic()<deadline:time.sleep(.01)
                 test.assertFalse(alive(pid),'watch ends workload on '+failure+' within seven seconds')

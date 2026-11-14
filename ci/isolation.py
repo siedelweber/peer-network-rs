@@ -140,6 +140,8 @@ def storage_observation(directory, token):
     """Observe without reentering binding preparation or taking any lock."""
     with (directory/'.gate-storage.lock').open('r') as stream:
         row = json.load(stream)
+        if not isinstance(row, dict):
+            raise ValueError('storage lock record is not an object')
         if not token or not secrets.compare_digest(str(row.get('token', '')), token):
             raise ValueError('storage lock token differs')
         if storage_range(stream, fcntl.F_OFD_GETLK, fcntl.F_RDLCK) == fcntl.F_WRLCK:
@@ -153,19 +155,32 @@ def storage_token():
     return declaration_environment().get('PN_GATE_STORAGE_TOKEN')
 
 
-def storage_driver(root, command):
+def storage_driver(root, command, prefix=False):
     """A switching driver must survive the checkout it changes."""
     if not command:
         raise ValueError('storage wrapper needs a command')
+    def search_path(value):
+        for part in value.split(os.pathsep):
+            if not Path(part).is_absolute() or Path(part).resolve().is_relative_to(root):
+                raise ValueError('storage prefix search path must be absolute and outside checkout')
+    if prefix:
+        search_path(os.environ.get('PATH', ''))
     for word in command:
+        if prefix and word.startswith('PATH='):
+            search_path(word[5:])
+        if word.startswith('-') or '=' in word:
+            continue
+        if prefix and not Path(word).is_absolute():
+            raise ValueError('storage prefix word must be absolute: '+word)
         try:
-            path = Path(word).resolve()
-            exists = path.is_file()
-        except (OSError, ValueError):
+            path = Path(shutil.which(word) or word).resolve() if '/' not in word else Path(word).resolve()
+        except (OSError, ValueError) as error:
+            if prefix:
+                raise ValueError('storage prefix path cannot be resolved: '+word) from error
             continue
         internal = (path == root/'ci/gate.sh' and '--gate-storage-locked' in command or
                     path == root/'ci/precheck.py' and '--storage-locked' in command)
-        if exists and path.is_relative_to(root) and not internal:
+        if (prefix or path.is_file()) and path.is_relative_to(root) and (prefix or not internal):
             raise ValueError('storage driver is inside checkout: '+str(path))
 
 

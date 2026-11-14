@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -17,6 +18,33 @@ from series_round import Round, Refusal, Busy, argv, append, write, round_lock
 
 
 ADAPTER_FILES = ('import_gate.py', 'isolation.py', 'build_graph.py', 'series_round.py')
+
+
+def verdict(status, output, phase):
+    """Only a matching terminal report makes zero or one a verdict."""
+    if status not in (0, 1):
+        return False
+    pattern = (rf'PRECHECK-EXIT={status} wall_s=[0-9.]+ execution=not-evaluated scope=all'
+               if phase == 'precheck' else rf'GATE-EXIT={status}')
+    lines = output.rstrip().splitlines()
+    while lines and lines[-1].startswith('GATE-STORAGE-LOCK action=released '):
+        lines.pop()
+    return bool(lines and re.fullmatch(pattern, lines[-1]))
+
+
+def import_status(result):
+    """A child exit without the import's closing verdict is uncounted."""
+    print(result.stdout, end='', flush=True)
+    if result.returncode in (4, 5):
+        return result.returncode
+    for line in reversed(result.stdout.splitlines()):
+        if line.startswith('GATE-IMPORT-CLOSED '):
+            row = json.loads(line.removeprefix('GATE-IMPORT-CLOSED '))
+            if row.get('counted') is True and row.get('status') == result.returncode and result.returncode in (0, 1):
+                return result.returncode
+            break
+    print('GATE-IMPORT-REFUSED status=4 counted=false child_status='+str(result.returncode)+' reason=no-completed-verdict',flush=True)
+    return 4
 
 
 def atomic(path, value):
@@ -66,6 +94,7 @@ class Import(Round):
         self.store.mkdir(parents=True,exist_ok=True)
         self.storage_token = None
         self.log = None
+        self.raw_status = True
 
     def census(self):
         """Collect host listings before the build prefix and keep the refusal evidence."""
@@ -131,18 +160,31 @@ class Import(Round):
         self.require(['git','reset','--hard',source])
         self.require(['git','clean','-fdx','-e','.lane/build-graph/'])
         environment = dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY=entry,PN_GATE_SAMPLE='import',PN_IMPORT_BASE=base)
-        precheck, _ = self.command(['python3','-B','ci/precheck.py'],environment=environment,build=True)
-        gate = None
-        if precheck == 0:
-            gate, _ = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
+        precheck = gate = None
+        outcome, reason, status = 'protocol-refusal', None, 4
+        try:
+            precheck, output = self.command(['python3','-B','ci/precheck.py'],environment=environment,build=True)
+            if verdict(precheck, output, 'precheck'):
+                if precheck == 1:
+                    status, outcome = 1, 'complete'
+                else:
+                    gate, output = self.command(['bash','ci/gate.sh'],environment=environment,build=True)
+                    if verdict(gate, output, 'gate'):
+                        status, outcome = gate, 'complete'
+            if precheck == 5 or gate == 5:
+                status, outcome = 5, 'not-run'
+            elif outcome != 'complete':
+                outcome = 'process-nonverdict'
+                reason = 'raw status or missing closing report is not a verdict'
+        except Exception as error:
+            outcome, reason = 'process-exception', type(error).__name__+': '+str(error)
         for name in ('gate-declaration.json','gate-wall.json','gate-resources.json','gate-steps.tsv',
                      'gate-baseline.json','gate-quiet-repeat.json'):
             path = self.root/'.lane'/name
             if path.is_file() and not path.is_symlink():
                 shutil.copyfile(path,evidence/name)
-        status = 5 if precheck == 5 or gate == 5 else 1 if precheck or gate else 0
         row = dict(declaration,status=status,precheck_status=precheck,gate_status=gate,
-            outcome='not-run' if status==5 else 'complete',evidence=str(evidence))
+            outcome=outcome,counted=outcome=='complete',reason=reason,evidence=str(evidence))
         atomic(evidence/'result.json',row)
         append(ledger,row)
         (self.store/'active.json').unlink()
@@ -155,8 +197,8 @@ class Import(Round):
             adapter = Path(__file__).with_name('isolation.py')
             from isolation import storage_driver, storage_lock, StorageBusy
             storage_driver(self.root,[sys.executable,str(Path(__file__).resolve())])
-            storage_driver(self.root,self.args.build_prefix)
-            status, output = self.command(['python3','-B',str(adapter),'storage-root'],build=True)
+            storage_driver(self.root,self.args.build_prefix,prefix=True)
+            status, output = self.command(['python3','-E','-s','-B',str(adapter),'storage-root'],build=True)
             if status:
                 raise Busy('storage preflight: '+output.strip())
             directory = Path(output.strip())
@@ -188,8 +230,9 @@ def main():
         if not args.staged:
             source = subprocess.check_output(['git','rev-parse','--verify',args.source+'^{commit}'],text=True).strip()
             staged = stage(runner.root,source,runner.store)
-            result = build_graph.cancellable([sys.executable,'-B',str(staged/'import_gate.py'),*sys.argv[1:],'--staged'])
-            return 128-result.returncode if result.returncode < 0 else result.returncode
+            result = build_graph.cancellable([sys.executable,'-E','-s','-B',str(staged/'import_gate.py'),*sys.argv[1:],'--staged'],
+                                             stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+            return import_status(result)
         if Path(__file__).resolve().parent.is_relative_to(runner.root):
             raise Refusal('staged import driver is inside checkout')
         validate_stage(runner.root,args.source,Path(__file__).resolve().parent)
@@ -197,7 +240,7 @@ def main():
     except Busy as error:
         print('GATE-IMPORT-NOT-RUN status=5 counted=false reason='+str(error),flush=True)
         return 5
-    except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
+    except Exception as error:
         print('GATE-IMPORT-REFUSED status=4 reason='+str(error),flush=True)
         return 4
 

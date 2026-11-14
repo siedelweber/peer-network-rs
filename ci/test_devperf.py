@@ -878,7 +878,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end within seven seconds of holder death, including a TERM-ignoring workload, or of foreign or unreadable watch evidence, even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, refuse busy hosts before switching, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end within seven seconds of holder death, including a TERM-ignoring workload, or of foreign or unreadable watch evidence, even with no parent relationship; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, refuse busy hosts before switching, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -921,9 +921,10 @@ class Performance(unittest.TestCase):
                 with redirect_stdout(io.StringIO()):
                     self.assertEqual(gate_storage([sys.executable,'-c','pass']),0,'unheld storage executes and releases')
                 with storage_lock(storage,'gate'): pass
-        from round_fixtures import controls, storage_controls, import_controls
+        from round_fixtures import controls, storage_controls, import_controls, import_failure_controls
         storage_controls(self)
         import_controls(self)
+        import_failure_controls(self)
         controls(self,'guards')
         from build_graph import declare_run
         invoke = declare_run
@@ -1089,7 +1090,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(repeat_compile_evidence({},tiers)['unknown'],[('wallet-conformance','wallet-conformance')],'unknown is not observed compilation')
 
     def test_repeat_obligation_close(self):
-        """One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Excess keeps a scope required beside its printed unresolved owner-history evidence, including unknown compilation, and independent work, pressure and functional failures are reported together.
+        """One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Excess keeps a scope required beside its printed unresolved owner-history evidence, including unknown compilation, and independent work, pressure and functional failures are reported together. A non-required scope still prints its owner work, and discharge names the non-repeatable scopes left unresolved.
         ´claim:devperf:repeat-obligation-close´
         ´test:integration:test-repeat-obligation-close´
         """
@@ -1120,6 +1121,11 @@ class Performance(unittest.TestCase):
             self.assertTrue(all(row['not_repeatable'] for row in limited['scopes']),'whole and affected tier retain non-repeatable cause')
             self.assertTrue(all(row['transition_compiling_steps']==[] for row in limited['scopes']),'non-repeatable work is not owed compiling work')
             self.assertIn('cache history',limited['scopes'][0]['not_repeatable'][0]['reason'],'non-repeatable work names its preparation limit')
+            low=copy.deepcopy(affected);low['fast']['excess_s']=0
+            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
+                unrequired=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),dict(whole,excess_s=0),low,declared)
+            self.assertFalse(unrequired['required'],'owner work alone does not require reproducible coverage')
+            self.assertEqual(output.getvalue().count('GATE-REPEAT-NOT-REPEATABLE '),2,'not-required owner scopes still print unresolved evidence')
             del affected['fast']['isolated_compiling_steps'][0]['compiled']
             with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
                 unknown=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,affected,declared)
@@ -1145,6 +1151,11 @@ class Performance(unittest.TestCase):
                 try:repeat_close(obligation,lane)
                 except ValueError as error:self.fail('quiet regression must discharge: '+str(error))
             self.assertIn('GATE-QUIET-REPEAT-DISCHARGED',output.getvalue(),'quiet regression discharges, it need not be within budget')
+            original_request['scopes'][0]['not_repeatable']=[dict(step='owner-step',reason='owner cache history')]
+            obligation.write_text(json.dumps(original_request))
+            with redirect_stdout(io.StringIO()) as output:repeat_close(obligation,lane)
+            closed=json.loads(output.getvalue().removeprefix('GATE-QUIET-REPEAT-DISCHARGED '))
+            self.assertEqual(closed['unresolved_scopes'],[dict(scope='whole',steps=original_request['scopes'][0]['not_repeatable'])],'discharge retains unresolved scope and owner work')
             for member,value in [('repeat_of','foreign'),('source','foreign'),('plan','refresh-second'),('sample','import-transition')]:
                 bad=dict(declaration);bad[member]=value;(lane/'gate-declaration.json').write_text(json.dumps(bad))
                 with self.assertRaisesRegex(ValueError,'identity',msg='repeat close refuses mismatched '+member):repeat_close(obligation,lane)

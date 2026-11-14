@@ -206,7 +206,7 @@ def cancellable(argv, *, kill_after=5, reap_tree=False, still_owned=None, **kwar
         if reap_tree:
             become_child_subreaper()
         parent = os.getpid()
-        bound = [sys.executable, "-B", str(Path(__file__).resolve()), "parent-bound", str(parent), *argv]
+        bound = [sys.executable, "-E", "-s", "-B", str(Path(__file__).resolve()), "parent-bound", str(parent), *argv]
         child = subprocess.Popen(bound, start_new_session=True, **kwargs)
         if pending:
             terminate(pending[0], None)
@@ -2342,7 +2342,9 @@ def repeat_close(obligation, directory, admission=None):
     if failures:
         raise ValueError('; '.join(failures))
     print('GATE-QUIET-REPEAT-DISCHARGED '+json.dumps(dict(obligation=request['obligation'],owing_entry=request['owing_entry'],
-        entry=declaration['entry'],classification=whole['classification'],whole_stall=pressure),sort_keys=True),flush=True)
+        entry=declaration['entry'],classification=whole['classification'],whole_stall=pressure,
+        unresolved_scopes=[dict(scope=row['scope'],steps=row['not_repeatable']) for row in request['scopes']
+                           if row.get('not_repeatable')]),sort_keys=True),flush=True)
 
 
 def wall_summary(root, status, interval=None):
