@@ -12253,6 +12253,7 @@
       "records": [
         "EPOCH::rule:compiler:fence-refinement",
         "ROOT::dec:design:rung-verdicts",
+        "ROOT::open:design:rung-anchor-representation",
         "ROOT::req:vision:rung-verdicts"
       ],
       "routes": [],
@@ -32788,6 +32789,10 @@
         {
           "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::rule:design:binary64-evidence"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::rule:design:refinement"
         }
       ],
       "record_granular": 0,
@@ -32796,7 +32801,8 @@
         "ROOT::amend:design:rung-proof-contract",
         "ROOT::resol:design:replay-paper-contract",
         "ROOT::resol:design:verification-canonical-amendment",
-        "ROOT::rule:design:binary64-evidence"
+        "ROOT::rule:design:binary64-evidence",
+        "ROOT::rule:design:refinement"
       ],
       "routes": [],
       "status": "designed",
@@ -32857,6 +32863,10 @@
         },
         {
           "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::open:design:rung-anchor-representation"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::resol:design:replay-paper-contract"
         },
         {
@@ -32878,7 +32888,9 @@
         "ROOT::amend:decomposition:deployment-evidence",
         "ROOT::amend:design:applied-dyadic-solve",
         "ROOT::amend:design:host-operational-declaration",
-        "ROOT::model:design:storage-history"
+        "ROOT::model:design:storage-history",
+        "ROOT::open:design:rung-anchor-representation",
+        "ROOT::rule:design:refinement"
       ],
       "routes": [],
       "status": "designed",
@@ -40149,22 +40161,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 211,
+      "exact_citing": 213,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "211",
+          "exact": "213",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "211",
+          "num": "213",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 730",
+          "exact": "1 731",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 730",
+          "num": "1 731",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40179,7 +40191,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1730
+      "total": 1731
     },
     {
       "category": "record-coverage",

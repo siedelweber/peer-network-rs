@@ -603,6 +603,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:rung-anchor-representation",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.",
       "relation": "realizes",
       "source": "ROOT::open:design:wall-performance",
@@ -817,6 +824,13 @@
       "relation": "realizes",
       "source": "ROOT::rule:design:refinement",
       "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:refinement",
+      "target": "post:deployment:replay-verification"
     },
     {
       "conditional_on": "",
