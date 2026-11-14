@@ -40066,10 +40066,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 729",
+          "exact": "1 730",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 729",
+          "num": "1 730",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40084,7 +40084,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1729
+      "total": 1730
     },
     {
       "category": "record-coverage",

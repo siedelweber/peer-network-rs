@@ -1150,10 +1150,10 @@
     },
     {
       "claims": [],
-      "closing_condition": "Execute the shared memory and real-server generation/judgement roster and assertion-killed mutants, full-tree audit and complete public rebuild, then obtain independent storage admission; retain the deployment's explicit published minimum and breach response as inputs.",
-      "closing_step": "Tree memory commit, matching server cuts, full-tree audit and public rebuild before persistence admission",
+      "closing_condition": "Execute and independently admit the single-generation tree roster, audit and rebuild; before any second law, discharge the separate generation-machinery requirement with its public applicability, binding, publication and memory/server evidence.",
+      "closing_step": "Single-generation persistence admission; generation machinery before the first stable version or any second law",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Public generation declarations, atomic installation and recorded judgements are designed, not implemented. The greatest-installed-generation selection and immediate-parent minimum are writer-enforced and witnessed only by executed writer controls; audit and replay check consistency given recorded generations and do not prove their currency at admission. The immediate-parent minimum, inherited-use origin, unchanged retry, all-branch audit and deterministic public rebuild controls have not run.",
+      "missing": "Single-generation labelled judgements and their memory/server controls are designed, not implemented. Further-generation installation, public applicability, label binding and connecting-map publication are held before a second law; public label/map consistency alone does not prove currency.",
       "name": "ROOT::dec:storage:branch-declaration-authority",
       "owner": "Deployment declaration authority and host storage implementer",
       "path": "adr/015-durable-storage.md",
@@ -1169,6 +1169,19 @@
       "missing": "Reviewed ordinary claim citations and scoped premises for dec:storage:postgresql",
       "name": "ROOT::dec:storage:postgresql",
       "owner": "Domain implementer and repository reviewer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Execute and independently admit the single-law labelled tree controls without claiming label currency or publication; discharge the separate publication and second-generation requirements before those uses.",
+      "closing_step": "Single-generation persistence admission and separate held publication and generation machinery",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Required explicit single-law labels and their declaration, transaction, read, audit and rebuild controls are designed; publication and any second law remain held.",
+      "name": "ROOT::dec:storage:public-generation-label",
+      "owner": "Deployment declaration authority and host storage and publication implementers",
       "path": "adr/015-durable-storage.md",
       "realizers": [],
       "status": "held",
@@ -2834,20 +2847,37 @@
       "name": "ROOT::req:storage:generation-authentication",
       "owner": "Deployment declaration authority and host publication implementer",
       "path": "adr/015-durable-storage.md",
+      "realizers": [
+        "ROOT::req:storage:judgement-publication"
+      ],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, required label and its declared ordinal, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and executable persistence admission.",
+      "closing_step": "Public rebuild and executable persistence admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "External carrier, source and transport of each required public generation label and complete judgement are held.",
+      "name": "ROOT::req:storage:judgement-publication",
+      "owner": "Host publication and rebuild implementers and deployment declaration authority",
+      "path": "adr/015-durable-storage.md",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []
     },
     {
       "claims": [],
-      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, generation, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and executable persistence admission.",
-      "closing_step": "Public rebuild and executable persistence admission",
+      "closing_condition": "Design, implement, review and admit the generation machinery, public applicability rule and enforcement, label-to-identity binding and map publication with memory/server controls, audit and rebuild before declaring, installing or accepting any law other than unstable.",
+      "closing_step": "Generation machinery before the first stable version or any second law",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "External carrier, source and transport of each result generation and complete judgement are held.",
-      "name": "ROOT::req:storage:judgement-publication",
-      "owner": "Host publication and rebuild implementers and deployment declaration authority",
+      "missing": "Further-generation installation, the connecting machinery, public applicability and its enforcement, label binding and map publication are designed or held; no second law is admitted.",
+      "name": "ROOT::req:storage:second-generation",
+      "owner": "Deployment declaration authority, host storage and publication implementers, and independent storage reviewer",
       "path": "adr/015-durable-storage.md",
-      "realizers": [],
+      "realizers": [
+        "ROOT::dec:storage:branch-declaration-authority"
+      ],
       "status": "held",
       "witnessed_labels": []
     },

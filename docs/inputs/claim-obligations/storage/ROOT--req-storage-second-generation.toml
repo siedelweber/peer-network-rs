@@ -1,0 +1,11 @@
+name = "ROOT::req:storage:second-generation"
+witnessed_labels = []
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:storage:branch-declaration-authority"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Deployment declaration authority, host storage and publication implementers, and independent storage reviewer"
+missing = "Further-generation installation, the connecting machinery, public applicability and its enforcement, label binding and map publication are designed or held; no second law is admitted."
+closing_condition = "Design, implement, review and admit the generation machinery, public applicability rule and enforcement, label-to-identity binding and map publication with memory/server controls, audit and rebuild before declaring, installing or accepting any law other than unstable."
+closing_step = "Generation machinery before the first stable version or any second law"

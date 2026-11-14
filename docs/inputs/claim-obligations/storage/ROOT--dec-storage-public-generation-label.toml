@@ -1,0 +1,11 @@
+name = "ROOT::dec:storage:public-generation-label"
+witnessed_labels = []
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Deployment declaration authority and host storage and publication implementers"
+missing = "Required explicit single-law labels and their declaration, transaction, read, audit and rebuild controls are designed; publication and any second law remain held."
+closing_condition = "Execute and independently admit the single-law labelled tree controls without claiming label currency or publication; discharge the separate publication and second-generation requirements before those uses."
+closing_step = "Single-generation persistence admission and separate held publication and generation machinery"
