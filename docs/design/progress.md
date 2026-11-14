@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Classification row identities and their generated copies are reported separately when they are the only exact mentions; they are neither realization citations nor design gaps. Other exact inventory labels in tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 70 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 64 further unassigned rows have classification identities only, retained separately in the statement table.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 70 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 65 further unassigned rows have classification identities only, retained separately in the statement table.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 356 | 35 | 67 | 400 | 7 | 32 | 854 |
+| implementation | 1 357 | 35 | 67 | 400 | 7 | 32 | 855 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -33,7 +33,7 @@
 | pn-host | 166 | 5 | 20 | 46 | 1 | 2 | 95 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
 | pn-records | 218 | 2 | 16 | 71 | 1 | 7 | 129 |
-| pn-replay | 26 | 0 | 3 | 4 | 0 | 0 | 19 |
+| pn-replay | 27 | 0 | 3 | 4 | 0 | 0 | 20 |
 | pn-verification | 281 | 8 | 9 | 69 | 4 | 6 | 195 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
@@ -79,7 +79,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 9 | 27 | 56 | 0 | 5 | 1 |
-| unlinked | 1 484 | 22 | 27 | 279 | 13 | 21 | 1 156 |
+| unlinked | 1 485 | 22 | 27 | 279 | 13 | 21 | 1 157 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -92,7 +92,7 @@
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
 | invariant check | 517 | 16 | 23 | 141 | 1 | 11 | 337 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 265 | 3 | 21 | 51 | 5 | 4 | 190 |
+| policy | 266 | 3 | 21 | 51 | 5 | 4 | 191 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 1 | 9 | 49 | 0 | 5 | 33 |
 
@@ -1739,6 +1739,7 @@
 | ``cond:deployment:wall-calibration`` | pn-epoch; policy | designed | ``ROOT::amend:design:host-operational-declaration`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` | | | |  | | ``ROOT::amend:design:host-operational-declaration``; Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.<br>``ROOT::open:design:wall-performance``; Claimed part: This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.<br>``ROOT::open:vision:deployment-profile``; Claimed part: This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.<br>|
 | ``cond:deployment:boundary-policy`` | pn-host; policy | designed | ``ROOT::amend:design:host-operational-declaration`` | | | |  | | ``ROOT::amend:design:host-operational-declaration``; Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.<br>``ROOT::amend:testing:boundary-policy-adaptation``; The existence and contents of the declared window are fixed by the public record; actual freeze compliance is a separate clause.<br>``ROOT::amend:testing:boundary-policy-announcement``; Record order does not attest a duration or message delivery.<br>``ROOT::amend:testing:boundary-policy-availability``; A target is an operator declaration, not an availability measurement.<br>``ROOT::amend:testing:boundary-policy-closure``; The denial of an admission right to an unwritten candidate clarifies the publication duty rather than adding a deployment obligation.<br>``ROOT::amend:testing:boundary-policy-durations``; A host timestamp has no external attestation in this paper edition.<br>``ROOT::amend:testing:boundary-policy-fallback``; An unseen trigger cannot be reconstructed from an accepted result.<br>``ROOT::amend:testing:boundary-policy-floor``; The schedule and certified floor are public mathematical inputs.<br>``ROOT::amend:testing:boundary-policy-freeze``; An unanchored timestamp cannot prove that no retarget occurred during a physical interval.<br>``ROOT::amend:testing:boundary-policy-search``; Accepted epochs do not reveal every attempted set.<br>``ROOT::amend:testing:boundary-policy-target-size``; Both integers are fixed by the declared record.<br>``ROOT::amend:testing:boundary-policy-timeout``; A duration measurement is not attested by the record.<br>|
 | ``cond:deployment:canonical-encoding`` | pn-host; policy | designed | ``ROOT::amend:decomposition:deployment-evidence`` ``ROOT::model:design:storage-history`` | | | |  | | ``ROOT::amend:design:epoch-authentication-fields``; Premise only: the deployment selects the byte encoding<br>|
+| ``post:deployment:replay-verification`` | pn-replay; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``cond:deployment:canonical-replay`` | pn-replay; policy | designed | ``ROOT::amend:decomposition:deployment-evidence`` ``ROOT::amend:design:applied-dyadic-solve`` ``ROOT::amend:design:host-operational-declaration`` ``ROOT::model:design:storage-history`` | | | |  | | ``ROOT::amend:design:epoch-authentication-fields``; Premise only: identical public inputs and procedure must reproduce verdicts<br>``ROOT::amend:design:replay-roles``; Premise only: identical verdicts under the same declared procedure<br>``ROOT::amend:testing:canonical-replay-verification``; The clause requires equal replay verdicts; a checked straddle establishes a sound enclosure but does not require another build to remain indecisive, so the alternative route needs amended text.<br>``ROOT::amend:testing:replay-conformance-scope``; Premise only: equal verdicts require the same declared procedure<br>``ROOT::resol:design:replay-paper-contract``; Premise only: the same declared procedure must reproduce all verdicts<br>``ROOT::rule:design:refinement``; Premise only: the tagged condition requires identical replay verdicts; no cross-build realization is claimed here<br>|
 | ``subsec:deployment:centralized-monitoring`` | pn-host; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``post:deployment:centralized-monitoring`` | pn-host; policy | designed | ``ROOT::amend:decomposition:deployment-evidence`` ``ROOT::amend:design:host-operational-declaration`` | | | |  | | ``ROOT::amend:decomposition:deployment-evidence``; Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.<br>``ROOT::amend:design:host-operational-declaration``; Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.<br>|

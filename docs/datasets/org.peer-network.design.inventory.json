@@ -1522,7 +1522,7 @@
       "kind": "type",
       "label": "def:network:conserved-standing-package",
       "label_source": "explicit",
-      "statement": "Publish completed inputs, fold/base data, activation, rung history, transport, emissions, standing and reproduction evidence."
+      "statement": "Publish completed inputs, fold/base data, activation, attempted-rung enclosures and verdicts, transport, emissions, standing and verification evidence."
     },
     {
       "chapter": "03 Network",
@@ -1742,7 +1742,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-evidence",
       "label_source": "explicit",
-      "statement": "Publish formula editions, constants, interval boxes, residual bounds and reports sufficient for any participant to rerun the host calculation."
+      "statement": "Publish formula editions, constants, interval boxes, residual bounds and verification reports, including every attempted rung’s stated enclosure and verdict, sufficient for independent checking."
     },
     {
       "chapter": "03 Network",
@@ -6780,7 +6780,7 @@
       "kind": "certificate",
       "label": "def:epoch:tilt-backoff-grid",
       "label_source": "explicit",
-      "statement": "Try the published finite decreasing rung grid ending at zero."
+      "statement": "Use the published finite grid ending at the exact no-tilt anchor, which is no attempt. Attempt each positive rung once in descending order through the first PASS or the least positive rung, publishing every enclosure and endpoint verdict; reject missing, repeated, out-of-order or below-acceptance attempts."
     },
     {
       "chapter": "6 Epoch",
@@ -7627,7 +7627,7 @@
       "kind": "function",
       "label": "alg:epoch:tilt-backoff",
       "label_source": "explicit",
-      "statement": "Attempt each rung independently and publish all higher-rung verdicts."
+      "statement": "Attempt positive rungs independently in descending order through the first stated PASS or the least positive rung and publish every attempted enclosure and verdict; the exact anchor is not an attempt."
     },
     {
       "chapter": "6 Epoch",
@@ -7638,7 +7638,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:epoch-replay-determinism",
       "label_source": "explicit",
-      "statement": "Reproduce the derivation from the shared verified marker package, accepted acts, prior state, writing-epoch debit, constants, compiler edition and certificate procedure."
+      "statement": "The verified marker package, accepted acts, prior state, writing-epoch debit, constants, compiler edition and published attempts determine the derivation; evaluated-object enclosures may differ across builds."
     },
     {
       "chapter": "6 Epoch",
@@ -7891,7 +7891,7 @@
       "kind": "invariant check",
       "label": "cond:epoch:safety-in-epoch-certification",
       "label_source": "explicit",
-      "statement": "Certify the greatest procedure-proved rung on the epoch own width; keep failed and indecisive higher attempts distinct."
+      "statement": "Certify the greatest attempted rung whose stated enclosure proves PASS on the epoch own width; retain higher attempts and distinguish proved failure from indecision."
     },
     {
       "chapter": "6 Epoch",
@@ -9409,7 +9409,7 @@
       "kind": "invariant check",
       "label": "prop:scalability:conserved-standing-verifiability",
       "label_source": "explicit",
-      "statement": "Recompute standing from the public package at the declared production-order cost."
+      "statement": "Verify standing from the public package at the declared production-order asymptotic cost, without requiring the previous epoch’s standing solution."
     },
     {
       "chapter": "10 Scalability",
@@ -12643,7 +12643,7 @@
       "kind": "invariant check",
       "label": "cor:dynamics:minimal-safe-rung",
       "label_source": "explicit",
-      "statement": "At positive contributing width W, a rung passes exactly when cumulative tilt is at most 1/(2 times margin times gain times W); at zero width every rung passes. The anchor always passes and the procedure accepts its greatest proven passing rung, which may be below a mathematically passing indecisive rung. Clean profile-cap wall diagnostics must not substitute their tilt volume for the deployed profile."
+      "statement": "At positive contributing width W, a rung passes exactly when cumulative tilt is at most 1/(2 times margin times gain times W); at zero width every rung passes. The anchor is exact and acceptance uses the greatest attempted PASS, which may be below a mathematically passing indecisive rung. Clean profile-cap wall diagnostics must not substitute their tilt volume for the deployed profile."
     },
     {
       "chapter": "D Dynamics",
@@ -17026,7 +17026,7 @@
       "kind": "policy",
       "label": "subsec:deployment:public-availability",
       "label_source": "explicit",
-      "statement": "Publish complete accepted act envelopes, projections and resolution without access control, retaining structural records and payload residue. Make every standing-package commitment resolvable: complete-act witnesses, fold cells, recipients, base allocation, emission, hull, evaluated fence and attempted-rung verdicts, fixed-point enclosure and residual evidence, final standing and admission decisions, declared inputs and formula editions."
+      "statement": "Publish complete accepted act envelopes, projections and resolution without access control, retaining structural records and payload residue. Make every standing-package commitment resolvable: complete-act witnesses, fold cells, recipients, base allocation, emission, hull, evaluated fence and attempted-rung enclosures and verdicts, fixed-point enclosure and residual evidence, final standing and admission decisions, declared inputs and formula editions."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17422,7 +17422,7 @@
       "kind": "policy",
       "label": "cond:deployment:wall-calibration",
       "label_source": "explicit",
-      "statement": "Publish numeraire, policy floor, fixed structural floor with exact object, margin, controller edition/init/constants and total comparison procedure. Compare both chartered floors, neither a default; distinguish proposal from delivered wall and preserve debit vintage. Deployment supplies evidence; epoch bites 6 and 7 certify the charge and controller."
+      "statement": "Publish numeraire, policy floor, fixed structural floor with exact defining object, margin and controller edition, initialization and constants. Exact data are compared exactly and evaluated quantities by their stated sound enclosures; a straddling binding-floor test rejects the set without inventing a comparison verdict. Compare both chartered floors and preserve debit vintage."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17448,6 +17448,17 @@
     },
     {
       "chapter": "Appendix I — Deployment",
+      "citable": false,
+      "crate": "pn-replay",
+      "current_at": "network-v0.33.0",
+      "environment": "postulate",
+      "kind": "policy",
+      "label": "post:deployment:replay-verification",
+      "label_source": "explicit",
+      "statement": "Exact data are decided exactly. Each evaluated verdict relates a published sound enclosure to an exact threshold by its endpoints alone; every verdict, including indecision, carries that enclosure. A reader checks soundness by its own evaluation; inability decides nothing. Reproduction is a voluntary producer test and never a prerequisite of acceptance."
+    },
+    {
+      "chapter": "Appendix I — Deployment",
       "citable": true,
       "crate": "pn-replay",
       "current_at": "network-v0.33.0",
@@ -17455,7 +17466,7 @@
       "kind": "policy",
       "label": "cond:deployment:canonical-replay",
       "label_source": "explicit",
-      "statement": "Publish deterministic certification, precision, refinement, equality and stopping limits. The same inputs and procedure must reproduce every attempted PASS, FAIL or INDECISIVE verdict and greatest proved passing rung, with the exact anchor available. Threshold straddling refines or rejects; no tolerance chooses a verdict. Bites 6 and 8 publish the procedure and history, and replay bite 9 reconstructs its original edition and inputs. Declared fibres and matched comparison histories permit replay of pair displacement and projected residuals; common ownership and counterfactual histories remain explicit inputs rather than inferred record facts. The comparison inputs follow ``def:epoch:actor-partition-comparison`` and cannot distinguish private purpose between identical records under ``thm:epoch:split-observational-equivalence``."
+      "statement": "Publish each attempted positive rung with its stated enclosure and verdict, descending through the first PASS or the least positive rung. Missing, repeated, out-of-order and below-acceptance attempts fail verification. Exact objects and endpoint verdicts are independently recomputed; a reader unable to verify decides nothing. Reproduction under a build declaration is voluntary; unresolved binding comparisons reject the set."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17488,7 +17499,7 @@
       "kind": "policy",
       "label": "cond:deployment:certificate-monitoring",
       "label_source": "explicit",
-      "statement": "The centralized operator publishes per-epoch fence, width, rung, enclosure radius, movement, hop mass and below-wall fraction; aggregate FAIL versus INDECISIVE, fallback frequencies, thresholds, persistence and crossing reviews. Screen failure is not certificate failure. Epoch bite 6 supplies evidence, host bite 8 publishes it, and deployment owns monitoring. For partition comparisons identify fibre, matched histories, rungs, pair shock, mixture variation and residual bound; distinguish identities from measured displacement without adding a gate or ownership inference. The comparison measures the displacement bounded by ``prop:epoch:split-pair-displacement``."
+      "statement": "The centralized operator publishes per-epoch fence, width, rung, enclosure radius, movement, hop mass and below-wall fraction; aggregate FAIL versus INDECISIVE, fallback frequencies, thresholds, persistence and crossing reviews. Screen failure is not certificate failure; FAIL and INDECISIVE frequencies describe the producer and are not deployment invariants. Epoch bite 6 supplies evidence, host bite 8 publishes it, and deployment owns monitoring. For partition comparisons identify fibre, matched histories, rungs, pair shock, mixture variation and residual bound; distinguish identities from measured displacement without adding a gate or ownership inference. The comparison measures the displacement bounded by ``prop:epoch:split-pair-displacement``."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17730,7 +17741,7 @@
       "kind": "invariant check",
       "label": "subsec:deployment:conserved-standing-reproducibility",
       "label_source": "explicit",
-      "statement": "Verify marker policy, lineage, accepted-set bounds and distinct destructions before rebuilding the ledger, compiler inputs, rung attempts, certificates, standing and gates."
+      "statement": "Verify marker policy, lineage, accepted-set bounds and distinct destructions before rebuilding exact ledger and compiler objects and checking every published attempt and verdict by independent sound evaluation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17741,7 +17752,7 @@
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-reference-compiler",
       "label_source": "explicit",
-      "statement": "The chosen deterministic reference compiler and independently executable certificate tools must replay act reconstruction, folds, allocation, emission, certificate evaluation and mediant convergence from public inputs."
+      "statement": "A deterministic reference compiler and independently executable certificate tools aid verification of the public record; neither tool is required for acceptance."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17818,7 +17829,7 @@
       "kind": "serialization",
       "label": "post:deployment:canonical-standing-publication",
       "label_source": "explicit",
-      "statement": "Publish the full canonical standing package and attempted-rung verdicts under one versioned encoding and deterministic certification procedure; value allowances cannot excuse different certificate verdicts, including INDECISIVE. Partition comparisons require explicit fibres and matched histories; the record establishes neither common control nor the alternative history. The comparison inputs follow ``def:epoch:actor-partition-comparison`` and cannot distinguish private purpose between identical records under ``thm:epoch:split-observational-equivalence``."
+      "statement": "Publish the complete standing package and attempted-rung enclosures and verdicts under a versioned encoding. Bits bind exact objects and encoded bytes, not independently evaluated endpoints. Producer metadata neither creates nor excuses a discrepancy; a participant unable to check decides nothing. Partition comparisons require explicit fibres and matched histories, not inferred common control or alternative histories."
     },
     {
       "chapter": "Appendix I — Deployment",

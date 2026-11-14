@@ -32766,6 +32766,27 @@
     {
       "bites": [],
       "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:replay-verification",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [],
       "holds": [],
@@ -36264,18 +36285,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 356",
+          "exact": "1 357",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 356",
+          "num": "1 357",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "854",
+          "exact": "855",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "854",
+          "num": "855",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36313,8 +36334,8 @@
       "realized": 35,
       "record_granular": 32,
       "tentative": 7,
-      "total": 1356,
-      "unassigned": 854
+      "total": 1357,
+      "unassigned": 855
     },
     {
       "category": "total",
@@ -37056,18 +37077,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "26",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "19",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37105,8 +37126,8 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 0,
-      "total": 26,
-      "unassigned": 19
+      "total": 27,
+      "unassigned": 20
     },
     {
       "category": "crate",
@@ -37947,18 +37968,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "265",
+          "exact": "266",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "265",
+          "num": "266",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "190",
+          "exact": "191",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "190",
+          "num": "191",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37996,8 +38017,8 @@
       "realized": 3,
       "record_granular": 4,
       "tentative": 5,
-      "total": 265,
-      "unassigned": 190
+      "total": 266,
+      "unassigned": 191
     },
     {
       "category": "kind",
@@ -39333,18 +39354,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 484",
+          "exact": "1 485",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 484",
+          "num": "1 485",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 156",
+          "exact": "1 157",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 156",
+          "num": "1 157",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39382,18 +39403,18 @@
       "realized": 22,
       "record_granular": 21,
       "tentative": 13,
-      "total": 1484,
-      "unassigned": 1156
+      "total": 1485,
+      "unassigned": 1157
     },
     {
       "category": "classification-identities",
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "64",
+          "exact": "65",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "64",
+          "num": "65",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39404,7 +39425,7 @@
           "exact_digits": 32
         }
       },
-      "total": 64
+      "total": 65
     },
     {
       "category": "record-coverage",

@@ -1377,6 +1377,17 @@
       "parent": "cond:deployment:canonical-replay",
       "reason": "The clause requires equal replay verdicts; a checked straddle establishes a sound enclosure but does not require another build to remain indecisive, so the alternative route needs amended text.",
       "witness_route": "rec:testing:deployment-replay-route"
+    },
+    {
+      "classification": "split",
+      "evidence_status": "scope-only",
+      "excluded": "The soundness of a producer’s enclosure before the reader confirms it by its own sound evaluation; a reader unable to check supplies neither confirmation nor discrepancy.",
+      "included": "Recomputation of exact objects, the order and completeness of published attempts, and each stated verdict from its enclosure endpoints and exact threshold.",
+      "kind": "statement",
+      "name": "post:deployment:replay-verification",
+      "paper_tag": "network-v0.33.0",
+      "reason": "The public attempted record determines these checks; this scope classification supplies no missing implementation or execution evidence and assumes no particular endpoint representation.",
+      "witness_route": "rec:testing:deployment-replay-route"
     }
   ]
 }

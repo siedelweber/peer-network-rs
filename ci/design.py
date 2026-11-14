@@ -300,7 +300,7 @@ def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1676 and len({row['label'] for row in inventory}) == 1676):
+    if not (len(inventory) == 1677 and len({row['label'] for row in inventory}) == 1677):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -418,7 +418,7 @@ def validate():
 
 
 PAPER_TAG = 'network-v0.33.0'
-CURRENT_INVENTORY_PIN = 'c5b30027e71ebeb29ee30b31322be0660e87294a97eda2360ea5453c31eb9a2c'
+CURRENT_INVENTORY_PIN = 'f4473da7dc22fd487b4e284628043ef2ec62bf32638ef75df54c9e2e62eb5e39'
 REFRESHED_CONSTANTS_PIN = '13f6d05292d293b263852dbdeebeaa07bd60f74cf25f9a7ac41cca3a6f8bf269'
 RELEASE_QUESTIONS_PIN = 'ca444a0a0a6a10246b2679e176ccc5ea1073e206331cd243bd2c940bf2a37c65'
 
