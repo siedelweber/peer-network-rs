@@ -4167,8 +4167,8 @@
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-canonical-corpus",
       "before": "",
-      "after": "Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.",
-      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
+      "after": "Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, including ten subnormal thresholds under an exponent ceiling of 1076, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.",
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission. The ten subnormal-threshold rows also decode under exponent ceiling 1076 before the ordinary corpus pass, comparing each retained test result with its independent stated polarity; a wrong comparison refuses Polarity, not Resource."
     },
     {
       "operation": "pn-host::public::binary64::binary64_expected_question_binding",
@@ -4183,8 +4183,8 @@
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-finite-and-bounded",
       "before": "",
-      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling.",
-      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
+      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling, with the decoder's preliminary fraction ceiling independently preceding a malformed question's refusal.",
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission. The existing root-not-last bytes refuse CanonicalNodes under the declared ceiling and Resource under work one, distinguishing preliminary fraction construction from cumulative constant reading."
     },
     {
       "operation": "pn-host::public::case_before_input",

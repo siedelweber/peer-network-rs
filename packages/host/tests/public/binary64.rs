@@ -48,13 +48,40 @@ fn expected(carrier: &Carrier) -> Expected {
     }
 }
 
-/// Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.
+fn subnormal_verdicts(rows: &[serde_json::Value]) {
+    let mut wide = limits();
+    wide.arithmetic.integer_exponent = 1076;
+    let polarities = [
+        model::Polarity::Proposition,
+        model::Polarity::Negation,
+        model::Polarity::Uncertified,
+    ];
+    let mut count = 0;
+    for row in rows
+        .iter()
+        .filter(|row| row["case"].as_str().unwrap().starts_with("subnormal-threshold-"))
+    {
+        let stated = polarities[usize::try_from(row["expected_relation"].as_u64().unwrap()).unwrap()];
+        let decoded = codec::decode(&unhex(row["canonical"].as_str().unwrap()), &wide);
+        assert_eq!(
+            decoded.as_ref().map(|value| value.fields().tests[0].result),
+            Ok(stated),
+            "subnormal verdict under wider ceiling {}",
+            row["case"]
+        );
+        count += 1;
+    }
+    assert_eq!(count, 10, "subnormal threshold rows exercised under wider ceiling");
+}
+
+/// Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, including ten subnormal thresholds under an exponent ceiling of 1076, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.
 /// ´claim:host:binary64-canonical-corpus´
 /// ´test:integration:binary64-canonical-corpus´
 #[test]
 fn binary64_canonical_corpus() {
     let corpus = corpus();
     let rows = corpus["cases"].as_array().unwrap();
+    subnormal_verdicts(rows);
     let distinct: std::collections::BTreeSet<_> = rows.iter().map(|r| r["canonical"].as_str().unwrap()).collect();
     assert_eq!(
         distinct.len(),
@@ -232,7 +259,27 @@ fn binary64_expected_question_binding() {
     assert_eq!(value.bind(&query), Err(model::Error::Question), "hypothesis substitution");
 }
 
-/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling.
+fn preliminary_ceiling(corpus: &serde_json::Value, arithmetic: &codec::Limits) {
+    let row = corpus["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["case"] == "root-not-last")
+        .unwrap();
+    let bytes = unhex(row["canonical"].as_str().unwrap());
+    assert_eq!(
+        codec::decode(&bytes, &limits()),
+        Err(Error::Structure(model::Error::CanonicalNodes)),
+        "question refuses before cumulative constant reading"
+    );
+    assert_eq!(
+        codec::decode(&bytes, arithmetic),
+        Err(Error::Structure(model::Error::Resource)),
+        "preliminary fraction ceiling precedes question refusal"
+    );
+}
+
+/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling, with the decoder's preliminary fraction ceiling independently preceding a malformed question's refusal.
 /// ´claim:host:binary64-finite-and-bounded´
 /// ´test:integration:binary64-finite-and-bounded´
 #[test]
@@ -291,6 +338,7 @@ fn binary64_finite_and_bounded() {
         "carrier test arithmetic ceiling"
     );
     assert!(codec::decode(&bytes, &limits()).is_ok(), "decoder test arithmetic ceiling");
+    preliminary_ceiling(&corpus, &arithmetic);
     let counts = [
         bytes.len(),
         usize::try_from(row["reader_items"].as_u64().unwrap()).unwrap(),
