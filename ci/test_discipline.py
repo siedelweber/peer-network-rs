@@ -27,6 +27,33 @@ from hash_citations import audit, establish, occurrences
 
 
 class WorkspaceChecks(unittest.TestCase):
+    def test_protected_package_resolution(self):
+        """Package-scoped versions and features are exact, including absent rows and distinct build contexts; an incomplete protected roster refuses before resolution or testing.
+        ´claim:discipline:protected-packages-retain-scoped-resolution´
+        ´test:integration:test-protected-package-resolution´
+        """
+        from protected_packages import parse_tree, compare, check
+        expected = parse_tree('home v0.1.0 (/fixture)|\nrustix v1.1.6|mm,process,std\n')
+        compare('home', expected, expected)
+        for changed in ['home v0.1.1|\nrustix v1.1.6|mm,process,std\n',
+                        'home v0.1.0|\nrustix v1.1.6|mm,net,process,std\n',
+                        'home v0.1.0|\n']:
+            with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
+                compare('home', expected, parse_tree(changed))
+        distinct = parse_tree('x v1.0.0|a\nx v1.0.0|b\nx v1.0.0|a (*)\n')
+        self.assertEqual([x['features'] for x in distinct], [['a'], ['b']])
+        with self.assertRaisesRegex(ValueError, 'unreadable protected dependency row'):
+            parse_tree('not a resolved dependency')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            records = root/'ci/protected-packages'
+            records.mkdir(parents=True)
+            (records/'one.json').write_text(json.dumps(dict(package='pn-secret-home', closure=[])))
+            with patch('protected_packages.resolve') as resolve:
+                with self.assertRaisesRegex(ValueError, 'protected package roster differs'):
+                    check(root, True)
+                resolve.assert_not_called()
+
     def test_unsafe_inventory(self):
         """Only the six private mapping sites with their exact expressions, item permissions and safety arguments are admitted; foreign, added, missing and changed sites refuse.
         ´claim:discipline:unsafe-sites-match-the-owned-mapping-inventory´

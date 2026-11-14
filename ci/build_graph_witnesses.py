@@ -527,6 +527,7 @@ def cargo_delegation(case):
     repository=Path(__file__).resolve().parent.parent
     checker=repository/'ci/build_graph.py'
     expected={
+        'protected-packages':'python3 -B ci/protected_packages.py --tests',
         'cargo-config-measurement':'python3 -B ci/measure_rustflags.py',
         'fmt':'python3 ci/discipline.py fmt',
         'clippy':'python3 ci/discipline.py clippy',

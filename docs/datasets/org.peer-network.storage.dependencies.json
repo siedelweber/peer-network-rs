@@ -888,6 +888,19 @@
     },
     {
       "build_time": "none",
+      "built_for_host": false,
+      "checksum": "53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.36",
+      "name": "futures-io 0.3.34",
+      "procedural_macros": [],
+      "version": "0.3.34"
+    },
+    {
+      "build_time": "none",
       "built_for_host": true,
       "checksum": "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",

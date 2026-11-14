@@ -1,0 +1,4 @@
+name = "NODE"
+position = 17
+partitions = [{ position = 21, value = { name = "node-package", owner = "NODE", pattern = '%s"packages/node/" *VCHAR' } }]
+may_cite = [{ position = 60, value = { owner = "NODE", target = "INTERCHANGE" } }, { position = 59, value = { owner = "NODE", target = "ROOT" } }]

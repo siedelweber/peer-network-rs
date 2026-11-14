@@ -1,0 +1,20 @@
+[package]
+name = "pn"
+description = "Unserved node schema and register admission"
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+async-graphql = { version = "=7.2.1", default-features = false }
+async-graphql-parser = { version = "=7.2.1", default-features = false }
+async-graphql-value = { version = "=7.2.1", default-features = false }
+async-graphql-derive = { version = "=7.2.1", default-features = false }
+pn-interchange = { path = "../interchange" }
+toml.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

@@ -280,3 +280,8 @@ reason = "Required invocation with a current inventory and exact evidence join."
 name = "extended-tests"
 slice = 4
 reason = "Required prebuilt case invocation selected by the declared allowance threshold; the disjoint result union retains every case."
+
+[[rows]]
+name = "protected-packages"
+slice = 3
+reason = "Resolve, build and test each protected package alone from the lock; preserve the shared Cargo serialization and serial report edge."

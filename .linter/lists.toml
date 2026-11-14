@@ -1,6 +1,42 @@
 namespace = "class.linter.lists"
 version = [1, 0, 0]
 
+[NODE."labels.citations-import-form"]
+allowances = []
+
+[NODE."labels.citations-imported-resolve"]
+allowances = []
+
+[NODE."labels.citations-layer-conform"]
+allowances = []
+
+[NODE."labels.citations-local-resolve"]
+allowances = []
+
+[NODE."labels.generated-regions-conform"]
+allowances = []
+
+[NODE."labels.heads-conform"]
+allowances = []
+
+[NODE."labels.mints-kind-conform"]
+allowances = []
+
+[NODE."labels.mints-unique"]
+allowances = []
+
+[NODE."labels.mints-well-formed"]
+allowances = []
+
+[NODE."labels.outlines-conform"]
+allowances = []
+
+[NODE."profile.tests-conform"]
+allowances = []
+
+[NODE."profile.claims-conform"]
+allowances = []
+
 [ROOT."profile.tests-conform"]
 allowances = []
 

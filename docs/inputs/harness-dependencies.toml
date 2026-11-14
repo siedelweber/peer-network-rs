@@ -117,7 +117,7 @@ role = "existing bounded property generation and shrinking"
 name = "regex"
 version = "1.13.1"
 license = "MIT OR Apache-2.0"
-features = ["std"]
+features = ["default", "perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"]
 source = "fetched Cargo registry package manifest and resolved feature metadata"
 role = "Criterion transitive development dependency"
 

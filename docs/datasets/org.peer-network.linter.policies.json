@@ -7,6 +7,54 @@
   ],
   "rows": [
     {
+      "owner": "NODE",
+      "policy": "labels.citations-import-form"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.citations-imported-resolve"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.citations-layer-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.citations-local-resolve"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.generated-regions-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.heads-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.mints-kind-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.mints-unique"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.mints-well-formed"
+    },
+    {
+      "owner": "NODE",
+      "policy": "labels.outlines-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "profile.tests-conform"
+    },
+    {
+      "owner": "NODE",
+      "policy": "profile.claims-conform"
+    },
+    {
       "owner": "ROOT",
       "policy": "profile.tests-conform"
     },

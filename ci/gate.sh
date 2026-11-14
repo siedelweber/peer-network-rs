@@ -134,7 +134,7 @@ run_step() {
     if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
         hash-citations|build-graph|claim-tests|harness-tests|observation-tests|testkit-tests) budget="whole-tree-$name" ;;
-        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|host-observation-build|observation-parser) budget=incremental-build ;;
+        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|protected-packages|discipline-tests|benchmarks|observation-syntax|observation-build|host-observation-build|observation-parser) budget=incremental-build ;;
     esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
         --own-cpu-log ".lane/gate-${name}.log" \

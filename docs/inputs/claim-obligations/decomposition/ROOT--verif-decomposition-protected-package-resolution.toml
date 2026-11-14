@@ -1,0 +1,13 @@
+name = "ROOT::verif:decomposition:protected-package-resolution"
+witnessed_labels = []
+path = "adr/007-crate-decomposition.md"
+status = "scoped-supported"
+claims = ["ROOT::claim:discipline:protected-packages-retain-scoped-resolution"]
+realizers = []
+premises = "The fixture compares declared rows, versions and features and refuses an incomplete roster before resolution; real package-scoped resolution and builds are separate gate steps."
+evidence_paragraph = "ROOT::amend:decomposition:protected-package-resolution"
+hold = ""
+owner = "Dependency admission implementer and secret-boundary reviewer"
+missing = "A protected consumer added later must add its reviewed package-scoped record."
+closing_condition = "The fixture and package-scoped resolution, builds and tests pass."
+closing_step = "Protected package dependency admission."

@@ -235,7 +235,7 @@
 | Package | Version | Licence | Minimal HTTP features | Unified ceiling | Scope |
 | --- | --- | --- | --- | --- | --- |
 | atomic-waker | 1.1.2 | Apache-2.0 OR MIT |  |  | HTTP runtime closure plus existing unified workspace features |
-| bytes | 1.12.1 | MIT | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
+| bytes | 1.12.1 | MIT | default, std | default, serde, std | HTTP runtime closure plus existing unified workspace features |
 | futures-core | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
 | futures-sink | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
 | http | 1.5.0 | MIT OR Apache-2.0 | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
@@ -268,7 +268,11 @@
 | want | 0.3.2 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
 | wasi | 0.11.1+wasi-snapshot-preview1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT |  | default, std | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
 | windows-link | 0.2.1 | MIT OR Apache-2.0 |  |  | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
-| windows-sys | 0.61.2 | MIT OR Apache-2.0 |  | Wdk, Wdk_Foundation, Wdk_Storage, Wdk_Storage_FileSystem, Wdk_System, Wdk_System_IO, Win32, Win32_Foundation, Win32_Networking, Win32_Networking_WinSock, Win32_Security, Win32_Storage, Win32_Storage_FileSystem, Win32_System, Win32_System_Console, Win32_System_Diagnostics, Win32_System_Diagnostics_Debug, Win32_System_IO, Win32_System_Pipes, Win32_System_SystemInformation, Win32_System_SystemServices, Win32_System_Threading, Win32_System_WindowsProgramming, Win32_UI, Win32_UI_Input, Win32_UI_Input_KeyboardAndMouse, default | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| windows-sys | 0.61.2 | MIT OR Apache-2.0 |  | Wdk, Wdk_Foundation, Wdk_Storage, Wdk_Storage_FileSystem, Wdk_System, Wdk_System_IO, Win32, Win32_Foundation, Win32_Networking, Win32_Networking_WinSock, Win32_Security, Win32_Storage, Win32_Storage_FileSystem, Win32_System, Win32_System_Console, Win32_System_Diagnostics, Win32_System_Diagnostics_Debug, Win32_System_IO, Win32_System_LibraryLoader, Win32_System_Memory, Win32_System_Pipes, Win32_System_SystemInformation, Win32_System_SystemServices, Win32_System_Threading, Win32_System_WindowsProgramming, Win32_UI, Win32_UI_Input, Win32_UI_Input_KeyboardAndMouse, default | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| serde | 1.0.229 | MIT OR Apache-2.0 |  | alloc, default, derive, serde_derive, std | Existing HTTP edges with node reader workspace feature unification |
+| serde_core | 1.0.229 | MIT OR Apache-2.0 |  | alloc, result, std | Existing HTTP edges with node reader workspace feature unification |
+| serde_derive | 1.0.229 | MIT OR Apache-2.0 |  | default | Existing HTTP edges with node reader workspace feature unification |
+| syn | 3.0.9 | MIT OR Apache-2.0 |  | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | Existing HTTP edges with node reader workspace feature unification |
 
 **Amendment (Shared act profile)** · `amend:decomposition:act-profile` pn-act-profile sits above pn-records and pn-interchange and below pn-host, pn-replay, pn-verification and the planned pn-client. It owns the pure canonical act profile, the proposal and projection commitment recipes, and the supplied-opening comparison of ``def:graph:proposal-pre-commitment``, the commitment formulas of ``def:graph:verified-act`` and ``def:graph:ordering-fraud-proof`` at network-v0.32.0 as its target; its implemented one-nonce version-one recipes realize the preceding construction only, with new-tag conformance held under (`open:identity:act-realization-admission`). Formation remains in pn-graph; salt generation and custody remain in pn-host. The Actor computes its proposal through the shared package without depending on the host or graph. pn-records owns the retained P, C_Y and C_D residues as distinct typed opaque recipe identifiers and 32-byte values, including when the dependency projection is tombstoned; pn-act-profile computes and interprets them. This direction preserves records' codec independence and the acyclic graph. The package has no host, database, network, random-generation or signature dependency. A matching opening establishes equality against supplied recorded bytes, not their authenticity. Namespace allocation, external envelopes, production entropy and custody, and signature and anchor authentication remain held separately. realizes{``open:identity:act-realization-admission``; This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.}
 
@@ -277,3 +281,64 @@
 **Amendment (Public authentication evidence)** · `amend:decomposition:act-authentication` pn-act-authentication owns the public fixed-size carriers, strict qualification and key scripts, signing-key byte hash and initial-asset locator derivation. The pure recipes use the already admitted RustCrypto sha2, tracing and thiserror crates; serde_json is test-only. Canonical authentication encoding adds the planned pn-interchange, pn-records and pn-act-profile edges for the single canonical codec and the existing public act carriers and recipe identifiers. The public verification candidate adds only the pinned secp256k1-zkp re-export edge under (`amend:crypto:public-verification-admission`), with no feature-union change. pn-wallet adds the shared-carrier edge and interprets a decoded transaction with supplied token prevouts. No direct base-library or secret-home edge is added by these pure operations; the later signature and signing surfaces remain under (`dec:design:authentication-owner`) and their operation admission. This is the created public subset of that owner, not admission of its planned private operations.
 
 **Amendment (Deployment evidence scope)** · `amend:decomposition:deployment-claim-scope` The obligations of (`amend:decomposition:deployment-evidence`) are read under (`rule:testing:public-record-conformance`). Public declarations, exact input comparisons and independently checked certificates have deterministic witness routes; publication of empirical measurements establishes their bytes and declared scope, not their acquisition truth or a hardware-independent capacity. (`amend:decomposition:numeric-backend`) identifies an admitted numerical build, not a stable unit of Work across revisions. Conditional edges retain the excluded premises without assigning an out-of-scope terminal consumer or closing an implementation hold.
+
+**Amendment (Protected package resolution)** · `amend:decomposition:protected-package-resolution` The protected closure is the normal/build dependency resolution of each secret-handling package built alone from the committed lock: pn-secret-home, pn-credential-derivation and the credential generator when present. Each package's versions and feature sets are recorded in ci/protected-packages and compared by ci/protected_packages.py; a difference refuses. The gate builds each protected package alone before compiling and running its tests alone, in addition to workspace tests, so an interface supplied only by workspace feature unification cannot become a hidden dependency. Installation builds a secret-handling executable for its package alone from the lock. These package-scoped sets are the protected facts of their dependency admissions. The node's executor may widen the workspace union without widening an installed protected package; every admission reports such changes and separately checks each protected set. Forbidding any wider union would prohibit interfaces the node needs for a property the installed configuration does not have; separate workspaces and locks would split shared dependency review; patching the executor would add a fork without changing that property. A protected package-scoped version or feature change requires its own admission before use. The roster is extended when a protected consumer is created, never replaced by a presumed node-only roster. The finite fixture (`claim:discipline:protected-packages-retain-scoped-resolution`) supports (`verif:decomposition:protected-package-resolution`) for comparison and roster refusals.
+
+**Amendment (Node reader closure)** · `amend:decomposition:node-reader-closure` The pn library admits async-graphql, its parser, value and derive packages at exact 7.2.1 with default features disabled, using the workspace TOML 0.9 reader and tracing and the path pn-interchange carrier under (`proposal:api:dependencies`). The derive edge pins the macro closure to the same patch; it grants no served operation. Registry sources retain their original notices and lock checksums; none is modified or vendored. The table is the newly added source inventory, including host build scripts and procedural macros. Pre-one transitive lines are admitted at these exact locked versions for the dependency's implementation APIs, not as a promise that another minor is compatible; TOML 0.9 retains its reviewed parser API. A later lock move requires renewed review. Boolean/String-only unserved parsing does not establish full unsigned or byte-value transport, executor resource bounds or cancellation; those integrations remain held by (`proposal:api:dependencies`). Errors at the first-party boundary carry refusal classes, never dependency diagnostics or private input.
+
+| Added source | Version | Licence expression | Build script | Procedural macro | Resolved features | Lock checksum |
+|---|---|---|---|---|---|---|
+| Inflector | 0.11.4 | BSD-2-Clause | no | no | none | fe438c63458706e03479442743baae6c88256498e6431708f6dfc520a26515d3 |
+| ar_archive_writer | 0.5.5 | Apache-2.0 WITH LLVM-exception | no | no | none | 523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec |
+| async-graphql | 7.2.1 | MIT OR Apache-2.0 | no | no | none | 1057a9f7ccf2404d94571dec3451ade1cb524790df6f1ada0d19c2a49f6b0f40 |
+| async-graphql-derive | 7.2.1 | MIT OR Apache-2.0 | no | yes | none | 2e6cbeadc8515e66450fba0985ce722192e28443697799988265d86304d7cc68 |
+| async-graphql-parser | 7.2.1 | MIT OR Apache-2.0 | no | no | none | e64ef70f77a1c689111e52076da1cd18f91834bcb847de0a9171f83624b07fbf |
+| async-graphql-value | 7.2.1 | MIT OR Apache-2.0 | no | no | none | 3e3ef112905abea9dea592fc868a6873b10ebd3f983e83308f995d6284e9ba41 |
+| async-io | 2.6.0 | Apache-2.0 OR MIT | yes | no | none | 456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc |
+| asynk-strim | 0.1.5 | MIT OR Apache-2.0 | no | no | none | 52697735bdaac441a29391a9e97102c74c6ef0f9b60a40cf109b1b404e29d2f6 |
+| concurrent-queue | 2.5.0 | Apache-2.0 OR MIT | no | no | default, std | 4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973 |
+| crossbeam-utils | 0.8.23 | MIT OR Apache-2.0 | yes | no | none | a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6 |
+| darling | 0.23.0 | MIT | no | no | default, suggestions | 25ae13da2f202d56bd7f91c25fba009e7717a1e4a1cc98a76d844b65ae912e9d |
+| darling_core | 0.23.0 | MIT | no | no | strsim, suggestions | 9865a50f7c335f53564bb694ef660825eb8610e0a53d3e11bf1b0d3df31e03b0 |
+| darling_macro | 0.23.0 | MIT | no | yes | none | ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d |
+| encoding_rs | 0.8.44 | (Apache-2.0 OR MIT) AND BSD-3-Clause | yes | no | alloc, default | 89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5 |
+| form_urlencoded | 1.2.2 | MIT OR Apache-2.0 | no | no | alloc, default, std | cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf |
+| futures-io | 0.3.34 | MIT OR Apache-2.0 | no | no | std | 53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed |
+| futures-lite | 2.6.1 | Apache-2.0 OR MIT | no | no | none | f78e10609fe0e0b3f4157ffab1876319b5b0db102a2c60dc4626306dc46b44ad |
+| hermit-abi | 0.5.3 | MIT OR Apache-2.0 | no | no | default | e17592d60ebacc7d5e169f4663c5f84f9161cc90328abcfe8456f41e4dfcb284 |
+| ident_case | 1.0.1 | MIT/Apache-2.0 | no | no | none | b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39 |
+| mime | 0.3.18 | MIT OR Apache-2.0 | no | no | none | d5848f5a9e8117cf94f2f90faac24a87ff81600ff8628c1e3deaab572e76bfa1 |
+| multer | 3.1.0 | MIT | yes | no | default | 83e87776546dc87511aa5ee218730c92b666d7264ab6ed41f9d215af9cd5224b |
+| multiversion_no_op | 1.0.0 | Apache-2.0 OR MIT | no | yes | none | 743fb55ba31b18fb1ecef6bdc9aa2743314978ac084044301a7eee33fb99a20d |
+| object | 0.39.1 | Apache-2.0 OR MIT | yes | no | archive, coff, elf, macho, pe, read, read_core, std, xcoff | 2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b |
+| parking | 2.2.1 | Apache-2.0 OR MIT | no | no | none | f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba |
+| pest | 2.9.6 | MIT OR Apache-2.0 | no | no | default, memchr, std | 5ec53fd1d256900a9a771bf2720d42cef6f8bc91b4e25065fbd291e3e7222576 |
+| pest_stack_guard | 1.0.1 | MIT OR Apache-2.0 | yes | no | none | 9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439 |
+| polling | 3.11.0 | Apache-2.0 OR MIT | no | no | none | 5d0e4f59085d47d8241c88ead0f274e8a0cb551f3625263c05eb8dd897c34218 |
+| psm | 0.1.32 | MIT OR Apache-2.0 | yes | no | none | 4dcd034599e63b970727f70d79e02d62390a4a84f7c6b827c27c46d5ac3fa622 |
+| ryu | 1.0.23 | Apache-2.0 OR BSL-1.0 | no | no | none | 9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f |
+| serde_urlencoded | 0.7.1 | MIT/Apache-2.0 | no | no | none | d3491c14715ca2294c4d6a88f15e84739788c1d030eed8c110436aafdaa2f3fd |
+| simdutf8 | 0.1.5 | MIT OR Apache-2.0 | no | no | aarch64_neon, public_imp | e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e |
+| spin | 0.9.9 | MIT | no | no | mutex, spin_mutex | 3763264f6b73151db08c50ff20d7d8a0b8796e021cdea7ceedad07b80155fa0e |
+| stacker | 0.1.25 | MIT OR Apache-2.0 | yes | no | none | 707f49d46706bacf8a2b00d51dace3f9de527c13eec3778f570c411f89e69967 |
+| static_assertions_next | 1.1.2 | MIT OR Apache-2.0 | no | no | none | d7beae5182595e9a8b683fa98c4317f956c9a2dec3b9716990d20023cc60c766 |
+| strum | 0.27.2 | MIT | no | no | default, derive, std, strum_macros | af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf |
+| strum_macros | 0.27.2 | MIT | no | yes | none | 7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7 |
+| ucd-trie | 0.1.7 | MIT OR Apache-2.0 | no | no | std | 2896d95c02a80c6d6a5d6e953d479f5ddf2dfdb6a244441010e373ac0fb88971 |
+
+The retained versions do not move. The integrated feature changes are listed below; only rustix and linux-raw-sys occur in a protected normal/build closure, and both protected package-scoped resolutions remain unchanged. The added rustix modules do not change the used memory/process interfaces; registry source review covers those public modules and their Linux backend. The existing asynchronous runtime feature set is unchanged.
+
+| Retained source | Version | Added workspace features |
+|---|---|---|
+| bytes | 1.12.1 | serde |
+| futures-util | 0.3.34 | futures-io, io, memchr |
+| indexmap | 2.14.2 | serde |
+| linux-raw-sys | 0.12.1 | if_ether, net, netlink, xdp |
+| num-traits | 0.2.19 | default |
+| regex | 1.13.1 | default, perf, perf-backtrack, perf-cache, perf-dfa, perf-inline, perf-literal, perf-onepass, unicode, unicode-age, unicode-bool, unicode-case, unicode-gencat, unicode-perl, unicode-script, unicode-segment |
+| regex-automata | 0.4.18 | dfa-onepass, unicode, unicode-age, unicode-bool, unicode-case, unicode-gencat, unicode-perl, unicode-script, unicode-segment, unicode-word-boundary |
+| rustix | 1.1.6 | event, net, pipe, time |
+| slab | 0.4.12 | default |
+| windows-sys | 0.61.2 | Win32_System_LibraryLoader, Win32_System_Memory |
+
+**Verification (Protected package resolution)** · `verif:decomposition:protected-package-resolution` The finite comparison and roster controls are (`claim:discipline:protected-packages-retain-scoped-resolution`); package-scoped resolution, builds and tests remain separately executed gate evidence.

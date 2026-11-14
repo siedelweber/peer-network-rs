@@ -783,6 +783,19 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
+built_for_host = false
+feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
+name = "futures-io 0.3.34"
+version = "0.3.34"
+checksum = "53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed"
+licence = "MIT OR Apache-2.0"
+msrv = "1.36"
+features = []
+build_time = "none"
+procedural_macros = []
+
+[[rows]]
+membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
 built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "futures-macro 0.3.34"

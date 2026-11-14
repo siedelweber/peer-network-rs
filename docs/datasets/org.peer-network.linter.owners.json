@@ -244,6 +244,14 @@
         {
           "owner": "SECRETHOME",
           "target": "DERIVATION"
+        },
+        {
+          "owner": "NODE",
+          "target": "ROOT"
+        },
+        {
+          "owner": "NODE",
+          "target": "INTERCHANGE"
         }
       ],
       "name": "declaration",
@@ -264,7 +272,8 @@
         "ACTPROFILE",
         "SECRETHOME",
         "ACTAUTH",
-        "DERIVATION"
+        "DERIVATION",
+        "NODE"
       ],
       "partitions": [
         {
@@ -371,6 +380,11 @@
           "name": "credential-derivation-package",
           "owner": "DERIVATION",
           "pattern": "%s\"packages/credential-derivation/\" *VCHAR"
+        },
+        {
+          "name": "node-package",
+          "owner": "NODE",
+          "pattern": "%s\"packages/node/\" *VCHAR"
         }
       ],
       "root_owner": "ROOT"

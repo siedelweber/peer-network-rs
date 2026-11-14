@@ -344,6 +344,7 @@
           "name": "cargo",
           "outputs": "Cargo artifacts or reports in the checkout-specific target directory; nursery findings retain their advisory status.",
           "steps": [
+            "protected-packages",
             "fmt",
             "clippy",
             "nursery-advisory",
@@ -499,6 +500,7 @@
         "service-tests",
         "wallet-conformance",
         "test-evidence",
+        "protected-packages",
         "cargo-config-measurement",
         "wallet-elements-stop",
         "fmt",

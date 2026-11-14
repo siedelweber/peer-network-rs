@@ -221,6 +221,7 @@
         "suppressions",
         "printing",
         "tests",
+        "protected-packages",
         "cargo-config-measurement",
         "fmt",
         "clippy",
@@ -561,6 +562,7 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
+        "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
         "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",
         "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",

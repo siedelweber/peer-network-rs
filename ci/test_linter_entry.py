@@ -243,7 +243,7 @@ class Conformance(unittest.TestCase):
         delegation(self)
 
     def test_cargo_delegation(self):
-        """Claim: Serial Cargo fixture commands preserve artifact and test inventories, compile-error refusal, advisory warnings and nonverdict timing excess through the Meson adapter, using the same target directory and a separate doctest command; the nine slice-three roster commands retain their exact arguments.
+        """Claim: Serial Cargo fixture commands preserve artifact and test inventories, compile-error refusal, advisory warnings and nonverdict timing excess through the Meson adapter, using the same target directory and a separate doctest command; the ten slice-three roster commands retain their exact arguments.
         ´claim:discipline:cargo-delegation-preserves-build-evidence´
         ´test:integration:test-cargo-delegation´
         """

@@ -18,6 +18,7 @@
     {
       "features": [
         "default",
+        "serde",
         "std"
       ],
       "license": "MIT",
@@ -478,6 +479,8 @@
         "Win32_System_Diagnostics",
         "Win32_System_Diagnostics_Debug",
         "Win32_System_IO",
+        "Win32_System_LibraryLoader",
+        "Win32_System_Memory",
         "Win32_System_Pipes",
         "Win32_System_SystemInformation",
         "Win32_System_SystemServices",
@@ -494,6 +497,66 @@
       "notice": "Existing workspace dependency notices",
       "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
       "version": "0.61.2"
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "serde",
+      "notice": "Existing workspace dependency notices",
+      "scope": "Existing HTTP edges with node reader workspace feature unification",
+      "version": "1.0.229"
+    },
+    {
+      "features": [
+        "alloc",
+        "result",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "serde_core",
+      "notice": "Existing workspace dependency notices",
+      "scope": "Existing HTTP edges with node reader workspace feature unification",
+      "version": "1.0.229"
+    },
+    {
+      "features": [
+        "default"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "serde_derive",
+      "notice": "Existing workspace dependency notices",
+      "scope": "Existing HTTP edges with node reader workspace feature unification",
+      "version": "1.0.229"
+    },
+    {
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "fold",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit",
+        "visit-mut"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "syn",
+      "notice": "Existing workspace dependency notices",
+      "scope": "Existing HTTP edges with node reader workspace feature unification",
+      "version": "3.0.9"
     }
   ]
 }

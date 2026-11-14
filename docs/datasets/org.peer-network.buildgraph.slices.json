@@ -285,6 +285,11 @@
       "name": "extended-tests",
       "reason": "Required prebuilt case invocation selected by the declared allowance threshold; the disjoint result union retains every case.",
       "slice": 4
+    },
+    {
+      "name": "protected-packages",
+      "reason": "Resolve, build and test each protected package alone from the lock; preserve the shared Cargo serialization and serial report edge.",
+      "slice": 3
     }
   ]
 }

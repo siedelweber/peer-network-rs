@@ -43,7 +43,7 @@
 | ci::test_claims | active | unit | ci-python | fast | 25 |
 | ci::test_design | active | integration | ci-python | extended | 12 |
 | ci::test_devperf | active | unit | ci-python | fast | 74 |
-| ci::test_discipline | active | integration | ci-python | fast | 34 |
+| ci::test_discipline | active | integration | ci-python | fast | 35 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 9 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
@@ -259,7 +259,7 @@
 | oorandom | 11.1.5 | MIT | none | Criterion transitive development dependency |
 | pn-testkit | 0.1.0 | AGPL-3.0-only | none | development-only support |
 | proptest | 1.12.0 | MIT OR Apache-2.0 | bit-set, default, fork, regex-syntax, rusty-fork, std, tempfile, timeout | existing bounded property generation and shrinking |
-| regex | 1.13.1 | MIT OR Apache-2.0 | std | Criterion transitive development dependency |
+| regex | 1.13.1 | MIT OR Apache-2.0 | default, perf, perf-backtrack, perf-cache, perf-dfa, perf-inline, perf-literal, perf-onepass, std, unicode, unicode-age, unicode-bool, unicode-case, unicode-gencat, unicode-perl, unicode-script, unicode-segment | Criterion transitive development dependency |
 | tinytemplate | 1.2.1 | Apache-2.0 OR MIT | none | Criterion transitive development dependency |
 
 **Amendment (Property replay evidence)** · `amend:harness:property-replay` The 36 existing properties retain their generators, shrinkers, predicates and 256-case default strength under (`conv:xchg:metatheorems-as-tests`). The fast seed policy is source-v1: SHA-256 of the UTF-8 string pn-property-seed-v1: followed by the checked source identity, taking the first eight bytes as an unsigned big-endian integer, rendered in decimal, with the cc algorithm. The same source replays the same search, while changes explore another seed; each joined result carries seed, configured successful-case count, generator and shrinker editions, scheduling/fault choices and the committed regression corpus path. Passing results account for the configured generated cases; persisted regression cases run additionally. Failed searches retain their failure and report the completed generated count as unknown rather than inventing it. All inherited PROPTEST variables are removed before the declared configuration is applied, and failure persistence remains enabled. The committed proptest-regressions files are replay inputs; newly minimized failures require review before entering that corpus. A missing seed is structural. No additional property was added to documents or cli-common merely to duplicate existing predicates.

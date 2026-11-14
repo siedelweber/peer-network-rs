@@ -626,6 +626,14 @@
       "review": "Read the dated-channel and component witnesses, full answering rustc commit acceptance, and wrong, missing, repeated or shortened commit-hash refusals. The expected public identity comes from build policy; a channel file alone cannot admit a different answering nightly. These assertions do not establish older-compiler compatibility or artifact reproducibility."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:protected-packages-retain-scoped-resolution",
+      "before": "Package-scoped versions and features are exact, including absent rows and distinct build contexts; an incomplete protected roster refuses before resolution or testing.",
+      "after": "Package-scoped versions and features are exact, including absent rows and distinct build contexts; an incomplete protected roster refuses before resolution or testing.",
+      "review": "Read exact row/version/feature comparisons and the incomplete-roster refusal before resolution; package-scoped build and resolution evidence are separate gate commands."
+    },
+    {
       "operation": "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:secret-carriers-reject-printable-traits",
@@ -792,6 +800,14 @@
       "before": "Claim: Every live gate step has exactly one delegation slice, and the record roster agrees with that set, so a missing, repeated, unknown or invalid assignment cannot hide until final migration.",
       "after": "Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.",
       "review": "Read the grouped roster comparison: generic reasons and a cross-slice policy assignment refuse, while the explicitly named observation-runtime split passes."
+    },
+    {
+      "operation": "ci::test_linter_entry.Conformance.test_cargo_delegation",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
+      "before": "Claim: Serial Cargo fixture commands preserve artifact and test inventories, compile-error refusal, advisory warnings and nonverdict timing excess through the Meson adapter, using the same target directory and a separate doctest command; the nine slice-three roster commands retain their exact arguments.",
+      "after": "Claim: Serial Cargo fixture commands preserve artifact and test inventories, compile-error refusal, advisory warnings and nonverdict timing excess through the Meson adapter, using the same target directory and a separate doctest command; the ten slice-three roster commands retain their exact arguments.",
+      "review": "The exact delegation roster includes the protected package-scoped build and test command; the fixture checks all ten argument vectors."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_missing_tracked_source",

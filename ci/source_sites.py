@@ -13,7 +13,7 @@ import tomllib
 
 from devperf import StructuralError
 
-OWNERS = {'credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home': 'SECRETHOME', 'interchange': 'INTERCHANGE', 'cli-common': 'CLICOMMON',
+OWNERS = {'node':'NODE','credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home': 'SECRETHOME', 'interchange': 'INTERCHANGE', 'cli-common': 'CLICOMMON',
           'execwrap': 'EXECWRAP', 'documents': 'DOCUMENTS', 'testkit': 'TESTKIT', 'act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet': 'WALLET', 'host': 'HOST', 'records': 'RECORDS', 'verification': 'VERIFICATION'}
 RAW_STRING = re.compile(r'(?:br|r)(#*)"')
 CHAR_LITERAL = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")

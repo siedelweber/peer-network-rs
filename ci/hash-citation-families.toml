@@ -1226,3 +1226,14 @@ reader = "control-schema-vectors"
 source = "packages/interchange/tests/corpus/control-schema.json"
 definition = "Regenerate and compare the entire corpus without Rust or production helpers. Alternate roles and special text are test vectors, never artifacts at reserved coordinates. Exact UTF-8 source carriage asserts no SDL validity or served operation."
 paths = ["packages/interchange/tests/corpus/control-schema.json"]
+
+[[rows]]
+family = "node-reader-crate-archives"
+group = "node reader dependency admission"
+measures = "SHA-256 of an unmodified registry crate archive"
+producer = "Cargo lock resolution"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "Cargo.lock"
+definition = "Package name and exact locked version locate the original registry archive; the admission repeats the matching lock checksum."
+paths = ["adr/007-crate-decomposition.md", "docs/templates/adr/007-crate-decomposition.md.j2"]

@@ -1,6 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['docs/inputs/linter-owners/node/NODE.toml', 'build-graph,linter,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/inputs/workload-benchmarks.toml', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations,benchmarks', ''],
   ['docs/inputs/secret-exposures.toml', 'suppressions,discipline-tests,fixed-point-generate,fixed-point-write,datasets,documents', ''],
   ['docs/inputs/http-dependencies.toml', 'member-lints,discipline-tests,fixed-point-generate,fixed-point-write,datasets,documents,hash-citations', ''],

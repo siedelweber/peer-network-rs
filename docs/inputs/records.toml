@@ -216,7 +216,7 @@ title = "Build graph"
 scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
 depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]
 does_not_establish = "Independent admission of the completed migration remains held. Every evidence command is delegated; the declared census setup and both service stops deliberately execute outside delegation. Entry sequencing and final report checks use the declared graph. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
-step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
+step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "protected-packages", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
 
 [[rows.step_groups]]
 name = "policy"
@@ -238,7 +238,7 @@ outputs = "Registry and dependency-boundary reports."
 
 [[rows.step_groups]]
 name = "cargo"
-steps = ["fmt", "clippy", "nursery-advisory", "minimal", "rustdoc"]
+steps = ["protected-packages", "fmt", "clippy", "nursery-advisory", "minimal", "rustdoc"]
 inputs = "ci/discipline.py and imports; toolchain and formatter configuration, all relevant manifests, lockfile, Rust sources, build scripts, included fixtures and feature selections; admitted vendor inputs for Cargo consumers."
 outputs = "Cargo artifacts or reports in the checkout-specific target directory; nursery findings retain their advisory status."
 

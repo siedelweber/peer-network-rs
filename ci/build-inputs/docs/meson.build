@@ -2,6 +2,7 @@
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
   ['docs/HTTP-NOTICES', 'member-lints,documents,hash-citations', ''],
+  ['docs/NODE-NOTICES', 'member-lints,documents,hash-citations', ''],
   ['ci/build-inputs/docs/meson.build', 'build-graph', ''],
 ]
 foreach row : local_inputs
