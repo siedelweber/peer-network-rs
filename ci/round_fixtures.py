@@ -785,6 +785,7 @@ def residue_controls(test, root, area, base, source, args):
     import import_gate
     import isolation
     import series_round
+    import build_graph
     from series_round import CONTROLLER_FILES, stage_controller, validate_controller
     for status in (0,1):
         row=dict(status=status,counted=False)
@@ -902,6 +903,22 @@ sys.exit(result)
     retained=Path(command['output_log'])
     text=retained.read_bytes()[command['output_start']:command['output_end']].decode() if retained.exists() else ''
     test.assertEqual(text,'early helper failure\n','early helper failure output is retained in evidence')
+    for entry_log in (None,output_driver.store/'entry.log'):
+        output_driver.log=entry_log
+        try:
+            status,output=output_driver.command([sys.executable,'-c','import os,sys;os.write(1,b"out\\xff");os.write(2,b"err\\xfe");sys.exit(2)'])
+        except UnicodeError:
+            test.fail('invalid helper text retains output and raw status')
+        test.assertEqual((status,output),(2,'out\ufffderr\ufffd'),'invalid helper text retains output and raw status')
+        command=json.loads((output_driver.store/'commands.jsonl').read_text().splitlines()[-1])
+        retained=Path(command['output_log']).read_bytes()[command['output_start']:command['output_end']]
+        test.assertEqual((command['status'],retained),(2,'out\ufffderr\ufffd'.encode()),'invalid helper text has a retained command row and byte range')
+    for delay in (0,0.3):
+        try:
+            child=build_graph.cancellable([sys.executable,'-c',f'import os,sys,time;os.write(1,b"out\\xff");os.write(2,b"err\\xfe");time.sleep({delay});sys.exit(2)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        except UnicodeError:
+            test.fail('adapter retains both invalid text streams across communicate waits')
+        test.assertEqual((child.returncode,child.stdout,child.stderr),(2,'out\ufffd','err\ufffd'),'adapter retains both invalid text streams across communicate waits')
     (root/'dirty').write_text('dirty')
     with refuses(test,'producing-controller checkout','historical precondition refuses dirty checkout'):
         driver.historical_run()

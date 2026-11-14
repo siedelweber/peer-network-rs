@@ -271,6 +271,16 @@ definition = "Package name and version locate the crates.io archive, whose check
 paths = ["packages/interchange/fuzz/Cargo.lock"]
 
 [[rows]]
+family = "round-command-text-bytes"
+group = "command evidence refusal witnesses"
+measures = "Invalid encoded byte values in helper-output controls; not identities"
+producer = "Authored Python command-output fixtures"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit byte escapes denote invalid text emitted by controlled child processes. They witness replacement decoding and retained raw status, not a digest or content identity; bare identity-shaped values remain excluded."
+paths = ["ci/round_fixtures.py"]
+
+[[rows]]
 family = "interchange-numeric-data"
 group = "interchange implementation and vendored engine"
 measures = "Numeric constants, character escapes, and ABNF terminals; not identities"

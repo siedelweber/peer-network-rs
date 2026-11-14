@@ -191,6 +191,8 @@ def parent_death(parent):
 
 def cancellable(argv, *, kill_after=5, reap_tree=False, still_owned=None, **kwargs):
     """Forward termination through each adapter boundary and reap its child."""
+    if kwargs.get('text') or kwargs.get('universal_newlines') or kwargs.get('encoding'):
+        kwargs['errors'] = 'replace'
     child = None
     pending = []
     def terminate(number, frame):
