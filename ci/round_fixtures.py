@@ -287,7 +287,7 @@ def controls(test, group):
                 prior=args.repeat_of;args.repeat_of=root/'owed.json';write(args.repeat_of,request)
                 with refuses(test,'outside checkout',message='in-tree obligation refuses before reset'):round.run()
                 args.repeat_of=prior;write(prior,dict(request,sample='import'));(area/'gate-baseline.json').unlink()
-                with refuses(test,'exist before reset',message='missing repeat sidecar refuses before reset'):round.run()
+                with refuses(test,'original regular files before reset',message='missing repeat sidecar refuses before reset'):round.run()
                 write(prior,request)
                 write(area/'gate-baseline.json',dict(cache=dict(state='warm')))
                 write(args.repeat_of,dict(request,source='foreign'))
@@ -551,7 +551,8 @@ def import_failure_controls(test):
             test.assertEqual(routed,[sys.executable,'-E','-s','-B',str(staged/'ci/series_round.py'),'--controller-command','series-identity'],'historical identity uses outside current controller')
             test.assertEqual(routed[-2:],['--controller-command','series-identity'],'historical identity reads workload data through current controller')
             test.assertEqual(driver.controller_command(['python3','-B','ci/build_graph.py','series-identity'],build=True)[0],'python3','historical build uses the prefix interpreter')
-            driver.args=SimpleNamespace(source=base)
+            driver.args=SimpleNamespace(source=base,base=base)
+            driver.repeat_pair=lambda base,source:None
             driver.require=lambda command:git(*command[1:])
             seen=[]
             def historical_work():
@@ -587,6 +588,7 @@ def import_failure_controls(test):
                     test.assertEqual(import_gate.main(),4,'entry maps child without closing verdict: '+str(raw))
             with chdir(root),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.stage',side_effect=RuntimeError('unexpected')),redirect_stdout(io.StringIO()):
                 test.assertEqual(import_gate.main(),4,'entry maps unexpected exception to protocol refusal')
+            residue_controls(test,root,area,base,source,args)
 
 
 def storage_controls(test):
@@ -767,3 +769,146 @@ def storage_controls(test):
             finally:
                 if holder.poll() is None:holder.kill();holder.communicate()
                 if pid and alive(pid):os.kill(pid,signal.SIGKILL)
+
+
+def residue_controls(test, root, area, base, source, args):
+    """Witness the retained import and historical-controller refusal branches."""
+    import ast
+    import io
+    import os
+    import subprocess
+    from contextlib import chdir, redirect_stdout
+    import import_gate
+    import isolation
+    import series_round
+    from series_round import CONTROLLER_FILES, stage_controller, validate_controller
+    for status in (0,1):
+        row=dict(status=status,counted=False)
+        with redirect_stdout(io.StringIO()):
+            actual=import_gate.import_status(SimpleNamespace(returncode=status,stdout='GATE-IMPORT-CLOSED '+json.dumps(row)+'\n'))
+        test.assertEqual(actual,4,'uncounted closing line is not a verdict')
+        for phase,closing in [('precheck','PRECHECK-EXIT='+str(status)+' wall_s=1.0 execution=not-evaluated scope=all'),('gate','GATE-EXIT='+str(status))]:
+            test.assertTrue(import_gate.verdict(status,closing+'\nGATE-STORAGE-LOCK action=released kind=gate\n',phase),'release line preserves the terminal verdict')
+    for name in ('LD_PRELOAD','LD_LIBRARY_PATH','BASH_ENV','ENV'):
+        with test.assertRaisesRegex(ValueError,'startup assignment',msg='startup assignment refuses '+name):
+            isolation.storage_driver(root,[sys.executable,name+'=relative'],prefix=True)
+        runner=Round.__new__(Round);runner.root=root;runner.args=args;runner.store=area/('env-'+name);runner.store.mkdir();runner.log=None;runner.storage_token=None
+        with patch.dict(os.environ,{name:'relative'}),patch('build_graph.cancellable',return_value=SimpleNamespace(returncode=0,stdout='')) as child:
+            runner.command([sys.executable],build=True)
+        test.assertNotIn(name,child.call_args.kwargs['env'],'inherited startup variable cleared '+name)
+    for value in ('relative',str(root/'absent')):
+        with test.assertRaisesRegex(ValueError,'flag operand',msg='equals flag refuses '+value):
+            isolation.storage_driver(root,[sys.executable,'--config='+value],prefix=True)
+    original_resolve=Path.resolve
+    def resolve(path,*a,**kw):
+        if str(path)=='/unresolvable':raise OSError('controlled resolution failure')
+        return original_resolve(path,*a,**kw)
+    with patch.object(Path,'resolve',resolve):
+        with test.assertRaisesRegex(ValueError,'cannot be resolved',msg='unresolvable prefix refuses by name'):
+            isolation.storage_driver(root,['/unresolvable'],prefix=True)
+    public=['--base',base,'--source',source,'--directory',str(area/'residue-entry'),'--container-list','["containers"]','--service-list','["services"]','--build-prefix',json.dumps(args.build_prefix),'--staged']
+    with chdir(root),patch('import_gate.__file__',str(area/'outside/import_gate.py')),patch('import_gate.validate_stage'),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.Import.run',side_effect=series_round.Busy('controlled busy')),redirect_stdout(io.StringIO()):
+        test.assertEqual(import_gate.main(),5,'entry maps busy to not run')
+    for status in (0,1):
+        def released(runner):
+            runner.completed_result=dict(status=status,counted=True,outcome='complete')
+            raise OSError('controlled lock release failure')
+        with chdir(root),patch('import_gate.__file__',str(area/'outside/import_gate.py')),patch('import_gate.validate_stage'),patch.object(sys,'argv',['import_gate.py',*public]),patch('import_gate.Import.run',released),redirect_stdout(io.StringIO()) as output:
+            test.assertEqual(import_gate.main(),status,'cleanup failure preserves counted verdict')
+        test.assertIn('GATE-IMPORT-CLEANUP-ERROR',output.getvalue(),'cleanup failure remains visible')
+    roster={Path(name).stem for name in CONTROLLER_FILES}
+    for name in CONTROLLER_FILES:
+        tree=ast.parse(Path(__file__).with_name(name).read_text())
+        for item in ast.walk(tree):
+            imports=[x.name.split('.')[0] for x in item.names] if isinstance(item,ast.Import) else [item.module.split('.')[0]] if isinstance(item,ast.ImportFrom) and item.module else []
+            for imported in imports:
+                if Path(__file__).with_name(imported+'.py').is_file():
+                    test.assertIn(imported,roster,'controller includes transitive local import '+imported)
+    def git(*words):return subprocess.check_output(['git',*words],cwd=root,text=True).strip()
+    with refuses(test,'outside checkout','controller staging refuses checkout destination'):
+        stage_controller(root,root/'stage')
+    linked=area/'controller-link';linked.symlink_to(area,target_is_directory=True)
+    with refuses(test,'without links','controller staging refuses linked destination'):
+        stage_controller(root,linked)
+    git('update-index','--chmod=+x','ci/series_round.py');git('commit','-qm','controller mode')
+    with refuses(test,'regular object','controller staging refuses nonregular mode'):
+        stage_controller(root,area/'bad-controller')
+    git('reset','--hard',source)
+    staged=stage_controller(root,area/'residue-controllers')
+    manifest=staged/'controller.json';original=manifest.read_text();record=json.loads(original);record['members']=[];manifest.write_text(json.dumps(record))
+    with refuses(test,'fixed roster','controller validation refuses omitted roster'):
+        validate_controller(root,staged)
+    manifest.write_text(original)
+    member=staged/'ci/claims.py';content=member.read_bytes();member.unlink();member.symlink_to(root/'ci/claims.py')
+    with refuses(test,'unsafe controller member','controller validation refuses linked member'):
+        validate_controller(root,staged)
+    member.unlink();member.write_bytes(content+b'\n')
+    with refuses(test,'producing objects','controller validation refuses altered member'):
+        validate_controller(root,staged)
+    member.write_bytes(content)
+    driver=Round.__new__(Round);driver.root=root;driver.controller=staged/'ci';driver.args=SimpleNamespace(source=base,base=base,repeat_of=area/'missing-pair')
+    calls=[]
+    def require(command):
+        calls.append(command)
+        return git(*command[1:])
+    driver.require=require;driver.locked_run=lambda:0
+    with refuses(test,'before reset','historical missing pair refuses before switch'):
+        driver.historical_run()
+    test.assertFalse(any(x[:2]==['git','reset'] for x in calls),'missing pair performs no switch')
+    driver.repeat_pair=lambda base,source:None
+    (root/'dirty').write_text('dirty')
+    with refuses(test,'producing-controller checkout','historical precondition refuses dirty checkout'):
+        driver.historical_run()
+    (root/'dirty').unlink()
+    git('reset','--hard',base)
+    with refuses(test,'producing-controller checkout','historical precondition refuses owing-source checkout'):
+        driver.historical_run()
+    git('reset','--hard',source)
+    common=['--label','fixture','--base',base,'--source',source,'--directory',str(area/'driver-entry'),'--container-list','["containers"]','--service-list','["services"]','--build-prefix',json.dumps(args.build_prefix),'--staged-controller']
+    with chdir(root),patch('series_round.__file__',str(staged/'ci/series_round.py')),patch.object(sys,'argv',['series_round.py',*common,'--mode','priming']),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
+        test.assertEqual(series_round.main(),4,'staged driver refuses nonrepeat mode')
+    with chdir(root),patch('series_round.__file__',str(root/'ci/series_round.py')),patch('series_round.validate_controller'),patch.object(sys,'argv',['series_round.py',*common,'--mode','repeat','--repeat-of',str(area/'pair')]),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
+        test.assertEqual(series_round.main(),4,'staged driver refuses checkout location')
+    bad=list(common);bad[bad.index('--build-prefix')+1]=json.dumps([sys.executable,'ENV=relative'])
+    with chdir(root),patch('series_round.__file__',str(staged/'ci/series_round.py')),patch('series_round.validate_controller'),patch.object(sys,'argv',['series_round.py',*bad,'--mode','repeat','--repeat-of',str(area/'pair')]),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
+        test.assertEqual(series_round.main(),4,'historical entry validates prefix before switch')
+    # A real old-source workload is a tiny gate; its controller file is poison.
+    (root/'ci/series_round.py').write_text('raise RuntimeError("old controller executed")\n')
+    (root/'ci/gate.sh').write_text('printf "OLD-GATE argument=%s\\n" "$1"\n')
+    git('add','ci');git('commit','-qm','old workload');old=git('rev-parse','HEAD')
+    git('checkout',source,'--','ci');git('commit','-qm','current controller');producing=git('rev-parse','HEAD')
+    staged=stage_controller(root,area/'child-controllers')
+    pair=area/'child-pair';pair.mkdir();write(pair/'obligation.json',dict(base=base,source=old));write(pair/'gate-baseline.json',{})
+    child=area/'historical-child.py'
+    child.write_text('''import json,os,subprocess,sys
+from pathlib import Path
+from types import SimpleNamespace
+sys.path.insert(0,sys.argv[1])
+from series_round import Round
+from isolation import storage_binding,storage_lock
+root=Path.cwd();driver=Round.__new__(Round);driver.root=root;driver.controller=Path(sys.argv[1]);driver.store=Path(sys.argv[2]);driver.store.mkdir();driver.log=None;driver.storage_token=None
+args=json.loads(sys.argv[3]);driver.args=SimpleNamespace(**args);driver.args.repeat_of=Path(args['repeat_of'])
+result={}
+def work():
+    dispatched=subprocess.run([sys.executable,'-E','-s','-B',str(driver.controller/'series_round.py'),'--controller-command','--help'],capture_output=True,text=True)
+    result['dispatch']=dispatched.returncode==0 and 'series-identity' in dispatched.stdout
+    import claims,build_graph_evidence
+    result['modules']=Path(claims.__file__).parent==driver.controller and Path(build_graph_evidence.__file__).parent==driver.controller
+    status,output=driver.command(driver.gate_command(),build=True)
+    result['watched']=status==0 and 'GATE-STORAGE-LOCK action=joined' in output and 'OLD-GATE argument=--gate-storage-locked' in output
+    return 0
+with storage_lock(storage_binding(root),'series') as token:
+    driver.storage_token=token;driver.locked_run=work
+    result['status']=driver.historical_run()
+result['restored']=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==sys.argv[4]
+print('HISTORICAL-CONTROL '+json.dumps(result))
+''')
+    child_args=dict(base=base,source=old,repeat_of=str(pair/'obligation.json'),build_prefix=args.build_prefix)
+    completed=subprocess.run([sys.executable,'-E','-s','-B',str(child),str(staged/'ci'),str(area/'child-store'),json.dumps(child_args),producing],cwd=root,text=True,capture_output=True)
+    test.assertEqual(completed.returncode,0,'historical child completes: '+completed.stdout+completed.stderr)
+    row=json.loads(next(x.removeprefix('HISTORICAL-CONTROL ') for x in completed.stdout.splitlines() if x.startswith('HISTORICAL-CONTROL ')))
+    test.assertTrue(row['dispatch'],'historical child executes controller dispatch')
+    test.assertTrue(row['modules'],'historical child imports complete staged modules')
+    test.assertTrue(row['watched'],'historical child wraps old gate in current watch')
+    test.assertTrue(row['restored'],'historical child restores after success')
+    git('reset','--hard',source)

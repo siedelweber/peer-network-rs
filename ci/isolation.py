@@ -155,6 +155,9 @@ def storage_token():
     return declaration_environment().get('PN_GATE_STORAGE_TOKEN')
 
 
+PREFIX_STARTUP_VARIABLES = frozenset(('LD_PRELOAD', 'LD_LIBRARY_PATH', 'BASH_ENV', 'ENV'))
+
+
 def storage_driver(root, command, prefix=False):
     """A switching driver must survive the checkout it changes."""
     if not command:
@@ -166,6 +169,13 @@ def storage_driver(root, command, prefix=False):
     if prefix:
         search_path(os.environ.get('PATH', ''))
     for word in command:
+        if prefix and '=' in word:
+            name, value = word.split('=', 1)
+            if name in PREFIX_STARTUP_VARIABLES:
+                raise ValueError('storage prefix startup assignment is refused: '+name)
+            if name.startswith('-'):
+                if not Path(value).is_absolute() or Path(value).resolve().is_relative_to(root):
+                    raise ValueError('storage prefix flag operand must be absolute and outside checkout')
         if prefix and word.startswith('PATH='):
             search_path(word[5:])
         if word.startswith('-') or '=' in word:

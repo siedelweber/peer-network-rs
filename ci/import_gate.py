@@ -95,6 +95,7 @@ class Import(Round):
         self.storage_token = None
         self.log = None
         self.raw_status = True
+        self.completed_result = None
 
     def census(self):
         """Collect host listings before the build prefix and keep the refusal evidence."""
@@ -189,6 +190,8 @@ class Import(Round):
         append(ledger,row)
         (self.store/'active.json').unlink()
         print('GATE-IMPORT-CLOSED '+json.dumps(row,sort_keys=True),flush=True)
+        if row['counted']:
+            self.completed_result = row
         return status
 
     def run(self):
@@ -225,6 +228,7 @@ def main():
     parser.add_argument('--build-prefix',required=True,type=argv)
     parser.add_argument('--staged',action='store_true',help=argparse.SUPPRESS)
     args = parser.parse_args()
+    runner = None
     try:
         runner = Import(Path.cwd(),args)
         if not args.staged:
@@ -237,10 +241,13 @@ def main():
             raise Refusal('staged import driver is inside checkout')
         validate_stage(runner.root,args.source,Path(__file__).resolve().parent)
         return runner.run()
-    except Busy as error:
-        print('GATE-IMPORT-NOT-RUN status=5 counted=false reason='+str(error),flush=True)
-        return 5
     except Exception as error:
+        if runner is not None and runner.completed_result is not None:
+            print('GATE-IMPORT-CLEANUP-ERROR counted=true status='+str(runner.completed_result['status'])+' reason='+str(error),flush=True)
+            return runner.completed_result['status']
+        if isinstance(error, Busy):
+            print('GATE-IMPORT-NOT-RUN status=5 counted=false reason='+str(error),flush=True)
+            return 5
         print('GATE-IMPORT-REFUSED status=4 reason='+str(error),flush=True)
         return 4
 
