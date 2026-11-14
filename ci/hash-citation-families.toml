@@ -344,6 +344,18 @@ definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-c
 paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md"]
 
 [[rows]]
+family = "numeric-prepared-evaluator-source"
+group = "numeric dependencies"
+measures = "Public Git revision cited for prepared evaluator statements"
+producer = "Numerics project public source history"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b0de8e9e845c172e20dd611bbcb1055ce1c5454c"
+commit = "b0de8e9e845c172e20dd611bbcb1055ce1c5454c"
+definition = "This cited public revision supplies the prepared evaluator statements read by the numerical evidence design. It is a source locator, not an admitted dependency or a change to the pinned numerical revision; dependency and toolchain admission remain held by the design's ordered cuts."
+paths = ["ci/hash-citation-families.toml", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md"]
+
+[[rows]]
 family = "host-crate-archives"
 group = "host transport dependencies"
 measures = "SHA-256 of a registry crate archive"

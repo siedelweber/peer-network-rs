@@ -2673,6 +2673,21 @@
     },
     {
       "claims": [],
+      "closing_condition": "Each ordered cut supplies reviewed current-source controls and assertion-killed mutants for its supported surface; no existing exact-route claim is promoted by design or sampling.",
+      "closing_step": "Binary64 evidence cuts through final evidence and profile/publication admission",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Native law and premise dossier, carrier and codec controls, complete prepared producer and composition, independent verification, profile calibration and the separately required canonical-publication decision.",
+      "name": "ROOT::req:design:binary64-admission",
+      "owner": "Numerical, records and publication implementers with independent dependency, platform and evidence reviewers",
+      "path": "docs/design/implementation.md",
+      "realizers": [
+        "ROOT::dec:decomposition:numbers"
+      ],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",
