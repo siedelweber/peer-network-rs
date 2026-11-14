@@ -629,6 +629,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "The ordered record cuts supply current-source controls and assertion-killed mutants; design fixes no implementation or evidence claim.",
+      "closing_step": "Joint comparison records, consumers and publication edition import",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Implementation and assertion-controlled verification of the designed evaluated, exact and operational comparison variants, with the closed reduction proofs and controls, controller Record edition, binding acceptance refusals and intact rejected-set verdict records and all consumer and publication joins in one import after schema identity review.",
+      "name": "ROOT::dec:design:comparison-verdict-record",
+      "owner": "Records, graph, epoch and host implementers with independent evidence reviewers",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",
@@ -818,6 +831,19 @@
       "missing": "Reviewed ordinary claim citations and scoped premises for dec:design:replay",
       "name": "ROOT::dec:design:replay",
       "owner": "Domain implementer and repository reviewer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "The ordered record cuts supply current-source controls and assertion-killed mutants; design fixes no implementation or evidence claim.",
+      "closing_step": "Scalar positive-attempt carrier cut",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Implementation and assertion-controlled verification of the designed positive-attempt edition, its three endings, independent corpus and explicit codec.",
+      "name": "ROOT::dec:design:rung-anchor-representation",
+      "owner": "Records, graph, epoch and host implementers with independent evidence reviewers",
       "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held",
@@ -2767,26 +2793,13 @@
       "closing_condition": "Each ordered cut supplies reviewed current-source controls and assertion-killed mutants for its supported surface; no existing exact-route claim is promoted by design or sampling.",
       "closing_step": "Binary64 evidence cuts through final evidence and profile/publication admission",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review of the implemented scalar-carrier controls, reviewed native law and premise dossier, complete prepared producer and composition, independent verification, profile calibration and the separately required canonical-publication decision.",
+      "missing": "Independent review of the implemented scalar-carrier controls, implementation and assertion-controlled verification of the designed positive-attempt edition with its carrier and codec controls, reviewed native law and premise dossier, complete prepared producer and composition, independent verification, profile calibration and the separately required canonical-publication decision.",
       "name": "ROOT::req:design:binary64-admission",
       "owner": "Numerical, records and publication implementers with independent dependency, platform and evidence reviewers",
       "path": "docs/design/implementation.md",
       "realizers": [
         "ROOT::dec:decomposition:numbers"
       ],
-      "status": "held",
-      "witnessed_labels": []
-    },
-    {
-      "claims": [],
-      "closing_condition": "Reviewed record-edition design together with the rung anchor, followed by carrier, codec and consumer controls; no existing bytes are reinterpreted.",
-      "closing_step": "Comparison and rung record edition design and implementation",
-      "hold": "ROOT::req:design:comparison-verdict-record",
-      "missing": "An edition decision separates operational comparison outcomes from mathematical verdicts and carries each verdict with its sound enclosure and exact threshold.",
-      "name": "ROOT::req:design:comparison-verdict-record",
-      "owner": "Numerical, record and publication implementers",
-      "path": "docs/design/implementation.md",
-      "realizers": [],
       "status": "held",
       "witnessed_labels": []
     },

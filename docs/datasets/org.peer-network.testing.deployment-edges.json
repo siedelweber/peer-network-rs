@@ -98,6 +98,13 @@
       "target": "ROOT::open:design:cross-build-replay"
     },
     {
+      "conditional_on": "cond:deployment:wall-calibration",
+      "reason": "Rejection publication remains held without changing the evaluated verdict.",
+      "relation": "relies",
+      "source": "HOST::rule:publication:authority",
+      "target": "ROOT::open:design:rejected-comparison-publication"
+    },
+    {
       "conditional_on": "",
       "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
       "relation": "realizes",
@@ -110,6 +117,13 @@
       "relation": "realizes",
       "source": "RECORDS::def:declarations:constants-edition",
       "target": "case:deployment:transparency-of-protocol-formulas-edition-fixed"
+    },
+    {
+      "conditional_on": "cond:deployment:wall-calibration",
+      "reason": "Rejection publication remains held without changing the evaluated verdict.",
+      "relation": "relies",
+      "source": "RECORDS::def:declarations:floor-comparison-evidence",
+      "target": "ROOT::open:design:rejected-comparison-publication"
     },
     {
       "conditional_on": "",
@@ -554,6 +568,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "The ordered positive-attempt record realizes the public-record scope, not enclosure soundness or execution evidence.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:rung-anchor-representation",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The public run configuration selects an edition, not its private concealment premise.",
       "relation": "realizes",
       "source": "ROOT::dec:devnet:elements",
@@ -616,11 +637,11 @@
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
-      "conditional_on": "",
-      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
-      "relation": "realizes",
-      "source": "ROOT::open:design:rung-anchor-representation",
-      "target": "cond:deployment:canonical-replay"
+      "conditional_on": "cond:deployment:wall-calibration",
+      "reason": "The published package retains this restriction while rejection-evidence publication is held.",
+      "relation": "relies",
+      "source": "ROOT::open:design:rejected-comparison-publication",
+      "target": "cond:deployment:wall-calibration"
     },
     {
       "conditional_on": "",

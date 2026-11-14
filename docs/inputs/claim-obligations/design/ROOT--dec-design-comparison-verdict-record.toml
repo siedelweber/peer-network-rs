@@ -1,0 +1,11 @@
+name = "ROOT::dec:design:comparison-verdict-record"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Records, graph, epoch and host implementers with independent evidence reviewers"
+missing = "Implementation and assertion-controlled verification of the designed evaluated, exact and operational comparison variants, with the closed reduction proofs and controls, controller Record edition, binding acceptance refusals and intact rejected-set verdict records and all consumer and publication joins in one import after schema identity review."
+closing_condition = "The ordered record cuts supply current-source controls and assertion-killed mutants; design fixes no implementation or evidence claim."
+closing_step = "Joint comparison records, consumers and publication edition import"
