@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<Owned as Drop>::drop",
-    "body": "{ if let Some (value) = self . 0 . take () { value . dispose () ; } }",
+    "body": "{ if let Some (value) = self . 0 . take () { # [cfg (test)] tests :: release_site (\"owned\" , std :: slice :: from_ref (& value)) ; value . dispose () ; } }",
     "class_decision": "host-admitted-carrier",
     "item_premise": "Borrowed admitted public causes, caller resource bounds, residue and exact admitted-request usage. Observation and callback execution are outside the projection budget. The callback is an executable capability, not serializable data. Retention separately clones and encodes public disclosures outside this meter. No store operation, credential, secret exit or mathematical admission.",
     "assessments": {

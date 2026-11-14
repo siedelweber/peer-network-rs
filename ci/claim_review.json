@@ -3907,6 +3907,14 @@
       "review": "Read construction from the real admitted fixture and the exact EpochResultHeld result from PostgresStore opened through the supported secret-terminating PostgreSQL fixture. No epoch write is enabled."
     },
     {
+      "operation": "pn-host::admitted_result::position::tests::nested::position_nested_publication",
+      "path": "packages/host/src/admitted_result/position/tests/nested.rs",
+      "claim": "HOST::claim:history:position-nested-publication",
+      "before": "",
+      "after": "Claim: Nested declaration, policy, address and amount bytes are compared with the public publication writer at edition 1.0.0 over the seven vector fixtures and an independently varied component fixture; no admission is asserted for the varied disclosure.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+    },
+    {
       "operation": "pn-host::admitted_result::position::tests::position_binding",
       "path": "packages/host/src/admitted_result/position/tests.rs",
       "claim": "HOST::claim:history:position-binding",
@@ -3929,6 +3937,46 @@
       "before": "",
       "after": "Claim: Seven distinct unsorted public projection inputs match independent canonical preimages and residues, including an admitted root and ordinary child; transition continuity is not fabricated.",
       "review": "Independent preimage/residue conformance, finite component parent and acceptance robustness, request-site budget controls and complete retention checks. Only root and ordinary child are expressible admitted packages. No allocator census, transition admission, collision proof, settlement or store evidence. UTF-8 multi-member order is pinned independently; the zero/multiple-genesis refusal is witnessed only at its private boundary and is unreachable through public admission. Commitment and opening proof bytes differ, and an equivalent proof-only change preserves the position."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::refusals::position_private_acceptance",
+      "path": "packages/host/src/admitted_result/position/tests/refusals.rs",
+      "claim": "HOST::claim:history:position-private-acceptance",
+      "before": "",
+      "after": "Claim: Raw marker and recovered-set inputs exercise acceptance predicates unreachable after public admission, including policy mismatch, non-subset recovery, disagreement, initial shape and successor snapshot; existing opening refusals are repeated at this same private boundary.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::refusals::position_private_input",
+      "path": "packages/host/src/admitted_result/position/tests/refusals.rs",
+      "claim": "HOST::claim:history:position-private-input",
+      "before": "",
+      "after": "Claim: Malformed untrusted carriers reach the position reader's private input checks without forging an admitted package; empty frames, empty recognition, missing boundary and inconsistent genesis refuse.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::refusals::position_private_parent",
+      "path": "packages/host/src/admitted_result/position/tests/refusals.rs",
+      "claim": "HOST::claim:history:position-private-parent",
+      "before": "",
+      "after": "Claim: Private position validation separately refuses changed initial name or history, child context, disclosed ancestry and duplicate records; scope-changing child components are not transition admission witnesses.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::release::position_nonempty_difference",
+      "path": "packages/host/src/admitted_result/position/tests/release.rs",
+      "claim": "HOST::claim:history:position-nonempty-difference",
+      "before": "",
+      "after": "Claim: A marker projection emits a nonempty lineage, accepted and complete-list difference over a nonempty base, excluding inherited members without changing the seven vectors.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+    },
+    {
+      "operation": "pn-host::admitted_result::position::tests::release::position_release_sites",
+      "path": "packages/host/src/admitted_result/position/tests/release.rs",
+      "claim": "HOST::claim:history:position-release-sites",
+      "before": "",
+      "after": "Claim: Host cleanup sites release partial children on refusal and panic and the complete preimage on encoding refusal and panic; this observes disposal invocations, not allocator activity. A real spare-capacity buffer refuses transfer and retains its address and capacity.",
+      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
     },
     {
       "operation": "pn-host::admitted_result::position::tests::tree_carrier_retention",

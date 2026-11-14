@@ -155,7 +155,7 @@
 | pn-graph::title | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::verification-resource-cause | active | integration | pn-graph-rust | extended | 1 |
 | pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 6 |
-| pn-host | active | unit | pn-host-rust | fast | 11 |
+| pn-host | active | unit | pn-host-rust | fast | 17 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 5 |
 | pn-host::admitted-carrier | active | integration | pn-host-rust | extended | 1 |
 | pn-host::admitted-carrier-held | active | integration | pn-host-memory-and-postgresql | service | 1 |

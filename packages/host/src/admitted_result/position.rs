@@ -252,14 +252,19 @@ struct Input<'a> {
 }
 impl<'a> Input<'a> {
     fn admitted(package: &'a AdmittedPackage) -> Result<Self, Error> {
-        let frame = package.carrier().frames.last().ok_or(Error::InvalidPosition)?;
+        Self::carrier(package.carrier())
+    }
+
+    // Private input boundary: tests can supply malformed carriers without forging admission.
+    fn carrier(carrier: &'a pn_epoch::publication::Carrier) -> Result<Self, Error> {
+        let frame = carrier.frames.last().ok_or(Error::InvalidPosition)?;
         let markers = frame.closure.markers.markers();
         let initial = markers.first().ok_or(Error::InvalidPosition)?;
         let terminal = markers
             .iter()
             .find(|m| m.identity().index == frame.parameters.boundary)
             .ok_or(Error::InvalidPosition)?;
-        let genesis = unique_genesis(&package.carrier().causes.declarations)?;
+        let genesis = unique_genesis(&carrier.causes.declarations)?;
         if !matches!(genesis.content, DeclarationContent::Deployment { genesis_at } if genesis_at == frame.marker_policy.genesis_at)
         {
             return Err(Error::InvalidPosition);
@@ -446,6 +451,8 @@ impl Drop for Children {
     /// (´[ROOT-amend:identity:result-position-recipe]´)
     /// Justified: Private cleanup inherits the budgeted position boundary; observation here would add teardown work outside its meter.
     fn drop(&mut self) {
+        #[cfg(test)]
+        tests::release_site("children", &self.0);
         Value::Array(Array::take_reserved(&mut self.0)).dispose();
     }
 }
@@ -456,6 +463,8 @@ impl Drop for Owned {
     /// Justified: Private cleanup inherits the budgeted position boundary; observation here would add teardown work outside its meter.
     fn drop(&mut self) {
         if let Some(value) = self.0.take() {
+            #[cfg(test)]
+            tests::release_site("owned", std::slice::from_ref(&value));
             value.dispose();
         }
     }

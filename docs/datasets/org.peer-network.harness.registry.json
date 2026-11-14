@@ -2912,6 +2912,12 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::admitted_result::position::tests::release::position_nonempty_difference",
+        "pn-host::admitted_result::position::tests::release::position_release_sites",
+        "pn-host::admitted_result::position::tests::refusals::position_private_acceptance",
+        "pn-host::admitted_result::position::tests::refusals::position_private_parent",
+        "pn-host::admitted_result::position::tests::refusals::position_private_input",
+        "pn-host::admitted_result::position::tests::nested::position_nested_publication",
         "pn-host::admitted_result::position::tests::tree_carrier_retention",
         "pn-host::admitted_result::position::tests::position_budget",
         "pn-host::admitted_result::position::tests::position_binding",
