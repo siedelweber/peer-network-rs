@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Introduction",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [derive (Clone , Debug)] struct Introduction < 'a > { origin : Identity , vintage : & 'a DebitVintage , chunks : Vec < & 'a [u8] > , member : bool , }"
+  }
+}

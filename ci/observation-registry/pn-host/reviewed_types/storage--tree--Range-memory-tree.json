@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Range",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [derive (Clone , Copy)] struct Range { segment : Identity , start : u64 , end : u64 , }"
+  }
+}

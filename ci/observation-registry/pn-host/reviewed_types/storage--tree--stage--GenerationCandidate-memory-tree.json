@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::stage::GenerationCandidate",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/stage.rs",
+    "syntax": "struct GenerationCandidate < 'a > { header : bool , installed : Installed < 'a > , versions : Vec < usize > , closures : Vec < usize > , }"
+  }
+}

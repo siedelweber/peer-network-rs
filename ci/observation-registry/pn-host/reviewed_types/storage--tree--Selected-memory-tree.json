@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Selected",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" The retained selection and the result whose original judgement it preserves.\"] # [doc = \" (´[ROOT-dec:storage:branch-declaration-authority]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct Selected < 'a > { pub use_ : & 'a DeclarationUse , pub origin : [u8 ; 32] , }"
+  }
+}

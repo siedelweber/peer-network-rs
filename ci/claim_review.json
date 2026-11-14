@@ -4435,6 +4435,86 @@
       "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
     },
     {
+      "operation": "pn-host::storage::tree::tests::tree_generation_atomic",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-generation-atomic",
+      "before": "",
+      "after": "Claim: Explicit single-law declarations install their complete versions and closures atomically in effect order independently of declared edition order; equal retries leave the whole state unchanged and every staged interruption leaves an empty state that accepts the same declaration on retry.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_generation_refusals",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-generation-refusals",
+      "before": "",
+      "after": "Claim: The single-law writer rejects malformed framed keys and prohibited ordinals, labels and minima before either allowance is charged, distinguishes conflicting valid deltas, and charges valid input at the first requested row or allocation with checked accumulation overflow.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_index_reservations",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-index-reservations",
+      "before": "",
+      "after": "Claim: The ordered index's sole node reservation site admits the exact requested size before its site hook, refuses one below it, and publishes 64 distinct unsorted keys with ordered bounded range delivery and balanced height without further heap requests at publication; this is a reservation-site control, not an allocator census.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_atomic",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-atomic",
+      "before": "",
+      "after": "Claim: The tree writer accepts supplied admitted root and child carriers with complete recorded selections and original debit introductions; retries return the same judgement without reading a generation, and every staged write interruption preserves the complete prior state before successful retry.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_forks",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-forks",
+      "before": "",
+      "after": "Claim: Publicly admitted fixture packages form two roots and a fork with independent debit origins; a child inherits only its ancestors' complete vintages and original selections, a side retry is unchanged, and differing context or same-position content refuses without writing. The first child continues its parent segment without a descriptor and the later child opens one while preserving the first-child row.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_input_budget",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-input-budget",
+      "before": "",
+      "after": "Claim: Writer accounting begins at the supplied retained carrier: missing and foreign labels refuse before either charge, while valid input refuses at the first requested row or allocation beyond a zero allowance, preserving the complete store.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_interruptions",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-interruptions",
+      "before": "",
+      "after": "Claim: Each staged mutation of an ordinary child, a fork with a new debit origin, and a second root can be interrupted with the complete store unchanged and a successful retry; mutation order ends with all introduction memberships before publication.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_limits",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-limits",
+      "before": "",
+      "after": "Claim: For the supplied root, child and exact retry, every row ceiling below measured usage and each admitted allocation-request prefix one below its need refuse without a write, exact allowances succeed, and a zero allocation limit reaches no vector reservation; the prefix observation records reservation requests, not an allocator census.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_ranges",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-ranges",
+      "before": "",
+      "after": "Claim: Structural signed-range and key bounds refuse as Representation before either charge; an absent installed generation refuses as `UnknownGenerationLabel`, while a descriptor naming a first result in another segment is private-boundary `CorruptHistory`, with no changed retained state.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_writer_refusals",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-writer-refusals",
+      "before": "",
+      "after": "Claim: Missing, mismatched and inactive exact references retain distinct writer refusals; a missing proposed parent refuses as input, whereas a damaged retained law or descriptor refuses as corrupt history at the private boundary. The shared roster reaches a public alternate-parent binding and private depth, inherited-use, qualified-presence and both vintage-conflict branches; private equal-byte retry projection damage refuses corrupt history, with every retained field unchanged.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
       "operation": "pn-host::tests::relay_refusals",
       "path": "packages/host/src/lib.rs",
       "claim": "HOST::claim:host:relay-refusals-retain-their-bounded-cause",

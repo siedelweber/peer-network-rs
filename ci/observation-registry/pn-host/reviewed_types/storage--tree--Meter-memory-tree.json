@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Meter",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "struct Meter { limit : ReadBudget , used : Usage , }"
+  }
+}

@@ -168,6 +168,15 @@ pub struct Retained {
     identity: [u8; 32],
     parent: Option<[u8; 32]>,
     depth: u64,
+    context: Context,
+}
+
+#[derive(Debug)]
+struct Context {
+    genesis: Declaration,
+    policy: burn::PolicyInput,
+    initial: burn::RecognizedMarker,
+    records: Vec<burn::BurnRecord>,
 }
 impl Retained {
     /// Retain complete canonical bytes and selections after the position is computed.
@@ -200,11 +209,26 @@ impl Retained {
             pn_interchange::Document::from_canonical_bytes(&inner.bytes).map_err(|_| super::CarrierError::Correspondence)?;
         inner.declarations =
             super::projection::declarations(position.package, &document, &inner.event, Some((&identity, position.depth)))?;
+        let input = Input::admitted(position.package).map_err(|_| super::CarrierError::Correspondence)?;
+        let context = Context {
+            genesis: input.genesis.clone(),
+            policy: input.frame.marker_policy.clone(),
+            initial: input.initial.clone(),
+            records: input
+                .frame
+                .marker_history
+                .records
+                .iter()
+                .filter(|r| input.initial.identity().lineage.contains(&r.identity))
+                .cloned()
+                .collect(),
+        };
         Ok(Self {
             inner,
             identity: position.residue,
             parent: position.parent,
             depth: position.depth,
+            context,
         })
     }
 
@@ -230,6 +254,41 @@ impl Retained {
     #[must_use]
     pub fn event(&self) -> (&super::EpochScope, &[u8; 32], Option<&[u8; 32]>, u64) {
         (&self.inner.event.scope, &self.identity, self.parent.as_ref(), self.depth)
+    }
+
+    /// Borrow the original complete debit vintages for ancestor-relative comparison.
+    /// (´[ROOT-amend:storage:admitted-debits]´)
+    /// Justified: Immutable projection access inherits the caller-owned retaining constructor.
+    pub(crate) fn debits(&self) -> &[super::DebitVintage] {
+        &self.inner.debits
+    }
+
+    /// Compare the complete starting context without interpreting evidence as identity.
+    /// (´[ROOT-amend:storage:admitted-event]´)
+    /// Justified: Allocation-free comparison of the caller-owned context inherits transaction observation.
+    pub(crate) fn same_context(&self, other: &Self) -> bool {
+        let (a, b) = (&self.context, &other.context);
+        a.genesis == b.genesis
+            && a.policy == b.policy
+            && same_marker(&a.initial, &b.initial)
+            && a.records.len() == b.records.len()
+            && a.records.iter().all(|r| b.records.iter().any(|s| same_record(r, s)))
+    }
+
+    /// Preserve complete inherited bindings while allowing disclosure-only marker evidence.
+    /// (´[ROOT-amend:storage:admitted-event]´)
+    /// Justified: Borrowed prefix comparison inherits transaction observation and constructs no carrier.
+    pub(crate) fn extends(&self, parent: &Self) -> bool {
+        if self.inner.bindings.len() < parent.inner.bindings.len() {
+            return false;
+        }
+        self.inner.bindings.iter().zip(&parent.inner.bindings).all(|(a, b)| {
+            same_marker_identity(&a.marker, &b.marker)
+                && same_marker_identity(&a.predecessor, &b.predecessor)
+                && a.inputs == b.inputs
+                && a.price == b.price
+                && a.sequence == b.sequence
+        })
     }
 }
 
@@ -387,12 +446,14 @@ fn same_record(a: &burn::BurnRecord, b: &burn::BurnRecord) -> bool {
 }
 fn same_marker(a: &burn::RecognizedMarker, b: &burn::RecognizedMarker) -> bool {
     let (x, y) = (a.identity(), b.identity());
+    a.accepted() == b.accepted() && same_marker_identity(x, y)
+}
+fn same_marker_identity(x: &burn::Marker, y: &burn::Marker) -> bool {
     scope(x) == scope(y)
         && x.index == y.index
         && x.history_position == y.history_position
         && x.predecessor == y.predecessor
         && x.lineage == y.lineage
-        && a.accepted() == b.accepted()
         && match (&x.accepted, &y.accepted) {
             (burn::AcceptedSet::CompleteList(a), burn::AcceptedSet::CompleteList(b)) => a == b,
             (burn::AcceptedSet::WholePrefix, burn::AcceptedSet::WholePrefix) => true,

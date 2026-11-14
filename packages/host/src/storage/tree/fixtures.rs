@@ -1,0 +1,519 @@
+use super::base::*;
+#[derive(Debug)]
+pub(crate) struct Check {
+    candidates: Vec<package::CandidateInput>,
+    procedures: Vec<pn_records::solve::Procedure>,
+    numeric: NumericPolicy,
+    pub(super) ridge_profile: Option<publication::RidgeReplayProfile>,
+}
+impl burn::PublicVerifier for Check {
+    fn profile(&self) -> &'static str {
+        burn::PublicVerifier::profile(&pn_records::test_support::burn::FixtureVerifier)
+    }
+    fn destruction(&self, record: &burn::BurnRecord) -> bool {
+        pn_records::test_support::burn::FixtureVerifier.destruction(record)
+    }
+    fn opening(&self, commitment: &[u8], opening: &burn::Opening) -> bool {
+        pn_records::test_support::burn::FixtureVerifier.opening(commitment, opening)
+    }
+}
+impl RegistrationVerifier for Check {
+    fn approval(&self, act: &ValidatedAct) -> bool {
+        RawVerifier.approval(act)
+    }
+    fn removal(&self, act: &ValidatedAct, kind: OpeningKind, position: Position) -> bool {
+        RawVerifier.removal(act, kind, position)
+    }
+}
+impl package::CandidateVerifier for Check {
+    fn candidate_causes(&self, input: &package::CandidateInput) -> bool {
+        let ordered = |history: &pn_records::ValidatedHistory| {
+            let mut acts = history.acts().to_vec();
+            acts.sort_by_key(|act| act.id().clone());
+            acts
+        };
+        self.candidates.iter().any(|candidate| {
+            input.causes.bindings == candidate.causes.bindings
+                && input.causes.inputs == candidate.causes.inputs
+                && input.causes.prices == candidate.causes.prices
+                && ordered(&input.causes.history) == ordered(&candidate.causes.history)
+        })
+    }
+}
+impl package::ClosureVerifier for Check {
+    fn host_determination(&self, input: &package::CandidateInput) -> bool {
+        self.candidates.iter().any(|candidate| input.closure == candidate.closure)
+    }
+}
+impl pn_epoch::solve::ProcedureVerifier for Check {
+    fn published_procedure(&self, procedure: &pn_records::solve::Procedure) -> bool {
+        self.procedures.contains(procedure)
+    }
+}
+impl publication::Verifier for Check {
+    fn ridge_charge_profile(&self, _: u64) -> Option<&publication::RidgeReplayProfile> {
+        self.ridge_profile.as_ref()
+    }
+    fn publication_profile(&self, carrier: &Carrier) -> bool {
+        carrier.numeric == self.numeric
+            && carrier.frames.iter().all(|f| {
+                f.realization == realization()
+                    && self.procedures.contains(&f.procedure.solve)
+                    && f.procedure.arithmetic == Limits::default()
+                    && f.procedure.maximum_products == 10_000_u64
+            })
+    }
+    fn disclosure_profile(&self, carrier: &publication::disclosures::Disclosure) -> bool {
+        carrier.numeric == self.numeric
+            && carrier.frames.iter().all(|f| {
+                f.realization == realization()
+                    && self.procedures.contains(&f.procedure.solve)
+                    && f.procedure.arithmetic == Limits::default()
+                    && f.procedure.maximum_products == 10_000_u64
+            })
+    }
+}
+
+fn realization() -> publication::RealizationEvidence {
+    publication::RealizationEvidence {
+        edition: "fixture-audit".into(),
+        provenance: b"fixture destruction verifier".to_vec(),
+        capacity_bound: b"fixture capacity declaration".to_vec(),
+        dimensioned_unit_cost: b"fixture unit cost and denomination".to_vec(),
+        recording_event_costs: b"fixture separate event costs and terms".to_vec(),
+        settlement_and_finality: b"fixture settled history assumption".to_vec(),
+        operator: publication::OperatorEvidence::Absent {
+            statement: b"fixture has no accruing operator".to_vec(),
+            explanation: b"synthetic destruction source".to_vec(),
+        },
+    }
+}
+fn raw_burn() -> pn_records::test_support::burn::BurnCase {
+    let mut raw = pn_records::test_support::burn::generate(&[0]);
+    let mut n = numeric();
+    let amount = n.literal("30").unwrap();
+    let amount = n.burn(&amount, "burn").unwrap();
+    let mut record = raw.history.records[0].clone();
+    record.address = burn::Address("a".into());
+    record.amount = amount.clone();
+    record.evidence = format!(
+        "{}:{}:{}:{}",
+        record.destruction,
+        record.address.0,
+        record.amount.exact(),
+        record.amount.unit()
+    )
+    .into_bytes();
+    raw.burn.read_addresses = BTreeSet::from([record.address.clone()]);
+    raw.burn.amounts = std::collections::BTreeMap::from([(record.address.clone(), amount)]);
+    raw.history.records = vec![record];
+    raw.history.markers.truncate(2);
+    let members = BTreeSet::from([raw.history.records[0].identity.clone()]);
+    raw.history.markers[1].lineage.clone_from(&members);
+    raw.history.markers[1].accepted = burn::AcceptedSet::CompleteList(members);
+    raw
+}
+struct Prelude {
+    raw: pn_records::test_support::burn::BurnCase,
+    causes: publication::Causes,
+    parameters: pn_epoch::ParameterInput,
+    price: pn_records::numerics::ChargedPrice,
+    candidate_input: package::CandidateInput,
+}
+
+fn prelude() -> Prelude {
+    let raw = raw_burn();
+    let mut n = numeric();
+    let markers = pn_records::test_support::burn::recognize(raw.clone()).unwrap();
+    let mut acts = positions(&self_acts());
+    acts.sort_by_key(|a| a.id.sequence);
+    let history = pn_records::validate_history(&acts, &[]).unwrap();
+    let (declaration, edition, mut parameters) = constants_fixture();
+    for name in parameters.domain_weights.values_mut() {
+        *name = "one".into();
+    }
+    parameters.depth_mass = vec!["one".into()];
+    let mut declarations = vec![
+        declaration,
+        Declaration {
+            id: DeclarationId {
+                namespace: "marker".into(),
+                name: "policy".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::MarkerPolicy {
+                recipe: "pn-records/marker-policy/v1".into(),
+                digest: pn_records::constants::marker_policy_digest(&raw.policy),
+            },
+        },
+        Declaration {
+            id: DeclarationId {
+                namespace: "deployment".into(),
+                name: "genesis".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::Deployment { genesis_at: 1 },
+        },
+    ];
+    // These distinct fixture namespaces determine their canonical structural order.
+    declarations.sort_by_key(|row| (row.id.namespace.len(), row.id.namespace.clone()));
+    let empty = pn_records::validate_history(&[], &[]).unwrap();
+    let declared = pn_records::validate_record(&[], &empty, &declarations).unwrap();
+    let constants = pn_records::constants::bind_constants(&declared, vec![edition.clone()]).unwrap();
+    let input = pn_epoch::bind_inputs(&constants, parameters.clone(), Limits::default()).unwrap();
+    let wall = n.literal("1/4").unwrap();
+    let wall = n.computed(&wall).unwrap();
+    let price = n.charged_price(&wall, &edition.numeraire, edition.floor).unwrap();
+    let mut sequence = history.acts().to_vec();
+    sequence.sort_by_key(ValidatedAct::position);
+    let candidate_input = package::CandidateInput {
+        causes: package::PackageInput {
+            markers: markers.clone(),
+            history,
+            inputs: vec![input.clone()],
+            prices: vec![price.clone()],
+            bindings: vec![package::EpochBinding {
+                marker: markers.markers()[1].identity().clone(),
+                predecessor: markers.markers()[0].identity().clone(),
+                inputs: input,
+                price: price.clone(),
+                sequence: sequence.clone(),
+            }],
+        },
+        closure: package::ClosureStatement {
+            policy: package::ClosurePolicy {
+                target: 12_u64,
+                minimum_ticks: 0,
+                maximum_ticks: 12_u64,
+                clock: "fixture-clock".into(),
+            },
+            opened_at: 0,
+            determined_at: 12_u64,
+            cause: package::ClosureCause::MaximumDuration,
+            attestation: "fixture-determination".into(),
+        },
+    };
+    Prelude {
+        raw,
+        causes: publication::Causes {
+            acts,
+            names: BTreeSet::new(),
+            declarations,
+            editions: vec![edition],
+        },
+        parameters,
+        price,
+        candidate_input,
+    }
+}
+
+fn announce(
+    state: &pn_epoch::compiler::CompiledState,
+    plan: &FinalProcedure,
+    d: &admission::ScheduleDeclaration,
+) -> schedules::Record {
+    let published = Published(plan.solve.clone());
+    let bound = bind_procedure(state, plan.solve.clone(), &published, Limits::default()).unwrap();
+    let search = pn_epoch::controller::InverseSearch {
+        bracket: Range {
+            lower: "1/100".into(),
+            upper: "1".into(),
+        },
+        stopping_width: "1/16".into(),
+        maximum_steps: 8_u64,
+    };
+    schedules::evaluate(
+        d,
+        &[schedules::Boundary {
+            completed: &bound,
+            search: &search,
+            announced_at: 1,
+            effective_at: 2,
+            policy_floor: None,
+        }],
+        None,
+        Limits::default(),
+    )
+    .unwrap()
+}
+
+fn tree_prelude(placement: u64) -> Prelude {
+    let mut value = prelude();
+    if placement == 102 {
+        value.raw.policy.cadence = "alternative-declared-cadence".into();
+        value
+            .causes
+            .declarations
+            .iter_mut()
+            .find(|d| d.id.namespace == "marker")
+            .unwrap()
+            .content = DeclarationContent::MarkerPolicy {
+            recipe: "pn-records/marker-policy/v1".into(),
+            digest: pn_records::constants::marker_policy_digest(&value.raw.policy),
+        };
+    }
+    value.raw.history.markers[1].history_position = placement;
+    value.raw.history.markers[1].name = format!("root-{placement}");
+    let markers = pn_records::test_support::burn::recognize(value.raw.clone()).unwrap();
+    value.candidate_input.causes.bindings[0].marker = markers.markers()[1].identity().clone();
+    value.candidate_input.causes.markers = markers;
+    value
+}
+
+fn tree_first(placement: u64) -> (ClosedBoundary, Carrier, Check) {
+    let Prelude {
+        raw,
+        causes: public_causes,
+        parameters,
+        price,
+        candidate_input,
+    } = tree_prelude(placement);
+    let causes = Causes(candidate_input.clone());
+    let candidate = package::verify_candidate(candidate_input.clone(), &causes, &causes).unwrap();
+    let plan = procedure(&candidate);
+    let declaration = schedule(&candidate, "1/4").record().declaration.clone();
+    let d = admission::declare_schedule(declaration, Limits::default()).unwrap();
+    let initial = schedules::evaluate(&d, &[], None, Limits::default()).unwrap();
+    let led = schedules::replay(&d, &[], None, Limits::default(), &initial).unwrap();
+    let admitted = run(&candidate, &plan, &led).unwrap();
+    let partition = closure::partition(&candidate).unwrap();
+    let closed = closure::close(
+        &ClosureInput {
+            candidate: &candidate,
+            partition: &partition,
+            schedule: &led,
+            previous: None,
+        },
+        &plan,
+        &RawVerifier,
+        &Published(plan.solve.clone()),
+        numeric(),
+    )
+    .unwrap();
+    let state = pn_epoch::compiler::compile_admitted(
+        &admitted,
+        &RawVerifier,
+        &mut numeric(),
+        Limits::default(),
+        plan.maximum_products,
+    )
+    .unwrap();
+    let next = announce(&state, &plan, &d);
+    let numeric = NumericPolicy {
+        arithmetic: Limits::default(),
+        comparison_attempts: 1000,
+        comparison_work: 100_000_000_u64,
+    };
+    let carrier = Carrier {
+        causes: public_causes,
+        numeric: numeric.clone(),
+        frames: vec![Frame {
+            realization: realization(),
+            burn: raw.burn,
+            marker_policy: raw.policy,
+            marker_history: raw.history,
+            parameters,
+            price: price.disclosure(),
+            sequence: candidate_input.causes.bindings[0]
+                .sequence
+                .iter()
+                .map(|a| a.id().clone())
+                .collect(),
+            procedure: plan.clone(),
+            compiled: state.view().clone(),
+            closure: closed.record().clone(),
+            standing: admitted.evidence().standing.clone().unwrap(),
+            next,
+        }],
+    };
+    let check = Check {
+        candidates: vec![candidate_input],
+        procedures: vec![plan.solve],
+        numeric,
+        ridge_profile: None,
+    };
+    (closed, carrier, check)
+}
+fn tree_successor(
+    carrier: &mut Carrier,
+    placement: u64,
+    introduce: bool,
+    check: &mut Check,
+    closed: &ClosedBoundary,
+    led: &schedules::CheckedSchedule,
+) -> (Frame, ClosedBoundary, pn_epoch::compiler::CompiledState) {
+    let mut frame = carrier.frames.last().unwrap().clone();
+    let mut marker = frame.marker_history.markers.last().unwrap().clone();
+    marker.predecessor = Some(marker.history_position);
+    marker.history_position = placement;
+    marker.index += 1;
+    marker.name = format!("m{}-{placement}", marker.index);
+    frame.marker_history.markers.push(marker);
+    let markers = pn_records::test_support::burn::recognize(pn_records::test_support::burn::BurnCase {
+        burn: frame.burn.clone(),
+        policy: frame.marker_policy.clone(),
+        history: frame.marker_history.clone(),
+    })
+    .unwrap();
+    let declarations = pn_records::validate_record(
+        &[],
+        &pn_records::validate_history(&[], &[]).unwrap(),
+        &carrier.causes.declarations,
+    )
+    .unwrap();
+    let constants = pn_records::constants::bind_constants(&declarations, carrier.causes.editions.clone()).unwrap();
+    frame.parameters.boundary += 1;
+    let inputs = pn_epoch::bind_inputs(&constants, frame.parameters.clone(), Limits::default()).unwrap();
+    let mut context = numeric();
+    let wall = context
+        .literal(&led.record().publications.last().unwrap().effective.wall)
+        .unwrap();
+    let wall = context.computed(&wall).unwrap();
+    let price = context
+        .charged_price(&wall, &inputs.parameters().numeraire, Floor::RationalThreeThirtySevenths)
+        .unwrap();
+    let mut input = check.candidates.last().unwrap().clone();
+    if introduce {
+        carrier.causes.acts.push(act("Opinion", "a", 3, frame.parameters.boundary));
+        carrier.causes.acts = positions(&carrier.causes.acts);
+        input.causes.history = pn_records::validate_history(&carrier.causes.acts, &[]).unwrap();
+    }
+    input.causes.markers = markers.clone();
+    input.causes.inputs.push(inputs.clone());
+    input.causes.prices.push(price.clone());
+    input.causes.bindings.push(package::EpochBinding {
+        marker: markers.markers().last().unwrap().identity().clone(),
+        predecessor: markers.markers()[markers.markers().len() - 2].identity().clone(),
+        inputs,
+        price: price.clone(),
+        sequence: input
+            .causes
+            .history
+            .acts()
+            .iter()
+            .filter(|a| a.position().0 == frame.parameters.boundary)
+            .cloned()
+            .collect(),
+    });
+    input.closure.opened_at = closed.record().statement.determined_at;
+    input.closure.determined_at = input.closure.opened_at + input.closure.policy.maximum_ticks;
+    let causes = Causes(input.clone());
+    let candidate = package::verify_candidate(input.clone(), &causes, &causes).unwrap();
+    frame.procedure = procedure(&candidate);
+    let partition = closure::partition(&candidate).unwrap();
+    let second = closure::close(
+        &ClosureInput {
+            candidate: &candidate,
+            partition: &partition,
+            schedule: led,
+            previous: Some(closed),
+        },
+        &frame.procedure,
+        &RawVerifier,
+        &Published(frame.procedure.solve.clone()),
+        numeric(),
+    )
+    .unwrap();
+    let admitted = run(&candidate, &frame.procedure, led).unwrap();
+    let state = pn_epoch::compiler::compile_admitted(
+        &admitted,
+        &RawVerifier,
+        &mut numeric(),
+        Limits::default(),
+        frame.procedure.maximum_products,
+    )
+    .unwrap();
+    check.candidates.push(input.clone());
+    check.procedures.push(frame.procedure.solve.clone());
+    let published = Published(frame.procedure.solve.clone());
+    let bound = bind_procedure(&state, frame.procedure.solve.clone(), &published, Limits::default()).unwrap();
+    let fence = pn_epoch::fence::search(&bound, None).unwrap();
+    frame.standing = pn_epoch::conserved::solve(&bound, &fence).unwrap();
+    frame.sequence = input
+        .causes
+        .bindings
+        .last()
+        .unwrap()
+        .sequence
+        .iter()
+        .map(|a| a.id().clone())
+        .collect();
+    frame.price = price.disclosure();
+    (frame, second, state)
+}
+
+// Explicit fixture publication authority, using the same independent restoration path
+// as complete(); placements and the new act's writing epoch are declared test inputs.
+pub(crate) fn tree_sequence(placements: &[u64], introduction: Option<u64>) -> Vec<publication::AdmittedPackage> {
+    let (mut closed, mut carrier, mut check) = tree_first(placements[0]);
+    let first = publication::assemble(&closed, carrier.clone(), &check).unwrap();
+    let first_state =
+        pn_epoch::compiler::compile_admitted(first.boundary(), &check, &mut numeric(), Limits::default(), 10_000_u64).unwrap();
+    let mut states = vec![first_state];
+    let mut output = vec![first];
+    let declaration = admission::declare_schedule(carrier.frames[0].next.declaration.clone(), Limits::default()).unwrap();
+    let search = carrier.frames[0].next.publications[0].proposal.search.clone();
+    for &placement in &placements[1..] {
+        let bounds: Vec<_> = states
+            .iter()
+            .zip(&check.procedures)
+            .map(|(state, procedure)| bind_procedure(state, procedure.clone(), &check, Limits::default()).unwrap())
+            .collect();
+        let boundaries: Vec<_> = bounds
+            .iter()
+            .enumerate()
+            .map(|(index, bound)| schedules::Boundary {
+                completed: bound,
+                search: &search,
+                announced_at: u64::try_from(index).unwrap() + 1,
+                effective_at: u64::try_from(index).unwrap() + 2,
+                policy_floor: None,
+            })
+            .collect();
+        let led = schedules::replay(
+            &declaration,
+            &boundaries,
+            None,
+            Limits::default(),
+            &carrier.frames.last().unwrap().next,
+        )
+        .unwrap();
+        let next_depth = u64::try_from(carrier.frames.len()).unwrap() + 1;
+        let (mut frame, next, state) = tree_successor(
+            &mut carrier,
+            placement,
+            introduction == Some(next_depth),
+            &mut check,
+            &closed,
+            &led,
+        );
+        states.push(state);
+        let bounds: Vec<_> = states
+            .iter()
+            .zip(&check.procedures)
+            .map(|(state, procedure)| bind_procedure(state, procedure.clone(), &check, Limits::default()).unwrap())
+            .collect();
+        let boundaries: Vec<_> = bounds
+            .iter()
+            .enumerate()
+            .map(|(index, bound)| schedules::Boundary {
+                completed: bound,
+                search: &search,
+                announced_at: u64::try_from(index).unwrap() + 1,
+                effective_at: u64::try_from(index).unwrap() + 2,
+                policy_floor: None,
+            })
+            .collect();
+        frame.next = schedules::evaluate(&declaration, &boundaries, None, Limits::default()).unwrap();
+        frame.compiled = states.last().unwrap().view().clone();
+        frame.closure = next.record().clone();
+        carrier.frames.push(frame);
+        output.push(publication::assemble(&next, carrier.clone(), &check).unwrap());
+        closed = next;
+    }
+    output
+}

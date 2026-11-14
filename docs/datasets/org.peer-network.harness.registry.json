@@ -2966,6 +2966,16 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::tests::tree_index_reservations",
+        "pn-host::storage::tree::tests::tree_writer_ranges",
+        "pn-host::storage::tree::tests::tree_writer_interruptions",
+        "pn-host::storage::tree::tests::tree_writer_limits",
+        "pn-host::storage::tree::tests::tree_writer_refusals",
+        "pn-host::storage::tree::tests::tree_writer_forks",
+        "pn-host::storage::tree::tests::tree_writer_input_budget",
+        "pn-host::storage::tree::tests::tree_writer_atomic",
+        "pn-host::storage::tree::tests::tree_generation_refusals",
+        "pn-host::storage::tree::tests::tree_generation_atomic",
         "pn-host::admitted_result::position::tests::release::position_nonempty_difference",
         "pn-host::admitted_result::position::tests::release::position_release_sites",
         "pn-host::admitted_result::position::tests::refusals::position_private_acceptance",

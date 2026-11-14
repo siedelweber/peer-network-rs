@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::stage::Plan",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/stage.rs",
+    "syntax": "pub (super) struct Plan < 'a > { pub input : & 'a Retained , pub generation : & 'a Generation , pub segment : Identity , pub descriptor : Option < Descriptor > , pub new_scope : bool , pub references : Vec < Selected < 'a > > , pub local : Vec < & 'a DebitVintage > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Closure",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" An appended closure in an explicitly declared admission generation.\"] # [doc = \" (´[ROOT-dec:storage:branch-declaration-authority]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Closure { pub family : Family , pub key : String , pub edition : String , pub closes_at : u64 , }"
+  }
+}

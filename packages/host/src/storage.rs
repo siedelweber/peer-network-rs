@@ -314,6 +314,8 @@ pub struct Boundary {
 mod admitted;
 pub use admitted::{EpochRead, ReadBudget, RetainedDebit};
 
+pub mod tree;
+
 type History = BTreeMap<(Family, String), Vec<EffectiveRow>>;
 pub(crate) fn check(version: &Version) -> Result<(), StorageError> {
     if version.key.is_empty()

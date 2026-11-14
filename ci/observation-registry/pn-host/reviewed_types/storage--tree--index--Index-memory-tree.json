@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::index::Index",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/index.rs",
+    "syntax": "# [derive (Clone , Debug)] pub (super) struct Index < K , V > { root : Link < K , V > , length : usize , }"
+  }
+}

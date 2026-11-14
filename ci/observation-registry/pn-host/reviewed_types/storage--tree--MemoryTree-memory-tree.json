@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::MemoryTree",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" A functional reference retaining immutable caller capabilities for its lifetime.\"] # [doc = \" No generation or label is installed by Default; all declarations are explicit inputs.\"] # [doc = \" (´[ROOT-amend:storage:admitted-transaction]´)\"] # [derive (Debug , Default)] pub struct MemoryTree < 'a > { generations : Vec < Installed < 'a > > , scopes : Index < & 'a EpochScope , Identity > , segments : Index < (& 'a EpochScope , Identity) , Descriptor > , results : Index < (& 'a EpochScope , Identity) , Node < 'a > > , children : Index < (& 'a EpochScope , Identity) , Identity > , observations : Index < (Family , & 'a str , & 'a str) , & 'a Version > , introductions : Index < (& 'a EpochScope , Identity , u64) , Identity > , }"
+  }
+}

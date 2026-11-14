@@ -4,6 +4,6 @@
     "item": "admitted_result::position::Retained",
     "package": "pn-host",
     "path": "packages/host/src/admitted_result/position.rs",
-    "syntax": "# [doc = \" Complete package retention with result-qualified observation versions.\"] # [doc = \" This carrier is not accepted by either existing chain-store commit operation.\"] # [doc = \" (´[ROOT-amend:storage:admitted-correspondence]´)\"] # [derive (Debug)] pub struct Retained { inner : super :: AdmittedEpoch , identity : [u8 ; 32] , parent : Option < [u8 ; 32] > , depth : u64 , }"
+    "syntax": "# [doc = \" Complete package retention with result-qualified observation versions.\"] # [doc = \" This carrier is not accepted by either existing chain-store commit operation.\"] # [doc = \" (´[ROOT-amend:storage:admitted-correspondence]´)\"] # [derive (Debug)] pub struct Retained { inner : super :: AdmittedEpoch , identity : [u8 ; 32] , parent : Option < [u8 ; 32] > , depth : u64 , context : Context , }"
   }
 }

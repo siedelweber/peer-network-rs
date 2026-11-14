@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::index::Entry",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/index.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Public immutable fixture declarations, admitted retained carriers and single-law storage judgements. No secret-bearing field or private transport. Debug is outside writer reconstruction accounting; no computation reads observation."
+  }
+}

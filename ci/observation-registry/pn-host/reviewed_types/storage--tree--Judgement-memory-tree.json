@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Judgement",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" A commit returns the exact recorded judgement, including on an unchanged retry.\"] # [doc = \" (´[ROOT-dec:storage:public-generation-label]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct Judgement < 'a > { pub label : & 'a str , pub generation : u64 , pub selections : & 'a [Selected < 'a >] , pub inserted : bool , }"
+  }
+}

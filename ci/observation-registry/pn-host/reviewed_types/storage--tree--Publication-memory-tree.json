@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Publication",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "struct Publication < 'a > { result : index :: Slot < (& 'a EpochScope , Identity) , Node < 'a > > , scope : Option < index :: Slot < & 'a EpochScope , Identity > > , segment : Option < index :: Slot < (& 'a EpochScope , Identity) , Descriptor > > , child : Option < index :: Slot < (& 'a EpochScope , Identity) , Identity > > , observations : Vec < index :: Slot < (Family , & 'a str , & 'a str) , & 'a Version > > , introductions : Option < index :: Slot < (& 'a EpochScope , Identity , u64) , Identity > > , }"
+  }
+}

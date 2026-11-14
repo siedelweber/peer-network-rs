@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Installed",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [derive (Debug)] struct Installed < 'a > { declaration : & 'a Generation , versions : Vec < usize > , closures : Vec < usize > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Node",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [derive (Debug)] struct Node < 'a > { input : & 'a Retained , label : & 'a str , generation : u64 , segment : Identity , chunks : Vec < & 'a [u8] > , references : Vec < Selected < 'a > > , reference_index : Vec < usize > , observations : Vec < & 'a Version > , introductions : Vec < Introduction < 'a > > , }"
+  }
+}

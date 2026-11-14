@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::stage::Candidate",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/stage.rs",
+    "syntax": "struct Candidate < 'a > { scope : Option < & 'a EpochScope > , descriptor : Option < Descriptor > , header : bool , node : Node < 'a > , }"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "item": "storage::tree::<Error as From < StorageError >>::from",
+    "owner": "HOST",
+    "signature": "fn from (value : StorageError) -> Self",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Pure refusal wrapping inherits the caller's transaction observation.",
+      "witness": "HOST::claim:history:tree-writer-refusals",
+      "boundary": "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::commit",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree.rs::storage::tree::<Error as From < StorageError >>::from",
+    "body": "{ Self :: Storage (value) }",
+    "class_decision": "host-storage",
+    "item_premise": "Public caller-owned admitted carriers and explicit unstable generation declarations, labelled judgements, references and immutable debit origins. Carrier construction and observation are outside the writer allowance. Only stored-state visits and requested reconstruction buffers are charged. No secret input, server session, second law, reader, audit or public publication is enabled.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

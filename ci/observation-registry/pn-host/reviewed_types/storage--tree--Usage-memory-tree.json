@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Usage",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" Exact admitted requests, exposed without claiming an allocator census.\"] # [doc = \" (´[ROOT-amend:storage:admitted-transaction]´)\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] pub struct Usage { pub rows : usize , pub allocation_bytes : usize , }"
+  }
+}

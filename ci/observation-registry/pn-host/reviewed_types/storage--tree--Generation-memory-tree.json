@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::Generation",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "syntax": "# [doc = \" Complete declared input, with no default law, ordinal, minimum or delta.\"] # [doc = \" (´[ROOT-dec:storage:branch-declaration-authority]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Generation { pub scope : EpochScope , pub ordinal : u64 , pub minimum : u64 , pub label : String , pub versions : Vec < Version > , pub closures : Vec < Closure > , }"
+  }
+}
