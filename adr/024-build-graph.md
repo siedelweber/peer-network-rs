@@ -22,7 +22,7 @@
 
 ## Step migration · `sec:buildgraph:steps`
 
-**Table (Existing step envelope)** · `tab:buildgraph:steps` This roster is rendered from this record's input row: 57 named steps, grouped below by their input and output envelope. Each name becomes a separate always-run target under (`rule:buildgraph:freshness`); the group does not collapse its statuses or timings. Every target additionally consumes the shared runner and reporting configuration and produces its named current-run log, status and measurement. Slice 1 reconciles this roster with the gate at implementation time, including changes introduced after this decision, before any step is delegated.
+**Table (Existing step envelope)** · `tab:buildgraph:steps` This roster is rendered from this record's input row: 58 named steps, grouped below by their input and output envelope. Each name becomes a separate always-run target under (`rule:buildgraph:freshness`); the group does not collapse its statuses or timings. Every target additionally consumes the shared runner and reporting configuration and produces its named current-run log, status and measurement. Slice 1 reconciles this roster with the gate at implementation time, including changes introduced after this decision, before any step is delegated.
 
 | Step targets | Declared input envelope | Outputs and evidence |
 | --- | --- | --- |
@@ -39,7 +39,7 @@
 | observation-build, host-observation-build | Cargo input set for examples and instrumentation evidence; ci/host_evidence_build.py and imports; observation declarations and the exact features and profile. | Example executables and instrumentation artifacts consumed by runtime and syntax checks. |
 | observation-runtime, host-observation-runtime, wallet-conformance, observation-syntax | ci/run_ci.py, ci/observe.py, the named runtime/boundary test modules and imports; built executables, instrumentation artifacts, observation fixtures and declarations; service readiness where required. | Runtime case results, traces, parser and instrumentation-coverage reports. |
 | harness-matrix, claim-evidence | ci/harness.py, ci/claims.py and imports; current-run case results, source/configuration identity, claim sites, obligation, review and gloss registers, claim areas and checked document citations. | Harness matrix and claim-evidence reports; missing, stale and held results retain their existing distinctions. |
-| linter, token, hash-citations, suppressions, printing | Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked. | Lint, token, citation, suppression and output-discipline reports. |
+| linter, token, hash-citations, binary64-corpus, suppressions, printing | Deployed linter and its declarations; ci/discipline.py and imported readers; the independent integer generator and committed carrier corpus; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked. | Lint, token, citation, corpus reproduction, suppression and output-discipline reports. |
 | build-graph | Meson directory lists, the live tracked index, the gate roster and deployed census. | Fresh file census and graph-incidence reports; no delegation of other steps. |
 
 
@@ -49,7 +49,7 @@
 
 ## Migration slices · `sec:buildgraph:slices`
 
-**Table (Step-to-slice assignment)** · `tab:buildgraph:slice-assignment` Each of the 57 roster steps is assigned exactly once below; the assignment is checked against the single Meson command declaration by (`claim:discipline:build-graph-slices-cover-roster`). Slice 2 includes toolchain identity, observation-parser and all five corpus checks (linter, token, hash-citations, suppressions and printing). The build-graph step already invokes Meson and stays on the shell route after slice 5 to avoid recursive Ninja invocation; both service stops stay there so cleanup does not require graph reports. Slice 5 also owns entry reduction and aggregate finalization rather than a second execution of any named step. The slice-two amendment below states the implemented scope. Each move preserves the existing serial position even when its slice is implemented earlier than another step's slice.
+**Table (Step-to-slice assignment)** · `tab:buildgraph:slice-assignment` Each of the 58 roster steps is assigned exactly once below; the assignment is checked against the single Meson command declaration by (`claim:discipline:build-graph-slices-cover-roster`). Slice 2 includes toolchain identity, observation-parser and all six corpus checks (linter, token, hash-citations, binary64-corpus, suppressions and printing). The build-graph step already invokes Meson and stays on the shell route after slice 5 to avoid recursive Ninja invocation; both service stops stay there so cleanup does not require graph reports. Slice 5 also owns entry reduction and aggregate finalization rather than a second execution of any named step. The slice-two amendment below states the implemented scope. Each move preserves the existing serial position even when its slice is implemented earlier than another step's slice.
 
 | Step | Delegation slice | Preserved responsibility |
 | --- | --- | --- |
@@ -110,6 +110,7 @@
 | test-evidence | 4 | Required invocation with a current inventory and exact evidence join. |
 | extended-tests | 4 | Required prebuilt case invocation selected by the declared allowance threshold; the disjoint result union retains every case. |
 | protected-packages | 3 | Resolve, build and test each protected package alone from the lock; preserve the shared Cargo serialization and serial report edge. |
+| binary64-corpus | 2 | Independent integer corpus reproduction is checked separately from literal accounting. |
 
 
 **Convention (Slice 1: census and skeleton)** · `conv:buildgraph:slice-one` Declare the root and directory lists, the full step roster and report edges, external-tool prerequisites, explicit exclusion reasons and a fresh census target. Keep existing commands on their current route while checking every tracked file and each roster name against the graph. Add negative witnesses for a new tracked source, a new tracked dotfile, an unconnected declared input, a stale path, a widened exclusion and a missing step, plus positive vendor and generated-file cases. Verify a new file is detected without reconfiguration. Gate the skeleton and its claim evidence before delegation; the additional accounting check strengthens coverage without changing any existing command's predicate.

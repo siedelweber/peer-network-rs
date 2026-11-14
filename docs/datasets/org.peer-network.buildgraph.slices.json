@@ -290,6 +290,11 @@
       "name": "protected-packages",
       "reason": "Resolve, build and test each protected package alone from the lock; preserve the shared Cargo serialization and serial report edge.",
       "slice": 3
+    },
+    {
+      "name": "binary64-corpus",
+      "reason": "Independent integer corpus reproduction is checked separately from literal accounting.",
+      "slice": 2
     }
   ]
 }

@@ -4,6 +4,6 @@
     "item": "binary64::Fraction",
     "package": "pn-records",
     "path": "packages/records/src/binary64.rs",
-    "syntax": "# [doc = \" A canonical reduced rational pair, validated under the caller's arithmetic ceiling.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Fraction { numerator : String , denominator : String , }"
+    "syntax": "# [doc = \" A canonical reduced rational pair, validated under the caller's arithmetic ceiling.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [doc = \" Its derived order compares decimal text and serves node uniqueness only; numeric comparison uses exact rational arithmetic.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Fraction { numerator : String , denominator : String , }"
   }
 }

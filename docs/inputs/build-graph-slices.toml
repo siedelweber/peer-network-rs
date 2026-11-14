@@ -285,3 +285,8 @@ reason = "Required prebuilt case invocation selected by the declared allowance t
 name = "protected-packages"
 slice = 3
 reason = "Resolve, build and test each protected package alone from the lock; preserve the shared Cargo serialization and serial report edge."
+
+[[rows]]
+name = "binary64-corpus"
+slice = 2
+reason = "Independent integer corpus reproduction is checked separately from literal accounting."

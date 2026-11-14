@@ -48,7 +48,7 @@ fn expected(carrier: &Carrier) -> Expected {
     }
 }
 
-/// Claim: The independent integer corpus reaches each named byte, domain, question and prefix refusal and round-trips every valid fragment byte for byte in its declared unsorted order; this does not establish interval soundness.
+/// Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.
 /// ´claim:host:binary64-canonical-corpus´
 /// ´test:integration:binary64-canonical-corpus´
 #[test]
@@ -76,8 +76,49 @@ fn binary64_canonical_corpus() {
                 row["case"]
             );
         } else {
-            let value = decoded.unwrap_or_else(|error| panic!("{}: {error:?}", row["case"]));
+            assert!(decoded.is_ok(), "valid enclosure and verdict {}: {decoded:?}", row["case"]);
+            let value = decoded.unwrap();
             assert_eq!(codec::encode(&value).unwrap(), bytes, "canonical bytes {}", row["case"]);
+            let fields = value.fields();
+            let consumers = [
+                model::Consumer::Free,
+                model::Consumer::Value,
+                model::Consumer::Map,
+                model::Consumer::Residual,
+                model::Consumer::Rung,
+                model::Consumer::Fixed,
+                model::Consumer::Local,
+            ];
+            let outcomes = [
+                model::Outcome::Completed,
+                model::Outcome::InvalidInput,
+                model::Outcome::InvalidEvidence,
+                model::Outcome::Unsupported,
+                model::Outcome::TargetNotCertifiable,
+                model::Outcome::Resource,
+                model::Outcome::Interrupted,
+            ];
+            let relations = [model::Relation::Equal, model::Relation::Less, model::Relation::AtMost];
+            assert_eq!(
+                fields.consumer,
+                consumers[usize::try_from(row["consumer"].as_u64().unwrap()).unwrap()],
+                "consumer vocabulary {}",
+                row["case"]
+            );
+            assert_eq!(
+                fields.outcome,
+                outcomes[usize::try_from(row["outcome"].as_u64().unwrap()).unwrap()],
+                "outcome vocabulary {}",
+                row["case"]
+            );
+            for (hypothesis, code) in fields.question.hypotheses.iter().zip(row["relations"].as_array().unwrap()) {
+                assert_eq!(
+                    hypothesis.relation,
+                    relations[usize::try_from(code.as_u64().unwrap()).unwrap()],
+                    "relation vocabulary {}",
+                    row["case"]
+                );
+            }
         }
     }
 }
@@ -146,8 +187,9 @@ fn binary64_expected_question_binding() {
     let mut query = expected(&fixed);
     query.predicate = model::Predicate::Membership;
     query.enclosures = Some((value.fields().enclosures.unwrap().0, value.fields().enclosures.unwrap().0));
-    assert!(
-        fixed.bind(&query).is_err(),
+    assert_eq!(
+        fixed.bind(&query),
+        Err(model::Error::ActualEnclosure),
         "original-threshold forbids adjusted-enclosure substitution"
     );
     let rung = named("accepted-zero");
@@ -157,9 +199,16 @@ fn binary64_expected_question_binding() {
     let mut query = expected(&rung);
     query.grid = None;
     assert_eq!(rung.bind(&query), Err(model::Error::RungPrefix), "declared grid substitution");
+    let mut query = expected(&value);
+    query.question.hypotheses.push(model::Hypothesis {
+        relation: model::Relation::Equal,
+        left: 0,
+        right: 0,
+    });
+    assert_eq!(value.bind(&query), Err(model::Error::Question), "hypothesis substitution");
 }
 
-/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader refuses exhausted input, item and depth bounds.
+/// Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it.
 /// ´claim:host:binary64-finite-and-bounded´
 /// ´test:integration:binary64-finite-and-bounded´
 #[test]
@@ -193,17 +242,32 @@ fn binary64_finite_and_bounded() {
     let values: Vec<_> = patterns.into_iter().map(|b| Endpoint::new(b).unwrap()).collect();
     assert!(values.windows(2).all(|v| v[0] < v[1]), "integer endpoint ordering");
     let bytes = codec::encode(&named("contained")).unwrap();
-    for field in 0..3 {
+    let corpus = corpus();
+    let row = corpus["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["case"] == "contained")
+        .unwrap();
+    let counts = [
+        bytes.len(),
+        usize::try_from(row["reader_items"].as_u64().unwrap()).unwrap(),
+        usize::try_from(row["reader_depth"].as_u64().unwrap()).unwrap(),
+    ];
+    for (field, count) in counts.into_iter().enumerate() {
         let mut bound = limits();
-        match field {
-            0 => bound.bytes = 0,
-            1 => bound.items = 0,
-            _ => bound.depth = 0,
+        for reduction in 0..2 {
+            match field {
+                0 => bound.bytes = count - reduction,
+                1 => bound.items = count - reduction,
+                _ => bound.depth = count - reduction,
+            }
+            let result = codec::decode(&bytes, &bound);
+            if reduction == 0 {
+                assert!(result.is_ok(), "reader bound inclusive limit {field}: {result:?}");
+            } else {
+                assert_eq!(result, Err(Error::Resource), "reader bound one past {field}");
+            }
         }
-        assert_eq!(
-            codec::decode(&bytes, &bound),
-            Err(Error::Resource),
-            "explicit reader bound {field}"
-        );
     }
 }

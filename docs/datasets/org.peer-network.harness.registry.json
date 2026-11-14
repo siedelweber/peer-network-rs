@@ -232,6 +232,7 @@
         "linter",
         "token",
         "hash-citations",
+        "binary64-corpus",
         "suppressions",
         "printing",
         "tests",

@@ -216,7 +216,7 @@ title = "Build graph"
 scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
 depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]
 does_not_establish = "Independent admission of the completed migration remains held. Every evidence command is delegated; the declared census setup and both service stops deliberately execute outside delegation. Entry sequencing and final report checks use the declared graph. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
-step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "protected-packages", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
+step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "binary64-corpus", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "protected-packages", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
 
 [[rows.step_groups]]
 name = "policy"
@@ -298,9 +298,9 @@ outputs = "Harness matrix and claim-evidence reports; missing, stale and held re
 
 [[rows.step_groups]]
 name = "corpus"
-steps = ["linter", "token", "hash-citations", "suppressions", "printing"]
-inputs = "Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked."
-outputs = "Lint, token, citation, suppression and output-discipline reports."
+steps = ["linter", "token", "hash-citations", "binary64-corpus", "suppressions", "printing"]
+inputs = "Deployed linter and its declarations; ci/discipline.py and imported readers; the independent integer generator and committed carrier corpus; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked."
+outputs = "Lint, token, citation, corpus reproduction, suppression and output-discipline reports."
 
 [[rows.step_groups]]
 name = "graph-accounting"

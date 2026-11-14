@@ -445,13 +445,14 @@
           ]
         },
         {
-          "inputs": "Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked.",
+          "inputs": "Deployed linter and its declarations; ci/discipline.py and imported readers; the independent integer generator and committed carrier corpus; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked.",
           "name": "corpus",
-          "outputs": "Lint, token, citation, suppression and output-discipline reports.",
+          "outputs": "Lint, token, citation, corpus reproduction, suppression and output-discipline reports.",
           "steps": [
             "linter",
             "token",
             "hash-citations",
+            "binary64-corpus",
             "suppressions",
             "printing"
           ]
@@ -492,6 +493,7 @@
         "linter",
         "token",
         "hash-citations",
+        "binary64-corpus",
         "suppressions",
         "printing",
         "tests",

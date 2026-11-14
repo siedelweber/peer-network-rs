@@ -4,6 +4,6 @@
     "item": "binary64::Limits",
     "package": "pn-host",
     "path": "packages/host/src/binary64.rs",
-    "syntax": "# [doc = \" Explicit reader ceilings; exhaustion supplies no mathematical result.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug)] pub struct Limits { pub bytes : usize , pub items : usize , pub depth : usize , pub arithmetic : ExactLimits , }"
+    "syntax": "# [doc = \" Explicit reader ceilings; exhaustion supplies no mathematical result.\"] # [doc = \" Each fraction is first constructed under a fresh arithmetic budget before the carrier checks all fractions under one cumulative budget; there are at most items preliminary constructions, each bounded by arithmetic, followed by the cumulative pass.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug)] pub struct Limits { pub bytes : usize , pub items : usize , pub depth : usize , pub arithmetic : ExactLimits , }"
   }
 }

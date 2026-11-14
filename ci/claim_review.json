@@ -4167,8 +4167,8 @@
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-canonical-corpus",
       "before": "",
-      "after": "Claim: The independent integer corpus reaches each named byte, domain, question and prefix refusal and round-trips every valid fragment byte for byte in its declared unsorted order; this does not establish interval soundness.",
-      "review": "The assertions compare exact refusal classes, canonical bytes or independently calculated exact rational relations for the supplied finite cases. They establish carrier conformance and binding only, not a native law, sound evaluation or numerical admission."
+      "after": "Claim: The independent integer corpus reaches named byte, domain, question and prefix refusal classes, exercises threshold and membership branches with their enclosures, and round-trips valid fragments and their vocabulary codes in unsorted order; this does not establish interval soundness.",
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
     },
     {
       "operation": "pn-host::public::binary64::binary64_expected_question_binding",
@@ -4176,15 +4176,15 @@
       "claim": "HOST::claim:host:binary64-expected-question-binding",
       "before": "",
       "after": "Claim: Explicit expected-context comparison refuses independent substitutions of inputs, domain, expression, actual enclosure, polarity, permissions, threshold and grid even when the supplied carrier is internally consistent; this does not establish a consumer's derivation of that context.",
-      "review": "The assertions compare exact refusal classes, canonical bytes or independently calculated exact rational relations for the supplied finite cases. They establish carrier conformance and binding only, not a native law, sound evaluation or numerical admission."
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
     },
     {
       "operation": "pn-host::public::binary64::binary64_finite_and_bounded",
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-finite-and-bounded",
       "before": "",
-      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader refuses exhausted input, item and depth bounds.",
-      "review": "The assertions compare exact refusal classes, canonical bytes or independently calculated exact rational relations for the supplied finite cases. They establish carrier conformance and binding only, not a native law, sound evaluation or numerical admission."
+      "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it.",
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
     },
     {
       "operation": "pn-host::public::case_before_input",
@@ -5200,7 +5200,7 @@
       "claim": "RECORDS::claim:numerics:binary64-exact-golden-relations",
       "before": "",
       "after": "Claim: Exact-route rational arithmetic independently checks the corpus's dyadic operands, threshold signs and membership relations, including original rational inputs distinct from their rounded surrogate; these checks establish no native law.",
-      "review": "The assertions compare exact refusal classes, canonical bytes or independently calculated exact rational relations for the supplied finite cases. They establish carrier conformance and binding only, not a native law, sound evaluation or numerical admission."
+      "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
     },
     {
       "operation": "pn-records::conformance::burn_cases",

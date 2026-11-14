@@ -12,24 +12,55 @@ use pn_records::numerics::ExactLimits;
 /// (´[ROOT-rule:design:binary64-evidence]´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Error {
+    /// A required byte is absent.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Truncated,
+    /// Bytes remain after the complete fragment.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Trailing,
+    /// An indefinite-length head is present.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Indefinite,
+    /// A tag is present.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Tag,
+    /// A floating-point item is present.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Float,
+    /// A head is longer than its value requires.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     ShortestHead,
+    /// An item has the wrong major or simple kind.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     ItemKind,
+    /// A closed map, array or constructor has the wrong member count.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Arity,
+    /// A map key is outside the closed roster.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     UnknownKey,
+    /// A map key is repeated, or the canonical writer reports a duplicate.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     DuplicateKey,
+    /// A known map key is out of order.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     MemberOrder,
+    /// An edition or vocabulary code is unknown.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     UnknownCode,
+    /// A text item is not valid UTF-8.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Utf8,
+    /// A byte, item, depth, allocation or arithmetic bound is exhausted.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Resource,
+    /// A typed carrier invariant refuses the decoded members.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Structure(model::Error),
 }
 
 /// Explicit reader ceilings; exhaustion supplies no mathematical result.
+/// Each fraction is first constructed under a fresh arithmetic budget before the carrier checks all fractions under one cumulative budget; there are at most items preliminary constructions, each bounded by arithmetic, followed by the cumulative pass.
 /// (´[ROOT-rule:design:binary64-evidence]´)
 #[derive(Clone, Debug)]
 pub struct Limits {
@@ -503,7 +534,7 @@ fn outcome_code(outcome: model::Outcome) -> u64 {
 /// Encode the separate checked fragment; no surrounding document or identity is assigned.
 /// (´[ROOT-rule:design:binary64-evidence]´)
 /// # Errors
-/// Refuses lengths unrepresentable in the fragment's unsigned member type.
+/// Maps an unrepresentable member index to `Resource` and a canonical writer's duplicate key to `DuplicateKey`; the fixed ten-key construction supplies neither condition for a validated carrier.
 #[tracing::instrument(
     name = "sig:design:storage",
     fields(

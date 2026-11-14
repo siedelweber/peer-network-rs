@@ -74,9 +74,29 @@ def base(evaluated, target=None):
             7: [[None, evaluated, result]], 8: None, 9: 0}
 
 
+def threshold_result(predicate, evaluated, threshold):
+    lower, li, upper, ui = evaluated
+    lower, upper = exact(lower), exact(upper)
+    # The set of possible comparisons to the exact threshold determines the
+    # verdict; no binary floating operation or carrier implementation is used.
+    signs = set()
+    if lower < threshold:
+        signs.add(-1)
+    if upper > threshold:
+        signs.add(1)
+    if lower <= threshold <= upper and (lower != threshold or li) and (upper != threshold or ui):
+        signs.add(0)
+    admitted = {1: {-1, 0}, 2: {-1}, 3: {0}, 4: {0, 1}, 5: {1}}[predicate]
+    return 0 if signs <= admitted else 1 if signs.isdisjoint(admitted) else 2
+
+
 def vectors():
     rows = []
     def add(name, value, refusal=None, raw=None):
+        def shape(item, depth):
+            children = [shape(v, depth+1) for v in item] if isinstance(item, list) else []
+            return 1 + sum(c[0] for c in children), max([depth] + [c[1] for c in children])
+        shapes = [shape(v, 1) for v in value.values()]
         endpoints = []
         for test in value[7]:
             endpoints.extend((test[1][0], test[1][2]))
@@ -93,7 +113,9 @@ def vectors():
         rows.append(dict(case=name, canonical=(encode(value) if raw is None else raw).hex(), refusal=refusal,
                          original_question=public([value[1], value[2], value[3], value[6]]),
                          membership_operands=relation_inputs,
-                         tests=public(value[7]),
+                         tests=public(value[7]), consumer=value[6][3], outcome=value[9],
+                         relations=[h[0] for h in value[3][1]],
+                         reader_items=1+len(value)+sum(s[0] for s in shapes), reader_depth=max(s[1] for s in shapes),
                          endpoint_patterns=[f'{b:016x}' for b in endpoints], exact_operands=pairs, expected_relation=value[6][2]))
     one = 0x3ff0000000000000
     # Intentionally unsorted: readers consume the corpus in this order.
@@ -212,6 +234,123 @@ def vectors():
     add('complete-data-vocabulary',v)
     v=copy.deepcopy(good); v[1]=[1,[[2,q(0)],[2,q(1)],[4,0,1]],2]; v[3][1]=[[1,0,1]]
     add('hypothesis-postorder',v)
+    # Non-dyadic thresholds cannot be touched by binary64 endpoints. Exact
+    # touches use a dyadic threshold; thirds exercise rational denominators.
+    two = 0x4000000000000000
+    half = 0x3fe0000000000000
+    quarter = 0x3fd0000000000000
+    for threshold in (Fraction(1, 3), Fraction(1)):
+        bounds = [(0, quarter), (quarter, half), (half, two)] if threshold != 1 else [(0, half), (0, one), (half, two), (one, two), (one+1, two)]
+        for predicate in range(1, 6):
+            for number, (lower, upper) in enumerate(bounds):
+                for li in (False, True):
+                    for ui in (False, True):
+                        evaluated = interval(lower, upper, li, ui)
+                        v = base(evaluated)
+                        result = threshold_result(predicate, evaluated, threshold)
+                        v[4] = [None, None]
+                        v[6] = [predicate, q(threshold), result, 5]
+                        v[7][0][2] = result
+                        add(f'comparison-{predicate}-{threshold}-{number}-{int(li)}{int(ui)}', v)
+    for side in ('lower', 'upper', 'left-touch', 'right-touch'):
+        for a in (False, True):
+            for b in (False, True):
+                evaluated, target = {
+                    'lower': (interval(0, one, li=a), interval(0, two, li=b)),
+                    'upper': (interval(one, two, ui=a), interval(0, two, ui=b)),
+                    'left-touch': (interval(0, one, ui=a), interval(one, two, li=b)),
+                    'right-touch': (interval(one, two, li=a), interval(0, one, ui=b)),
+                }[side]
+                add(f'membership-{side}-{int(a)}{int(b)}', base(evaluated, target))
+    v = base(interval(one), interval(0, two))
+    v[4][0] = interval(0, one)
+    v[5] = 1
+    add('adjusted-free', v)
+    v = copy.deepcopy(v); v[5] = 0
+    add('adjusted-free-refusal', v, 'Structure(Adjustment)')
+
+    def changed(name, edit, error, source=good):
+        v = copy.deepcopy(source)
+        edit(v)
+        add(name, v, error)
+
+    changed('reversed-enclosure', lambda v: v[7][0].__setitem__(1, interval(two, one)), 'Structure(Enclosure)', base(interval(one), interval(0, two)))
+    changed('dangling-input', lambda v: v.__setitem__(1, [1, [[0, 'absent', []]], 0]), 'Structure(Reference)')
+    data = copy.deepcopy(good)
+    data[2] = [['input', b'input', [4, [[3, 'not-numeric'], [0, q(1)]]]]]
+    data[1] = [1, [[0, 'input', [[0, 1]]]], 0]
+    add('array-second-element', data)
+    changed('dangling-path-index', lambda v: v[1][1][0].__setitem__(2, [[0, 2]]), 'Structure(Reference)', data)
+    changed('dangling-path-kind', lambda v: v[1][1][0].__setitem__(2, [[1, 'absent']]), 'Structure(Reference)', data)
+    changed('nonnumeric-leaf', lambda v: v[1][1][0].__setitem__(2, []), 'Structure(Reference)', data)
+    changed('dangling-coordinate', lambda v: v.__setitem__(1, [1, [[1, 0]], 0]), 'Structure(Reference)')
+    changed('hypothesis-operand-range', lambda v: v[3].__setitem__(1, [[0, 0, 1]]), 'Structure(Reference)')
+    changed('root-not-last', lambda v: v.__setitem__(1, [1, [[2, q(0)], [2, q(1)]], 0]), 'Structure(CanonicalNodes)')
+    v = copy.deepcopy(good)
+    v[1] = [1, [[2, q(0)], [3, 0]], 0]
+    v[3][1] = [[0, 1, 1]]
+    add('root-under-hypothesis', v, 'Structure(CanonicalNodes)')
+    v = copy.deepcopy(good)
+    v[1] = [1, [[2, q(0)], [2, q(1)], [3, 1]], 2]
+    v[3][1] = [[0, 2, 0]]
+    add('direct-root-omitted', v)
+    v = copy.deepcopy(good)
+    v[1] = [1, [[2, q(0)], [2, q(1)], [4, 1, 0]], 2]
+    v[3][1] = [[0, 0, 1]]
+    add('hypothesis-before-root', v)
+    v[3][1] = [[0, 1, 0]]
+    add('hypothesis-wrong-order', v, 'Structure(CanonicalNodes)')
+    for name, entries in [('descending', ['z', 'a']), ('duplicate', ['a', 'a'])]:
+        changed('input-names-'+name, lambda v: v.__setitem__(2, [[n, b'x', [0, q(0)]] for n in entries]), 'Structure(Name)')
+        changed('record-names-'+name, lambda v: v.__setitem__(2, [['input', b'x', [5, [[n, [0, q(0)]] for n in entries]]]]), 'Structure(Name)')
+    changed('record-name-invalid', lambda v: v.__setitem__(2, [['input', b'x', [5, [['9bad', [0, q(0)]]]]]]), 'Structure(Name)')
+    changed('domain-open-singleton', lambda v: v[3].__setitem__(0, [['box', q(0), False, q(0), True]]), 'Structure(Domain)')
+    # Sorted inputs and records: first, middle, last and absent lookups.
+    for name in ('a', 'm', 'z', 'missing'):
+        v = copy.deepcopy(good)
+        v[2] = [[n, b'x', [0, q(i)]] for i, n in enumerate(('a', 'm', 'z'))]
+        v[1] = [1, [[0, name, []]], 0]
+        add('input-lookup-'+name, v, 'Structure(Reference)' if name == 'missing' else None)
+        v[2] = [['input', b'x', [5, [[n, [0, q(i)]] for i, n in enumerate(('a', 'm', 'z'))]]]]
+        v[1] = [1, [[0, 'input', [[1, name]]]], 0]
+        add('field-lookup-'+name, v, 'Structure(Reference)' if name == 'missing' else None)
+    for code in (1, 2, 3, 6):
+        changed(f'consumer-code-{code}', lambda v: v[6].__setitem__(3, code), None)
+    for code in range(1, 7):
+        v = copy.deepcopy(good); v[7] = []; v[6][2] = 2; v[9] = code
+        add(f'operational-outcome-{code}', v)
+    for code in (0, 2):
+        v = copy.deepcopy(good); v[3][1] = [[code, 0, 0]]
+        add(f'relation-code-{code}', v)
+    changed('consumer-requires-proposition', lambda v: v[6].__setitem__(3, 1), 'Structure(Consumer)', base(interval(0), interval(one)))
+    v = copy.deepcopy(good); v[4] = [None, None]; v[6] = [1, q(1), 0, 1]
+    add('consumer-requires-membership', v, 'Structure(Consumer)')
+    v = copy.deepcopy(good); v[9] = 1; v[7] = []
+    add('operational-polarity', v, 'Structure(Polarity)')
+    changed('completed-polarity-agreement', lambda v: v[6].__setitem__(2, 1), 'Structure(Tests)')
+    changed('completed-without-test', lambda v: v.__setitem__(7, []), 'Structure(Tests)')
+    v = base(interval(0, two), interval(one)); v[9] = 1
+    add('operational-with-test', v, 'Structure(Tests)')
+    changed('question-edition', lambda v: v[1].__setitem__(0, 2), 'UnknownCode')
+    changed('one-null-enclosure', lambda v: v[4].__setitem__(0, None), 'ItemKind')
+    changed('unknown-adjusted', lambda v: v.__setitem__(5, 2), 'UnknownCode')
+    changed('membership-with-threshold', lambda v: v[6].__setitem__(1, q(1)), 'UnknownCode')
+    for name, slot in [('consumer', 3), ('polarity', 2), ('predicate', 0)]:
+        changed('unknown-'+name, lambda v: v[6].__setitem__(slot, 99), 'UnknownCode')
+    changed('unknown-outcome', lambda v: v.__setitem__(9, 99), 'UnknownCode')
+    changed('unknown-relation', lambda v: v[3].__setitem__(1, [[99, 0, 0]]), 'UnknownCode')
+    changed('unknown-data', lambda v: v.__setitem__(2, [['input', b'x', [99, None]]]), 'UnknownCode')
+    changed('unknown-path', lambda v: v[1][1][0].__setitem__(2, [[99, 0]]), 'UnknownCode', data)
+    for name, fragment, error in [
+        ('map-arity', b'\xa9'+raw[1:], 'Arity'),
+        ('key-kind', raw[:1]+b'\x60'+raw[2:], 'ItemKind'),
+        ('float32', raw[:2]+b'\xfa\x3f\x80\x00\x00'+raw[3:], 'Float'),
+        ('float64', raw[:2]+b'\xfb\x3f\xf0\x00\x00\x00\x00\x00\x00'+raw[3:], 'Float'),
+        ('shortest-two', raw[:2]+b'\x19\x00\x01'+raw[3:], 'ShortestHead'),
+        ('shortest-four', raw[:2]+b'\x1a\x00\x00\x00\x01'+raw[3:], 'ShortestHead'),
+        ('array-length-precheck', raw[:2]+b'\x9a\x00\x01\x86\xa1', 'Resource'),
+    ]:
+        add(name, good, error, fragment)
     return dict(provenance='Independent RFC 8949 integer encoder and exact Fraction cross-products; records exact-route rational cross-check; no native-law evidence.',
                 distinct_inputs=len({row['canonical'] for row in rows}), cases=rows)
 

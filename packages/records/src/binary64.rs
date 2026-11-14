@@ -11,25 +11,65 @@ use std::cmp::Ordering;
 /// (´[ROOT-rule:design:binary64-evidence]´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Error {
+    /// The sign bit is set on zero.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     NegativeZero,
+    /// The exponent is all ones.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     NonFinite,
+    /// The exact rational spelling is not canonical and reduced.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Rational,
+    /// A name is malformed, duplicated or out of order.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Name,
+    /// An enclosure is reversed or empty.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Enclosure,
+    /// A coordinate domain is reversed, empty or excludes a required point.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Domain,
+    /// An index, input name, path or numeric leaf is unavailable.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Reference,
+    /// The quantity list is not maximally shared first-occurrence post-order.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     CanonicalNodes,
+    /// The adjustment flag or enclosure pair contradicts its predicate.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Adjustment,
+    /// The predicate is incompatible with the required carrier form.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Predicate,
+    /// A stated polarity disagrees with its enclosure or operational outcome.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Polarity,
+    /// The non-rung test list disagrees with its outcome or polarity.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Tests,
+    /// The rung grid or prefix has an invalid shape or descent.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     RungPrefix,
+    /// The completed prefix lacks its terminal pass or continues after one.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     TerminalPass,
+    /// The operational prefix skips an attempt or exhausts its grid.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     RefusalPrefix,
+    /// The supplied public inputs differ from the expected inputs.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     OriginalInputs,
+    /// The supplied enclosure pair differs from the expected pair.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     ActualEnclosure,
+    /// The supplied expression, domain or hypotheses differ from the expected question.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Question,
+    /// The requested consumer cannot use the supplied predicate or polarity.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Consumer,
+    /// A declared arithmetic or representation bound is exhausted.
+    /// (´[ROOT-rule:design:binary64-evidence]´)
     Resource,
 }
 
@@ -140,6 +180,8 @@ impl PartialOrd for Endpoint {
 }
 
 /// A canonical reduced rational pair, validated under the caller's arithmetic ceiling.
+/// (´[ROOT-rule:design:binary64-evidence]´)
+/// Its derived order compares decimal text and serves node uniqueness only; numeric comparison uses exact rational arithmetic.
 /// (´[ROOT-rule:design:binary64-evidence]´)
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Fraction {
@@ -640,17 +682,21 @@ fn validate_nodes(question: &Question, budget: &mut Budget) -> Result<(), Error>
         }
         match node {
             Node::Input(input, path) => {
-                let mut value = &question
+                // validate_question checks every input and record name list
+                // before entering this walk, including unused nested records.
+                let position = question
                     .inputs
-                    .iter()
-                    .find(|v| &v.name == input)
-                    .ok_or(Error::Reference)?
-                    .value;
+                    .binary_search_by(|v| v.name.cmp(input))
+                    .map_err(|_| Error::Reference)?;
+                let mut value = &question.inputs[position].value;
                 for step in path {
                     value = match (step, value) {
                         (Path::Index(i), Data::Array(values)) => &values[index(*i, values.len())?],
                         (Path::Field(key), Data::Record(values)) => {
-                            &values.iter().find(|(n, _)| n == key).ok_or(Error::Reference)?.1
+                            let position = values
+                                .binary_search_by(|(name, _)| name.cmp(key))
+                                .map_err(|_| Error::Reference)?;
+                            &values[position].1
                         }
                         _ => return Err(Error::Reference),
                     };
@@ -873,10 +919,35 @@ mod tests {
             }
             check_operands(row, &limits);
             check_membership(row, &limits);
+            check_threshold(row, &limits);
         }
         let mut budget = Budget::new(limits).unwrap();
-        let original = Rational::parse("9007199254740993", &mut budget).unwrap();
-        let rounded = Rational::parse("9007199254740992", &mut budget).unwrap();
+        let row = corpus["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r["case"] == "original-not-rounded")
+            .unwrap();
+        let original_pair = &row["original_question"][1][0][2][1];
+        let evaluated_pair = &row["exact_operands"][0];
+        let original = Rational::parse(
+            &format!(
+                "{}/{}",
+                original_pair[0].as_str().unwrap(),
+                original_pair[1].as_str().unwrap()
+            ),
+            &mut budget,
+        )
+        .unwrap();
+        let rounded = Rational::parse(
+            &format!(
+                "{}/{}",
+                evaluated_pair[0].as_str().unwrap(),
+                evaluated_pair[1].as_str().unwrap()
+            ),
+            &mut budget,
+        )
+        .unwrap();
         assert_eq!(
             original.compare(&rounded, &mut budget).unwrap(),
             Ordering::Greater,
@@ -918,24 +989,70 @@ mod tests {
                 "exact-route operand {}",
                 row["case"]
             );
-            if row["case"].as_str().unwrap().starts_with("threshold-") {
-                let relation = exact.compare(&Rational::one(), &mut budget).unwrap();
-                let predicate = row["case"].as_str().unwrap().split('-').nth(1).unwrap();
-                let holds = match predicate {
-                    "1" => relation != Ordering::Greater,
-                    "2" => relation == Ordering::Less,
-                    "3" => relation == Ordering::Equal,
-                    "4" => relation != Ordering::Less,
-                    "5" => relation == Ordering::Greater,
-                    _ => panic!("closed threshold fixture"),
-                };
-                assert_eq!(
-                    row["expected_relation"].as_u64().unwrap(),
-                    u64::from(!holds),
-                    "exact-route threshold {}",
-                    row["case"]
-                );
-            }
+        }
+    }
+
+    fn check_threshold(row: &serde_json::Value, limits: &Limits) {
+        let predicate = &row["original_question"][3];
+        let code = predicate[0].as_u64().unwrap();
+        if code == 0 {
+            return;
+        }
+        let mut budget = Budget::new(limits.clone()).unwrap();
+        let pair = &predicate[1];
+        let threshold = Rational::parse(
+            &format!("{}/{}", pair[0].as_str().unwrap(), pair[1].as_str().unwrap()),
+            &mut budget,
+        )
+        .unwrap();
+        for (test, endpoints) in row["tests"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(row["exact_operands"].as_array().unwrap().as_chunks::<2>().0)
+        {
+            let mut read = |pair: &serde_json::Value| {
+                Rational::parse(
+                    &format!("{}/{}", pair[0].as_str().unwrap(), pair[1].as_str().unwrap()),
+                    &mut budget,
+                )
+                .unwrap()
+            };
+            let lower = read(&endpoints[0]);
+            let upper = read(&endpoints[1]);
+            let lo = lower.compare(&threshold, &mut budget).unwrap();
+            let hi = upper.compare(&threshold, &mut budget).unwrap();
+            let possible = [
+                lo == Ordering::Less,
+                lo != Ordering::Greater
+                    && hi != Ordering::Less
+                    && (lo != Ordering::Equal || test[1][1].as_bool().unwrap())
+                    && (hi != Ordering::Equal || test[1][3].as_bool().unwrap()),
+                hi == Ordering::Greater,
+            ];
+            let admitted = match code {
+                1 => [true, true, false],
+                2 => [true, false, false],
+                3 => [false, true, false],
+                4 => [false, true, true],
+                5 => [false, false, true],
+                _ => panic!("closed threshold vocabulary"),
+            };
+            let positive = possible.iter().zip(admitted).any(|(p, a)| *p && a);
+            let negative = possible.iter().zip(admitted).any(|(p, a)| *p && !a);
+            let result = if !negative {
+                0
+            } else if !positive {
+                1
+            } else {
+                2
+            };
+            assert_eq!(
+                test[2].as_u64().unwrap(),
+                result,
+                "exact-route enclosure and threshold {}",
+                row["case"]
+            );
         }
     }
 
