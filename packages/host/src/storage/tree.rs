@@ -9,6 +9,8 @@ mod index;
 mod stage;
 
 type Identity = [u8; 32];
+type PlacementKey<'a> = (&'a EpochScope, Identity, u64);
+type ChildKey<'a> = (&'a EpochScope, Option<Identity>, Identity);
 
 /// An appended closure in an explicitly declared admission generation.
 /// (´[ROOT-dec:storage:branch-declaration-authority]´)
@@ -235,6 +237,8 @@ enum Write {
     Scope,
     Segment,
     Result,
+    Placement,
+    DirectChild,
     PackageChunk(usize),
     Observation(usize),
     Reference(usize),
@@ -259,6 +263,8 @@ pub struct MemoryTree<'a> {
     scopes: Index<&'a EpochScope, Identity>,
     segments: Index<(&'a EpochScope, Identity), Descriptor>,
     results: Index<(&'a EpochScope, Identity), Node<'a>>,
+    placements: Index<PlacementKey<'a>, Identity>,
+    direct_children: Index<ChildKey<'a>, ()>,
     children: Index<(&'a EpochScope, Identity), Identity>,
     observations: Index<(Family, &'a str, &'a str), &'a Version>,
     introductions: Index<(&'a EpochScope, Identity, u64), Identity>,
@@ -478,8 +484,11 @@ impl<'a> MemoryTree<'a> {
         Ok(self.publish(stage, descriptor, slots))
     }
 
-    fn publish(&mut self, stage: Node<'a>, descriptor: Option<Descriptor>, slots: Publication<'a>) -> Judgement<'_> {
+    fn publish(&mut self, staged: stage::Staged<'a>, descriptor: Option<Descriptor>, slots: Publication<'a>) -> Judgement<'_> {
+        let stage = staged.node;
         let (scope, identity, _, _) = stage.input.event();
+        self.placements.publish(slots.placement, staged.placement.1);
+        self.direct_children.publish(slots.direct_child, ());
         if let (Some(slot), Some(descriptor)) = (slots.segment, descriptor) {
             self.segments.publish(slot, descriptor);
         }
@@ -799,6 +808,8 @@ mod roster;
 mod tests;
 
 struct Publication<'a> {
+    placement: index::Slot<PlacementKey<'a>, Identity>,
+    direct_child: index::Slot<ChildKey<'a>, ()>,
     result: index::Slot<(&'a EpochScope, Identity), Node<'a>>,
     scope: Option<index::Slot<&'a EpochScope, Identity>>,
     segment: Option<index::Slot<(&'a EpochScope, Identity), Descriptor>>,
@@ -810,6 +821,8 @@ impl<'a> Publication<'a> {
     fn prepare(plan: &stage::Plan<'a>, continuation: bool, meter: &mut Meter) -> Result<Self, Error> {
         let (scope, identity, parent, depth) = plan.input.event();
         let result = Index::prepare((scope, *identity), meter)?;
+        let placement = Index::prepare((scope, plan.segment, depth), meter)?;
+        let direct_child = Index::prepare((scope, parent.copied(), *identity), meter)?;
         let scope_slot = plan.new_scope.then(|| Index::prepare(scope, meter)).transpose()?;
         let segment = plan
             .descriptor
@@ -839,6 +852,8 @@ impl<'a> Publication<'a> {
             .then(|| Index::prepare((scope, plan.segment, depth), meter))
             .transpose()?;
         Ok(Self {
+            placement,
+            direct_child,
             result,
             scope: scope_slot,
             segment,

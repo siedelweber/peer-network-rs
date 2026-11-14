@@ -113,6 +113,8 @@ impl<K: Ord, V> Index<K, V> {
         })))
     }
     pub(super) fn publish(&mut self, mut slot: Slot<K, V>, value: V) {
+        #[cfg(test)]
+        PUBLICATIONS.with(|n| n.set(n.get() + 1));
         slot.0.value = Some(value);
         let (root, fresh) = insert(self.root.take(), slot.0);
         self.root = root;
@@ -167,10 +169,27 @@ impl<K: Ord, V> Index<K, V> {
 }
 
 #[cfg(test)]
+thread_local! { pub(super) static PUBLICATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) }; }
+
+#[cfg(test)]
 thread_local! { pub(super) static ALLOCATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) }; }
 
 #[cfg(test)]
 impl<K: Ord, V> Index<K, V> {
+    // Private damage leaves the key node in place but removes its retained entry.
+    pub(super) fn erase(&mut self, key: &K) {
+        let mut link = self.root.as_deref_mut();
+        while let Some(node) = link {
+            match key.cmp(&node.key) {
+                std::cmp::Ordering::Less => link = node.left.as_deref_mut(),
+                std::cmp::Ordering::Greater => link = node.right.as_deref_mut(),
+                std::cmp::Ordering::Equal => {
+                    self.length -= usize::from(node.value.take().is_some());
+                    return;
+                }
+            }
+        }
+    }
     pub(super) fn len(&self) -> usize {
         self.length
     }

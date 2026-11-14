@@ -371,6 +371,7 @@ fn tree_writer_atomic() {
             .inserted
     );
     assert!(events.contains(&Write::Scope) && events.contains(&Write::Segment));
+    index_events(&events);
     assert!(events.iter().any(|w| matches!(w, Write::DebitChunk(_, _))));
     assert_eq!(
         store.results[&(root.event().0, *root.event().1)].references.len(),
@@ -581,7 +582,7 @@ pub(super) fn forks() -> &'static Forks {
     })
 }
 
-/// Claim: Publicly admitted fixture packages form two roots and a fork with independent debit origins; a child inherits only its ancestors' complete vintages and original selections, a side retry is unchanged, and differing context or same-position content refuses without writing. The first child continues its parent segment without a descriptor and the later child opens one while preserving the first-child row.
+/// Claim: Publicly admitted fixture packages form two roots and a fork with independent debit origins; a child inherits only its ancestors' complete vintages and original selections, a side retry is unchanged, and differing context or same-position content refuses without writing. The first child continues its parent segment without a descriptor and the later child opens one while preserving the first-child row; each admission has exactly its complete placement and direct-child entries.
 /// ´claim:history:tree-writer-forks´
 /// ´test:unit:tree-writer-forks´
 #[test]
@@ -814,7 +815,7 @@ fn tree_writer_limits() {
     assert_eq!(output.capacity(), 0, "allocation is not executed before admission");
 }
 
-/// Claim: Each staged mutation of an ordinary child, a fork with a new debit origin, and a second root can be interrupted with the complete store unchanged and a successful retry; mutation order ends with all introduction memberships before publication.
+/// Claim: Each staged mutation of an ordinary child, a fork with a new debit origin, and a second root can be interrupted with the complete store unchanged and a successful retry; the placement and direct-child entries are staged mutations, and mutation order ends with all introduction memberships before publication.
 /// ´claim:history:tree-writer-interruptions´
 /// ´test:unit:tree-writer-interruptions´
 #[test]
@@ -946,4 +947,137 @@ fn tree_index_reservations() {
         Ok(())
     );
     assert_eq!(selected, (7..=12_u64).map(|k| (k, k + 100)).collect::<Vec<_>>());
+}
+
+fn index_damage(input: &Retained, parent: &Retained, generation: &Generation) {
+    use super::roster::{Contract, Damage};
+    for damage in [Damage::MissingPlacement, Damage::ForeignPlacement, Damage::MissingChild] {
+        let mut store = MemoryTree::default();
+        assert_eq!(Contract::install(&mut store, generation), Ok(true));
+        assert_eq!(store.write(parent), Ok(true));
+        assert_eq!(store.write(input), Ok(true));
+        let before = snapshot(&store);
+        let mut expected = store.index_rows();
+        let (scope, identity, ancestor, depth) = input.event();
+        let key = (scope.clone(), store.results[&(scope, *identity)].segment, depth);
+        match damage {
+            Damage::MissingPlacement => {
+                expected.placements.remove(&key);
+            }
+            Damage::ForeignPlacement => {
+                expected.placements.insert(key, *parent.event().1);
+            }
+            Damage::MissingChild => {
+                expected.children.remove(&(scope.clone(), ancestor.copied(), *identity));
+            }
+            _ => unreachable!("three private index damage shapes"),
+        }
+        let old_rows = store.immutable_rows();
+        store.damage(input, parent, damage);
+        assert_ne!(snapshot(&store), before, "private adapter changes the requested index");
+        assert_eq!(
+            store.index_rows(),
+            expected,
+            "private adapter preserves every other index entry"
+        );
+        for (key, value) in store.immutable_rows() {
+            if !key.starts_with("placement:") && !key.starts_with("direct-child:") {
+                assert_eq!(old_rows.get(&key), Some(&value), "private index damage preserves other rows");
+            }
+        }
+    }
+}
+
+/// Claim: Every result of a 32-result segment with no debit introductions after its root and three children of one parent has its complete placement and direct-child entry, including roots; an equal retry changes no retained field and executes no index publication site. Three private damage-adapter shapes alter only a missing or foreign placement entry or a missing child entry; these inspections claim no reader corruption refusal.
+/// ´claim:history:tree-result-indexes´
+/// ´test:unit:tree-result-indexes´
+#[test]
+fn tree_result_indexes() {
+    use super::roster::{Contract, IndexRows};
+    use crate::admitted_carrier_tests::tree_fixture::tree_sequence;
+    let positions: Vec<_> = (1..=32).map(|n| n * 100).collect();
+    let chain = retain_chain(&tree_sequence(&positions, None));
+    let third = retain_chain(&tree_sequence(&[100, 200, 375], None));
+    let fixture = forks();
+    let mut store = MemoryTree::default();
+    assert_eq!(Contract::install(&mut store, &fixture.generation), Ok(true));
+    let mut expected = IndexRows::default();
+    let allowance = ReadBudget {
+        rows: 1_000_000,
+        bytes: 100_000_000,
+    };
+    // Arrival is ancestry-valid and is not sorted by either index's identity key.
+    for input in chain.iter().chain([&fixture.side[2], &third[2]]) {
+        let old = store.immutable_rows();
+        assert_eq!(
+            store
+                .commit(input, Some("unstable"), allowance, &mut Usage::default())
+                .map(|j| j.inserted),
+            Ok(true)
+        );
+        let (scope, identity, parent, depth) = input.event();
+        let segment = if chain.iter().any(|v| v.event().1 == identity) {
+            *chain[0].event().1
+        } else {
+            *identity
+        };
+        expected.placements.insert((scope.clone(), segment, depth), *identity);
+        expected.children.insert((scope.clone(), parent.copied(), *identity));
+        assert_eq!(
+            store.index_rows(),
+            expected,
+            "complete indexes include empty interiors and later siblings"
+        );
+        let after = store.immutable_rows();
+        for (key, value) in old {
+            assert_eq!(
+                after.get(&key),
+                Some(&value),
+                "index maintenance preserves every existing row"
+            );
+        }
+        let before = snapshot(&store);
+        let publications = index::PUBLICATIONS.with(std::cell::Cell::get);
+        assert_eq!(
+            store
+                .commit(input, Some("unstable"), allowance, &mut Usage::default())
+                .map(|j| j.inserted),
+            Ok(false)
+        );
+        assert_eq!(snapshot(&store), before);
+        assert_eq!(
+            index::PUBLICATIONS.with(std::cell::Cell::get),
+            publications,
+            "exact retry executes no index publication"
+        );
+    }
+    assert_eq!(
+        store
+            .introductions
+            .iter()
+            .map(|(key, value)| (*key, *value))
+            .collect::<Vec<_>>(),
+        vec![((chain[0].event().0, *chain[0].event().1, 1), *chain[0].event().1)],
+        "placement preserves the root-only sparse debit index"
+    );
+    assert_eq!(
+        store.children.get(&(chain[1].event().0, *chain[1].event().1)),
+        Some(chain[2].event().1)
+    );
+    assert_eq!(store.placements.len(), 34);
+    assert_eq!(store.direct_children.len(), 34);
+    index_damage(&chain[1], &chain[0], &fixture.generation);
+}
+
+fn index_events(events: &[Write]) {
+    assert_eq!(
+        events.iter().filter(|&&w| w == Write::Placement).count(),
+        1,
+        "placement is an interruption point"
+    );
+    assert_eq!(
+        events.iter().filter(|&&w| w == Write::DirectChild).count(),
+        1,
+        "direct child is an interruption point"
+    );
 }

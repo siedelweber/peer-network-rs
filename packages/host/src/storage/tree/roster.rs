@@ -1,6 +1,12 @@
 use super::tests::{budget, forks, snapshot};
 use super::{DeclarationUse, Error, Generation, Identity, MemoryTree, Retained, StorageError, Usage, Write};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
+
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(super) struct IndexRows {
+    pub placements: BTreeMap<(super::EpochScope, Identity, u64), Identity>,
+    pub children: BTreeSet<(super::EpochScope, Option<Identity>, Identity)>,
+}
 
 type Debit = (pn_records::ActId, Identity, Vec<u8>);
 
@@ -30,9 +36,24 @@ pub(super) trait Contract<'a>: Default {
     fn origins(&self, input: &Retained) -> Result<Vec<Debit>, Error>;
     fn selections(&self, input: &Retained) -> Vec<(DeclarationUse, Identity)>;
     fn placement(&self, input: &Retained) -> Placement;
+    fn index_rows(&self) -> IndexRows;
     fn damage(&mut self, input: &'a Retained, parent: &'a Retained, damage: Damage);
 }
 impl<'a> Contract<'a> for MemoryTree<'a> {
+    fn index_rows(&self) -> IndexRows {
+        IndexRows {
+            placements: self
+                .placements
+                .iter()
+                .map(|((s, g, d), v)| (((*s).clone(), *g, *d), *v))
+                .collect(),
+            children: self
+                .direct_children
+                .iter()
+                .map(|((s, p, i), ())| ((*s).clone(), *p, *i))
+                .collect(),
+        }
+    }
     fn placement(&self, input: &Retained) -> Placement {
         let key = (input.event().0, *input.event().1);
         Placement {
@@ -48,6 +69,20 @@ impl<'a> Contract<'a> for MemoryTree<'a> {
         }
     }
     fn damage(&mut self, input: &'a Retained, parent: &'a Retained, damage: Damage) {
+        let (scope, identity, ancestor, depth) = input.event();
+        if matches!(
+            damage,
+            Damage::MissingPlacement | Damage::ForeignPlacement | Damage::MissingChild
+        ) {
+            let segment = self.results[&(scope, *identity)].segment;
+            match damage {
+                Damage::MissingPlacement => self.placements.erase(&(scope, segment, depth)),
+                Damage::ForeignPlacement => *self.placements.get_mut(&(scope, segment, depth)).unwrap() = *parent.event().1,
+                Damage::MissingChild => self.direct_children.erase(&(scope, ancestor.copied(), *identity)),
+                _ => unreachable!("index damage only"),
+            }
+            return;
+        }
         if matches!(damage, Damage::Observation) {
             let version = &input
                 .declarations()
@@ -91,7 +126,9 @@ impl<'a> Contract<'a> for MemoryTree<'a> {
                 vintage.key.act.sequence += 50;
                 introduction.vintage = Box::leak(Box::new(vintage));
             }
-            Damage::Observation => unreachable!("handled before borrowing the result"),
+            Damage::Observation | Damage::MissingPlacement | Damage::ForeignPlacement | Damage::MissingChild => {
+                unreachable!("handled before borrowing the result")
+            }
         }
     }
     fn install(&mut self, input: &'a Generation) -> Result<bool, Error> {
@@ -143,6 +180,12 @@ impl<'a> Contract<'a> for MemoryTree<'a> {
         for (key, value) in self.children.iter() {
             rows.insert(format!("child:{key:?}"), format!("{value:?}"));
         }
+        for (key, value) in self.placements.iter() {
+            rows.insert(format!("placement:{key:?}"), format!("{value:?}"));
+        }
+        for (key, value) in self.direct_children.iter() {
+            rows.insert(format!("direct-child:{key:?}"), format!("{value:?}"));
+        }
         for generation in &self.generations {
             rows.insert(
                 format!("generation:{:?}", generation.declaration.scope),
@@ -185,9 +228,20 @@ pub(super) fn fork_conformance<A: Contract<'static>>() {
     let right = &fixture.side[2];
     let mut store = A::default();
     assert_eq!(store.install(&fixture.generation), Ok(true));
+    let mut expected_indexes = IndexRows::default();
     for input in [root, ancestor, right, left, descendant, &fixture.other_root[0]] {
         let before = store.immutable_rows();
         assert_eq!(store.write(input), Ok(true), "a new sibling or root is accepted");
+        let (scope, identity, parent, depth) = input.event();
+        expected_indexes
+            .placements
+            .insert((scope.clone(), store.placement(input).segment, depth), *identity);
+        expected_indexes.children.insert((scope.clone(), parent.copied(), *identity));
+        assert_eq!(
+            store.index_rows(),
+            expected_indexes,
+            "every result has exactly its placement and direct-child entry"
+        );
         let after = store.immutable_rows();
         for (key, row) in before {
             assert_eq!(
@@ -330,6 +384,9 @@ pub(super) fn interruption_conformance<A: Contract<'static>>() {
 
 #[derive(Clone, Copy, Debug)]
 pub(super) enum Damage {
+    MissingPlacement,
+    ForeignPlacement,
+    MissingChild,
     ParentDepth,
     InheritedUse,
     Observation,

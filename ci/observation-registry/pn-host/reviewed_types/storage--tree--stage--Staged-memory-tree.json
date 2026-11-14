@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::stage::Staged",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/stage.rs",
+    "syntax": "pub (super) struct Staged < 'a > { pub node : Node < 'a > , pub placement : (PlacementKey < 'a > , Identity) , }"
+  }
+}

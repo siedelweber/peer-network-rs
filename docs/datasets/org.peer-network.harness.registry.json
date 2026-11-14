@@ -2970,6 +2970,7 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::tests::tree_result_indexes",
         "pn-host::storage::tree::tests::tree_index_reservations",
         "pn-host::storage::tree::tests::tree_writer_ranges",
         "pn-host::storage::tree::tests::tree_writer_interruptions",

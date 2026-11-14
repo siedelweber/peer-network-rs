@@ -2,8 +2,8 @@
 //! (´[ROOT-amend:storage:admitted-transaction]´)
 
 use super::{
-    DebitVintage, Descriptor, EpochScope, Error, Generation, Identity, Installed, Introduction, Meter, Node, Retained, Selected,
-    StorageError, Version, Write, unqualified,
+    ChildKey, DebitVintage, Descriptor, EpochScope, Error, Generation, Identity, Installed, Introduction, Meter, Node,
+    PlacementKey, Retained, Selected, StorageError, Version, Write, unqualified,
 };
 
 pub(super) struct Plan<'a> {
@@ -16,10 +16,17 @@ pub(super) struct Plan<'a> {
     pub local: Vec<&'a DebitVintage>,
 }
 
+pub(super) struct Staged<'a> {
+    pub node: Node<'a>,
+    pub placement: (PlacementKey<'a>, Identity),
+}
+
 struct Candidate<'a> {
     scope: Option<&'a EpochScope>,
     descriptor: Option<Descriptor>,
     header: bool,
+    placement: Option<(PlacementKey<'a>, Identity)>,
+    child: Option<ChildKey<'a>>,
     node: Node<'a>,
 }
 
@@ -27,6 +34,8 @@ enum Mutation<'a> {
     Scope(&'a EpochScope),
     Segment(Descriptor),
     Header,
+    Placement(PlacementKey<'a>, Identity),
+    DirectChild(ChildKey<'a>),
     Chunk(&'a [u8]),
     Observation(&'a Version),
     Reference(Selected<'a>),
@@ -37,6 +46,26 @@ enum Mutation<'a> {
 }
 
 impl<'a> Candidate<'a> {
+    fn empty(plan: &Plan<'a>) -> Self {
+        Self {
+            scope: None,
+            descriptor: None,
+            header: false,
+            placement: None,
+            child: None,
+            node: Node {
+                input: plan.input,
+                label: &plan.generation.label,
+                generation: plan.generation.ordinal,
+                segment: plan.segment,
+                chunks: Vec::new(),
+                references: Vec::new(),
+                reference_index: Vec::new(),
+                observations: Vec::new(),
+                introductions: Vec::new(),
+            },
+        }
+    }
     fn write(&mut self, mutation: Mutation<'a>, point: &mut impl FnMut(Write) -> Result<(), Error>) -> Result<(), Error> {
         let event = match mutation {
             Mutation::Scope(scope) => {
@@ -50,6 +79,14 @@ impl<'a> Candidate<'a> {
             Mutation::Header => {
                 self.header = true;
                 Write::Result
+            }
+            Mutation::Placement(key, identity) => {
+                self.placement = Some((key, identity));
+                Write::Placement
+            }
+            Mutation::DirectChild(key) => {
+                self.child = Some(key);
+                Write::DirectChild
             }
             Mutation::Chunk(bytes) => {
                 let index = self.node.chunks.len();
@@ -90,23 +127,8 @@ pub(super) fn result<'a>(
     plan: &Plan<'a>,
     meter: &mut Meter,
     point: &mut impl FnMut(Write) -> Result<(), Error>,
-) -> Result<Node<'a>, Error> {
-    let mut candidate = Candidate {
-        scope: None,
-        descriptor: None,
-        header: false,
-        node: Node {
-            input: plan.input,
-            label: &plan.generation.label,
-            generation: plan.generation.ordinal,
-            segment: plan.segment,
-            chunks: Vec::new(),
-            references: Vec::new(),
-            reference_index: Vec::new(),
-            observations: Vec::new(),
-            introductions: Vec::new(),
-        },
-    };
+) -> Result<Staged<'a>, Error> {
+    let mut candidate = Candidate::empty(plan);
     let observations = plan
         .input
         .declarations()
@@ -145,6 +167,11 @@ pub(super) fn result<'a>(
         candidate.write(Mutation::Segment(descriptor), point)?;
     }
     candidate.write(Mutation::Header, point)?;
+    let (scope, identity, parent, depth) = plan.input.event();
+    let placement = ((scope, plan.segment, depth), *identity);
+    let child = (scope, parent.copied(), *identity);
+    candidate.write(Mutation::Placement(placement.0, placement.1), point)?;
+    candidate.write(Mutation::DirectChild(child), point)?;
     for chunk in plan.input.bytes().chunks(super::super::MAX_PACKAGE) {
         candidate.write(Mutation::Chunk(chunk), point)?;
     }
@@ -164,7 +191,9 @@ pub(super) fn result<'a>(
     for index in 0..plan.local.len() {
         candidate.write(Mutation::Member(index), point)?;
     }
-    if !candidate.header
+    if candidate.placement != Some(placement)
+        || candidate.child != Some(child)
+        || !candidate.header
         || candidate.scope.is_some() != plan.new_scope
         || candidate.descriptor != plan.descriptor
         || candidate.node.chunks.len() != plan.input.bytes().len().div_ceil(super::super::MAX_PACKAGE)
@@ -180,7 +209,10 @@ pub(super) fn result<'a>(
         return Err(StorageError::CorruptHistory.into());
     }
     candidate.write(Mutation::Publish, point)?;
-    Ok(candidate.node)
+    Ok(Staged {
+        node: candidate.node,
+        placement,
+    })
 }
 
 struct GenerationCandidate<'a> {

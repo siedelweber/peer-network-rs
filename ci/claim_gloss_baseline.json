@@ -748,6 +748,7 @@
     "pn-host::storage::tree::tests::tree_generation_atomic": "",
     "pn-host::storage::tree::tests::tree_generation_refusals": "",
     "pn-host::storage::tree::tests::tree_index_reservations": "",
+    "pn-host::storage::tree::tests::tree_result_indexes": "",
     "pn-host::storage::tree::tests::tree_writer_atomic": "",
     "pn-host::storage::tree::tests::tree_writer_forks": "",
     "pn-host::storage::tree::tests::tree_writer_input_budget": "",

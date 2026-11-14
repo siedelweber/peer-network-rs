@@ -4491,6 +4491,14 @@
       "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
     },
     {
+      "operation": "pn-host::storage::tree::tests::tree_result_indexes",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-result-indexes",
+      "before": "",
+      "after": "Claim: Every result of a 32-result segment with no debit introductions after its root and three children of one parent has its complete placement and direct-child entry, including roots; an equal retry changes no retained field and executes no index publication site. Three private damage-adapter shapes alter only a missing or foreign placement entry or a missing child entry; these inspections claim no reader corruption refusal.",
+      "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
       "operation": "pn-host::storage::tree::tests::tree_writer_atomic",
       "path": "packages/host/src/storage/tree/tests.rs",
       "claim": "HOST::claim:history:tree-writer-atomic",
@@ -4503,7 +4511,7 @@
       "path": "packages/host/src/storage/tree/tests.rs",
       "claim": "HOST::claim:history:tree-writer-forks",
       "before": "",
-      "after": "Claim: Publicly admitted fixture packages form two roots and a fork with independent debit origins; a child inherits only its ancestors' complete vintages and original selections, a side retry is unchanged, and differing context or same-position content refuses without writing. The first child continues its parent segment without a descriptor and the later child opens one while preserving the first-child row.",
+      "after": "Claim: Publicly admitted fixture packages form two roots and a fork with independent debit origins; a child inherits only its ancestors' complete vintages and original selections, a side retry is unchanged, and differing context or same-position content refuses without writing. The first child continues its parent segment without a descriptor and the later child opens one while preserving the first-child row; each admission has exactly its complete placement and direct-child entries.",
       "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
     },
     {
@@ -4519,7 +4527,7 @@
       "path": "packages/host/src/storage/tree/tests.rs",
       "claim": "HOST::claim:history:tree-writer-interruptions",
       "before": "",
-      "after": "Claim: Each staged mutation of an ordinary child, a fork with a new debit origin, and a second root can be interrupted with the complete store unchanged and a successful retry; mutation order ends with all introduction memberships before publication.",
+      "after": "Claim: Each staged mutation of an ordinary child, a fork with a new debit origin, and a second root can be interrupted with the complete store unchanged and a successful retry; the placement and direct-child entries are staged mutations, and mutation order ends with all introduction memberships before publication.",
       "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
     },
     {

@@ -4,6 +4,6 @@
     "item": "storage::tree::stage::Mutation",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/stage.rs",
-    "syntax": "enum Mutation < 'a > { Scope (& 'a EpochScope) , Segment (Descriptor) , Header , Chunk (& 'a [u8]) , Observation (& 'a Version) , Reference (Selected < 'a >) , Debit (Introduction < 'a >) , DebitChunk (usize , & 'a [u8]) , Member (usize) , Publish , }"
+    "syntax": "enum Mutation < 'a > { Scope (& 'a EpochScope) , Segment (Descriptor) , Header , Placement (PlacementKey < 'a > , Identity) , DirectChild (ChildKey < 'a >) , Chunk (& 'a [u8]) , Observation (& 'a Version) , Reference (Selected < 'a >) , Debit (Introduction < 'a >) , DebitChunk (usize , & 'a [u8]) , Member (usize) , Publish , }"
   }
 }
