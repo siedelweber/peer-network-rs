@@ -28,7 +28,7 @@ class DeploymentClaims(unittest.TestCase):
         from deployment_claims import Refusal, project, compare_edges, source_units, validate
         from claims import conformance_marks, StructuralError
         statement = dict(kind='statement', name='cond:deployment:standing-work',
-                         paper_tag='network-v0.32.0', classification='split',
+                         paper_tag='network-v0.33.0', classification='split',
                          included='Accepted counts.', excluded='Clock truth.',
                          reason='Counts follow from inputs; clocks do not.',
                          witness_route='rec:testing:fixture-route', evidence_status='scope-only')
@@ -244,7 +244,9 @@ def git(root, *args):
 
 def compact_json_fixture(source, destination):
     """Keep every dataset value without repeating pretty-print scan work."""
-    Path(destination).write_text(compact_json_content(Path(source).read_text()))
+    text = Path(source).read_text()
+    # Historical bindings cover complete lines, including generated provenance.
+    Path(destination).write_text(text if 'network-v0.32.0' in text else compact_json_content(text))
     return destination
 
 
@@ -306,8 +308,8 @@ class Correspondence(unittest.TestCase):
                 validate_again.assert_called_once_with(original)
         from design import paper_edition_mentions
         paper_edition_mentions.cache_clear()
-        self.assertEqual(paper_edition_mentions('network-v0.32.0'), ((1, 'network-v0.32.0'),))
-        self.assertEqual(paper_edition_mentions('network-v0.32.0'), ((1, 'network-v0.32.0'),))
+        self.assertEqual(paper_edition_mentions('network-v0.33.0'), ((1, 'network-v0.33.0'),))
+        self.assertEqual(paper_edition_mentions('network-v0.33.0'), ((1, 'network-v0.33.0'),))
         self.assertEqual(paper_edition_mentions.cache_info().hits, 1)
         self.assertEqual(paper_edition_mentions('network-v0.31.0'), ((1, 'network-v0.31.0'),))
 
@@ -326,7 +328,7 @@ class Correspondence(unittest.TestCase):
                 tag_path.write_text(tag)
             with self.assertRaisesRegex(ValueError, 'external TAG'):
                 published_correspondence(rows, path)
-        tag_path.write_text('network-v0.32.0\n')
+        tag_path.write_text('network-v0.33.0\n')
         published_correspondence(rows, path)
         for field in ('paper_key', 'paper_tag'):
             changed = json.loads(json.dumps(rows))
@@ -429,6 +431,9 @@ class Correspondence(unittest.TestCase):
             destination = self.root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPOSITORY / name, destination)
+        history = json.loads((REPOSITORY / 'ci/paper-history.json').read_text())
+        history = [row for row in history if (self.root / row['path']).is_file()]
+        (self.root / 'ci/paper-history.json').write_text(json.dumps(history)+'\n')
         git(self.root, 'add', '.')
 
     @classmethod
@@ -689,6 +694,7 @@ class Correspondence(unittest.TestCase):
             self.assertIn('refused=0', result.stdout)
         self.assertEqual(PAPER_EDITION_FIXTURES, {'ci/test_design.py', 'packages/documents/tests/integration.rs'})
         self.historical_release_bindings()
+        historical_count = len(json.loads((self.root / 'ci/paper-history.json').read_text()))
         for count, name in enumerate(sorted(PAPER_EDITION_FIXTURES), 1):
             fixture = self.root / name
             fixture.parent.mkdir(parents=True, exist_ok=True)
@@ -696,7 +702,7 @@ class Correspondence(unittest.TestCase):
             git(self.root, 'add', name)
             result = self.check()
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn(f'exempt={count} historical=0 refused=0', result.stdout)
+            self.assertIn(f'exempt={count} historical={historical_count} refused=0', result.stdout)
             probe = self.root / 'not-allow-listed.txt'
             probe.write_bytes(fixture.read_bytes())
             git(self.root, 'add', probe.name)
@@ -709,7 +715,7 @@ class Correspondence(unittest.TestCase):
             git(self.root, 'add', name)
         result = self.check()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('binary=2 exempt=2 historical=0 refused=0', result.stdout)
+        self.assertIn(f'binary=2 exempt=2 historical={historical_count} refused=0', result.stdout)
 
     def historical_release_bindings(self):
         from design import check_paper_editions, historical_references

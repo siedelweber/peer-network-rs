@@ -108,7 +108,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.32.0, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
+      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.33.0, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
       "topic": "Order and standing"
     },
     {
