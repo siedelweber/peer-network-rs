@@ -416,7 +416,10 @@ impl<'a> MemoryTree<'a> {
                 let prior = meter
                     .row(|| self.results.get(&(scope, *parent)))?
                     .ok_or(Error::PredecessorMismatch)?;
-                if prior.input.event().3.checked_add(1) != Some(depth) || !input.extends(prior.input) {
+                if prior.input.event().3.checked_add(1) != Some(depth) {
+                    return Err(StorageError::CorruptHistory.into());
+                }
+                if !input.extends(prior.input) {
                     return Err(Error::PredecessorMismatch);
                 }
                 Some(prior)

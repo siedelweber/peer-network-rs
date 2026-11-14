@@ -370,7 +370,7 @@ pub(super) fn refusal_conformance<A: Contract<'static>>() {
         (Damage::Observation, Error::Storage(StorageError::CorruptHistory)),
         (Damage::DebitAct, Error::Storage(StorageError::DebitConflict)),
         (Damage::InheritedUse, Error::Storage(StorageError::SelectedContentMismatch)),
-        (Damage::ParentDepth, Error::PredecessorMismatch),
+        (Damage::ParentDepth, Error::Storage(StorageError::CorruptHistory)),
         (Damage::DebitBytes, Error::Storage(StorageError::DebitConflict)),
     ] {
         damaged::<A>(damage, false, expected);
