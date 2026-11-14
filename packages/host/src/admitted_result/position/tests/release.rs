@@ -12,11 +12,11 @@ std::thread_local! {
 }
 
 pub(in crate::admitted_result::position) fn release_site(kind: &'static str, values: &[Value]) {
-    // This observes the host's disposal invocation, not the dependency's allocator or destructor.
+    // This observes guard entry with pending values, not disposal or allocator activity.
     RELEASES.with(|events| events.borrow_mut().push((kind, values.len())));
 }
 
-/// Claim: Host cleanup sites release partial children on refusal and panic and the complete preimage on encoding refusal and panic; this observes disposal invocations, not allocator activity. A real spare-capacity buffer refuses transfer and retains its address and capacity.
+/// Claim: Each cleanup guard is entered once on refusal and unwinding with the values it is about to dispose: two completed children for the partial guard and the complete preimage for the owned guard. Disposal completeness rests on the interchange package's release witness and is not observed here; neither deallocation nor the allocator is observed. A real spare-capacity buffer refuses transfer and retains its address and capacity.
 /// ´claim:history:position-release-sites´
 /// ´test:unit:position-release-sites´
 #[test]
@@ -52,7 +52,7 @@ fn partial_cleanup() {
         assert_eq!(
             RELEASES.with(|events| events.borrow().clone()),
             [("children", 2)],
-            "partial children reach disposal once"
+            "partial guard entered once with two completed children"
         );
     }
 }
@@ -99,7 +99,7 @@ fn complete_cleanup() {
                 .copied()
                 .collect::<Vec<_>>()),
             [("owned", 1)],
-            "complete preimage reaches disposal once"
+            "owned guard entered once with complete preimage"
         );
     }
 }

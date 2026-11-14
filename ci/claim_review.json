@@ -4007,8 +4007,8 @@
       "path": "packages/host/src/admitted_result/position/tests/refusals.rs",
       "claim": "HOST::claim:history:position-private-parent",
       "before": "",
-      "after": "Claim: Private position validation separately refuses changed initial name or history, child context, disclosed ancestry and duplicate records; scope-changing child components are not transition admission witnesses.",
-      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+      "after": "Claim: Public `from_package` refuses an admitted child paired with a position from another admitted genesis declaration. The other caller-parent pairings are witnessed privately, alongside initial name or history, absent disclosed parent, missing or duplicate records and child-context refusals; scope-changing components are not transition admission witnesses.",
+      "review": "Public admitted-package pairing robustness for child genesis; remaining caller-pairing checks and absent-parent/missing-record refusals are private boundary witnesses. No transition or store evidence."
     },
     {
       "operation": "pn-host::admitted_result::position::tests::release::position_nonempty_difference",
@@ -4023,8 +4023,8 @@
       "path": "packages/host/src/admitted_result/position/tests/release.rs",
       "claim": "HOST::claim:history:position-release-sites",
       "before": "",
-      "after": "Claim: Host cleanup sites release partial children on refusal and panic and the complete preimage on encoding refusal and panic; this observes disposal invocations, not allocator activity. A real spare-capacity buffer refuses transfer and retains its address and capacity.",
-      "review": "Finite nested-byte conformance against the pinned public publication writer; private-boundary robustness of malformed inputs; disposal-invocation observation and refusal classification. No new admission, allocator census, transition capability or store evidence."
+      "after": "Claim: Each cleanup guard is entered once on refusal and unwinding with the values it is about to dispose: two completed children for the partial guard and the complete preimage for the owned guard. Disposal completeness rests on the interchange package's release witness and is not observed here; neither deallocation nor the allocator is observed. A real spare-capacity buffer refuses transfer and retains its address and capacity.",
+      "review": "Guard entry is observed once with pending values on refusal and unwinding. Disposal completeness rests on the interchange release witness, not this counter; no disposal-call deletion kill, deallocation or allocator observation is claimed. A dependency release-inventory seam is set aside because the dependency already witnesses completeness."
     },
     {
       "operation": "pn-host::admitted_result::position::tests::tree_carrier_retention",

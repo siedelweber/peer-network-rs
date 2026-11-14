@@ -40,19 +40,21 @@ fn position_private_input() {
     assert!(Input::carrier(original).is_ok());
 }
 
-/// Claim: Private position validation separately refuses changed initial name or history, child context, disclosed ancestry and duplicate records; scope-changing child components are not transition admission witnesses.
+/// Claim: Public `from_package` refuses an admitted child paired with a position from another admitted genesis declaration. The other caller-parent pairings are witnessed privately, alongside initial name or history, absent disclosed parent, missing or duplicate records and child-context refusals; scope-changing components are not transition admission witnesses.
 /// ´claim:history:position-private-parent´
 /// ´test:unit:position-private-parent´
 #[test]
 fn position_private_parent() {
+    public_parent_pairing();
     let root = Input::admitted(&packages().0).unwrap();
     let child = Input::admitted(&packages().1).unwrap();
-    for case in ["initial-name", "initial-history", "duplicate-record"] {
+    for case in ["initial-name", "initial-history", "duplicate-record", "missing-record"] {
         let mut frame = root.frame.clone();
         match case {
             "initial-name" => frame.marker_policy.initial_marker.push_str("-changed"),
             "initial-history" => frame.marker_history.identity.push_str("-changed"),
             "duplicate-record" => frame.marker_history.records.push(frame.marker_history.records[0].clone()),
+            "missing-record" => frame.marker_history.records.clear(),
             _ => unreachable!(),
         }
         invalid(input(&frame, root.genesis).validate(None), case);
@@ -70,7 +72,48 @@ fn position_private_parent() {
     ancestry_refusals(&root, &child);
 }
 
+fn public_parent_pairing() {
+    let (child, verifier) = fixture::complete();
+    let mut disclosure = child.disclosures();
+    disclosure.frames.truncate(1);
+    disclosure
+        .causes
+        .declarations
+        .iter_mut()
+        .find(|d| d.id.namespace == "deployment")
+        .unwrap()
+        .id
+        .edition += 1;
+    let other = d::restore(disclosure, &verifier).unwrap();
+    let parent = position(&other, None);
+    assert_eq!(
+        Position::from_package(
+            &child,
+            Some(&parent),
+            RECIPE,
+            usize::MAX,
+            &mut EncodingUsage::default(),
+            |_| Ok(())
+        )
+        .map(|_| ()),
+        Err(Error::InvalidPosition),
+        "public parent pairing refuses child-genesis mismatch"
+    );
+}
+
 fn ancestry_refusals(root: &Input<'_>, child: &Input<'_>) {
+    let mut initial_only = root.frame.clone();
+    initial_only.marker_history.markers.truncate(1);
+    recognize(&mut initial_only);
+    let mut absent = child.frame.clone();
+    absent.closure.markers = initial_only.closure.markers;
+    let changed = Input {
+        frame: &absent,
+        genesis: child.genesis,
+        initial: child.initial,
+        terminal: child.terminal,
+    };
+    invalid(changed.validate(Some(root)), "disclosed-parent-absent");
     let mut parent_frame = root.frame.clone();
     parent_frame.marker_history.markers[1].history_position += 10;
     recognize(&mut parent_frame);
