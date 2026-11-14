@@ -268,6 +268,9 @@
     },
     {
       "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Require marker policy identity and edition, lineage and interpretation, accepted sets encoded as policy-selected lists or commitments with uniquely verifiable public openings; recover the entire set and verify every member against the policy and both acceptance bounds. Reject an asserted total or unavailable, ambiguous or invalid opening in their place.",
+      "conformance": [
+        "realizes{``post:deployment:canonical-standing-publication``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}"
+      ],
       "decision": "dec:design:publication",
       "fixture": "canonical-package-cases",
       "hold": "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility.",

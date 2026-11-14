@@ -39,6 +39,10 @@
     {
       "ambiguity": "Canonical numeric encoding, actor/support order, exact equality handling and a deterministic refinement policy are deployment obligations not yet concretely specified. (subsec:deployment:canonical-standing-encoding) (post:deployment:canonical-standing-publication) (cond:deployment:canonical-replay)",
       "class": "OWNER-CALL",
+      "conformance": [
+        "realizes{``cond:deployment:canonical-replay``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}",
+        "realizes{``post:deployment:canonical-standing-publication``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}"
+      ],
       "id": "Q04",
       "instruction": "JSON and rational endpoints are safe as explicitly provisional study choices only. Do not advertise them as the paper's canonical encoding or treat an equality-straddling interval as a passing comparison.",
       "reading": "Study judgment: Propose JSON and rational endpoints as study judgments only; hold bitwise and equality claims until the canonical contract is declared.",

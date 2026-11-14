@@ -424,8 +424,8 @@ RELEASE_QUESTIONS_PIN = 'ca444a0a0a6a10246b2679e176ccc5ea1073e206331cd243bd2c940
 
 
 CRATES_PIN = 'bed338b467a73299cd0bab328c1b3ccbf897d37fdfa58942b4f3bf7108d21b22'
-BITES_PIN = '6cf7ab7af29332b1c0002a4e5bb1a8093bb37bec3ee634f44f515719e682f790'
-QUESTIONS_PIN = '4d70369ba5138288fe9d0edca525220de9015a254b902122d7cca601f68dba3b'
+BITES_PIN = '80adcc0d0c1e09d9873e1743d9312578b5fbf01345e3a806d9d75886587cd2e8'
+QUESTIONS_PIN = '121b376ebfba8f3a7c97cc2703ace8b2a4118df875764501c189d5e400e42d39'
 
 def published_correspondence(rows, path=None):
     """Join tagged published quantities to supplied external build values exactly."""

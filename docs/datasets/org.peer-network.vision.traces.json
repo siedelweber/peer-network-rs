@@ -133,6 +133,9 @@
       "name": "policy-schedules"
     },
     {
+      "conformance": [
+        "realizes{``post:deployment:canonical-standing-publication``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}"
+      ],
       "labels": [
         "post:network:host-contract",
         "post:deployment:canonical-standing-publication",

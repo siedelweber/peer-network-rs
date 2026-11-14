@@ -87,6 +87,9 @@
       "slice": "pn-epoch: final admission and schedules"
     },
     {
+      "conformance": [
+        "realizes{``post:deployment:canonical-standing-publication``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}"
+      ],
       "dependency": "Study judgment: requires all binding outputs from bites 1–7 and a maintainer/deployment decision on canonical encoding.",
       "labels": [
         "post:network:host-contract",

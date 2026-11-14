@@ -3027,7 +3027,7 @@
       "label": "post:network:host-contract",
       "portions": [
         {
-          "clause": "Premise only: the public causes and declared procedure reproduce the binding result",
+          "clause": "Premise only: published attempts are checked causes of the binding result",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -13947,7 +13947,7 @@
       "label": "prop:epoch:epoch-replay-determinism",
       "portions": [
         {
-          "clause": "Premise only: the declared procedure and public inputs determine the reproduced result",
+          "clause": "Premise only: the disclosed inputs and attempts determine the derivation",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -32757,7 +32757,8 @@
       "record_routes": [],
       "records": [
         "ROOT::amend:decomposition:deployment-evidence",
-        "ROOT::model:design:storage-history"
+        "ROOT::model:design:storage-history",
+        "ROOT::rule:design:binary64-evidence"
       ],
       "routes": [],
       "status": "designed",
@@ -32766,22 +32767,39 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-replay",
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "post:deployment:replay-verification",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:design:rung-proof-contract"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::resol:design:replay-paper-contract"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::resol:design:verification-canonical-amendment"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::rule:design:binary64-evidence"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::amend:design:rung-proof-contract",
+        "ROOT::resol:design:replay-paper-contract",
+        "ROOT::resol:design:verification-canonical-amendment",
+        "ROOT::rule:design:binary64-evidence"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -32794,27 +32812,63 @@
       "label": "cond:deployment:canonical-replay",
       "portions": [
         {
-          "clause": "Premise only: identical public inputs and procedure must reproduce verdicts",
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:design:applied-dyadic-solve"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
-          "clause": "Premise only: identical verdicts under the same declared procedure",
+          "clause": "Premise only: the published attempted record determines order, completeness and verdicts from stated endpoints",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::amend:design:replay-roles"
         },
         {
-          "clause": "The clause requires equal replay verdicts; a checked straddle establishes a sound enclosure but does not require another build to remain indecisive, so the alternative route needs amended text.",
+          "clause": "Premise only: the published attempts and endpoint verdicts are independently checked",
+          "record": "ROOT::amend:design:replay-roles"
+        },
+        {
+          "clause": "The released principle requires public attempted evidence and the reader’s own sound evaluation; it requires neither a producer build nor reproduction of independently evaluated endpoints.",
           "record": "ROOT::amend:testing:canonical-replay-verification"
         },
         {
-          "clause": "Premise only: equal verdicts require the same declared procedure",
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::amend:testing:replay-conformance-scope"
         },
         {
-          "clause": "Premise only: the same declared procedure must reproduce all verdicts",
+          "clause": "Premise only: the public attempted record fixes exact objects, order, completeness and endpoint verdicts",
+          "record": "ROOT::amend:testing:replay-conformance-scope"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::model:design:storage-history"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::resol:design:replay-paper-contract"
         },
         {
-          "clause": "Premise only: the tagged condition requires identical replay verdicts; no cross-build realization is claimed here",
+          "clause": "Premise only: attempted positive rungs are complete and ordered through the first PASS or the least positive rung",
+          "record": "ROOT::resol:design:replay-paper-contract"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::rule:design:refinement"
+        },
+        {
+          "clause": "Premise only: the public attempted record fixes the verdicts to check, while a reader uses its own sound evaluation; this legacy implementation is not reclassified as implementing that design",
           "record": "ROOT::rule:design:refinement"
         }
       ],
@@ -33738,11 +33792,31 @@
       "label": "post:deployment:canonical-standing-publication",
       "portions": [
         {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "EPOCH::def:compiler:completed-package"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
           "clause": "Premise only: publication requires complete versioned deterministic bytes",
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
-          "clause": "Premise only: verdict identity includes indecision",
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::dec:design:publication"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::req:vision:publication"
+        },
+        {
+          "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+          "record": "ROOT::resol:design:replay-paper-contract"
+        },
+        {
+          "clause": "Premise only: exact objects and canonical encoded bytes agree, independently evaluated endpoints need not",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -36240,15 +36314,15 @@
     },
     {
       "category": "total",
-      "designed": 400,
+      "designed": 401,
       "held": 67,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "400",
+          "exact": "401",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "400",
+          "num": "401",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36293,10 +36367,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "855",
+          "exact": "854",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "855",
+          "num": "854",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36335,7 +36409,7 @@
       "record_granular": 32,
       "tentative": 7,
       "total": 1357,
-      "unassigned": 855
+      "unassigned": 854
     },
     {
       "category": "total",
@@ -37032,15 +37106,15 @@
     },
     {
       "category": "crate",
-      "designed": 4,
+      "designed": 5,
       "held": 3,
       "name": "pn-replay",
       "number_forms": {
         "designed": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37085,10 +37159,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "20",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37127,7 +37201,7 @@
       "record_granular": 0,
       "tentative": 0,
       "total": 27,
-      "unassigned": 20
+      "unassigned": 19
     },
     {
       "category": "crate",
@@ -37923,15 +37997,15 @@
     },
     {
       "category": "kind",
-      "designed": 51,
+      "designed": 52,
       "held": 21,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "51",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37976,10 +38050,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "191",
+          "exact": "190",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "191",
+          "num": "190",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38018,7 +38092,7 @@
       "record_granular": 4,
       "tentative": 5,
       "total": 266,
-      "unassigned": 191
+      "unassigned": 190
     },
     {
       "category": "kind",
@@ -39309,15 +39383,15 @@
     },
     {
       "category": "bite",
-      "designed": 279,
+      "designed": 280,
       "held": 27,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "279",
+          "exact": "280",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "279",
+          "num": "280",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39362,10 +39436,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 157",
+          "exact": "1 156",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 157",
+          "num": "1 156",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39404,17 +39478,17 @@
       "record_granular": 21,
       "tentative": 13,
       "total": 1485,
-      "unassigned": 1157
+      "unassigned": 1156
     },
     {
       "category": "classification-identities",
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "65",
+          "exact": "64",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "65",
+          "num": "64",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39425,7 +39499,7 @@
           "exact_digits": 32
         }
       },
-      "total": 65
+      "total": 64
     },
     {
       "category": "record-coverage",
@@ -40075,14 +40149,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 207,
+      "exact_citing": 211,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "207",
+          "exact": "211",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "207",
+          "num": "211",
           "num_exact": true,
           "num_relation": "="
         },

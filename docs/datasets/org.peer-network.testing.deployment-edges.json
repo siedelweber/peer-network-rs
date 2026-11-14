@@ -78,6 +78,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "EPOCH::def:compiler:completed-package",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
       "reason": "The carrier retains and validates disclosed audit evidence under its explicit verifier premises, without asserting external finality.",
       "relation": "realizes",
       "source": "EPOCH::rule:admission:semantic-carrier",
@@ -148,6 +155,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:decomposition:deployment-evidence",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
       "relation": "realizes",
       "source": "ROOT::amend:decomposition:deployment-evidence",
@@ -176,10 +190,31 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:applied-dyadic-solve",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
       "relation": "realizes",
       "source": "ROOT::amend:design:bite-six-conserved-solve",
       "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:epoch-authentication-fields",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:epoch-authentication-fields",
+      "target": "post:deployment:canonical-standing-publication"
     },
     {
       "conditional_on": "",
@@ -194,6 +229,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:design:host-operational-declaration",
       "target": "cond:deployment:boundary-search-evidence"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:host-operational-declaration",
+      "target": "cond:deployment:canonical-replay"
     },
     {
       "conditional_on": "",
@@ -239,10 +281,24 @@
     },
     {
       "conditional_on": "",
-      "reason": "This specifies sound evidence checking, not its still-conditional status as canonical replay.",
+      "reason": "This specifies the released verification scope without claiming its implementation.",
       "relation": "realizes",
       "source": "ROOT::amend:design:replay-roles",
-      "target": "ROOT::open:design:verification-canonical-amendment"
+      "target": "ROOT::resol:design:verification-canonical-amendment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:replay-roles",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:rung-proof-contract",
+      "target": "post:deployment:replay-verification"
     },
     {
       "conditional_on": "",
@@ -414,10 +470,17 @@
     },
     {
       "conditional_on": "",
-      "reason": "Reproduction supplies the currently claimed route; the alternative's canonical status remains explicitly held.",
+      "reason": "The public-record checks are the included scope, not an assertion that every enclosure is sound.",
       "relation": "realizes",
       "source": "ROOT::amend:testing:replay-conformance-scope",
       "target": "amend:testing:canonical-replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:testing:replay-conformance-scope",
+      "target": "cond:deployment:canonical-replay"
     },
     {
       "conditional_on": "",
@@ -470,6 +533,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:publication",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
       "reason": "The public run configuration selects an edition, not its private concealment premise.",
       "relation": "realizes",
       "source": "ROOT::dec:devnet:elements",
@@ -498,6 +568,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::model:design:storage-history",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "Stored editions and retained bytes preserve earlier supplied history; they do not prove absence of an undisclosed alternative history.",
       "relation": "realizes",
       "source": "ROOT::model:design:storage-history",
@@ -523,13 +600,6 @@
       "relation": "realizes",
       "source": "ROOT::open:design:proposal-carriage",
       "target": "ROOT::open:identity:act-realization-admission"
-    },
-    {
-      "conditional_on": "amend:testing:canonical-replay-verification",
-      "reason": "Treating certificate-only verification as canonical replay needs an amendment to the tagged same-procedure requirement; reproduction remains the claimed route today.",
-      "relation": "relies",
-      "source": "ROOT::open:design:verification-canonical-amendment",
-      "target": "amend:testing:canonical-replay-verification"
     },
     {
       "conditional_on": "",
@@ -659,10 +729,52 @@
     },
     {
       "conditional_on": "",
-      "reason": "This resolution keeps the conditional canonical-verification claim in that hold and establishes only the independent reproduction and certificate-verification scopes.",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::req:vision:publication",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The released principle settles the textual scope while implementation and identity admission remain owed.",
       "relation": "realizes",
       "source": "ROOT::resol:design:replay-paper-contract",
-      "target": "ROOT::open:design:verification-canonical-amendment"
+      "target": "ROOT::resol:design:verification-canonical-amendment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:replay-paper-contract",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:replay-paper-contract",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:replay-paper-contract",
+      "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This resolution uses the exact-record verification scope and does not assert enclosure soundness before a reader checks it.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:verification-canonical-amendment",
+      "target": "amend:testing:canonical-replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::resol:design:verification-canonical-amendment",
+      "target": "post:deployment:replay-verification"
     },
     {
       "conditional_on": "",
@@ -680,6 +792,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:binary64-evidence",
+      "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
       "reason": "This rule decides the replacement contract without claiming that current Work-bearing bytes implement it.",
       "relation": "realizes",
       "source": "ROOT::rule:design:build-relative-work",
@@ -691,6 +810,13 @@
       "relation": "realizes",
       "source": "ROOT::rule:design:refinement",
       "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:refinement",
+      "target": "cond:deployment:canonical-replay"
     },
     {
       "conditional_on": "",
@@ -785,6 +911,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.bites:7",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
       "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
       "relation": "realizes",
       "source": "input:org.peer-network.design.implementation-claims:rung-policy-cases",
@@ -826,6 +959,13 @@
       "target": "subsec:deployment:transparency-of-protocol-formulas"
     },
     {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.implementation-traces:publication",
+      "target": "post:deployment:canonical-standing-publication"
+    },
+    {
       "conditional_on": "amend:testing:standing-work-envelopes",
       "reason": "The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.",
       "relation": "relies",
@@ -845,6 +985,20 @@
       "relation": "realizes",
       "source": "input:org.peer-network.design.inventory:rem:frontiers:priority",
       "target": "cond:deployment:standing-work"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.questions:Q04",
+      "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.questions:Q04",
+      "target": "post:deployment:canonical-standing-publication"
     },
     {
       "conditional_on": "",
@@ -964,6 +1118,13 @@
       "relation": "realizes",
       "source": "input:org.peer-network.vision.traces:policy-schedules",
       "target": "subsec:deployment:transparency-of-protocol-formulas"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.vision.traces:publication",
+      "target": "post:deployment:canonical-standing-publication"
     }
   ]
 }
