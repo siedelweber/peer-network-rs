@@ -73,6 +73,18 @@ def historical_references():
             raise ValueError('paper history: unknown historical class')
         if row['path'] in PAPER_EDITION_FIXTURES or row['path'] == PAPER_HISTORY.as_posix():
             raise ValueError('paper history: invalid binding path')
+    for row in rows:
+        marks = re.finditer(r'\b(?:premise|relies|realizes)\{[^}]*\}', row['line'])
+        if any(row['release'] in mark.group() for mark in marks):
+            raise ValueError('paper history: historical mention inside normative mark')
+        path = Path(row['path'])
+        generated = (path.parent.name == 'datasets' and path.parent.parent.name == 'docs'
+                     or Path('docs/templates', row['path'] + '.j2').is_file())
+        sources = [source for source in rows if source['path'] == row['derived_from']
+                   and source['path'] != row['path'] and source['release'] == row['release']
+                   and source['class'] == row['class']]
+        if generated and len(sources) != 1:
+            raise ValueError('paper history: generated occurrence lacks unique registered source row')
     return rows
 
 
@@ -423,9 +435,9 @@ REFRESHED_CONSTANTS_PIN = '13f6d05292d293b263852dbdeebeaa07bd60f74cf25f9a7ac41cc
 RELEASE_QUESTIONS_PIN = 'ca444a0a0a6a10246b2679e176ccc5ea1073e206331cd243bd2c940bf2a37c65'
 
 
-CRATES_PIN = 'bed338b467a73299cd0bab328c1b3ccbf897d37fdfa58942b4f3bf7108d21b22'
-BITES_PIN = '80adcc0d0c1e09d9873e1743d9312578b5fbf01345e3a806d9d75886587cd2e8'
-QUESTIONS_PIN = '121b376ebfba8f3a7c97cc2703ace8b2a4118df875764501c189d5e400e42d39'
+CRATES_PIN = '145b9f7bb25895cfa78adeaf78bc1077f119af6c02949c2062098b7a210675cc'
+BITES_PIN = 'cba90e75dc8ddd40a02821b667e0634719aedeeda88723ac6214f5fba5e98325'
+QUESTIONS_PIN = '4eafbcfbab23c50178eaec7acb69b39749ce7b345841886b2b4f2b20a6aac05b'
 
 def published_correspondence(rows, path=None):
     """Join tagged published quantities to supplied external build values exactly."""

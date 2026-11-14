@@ -432,6 +432,13 @@ class Correspondence(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPOSITORY / name, destination)
         history = json.loads((REPOSITORY / 'ci/paper-history.json').read_text())
+        for row in history:
+            if (self.root / row['path']).is_file() and row['derived_from']:
+                sources = [source for source in history if source['path'] == row['derived_from']]
+                for source in sources:
+                    destination = self.root / source['path']
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy(REPOSITORY / source['path'], destination)
         history = [row for row in history if (self.root / row['path']).is_file()]
         (self.root / 'ci/paper-history.json').write_text(json.dumps(history)+'\n')
         git(self.root, 'add', '.')
@@ -746,6 +753,34 @@ class Correspondence(unittest.TestCase):
             ]
             for message, rows, paths in cases:
                 with self.subTest(historical=message), self.assertRaisesRegex(ValueError, message):
+                    run(rows, paths)
+            with self.assertRaisesRegex(ValueError, 'unregistered stale mention'):
+                run([{**row, 'release': 'network-v0.0.0'}], [path])
+            repeated = source + ' ' + source
+            path.write_text(repeated + '\n')
+            with self.assertRaisesRegex(ValueError, 'historical row matches repeated occurrences'):
+                run([{**row, 'line': repeated}], [path])
+            path.write_text(source + '\n')
+            for invalid, message in [({**row, 'extra': ''}, 'invalid row fields'),
+                                     ({**row, 'reason': 7}, 'invalid row text'),
+                                     ({**row, 'reason': ' '}, 'invalid row text')]:
+                with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, message):
+                    run([invalid], [path])
+            for mark in ('premise', 'relies', 'realizes'):
+                marked = mark + '{' + source + '; asserted}'
+                path.write_text(marked + '\n')
+                with self.subTest(mark=mark), self.assertRaisesRegex(ValueError, 'historical mention inside normative mark'):
+                    run([{**row, 'line': marked}], [path])
+            path.write_text(source + '\n')
+            generated = Path(directory)/'docs/datasets/history.json'
+            generated.parent.mkdir(parents=True)
+            generated.write_text(source + '\n')
+            copy = {**row, 'path': generated.as_posix(), 'derived_from': path.as_posix()}
+            run([row, copy], [path, generated])
+            for rows, paths in (([copy], [generated]),
+                                ([row, {**copy, 'derived_from': ''}], [path, generated]),
+                                ([row, {**copy, 'derived_from': other.as_posix()}], [path, generated])):
+                with self.subTest(derived=rows), self.assertRaisesRegex(ValueError, 'generated occurrence lacks unique registered source row'):
                     run(rows, paths)
             for release in (PAPER_TAG, 'network-v999.0.0'):
                 register.write_text(json.dumps([{**row, 'release': release}]))

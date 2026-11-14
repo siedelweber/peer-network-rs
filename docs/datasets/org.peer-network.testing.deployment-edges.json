@@ -218,6 +218,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:epoch-authentication-fields",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
       "relation": "realizes",
       "source": "ROOT::amend:design:host-operational-declaration",
@@ -540,6 +547,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:replay",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The public run configuration selects an edition, not its private concealment premise.",
       "relation": "realizes",
       "source": "ROOT::dec:devnet:elements",
@@ -743,6 +757,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "ROOT::req:vision:replay",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The released principle settles the textual scope while implementation and identity admission remain owed.",
       "relation": "realizes",
       "source": "ROOT::resol:design:replay-paper-contract",
@@ -932,6 +953,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.bites:8",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.crates:pn-replay",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "This describes version-one behavior held for replacement, not a portable Work premise.",
       "relation": "realizes",
       "source": "input:org.peer-network.design.implementation-claims:rung-policy-cases",
@@ -980,6 +1015,13 @@
       "target": "post:deployment:canonical-standing-publication"
     },
     {
+      "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.implementation-traces:replay",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
       "conditional_on": "amend:testing:standing-work-envelopes",
       "reason": "The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.",
       "relation": "relies",
@@ -1020,6 +1062,13 @@
       "relation": "realizes",
       "source": "input:org.peer-network.design.questions:Q06",
       "target": "subsec:deployment:realization-obligations"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.questions:Q07",
+      "target": "post:deployment:public-object-replay"
     },
     {
       "conditional_on": "",
@@ -1139,6 +1188,13 @@
       "relation": "realizes",
       "source": "input:org.peer-network.vision.traces:publication",
       "target": "post:deployment:canonical-standing-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.vision.traces:replay",
+      "target": "post:deployment:public-object-replay"
     }
   ]
 }

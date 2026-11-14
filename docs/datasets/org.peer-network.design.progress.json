@@ -14699,6 +14699,10 @@
           "record": "ROOT::dec:design:policy-schedules"
         },
         {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "ROOT::model:design:wall-floor"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::req:vision:policy-schedules"
         }
@@ -14714,7 +14718,7 @@
         "ROOT::req:vision:policy-schedules"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -14906,7 +14910,16 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "RECORDS::def:declarations:constants-edition"
+        },
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "ROOT::model:design:wall-floor"
+        }
+      ],
       "kind": "invariant check",
       "label": "case:epoch:safety-wall-floor-ridge-floor",
       "portions": [],
@@ -14917,7 +14930,7 @@
         "ROOT::model:design:wall-floor"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -14927,7 +14940,12 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "ROOT::model:design:wall-floor"
+        }
+      ],
       "kind": "invariant check",
       "label": "case:epoch:safety-wall-floor-rational-floor",
       "portions": [],
@@ -14937,7 +14955,7 @@
         "ROOT::model:design:wall-floor"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -14947,7 +14965,12 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "ROOT::model:design:wall-floor"
+        }
+      ],
       "kind": "none",
       "label": "cor:epoch:floor-economics",
       "portions": [],
@@ -14971,7 +14994,12 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "ROOT::model:design:wall-floor"
+        }
+      ],
       "kind": "none",
       "label": "rem:epoch:floor-is-a-landmark",
       "portions": [],
@@ -32188,8 +32216,20 @@
       "label": "post:deployment:public-object-replay",
       "portions": [
         {
+          "clause": "Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+          "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
           "clause": "Premise only: a locator cannot substitute for replay",
           "record": "ROOT::amend:design:epoch-authentication-fields"
+        },
+        {
+          "clause": "Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+          "record": "ROOT::dec:design:replay"
+        },
+        {
+          "clause": "Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.",
+          "record": "ROOT::req:vision:replay"
         }
       ],
       "record_granular": 0,
@@ -32476,7 +32516,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::req:design:comparison-verdict-record",
+          "record": "RECORDS::def:declarations:constants-edition"
+        }
+      ],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-edition-fixed",
       "portions": [
@@ -32491,7 +32536,7 @@
         "RECORDS::def:declarations:constants-edition"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -36326,23 +36371,23 @@
     },
     {
       "category": "total",
-      "designed": 401,
-      "held": 67,
+      "designed": 397,
+      "held": 71,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "401",
+          "exact": "397",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "401",
+          "num": "397",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "67",
+          "exact": "71",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "67",
+          "num": "71",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36623,23 +36668,23 @@
     },
     {
       "category": "crate",
-      "designed": 141,
-      "held": 8,
+      "designed": 138,
+      "held": 11,
       "name": "pn-epoch",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "138",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "138",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "8",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36821,23 +36866,23 @@
     },
     {
       "category": "crate",
-      "designed": 46,
-      "held": 20,
+      "designed": 45,
+      "held": 21,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "46",
+          "exact": "45",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "46",
+          "num": "45",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "20",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37811,23 +37856,23 @@
     },
     {
       "category": "kind",
-      "designed": 141,
-      "held": 23,
+      "designed": 138,
+      "held": 26,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "138",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "138",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "23",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38009,23 +38054,23 @@
     },
     {
       "category": "kind",
-      "designed": 52,
-      "held": 21,
+      "designed": 51,
+      "held": 22,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "52",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "21",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38405,23 +38450,23 @@
     },
     {
       "category": "bite",
-      "designed": 24,
-      "held": 4,
+      "designed": 21,
+      "held": 7,
       "name": "2",
       "number_forms": {
         "designed": {
-          "exact": "24",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "4",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38900,23 +38945,23 @@
     },
     {
       "category": "bite",
-      "designed": 30,
-      "held": 7,
+      "designed": 29,
+      "held": 8,
       "name": "7",
       "number_forms": {
         "designed": {
-          "exact": "30",
+          "exact": "29",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30",
+          "num": "29",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "7",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39296,23 +39341,23 @@
     },
     {
       "category": "bite",
-      "designed": 56,
-      "held": 27,
+      "designed": 55,
+      "held": 28,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "56",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "27",
+          "exact": "28",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "28",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39395,23 +39440,23 @@
     },
     {
       "category": "bite",
-      "designed": 280,
-      "held": 27,
+      "designed": 279,
+      "held": 28,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "280",
+          "exact": "279",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "280",
+          "num": "279",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "27",
+          "exact": "28",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "28",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40173,10 +40218,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 731",
+          "exact": "1 732",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 731",
+          "num": "1 732",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40191,7 +40236,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1731
+      "total": 1732
     },
     {
       "category": "record-coverage",

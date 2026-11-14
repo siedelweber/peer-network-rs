@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 357 | 35 | 67 | 401 | 7 | 32 | 854 |
+| implementation | 1 357 | 35 | 71 | 397 | 7 | 32 | 854 |
 | prose | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
 
 ## By crate · `sec:progress:crates`
@@ -28,9 +28,9 @@
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | none | 320 | 0 | 0 | 14 | 6 | 0 | 306 |
-| pn-epoch | 371 | 15 | 8 | 141 | 0 | 13 | 207 |
+| pn-epoch | 371 | 15 | 11 | 138 | 0 | 13 | 207 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
-| pn-host | 166 | 5 | 20 | 46 | 1 | 2 | 95 |
+| pn-host | 166 | 5 | 21 | 45 | 1 | 2 | 95 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
 | pn-records | 218 | 2 | 16 | 71 | 1 | 7 | 129 |
 | pn-replay | 27 | 0 | 3 | 5 | 0 | 0 | 19 |
@@ -61,7 +61,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 1 731 | 213 |
+| ROOT (repository-wide) | 1 732 | 213 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -69,17 +69,17 @@
 | Bite | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 19 | 0 | 6 | 12 | 0 | 1 | 1 |
-| 2 | 35 | 7 | 4 | 24 | 0 | 0 | 0 |
+| 2 | 35 | 7 | 7 | 21 | 0 | 0 | 0 |
 | 3 | 22 | 0 | 5 | 16 | 0 | 5 | 1 |
 | 4 | 36 | 2 | 12 | 22 | 0 | 5 | 0 |
 | 5 | 44 | 6 | 5 | 33 | 0 | 3 | 0 |
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
-| 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
+| 7 | 38 | 1 | 8 | 29 | 0 | 2 | 0 |
 | 8 | 4 | 1 | 0 | 3 | 0 | 1 | 0 |
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
-| 11 | 93 | 9 | 27 | 56 | 0 | 5 | 1 |
-| unlinked | 1 485 | 22 | 27 | 280 | 13 | 21 | 1 156 |
+| 11 | 93 | 9 | 28 | 55 | 0 | 5 | 1 |
+| unlinked | 1 485 | 22 | 28 | 279 | 13 | 21 | 1 156 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -90,9 +90,9 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 218 | 5 | 6 | 50 | 6 | 3 | 157 |
 | function | 216 | 10 | 6 | 97 | 0 | 8 | 103 |
-| invariant check | 517 | 16 | 23 | 141 | 1 | 11 | 337 |
+| invariant check | 517 | 16 | 26 | 138 | 1 | 11 | 337 |
 | none | 346 | 0 | 0 | 13 | 1 | 0 | 333 |
-| policy | 266 | 3 | 21 | 52 | 5 | 4 | 190 |
+| policy | 266 | 3 | 22 | 51 | 5 | 4 | 190 |
 | serialization | 8 | 0 | 0 | 4 | 0 | 0 | 4 |
 | type | 92 | 1 | 9 | 49 | 0 | 5 | 33 |
 
@@ -876,7 +876,7 @@
 | ``cond:epoch:safety-publication-lead`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``cond:epoch:safety-controller-publication`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::rec:design:bite-seven-checklist``; ``ROOT::open:design:reference-registration-base``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``cond:epoch:safety-numeraire-covariance`` | pn-epoch; invariant check | held | ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
-| ``cond:epoch:safety-declared-floor`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:policy-schedules`` ``ROOT::model:design:wall-floor`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | | |
+| ``cond:epoch:safety-declared-floor`` | pn-epoch; invariant check | held | ``ROOT::dec:design:policy-schedules`` ``ROOT::model:design:wall-floor`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::model:design:wall-floor``; ``ROOT::req:design:comparison-verdict-record``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | | |
 | ``cond:epoch:safety-input-quarantine`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::alg:design:schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::rec:design:bite-seven-checklist`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::rec:design:bite-seven-checklist``; ``ROOT::open:design:reference-registration-base``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``def:epoch:policy-floor`` | pn-host; function | designed | ``ROOT::alg:design:effective-schedules`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``eq:epoch:floor-validity`` | pn-epoch; function | designed | ``ROOT::alg:design:effective-schedules`` | | | |  | | |
@@ -884,10 +884,10 @@
 | ``eq:epoch:effective-floor`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``def:epoch:safety-wall`` | pn-epoch; function | designed | ``ROOT::inv:design:charged-value`` | | | | 2 | | |
 | ``def:epoch:safety-wall-floor`` | pn-records; type | designed | ``CONSTANTS::bound.epoch.wall_floor_ridge_hi`` ``CONSTANTS::bound.epoch.wall_floor_ridge_lo`` ``CONSTANTS::const.epoch.wall_floor_rational`` ``CONSTANTS::const.epoch.wall_floor_ridge`` ``ROOT::alg:design:binding-ridge`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` ``ROOT::rule:design:ridge-charge-contract`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
-| ``case:epoch:safety-wall-floor-ridge-floor`` | pn-epoch; invariant check | designed | ``RECORDS::def:declarations:constants-edition`` ``ROOT::model:design:wall-floor`` | | | | 2 | | |
-| ``case:epoch:safety-wall-floor-rational-floor`` | pn-epoch; invariant check | designed | ``ROOT::model:design:wall-floor`` | | | | 2 | | |
-| ``cor:epoch:floor-economics`` | pn-epoch; none | designed | ``CONSTANTS::const.epoch.floor_capacity_rational`` ``CONSTANTS::const.epoch.floor_capacity_ridge`` ``CONSTANTS::const.epoch.floor_price_rational`` ``CONSTANTS::const.epoch.floor_price_ridge`` ``ROOT::model:design:wall-floor`` | | | | 2 | | |
-| ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` ``ROOT::rule:design:ridge-charge-contract`` | | | | 2 | | |
+| ``case:epoch:safety-wall-floor-ridge-floor`` | pn-epoch; invariant check | held | ``RECORDS::def:declarations:constants-edition`` ``ROOT::model:design:wall-floor`` | | | ``RECORDS::def:declarations:constants-edition``; ``ROOT::req:design:comparison-verdict-record``<br>``ROOT::model:design:wall-floor``; ``ROOT::req:design:comparison-verdict-record``<br>| 2 | | |
+| ``case:epoch:safety-wall-floor-rational-floor`` | pn-epoch; invariant check | held | ``ROOT::model:design:wall-floor`` | | | ``ROOT::model:design:wall-floor``; ``ROOT::req:design:comparison-verdict-record``<br>| 2 | | |
+| ``cor:epoch:floor-economics`` | pn-epoch; none | designed | ``CONSTANTS::const.epoch.floor_capacity_rational`` ``CONSTANTS::const.epoch.floor_capacity_ridge`` ``CONSTANTS::const.epoch.floor_price_rational`` ``CONSTANTS::const.epoch.floor_price_ridge`` ``ROOT::model:design:wall-floor`` | | | ``ROOT::model:design:wall-floor``; ``ROOT::req:design:comparison-verdict-record``<br>| 2 | | |
+| ``rem:epoch:floor-is-a-landmark`` | pn-epoch; none | designed | ``ROOT::model:design:wall-floor`` ``ROOT::rule:design:ridge-charge-contract`` | | | ``ROOT::model:design:wall-floor``; ``ROOT::req:design:comparison-verdict-record``<br>| 2 | | |
 | ``def:epoch:wall-controller`` | pn-epoch; function | designed | ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``def:epoch:canonical-interim-wall-controller`` | pn-epoch; function | designed | ``CONSTANTS::const.epoch.deadband`` ``CONSTANTS::const.epoch.step_abs`` ``CONSTANTS::const.epoch.step_rel`` ``ROOT::alg:design:production-wall-controller`` ``ROOT::alg:design:schedules`` ``ROOT::amend:decomposition:wall-reference`` ``ROOT::amend:design:admission-declarations`` ``ROOT::amend:design:reference-wall-measurements`` ``ROOT::dec:design:policy-schedules`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:policy-schedules`` ``ROOT::rule:design:reference-wall-branches`` | | ``ROOT::amend:design:reference-wall-measurements``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 7, 11 | | |
 | ``case:epoch:canonical-interim-wall-controller-zero-width`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:schedules`` | | | | 7 | | |
@@ -1717,7 +1717,7 @@
 | ``case:deployment:final-epoch-state-agreement-inconsistent-projection`` | pn-replay; invariant check | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
 | ``subsec:deployment:immutability`` | pn-records; invariant check | designed | ``ROOT::model:design:storage-history`` | | | |  | | ``ROOT::model:design:storage-history``; Claimed part: Stored editions and retained bytes preserve earlier supplied history; they do not prove absence of an undisclosed alternative history.<br>|
 | ``case:deployment:immutability-mutable-records`` | pn-records; invariant check | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
-| ``post:deployment:public-object-replay`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | ``ROOT::amend:design:epoch-authentication-fields``; Premise only: a locator cannot substitute for replay<br>|
+| ``post:deployment:public-object-replay`` | pn-replay; invariant check | held | ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | ``ROOT::amend:design:epoch-authentication-fields``; Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.<br>``ROOT::amend:design:epoch-authentication-fields``; Premise only: a locator cannot substitute for replay<br>``ROOT::dec:design:replay``; Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.<br>``ROOT::req:vision:replay``; Claimed part: This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.<br>|
 | ``subsec:deployment:feed-reproducibility`` | none; none | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``case:deployment:feed-reproducibility-closed-form`` | none; none | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``case:deployment:feed-reproducibility-public-model`` | none; none | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
@@ -1729,7 +1729,7 @@
 | ``case:deployment:device-local-depth-six`` | none; none | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``case:deployment:device-local-server-assisted`` | none; none | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``subsec:deployment:transparency-of-protocol-formulas`` | pn-host; policy | held | ``ROOT::dec:design:constants`` ``ROOT::dec:design:policy-schedules`` ``ROOT::req:vision:constants`` ``ROOT::req:vision:policy-schedules`` | | | ``ROOT::dec:design:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:constants``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:policy-schedules``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 7, 11 | | ``ROOT::dec:design:constants``; Claimed part: Effective edition lookup and locked overrides are determined by the supplied history.<br>``ROOT::dec:design:policy-schedules``; Claimed part: The exact boundary-sequence model checks published schedules and controller arithmetic, not plant performance.<br>``ROOT::req:vision:constants``; Claimed part: The requirement trace names published effective constants and formula editions.<br>``ROOT::req:vision:policy-schedules``; Claimed part: The requirement trace names declared schedules and formula identities, not elapsed-time truth.<br>|
-| ``case:deployment:transparency-of-protocol-formulas-edition-fixed`` | pn-host; policy | designed | ``RECORDS::def:declarations:constants-edition`` | | | |  | | ``RECORDS::def:declarations:constants-edition``; Claimed part: The selected constants edition is resolved from its published identity and effective boundary.<br>|
+| ``case:deployment:transparency-of-protocol-formulas-edition-fixed`` | pn-host; policy | held | ``RECORDS::def:declarations:constants-edition`` | | | ``RECORDS::def:declarations:constants-edition``; ``ROOT::req:design:comparison-verdict-record``<br>|  | | ``RECORDS::def:declarations:constants-edition``; Claimed part: The selected constants edition is resolved from its published identity and effective boundary.<br>|
 | ``case:deployment:transparency-of-protocol-formulas-scheduled-vote`` | pn-host; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``case:deployment:transparency-of-protocol-formulas-time-locked`` | pn-host; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
 | ``case:deployment:transparency-of-protocol-formulas-silent-tuning`` | pn-host; policy | held | ``ROOT::dec:design:constants`` | | | ``ROOT::dec:design:constants``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | ``ROOT::dec:design:constants``; Claimed part: The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.<br>|

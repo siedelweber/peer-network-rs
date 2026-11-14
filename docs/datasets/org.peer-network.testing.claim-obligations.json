@@ -2779,6 +2779,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Reviewed record-edition design together with the rung anchor, followed by carrier, codec and consumer controls; no existing bytes are reinterpreted.",
+      "closing_step": "Comparison and rung record edition design and implementation",
+      "hold": "ROOT::req:design:comparison-verdict-record",
+      "missing": "An edition decision separates operational comparison outcomes from mathematical verdicts and carries each verdict with its sound enclosure and exact threshold.",
+      "name": "ROOT::req:design:comparison-verdict-record",
+      "owner": "Numerical, record and publication implementers",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",

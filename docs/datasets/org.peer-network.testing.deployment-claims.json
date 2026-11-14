@@ -21,18 +21,18 @@
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "cond:deployment:standing-parameters",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "cond:deployment:canonical-encoding",
       "paper_tag": "network-v0.33.0",
@@ -54,44 +54,44 @@
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "cond:deployment:complete-act-conformance",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
-      "classification": "claimed",
+      "classification": "split",
       "evidence_status": "scope-only",
-      "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "excluded": "Enclosure soundness until independently checked by the reader; inability to check establishes neither confirmation nor discrepancy.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "post:deployment:public-object-replay",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "prop:deployment:allocation-input-completeness",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "rem:deployment:completeness-safety-orthogonal",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -109,11 +109,11 @@
       "classification": "claimed",
       "evidence_status": "scope-only",
       "excluded": "",
-      "included": "The complete published inputs, admissibility predicates, canonical bytes and replayed mathematical outputs specified by this statement.",
+      "included": "The complete published inputs, exact admissibility predicates, canonical bytes, recomputed exact objects and verdicts checked from published enclosure endpoints and exact thresholds specified by this statement.",
       "kind": "statement",
       "name": "subsec:deployment:canonical-standing-encoding",
       "paper_tag": "network-v0.33.0",
-      "reason": "A fixed public record and the declared exact procedure determine the acceptance predicate; this classification supplies no missing implementation evidence.",
+      "reason": "Canonical published bytes, exact objects and endpoint verdicts are deterministic predicates of the public record; this classification supplies no missing implementation evidence and requires no producer evaluation procedure.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -795,7 +795,7 @@
       "kind": "statement",
       "name": "case:deployment:conserved-standing-reproducibility-reference-compiler",
       "paper_tag": "network-v0.33.0",
-      "reason": "The chosen compiler route replays complete published inputs and checks its certificate under the declared edition; it does not certify external acquisition.",
+      "reason": "The chosen compiler route checks complete published inputs, recomputed exact objects and certificate consistency under the declared edition; it does not certify external acquisition or infer enclosure soundness from reproduction.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -828,7 +828,7 @@
       "kind": "statement",
       "name": "case:deployment:conserved-standing-reproducibility-mismatched-package",
       "paper_tag": "network-v0.33.0",
-      "reason": "A safe-looking isolated certificate cannot conceal a mismatch between the published complete inputs and the reproduced standing package.",
+      "reason": "An isolated certificate cannot conceal a mismatch between the published complete inputs and the checked exact objects and endpoint verdicts of the standing package.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {

@@ -144,6 +144,9 @@
       "name": "publication"
     },
     {
+      "conformance": [
+        "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
+      ],
       "labels": [
         "post:deployment:public-object-replay",
         "subsec:deployment:conserved-standing-reproducibility",

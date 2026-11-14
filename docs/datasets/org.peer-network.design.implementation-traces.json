@@ -289,6 +289,9 @@
     },
     {
       "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Recover equal accepted sets from list and commitment encodings under their declared policies. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records.",
+      "conformance": [
+        "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
+      ],
       "decision": "dec:design:replay",
       "fixture": "reconstruction-mutations",
       "hold": "Cross-implementation agreement is held until an independent implementation runs the declared profile.",

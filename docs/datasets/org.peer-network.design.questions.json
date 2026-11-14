@@ -76,6 +76,9 @@
     {
       "ambiguity": "Formation requires commitments and authentication while package replay says hashes, roots and digests are not normative. (def:graph:proposal-pre-commitment) (rem:graph:authentication-realization-out-of-scope) (post:deployment:public-object-replay)",
       "class": "ANSWERED",
+      "conformance": [
+        "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
+      ],
       "id": "Q07",
       "instruction": "Your provisional separation is safe. Preserve the required binding/authentication checks without selecting a cryptographic library on the paper's behalf.",
       "reading": "Study judgment: Treat public semantic objects as authoritative and leave the concrete commitment/authentication encoding to the declared realization; do not select a cryptographic library.",

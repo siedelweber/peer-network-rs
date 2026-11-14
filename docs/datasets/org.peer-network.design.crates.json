@@ -89,6 +89,9 @@
       ]
     },
     {
+      "conformance": [
+        "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
+      ],
       "dependencies": [
         "pn-act-profile",
         "pn-records",

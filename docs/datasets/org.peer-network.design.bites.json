@@ -100,6 +100,9 @@
       "slice": "pn-host: canonical seven-part package"
     },
     {
+      "conformance": [
+        "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
+      ],
       "dependency": "Study judgment: requires the package schema and computational public surfaces; no reverse dependency from pn-host.",
       "labels": [
         "subsec:deployment:conserved-standing-reproducibility",
