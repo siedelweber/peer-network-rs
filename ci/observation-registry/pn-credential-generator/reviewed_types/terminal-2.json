@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Production",
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "syntax": "struct Production { protection : Protection , password : Option < PasswordReceiver > , verifier : Option < VerifierReceiver > , credential : Option < Credential > , }"
+  }
+}

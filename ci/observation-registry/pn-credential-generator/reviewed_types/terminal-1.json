@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Failure",
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "syntax": "# [doc = \" Content-free stage results preserve all observable failures without dependency text.\"] # [doc = \" (´def:generator:terminal-entry´)\"] # [derive (Debug)] enum Failure { Acquisition (AcquisitionError) , Protection (pn_secret_home :: Error) , Construction (CredentialError) , Delivery { password : Result < usize , DeliveryError > , verifier : Result < usize , DeliveryError > , completion : Result < () , CredentialError > , } , }"
+  }
+}

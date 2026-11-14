@@ -139,6 +139,27 @@
     },
     {
       "claims": [
+        "GENERATOR::claim:generator:terminal-driver-checks-every-stage-before-exit",
+        "GENERATOR::claim:generator:completion-model-requires-the-matching-supervisor-result",
+        "GENERATOR::claim:generator:stream-model-keeps-the-complete-calibration-premise",
+        "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output",
+        "ROOT::claim:discipline:credential-models-cannot-enter-production"
+      ],
+      "closing_condition": "The finite lifecycle, stream, result and process controls pass.",
+      "closing_step": "Protected generator implementation.",
+      "evidence_paragraph": "GENERATOR::crit:generator:evidence",
+      "hold": "",
+      "missing": "Outside scope: sealing, durable publication, provisioning, supervisor policy and physical installation.",
+      "name": "GENERATOR::verif:generator:terminal",
+      "owner": "Credential generator implementer and independent secret-boundary reviewer",
+      "path": "packages/credential-generator/README.md",
+      "premises": "Finite lifecycle and process controls; result and calibration models do not establish an installation premise.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "GRAPH::claim:numerics:proof-endpoints-separate-only-checked-comparisons",
         "GRAPH::claim:numerics:proof-replay-refuses-scope-substitution",
         "GRAPH::claim:numerics:proof-replay-exhaustion-is-operational"
@@ -1007,7 +1028,7 @@
       "closing_condition": "The ordered credential cuts preserve host vectors and bounds, pass their scoped controls and source-local census, and join the independently required installation evidence without a secret byte export or additional unsafe site.",
       "closing_step": "Ordered credential cuts before executable startup",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "Installed swap/hibernation exclusion and terminal generator lifecycle required by the conditional residue admission under ROOT::amend:crypto:protected-verifier-residue, executable and test-only models, delivered-set integration and installation witnesses. Shared derivation, checked completion and protected construction have only their scoped library evidence.",
+      "missing": "Installed swap/hibernation exclusion required by the conditional residue admission under ROOT::amend:crypto:protected-verifier-residue, external completion and calibration, publication and role models, delivered-set integration and installation witnesses. Shared derivation, checked completion, protected construction, named delivery and terminal generator have only their scoped repository evidence; test-only completion and stream models do not establish supervisor facts.",
       "name": "ROOT::dec:observe:credential-packages",
       "owner": "Foundation implementer, storage reviewer and secret-boundary reviewer",
       "path": "adr/016-observability.md",

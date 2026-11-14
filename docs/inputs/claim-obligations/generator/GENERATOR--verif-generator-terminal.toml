@@ -1,0 +1,13 @@
+name = "GENERATOR::verif:generator:terminal"
+witnessed_labels = []
+path = "packages/credential-generator/README.md"
+status = "scoped-supported"
+claims = ["GENERATOR::claim:generator:terminal-driver-checks-every-stage-before-exit", "GENERATOR::claim:generator:completion-model-requires-the-matching-supervisor-result", "GENERATOR::claim:generator:stream-model-keeps-the-complete-calibration-premise", "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output", "ROOT::claim:discipline:credential-models-cannot-enter-production"]
+realizers = []
+premises = "Finite lifecycle and process controls; result and calibration models do not establish an installation premise."
+evidence_paragraph = "GENERATOR::crit:generator:evidence"
+hold = ""
+owner = "Credential generator implementer and independent secret-boundary reviewer"
+missing = "Outside scope: sealing, durable publication, provisioning, supervisor policy and physical installation."
+closing_condition = "The finite lifecycle, stream, result and process controls pass."
+closing_step = "Protected generator implementation."

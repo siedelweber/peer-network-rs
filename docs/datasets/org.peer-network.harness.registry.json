@@ -83,6 +83,13 @@
       "name": "pn-credential-derivation-rust"
     },
     {
+      "contract": "terminal protected generation and completion model",
+      "edition": "credential-generator-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-credential-generator-rust"
+    },
+    {
       "contract": "boundary compiler parameters, final ledger, declared conserved numeric procedures and finite candidate admission/closure",
       "edition": "0.1",
       "evidence": "pure",
@@ -569,7 +576,6 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
-        "ci::test_discipline.WorkspaceChecks.test_credential_receiver_census",
         "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
         "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",
@@ -604,7 +610,9 @@
         "ci::test_discipline.WorkspaceChecks.test_unsafe_nonblock",
         "ci::test_discipline.WorkspaceChecks.test_discovered_members",
         "ci::test_discipline.WorkspaceChecks.test_http_admission",
-        "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits"
+        "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits",
+        "ci::test_discipline.WorkspaceChecks.test_credential_model_census",
+        "ci::test_discipline.WorkspaceChecks.test_credential_receiver_census"
       ],
       "implementation": "ci-python",
       "kind": "suite",
@@ -1842,6 +1850,46 @@
       "kind": "suite",
       "level": "unit",
       "name": "pn-credential-derivation::unit",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-credential-generator::models::completion::completion_result",
+        "pn-credential-generator::models::completion::calibration"
+      ],
+      "implementation": "pn-credential-generator-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-credential-generator::models",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-credential-generator::process::process_protocol"
+      ],
+      "implementation": "pn-credential-generator-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-credential-generator::process",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-credential-generator::bin/pn-credential-generator::tests::lifecycle"
+      ],
+      "implementation": "pn-credential-generator-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-credential-generator::unit",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

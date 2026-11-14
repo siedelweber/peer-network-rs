@@ -13,7 +13,7 @@ import tomllib
 
 from devperf import StructuralError
 
-OWNERS = {'node':'NODE','credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home': 'SECRETHOME', 'interchange': 'INTERCHANGE', 'cli-common': 'CLICOMMON',
+OWNERS = {'node':'NODE','credential-generator':'GENERATOR','credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home': 'SECRETHOME', 'interchange': 'INTERCHANGE', 'cli-common': 'CLICOMMON',
           'execwrap': 'EXECWRAP', 'documents': 'DOCUMENTS', 'testkit': 'TESTKIT', 'act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet': 'WALLET', 'host': 'HOST', 'records': 'RECORDS', 'verification': 'VERIFICATION'}
 RAW_STRING = re.compile(r'(?:br|r)(#*)"')
 CHAR_LITERAL = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")
@@ -123,7 +123,14 @@ def census(root):
                 aliases[str(target.relative_to(root))] = list(parent.parent.relative_to(root/'packages'/directory/'src').parts)+[match[2]]
         for path in sorted((root/'packages'/directory).rglob('*.rs')):
             if not {'src','tests'}.intersection(path.relative_to(root).parts[2:]): continue
-            sites.extend(rust_sites(path.relative_to(root), path.read_text(), package, owner, aliases))
+            target = package
+            # A declared sole binary has nextest's binary component even for
+            # its source-local unit controls; it is not a library test target.
+            if (path.is_relative_to(root/'packages'/directory/'src')
+                    and not (root/'packages'/directory/'src/lib.rs').exists()
+                    and len(manifest.get('bin', [])) == 1):
+                target += '::bin/'+manifest['bin'][0]['name']
+            sites.extend(rust_sites(path.relative_to(root), path.read_text(), target, owner, aliases))
     for path in sorted((root/'ci').glob('test_*.py')):
         tree = ast.parse(path.read_text())
         for node in ast.walk(tree):

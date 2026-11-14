@@ -2005,6 +2005,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pn-credential-generator"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "cli-common",
+ "pn-secret-home",
+ "tracing",
+]
+
+[[package]]
 name = "pn-epoch"
 version = "0.1.0"
 dependencies = [

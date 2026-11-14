@@ -817,6 +817,8 @@ pub enum OperationKind {
     SecretHome,
     /// Borrowed credential primitive accounting.
     CredentialDerivation,
+    /// Terminal credential generation and delivery.
+    CredentialGenerator,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -836,6 +838,7 @@ impl OperationKind {
             Self::ActProfile => "actprofile__root__amend__decomposition__act_profile",
             Self::SecretHome => "secrethome__root__amend__crypto__secret_home",
             Self::CredentialDerivation => "derivation__root__dec__observe__credential_packages",
+            Self::CredentialGenerator => "generator__root__dec__observe__first_start_route",
         }
     }
     const fn label(self) -> &'static str {
@@ -852,6 +855,7 @@ impl OperationKind {
             Self::ActProfile => "amend:decomposition:act-profile",
             Self::SecretHome => "amend:crypto:secret-home",
             Self::CredentialDerivation => "dec:observe:credential-packages",
+            Self::CredentialGenerator => "dec:observe:first-start-route",
         }
     }
     const fn owner(self) -> &'static str {
@@ -867,6 +871,7 @@ impl OperationKind {
             Self::ActProfile => "ACTPROFILE",
             Self::SecretHome => "SECRETHOME",
             Self::CredentialDerivation => "DERIVATION",
+            Self::CredentialGenerator => "GENERATOR",
             _ => "CLICOMMON",
         }
     }
@@ -1253,6 +1258,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("ACTPROFILE") => Some(OperationKind::ActProfile),
                     Some("SECRETHOME") => Some(OperationKind::SecretHome),
                     Some("DERIVATION") => Some(OperationKind::CredentialDerivation),
+                    Some("GENERATOR") => Some(OperationKind::CredentialGenerator),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

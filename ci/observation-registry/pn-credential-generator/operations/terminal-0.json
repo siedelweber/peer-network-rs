@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "item": "entry",
+    "owner": "GENERATOR",
+    "signature": "fn entry (receivers : Result < (PasswordReceiver , VerifierReceiver) , AcquisitionError > , protection : Option < Result < Protection , pn_secret_home :: Error > > ,) -> Result < BTreeMap < & 'static str , usize > , Failure >",
+    "claim": "ROOT::dec:observe:first-start-route",
+    "mode": "instrumented",
+    "shape": "shape-credential-generator"
+  },
+  "review": {
+    "operation": "pn-credential-generator::packages/credential-generator/src/main.rs::entry",
+    "body": "{ tracing :: info ! (address = ? std :: env :: var_os (\"LISTEN_PID\") , count = ? std :: env :: var_os (\"LISTEN_FDS\") , names = ? std :: env :: var_os (\"LISTEN_FDNAMES\") , identity = ? std :: env :: var_os (\"LISTEN_PIDFDID\") , \"public receiver convention\") ; let (password , verifier) = receivers . map_err (Failure :: Acquisition) ? ; let protection = protection . ok_or (Failure :: Protection (pn_secret_home :: Error :: Protection)) ? . map_err (Failure :: Protection) ? ; terminal (& mut Production { password : Some (password) , verifier : Some (verifier) , credential : None , protection , }) }",
+    "class_decision": "terminal-credential-recording",
+    "item_premise": "The source-reviewed terminal entry receives only opaque named capabilities and a protection outcome, records public convention values, and returns public lengths or closed error classes. Its private stage interface carries no bytes, writer or callback; all private construction, delivery and completion remain in the owning home. The aggregate retains both delivery outcomes and completion, including failures after full writes. Failure Debug and Display contain only public classes and accepted-byte progress, with no error source. Public process sentinels compare the delivered values only in the external receiver fixture. This confirms the finite recording surface, not installed descriptor custody, sealing, publication or the supervisor result.",
+    "assessments": {
+      "full_recording": "terminal-credential-recording-review",
+      "secret_flow": "terminal-credential-recording-review",
+      "exposure_consumers": "terminal-credential-recording-review"
+    }
+  }
+}

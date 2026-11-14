@@ -11,8 +11,7 @@ def parse_tree(text):
     """Retain each build-context feature set rather than unioning distinct rows."""
     rows = set()
     for line in text.splitlines():
-        line = line.replace(' (proc-macro)', '')
-        match = re.fullmatch(r'([^ ]+) v([^ ]+)(?: (.*?))?\|([^|]*)', line)
+        match = re.fullmatch(r'([^ ]+) v([^ ]+)(?: \(proc-macro\))?(?: (.*?))?\|([^|]*)', line)
         if not match:
             raise ValueError('unreadable protected dependency row: '+line)
         name, version, origin, features = match.groups()

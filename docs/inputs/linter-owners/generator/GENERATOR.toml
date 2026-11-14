@@ -1,0 +1,4 @@
+name = "GENERATOR"
+position = 18
+partitions = [{ position = 22, value = { name = "credential-generator-package", owner = "GENERATOR", pattern = '%s"packages/credential-generator/" *VCHAR' } }]
+may_cite = [{ position = 61, value = { owner = "GENERATOR", target = "ROOT" } }, { position = 62, value = { owner = "GENERATOR", target = "SECRETHOME" } }, { position = 63, value = { owner = "GENERATOR", target = "CLICOMMON" } }]

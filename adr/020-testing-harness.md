@@ -34,7 +34,7 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). The support step re-declares the 73 cli-common and 25 execwrap internal-module cases as unit, and adds external public-surface witnesses under tests/; internal access is not public-surface evidence. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`). Levels and tiers have separate common fragments; each implementation and each suite has its own fragment in that implementation domain. The shared index-scoped reader merges by kind and exact name, preserving case sequences and overrides within a suite, before the global roster and reference checks. Equal duplicate entries refuse with both origins. Service selection projects only its selected case and referenced declarations from this same aggregate, so an unrelated fragment cannot invalidate a retained pass; the shared loader code remains a fingerprint input. The admitted carrier's byte/projection case is pure integration: it composes public admission, canonical encoding and retained-content comparison. Its PostgreSQL-held counterpart is integration with the existing real-case budget, because a real session establishes the refusal. Neither is a local unit invariant. Their process-local immutable fixture caches do not imply sharing across nextest processes; the admission premise remains required.
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 189 suites and 21 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 192 suites and 22 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
@@ -43,7 +43,7 @@
 | ci::test_claims | active | unit | ci-python | fast | 25 |
 | ci::test_design | active | integration | ci-python | extended | 12 |
 | ci::test_devperf | active | unit | ci-python | fast | 74 |
-| ci::test_discipline | active | integration | ci-python | fast | 36 |
+| ci::test_discipline | active | integration | ci-python | fast | 37 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 9 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
@@ -99,6 +99,9 @@
 | pn-act-authentication::signatures | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |
 | pn-credential-derivation::unit | active | unit | pn-credential-derivation-rust | fast | 2 |
+| pn-credential-generator::models | active | integration | pn-credential-generator-rust | fast | 2 |
+| pn-credential-generator::process | active | integration | pn-credential-generator-rust | fast | 1 |
+| pn-credential-generator::unit | active | unit | pn-credential-generator-rust | fast | 1 |
 | pn-epoch-doctests | active | doctest | pn-epoch-rust | fast | 4 |
 | pn-epoch::admission | active | public-surface | pn-epoch-rust | fast | 6 |
 | pn-epoch::admission-contract | active | public-surface | pn-epoch-rust | fast | 1 |

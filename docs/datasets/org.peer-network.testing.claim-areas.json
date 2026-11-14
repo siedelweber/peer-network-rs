@@ -7,6 +7,13 @@
   ],
   "rows": [
     {
+      "area": "generator",
+      "contract": "GENERATOR::def:generator:terminal-entry",
+      "owner": "GENERATOR",
+      "register": "GENERATOR::sec:generator:area-generator",
+      "stake": "Accepting incomplete output or a failed invocation can publish a credential whose custody and role pairing were never established."
+    },
+    {
       "area": "crypto",
       "contract": "DERIVATION::def:derivation:scope",
       "owner": "DERIVATION",

@@ -1,0 +1,11 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "generator__root__dec__observe__first_start_route__resource_current_bytes",
+    "kind": "gauge",
+    "unit": "bytes",
+    "attributes": {},
+    "owner": "GENERATOR",
+    "claim": "ROOT::dec:observe:first-start-route"
+  }
+}

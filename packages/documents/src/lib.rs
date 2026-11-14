@@ -412,6 +412,7 @@ fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
                 | "packages/secret-home/README.md"
                 | "packages/credential-derivation/README.md"
                 | "packages/node/README.md"
+                | "packages/credential-generator/README.md"
                 | "packages/act-authentication/README.md"
                 | ".linter/environments.toml"
                 | ".linter/owners.toml"

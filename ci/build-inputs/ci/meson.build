@@ -1,7 +1,8 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
-  ['ci/credential-receiver-types.json', 'build-graph,discipline-tests,token,hash-citations', ''],
+  ['ci/protected-packages/pn-credential-generator.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
+  ['ci/credential-receiver-types.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected_packages.py', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected-packages/pn-secret-home.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected-packages/pn-credential-derivation.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],

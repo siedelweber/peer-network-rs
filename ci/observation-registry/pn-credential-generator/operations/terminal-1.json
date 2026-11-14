@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "item": "<Failure as std :: fmt :: Display>::fmt",
+    "owner": "GENERATOR",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::dec:observe:first-start-route",
+    "mode": "exception",
+    "shape": "shape-credential-generator",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: The terminal failure exposes only closed classes and accepted-byte counts.",
+      "witness": "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output",
+      "boundary": "pn-credential-generator::packages/credential-generator/src/main.rs::entry",
+      "class_decision": "terminal-credential-recording"
+    }
+  },
+  "review": {
+    "operation": "pn-credential-generator::packages/credential-generator/src/main.rs::<Failure as std :: fmt :: Display>::fmt",
+    "body": "{ match self { Self :: Acquisition (error) => write ! (f , \"{error}\") , Self :: Protection (error) => write ! (f , \"credential protection refused: {error:?}\") , Self :: Construction (error) => write ! (f , \"credential construction refused: {error:?}; cleanup unconfirmed\") , Self :: Delivery { password , verifier , completion , } => write ! (f , \"credential terminal result: password={password:?} verifier={verifier:?} completion={completion:?}\") , } }",
+    "class_decision": "terminal-credential-recording",
+    "item_premise": "The source-reviewed terminal entry receives only opaque named capabilities and a protection outcome, records public convention values, and returns public lengths or closed error classes. Its private stage interface carries no bytes, writer or callback; all private construction, delivery and completion remain in the owning home. The aggregate retains both delivery outcomes and completion, including failures after full writes. Failure Debug and Display contain only public classes and accepted-byte progress, with no error source. Public process sentinels compare the delivered values only in the external receiver fixture. This confirms the finite recording surface, not installed descriptor custody, sealing, publication or the supervisor result.",
+    "assessments": {
+      "full_recording": "terminal-credential-recording-review",
+      "secret_flow": "terminal-credential-recording-review",
+      "exposure_consumers": "terminal-credential-recording-review"
+    }
+  }
+}

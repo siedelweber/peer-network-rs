@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Failure",
+    "kind": "derive",
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "terminal-credential-recording",
+    "expansion_review": "Parser derives only the existing public debug option and command controls; generated parsing never receives a private argument. Derived Debug covers only closed stage error classes and public progress. The production state and receiver capabilities have no derived copying or serialization."
+  }
+}

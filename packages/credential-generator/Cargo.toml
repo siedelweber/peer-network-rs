@@ -1,0 +1,30 @@
+[package]
+name = "pn-credential-generator"
+description = "Terminal protected credential generation for supervisor sealing"
+autotests = false
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "pn-credential-generator"
+path = "src/main.rs"
+
+[[test]]
+name = "models"
+path = "tests/models.rs"
+
+[[test]]
+name = "process"
+path = "tests/process.rs"
+
+[dependencies]
+pn-secret-home = { path = "../secret-home" }
+cli-common.workspace = true
+clap.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

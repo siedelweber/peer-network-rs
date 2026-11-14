@@ -60,6 +60,11 @@
   - pn-readouts
   - pn-host
   - pn-replay
+- pn-credential-generator
+  - pn-secret-home
+  - cli-common
+  - clap
+  - tracing
 - pn-credential-derivation
   - reviewed hmac
   - reviewed pbkdf2
@@ -123,6 +128,7 @@
 
 | Infrastructure crate | Role | Direct prerequisites | Optional prerequisites |
 | --- | --- | --- | --- |
+| pn-credential-generator | Terminal protected credential generation and named delivery | pn-secret-home, cli-common, clap, tracing | None |
 | pn-credential-derivation | Shared borrowed salted-challenge primitives and verifier formatting | reviewed hmac, reviewed pbkdf2, reviewed sha2, reviewed base64, tracing | None |
 | pn | Node schema, service and lifecycle | pn-host, pn-records, pn-interchange | pn-readouts |
 | pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client, pn-act-authentication | None |

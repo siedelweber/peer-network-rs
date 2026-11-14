@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Args",
+    "package": "pn-credential-generator",
+    "path": "packages/credential-generator/src/main.rs",
+    "syntax": "# [doc = \" Only the shared public debug option is accepted; private values never enter argv.\"] # [doc = \" (´def:generator:terminal-entry´)\"] # [derive (clap :: Parser)] # [command (name = \"pn-credential-generator\" , version , about)] struct Args { # [command (flatten)] common : cli_common :: BaseArgs , }"
+  }
+}

@@ -20,6 +20,17 @@
       "added_crates": [
         {
           "dependencies": [
+            "pn-secret-home",
+            "cli-common",
+            "clap",
+            "tracing"
+          ],
+          "name": "pn-credential-generator",
+          "optional": [],
+          "role": "Terminal protected credential generation and named delivery"
+        },
+        {
+          "dependencies": [
             "reviewed hmac",
             "reviewed pbkdf2",
             "reviewed sha2",

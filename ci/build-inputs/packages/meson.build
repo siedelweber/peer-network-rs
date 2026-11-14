@@ -23,3 +23,5 @@ subdir('secret-home')
 subdir('act-authentication')
 subdir('credential-derivation')
 subdir('node')
+
+subdir('credential-generator')

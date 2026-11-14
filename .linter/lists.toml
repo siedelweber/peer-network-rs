@@ -520,6 +520,42 @@ allowances = []
 [ACTPROFILE."profile.claims-conform"]
 allowances = []
 
+[GENERATOR."labels.citations-import-form"]
+allowances = []
+
+[GENERATOR."labels.citations-imported-resolve"]
+allowances = []
+
+[GENERATOR."labels.citations-layer-conform"]
+allowances = []
+
+[GENERATOR."labels.citations-local-resolve"]
+allowances = []
+
+[GENERATOR."labels.generated-regions-conform"]
+allowances = []
+
+[GENERATOR."labels.heads-conform"]
+allowances = []
+
+[GENERATOR."labels.mints-kind-conform"]
+allowances = []
+
+[GENERATOR."labels.mints-unique"]
+allowances = []
+
+[GENERATOR."labels.mints-well-formed"]
+allowances = []
+
+[GENERATOR."labels.outlines-conform"]
+allowances = []
+
+[GENERATOR."profile.tests-conform"]
+allowances = []
+
+[GENERATOR."profile.claims-conform"]
+allowances = []
+
 [DERIVATION."labels.citations-import-form"]
 allowances = []
 

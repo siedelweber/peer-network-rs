@@ -252,6 +252,18 @@
         {
           "owner": "NODE",
           "target": "INTERCHANGE"
+        },
+        {
+          "owner": "GENERATOR",
+          "target": "ROOT"
+        },
+        {
+          "owner": "GENERATOR",
+          "target": "SECRETHOME"
+        },
+        {
+          "owner": "GENERATOR",
+          "target": "CLICOMMON"
         }
       ],
       "name": "declaration",
@@ -273,7 +285,8 @@
         "SECRETHOME",
         "ACTAUTH",
         "DERIVATION",
-        "NODE"
+        "NODE",
+        "GENERATOR"
       ],
       "partitions": [
         {
@@ -385,6 +398,11 @@
           "name": "node-package",
           "owner": "NODE",
           "pattern": "%s\"packages/node/\" *VCHAR"
+        },
+        {
+          "name": "credential-generator-package",
+          "owner": "GENERATOR",
+          "pattern": "%s\"packages/credential-generator/\" *VCHAR"
         }
       ],
       "root_owner": "ROOT"

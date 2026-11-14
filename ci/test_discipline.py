@@ -45,6 +45,7 @@ class WorkspaceChecks(unittest.TestCase):
         self.assertEqual([x['features'] for x in distinct], [['a'], ['b']])
         self.assertEqual(parse_tree('x v1.0.0 (proc-macro)|a\n'), parse_tree('x v1.0.0|a\n'))
         self.assertEqual(parse_tree('x v1.0.0 (proc-macro) (/fixture)|a\n'), parse_tree('x v1.0.0 (/fixture)|a\n'))
+        self.assertEqual(parse_tree('x v1.0.0 (/fixture (proc-macro))|a\n')[0]['origin'], '(/fixture (proc-macro))')
         with self.assertRaisesRegex(ValueError, 'unreadable protected dependency row'):
             parse_tree('not a resolved dependency')
         with tempfile.TemporaryDirectory() as directory:
@@ -94,6 +95,31 @@ class WorkspaceChecks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
                 compare('x',original,actual)
 
+    def test_credential_model_census(self):
+        """The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry.
+        ´claim:discipline:credential-models-cannot-enter-production´
+        ´test:integration:test-credential-model-census´
+        """
+        from discipline import credential_model_findings
+        root = Path('packages/credential-generator')
+        sources = {p: p.read_text() for p in root.rglob('*.rs')}
+        manifest = tomllib.loads((root/'Cargo.toml').read_text())
+        self.assertEqual(credential_model_findings(sources, manifest), [], 'model census admits only test reachability')
+        main = root/'src/main.rs'
+        changed = dict(sources)
+        # The production entry must tail-return the lifecycle; an appended act
+        # changes that finite source contract even when it emits no event.
+        changed[main] = re.sub(r'(terminal\(&mut Production\s*\{[^}]*\}\))', r'\1; later_work()', changed[main])
+        self.assertNotEqual(changed[main], sources[main])
+        self.assertTrue(credential_model_findings(changed, manifest), 'later terminal work refuses')
+        changed = dict(sources);changed[main] = changed[main].replace('#[cfg(test)]\n', '')
+        self.assertTrue(credential_model_findings(changed, manifest), 'production reachability refuses')
+        changed = dict(sources);model = root/'tests/models/completion.rs'
+        changed[model] = changed[model].replace('fn authorizes(', 'pub fn authorizes(')
+        self.assertTrue(credential_model_findings(changed, manifest), 'model export refuses')
+        changed = copy.deepcopy(manifest);changed['features'] = {'models': []}
+        self.assertTrue(credential_model_findings(sources, changed), 'feature activation refuses')
+
     def test_credential_receiver_census(self):
         """One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.
         ´claim:discipline:credential-receiver-census-pins-first-entry´
@@ -129,6 +155,7 @@ class WorkspaceChecks(unittest.TestCase):
                 self.assertTrue(credential_receiver_findings({path:changed}), 'receiver conversion and duplication refuses')
             changed = source.replace('pub struct '+role+'(File);','pub struct '+role+'(pub File);')
             self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver constructor refuses')
+            self.assertTrue(credential_receiver_findings({path:changed+'\n// pub struct '+role+'(File);\n'}), 'comment cannot restore constructor privacy')
             changed = source+'\npub fn receiver(file: File) -> '+role+' { '+role+'(file) }\n'
             self.assertTrue(credential_receiver_findings({path:changed}), 'public receiver-producing function refuses')
             changed = changed.replace('fn receiver(', 'fn permitted_entry(')
