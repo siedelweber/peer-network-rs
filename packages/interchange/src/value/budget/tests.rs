@@ -1,8 +1,63 @@
 use super::*;
 use crate::{EncodingError, EncodingUsage, Tag};
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 
 thread_local! { static GROWTH: Cell<usize> = const { Cell::new(0) }; }
+thread_local! { static RELEASES: RefCell<Option<Vec<(u8, usize)>>> = const { RefCell::new(None) }; }
+
+fn owned_site(value: &Value) -> Option<(u8, usize)> {
+    match value {
+        Value::Bytes(bytes) if !bytes.0.is_empty() => Some((0, bytes.0.as_ptr().addr())),
+        Value::Text(text) if !text.0.is_empty() => Some((1, text.0.as_ptr().addr())),
+        Value::Array(array) if array.0.capacity() != 0 => Some((2, array.0.as_ptr().addr())),
+        Value::Map(map) if map.0.capacity() != 0 => Some((3, map.0.as_ptr().addr())),
+        Value::Tag(tag) => Some((4, std::ptr::from_ref(tag.item.as_ref()).addr())),
+        _ => None,
+    }
+}
+
+pub(super) fn release_site(value: &Value) {
+    RELEASES.with_borrow_mut(|sites| {
+        if let Some(sites) = sites
+            && let Some(site) = owned_site(value)
+        {
+            assert!(sites.len() < sites.capacity(), "release witness never grows its buffer");
+            sites.push(site);
+        }
+    });
+}
+
+fn inventory(value: &Value, sites: &mut Vec<(u8, usize)>) {
+    if let Some(site) = owned_site(value) {
+        sites.push(site);
+    }
+    match value {
+        Value::Array(array) => {
+            for child in &array.0 {
+                inventory(child, sites);
+            }
+        }
+        Value::Map(map) => {
+            for (key, child) in &map.0 {
+                inventory(key, sites);
+                inventory(child, sites);
+            }
+        }
+        Value::Tag(tag) => inventory(&tag.item, sites),
+        _ => {}
+    }
+}
+
+fn dispose_once(value: Value) {
+    let mut expected = Vec::new();
+    inventory(&value, &mut expected);
+    RELEASES.with_borrow_mut(|sites| *sites = Some(Vec::with_capacity(expected.len())));
+    dispose(value);
+    let mut actual = RELEASES.with_borrow_mut(Option::take).unwrap();
+    expected.sort_unstable();
+    actual.sort_unstable();
+    assert_eq!(actual, expected, "each owned subtree reaches release exactly once");
+}
 pub(super) fn allocation_site() {
     GROWTH.with(|value| value.set(value.get() + 1));
 }
@@ -47,6 +102,18 @@ fn reserved_value_transfers() {
     assert_eq!(
         (invalid.as_ptr(), invalid.capacity(), invalid.as_slice()),
         (pointer, capacity, &[0xff][..])
+    );
+    // The prior borrowed UTF-8 check makes this conversion refusal unreachable from
+    // the public entry. Exercise the private recovery boundary with invalid bytes.
+    assert_eq!(
+        Text::finish_transfer(&mut invalid),
+        Err(TransferError::InvalidUtf8 { offset: 0 }),
+        "conversion refusal returns its buffer"
+    );
+    assert_eq!(
+        (invalid.as_ptr(), invalid.capacity(), invalid.as_slice()),
+        (pointer, capacity, &[0xff][..]),
+        "conversion refusal preserves address capacity and bytes"
     );
 
     {
@@ -172,6 +239,26 @@ fn reserved_value_disposal() {
         ])
         .unwrap(),
     ));
+    dispose_once(Value::Map(
+        Map::new([
+            (Value::Unsigned(1), Value::Bytes(vec![1, 2].into())),
+            (
+                Value::Array(Array::new([Value::Unsigned(2)])),
+                Value::Text("held".to_owned().into()),
+            ),
+            (
+                Value::Array(Array::new([Value::Unsigned(3)])),
+                Value::Tag(Tag::new(7, Value::Tag(Tag::new(8, Value::Text("nested".to_owned().into()))))),
+            ),
+        ])
+        .unwrap(),
+    ));
+    let mut partial = vec![Value::Tag(Tag::new(
+        1,
+        Value::Tag(Tag::new(2, Value::Text("partial".to_owned().into()))),
+    ))];
+    dispose_once(Value::Array(Array::take_reserved(&mut partial)));
+    assert_eq!(partial, [] as [Value; 0]);
     for refuse in 1..=12 {
         let (value, usage, calls, result) = nested(12, refuse);
         assert_eq!(result, Err(EncodingError::Reservation));

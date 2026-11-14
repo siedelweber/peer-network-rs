@@ -23,6 +23,8 @@ pub enum TransferError {
 impl Bytes {
     /// Transfer a fully occupied byte buffer, retaining its address and capacity.
     /// The documented equal-length/capacity vector-to-box guarantee excludes shrinking.
+    /// Release the constructed value through `Value::dispose`, including on later refusal.
+    /// Spare capacity after reservation is a refusal, never permission to shrink.
     /// (´amend:interchange:canonical-budget´)
     /// # Errors
     /// `SpareCapacity` leaves the original buffer untouched.
@@ -46,6 +48,8 @@ impl Bytes {
 
 impl Text {
     /// Transfer a fully occupied valid UTF-8 buffer without copying or shrinking.
+    /// Release the constructed value through `Value::dispose`, including on later refusal.
+    /// Spare capacity after reservation is a refusal, never permission to shrink.
     /// (´amend:interchange:canonical-budget´)
     /// # Errors
     /// Spare capacity or invalid UTF-8 leaves the buffer, address and capacity untouched.
@@ -70,6 +74,10 @@ impl Text {
                 offset: error.valid_up_to(),
             });
         }
+        Self::finish_transfer(buffer)
+    }
+
+    fn finish_transfer(buffer: &mut Vec<u8>) -> Result<Self, TransferError> {
         // String::from_utf8 transfers the vector without copying; no box conversion occurs.
         // A copy or normalization here would evade reservation-site controls and needs re-review.
         match String::from_utf8(mem::take(buffer)) {
@@ -86,6 +94,9 @@ impl Text {
 impl Array {
     /// Transfer an already reserved vector without collecting, shrinking or growing it.
     /// Elements already carry their value invariants; spare capacity is preserved.
+    /// Release with `Value::Array(array).dispose()` on success and every refusal path.
+    /// This transfer followed by disposal also releases partial children in a caller vector;
+    /// ordinary vector destruction can allocate through the children's destructors.
     /// (´amend:interchange:canonical-budget´)
     #[must_use]
     pub fn take_reserved(buffer: &mut Vec<Value>) -> Self {
@@ -105,6 +116,9 @@ impl Array {
 impl Map {
     /// Transfer an empty reserved map buffer without sorting or copying.
     /// Empty input establishes canonical order and distinctness without comparison scratch.
+    /// Release the resulting value with `Value::dispose`, including on later refusal.
+    /// Refused nonempty input remains the caller's responsibility: drain its entries and
+    /// dispose each key and value, rather than invoking ordinary container destruction.
     /// (´amend:interchange:canonical-budget´)
     /// # Errors
     /// Nonempty input refuses unchanged; general map construction is outside this route.
@@ -153,6 +167,8 @@ fn dismantle(mut current: Value) {
             mem::swap(&mut current, &mut parent);
             continue;
         }
+        #[cfg(test)]
+        tests::release_site(&current);
         drop(current);
         loop {
             let child = match &mut parent {
@@ -184,6 +200,8 @@ fn dismantle(mut current: Value) {
                 return;
             };
             // Emptied containers reach the unchanged destructor with no pending children.
+            #[cfg(test)]
+            tests::release_site(&parent);
             parent = ancestor;
         }
     }
