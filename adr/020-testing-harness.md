@@ -99,7 +99,7 @@
 | pn-act-authentication::signatures | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |
 | pn-credential-derivation::unit | active | unit | pn-credential-derivation-rust | fast | 2 |
-| pn-credential-generator::models | active | integration | pn-credential-generator-rust | fast | 6 |
+| pn-credential-generator::models | active | integration | pn-credential-generator-rust | fast | 10 |
 | pn-credential-generator::process | active | integration | pn-credential-generator-rust | fast | 1 |
 | pn-credential-generator::unit | active | unit | pn-credential-generator-rust | fast | 1 |
 | pn-epoch-doctests | active | doctest | pn-epoch-rust | fast | 4 |

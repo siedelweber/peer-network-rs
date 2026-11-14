@@ -439,7 +439,7 @@ def credential_model_findings(sources, manifest):
             findings.append('credential model is exported')
     if manifest.get('test') != [{'name': 'models', 'path': 'tests/models.rs'}, {'name': 'process', 'path': 'tests/process.rs'}]:
         findings.append('credential model target roster differs')
-    if sources.get(root/'tests/models.rs') != '#[path = "models/completion.rs"]\nmod completion;\n#[path = "models/publication.rs"]\nmod publication;\n':
+    if sources.get(root/'tests/models.rs') != '#[path = "models/completion.rs"]\nmod completion;\n#[path = "models/publication.rs"]\nmod publication;\n#[path = "models/reconciliation.rs"]\nmod reconciliation;\n':
         findings.append('credential model root differs')
     return findings
 

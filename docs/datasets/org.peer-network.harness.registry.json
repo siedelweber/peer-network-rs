@@ -1863,7 +1863,11 @@
         "pn-credential-generator::models::publication::publication_walk",
         "pn-credential-generator::models::publication::publication_prerequisites",
         "pn-credential-generator::models::publication::publication_endings",
-        "pn-credential-generator::models::publication::publication_completion"
+        "pn-credential-generator::models::publication::publication_completion",
+        "pn-credential-generator::models::reconciliation::controls::role_prerequisites",
+        "pn-credential-generator::models::reconciliation::controls::role_walk",
+        "pn-credential-generator::models::reconciliation::controls::role_recovery",
+        "pn-credential-generator::models::reconciliation::controls::role_endings"
       ],
       "implementation": "pn-credential-generator-rust",
       "kind": "suite",

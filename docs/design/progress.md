@@ -49,7 +49,7 @@
 | pn-act-authentication | 11 | 0 |
 | pn-act-profile | 12 | 0 |
 | pn-credential-derivation | 7 | 0 |
-| pn-credential-generator | 7 | 0 |
+| pn-credential-generator | 9 | 0 |
 | pn-epoch | 55 | 19 |
 | pn-graph | 78 | 34 |
 | pn-host | 27 | 0 |

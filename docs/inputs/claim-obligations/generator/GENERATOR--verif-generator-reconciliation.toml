@@ -1,0 +1,13 @@
+name = "GENERATOR::verif:generator:reconciliation"
+witnessed_labels = []
+path = "packages/credential-generator/README.md"
+status = "scoped-supported"
+claims = ["GENERATOR::claim:generator:role-model-pins-each-reconciliation-clause", "GENERATOR::claim:generator:role-model-walks-directional-reconciliation", "GENERATOR::claim:generator:role-model-refuses-contradictory-recovery", "GENERATOR::claim:generator:rollback-endings-preserve-file-history"]
+realizers = []
+premises = "Finite public state inputs; private equalities and all installation behavior remain declared premises."
+evidence_paragraph = "GENERATOR::crit:generator:reconciliation"
+hold = ""
+owner = "Credential role model implementer"
+missing = "Real server, supervisor, locking, durability and administrator enforcement remain installation witnesses."
+closing_condition = "The finite role, rollback, ending and disposal controls pass."
+closing_step = "Role reconciliation model implementation."

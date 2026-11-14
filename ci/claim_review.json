@@ -2346,6 +2346,38 @@
       "review": "Read the finite abstract publication state walk and its explicit refusal predicates; physical enforcement and external-party evidence remain installation witnesses."
     },
     {
+      "operation": "pn-credential-generator::models::reconciliation::controls::role_endings",
+      "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
+      "claim": "GENERATOR::claim:generator:rollback-endings-preserve-file-history",
+      "before": "",
+      "after": "File endings distinguish source-only, destination-only, identical file identity,\ndifferent-object collisions and absent material; each authorization has its own\nending and synchronization state, with the rollback source pinned by the walk.\n\n# Panics\nPanics only if a finite ending reading changes history or admits missing material.",
+      "review": "Read all five file-name readings, comparing both device and inode and refusing each differing identity, absent material and unsupported semantics. The role walk separately pins a fresh rollback source and its synchronization, so these abstract file readings do not claim directory atomicity or durability."
+    },
+    {
+      "operation": "pn-credential-generator::models::reconciliation::controls::role_prerequisites",
+      "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
+      "claim": "GENERATOR::claim:generator:role-model-pins-each-reconciliation-clause",
+      "before": "",
+      "after": "Named clauses have isolated public-state refusals and every non-target phase.\nThe named scope limits exclude further rollback and next rotation without\ncompleted disposal and readiness; these are not procedure rules.\n\n# Panics\nPanics only if an admitted fixture or a clause refusal differs from its law.",
+      "review": "Read each positive fixture and its single-clause injection, including all non-target phases and the disposal synchronization inputs. The explicitly named further-rollback and next-rotation restrictions are finite scope limits rather than procedure rules; no installation property follows."
+    },
+    {
+      "operation": "pn-credential-generator::models::reconciliation::controls::role_recovery",
+      "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
+      "claim": "GENERATOR::claim:generator:role-model-refuses-contradictory-recovery",
+      "before": "",
+      "after": "Recovery refuses missing, ended or contradictory direction records and unknown\nroles; rollback admission is refused after a present disposal act, which recovery\nsynchronizes before further steps and never cancels.\n\n# Panics\nPanics only if a recorded direction or injected refusal differs from the model law.",
+      "review": "Read the independent old/new equality refusals, wrong direction and history, standing-disposal rollback refusals at every post-act phase and injected contradictory records. The walked present act synchronizes before further recovery; actual synchronization and administrator enforcement remain installation witnesses."
+    },
+    {
+      "operation": "pn-credential-generator::models::reconciliation::controls::role_walk",
+      "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
+      "claim": "GENERATOR::claim:generator:role-model-walks-directional-reconciliation",
+      "before": "",
+      "after": "Finite paths permute role order and recovery stride, retaining separate equalities\nthrough uncertain writes, selection, both rotation endings and rollback before\nreadiness with its own pending ending; next rotation reaches admission only.\n\n# Panics\nPanics only if a finite admitted transition or its stated postcondition fails.",
+      "review": "Read the procedure-ordered paths with permuted role order and recovery stride: forward and abandonment, rollback from completed activation before readiness, fresh rollback source and separate synchronization, preserved rotation history, disposal and fresh next-rotation ending at admission only. This does not walk the next rotation to selection or establish physical completion."
+    },
+    {
       "operation": "pn-credential-generator::process::process_protocol",
       "path": "packages/credential-generator/tests/process.rs",
       "claim": "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output",

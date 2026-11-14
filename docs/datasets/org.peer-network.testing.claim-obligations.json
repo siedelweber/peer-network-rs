@@ -159,6 +159,26 @@
     },
     {
       "claims": [
+        "GENERATOR::claim:generator:role-model-pins-each-reconciliation-clause",
+        "GENERATOR::claim:generator:role-model-walks-directional-reconciliation",
+        "GENERATOR::claim:generator:role-model-refuses-contradictory-recovery",
+        "GENERATOR::claim:generator:rollback-endings-preserve-file-history"
+      ],
+      "closing_condition": "The finite role, rollback, ending and disposal controls pass.",
+      "closing_step": "Role reconciliation model implementation.",
+      "evidence_paragraph": "GENERATOR::crit:generator:reconciliation",
+      "hold": "",
+      "missing": "Real server, supervisor, locking, durability and administrator enforcement remain installation witnesses.",
+      "name": "GENERATOR::verif:generator:reconciliation",
+      "owner": "Credential role model implementer",
+      "path": "packages/credential-generator/README.md",
+      "premises": "Finite public state inputs; private equalities and all installation behavior remain declared premises.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "GENERATOR::claim:generator:terminal-driver-checks-every-stage-before-exit",
         "GENERATOR::claim:generator:completion-model-requires-the-matching-supervisor-result",
         "GENERATOR::claim:generator:stream-model-keeps-the-complete-calibration-premise",
