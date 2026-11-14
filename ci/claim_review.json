@@ -2314,11 +2314,43 @@
       "review": "Read the finite production-driver outcome tuples, test-only result and stream model, or process fixture as named; the external supervisor and physical installation remain outside these controls."
     },
     {
+      "operation": "pn-credential-generator::models::publication::publication_completion",
+      "path": "packages/credential-generator/tests/models/publication.rs",
+      "claim": "GENERATOR::claim:generator:publication-checks-own-completion-and-measure",
+      "before": "",
+      "after": "Publication owns its invocation pairing and sealed-length comparison;\nno plaintext reader, actual sealer or installed calibration law is modelled.\n# Panics\nPanics if failed completion, missing framing or an invalid measure authorizes a link.",
+      "review": "Read the finite abstract publication state walk and its explicit refusal predicates; physical enforcement and external-party evidence remain installation witnesses."
+    },
+    {
+      "operation": "pn-credential-generator::models::publication::publication_endings",
+      "path": "packages/credential-generator/tests/models/publication.rs",
+      "claim": "GENERATOR::claim:generator:publication-endings-distinguish-identity-from-collision",
+      "before": "",
+      "after": "File-ending identity is device plus inode; directory endings are atomic\nno-replace renames and cannot have a link-then-unlink intermediate state.\n# Panics\nPanics if a collision is accepted or an interrupted same-file ending is lost.",
+      "review": "Read the finite abstract publication state walk and its explicit refusal predicates; physical enforcement and external-party evidence remain installation witnesses. Missing, mismatched and undurable acts each refuse before rename and before removal in separate injected inputs."
+    },
+    {
+      "operation": "pn-credential-generator::models::publication::publication_prerequisites",
+      "path": "packages/credential-generator/tests/models/publication.rs",
+      "claim": "GENERATOR::claim:generator:publication-model-refuses-invalid-prerequisites",
+      "before": "",
+      "after": "Injected states refuse invalid generation, receipt, link, marker, selection,\nconsumption, start and recovery prerequisites; rotation recovery abandons\nits authorization and refuses generation under it.\n# Panics\nPanics if the model accepts a refused authorization or publication boundary.",
+      "review": "Read the independent injected inputs and positive controls: each named missing predicate refuses at the finite model boundary, including generating recovery and abandoned rotation. The model has no installed role or durability evidence."
+    },
+    {
+      "operation": "pn-credential-generator::models::publication::publication_walk",
+      "path": "packages/credential-generator/tests/models/publication.rs",
+      "claim": "GENERATOR::claim:generator:publication-model-retains-complete-set-authority",
+      "before": "",
+      "after": "Finite walks reach every staged file and marker boundary, selection and\nauthorization ending; recovery cannot silently regenerate a credential.\nThe role equalities are declared inputs owned by the role model, not server evidence.\n# Panics\nPanics if a finite model transition violates its declared preconditions.",
+      "review": "Read the finite abstract publication state walk and its explicit refusal predicates; physical enforcement and external-party evidence remain installation witnesses."
+    },
+    {
       "operation": "pn-credential-generator::process::process_protocol",
       "path": "packages/credential-generator/tests/process.rs",
       "claim": "GENERATOR::claim:generator:process-delivery-keeps-private-streams-out-of-public-output",
       "before": "",
-      "after": "Fresh terminal processes deliver two exact ended streams, emit only public\nJSON and trace content in default and trace modes, and return a nonzero public refusal without private\noutput for malformed metadata or a closed receiver. Receiver copies remain\nin the external fixture process and are never printed or written to a file.\nA full public-filled pipe remains unread through construction and termination;\nthe terminated process emits no success object and only public JSON diagnostics.\n# Panics\nPanics if the runner omits the executable or a process violates the protocol.",
+      "after": "Fresh terminal processes deliver two exact ended streams, emit only public\nJSON and trace content in default and trace modes, and return a nonzero public refusal without private\noutput for malformed metadata or a closed receiver. Receiver copies remain\nin the external fixture process and are never printed or written to a file.\nA full public-filled pipe remains unread through construction and termination;\nthe terminated process emits no success object and only well-formed JSON diagnostics.\n# Panics\nPanics if the runner omits the executable or a process violates the protocol.",
       "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness."
     },
     {

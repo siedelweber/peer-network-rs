@@ -1858,7 +1858,11 @@
       "budget": "pure-suite",
       "cases": [
         "pn-credential-generator::models::completion::completion_result",
-        "pn-credential-generator::models::completion::calibration"
+        "pn-credential-generator::models::completion::calibration",
+        "pn-credential-generator::models::publication::publication_walk",
+        "pn-credential-generator::models::publication::publication_prerequisites",
+        "pn-credential-generator::models::publication::publication_endings",
+        "pn-credential-generator::models::publication::publication_completion"
       ],
       "implementation": "pn-credential-generator-rust",
       "kind": "suite",

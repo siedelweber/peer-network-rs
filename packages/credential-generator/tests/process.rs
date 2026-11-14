@@ -5,7 +5,7 @@ use std::process::Command;
 /// output for malformed metadata or a closed receiver. Receiver copies remain
 /// in the external fixture process and are never printed or written to a file.
 /// A full public-filled pipe remains unread through construction and termination;
-/// the terminated process emits no success object and only public JSON diagnostics.
+/// the terminated process emits no success object and only well-formed JSON diagnostics.
 /// # Panics
 /// Panics if the runner omits the executable or a process violates the protocol.
 /// ´claim:generator:process-delivery-keeps-private-streams-out-of-public-output´

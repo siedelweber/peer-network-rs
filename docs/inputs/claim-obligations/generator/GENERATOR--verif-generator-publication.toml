@@ -1,0 +1,13 @@
+name = "GENERATOR::verif:generator:publication"
+witnessed_labels = []
+path = "packages/credential-generator/README.md"
+status = "scoped-supported"
+claims = ["GENERATOR::claim:generator:publication-model-retains-complete-set-authority", "GENERATOR::claim:generator:publication-model-refuses-invalid-prerequisites", "GENERATOR::claim:generator:publication-endings-distinguish-identity-from-collision", "GENERATOR::claim:generator:publication-checks-own-completion-and-measure"]
+realizers = []
+premises = "Finite abstract public states; no physical publication or supervisor behavior is witnessed."
+evidence_paragraph = "GENERATOR::crit:generator:publication"
+hold = ""
+owner = "Credential publication model implementer"
+missing = "Installation witnesses and role reconciliation remain outside this model."
+closing_condition = "The finite publication, authorization, ending and invocation controls pass."
+closing_step = "Publication model implementation."
