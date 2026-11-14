@@ -165,7 +165,7 @@
 | pn-host::admitted-memory | active | integration | pn-host-rust | extended | 2 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
-| pn-host::public | active | public-surface | pn-host-rust | fast | 14 |
+| pn-host::public | active | public-surface | pn-host-rust | fast | 17 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 247 |
@@ -188,7 +188,7 @@
 | pn-interchange::transport | active | integration | pn-interchange-rust | fast | 4 |
 | pn-interchange::vectors | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::versions | active | integration | pn-interchange-rust | fast | 6 |
-| pn-records | active | unit | pn-records-rust | fast | 5 |
+| pn-records | active | unit | pn-records-rust | fast | 6 |
 | pn-records-doctests | active | doctest | pn-records-rust | fast | 4 |
 | pn-records::authentication-disclosures | active | public-surface | pn-records-rust | fast | 1 |
 | pn-records::conformance | active | integration | pn-records-rust | fast | 4 |

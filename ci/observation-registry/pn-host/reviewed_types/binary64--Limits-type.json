@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Limits",
+    "package": "pn-host",
+    "path": "packages/host/src/binary64.rs",
+    "syntax": "# [doc = \" Explicit reader ceilings; exhaustion supplies no mathematical result.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug)] pub struct Limits { pub bytes : usize , pub items : usize , pub depth : usize , pub arithmetic : ExactLimits , }"
+  }
+}

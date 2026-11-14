@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Predicate",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Closed comparison predicates; membership alone has no rational threshold.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Predicate { Membership , AtMost (Fraction) , Less (Fraction) , Equal (Fraction) , AtLeast (Fraction) , Greater (Fraction) , }"
+  }
+}

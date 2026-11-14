@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Enclosure",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" A nonempty finite interval with explicit endpoint inclusion.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct Enclosure { lower : Endpoint , lower_included : bool , upper : Endpoint , upper_included : bool , }"
+  }
+}

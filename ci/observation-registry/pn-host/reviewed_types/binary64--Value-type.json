@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Value",
+    "package": "pn-host",
+    "path": "packages/host/src/binary64.rs",
+    "syntax": "# [derive (Clone , Debug)] enum Value { UInt (u64) , Bytes (Vec < u8 >) , Text (String) , Array (Vec < Self >) , Boolean (bool) , Null , }"
+  }
+}

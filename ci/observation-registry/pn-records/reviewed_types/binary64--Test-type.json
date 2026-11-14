@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Test",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" One completed interval test; refusal creates no interval.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Test { pub subject : Option < u64 > , pub evaluated : Enclosure , pub result : Polarity , }"
+  }
+}

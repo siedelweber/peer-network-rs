@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "item": "binary64::Fraction::parts",
+    "owner": "RECORDS",
+    "signature": "fn parts (& self) -> (& str , & str)",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "binary64-fraction-parts"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/binary64.rs::binary64::Fraction::parts",
+    "body": "{ (& self . numerator , & self . denominator) }",
+    "class_decision": "binary64-records",
+    "item_premise": "These separate fragments retain only declared public source bytes, exact data, finite endpoint patterns, mathematical syntax and supplied interval assertions. Structural checks grant no evidence, admission, publication or store capability. Complete arguments and results are recorded at the public tracing boundaries. No Session, secret container, credential acquisition, private path, I/O or observation-dependent computation enters these bodies. Derived copying, formatting and comparison expose the same public content.",
+    "assessments": {
+      "full_recording": "binary64-full_recording",
+      "secret_flow": "binary64-secret_flow",
+      "exposure_consumers": "binary64-exposure_consumers"
+    }
+  }
+}

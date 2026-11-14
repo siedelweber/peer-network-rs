@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Error",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Closed structural refusal classes, without a mathematical sign.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Error { NegativeZero , NonFinite , Rational , Name , Enclosure , Domain , Reference , CanonicalNodes , Adjustment , Predicate , Polarity , Tests , RungPrefix , TerminalPass , RefusalPrefix , OriginalInputs , ActualEnclosure , Question , Consumer , Resource , }"
+  }
+}

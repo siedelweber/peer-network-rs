@@ -21,6 +21,7 @@ CONTROLLER_FILES = (
     'authentication_crypto.py',
     'authentication_encoding_vectors.py',
     'authentication_vectors.py',
+    'binary64_vectors.py',
     'build_graph.py',
     'build_graph_evidence.py',
     'calibrate.py',

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Rungs",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" The candidate grid and its complete attempted prefix.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Rungs { pub coordinate : u64 , pub grid : Vec < Fraction > , pub rows : Vec < Row > , }"
+  }
+}

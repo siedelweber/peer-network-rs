@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Endpoint",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" A finite binary64 pattern with one spelling for zero.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct Endpoint (u64) ;"
+  }
+}

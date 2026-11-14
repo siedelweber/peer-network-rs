@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Relation",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" A hypothesis relation, retaining its declared position.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Relation { Equal , Less , AtMost , }"
+  }
+}

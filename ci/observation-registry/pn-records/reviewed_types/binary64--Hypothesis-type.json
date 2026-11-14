@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Hypothesis",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" A relation between two quantity nodes, not a proof of domain feasibility.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Hypothesis { pub relation : Relation , pub left : u64 , pub right : u64 , }"
+  }
+}

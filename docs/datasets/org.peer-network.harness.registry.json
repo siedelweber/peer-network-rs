@@ -3118,6 +3118,9 @@
         "pn-host::public::publication::refusals::publication_malformed_documents": "calibrated-host-publication-malformed-documents-case"
       },
       "cases": [
+        "pn-host::public::binary64::binary64_canonical_corpus",
+        "pn-host::public::binary64::binary64_expected_question_binding",
+        "pn-host::public::binary64::binary64_finite_and_bounded",
         "pn-host::public::acquisition_bound_refusals",
         "pn-host::public::authentication_disconnect",
         "pn-host::public::case_before_input",
@@ -4160,6 +4163,7 @@
         "pn-records::tests::whole_act_carrier": "calibrated-whole-act-carrier-case"
       },
       "cases": [
+        "pn-records::binary64::tests::binary64_exact_golden_relations",
         "pn-records::numerics::tests::literal_admission",
         "pn-records::tests::deployment_announcement_guard",
         "pn-records::tests::whole_act_carrier",

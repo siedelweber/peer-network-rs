@@ -5,6 +5,9 @@
 #[path = "storage/admitted_tests.rs"]
 mod admitted_carrier_tests;
 mod admitted_result;
+/// Explicit binary64 fragments, without publication or admission integration.
+/// (´[ROOT-rule:design:binary64-evidence]´)
+pub mod binary64;
 /// Budgeted positions computed only from borrowed admitted packages.
 /// (´[ROOT-amend:identity:result-position-recipe]´)
 pub use admitted_result::position;

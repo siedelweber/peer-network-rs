@@ -278,6 +278,28 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "binary64-carrier-vectors" and standing == "defined":
+        from binary64_vectors import check
+        check(relative_file(root, rule['source']))
+        text = relative_file(root, rule['source']).read_text()
+        values = {match.group() for match in occurrences(text)}
+        cases = json.loads(text)['cases']
+        endpoints = {int(value, 16) for row in cases for value in row['endpoint_patterns']}
+        octets = {value for row in cases for value in bytes.fromhex(row['canonical'])}
+        characters = {ord(character) for character in json.dumps(cases, ensure_ascii=False)}
+        # The generator's explicit operands and encoding bytes must occur in
+        # the independently regenerated corpus; they are not content identities.
+        def accounted(candidate, _line):
+            if candidate in values:
+                return True
+            if candidate.startswith(('0x', '0X')):
+                return literal_integer(candidate) in endpoints
+            if candidate.startswith('\\x'):
+                return literal_integer(candidate) in octets
+            if candidate.startswith('\\u'):
+                return literal_integer(candidate) in characters
+            return False
+        return accounted
     if kind == "result-position-vectors" and standing == "defined":
         from position_vectors import check
         check(relative_file(root, rule['source']))

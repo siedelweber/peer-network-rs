@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Outcome",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Operational results never imply mathematical negation.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Outcome { Completed , InvalidInput , InvalidEvidence , Unsupported , TargetNotCertifiable , Resource , Interrupted , }"
+  }
+}

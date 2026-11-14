@@ -1,6 +1,9 @@
 //! Internal carriers; no codec, host admission or graph algorithm.
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
+/// Separate binary64 fragments with no numerical admission authority.
+/// (´[ROOT-rule:design:binary64-evidence]´)
+pub mod binary64;
 pub mod conserved;
 pub mod controller;
 /// Exact numeric carriers and explicit unit operations.

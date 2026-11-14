@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Data",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Exact public data; its constructor follows the source field's type.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Data { Rational (Fraction) , Binary64 (Endpoint) , Bytes (Vec < u8 >) , Text (String) , Array (Vec < Self >) , Record (Vec < (String , Self) >) , Boolean (bool) , Absent , }"
+  }
+}

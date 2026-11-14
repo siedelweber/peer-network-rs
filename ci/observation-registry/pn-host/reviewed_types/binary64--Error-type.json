@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Error",
+    "package": "pn-host",
+    "path": "packages/host/src/binary64.rs",
+    "syntax": "# [doc = \" Closed byte refusals, separate from typed structural refusals.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Error { Truncated , Trailing , Indefinite , Tag , Float , ShortestHead , ItemKind , Arity , UnknownKey , DuplicateKey , MemberOrder , UnknownCode , Utf8 , Resource , Structure (model :: Error) , }"
+  }
+}

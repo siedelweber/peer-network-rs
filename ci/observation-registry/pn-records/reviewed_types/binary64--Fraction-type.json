@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Fraction",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" A canonical reduced rational pair, validated under the caller's arithmetic ceiling.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Fraction { numerator : String , denominator : String , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Expected",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Independently fixed consumer question and permitted result, never read from the carrier.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Expected { pub question : Question , pub enclosures : Option < (Enclosure , Enclosure) > , pub adjusted : bool , pub predicate : Predicate , pub polarity : Polarity , pub consumer : Consumer , pub grid : Option < (u64 , Vec < Fraction >) > , }"
+  }
+}

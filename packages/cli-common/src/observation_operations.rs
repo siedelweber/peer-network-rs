@@ -1,7 +1,16 @@
 // Generated from ci/observation-registry by ci/observe.py --write-operation-vocabulary.
-pub(super) const RECORDS_OPERATIONS: [&str; 44] = [
+pub(super) const RECORDS_OPERATIONS: [&str; 53] = [
     "assemble-boundary-inputs",
     "authentication-disclosure",
+    "binary64-carrier-bind",
+    "binary64-carrier-fields",
+    "binary64-carrier-new",
+    "binary64-enclosure-new",
+    "binary64-enclosure-parts",
+    "binary64-endpoint-bits",
+    "binary64-endpoint-new",
+    "binary64-fraction-new",
+    "binary64-fraction-parts",
     "bind-constants",
     "bind-marker-policy",
     "complete-act-access",

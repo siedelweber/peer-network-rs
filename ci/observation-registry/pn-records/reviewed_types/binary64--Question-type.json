@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Question",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Original mathematical question, compared as a complete value.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Question { pub nodes : Vec < Node > , pub root : u64 , pub inputs : Vec < Input > , pub coordinates : Vec < Coordinate > , pub hypotheses : Vec < Hypothesis > , }"
+  }
+}

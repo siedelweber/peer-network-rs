@@ -3,6 +3,9 @@ use pn_host::{Configuration, Refusal, Session};
 use std::io::Read;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+#[path = "public/binary64.rs"]
+mod binary64;
+
 fn runtime() -> tokio::runtime::Runtime {
     tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap()
 }

@@ -1280,3 +1280,14 @@ establishment = "defined"
 reader = "receiver-filter"
 definition = "The classic filter loads the syscall number as an absolute word, compares an immediate, and returns either permission refusal or allowance. Only those five published instruction/action words are admitted."
 paths = ["packages/secret-home/src/delivery/tests.rs"]
+
+[[rows]]
+family = "binary64-carrier-vectors"
+group = "scalar carrier golden values"
+measures = "Canonical fragment bytes independently derived from exact integer and rational fixture values"
+producer = "ci/binary64_vectors.py with integer framing and exact Fraction arithmetic, cross-checked against the exact route"
+establishment = "defined"
+reader = "binary64-carrier-vectors"
+source = "packages/host/tests/data/binary64-carriers.json"
+definition = "Regenerate distinct unsorted carrier inputs without the host codec or interchange helpers. The generator's explicit endpoint integers, escaped encoding bytes and Unicode characters must occur in that checked corpus, as must the test's substituted endpoint spelling. These golden values check representation and interval implications, not interval soundness or a native law; no carrier identity is assigned."
+paths = ["packages/host/tests/data/binary64-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/binary64.rs"]

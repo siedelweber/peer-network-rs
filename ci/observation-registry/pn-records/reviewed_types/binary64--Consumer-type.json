@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Consumer",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Consumer role; this code grants no authority to adjust a question.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Consumer { Free , Value , Map , Residual , Rung , Fixed , Local , }"
+  }
+}

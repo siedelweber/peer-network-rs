@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Fields",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Untrusted typed members awaiting structural validation; no evidence capability.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Fields { pub question : Question , pub enclosures : Option < (Enclosure , Enclosure) > , pub adjusted : bool , pub predicate : Predicate , pub polarity : Polarity , pub consumer : Consumer , pub tests : Vec < Test > , pub rungs : Option < Rungs > , pub outcome : Outcome , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Coordinate",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" One coordinate of the complete original domain.\"] # [doc = \" (´[ROOT-rule:design:binary64-evidence]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Coordinate { pub name : String , pub lower : Fraction , pub lower_included : bool , pub upper : Fraction , pub upper_included : bool , }"
+  }
+}

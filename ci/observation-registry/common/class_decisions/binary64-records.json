@@ -1,0 +1,21 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "binary64-records",
+    "status": "reviewer-confirmed",
+    "premises": "These separate fragments retain only declared public source bytes, exact data, finite endpoint patterns, mathematical syntax and supplied interval assertions. Structural checks grant no evidence, admission, publication or store capability. Complete arguments and results are recorded at the public tracing boundaries. No Session, secret container, credential acquisition, private path, I/O or observation-dependent computation enters these bodies. Derived copying, formatting and comparison expose the same public content.",
+    "membership": {
+      "explicit": [
+        "pn-records::packages/records/src/binary64.rs::binary64::Carrier::bind",
+        "pn-records::packages/records/src/binary64.rs::binary64::Carrier::fields",
+        "pn-records::packages/records/src/binary64.rs::binary64::Carrier::new",
+        "pn-records::packages/records/src/binary64.rs::binary64::Enclosure::new",
+        "pn-records::packages/records/src/binary64.rs::binary64::Enclosure::parts",
+        "pn-records::packages/records/src/binary64.rs::binary64::Endpoint::bits",
+        "pn-records::packages/records/src/binary64.rs::binary64::Endpoint::new",
+        "pn-records::packages/records/src/binary64.rs::binary64::Fraction::new",
+        "pn-records::packages/records/src/binary64.rs::binary64::Fraction::parts"
+      ]
+    }
+  }
+}

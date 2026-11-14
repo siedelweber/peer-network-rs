@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Reader",
+    "package": "pn-host",
+    "path": "packages/host/src/binary64.rs",
+    "syntax": "struct Reader < 'a > { bytes : & 'a [u8] , offset : usize , items : usize , limits : & 'a Limits , }"
+  }
+}
