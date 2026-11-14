@@ -1,0 +1,13 @@
+name = "NODE::verif:node:admission"
+witnessed_labels = []
+path = "packages/node/README.md"
+status = "scoped-supported"
+claims = ["NODE::claim:admission:control-schema-register-agree", "NODE::claim:admission:schema-reader-refuses-invalid-shapes", "NODE::claim:admission:register-syntax-refuses", "NODE::claim:admission:register-unknown-keys-refuse", "NODE::claim:admission:register-metadata-is-closed", "NODE::claim:admission:pending-register-cannot-serve", "NODE::claim:admission:embedding-is-build-owned", "NODE::claim:admission:embedded-child-has-no-policy-path"]
+realizers = []
+premises = "Finite unserved schema, register and embedding controls; no operation executes and no register artifact exists."
+evidence_paragraph = "NODE::def:node:scope"
+hold = ""
+owner = "Node implementer and API reviewer"
+missing = "Executor bounds, scalar transport, cancellation and served configurations remain later cuts."
+closing_condition = "Reader agreement, refusal and embedding controls pass with their assertion mutants."
+closing_step = "Reader dependency admission and agreement."

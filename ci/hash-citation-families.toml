@@ -1237,3 +1237,13 @@ reader = "cargo-archive"
 source = "Cargo.lock"
 definition = "Package name and exact locked version locate the original registry archive; the admission repeats the matching lock checksum."
 paths = ["adr/007-crate-decomposition.md", "docs/templates/adr/007-crate-decomposition.md.j2"]
+
+[[rows]]
+family = "node-embedding-cbor-header"
+group = "node reader admission"
+measures = "CBOR array-of-three initial byte locating the version tuple in the embedding refusal control"
+producer = "RFC 8949 major type four with direct argument three"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "The initial byte encodes an array of three version components; the control changes the patch component of an otherwise decodable artifact and requires the embedding comparison to refuse it. This is an encoding constant, not an artifact digest or identity assignment."
+paths = ["packages/node/src/admission.rs"]

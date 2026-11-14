@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-rust"
+evidence = "pure"
+contract = "Unserved embedded control schema and register reader admission"
+edition = "node-reader-1"

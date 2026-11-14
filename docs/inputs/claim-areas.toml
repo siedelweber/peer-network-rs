@@ -414,3 +414,10 @@ area = "authentication"
 stake = "Incorrect public byte recipes or script interpretation can attach authority to the wrong author."
 register = "ACTAUTH::sec:authentication:area-authentication"
 contract = "ACTAUTH::def:authentication:public-evidence"
+
+[[rows]]
+owner = "NODE"
+area = "admission"
+stake = "A reader that accepts structural disagreement or a substituted input can admit a different edition from the reviewed source."
+register = "NODE::def:node:scope"
+contract = "NODE::verif:node:admission"

@@ -1,0 +1,59 @@
+role = "control"
+schema_namespace = "org.peer-network.test.api-control-schema"
+schema_version = "1.0.0"
+query_root = "ControlQuery"
+query_fields = ["unavailable:Boolean"]
+mutation_root = "ControlMutation"
+query_admission = "refuse-before-resolver"
+introspection = "isolated-conformance-only"
+
+[[operations]]
+name = "start"
+kind = "mutation"
+arguments = []
+defaults = []
+result = "ControlStartResult!"
+fields = ["ready:Boolean!", "edition:String!", "failure:String"]
+success = "ready=true; failure=null"
+refusal = "ready=false; failure=one-closed-name"
+failures = ["BootstrapInvalid", "EditionUnsupported", "ResourceLimit", "Cancelled", "StartFailed"]
+authorization = "in-process-entry; no-channel; no-control-credential"
+bootstrap = "embedding-public-context; no-message-arguments"
+pagination = "not-applicable:no-list-result"
+cancellation = "before-ready; first-terminal-cause; absolute-deadline"
+argument_nullability = "not-applicable:no-arguments"
+work_weights = { status = "not-yet-admitted", unit = "work-per-start" }
+
+[failure_conditions]
+BootstrapInvalid = "public-bootstrap-validation"
+EditionUnsupported = "unsupported-lifecycle-edition"
+ResourceLimit = "resource-or-execution-deadline-exhausted"
+Cancelled = "cancellation-before-readiness"
+StartFailed = "remaining-checked-shell-startup-failure"
+
+[ceilings]
+schema_source = { status = "not-yet-admitted", unit = "utf8-bytes" }
+register_source = { status = "not-yet-admitted", unit = "utf8-bytes" }
+graphql_source = { status = "not-yet-admitted", unit = "utf8-bytes" }
+transport = { status = "not-yet-admitted", unit = "bytes" }
+decoded_bytes = { status = "not-yet-admitted", unit = "bytes" }
+decoded_items = { status = "not-yet-admitted", unit = "items" }
+cbor_nesting = { status = "not-yet-admitted", unit = "levels" }
+input_nesting = { status = "not-yet-admitted", unit = "levels" }
+lexical_tokens = { status = "not-yet-admitted", unit = "tokens" }
+source_nesting = { status = "not-yet-admitted", unit = "levels" }
+selection_depth = { status = "not-yet-admitted", unit = "levels" }
+root_selections = { status = "not-yet-admitted", unit = "selections" }
+fields = { status = "not-yet-admitted", unit = "selections" }
+aliases = { status = "not-yet-admitted", unit = "aliases" }
+fragment_work = { status = "not-yet-admitted", unit = "occurrences" }
+resolver_work = { status = "not-yet-admitted", unit = "work" }
+response = { status = "not-yet-admitted", unit = "bytes" }
+concurrency = { status = "not-yet-admitted", unit = "executions" }
+execution = { status = "not-yet-admitted", unit = "nanoseconds" }
+cancellation_drain = { status = "not-yet-admitted", unit = "nanoseconds" }
+shell_start = { status = "not-yet-admitted", unit = "nanoseconds" }
+shell_stop = { status = "not-yet-admitted", unit = "nanoseconds" }
+list_size = "not-applicable:no-list-type"
+page_size = "not-applicable:no-pagination"
+http_body = "not-applicable:no-http-listener"

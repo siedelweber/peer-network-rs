@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn::unit"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn::admission::agreement", "pn::admission::schema_refusals", "pn::admission::register_syntax", "pn::admission::register_unknown_keys", "pn::admission::register_metadata", "pn::admission::pending_refusal", "pn::admission::embedding_owned", "pn::admission::embedded_child"]

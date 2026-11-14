@@ -39522,10 +39522,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "2",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39540,7 +39540,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2
+      "total": 3
     },
     {
       "category": "record-coverage",

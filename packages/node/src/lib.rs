@@ -9,3 +9,6 @@ use async_graphql_value as _;
 use pn_interchange as _;
 use toml as _;
 use tracing as _;
+
+#[cfg(test)]
+mod admission;

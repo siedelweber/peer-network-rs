@@ -1412,6 +1412,14 @@
     "pn-wallet::token::tests::token_limits": "",
     "pn-wallet::token::tests::token_qualification": "",
     "pn-wallet::token::tests::token_spends": "",
-    "pn-wallet::wire::wire_compatibility": ""
+    "pn-wallet::wire::wire_compatibility": "",
+    "pn::admission::agreement": "Claim: Conformance parses the exact carried schema and independent draft into agreeing roots, fields and nullability, with closed metadata and pending ceilings; no execution occurs.",
+    "pn::admission::embedded_child": "Claim: Conformance uses the build-owned artifact and draft without a runtime path, including when invoked from a directory containing substituted files.",
+    "pn::admission::embedding_owned": "Claim: Conformance compares embedded bytes with the committed inputs and the record's exact draft, refuses a decodable alternate patch or changed draft, and observes no disk-policy read after substituting runtime files.",
+    "pn::admission::pending_refusal": "Claim: Conformance refuses served construction while any register value is pending; even a fully admitted synthetic fixture cannot construct a served operation in this test-only harness.",
+    "pn::admission::register_metadata": "Claim: Robustness refuses missing members, wrong types, reordered failure rows and invalid status, unit, applicability or value combinations without treating pending as unlimited.",
+    "pn::admission::register_syntax": "Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.",
+    "pn::admission::register_unknown_keys": "Claim: Robustness refuses unknown keys at the root, operation, failure, ceiling and bound levels, before structural agreement.",
+    "pn::admission::schema_refusals": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement."
   }
 }

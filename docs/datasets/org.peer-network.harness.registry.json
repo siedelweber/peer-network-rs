@@ -132,6 +132,13 @@
       "name": "pn-records-rust"
     },
     {
+      "contract": "Unserved embedded control schema and register reader admission",
+      "edition": "node-reader-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-rust"
+    },
+    {
       "contract": "owned Linux mapping and process protection",
       "edition": "secret-home-1",
       "evidence": "pure",
@@ -4590,6 +4597,26 @@
       "runner": "nextest",
       "status": "active",
       "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn::admission::agreement",
+        "pn::admission::schema_refusals",
+        "pn::admission::register_syntax",
+        "pn::admission::register_unknown_keys",
+        "pn::admission::register_metadata",
+        "pn::admission::pending_refusal",
+        "pn::admission::embedding_owned",
+        "pn::admission::embedded_child"
+      ],
+      "implementation": "pn-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn::unit",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     },
     {
       "budget": "pure-suite",

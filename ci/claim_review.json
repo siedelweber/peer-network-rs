@@ -6131,6 +6131,70 @@
       "before": "",
       "after": "Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.",
       "review": "Read the named assertions and refusal variants in this source site. Wire witnesses answer the public reader through a scripted local server with exact bytes and observe the peer side of each closure; no Elements service, signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn::admission::agreement",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:control-schema-register-agree",
+      "before": "Claim: Conformance parses the exact carried schema and independent draft into agreeing roots, fields and nullability, with closed metadata and pending ceilings; no execution occurs.",
+      "after": "Claim: Conformance parses the exact carried schema and independent draft into agreeing roots, fields and nullability, with closed metadata and pending ceilings; no execution occurs.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::embedded_child",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:embedded-child-has-no-policy-path",
+      "before": "Claim: Conformance uses the build-owned artifact and draft without a runtime path, including when invoked from a directory containing substituted files.",
+      "after": "Claim: Conformance uses the build-owned artifact and draft without a runtime path, including when invoked from a directory containing substituted files.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::embedding_owned",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:embedding-is-build-owned",
+      "before": "Claim: Conformance compares embedded bytes with the committed inputs and the record's exact draft, refuses a decodable alternate patch or changed draft, and observes no disk-policy read after substituting runtime files.",
+      "after": "Claim: Conformance compares embedded bytes with the committed inputs and the record's exact draft, refuses a decodable alternate patch or changed draft, and observes no disk-policy read after substituting runtime files.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::pending_refusal",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:pending-register-cannot-serve",
+      "before": "Claim: Conformance refuses served construction while any register value is pending; even a fully admitted synthetic fixture cannot construct a served operation in this test-only harness.",
+      "after": "Claim: Conformance refuses served construction while any register value is pending; even a fully admitted synthetic fixture cannot construct a served operation in this test-only harness.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::register_metadata",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-metadata-is-closed",
+      "before": "Claim: Robustness refuses missing members, wrong types, reordered failure rows and invalid status, unit, applicability or value combinations without treating pending as unlimited.",
+      "after": "Claim: Robustness refuses missing members, wrong types, reordered failure rows and invalid status, unit, applicability or value combinations without treating pending as unlimited.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::register_syntax",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-syntax-refuses",
+      "before": "Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.",
+      "after": "Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::register_unknown_keys",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-unknown-keys-refuse",
+      "before": "Claim: Robustness refuses unknown keys at the root, operation, failure, ceiling and bound levels, before structural agreement.",
+      "after": "Claim: Robustness refuses unknown keys at the root, operation, failure, ceiling and bound levels, before structural agreement.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::schema_refusals",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:schema-reader-refuses-invalid-shapes",
+      "before": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
+      "after": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
+      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
     }
   ],
   "conditional_claims": {}
