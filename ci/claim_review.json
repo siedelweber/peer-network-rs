@@ -758,8 +758,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-statement-types-refuse-inline-sql",
       "before": "",
-      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.",
-      "review": "Read exact driver/include/path refusals, traversed config inference and import probes guarding the storage-only exemption, plus existing rename and inline SQL compile-fail probes."
+      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, inline and external test code cannot acquire a direct driver connection, and inline SQL fails compilation at the wrapper's Statement parameter. The connection census reads masked source, not macro expansions.",
+      "review": "Read the production traversal and private-wrapper restriction with the unchanged compile-fail SQL control. The added inline-test, external-test, free-constructor and inferred-method source fixtures must each refuse at the connection-constructor finding; none executes a connection. The census retains test declarations, follows their external modules and reads integration and benchmark sources. It is lexical evidence and does not resolve macro-generated or aliased type identities."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_storage_restart",
@@ -4121,6 +4121,22 @@
       "before": "",
       "after": "Real startup refusals reach their assigned class before credential construction;\na later independent refusal keeps each wrapper mutation free of private output.",
       "review": "Read the real exec wrapper and each acquisition class, exact nonzero status, empty streams and absence of terminal success. Each mutant retains an independent later refusal so this control constructs no credential. Successful delivery, framing and retained-writer hangs remain unwitnessed."
+    },
+    {
+      "operation": "pn-host::credential_fixture::instance_prerequisites",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-instance-prerequisites",
+      "before": "",
+      "after": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits and a leftover directory before instance use.",
+      "review": "Read the independent typed refusal assertions for missing or relative programs, wrong version, unreviewed series, non-piped collector, unchanged core limits and a pre-existing instance directory. These checks admit only the recorded public fixture prerequisites; they witness no installation policy."
+    },
+    {
+      "operation": "pn-host::credential_fixture::owned_instances",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-instance-standing-profiles",
+      "before": "",
+      "after": "Two fresh instances with published SCRAM setup inputs retain their distinct text-exposing statistics profiles and one/one inherited core limits, read through the unchanged host Session; an incompatible backend-start connection is refused, and every owned directory is removed after shutdown. No generated credential material is handled.",
+      "review": "Read the selected target check, interpreter lowering and read-back before startup, inherited limits from the postmaster and its children, both real statistics profiles, backend-start refusal and shutdown before directory removal. Published SCRAM setup inputs are acquired through Configuration and every connection uses the unchanged Session shim; no generated credential, raw provisioning session or installation witness is claimed."
     },
     {
       "operation": "pn-host::postgresql::connection_loss_and_drop",

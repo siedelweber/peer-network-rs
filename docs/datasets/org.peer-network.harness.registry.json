@@ -3087,8 +3087,22 @@
       "tier": "extended"
     },
     {
+      "budget": "postgresql-suite",
+      "cases": [
+        "pn-host::credential_fixture::owned_instances"
+      ],
+      "implementation": "pn-host-postgresql",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::credential-instance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
+    },
+    {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::credential_fixture::instance_prerequisites",
         "pn-host::credential_fixture::binding",
         "pn-host::credential_fixture::handovers"
       ],

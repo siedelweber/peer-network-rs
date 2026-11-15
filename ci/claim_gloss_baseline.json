@@ -701,6 +701,8 @@
     "pn-host::config::tests::secret_json_grammar": "",
     "pn-host::credential_fixture::binding": "",
     "pn-host::credential_fixture::handovers": "",
+    "pn-host::credential_fixture::instance_prerequisites": "",
+    "pn-host::credential_fixture::owned_instances": "",
     "pn-host::postgresql::connection_loss_and_drop": "",
     "pn-host::postgresql::outbound_refusal": "",
     "pn-host::postgresql::private_server_echo": "",

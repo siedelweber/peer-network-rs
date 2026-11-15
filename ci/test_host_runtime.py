@@ -473,7 +473,7 @@ def capture_regressions(test, prefix):
 
 class HostRuntime(unittest.TestCase):
     def test_statement_type_boundary(self):
-        """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.
+        """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, inline and external test code cannot acquire a direct driver connection, and inline SQL fails compilation at the wrapper's Statement parameter. The connection census reads masked source, not macro expansions.
         ´claim:discipline:storage-statement-types-refuse-inline-sql´
         ´test:integration:test-statement-type-boundary´
         """
@@ -505,6 +505,22 @@ class HostRuntime(unittest.TestCase):
                 source.write_bytes(original+fixture)
                 with self.assertRaisesRegex(ValueError,re.escape(message)):check()
             finally:source.write_bytes(original)
+        # Hermetic source mutations do not compile or connect. Both inline and
+        # external test modules are in the constructor census's read set.
+        test_source=Path('packages/host/src/credential_fixture.rs')
+        test_original=test_source.read_bytes()
+        for source,original,fixture in (
+            (lib,lib_original,b'\n#[cfg(test)] async fn direct_test_driver() { tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await; }\n'),
+            (test_source,test_original,b'\nasync fn direct_test_driver() { tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await; }\n'),
+            (test_source,test_original,b'\nasync fn direct_test_driver() { let connect = tokio_postgres::connect; connect("public", tokio_postgres::NoTls).await; }\n'),
+            (test_source,test_original,b'\nasync fn direct_test_driver() { configuration.connect(tokio_postgres::NoTls).await; }\n'),
+        ):
+            try:
+                source.write_bytes(original+fixture)
+                with self.assertRaisesRegex(ValueError,'connection constructor outside Session, including test code'):
+                    check()
+            finally:source.write_bytes(original)
+        print('HOST-DRIVER-CENSUS test-code=checked placed-connections=4 refused=4')
         source=Path('packages/host/src/config.rs')
         original=source.read_bytes()
         for fixture in (
