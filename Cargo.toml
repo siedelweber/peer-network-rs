@@ -31,7 +31,7 @@ regexml = { path = "vendor/regexml" }
 proptest = "1"
 pn-testkit = { path = "packages/testkit" }
 # Measurement only; plotting and parallel analysis are unnecessary for owned smoke runs.
-criterion = { version = "0.7", default-features = false }
+criterion = { version = "0.8", default-features = false }
 cli-common = { path = "packages/cli-common" }
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
@@ -46,7 +46,7 @@ secrecy = { version = "0.10", default-features = false }
 metrics = { version = "0.24", default-features = false }
 sha2 = { version = "=0.11.1", default-features = false, features = ["zeroize"] }
 # Parser-only development tooling and a compatible local exporter stack.
-syn = { version = "2", features = ["full", "visit"] }
+syn = { version = "3", features = ["full", "visit"] }
 quote = "1"
 proc-macro2 = { version = "1", features = ["span-locations"] }
 opentelemetry = { version = "0.33.1", default-features = false, features = ["trace", "metrics"] }
@@ -60,8 +60,8 @@ futures-executor = "0.3"
 textwrap = "0.16"
 # Keep the renderer on its reviewed major line with default features and dataset serialization.
 minijinja = { version = "3", features = ["serde"] }
-# TOML is pre-1.0; its 0.9 minor line preserves this input parser's API.
-toml = "0.9"
+# Stable TOML reader; first-party admission retains its own refusal classes.
+toml = "1"
 
 [workspace.lints.rust]
 deprecated_safe = { level = "deny", priority = -1 }

@@ -2449,7 +2449,7 @@
         "criterion/default-features-off"
       ],
       "kind": "campaign",
-      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied",
+      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied; producing Criterion line 0.7.0",
       "measured_series": [
         {
           "commit": "7cc999af9e209ce9cda111a7db1554e3cb11232f",
@@ -6244,7 +6244,7 @@
         "criterion/default-features-off"
       ],
       "kind": "campaign",
-      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied",
+      "lock_identity": "Cargo.lock at the public base with the measured implementation patch applied; producing Criterion line 0.7.0",
       "measured_series": [
         {
           "commit": "7cc999af9e209ce9cda111a7db1554e3cb11232f",
@@ -16672,7 +16672,7 @@
         "wall_s": 182.57821464538574
       },
       "kind": "campaign",
-      "lock_identity": "Cargo.lock at exact public measured commit",
+      "lock_identity": "Cargo.lock at exact public measured commit; producing Criterion line 0.7.0",
       "measured_series": [
         {
           "commit": "2afc7a89ce57783a2bc6928828ae0066fb19178e",
@@ -104616,7 +104616,7 @@
         "wall_s": 1438.3613905906677
       },
       "kind": "campaign",
-      "lock_identity": "Cargo.lock at exact public measured commit",
+      "lock_identity": "Cargo.lock at exact public measured commit; producing Criterion line 0.7.0",
       "measured_series": [
         {
           "commit": "71e2a4cfaebc3a8bb021eb6a500cb0566072e83a",
@@ -262368,7 +262368,7 @@
         "B15"
       ],
       "kind": "campaign",
-      "lock_identity": "Cargo.lock at the exact public measured source",
+      "lock_identity": "Cargo.lock at the exact public measured source; producing Criterion line 0.7.0",
       "measured_series": [
         {
           "commit": "51fa529297d8cd862bbf782bb8f69969dd6df34b",

@@ -314,7 +314,7 @@ impl Census {
                     }
                 }
                 Item::Impl(i) if enabled(&i.attrs, &self.cfg)? => {
-                    let parent = if let Some((_, tr, _)) = &i.trait_ {
+                    let parent = if let Some((tr, _)) = &i.trait_ {
                         format!("<{} as {}>::", tokens(&i.self_ty), tokens(tr))
                     } else {
                         format!("{}::", tokens(&i.self_ty))

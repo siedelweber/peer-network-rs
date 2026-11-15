@@ -277,7 +277,7 @@ build_time = "procedural macro expands serialization derives; no build script"
 [[rows]]
 feature_scope = "Features resolved for pn-records built on its own over normal and build edges; built_for_records distinguishes absent packages from empty feature sets. development_features separately records development/test unification including Criterion. Workspace-unified features remain in the graph dependency table."
 name = "syn"
-version = "3.0.9"
+version = "3.0.10"
 license = "MIT OR Apache-2.0"
 features = "clone-impls, default, derive, parsing, printing, proc-macro"
 built_for_records = true

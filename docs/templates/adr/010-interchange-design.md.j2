@@ -1084,7 +1084,7 @@ The slice boundaries are the commit boundaries, since each slice leaves `bash ci
 | regexml | 0.2.2 | Apache-2.0 OR MPL-2.0 | None | Local XSD matcher fork, with retained MPL-2.0 notices and reviewed provenance; one regexp seam. |
 | tracing | 0.1.44 | MIT | attributes, default, std, tracing-attributes | Labelled nonbinding observation; no global subscriber installed by the library. |
 | proptest | 1.12.0 | MIT OR Apache-2.0 | bit-set, default, fork, regex-syntax, rusty-fork, std, tempfile, timeout | Development-only property generation and replay; fork and timeout execution disabled by the harness; accepted under MIT. |
-| criterion | 0.7.0 | Apache-2.0 OR MIT | None | Development-only measurement through the owned runner; accepted under MIT. |
+| criterion | 0.8.2 | Apache-2.0 OR MIT | None | Development-only measurement through the owned runner; accepted under MIT, with the dated source and feature review of (`amend:harness:dependency-review`). |
 | serde_json | 1.0.154 | MIT OR Apache-2.0 | default, raw_value, std | Development vector input and reporting; not an alternative interchange codec; accepted under MIT. |
 | pn-testkit | 0.1.0 | AGPL-3.0-only | None | Unpublished first-party development contract runner, excluded from every production graph. |
 

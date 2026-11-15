@@ -102,8 +102,8 @@
 | const-oid 0.10.2 | Apache-2.0 OR MIT | none enabled | 1.85 | none | a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c |
 | core_detect 1.0.0 | MIT/Apache-2.0 | default | not declared | none | 7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48 |
 | cpufeatures 0.3.1 | MIT OR Apache-2.0 | none enabled | 1.85 | none | 5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566 |
-| criterion 0.7.0 | Apache-2.0 OR MIT | none enabled | 1.80 | none | e1c047a62b0cc3e145fa84415a3191f628e980b194c2755aa12300a4e6cbd928 |
-| criterion-plot 0.6.0 | MIT OR Apache-2.0 | none enabled | not declared | none | 9b1bcc0dc7dfae599d84ad0b1a55f80cde8af3725da8313b528da95ef783e338 |
+| criterion 0.8.2 | Apache-2.0 OR MIT | none enabled | 1.86 | none | 950046b2aa2492f9a536f5f4f9a3de7b9e2476e575e05bd6c333371add4d98f3 |
+| criterion-plot 0.8.2 | Apache-2.0 OR MIT | none enabled | not declared | none | d8d80a2f4f5b554395e47b5d8305bc3d27813bacb73493eb1001e8f76dae29ea |
 | crunchy 0.2.4 | MIT | not built for pn-host | not declared | build script: build-script-build | 460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5 |
 | crypto-common 0.2.2 | MIT OR Apache-2.0 | none enabled | 1.85 | none | ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453 |
 | ctutils 0.4.5 | Apache-2.0 OR MIT | none enabled | 1.87 | none | 38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0 |
@@ -235,7 +235,7 @@
 | stringprep 0.1.5 | MIT/Apache-2.0 | none enabled | not declared | none | 7b4df3d392d81bd458a8a621b8bffbd2302a12ffe288a9d931670948749463b1 |
 | strsim 0.11.1 | MIT | none enabled | 1.56 | none | 7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f |
 | syn 2.0.119 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | 1.71 | none | 872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297 |
-| syn 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | 1.71 | none | d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b |
+| syn 3.0.10 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | 1.71 | none | 4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79 |
 | synstructure 0.13.2 | MIT | default, proc-macro | not declared | none | 728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2 |
 | synstructure 0.14.0 | MIT | default, proc-macro | 1.71 | none | 901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02 |
 | tempfile 3.27.0 | MIT OR Apache-2.0 | default, getrandom | 1.63 | none | 32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd |
@@ -248,7 +248,7 @@
 | tokio 1.54.1 | MIT | bytes, default, io-util, libc, mio, net, rt, rt-multi-thread, socket2, sync, time | 1.85 | none | b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3 |
 | tokio-postgres 0.7.18 | MIT OR Apache-2.0 | none enabled | 1.85 | none | a528f7d280f6d5b9cd149635c8705b0dd049754bc67d81d31fa25169a93809d3 |
 | tokio-util 0.7.20 | MIT | codec, default, libc | 1.85 | none | e464cf451ba96ebfc6f9b6542f17ee8b8956e33f1e40d9690624e59d7a7f8a4b |
-| toml_datetime 1.1.2+spec-1.1.0 | MIT OR Apache-2.0 | not built for pn-host | 1.85 | none | 2b86d767906c6c42421dcba507eb9d203e779497710a47782a224bb871653053 |
+| toml_datetime 1.1.3+spec-1.1.0 | MIT OR Apache-2.0 | not built for pn-host | 1.85 | none | 173f25c883cd2176a2d8212155638c0a60d484a9d84546d270866f40f56b6e49 |
 | toml_edit 0.25.17+spec-1.1.0 | MIT OR Apache-2.0 | not built for pn-host | 1.85 | none | e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c |
 | toml_parser 1.1.5+spec-1.1.0 | MIT OR Apache-2.0 | not built for pn-host | 1.85 | none | baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c |
 | tracing 0.1.44 | MIT | attributes, default, std, tracing-attributes | 1.65.0 | none | 63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100 |
@@ -296,6 +296,14 @@
 | zerovec 0.10.4 | Unicode-3.0 | derive, yoke | 1.67 | none | aa2b893d79df23bfb12d5461018d408ea19dfafe76c2c7ef6d4eba614f8ff079 |
 | zerovec-derive 0.10.4 | Unicode-3.0 | none enabled | not declared | none; procedural macro zerovec_derive | 3e3c6377872d72510393f688a555d7097b0f741995c7a00f0407f786dd486b2d |
 | zmij 1.0.23 | MIT | none enabled | 1.71 | build script: build-script-build | 29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b |
+| alloca 0.4.0 | MIT | none enabled | not declared | build script: build-script-build | e5a7d05ea6aea7e9e64d25b9156ba2fee3fdd659e34e41063cd2fc7cd020d7f4 |
+| page_size 0.6.0 | MIT/Apache-2.0 | none enabled | not declared | none | 30d5b2194ed13191c1999ae0704b7839fb18384fa22e49b57eeaa97d79ce40da |
+| winapi 0.3.9 | MIT/Apache-2.0 | not built for pn-host | not declared | build script: build-script-build | 5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419 |
+| winapi-i686-pc-windows-gnu 0.4.0 | MIT/Apache-2.0 | not built for pn-host | not declared | build script: build-script-build | ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6 |
+| winapi-x86_64-pc-windows-gnu 0.4.0 | MIT/Apache-2.0 | not built for pn-host | not declared | build script: build-script-build | 712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f |
+| cc 1.10.0 | MIT OR Apache-2.0 | none enabled | 1.65.0 | none | 86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0 |
+| find-msvc-tools 0.1.15 | MIT OR Apache-2.0 | none enabled | 1.65.0 | none | 1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48 |
+| shlex 2.0.1 | MIT OR Apache-2.0 | default, std | 1.46.0 | none | f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba |
 
 
 **Amendment (Transport evidence boundary)** · `amend:storage:transport-evidence-boundary` The pn-host fixture implements (`amend:storage:host-secured-evidence`) without a production executable, schema or persistence path. It accepts Unix sockets and numeric TCP endpoints, with no ordinary DNS hostname retained; direct secret acquisition and the public link-case refusal precede connection. The shim owns startup, SCRAM server-proof verification, real cancellation and whole private diagnostics; the driver receives only the public placeholder startup and cancellation key. Authentication uses the printable-ASCII password profile and a declared 100,000-iteration refusal bound; messages and configuration use a one-MiB representation bound. Public division-by-zero, cancellation and serialization-conflict diagnostics have explicit structural grammars; other diagnostics remain whole and secret-owned and terminate the stream. The reviewed statement and diagnostic surface must expand with storage shapes before enabling persistence; these limits do not clear the independent integration hold.

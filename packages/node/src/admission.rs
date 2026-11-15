@@ -376,12 +376,31 @@ fn schema_refusals() {
     }
 }
 
-/// Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.
+/// Claim: Robustness pins quoted-key acceptance and datetime/numeric type acceptance at the reader boundary, and refuses malformed TOML and duplicate keys or tables with only a constant first-party refusal class retained.
 /// ´claim:admission:register-syntax-refuses´
 /// ´test:unit:register-syntax´
 #[test]
 fn register_syntax() {
-    for bad in ["role = [".to_owned(), format!("role = \"private-diagnostic-probe\"\n{DRAFT}")] {
+    assert_eq!(
+        register(&DRAFT.replace("role =", "\"role\" =")),
+        register(DRAFT),
+        "quoted key retains register acceptance"
+    );
+    for value in ["1979-05-27T07:32Z", "1979-05-27T07:32:00Z", "0b1", "1_000"] {
+        assert_eq!(
+            register(&DRAFT.replace("role = \"control\"", &format!("role = {value}"))),
+            Err(Refusal::RegisterShape),
+            "accepted TOML value reaches first-party type refusal"
+        );
+    }
+    for bad in [
+        "role = [".to_owned(),
+        "value = 0b_1".to_owned(),
+        "private-diagnostic-probe?key = 1".to_owned(),
+        format!("role = \"private-diagnostic-probe\"\n{DRAFT}"),
+        format!("{DRAFT}\n[failure_conditions]\n"),
+        format!("{DRAFT}\n[ceilings]\n"),
+    ] {
         assert_eq!(
             register(&bad),
             Err(Refusal::RegisterSyntax),

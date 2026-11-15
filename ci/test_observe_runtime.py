@@ -556,7 +556,7 @@ class Processes(unittest.TestCase):
 
         for row in host:
             check_host(row)
-        criterion = next(row for row in host if row['name'] == 'criterion 0.7.0')
+        criterion = next(row for row in host if row['name'] == 'criterion 0.8.2')
         self.assertTrue(criterion['built_for_host'])
         with self.assertRaises(AssertionError):
             check_host(criterion | {'built_for_host': False})

@@ -1115,6 +1115,7 @@ fn json_model() -> Result<()> {
     let path = directory.path().join("docs/inputs/items.toml");
     for (value, reason) in [
         ("1979-05-27T07:32:00Z", "datetime"),
+        ("1979-05-27T07:32Z", "datetime"),
         ("nan", "non-finite"),
         ("{ nested = [inf] }", "non-finite"),
     ] {

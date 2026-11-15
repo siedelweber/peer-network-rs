@@ -556,7 +556,7 @@
       "name": "syn",
       "notice": "Existing workspace dependency notices",
       "scope": "Existing HTTP edges with node reader workspace feature unification",
-      "version": "3.0.9"
+      "version": "3.0.10"
     }
   ]
 }

@@ -6625,8 +6625,8 @@
       "path": "packages/node/src/admission.rs",
       "claim": "NODE::claim:admission:register-syntax-refuses",
       "before": "Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.",
-      "after": "Claim: Robustness refuses malformed TOML and duplicate keys through the admitted reader, with only a constant first-party refusal class retained.",
-      "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+      "after": "Claim: Robustness pins quoted-key acceptance and datetime/numeric type acceptance at the reader boundary, and refuses malformed TOML and duplicate keys or tables with only a constant first-party refusal class retained.",
+      "review": "The quoted key preserves DRAFT acceptance through register; datetime values with omitted and explicit seconds and valid numeric tokens parse and reach RegisterShape. Malformed numeric/key syntax and duplicate keys/tables reach RegisterSyntax. These finite cases pin acceptance as well as constant first-party refusal classes, not dependency diagnostic spans or all TOML inputs; the old and new wrappers share the underlying parser."
     },
     {
       "operation": "pn::admission::register_unknown_keys",

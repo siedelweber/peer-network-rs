@@ -60,15 +60,15 @@
       "name": "criterion",
       "role": "owned benchmark measurement",
       "source": "fetched Cargo registry package manifest and resolved feature metadata",
-      "version": "0.7.0"
+      "version": "0.8.2"
     },
     {
       "features": [],
-      "license": "MIT OR Apache-2.0",
+      "license": "Apache-2.0 OR MIT",
       "name": "criterion-plot",
       "role": "Criterion transitive development dependency",
       "source": "fetched Cargo registry package manifest and resolved feature metadata",
-      "version": "0.6.0"
+      "version": "0.8.2"
     },
     {
       "features": [
@@ -178,6 +178,48 @@
       "role": "Criterion transitive development dependency",
       "source": "fetched Cargo registry package manifest and resolved feature metadata",
       "version": "1.2.1"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "name": "alloca",
+      "role": "Criterion measurement stack-layout support",
+      "source": "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2",
+      "version": "0.4.0"
+    },
+    {
+      "features": [],
+      "license": "MIT/Apache-2.0",
+      "name": "page_size",
+      "role": "Criterion measurement stack-layout support",
+      "source": "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2",
+      "version": "0.6.0"
+    },
+    {
+      "features": [
+        "sysinfoapi"
+      ],
+      "license": "MIT/Apache-2.0",
+      "name": "winapi",
+      "role": "Criterion measurement stack-layout support",
+      "source": "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2",
+      "version": "0.3.9"
+    },
+    {
+      "features": [],
+      "license": "MIT/Apache-2.0",
+      "name": "winapi-i686-pc-windows-gnu",
+      "role": "Criterion measurement stack-layout support",
+      "source": "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2",
+      "version": "0.4.0"
+    },
+    {
+      "features": [],
+      "license": "MIT/Apache-2.0",
+      "name": "winapi-x86_64-pc-windows-gnu",
+      "role": "Criterion measurement stack-layout support",
+      "source": "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2",
+      "version": "0.4.0"
     }
   ]
 }

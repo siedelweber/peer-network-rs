@@ -43,7 +43,7 @@ role = "Criterion transitive development dependency"
 
 [[rows]]
 name = "criterion"
-version = "0.7.0"
+version = "0.8.2"
 license = "Apache-2.0 OR MIT"
 features = []
 source = "fetched Cargo registry package manifest and resolved feature metadata"
@@ -51,8 +51,8 @@ role = "owned benchmark measurement"
 
 [[rows]]
 name = "criterion-plot"
-version = "0.6.0"
-license = "MIT OR Apache-2.0"
+version = "0.8.2"
+license = "Apache-2.0 OR MIT"
 features = []
 source = "fetched Cargo registry package manifest and resolved feature metadata"
 role = "Criterion transitive development dependency"
@@ -128,3 +128,43 @@ license = "Apache-2.0 OR MIT"
 features = []
 source = "fetched Cargo registry package manifest and resolved feature metadata"
 role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "alloca"
+version = "0.4.0"
+license = "MIT"
+features = []
+source = "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2"
+role = "Criterion measurement stack-layout support"
+
+[[rows]]
+name = "page_size"
+version = "0.6.0"
+license = "MIT/Apache-2.0"
+features = []
+source = "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2"
+role = "Criterion measurement stack-layout support"
+
+[[rows]]
+name = "winapi"
+version = "0.3.9"
+license = "MIT/Apache-2.0"
+features = ["sysinfoapi"]
+source = "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2"
+role = "Criterion measurement stack-layout support"
+
+[[rows]]
+name = "winapi-i686-pc-windows-gnu"
+version = "0.4.0"
+license = "MIT/Apache-2.0"
+features = []
+source = "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2"
+role = "Criterion measurement stack-layout support"
+
+[[rows]]
+name = "winapi-x86_64-pc-windows-gnu"
+version = "0.4.0"
+license = "MIT/Apache-2.0"
+features = []
+source = "Fetched Cargo registry manifest and resolved features; reviewed 2026-11-15 with Criterion 0.8.2"
+role = "Criterion measurement stack-layout support"

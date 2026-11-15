@@ -290,7 +290,7 @@
       "resolution": "retained",
       "role": "Derive syntax parsing",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
-      "version": "3.0.9"
+      "version": "3.0.10"
     },
     {
       "build_time": "procedural macro expands typed errors; no build script",

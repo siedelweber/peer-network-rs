@@ -75,7 +75,7 @@
             "serde_core 1.0.229",
             "serde_derive 1.0.229",
             "shlex 2.0.1",
-            "syn 3.0.9",
+            "syn 3.0.10",
             "unicode-ident 1.0.27",
             "zerocopy 0.8.63"
           ],
@@ -102,7 +102,7 @@
             "serde_core 1.0.229",
             "serde_derive 1.0.229",
             "serde_json 1.0.154",
-            "syn 3.0.9",
+            "syn 3.0.10",
             "unicode-ident 1.0.27",
             "zmij 1.0.23"
           ],
