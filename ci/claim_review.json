@@ -1182,8 +1182,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:drain-timeouts-are-not-record-loss",
       "before": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
-      "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.",
-      "review": "Read the batch-end rendezvous and one-record and full-queue prefixes, acknowledgement counts and successful close disclosure; existing timeout and unavailable accounting remains."
+      "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered.",
+      "review": "The held-delivery contrast injects a zero window and observes its expiry before release; the complete route selects an unwindowed wait, then acknowledges every held record after release. A private test-build call observer pins the wait selection and the 600-second containment independently of scheduling, without exposing delivery hooks to dependents. The batch-end, full-queue, timeout and unavailable controls remain."
     },
     {
       "operation": "cli-common::observation::tests::epoch_owner_accounting",
@@ -2238,8 +2238,8 @@
       "path": "packages/act-profile/src/tests.rs",
       "claim": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
       "before": "Claim: Complete traced commitment computations retain the three fixed residues without emitting the nonce, salts, payload, dependency list or private pre-digests.",
-      "after": "Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
-      "review": "Retires ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection in favor of ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments at this witness site. The witness compares the three fixed commitment residues in complete default and trace runs and asserts redacted dependency Debug. Secrecy-typed inputs and labelled census-counted exits establish the construction boundary; observer-representation leak testing remains held after v1. Each recipe asserts attempted volume against the product queue capacity. Independent recipe children run concurrently with file-backed stderr, read only after exit, retaining every fixed-residue, privacy, operation-count, zero-loss and zero-undelivered assertion. Optional timing files separate preparation, computation, drain, spawn, wait and validation; case budgets are assessed in calibration."
+      "after": "Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs whose child status confirms the complete-evidence route; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
+      "review": "Each default/trace recipe child selects complete evidence and its feature-only status confirms the route before completeness assertions. The common-library held-delivery control witnesses the route, while these children witness selection, fixed residues, redacted Debug and complete capture. Parent containment names the child; status failures retain the whole row, exit status and artifact directory. No allocation or timing property is inferred."
     },
     {
       "operation": "pn-act-profile::tests::fixed_recipes_and_controls",
@@ -5095,8 +5095,8 @@
       "path": "packages/interchange/src/encode.rs",
       "claim": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",
       "before": "Claim: Protected canonical tuples match public canonical bytes while complete full-trace child captures record no protected field or encoded result; the public route still records its content and the private allocation bound refuses excess.",
-      "after": "Claim: Secrecy-typed protected tuples and output match the public canonical bytes under complete traced execution, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
-      "review": "Retires INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy in favor of INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree at this witness site. The witness checks byte agreement between the protected and public canonical routes, refusal at a one-byte private allocation bound, complete traced capture and the public-route positive for private-author-name. The private route carries secrecy-typed inputs and output through labelled exits; it makes no trace-absence claim."
+      "after": "Claim: Secrecy-typed protected tuples and output match the public canonical bytes under traced execution whose child status confirms the complete-evidence route, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
+      "review": "Each private/public child selects complete evidence and its feature-only status confirms the route before zero-loss and zero-undelivered assertions. The common-library held-delivery control witnesses the route; these children witness selection, canonical byte agreement, the private allocation refusal and the public positive. Failure messages retain mode, exit and the whole status row; the parent has a named hang containment."
     },
     {
       "operation": "pn-interchange::encode::secret_tests::protected_encoding_retains_legacy_policy",

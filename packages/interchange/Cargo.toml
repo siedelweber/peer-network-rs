@@ -20,7 +20,7 @@ regexml.workspace = true
 thiserror = { workspace = true }
 
 [dev-dependencies]
-cli-common.workspace = true
+cli-common = { workspace = true, features = ["observation-test-hook"] }
 pn-testkit.workspace = true
 criterion.workspace = true
 # Property obligations of the design's metatheorem table: shrinking and

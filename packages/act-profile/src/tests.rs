@@ -482,7 +482,105 @@ fn captured_recipe(recipe: &str) {
     );
 }
 
-/// Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
+fn await_capture(mut child: std::process::Child) -> (std::process::Output, bool) {
+    use std::io::Read;
+    let stdout = child.stdout.take().map(|mut stream| {
+        std::thread::spawn(move || {
+            let mut bytes = Vec::new();
+            stream.read_to_end(&mut bytes).unwrap();
+            bytes
+        })
+    });
+    let stderr = child.stderr.take().map(|mut stream| {
+        std::thread::spawn(move || {
+            let mut bytes = Vec::new();
+            stream.read_to_end(&mut bytes).unwrap();
+            bytes
+        })
+    });
+    let started = std::time::Instant::now();
+    let mut hung = false;
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break status;
+        }
+        // Hang containment only: the child exit and capture contents decide.
+        if started.elapsed() >= std::time::Duration::from_secs(600) {
+            hung = true;
+            child.kill().unwrap();
+            break child.wait().unwrap();
+        }
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    };
+    let output = std::process::Output {
+        status,
+        stdout: stdout.map_or_else(Vec::new, |reader| reader.join().unwrap()),
+        stderr: stderr.map_or_else(Vec::new, |reader| reader.join().unwrap()),
+    };
+    (output, hung)
+}
+
+fn verify_capture(level: &str, recipe: &str, sink: &std::path::Path, output: &std::process::Output) {
+    let stderr = std::fs::read(sink).unwrap();
+    assert!(
+        output.status.success(),
+        "{level}/{recipe}: {output:?} {}",
+        String::from_utf8_lossy(&stderr)
+    );
+    let mut records: Vec<serde_json::Value> = String::from_utf8(stderr)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    records.iter_mut().for_each(expand_artifacts);
+    let status: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
+    assert_eq!(
+        status.len(),
+        1,
+        "{level}/{recipe}: exit={} records={records:?}",
+        output.status
+    );
+    let evidence = format!("{level}/{recipe}: exit={} status={}", output.status, status[0]);
+    assert_eq!(
+        status[0]["drain_route"], "complete-evidence",
+        "complete evidence selected: {evidence}"
+    );
+    assert!(
+        status[0]["attempted_records"].as_u64().unwrap() <= u64::try_from(cli_common::observation::QUEUE_RECORDS).unwrap(),
+        "{level}/{recipe}: {}",
+        status[0]
+    );
+    capture_timing(
+        &format!("volume-{level}-{recipe}"),
+        &serde_json::json!({"attempted":status[0]["attempted_records"], "capacity":cli_common::observation::QUEUE_RECORDS}),
+    );
+    assert_eq!(status[0]["lost_records"], 0, "{evidence}");
+    assert_eq!(status[0]["undelivered_records"], 0, "{evidence}");
+    assert!(status[0]["delivered_records"].as_u64().unwrap() > 0, "{evidence}");
+    assert_eq!(
+        status[0]["in_flight_records"], 0,
+        "OBSERVATION-CAPTURE-INCOMPLETE: in flight; {evidence}"
+    );
+    assert_eq!(
+        status[0]["drain_timeouts"], 0,
+        "OBSERVATION-CAPTURE-INCOMPLETE: drain timeout; {evidence}"
+    );
+    assert_eq!(
+        status[0]["delivered_records"].as_u64().unwrap(),
+        u64::try_from(records.len() - 1).unwrap(),
+        "OBSERVATION-CAPTURE-INCOMPLETE: captured records; {evidence}"
+    );
+    let metrics = records.iter().find(|row| row["kind"] == "metric_summary").unwrap();
+    let started = metrics["metrics"]["instruments"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
+        .unwrap();
+    assert_eq!(started["counter"], if recipe == "proposal" { 2 } else { 1 });
+}
+
+/// Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs whose child status confirms the complete-evidence route; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
 /// ´claim:profile:protected-inputs-retain-fixed-commitments´
 /// ´test:unit:commitment-trace-privacy´
 #[test]
@@ -508,6 +606,7 @@ fn commitment_trace_privacy() {
         let child = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "tests::commitment_trace_privacy", "--nocapture"])
             .env("PN_PROFILE_TRACE_CHILD", recipe)
+            .env("PN_OBSERVE_COMPLETE_EVIDENCE", "1")
             .env("PN_OBSERVE_LEVEL", level)
             .env("PN_OBSERVE_ARTIFACT_DIR", &artifacts)
             .stderr(std::fs::File::create(&sink).unwrap())
@@ -519,52 +618,23 @@ fn commitment_trace_privacy() {
     let spawn = spawn_started.elapsed();
     let mut wait = std::time::Duration::ZERO;
     let mut decode = std::time::Duration::ZERO;
+    // Reap the finite child roster before any capture assertion, including a
+    // route-selection failure, so failed evidence leaves no sibling running.
+    let mut captures = Vec::new();
     for (level, recipe, artifacts, sink, child) in children {
         let wait_started = std::time::Instant::now();
-        let output = child.wait_with_output().unwrap();
+        let (output, hung) = await_capture(child);
         wait += wait_started.elapsed();
-        let decode_started = std::time::Instant::now();
-        let stderr = std::fs::read(sink).unwrap();
-        assert!(output.status.success(), "{output:?} {}", String::from_utf8_lossy(&stderr));
-        let mut records: Vec<serde_json::Value> = String::from_utf8(stderr)
-            .unwrap()
-            .lines()
-            .map(|line| serde_json::from_str(line).unwrap())
-            .collect();
-        records.iter_mut().for_each(expand_artifacts);
-        std::fs::remove_dir_all(&artifacts).unwrap();
-        let status: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
-        assert_eq!(status.len(), 1);
+        captures.push((level, recipe, artifacts, sink, output, hung));
+    }
+    for (level, recipe, artifacts, sink, output, hung) in captures {
         assert!(
-            status[0]["attempted_records"].as_u64().unwrap() <= u64::try_from(cli_common::observation::QUEUE_RECORDS).unwrap(),
-            "{level}/{recipe}: {}",
-            status[0]
+            !hung,
+            "HANG awaiting capture child {level}/{recipe}; last state=running; output={output:?}"
         );
-        capture_timing(
-            &format!("volume-{level}-{recipe}"),
-            &serde_json::json!({"attempted":status[0]["attempted_records"], "capacity":cli_common::observation::QUEUE_RECORDS}),
-        );
-        assert_eq!(status[0]["lost_records"], 0, "{level}/{recipe}: {}", status[0]);
-        assert_eq!(status[0]["undelivered_records"], 0);
-        assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
-        assert_eq!(status[0]["in_flight_records"], 0, "OBSERVATION-CAPTURE-INCOMPLETE: in flight");
-        assert_eq!(
-            status[0]["drain_timeouts"], 0,
-            "OBSERVATION-CAPTURE-INCOMPLETE: drain timeout"
-        );
-        assert_eq!(
-            status[0]["delivered_records"].as_u64().unwrap(),
-            u64::try_from(records.len() - 1).unwrap(),
-            "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
-        );
-        let metrics = records.iter().find(|row| row["kind"] == "metric_summary").unwrap();
-        let started = metrics["metrics"]["instruments"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
-            .unwrap();
-        assert_eq!(started["counter"], if recipe == "proposal" { 2 } else { 1 });
+        let decode_started = std::time::Instant::now();
+        verify_capture(level, recipe, &sink, &output);
+        std::fs::remove_dir_all(&artifacts).unwrap();
         decode += decode_started.elapsed();
     }
     capture_timing(

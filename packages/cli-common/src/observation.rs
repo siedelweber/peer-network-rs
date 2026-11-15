@@ -286,6 +286,8 @@ pub struct Observation {
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
     refuse_drain_wait: bool,
+    #[cfg(test)]
+    drain_wait_observer: Option<SyncSender<Option<Duration>>>,
     full_trace: bool,
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
@@ -295,6 +297,12 @@ pub struct Observation {
 
 #[cfg(test)]
 type PublicationPause = Arc<Mutex<Option<Box<dyn FnOnce() + Send>>>>;
+
+#[cfg(test)]
+fn publication_pause_pair() -> (PublicationPause, PublicationPause) {
+    let pause = Arc::new(Mutex::new(None));
+    (Arc::clone(&pause), pause)
+}
 
 struct Delivery {
     queue_records: usize,
@@ -499,9 +507,7 @@ impl Observation {
         let worker_closing = closing.clone();
         let publication = Arc::new(Mutex::new(false));
         #[cfg(test)]
-        let before_publication = Arc::new(Mutex::new(None));
-        #[cfg(test)]
-        let worker_before_publication = Arc::clone(&before_publication);
+        let (before_publication, worker_before_publication) = publication_pause_pair();
         #[cfg(test)]
         let before_drain = Arc::new(Mutex::new(None));
         #[cfg(test)]
@@ -571,6 +577,8 @@ impl Observation {
             drain_unavailable,
             #[cfg(test)]
             refuse_drain_wait: false,
+            #[cfg(test)]
+            drain_wait_observer: None,
             full_trace: false,
             clock,
             recorder: bridge
@@ -660,20 +668,35 @@ impl Observation {
         let duration = if self.refuse_drain_wait {
             Duration::ZERO
         } else {
-            // Fixture completion waits are watchdogs, not the production drain budget.
+            // This one-sided test hold witnesses delivery completion: waiting longer
+            // can only help a correct worker drain. The bound contains a hang,
+            // rather than deciding a duration verdict or a production budget.
             // Explicit zero-deadline controls still exercise the loss accounting.
-            duration.max(Duration::from_secs(30))
+            duration.max(Duration::from_secs(600))
         };
         let completed = if self.queue_records == QUEUE_RECORDS {
+            #[cfg(test)]
+            if let Some(observer) = &self.drain_wait_observer {
+                observer.send(Some(duration)).unwrap();
+            }
             wait.recv_timeout(duration)
         } else {
             // Complete evidence waits for its finite roster; the fixture process
             // watchdog only refuses. Production retains its bounded drain.
+            #[cfg(test)]
+            if let Some(observer) = &self.drain_wait_observer {
+                observer.send(None).unwrap();
+            }
             wait.recv().map_err(|_| mpsc::RecvTimeoutError::Disconnected)
         };
         match completed {
             Ok(()) => {}
             Err(mpsc::RecvTimeoutError::Timeout) => {
+                #[cfg(test)]
+                assert!(
+                    self.refuse_drain_wait,
+                    "HANG awaiting observation drain acknowledgement; last state=pending"
+                );
                 self.drain_timeouts.fetch_add(1, Ordering::Relaxed);
             }
             Err(mpsc::RecvTimeoutError::Disconnected) => {
@@ -713,6 +736,16 @@ impl Observation {
             "drain_unavailable":self.drain_unavailable.load(Ordering::Relaxed),
             "drain_deadline_milliseconds":millis,"process_id":std::process::id(),"timestamp":self.clock.utc(),
             "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"});
+        #[cfg(feature = "observation-test-hook")]
+        let record = {
+            let mut record = record;
+            record["drain_route"] = json!(if self.queue_records == QUEUE_RECORDS {
+                "windowed"
+            } else {
+                "complete-evidence"
+            });
+            record
+        };
         drop(publication);
         // A synchronous final status cannot be stranded behind the bounded queue.
         if let (Ok(mut writer), Ok(mut bytes)) = (self.final_writer.lock(), serde_json::to_vec(&record)) {

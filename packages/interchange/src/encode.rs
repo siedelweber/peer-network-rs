@@ -730,7 +730,49 @@ mod secret_tests {
         (SecretValue::Array(values), Value::Array(Array::new(public)))
     }
 
-    /// Claim: Secrecy-typed protected tuples and output match the public canonical bytes under complete traced execution, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
+    fn await_capture(mut child: std::process::Child, identity: &str) -> std::process::Output {
+        use std::io::Read;
+        let stdout = child.stdout.take().map(|mut stream| {
+            std::thread::spawn(move || {
+                let mut bytes = Vec::new();
+                stream.read_to_end(&mut bytes).unwrap();
+                bytes
+            })
+        });
+        let stderr = child.stderr.take().map(|mut stream| {
+            std::thread::spawn(move || {
+                let mut bytes = Vec::new();
+                stream.read_to_end(&mut bytes).unwrap();
+                bytes
+            })
+        });
+        let started = std::time::Instant::now();
+        let mut hung = false;
+        let status = loop {
+            if let Some(status) = child.try_wait().unwrap() {
+                break status;
+            }
+            // Hang containment only: the child exit and capture contents decide.
+            if started.elapsed() >= std::time::Duration::from_secs(600) {
+                hung = true;
+                child.kill().unwrap();
+                break child.wait().unwrap();
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        };
+        let output = std::process::Output {
+            status,
+            stdout: stdout.map_or_else(Vec::new, |reader| reader.join().unwrap()),
+            stderr: stderr.map_or_else(Vec::new, |reader| reader.join().unwrap()),
+        };
+        assert!(
+            !hung,
+            "HANG awaiting capture child {identity}; last state=running; output={output:?}"
+        );
+        output
+    }
+
+    /// Claim: Secrecy-typed protected tuples and output match the public canonical bytes under traced execution whose child status confirms the complete-evidence route, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
     /// ´claim:encoding:protected-and-public-canonical-bytes-agree´
     /// ´test:unit:protected-canonical-bytes´
     #[test]
@@ -749,32 +791,44 @@ mod secret_tests {
             return;
         }
         for mode in ["private", "public"] {
-            let output = std::process::Command::new(std::env::current_exe().unwrap())
+            let child = std::process::Command::new(std::env::current_exe().unwrap())
                 .args(["--exact", "encode::secret_tests::protected_canonical_bytes", "--nocapture"])
                 .env("PN_ENCODING_FIXTURE_CHILD", mode)
+                .env("PN_OBSERVE_COMPLETE_EVIDENCE", "1")
                 .env("PN_OBSERVE_LEVEL", "trace")
-                .output()
+                .stdout(std::process::Stdio::piped())
+                .stderr(std::process::Stdio::piped())
+                .spawn()
                 .unwrap();
-            assert!(output.status.success(), "{output:?}");
+            let output = await_capture(child, mode);
+            assert!(output.status.success(), "{mode}: {output:?}");
             let records: Vec<serde_json::Value> = String::from_utf8(output.stderr)
                 .unwrap()
                 .lines()
                 .map(|line| serde_json::from_str(line).unwrap())
                 .collect();
             let status: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
-            assert_eq!(status.len(), 1);
-            assert_eq!(status[0]["lost_records"], 0);
-            assert_eq!(status[0]["undelivered_records"], 0);
-            assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
-            assert_eq!(status[0]["in_flight_records"], 0, "OBSERVATION-CAPTURE-INCOMPLETE: in flight");
+            assert_eq!(status.len(), 1, "{mode}: exit={} records={records:?}", output.status);
+            let evidence = format!("{mode}: exit={} status={}", output.status, status[0]);
+            assert_eq!(
+                status[0]["drain_route"], "complete-evidence",
+                "complete evidence selected: {evidence}"
+            );
+            assert_eq!(status[0]["lost_records"], 0, "{evidence}");
+            assert_eq!(status[0]["undelivered_records"], 0, "{evidence}");
+            assert!(status[0]["delivered_records"].as_u64().unwrap() > 0, "{evidence}");
+            assert_eq!(
+                status[0]["in_flight_records"], 0,
+                "OBSERVATION-CAPTURE-INCOMPLETE: in flight; {evidence}"
+            );
             assert_eq!(
                 status[0]["drain_timeouts"], 0,
-                "OBSERVATION-CAPTURE-INCOMPLETE: drain timeout"
+                "OBSERVATION-CAPTURE-INCOMPLETE: drain timeout; {evidence}"
             );
             assert_eq!(
                 status[0]["delivered_records"].as_u64().unwrap(),
                 u64::try_from(records.len() - 1).unwrap(),
-                "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+                "OBSERVATION-CAPTURE-INCOMPLETE: captured records; {evidence}"
             );
             let delivered = serde_json::to_string(&records).unwrap();
             if mode == "public" {

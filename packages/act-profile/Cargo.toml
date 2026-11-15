@@ -16,7 +16,7 @@ tracing.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
-cli-common.workspace = true
+cli-common = { workspace = true, features = ["observation-test-hook"] }
 pn-graph = { path = "../graph" }
 serde_json.workspace = true
 

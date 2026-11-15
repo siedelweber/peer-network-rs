@@ -771,11 +771,128 @@ fn ordinary_queue_overflow() {
     assert_eq!(status["delivered_records"], rows.len() - 1);
 }
 
-/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.
+fn held_complete_delivery() {
+    // Delivery is held by an event, not by a sleeping peer. The injected zero
+    // window expires while held. The private call observer pins which wait
+    // branch the call selects, so a selection mutant cannot escape by scheduling
+    // its wait after release. Neither hook exists in dependency builds.
+    for complete in [false, true] {
+        let capture = Capture::default();
+        let mut observation = Observation::with_delivery(
+            capture.clone(),
+            Arc::new(ManualClock(AtomicU64::new(0))),
+            None,
+            if complete { EVIDENCE_QUEUE_RECORDS } else { QUEUE_RECORDS },
+            false,
+        )
+        .unwrap();
+        observation.refuse_drain_wait = true;
+        let (entered, entry) = mpsc::sync_channel(1);
+        let (release, released) = mpsc::sync_channel(1);
+        *observation.before_drain.lock().unwrap() = Some(Box::new(move || {
+            entered.send(()).unwrap();
+            released
+                .recv_timeout(Duration::from_secs(600))
+                .expect("HANG awaiting held delivery release; last state=held");
+        }));
+        observation.sender.send(Message::Wake).unwrap();
+        entry
+            .recv_timeout(Duration::from_secs(600))
+            .expect("HANG awaiting delivery hold; last state=pending");
+        for index in 0..3 {
+            observation.emit(json!({"public":index}));
+        }
+        let (selection_sender, selections) = mpsc::sync_channel(1);
+        observation.drain_wait_observer = Some(selection_sender);
+        let draining = observation.clone();
+        let (finished, completion) = mpsc::sync_channel(1);
+        let thread = std::thread::spawn(move || {
+            draining.flush_for(Duration::ZERO);
+            finished.send(()).unwrap();
+        });
+        let window = selections
+            .recv_timeout(Duration::from_secs(600))
+            .expect("HANG awaiting drain wait selection; last state=delivery held");
+        if window.is_some() {
+            completion
+                .recv_timeout(Duration::from_secs(600))
+                .expect("HANG awaiting injected drain expiry; last state=delivery held");
+            assert_eq!(
+                observation.delivered.load(Ordering::Acquire),
+                0,
+                "windowed drain leaves held records undelivered"
+            );
+            assert_eq!(
+                observation.drain_timeouts.load(Ordering::Acquire),
+                1,
+                "windowed drain reports its injected expiry"
+            );
+        }
+        release.send(()).unwrap();
+        if window.is_none() {
+            completion
+                .recv_timeout(Duration::from_secs(600))
+                .expect("HANG awaiting complete delivery acknowledgement; last state=released");
+        }
+        thread.join().unwrap();
+        assert_eq!(
+            window,
+            if complete { None } else { Some(Duration::ZERO) },
+            "complete evidence selects an unwindowed wait at its call"
+        );
+        if complete {
+            assert_eq!(
+                observation.delivered.load(Ordering::Acquire),
+                3,
+                "complete evidence delivers the held roster"
+            );
+            assert_eq!(
+                observation.lost.load(Ordering::Acquire),
+                0,
+                "complete evidence loses no held record"
+            );
+            assert_eq!(
+                observation.drain_timeouts.load(Ordering::Acquire),
+                0,
+                "complete evidence has no window expiry"
+            );
+        }
+        observation.drain_wait_observer = None;
+        observation.refuse_drain_wait = false;
+        observation.flush();
+    }
+}
+
+fn pinned_drain_containment() {
+    let (mut observation, _, _) = fixture();
+    let (proxy, requests) = mpsc::sync_channel(1);
+    observation.flush_sender = proxy;
+    let (selection_sender, selections) = mpsc::sync_channel(1);
+    observation.drain_wait_observer = Some(selection_sender);
+    let thread = std::thread::spawn(move || observation.flush_for(Duration::from_secs(1)));
+    let window = selections
+        .recv_timeout(Duration::from_secs(600))
+        .expect("HANG awaiting test drain containment selection");
+    requests
+        .recv_timeout(Duration::from_secs(600))
+        .expect("HANG awaiting test drain request")
+        .send(())
+        .unwrap();
+    thread.join().unwrap();
+    assert_eq!(
+        window,
+        Some(Duration::from_secs(600)),
+        "test drain containment is pinned at its call"
+    );
+}
+
+/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered.
 /// ´claim:cli:drain-timeouts-are-not-record-loss´
 /// ´test:unit:drain-timeout-preserves-loss´
 #[test]
 fn drain_timeout_preserves_loss() {
+    held_complete_delivery();
+    pinned_drain_containment();
     // Hold the worker exactly after its batch ends, then populate the queue
     // before requesting a drain. The old batch-end acknowledgement loses this
     // ordering deterministically, without depending on a scheduler delay.
@@ -812,9 +929,9 @@ fn drain_timeout_preserves_loss() {
                 release.send(()).unwrap();
                 closing.join().unwrap();
                 let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
-                assert_eq!(row["undelivered_records"], 0);
-                assert_eq!(row["in_flight_records"], 0);
-                assert_eq!(row["lost_records"], 0);
+                assert_eq!(row["undelivered_records"], 0, "close={close} count={count} status={row}");
+                assert_eq!(row["in_flight_records"], 0, "close={close} count={count} status={row}");
+                assert_eq!(row["lost_records"], 0, "close={close} count={count} status={row}");
                 assert_eq!(row["delivered_records"], count + 1);
             } else {
                 let (done, drained) = mpsc::sync_channel(1);
@@ -827,7 +944,11 @@ fn drain_timeout_preserves_loss() {
                     count
                 );
             }
-            assert_eq!(ordered.lost.load(Ordering::Relaxed), 0);
+            assert_eq!(
+                ordered.lost.load(Ordering::Relaxed),
+                0,
+                "ordered drain close={close} count={count} loses no records"
+            );
             continue_worker.send(()).unwrap();
         }
     }
@@ -837,10 +958,18 @@ fn drain_timeout_preserves_loss() {
     observation.refuse_drain_wait = true;
     observation.flush();
     assert_eq!(observation.drain_timeouts.load(Ordering::Relaxed), 1);
-    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+    assert_eq!(
+        observation.lost.load(Ordering::Relaxed),
+        0,
+        "injected wait refusal invents no record loss"
+    );
     observation.flush();
     assert_eq!(observation.drain_unavailable.load(Ordering::Relaxed), 1);
-    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+    assert_eq!(
+        observation.lost.load(Ordering::Relaxed),
+        0,
+        "injected wait refusal invents no record loss"
+    );
 }
 use crate::secrets::{PrivateBytes, PrivateString, SecretBox, SecretRole, SecretString};
 use std::sync::Mutex;
@@ -1427,16 +1556,22 @@ fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
         let statuses: Vec<_> = rows.iter().filter(|row| row["kind"] == "observation_status").collect();
         assert_eq!(statuses.len(), 1, "OBSERVATION-CAPTURE-INCOMPLETE: final status");
         for field in ["lost_records", "undelivered_records", "in_flight_records", "drain_timeouts"] {
-            assert_eq!(statuses[0][field], 0, "OBSERVATION-CAPTURE-INCOMPLETE: {field}");
+            assert_eq!(
+                statuses[0][field], 0,
+                "OBSERVATION-CAPTURE-INCOMPLETE: {field}; status={}",
+                statuses[0]
+            );
         }
         assert_eq!(
             statuses[0]["attempted_records"], statuses[0]["delivered_records"],
-            "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+            "OBSERVATION-CAPTURE-INCOMPLETE: accounting; status={}",
+            statuses[0]
         );
         assert_eq!(
             statuses[0]["delivered_records"].as_u64().unwrap(),
             u64::try_from(rows.len() - 1).unwrap(),
-            "OBSERVATION-CAPTURE-INCOMPLETE: captured records"
+            "OBSERVATION-CAPTURE-INCOMPLETE: captured records; status={}",
+            statuses[0]
         );
         rows
     } else {
@@ -1453,7 +1588,7 @@ fn drained_records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     assert_eq!(
         observation.attempted.load(Ordering::Relaxed),
         observation.delivered.load(Ordering::Relaxed),
-        "OBSERVATION-CAPTURE-INCOMPLETE: accounting"
+        "OBSERVATION-CAPTURE-INCOMPLETE: accounting; captured={rows:?}"
     );
     rows
 }
