@@ -6,6 +6,8 @@ use crate::admitted_result::{DebitVintage, DeclarationUse, position::Retained};
 use index::Index;
 
 mod index;
+mod read;
+pub use read::{DebitRead, Page, Reader, ResultRead};
 mod stage;
 
 type Identity = [u8; 32];
@@ -44,6 +46,7 @@ pub enum Error {
     UnknownGenerationLabel,
     ContextConflict,
     PredecessorMismatch,
+    MissingTip,
     Storage(StorageError),
 }
 
@@ -584,6 +587,16 @@ impl<'a> MemoryTree<'a> {
     }
 
     fn selected(generation: &Installed<'_>, use_: &DeclarationUse, meter: &mut Meter) -> Result<(), Error> {
+        Self::selected_with_probes(generation, use_, meter, false)
+    }
+
+    // The reader opts into probe admission; the writer's established row charges stay unchanged.
+    fn selected_with_probes(
+        generation: &Installed<'_>,
+        use_: &DeclarationUse,
+        meter: &mut Meter,
+        probes: bool,
+    ) -> Result<(), Error> {
         let expected = &use_.version;
         let mut exact = None;
         let mut active = None;
@@ -593,6 +606,9 @@ impl<'a> MemoryTree<'a> {
             let candidate = (v.family.name(), v.key.as_str());
             if inclusive { candidate <= key } else { candidate < key }
         };
+        if probes {
+            meter.row(|| ())?;
+        }
         let start = generation.versions.partition_point(|&i| before(i, false));
         let end = generation.versions.partition_point(|&i| before(i, true));
         for &index in &generation.versions[start..end] {
@@ -604,6 +620,9 @@ impl<'a> MemoryTree<'a> {
             }
             if v.edition == expected.edition {
                 exact = Some(v);
+            }
+            if probes {
+                meter.row(|| ())?;
             }
             let end = generation
                 .closures
@@ -631,6 +650,15 @@ impl<'a> MemoryTree<'a> {
     }
 
     fn ancestor_debits<'s>(&'s self, tip: &'s Node<'a>, meter: &mut Meter) -> Result<Vec<&'s Introduction<'a>>, Error> {
+        self.ancestor_debits_with_probes(tip, meter, false)
+    }
+
+    fn ancestor_debits_with_probes<'s>(
+        &'s self,
+        tip: &'s Node<'a>,
+        meter: &mut Meter,
+        probes: bool,
+    ) -> Result<Vec<&'s Introduction<'a>>, Error> {
         let scope = tip.input.event().0;
         let mut ranges = Vec::new();
         let mut segment = tip.segment;
@@ -676,6 +704,9 @@ impl<'a> MemoryTree<'a> {
         }
         let mut result: Vec<&Introduction<'_>> = Vec::new();
         for range in ranges {
+            if probes {
+                meter.row(|| ())?;
+            }
             self.introductions.visit(
                 &(scope, range.segment, range.start),
                 &(scope, range.segment, range.end),

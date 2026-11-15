@@ -26,7 +26,16 @@
         "pn-host::packages/host/src/storage/tree.rs::storage::tree::<Error as From < StorageError >>::from",
         "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::commit",
         "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::install_generation",
-        "pn-host::packages/host/src/storage/tree/index.rs::storage::tree::index::<Index < K , V > as Default>::default"
+        "pn-host::packages/host/src/storage/tree/index.rs::storage::tree::index::<Index < K , V > as Default>::default",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::MemoryTree < 'a >::reader",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::as_of",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::candidates",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::children",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::exact",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::has_child",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::roots",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::tips",
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::usage"
       ]
     }
   }

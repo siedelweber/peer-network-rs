@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::read::DebitRead",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "syntax": "# [doc = \" A complete vintage and its introduction on the selected ancestor path.\"] # [doc = \" (´[ROOT-amend:storage:admitted-debits]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct DebitRead < 'a > { pub vintage : & 'a DebitVintage , pub origin : Identity , pub bytes : Vec < u8 > , }"
+  }
+}

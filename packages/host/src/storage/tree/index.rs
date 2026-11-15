@@ -134,6 +134,30 @@ impl<K: Ord, V> Index<K, V> {
     pub(super) fn contains_key(&self, key: &K) -> bool {
         self.get(key).is_some()
     }
+    pub(super) fn find_by(&self, compare: impl Fn(&K) -> std::cmp::Ordering) -> Option<&V> {
+        let mut link = self.root.as_deref();
+        while let Some(node) = link {
+            match compare(&node.key) {
+                std::cmp::Ordering::Less => link = node.right.as_deref(),
+                std::cmp::Ordering::Greater => link = node.left.as_deref(),
+                std::cmp::Ordering::Equal => return node.value.as_ref(),
+            }
+        }
+        None
+    }
+    pub(super) fn seek(&self, lower: &K, exclusive: bool) -> Option<(&K, &V)> {
+        fn walk<'a, K: Ord, V>(link: Option<&'a Entry<K, V>>, lower: &K, exclusive: bool) -> Option<(&'a K, &'a V)> {
+            let node = link?;
+            if node.key < *lower || (exclusive && node.key == *lower) {
+                return walk(node.right.as_deref(), lower, exclusive);
+            }
+            walk(node.left.as_deref(), lower, exclusive)
+                .or_else(|| node.value.as_ref().map(|v| (&node.key, v)))
+                .or_else(|| walk(node.right.as_deref(), lower, exclusive))
+        }
+        // Logarithmic native-stack seek in an intact AVL index; no heap iterator or read cache.
+        walk(self.root.as_deref(), lower, exclusive)
+    }
     pub(super) fn visit<'s>(
         &'s self,
         lower: &K,

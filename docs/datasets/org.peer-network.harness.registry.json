@@ -2970,6 +2970,14 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::tests::tree_read_shapes",
+        "pn-host::storage::tree::tests::tree_read_page_limits",
+        "pn-host::storage::tree::tests::tree_read_closure",
+        "pn-host::storage::tree::tests::tree_read_nested",
+        "pn-host::storage::tree::tests::tree_read_limits",
+        "pn-host::storage::tree::tests::tree_read_index_damage",
+        "pn-host::storage::tree::tests::tree_read_pages",
+        "pn-host::storage::tree::tests::tree_read_branches",
         "pn-host::storage::tree::tests::tree_result_indexes",
         "pn-host::storage::tree::tests::tree_index_reservations",
         "pn-host::storage::tree::tests::tree_writer_ranges",

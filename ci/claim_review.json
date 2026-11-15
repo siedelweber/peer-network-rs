@@ -4499,6 +4499,70 @@
       "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
     },
     {
+      "operation": "pn-host::storage::tree::tests::tree_read_branches",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-branches",
+      "before": "",
+      "after": "Claim: Twelve unsorted worked-example queries in each sibling arrival order distinguish both tips below and above a fork, clamp above each tip, preserve exact bytes and each selection and debit origin, return debits in act order, and leave the complete store unchanged; unknown exact identities are absent and unknown tips refuse separately.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_closure",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-closure",
+      "before": "",
+      "after": "Claim: A generation with an explicit later edition and closure resolves retained uses at their original coordinates, not to the current edition; its fork read crosses every row and allocation ceiling without partial output or changed state.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_index_damage",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-index-damage",
+      "before": "",
+      "after": "Claim: Missing placement, foreign placement and missing child entries refuse `CorruptHistory` through private damage on exact reads, without changing any retained state; these are the three evidenced reader damage shapes only.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_limits",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-limits",
+      "before": "",
+      "after": "Claim: Every row and reservation prefix of the executed continuation and fork read paths meets a refusing ceiling, exact allowance succeeds and late refusal returns no result; no fetched header is delivered before row admission.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_nested",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-nested",
+      "before": "",
+      "after": "Claim: Two nested forks resolve independently of long empty interiors and side-branch arrival; descriptor traversal visits only the nesting of forks, while returned reconstruction has its own charges, and later results leave earlier exact bytes and selections unchanged.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_page_limits",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-page-limits",
+      "before": "",
+      "after": "Claim: Enumeration shares the caller session's allowance across statements; every row ceiling below completion refuses, and the final allocation boundary of each supplied root, child, candidate and tip page refuses one below and succeeds exactly, including an empty advancing tip page.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_pages",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-pages",
+      "before": "",
+      "after": "Claim: Root, child, candidate and tip pages use identity byte order within their fixed scope and parent, advance empty tip pages by inspected candidates, share one cumulative session, and preserve the store; fixture arrival is not sorted by identity.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_read_shapes",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-read-shapes",
+      "before": "",
+      "after": "Claim: Zero page work refuses without a visit, and unrepresentable page limits, signed depths and scopes refuse as representation before a zero allowance can admit any stored-state visit or buffer.",
+      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
       "operation": "pn-host::storage::tree::tests::tree_result_indexes",
       "path": "packages/host/src/storage/tree/tests.rs",
       "claim": "HOST::claim:history:tree-result-indexes",

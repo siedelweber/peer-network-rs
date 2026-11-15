@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::read::ResultRead",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "syntax": "# [doc = \" Public retained evidence; this does not reconstruct an admitted capability.\"] # [doc = \" Observation and caller cloning of the returned evidence are outside the meter.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct ResultRead < 'a > { pub identity : Identity , pub parent : Option < Identity > , pub depth : u64 , pub label : & 'a str , pub generation : u64 , pub bytes : Vec < u8 > , pub selections : Vec < Selected < 'a > > , pub debits : Vec < DebitRead < 'a > > , }"
+  }
+}

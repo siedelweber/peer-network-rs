@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::read::ResultRead",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Public immutable fixture declarations, admitted retained carriers and single-law storage judgements. No secret-bearing field or private transport. Debug is outside writer reconstruction accounting; no computation reads observation."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::read::Page",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "syntax": "# [doc = \" An exclusive continuation cursor is the last inspected candidate, including on an empty tip page.\"] # [doc = \" (´[ROOT-amend:storage:tree-enumeration]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct Page { pub identities : Vec < Identity > , pub after : Option < Identity > , pub end : bool , }"
+  }
+}

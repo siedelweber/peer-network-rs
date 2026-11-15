@@ -1081,3 +1081,516 @@ pub(super) fn index_events(events: &[Write]) {
         "direct child is an interruption point"
     );
 }
+
+fn read_budget() -> ReadBudget {
+    ReadBudget {
+        rows: 100_000,
+        bytes: 100_000_000,
+    }
+}
+
+fn read_store() -> MemoryTree<'static> {
+    let f = forks();
+    let mut store = MemoryTree::default();
+    assert_eq!(
+        store.install_generation(&f.generation, read_budget(), &mut Usage::default()),
+        Ok(true)
+    );
+    for input in [&f.main[0], &f.main[1], &f.side[2], &f.main[2], &f.main[3], &f.other_root[0]] {
+        assert!(
+            store
+                .commit(input, Some("unstable"), read_budget(), &mut Usage::default())
+                .is_ok()
+        );
+    }
+    store
+}
+
+/// Claim: Twelve unsorted worked-example queries in each sibling arrival order distinguish both tips below and above a fork, clamp above each tip, preserve exact bytes and each selection and debit origin, return debits in act order, and leave the complete store unchanged; unknown exact identities are absent and unknown tips refuse separately.
+/// ´claim:history:tree-read-branches´
+/// ´test:unit:tree-read-branches´
+#[test]
+fn tree_read_branches() {
+    super::roster::read_conformance::<MemoryTree<'static>>();
+}
+
+/// Claim: Root, child, candidate and tip pages use identity byte order within their fixed scope and parent, advance empty tip pages by inspected candidates, share one cumulative session, and preserve the store; fixture arrival is not sorted by identity.
+/// ´claim:history:tree-read-pages´
+/// ´test:unit:tree-read-pages´
+#[test]
+fn tree_read_pages() {
+    let f = forks();
+    let store = read_store();
+    let scope = f.main[0].event().0;
+    let before = snapshot(&store);
+    let mut reader = store.reader(read_budget());
+    let mut roots = vec![*f.main[0].event().1, *f.other_root[0].event().1];
+    roots.sort_unstable();
+    assert_eq!(reader.roots(scope, None, 10).unwrap().identities, roots);
+    let mut children = vec![*f.main[2].event().1, *f.side[2].event().1];
+    children.sort_unstable();
+    assert_eq!(
+        reader.children(scope, *f.main[1].event().1, None, 10).unwrap().identities,
+        children,
+        "all siblings are ordered by identity"
+    );
+    assert_eq!(reader.children(scope, [255; 32], None, 1), Err(Error::MissingTip));
+    let all = reader.candidates(scope, None, 100).unwrap().identities;
+    assert_eq!(all.len(), 6);
+    assert!(all.windows(2).all(|w| w[0] < w[1]));
+    let mut cursor = None;
+    let mut tips = Vec::new();
+    let mut empty = 0;
+    loop {
+        let page = reader.tips(scope, cursor, 1).unwrap();
+        if page.end {
+            break;
+        }
+        assert!(page.after > cursor, "every inspected candidate advances");
+        if page.identities.is_empty() {
+            empty += 1;
+        }
+        tips.extend(page.identities);
+        cursor = page.after;
+    }
+    let mut expected = vec![*f.main[3].event().1, *f.side[2].event().1, *f.other_root[0].event().1];
+    expected.sort_unstable();
+    assert_eq!(tips, expected);
+    assert_eq!(empty, 3, "non-tip pages advance without output");
+    assert!(reader.usage().rows > all.len());
+    assert_eq!(snapshot(&store), before);
+    reversed_arrival_pages();
+}
+
+fn reversed_arrival_pages() {
+    let f = forks();
+    let mut root_inputs = [&f.main[0], &f.other_root[0]];
+    let mut child_inputs = [&f.main[2], &f.side[2]];
+    root_inputs.sort_unstable_by(|a, b| b.event().1.cmp(a.event().1));
+    child_inputs.sort_unstable_by(|a, b| b.event().1.cmp(a.event().1));
+    assert!(root_inputs[0].event().1 > root_inputs[1].event().1);
+    assert!(child_inputs[0].event().1 > child_inputs[1].event().1);
+    let mut store = MemoryTree::default();
+    assert_eq!(
+        store.install_generation(&f.generation, read_budget(), &mut Usage::default()),
+        Ok(true)
+    );
+    for input in root_inputs.into_iter().chain([&f.main[1]]).chain(child_inputs) {
+        assert!(
+            store
+                .commit(input, Some("unstable"), read_budget(), &mut Usage::default())
+                .is_ok()
+        );
+    }
+    let before = snapshot(&store);
+    let scope = f.main[0].event().0;
+    let mut reader = store.reader(read_budget());
+    assert_eq!(
+        reader.roots(scope, None, 10).unwrap().identities,
+        vec![*root_inputs[1].event().1, *root_inputs[0].event().1],
+        "root order is not arrival order"
+    );
+    assert_eq!(
+        reader.children(scope, *f.main[1].event().1, None, 10).unwrap().identities,
+        vec![*child_inputs[1].event().1, *child_inputs[0].event().1],
+        "child order is not arrival order"
+    );
+    assert_eq!(snapshot(&store), before);
+}
+
+/// Claim: Missing placement, foreign placement and missing child entries refuse `CorruptHistory` through private damage on exact reads, without changing any retained state; these are the three evidenced reader damage shapes only.
+/// ´claim:history:tree-read-index-damage´
+/// ´test:unit:tree-read-index-damage´
+#[test]
+fn tree_read_index_damage() {
+    use super::roster::{Contract, Damage};
+    let f = forks();
+    for damage in [Damage::MissingPlacement, Damage::ForeignPlacement, Damage::MissingChild] {
+        let mut store = read_store();
+        store.damage(&f.main[3], &f.main[2], damage);
+        let before = snapshot(&store);
+        assert_eq!(
+            store.reader(read_budget()).exact(f.main[3].event().0, *f.main[3].event().1),
+            Err(Error::Storage(StorageError::CorruptHistory)),
+            "damaged index membership refuses"
+        );
+        assert_eq!(snapshot(&store), before);
+    }
+}
+
+fn read_limits(store: &MemoryTree<'_>, input: &Retained, depth: u64, expected_usage: Usage) {
+    REQUESTS.with_borrow_mut(|a| *a = Some(Vec::new()));
+    let mut reader = store.reader(read_budget());
+    let expected = reader.as_of(input.event().0, *input.event().1, depth).unwrap();
+    let used = reader.usage();
+    assert_eq!(used, expected_usage, "reader helper probes and returned requests are pinned");
+    let requests = REQUESTS.with_borrow_mut(|a| a.take().unwrap());
+    assert_eq!(requests.iter().sum::<usize>(), used.allocation_bytes);
+    let before = snapshot(store);
+    for rows in (0..used.rows).rev() {
+        let mut reader = store.reader(ReadBudget {
+            rows,
+            bytes: read_budget().bytes,
+        });
+        assert_eq!(
+            reader.as_of(input.event().0, *input.event().1, depth),
+            Err(Error::Storage(StorageError::ReadLimit)),
+            "every row ceiling refuses without a partial result"
+        );
+        assert!(reader.usage().rows <= rows);
+    }
+    let mut sum = 0;
+    for request in requests {
+        sum += request;
+        if request == 0 {
+            continue;
+        }
+        let mut reader = store.reader(ReadBudget {
+            rows: read_budget().rows,
+            bytes: sum - 1,
+        });
+        assert_eq!(
+            reader.as_of(input.event().0, *input.event().1, depth),
+            Err(Error::Storage(StorageError::ReadLimit)),
+            "every buffer ceiling refuses without a partial result"
+        );
+        assert!(reader.usage().allocation_bytes < sum);
+    }
+    let mut reader = store.reader(ReadBudget {
+        rows: used.rows,
+        bytes: used.allocation_bytes,
+    });
+    assert_eq!(reader.as_of(input.event().0, *input.event().1, depth), Ok(expected));
+    assert_eq!(snapshot(store), before);
+}
+
+/// Claim: Every row and reservation prefix of the executed continuation and fork read paths meets a refusing ceiling, exact allowance succeeds and late refusal returns no result; no fetched header is delivered before row admission.
+/// ´claim:history:tree-read-limits´
+/// ´test:unit:tree-read-limits´
+#[test]
+fn tree_read_limits() {
+    let store = read_store();
+    let f = forks();
+    read_limits(
+        &store,
+        &f.main[3],
+        4,
+        Usage {
+            rows: 186,
+            allocation_bytes: 188_606,
+        },
+    );
+    read_limits(
+        &store,
+        &f.main[3],
+        2,
+        Usage {
+            rows: 110,
+            allocation_bytes: 84_491,
+        },
+    );
+    read_limits(
+        &store,
+        &f.side[2],
+        3,
+        Usage {
+            rows: 137,
+            allocation_bytes: 122_730,
+        },
+    );
+    let mut reader = store.reader(ReadBudget { rows: 0, bytes: 0 });
+    assert_eq!(reader.exact(f.main[0].event().0, [255; 32]), Ok(None));
+    super::read::FETCHES.with(|n| n.set(0));
+    assert_eq!(
+        reader.exact(f.main[0].event().0, *f.main[0].event().1),
+        Err(Error::Storage(StorageError::ReadLimit))
+    );
+    assert_eq!(
+        super::read::FETCHES.with(std::cell::Cell::get),
+        0,
+        "header fetch follows budget admission"
+    );
+    assert_eq!(reader.usage(), Usage::default());
+}
+
+/// Claim: Two nested forks resolve independently of long empty interiors and side-branch arrival; descriptor traversal visits only the nesting of forks, while returned reconstruction has its own charges, and later results leave earlier exact bytes and selections unchanged.
+/// ´claim:history:tree-read-nested´
+/// ´test:unit:tree-read-nested´
+#[test]
+fn tree_read_nested() {
+    use crate::admitted_carrier_tests::tree_fixture::tree_sequence;
+    let main = retain_chain(&tree_sequence(
+        &[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200],
+        None,
+    ));
+    let side = retain_chain(&tree_sequence(&[100, 200, 301, 401, 501, 601], None));
+    let nested = retain_chain(&tree_sequence(&[100, 200, 301, 402, 502, 602], None));
+    let f = forks();
+    let mut store = MemoryTree::default();
+    assert!(
+        store
+            .install_generation(&f.generation, read_budget(), &mut Usage::default())
+            .is_ok()
+    );
+    for input in &main[..3] {
+        assert!(
+            store
+                .commit(input, Some("unstable"), read_budget(), &mut Usage::default())
+                .is_ok()
+        );
+    }
+    let before = store
+        .reader(read_budget())
+        .exact(main[1].event().0, *main[1].event().1)
+        .unwrap();
+    let whole_before = [true, false].map(|exact| whole_read_usage(&store, &main[2], &main[1], exact));
+    assert_read_usage(whole_before[0], 99, 84_347, "whole exact read has the pinned request usage");
+    assert_read_usage(whole_before[1], 105, 84_395, "whole as-of read has the pinned request usage");
+    for input in side.iter().skip(2).chain(nested.iter().skip(3)).chain(main.iter().skip(3)) {
+        assert!(
+            store
+                .commit(input, Some("unstable"), read_budget(), &mut Usage::default())
+                .is_ok()
+        );
+    }
+    let snapshot_before = snapshot(&store);
+    let whole_after = [true, false].map(|exact| whole_read_usage(&store, &main[11], &main[1], exact));
+    assert_eq!(whole_after, whole_before, "whole reads ignore empty length and side branches");
+    let side_usage = whole_read_usage(&store, &side[5], &main[1], false);
+    let nested_usage = whole_read_usage(&store, &nested[5], &main[1], false);
+    let nested_exact = whole_read_usage(&store, &nested[5], &nested[5], true);
+    assert_read_usage(nested_exact, 246, 268_227, "nested exact admits empty introduction descents");
+    assert!(
+        side_usage.rows > whole_after[1].rows && nested_usage.rows > side_usage.rows,
+        "whole read visits grow with nested forks"
+    );
+    assert!(
+        side_usage.allocation_bytes > whole_after[1].allocation_bytes
+            && nested_usage.allocation_bytes > side_usage.allocation_bytes,
+        "whole read range requests grow with nested forks"
+    );
+    for depth in [6, 2, 4, 1, 5, 3] {
+        let expected = if depth <= 2 { &main[depth - 1] } else { &nested[depth - 1] };
+        assert_eq!(
+            store
+                .reader(read_budget())
+                .as_of(expected.event().0, *nested[5].event().1, depth as u64)
+                .unwrap()
+                .unwrap()
+                .identity,
+            *expected.event().1,
+            "nested fork cutoffs preserve ancestry"
+        );
+    }
+    for depth in [11, 4, 8, 3, 7] {
+        assert_eq!(
+            store
+                .reader(read_budget())
+                .as_of(main[0].event().0, *main[11].event().1, depth as u64)
+                .unwrap()
+                .unwrap()
+                .identity,
+            *main[depth - 1].event().1
+        );
+    }
+    assert_eq!(
+        store
+            .reader(read_budget())
+            .exact(main[1].event().0, *main[1].event().1)
+            .unwrap(),
+        before
+    );
+    assert_eq!(snapshot(&store), snapshot_before);
+}
+
+fn assert_read_usage(actual: Usage, rows: usize, allocation_bytes: usize, message: &str) {
+    assert_eq!(actual, Usage { rows, allocation_bytes }, "{message}");
+}
+
+fn whole_read_usage(store: &MemoryTree<'_>, tip: &Retained, expected: &Retained, exact: bool) -> Usage {
+    let mut reader = store.reader(read_budget());
+    let result = if exact {
+        reader.exact(expected.event().0, *expected.event().1)
+    } else {
+        reader.as_of(tip.event().0, *tip.event().1, expected.event().3)
+    }
+    .unwrap()
+    .unwrap();
+    assert_eq!(result.identity, *expected.event().1);
+    reader.usage()
+}
+
+/// Claim: A generation with an explicit later edition and closure resolves retained uses at their original coordinates, not to the current edition; its fork read crosses every row and allocation ceiling without partial output or changed state.
+/// ´claim:history:tree-read-closure´
+/// ´test:unit:tree-read-closure´
+#[test]
+fn tree_read_closure() {
+    let f = forks();
+    let mut generation = f.generation.clone();
+    let use_ = f.main[0]
+        .declarations()
+        .iter()
+        .find(|u| unqualified(u.version.family))
+        .unwrap();
+    let mut later = use_.version.clone();
+    later.edition.push_str("-later");
+    later.opens_at = f
+        .main
+        .iter()
+        .chain(&f.side)
+        .flat_map(Retained::declarations)
+        .filter(|u| u.version.family == use_.version.family && u.version.key == use_.version.key)
+        .map(|u| u.selected_at)
+        .max()
+        .unwrap()
+        + 1;
+    generation.closures.push(Closure {
+        family: use_.version.family,
+        key: use_.version.key.clone(),
+        edition: use_.version.edition.clone(),
+        closes_at: later.opens_at,
+    });
+    generation.versions.push(later);
+    generation
+        .versions
+        .sort_by(|a, b| declaration_key(a).cmp(&declaration_key(b)));
+    let mut store = MemoryTree::default();
+    assert_eq!(
+        store.install_generation(&generation, read_budget(), &mut Usage::default()),
+        Ok(true)
+    );
+    for input in [&f.main[0], &f.main[1], &f.side[2], &f.main[2], &f.main[3]] {
+        assert!(
+            store
+                .commit(input, Some("unstable"), read_budget(), &mut Usage::default())
+                .is_ok()
+        );
+    }
+    let got = store
+        .reader(read_budget())
+        .exact(f.main[3].event().0, *f.main[3].event().1)
+        .unwrap()
+        .unwrap();
+    assert!(
+        got.selections.iter().any(|s| s.use_ == use_),
+        "the recorded edition survives a later effective edition"
+    );
+    read_limits(
+        &store,
+        &f.main[3],
+        4,
+        Usage {
+            rows: 198,
+            allocation_bytes: 188_606,
+        },
+    );
+}
+
+/// Claim: Enumeration shares the caller session's allowance across statements; every row ceiling below completion refuses, and the final allocation boundary of each supplied root, child, candidate and tip page refuses one below and succeeds exactly, including an empty advancing tip page.
+/// ´claim:history:tree-read-page-limits´
+/// ´test:unit:tree-read-page-limits´
+#[test]
+fn tree_read_page_limits() {
+    let f = forks();
+    let store = read_store();
+    let before = snapshot(&store);
+    let scope = f.main[0].event().0;
+    let mut candidates = [&f.main[0], &f.main[1], &f.side[2], &f.main[2], &f.main[3], &f.other_root[0]].map(|r| *r.event().1);
+    candidates.sort_unstable();
+    let empty_index = candidates
+        .iter()
+        .position(|id| [&f.main[0], &f.main[1], &f.main[2]].iter().any(|r| r.event().1 == id))
+        .unwrap();
+    let empty_after = empty_index.checked_sub(1).map(|i| candidates[i]);
+    for kind in [3, 0, 4, 2, 1] {
+        let query = |reader: &mut super::read::Reader<'_, '_>| match kind {
+            0 => reader.roots(scope, None, 2),
+            1 => reader.children(scope, *f.main[1].event().1, None, 2),
+            2 => reader.candidates(scope, None, 3),
+            4 => reader.tips(scope, empty_after, 1),
+            _ => reader.tips(scope, None, 3),
+        };
+        let mut reader = store.reader(read_budget());
+        let expected = query(&mut reader).unwrap();
+        if kind == 4 {
+            assert!(expected.identities.is_empty(), "the swept tip page is empty");
+            assert_eq!(expected.after, Some(candidates[empty_index]), "the swept empty page advances");
+        }
+        let used = reader.usage();
+        for rows in (0..used.rows).rev() {
+            assert_eq!(
+                query(&mut store.reader(ReadBudget {
+                    rows,
+                    bytes: read_budget().bytes
+                })),
+                Err(Error::Storage(StorageError::ReadLimit)),
+                "page row admission precedes visits"
+            );
+        }
+        assert_eq!(
+            query(&mut store.reader(ReadBudget {
+                rows: used.rows,
+                bytes: used.allocation_bytes - 1
+            })),
+            Err(Error::Storage(StorageError::ReadLimit))
+        );
+        assert_eq!(
+            query(&mut store.reader(ReadBudget {
+                rows: used.rows,
+                bytes: used.allocation_bytes
+            })),
+            Ok(expected)
+        );
+    }
+    let mut reader = store.reader(ReadBudget {
+        rows: 1,
+        bytes: read_budget().bytes,
+    });
+    assert!(reader.has_child(scope, *f.main[0].event().1).unwrap());
+    assert_eq!(
+        reader.has_child(scope, *f.main[0].event().1),
+        Err(Error::Storage(StorageError::ReadLimit)),
+        "statements share one meter"
+    );
+    assert_eq!(snapshot(&store), before, "page limits leave complete state unchanged");
+}
+
+/// Claim: Zero page work refuses without a visit, and unrepresentable page limits, signed depths and scopes refuse as representation before a zero allowance can admit any stored-state visit or buffer.
+/// ´claim:history:tree-read-shapes´
+/// ´test:unit:tree-read-shapes´
+#[test]
+fn tree_read_shapes() {
+    let f = forks();
+    let store = read_store();
+    let before = snapshot(&store);
+    let scope = f.main[0].event().0;
+    let zero = ReadBudget { rows: 0, bytes: 0 };
+    let mut reader = store.reader(zero);
+    assert_eq!(
+        reader.roots(scope, None, 0),
+        Err(Error::Storage(StorageError::ReadLimit)),
+        "zero page work refuses without admission"
+    );
+    assert_eq!(reader.usage(), Usage::default());
+    assert_eq!(
+        reader.roots(scope, None, usize::MAX),
+        Err(Error::Storage(StorageError::Representation)),
+        "page representation wins before admission"
+    );
+    assert_eq!(reader.usage(), Usage::default());
+    assert_eq!(
+        reader.as_of(scope, *f.main[0].event().1, i64::MAX as u64 + 1),
+        Err(Error::Storage(StorageError::Representation)),
+        "depth representation wins before admission"
+    );
+    assert_eq!(reader.usage(), Usage::default());
+    let mut oversized = scope.clone();
+    oversized.history = "x".repeat(1025);
+    assert_eq!(
+        reader.exact(&oversized, *f.main[0].event().1),
+        Err(Error::Storage(StorageError::Representation)),
+        "scope representation wins before admission"
+    );
+    assert_eq!(reader.usage(), Usage::default());
+    assert_eq!(snapshot(&store), before);
+}

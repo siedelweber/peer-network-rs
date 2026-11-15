@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::read::Reader",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "syntax": "# [doc = \" Caller-owned snapshot and cumulative meter. Borrow this session across all pages or audit phases.\"] # [doc = \" The immutable store borrow prevents publication during its lifetime.\"] # [doc = \" (´[ROOT-amend:storage:tree-enumeration]´)\"] pub struct Reader < 's , 'a > { store : & 's MemoryTree < 'a > , meter : Meter , }"
+  }
+}

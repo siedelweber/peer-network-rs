@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/read.rs",
+    "item": "storage::tree::read::Reader < 's , 'a >::has_child",
+    "owner": "HOST",
+    "signature": "fn has_child (& mut self , scope : & EpochScope , parent : Identity) -> Result < bool , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::has_child",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::tree::read::Reader < 's , 'a >::has_child\" , & (scope , parent) ,) ; let result = self . has_child_inner (scope , parent) ; operation . finish (& result) ; result }",
+    "class_decision": "host-storage",
+    "item_premise": "Public caller-owned admitted carriers and explicit unstable generation declarations, labelled judgements, references and immutable debit origins. Carrier construction and observation are outside the writer allowance. Only stored-state visits and requested reconstruction buffers are charged. No secret input, server session, second law, audit or public publication is enabled; the reader returns retained public evidence under the same request accounting.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}
