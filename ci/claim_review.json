@@ -250,14 +250,6 @@
       "review": "Actual C-locale tool expiry lines are injected separately for start and stop; could-not-start and an unrelated nonzero status remain command failures. Allocation observes one pending iteration at 599 and a hang at 601; restart shares one deadline through two command waits. Child and tool arguments and locale are pinned at their calls."
     },
     {
-      "operation": "ci::test_devperf.Performance.test_quiet_repeat_request",
-      "path": "ci/test_devperf.py",
-      "claim": "ROOT::claim:devperf:quiet-repeat-request",
-      "before": "",
-      "after": "Loaded excess names a separately declared quiet repeat without scheduling or changing a verdict.",
-      "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
-    },
-    {
       "operation": "ci::test_devperf.Performance.test_reference_archive_retention",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:reference-archive-retention",
@@ -338,22 +330,6 @@
       "review": "Read the named assertions in this focused witness. Controlled observations pass through the production writer; malformed-record and projection controls assert the named refusal. Archive sequences exercise generated event order and base-passed retention. No measured noise margin or cost attribution follows from fixture values."
     },
     {
-      "operation": "ci::test_devperf.Performance.test_repeat_obligation_close",
-      "path": "ci/test_devperf.py",
-      "claim": "ROOT::claim:devperf:repeat-obligation-close",
-      "before": "",
-      "after": "One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Excess keeps a scope required beside its printed unresolved owner-history evidence, including unknown compilation, and independent work, pressure and functional failures are reported together. A non-required scope still prints its owner work, and discharge names the non-repeatable scopes left unresolved.",
-      "review": "Conformance controls retain an excess-only reproducible scope alongside known or unknown owner evidence, print its unresolved disposition and report independent close failures together; no owner cache history is claimed reproduced. The added controls assert verdict versus non-verdict and the retained unresolved evidence; fixture processes do not establish installation scheduling or reproduce an owner’s cold cache."
-    },
-    {
-      "operation": "ci::test_devperf.Performance.test_repeat_transition_compiles",
-      "path": "ci/test_devperf.py",
-      "claim": "ROOT::claim:devperf:repeat-transition-compiles",
-      "before": "",
-      "after": "Only cache compilation or owner work outside each recurring set enters transition-compilation evidence; the obligation separately identifies reproducible scopes.",
-      "review": "Read the recurring package/version set against cache compiles and owner artifacts. The controls distinguish freshness, recurring checks, lint rebuilds and a new owner artifact."
-    },
-    {
       "operation": "ci::test_devperf.Performance.test_series_archive_list",
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-archive-list",
@@ -390,8 +366,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:series-declaration",
       "before": "",
-      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, retain busy host counts and load without refusing a switch, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.",
-      "review": "The controlled import runs at injected load 82 with an active container, preserving counts in host.json and its plan. A second evidence store is refused by the already-held checkout storage lock. Existing staged-entry, raw-status, reconciliation, binding and cancellation controls retain their scope; series start and end activity no longer exclude a measured attempt."
+      "after": "Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, retain busy host counts and load without refusing a switch, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A failing real helper retains its output and raw status before an entry log exists. loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.",
+      "review": "The controlled import runs at injected load 82 with an active container, preserving counts in host.json and its plan. A second evidence store is refused by the already-held checkout storage lock. Existing staged-entry, raw-status, reconciliation, binding and cancellation controls retain their scope; series start and end activity no longer exclude a measured attempt. Historical repeat controls retire with that route; retained output and import closing controls continue to execute."
     },
     {
       "operation": "ci::test_devperf.Performance.test_series_declared_ledger_identity",
@@ -542,8 +518,8 @@
       "path": "ci/test_devperf.py",
       "claim": "ROOT::claim:devperf:whole-gate-warning-preserves-verdict",
       "before": "",
-      "after": "The whole critical path keeps its own warning and baseline while preserving the functional verdict.",
-      "review": "The campaign controls recompute the mixed-sample bound and refuse malformed or altered declarations. Green and failed outcomes survive whole-wall reporting; retained pressure and comparable CPU include preparation. Missing resource context remains unclassified. The CLI carries the whole warning class and budget without changing a functional result."
+      "after": "The whole critical path keeps its own warning and baseline while preserving the functional verdict. Injected loaded excess preserves both green and red verdicts, emits no repeat request or obligation, and leaves a retained entry unchanged.",
+      "review": "Controlled loaded excess runs through wall_summary for green and red statuses without changing either, emitting a repeat request or creating an obligation. A pre-existing entry remains byte-identical; elapsed walls remain measurements."
     },
     {
       "operation": "ci::test_devperf.Performance.test_written_peer_instructions",

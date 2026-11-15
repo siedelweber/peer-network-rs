@@ -718,7 +718,7 @@ def series_count():
 DECLARATION_VARIABLES = (
     'PN_GATE_PLAN', 'PN_GATE_ENTRY', 'PN_GATE_FIRST_CACHE', 'PN_GATE_SAMPLE',
     'PN_IMPORT_BASE', 'PN_GATE_SERIES', 'PN_GATE_ORDINAL', 'PN_GATE_SERIES_COUNT',
-    'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE', 'PN_GATE_REPEAT_OF',
+    'PN_GATE_SERIES_KEY', 'PN_GATE_SERIES_CACHE',
     'PN_GATE_CONTAINER_LIST', 'PN_GATE_SERVICE_LIST', 'PN_GATE_STORAGE_TOKEN',
 )
 
@@ -770,13 +770,6 @@ def declare_run(root):
                         configuration_key=key, cache=cache, count=count)
         if declared['base'] == source:
             raise ValueError('series base equals source')
-    repeat_path = environment.get('PN_GATE_REPEAT_OF')
-    if repeat_path:
-        obligation = json.loads(Path(repeat_path).read_text())
-        if (sample != obligation['sample'] or plan != 'one-run' or source != obligation['source']
-                or environment.get('PN_IMPORT_BASE') != obligation['base'] or entry == obligation['owing_entry']):
-            raise ValueError('repeat declaration differs from its obligation')
-        declared['repeat_of'] = obligation['obligation']
     print('GATE-DECLARED '+' '.join(key+'='+value for key, value in declared.items()), flush=True)
     lane = root/'.lane'
     lane.mkdir(exist_ok=True)
@@ -2186,159 +2179,6 @@ def tier_summary(root, registry, worker_statuses):
         previous_statuses=baseline.get('evidence_statuses') if baseline else None))+'\n')
 
 
-# Recurring compile-only witnesses; a new package or owner is not exempt.
-RECURRING_COMPILES = {
-    ('discipline-tests','ci-test_discipline'): {'app@0.0.0','fork@0.0.0','foundation-nursery-probe@0.0.0','pn-host@0.0.0','secret-trait-probe@0.0.0','dependency@0.0.0'},
-    ('linter-entry-tests','ci-test_linter_entry'): {'composition-fixture@0.1.0'},
-    ('host-observation-runtime','host-observation-runtime'): {'pn-host@0.1.0'},
-    ('wallet-conformance','wallet-conformance'): {'pn-wallet@0.1.0'},
-}
-
-
-def repeat_compilation(cache, tiers):
-    """Cache compiles and owner compiles outside the named recurring set."""
-    return repeat_compile_evidence(cache, tiers)['transition_compiling_steps']
-
-
-def repeat_compile_evidence(cache, tiers):
-    """Expose recurring observations and missing evidence alongside triggers."""
-    triggers = set(cache.get('compiling_steps', []))
-    observed, exempted, unknown = set(), set(), set()
-    for tier in tiers.values():
-        for row in tier.get('isolated_compiling_steps', []):
-            allowed = RECURRING_COMPILES.get((row['step'],row['owner']), set())
-            if not isinstance(row.get('compiled'), list):
-                triggers.add(row['step'])
-                unknown.add((row['step'],row['owner']))
-            for artifact in row['compiled'] if isinstance(row.get('compiled'), list) else []:
-                match = re.match(r'(?:Checking|Compiling) ([^ ]+) v([^ ]+)(?: |$)',artifact)
-                name = match[1]+'@'+match[2] if match else artifact.rsplit('#',1)[-1]
-                identity = (row['step'],row['owner'],name)
-                observed.add(identity)
-                if name not in allowed or row.get('cold_target'):
-                    triggers.add(row['step'])
-                else:
-                    exempted.add(identity)
-    expected = {(step,owner,name) for (step,owner),names in RECURRING_COMPILES.items() for name in names}
-    return dict(transition_compiling_steps=sorted(triggers), exempted=sorted(exempted),
-                not_observed=sorted(expected-observed), unknown=sorted(unknown))
-
-
-def quiet_repeat(source, tree, scope, measurement, budget, compiling):
-    """A scope contributes evidence to one obligation, not another scheduled run."""
-    if measurement.get('classification') != 'load-unresolved':
-        return None
-    share = .10
-    return dict(scope=scope, required=bool(compiling) or budget is not None and measurement.get('excess_s',0) > budget*share,
-                excess_share=share, share_status='proposal-for-series-confirmation',
-                transition_compiling_steps=compiling)
-
-
-def repeat_obligation(root, pending, whole, tiers, declared):
-    declaration_path = root/'.lane/gate-declaration.json'
-    if not declaration_path.exists():
-        return None
-    declaration = json.loads(declaration_path.read_text())
-    compilation = repeat_compile_evidence(pending.get('cache',{}),tiers)
-    print('GATE-REPEAT-COMPILES '+json.dumps(compilation,sort_keys=True),flush=True)
-    if declaration.get('repeat_of'):
-        print('GATE-QUIET-REPEAT-PENDING obligation='+declaration['repeat_of']+' entry='+declaration['entry']+' close=repeat-close',flush=True)
-        return None
-    compiling = sorted(set(pending.get('cache',{}).get('compiling_steps',[])))
-    nonrepeatable = sorted(set(compilation['transition_compiling_steps'])-set(compiling))
-    scopes = []
-    for scope, measurement in [('whole',whole),*tiers.items()]:
-        budget = declared['whole-gate']['budget_ms']/1000 if scope == 'whole' else declared[measurement['budget']]['budget_ms']/1000 if measurement.get('budget') else None
-        selected = compiling if scope == 'whole' else [name for name in compiling if name in measurement.get('steps',[])]
-        request = quiet_repeat(declaration['source'],pending.get('tree'),scope,measurement,budget,selected)
-        if request is not None:
-            omitted = nonrepeatable if scope == 'whole' else [name for name in nonrepeatable if name in measurement.get('steps',[])]
-            request['not_repeatable'] = [dict(step=name, reason='owner cache history is not prepared by the controller') for name in omitted]
-            if omitted:
-                print('GATE-REPEAT-NOT-REPEATABLE '+json.dumps(dict(scope=scope, steps=request['not_repeatable'],
-                    disposition='unresolved-until-quiet-measurement'),sort_keys=True),flush=True)
-            scopes.append(request)
-    if not scopes:return None
-    policy = series_policy()
-    # The floor is sufficient for every possible frozen-median admission bound.
-    quiet_limit = min(policy['series_absolute_pressure'],policy['series_relative_floor'])
-    identity = dict(source=declaration['source'], tree=pending.get('tree'),base=os.environ.get('PN_IMPORT_BASE'),
-                    configuration_key=Path(pending['path']).parent.name if pending.get('path') else None,
-                    sample=declaration.get('sample','import'),owing_entry=declaration['entry'])
-    digest = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
-    request = dict(identity, obligation=digest, plan='one-run',entry='quiet-'+digest[:24],
-                   scopes=scopes,required=any(row['required'] for row in scopes),
-                   whole_stall_at_most=quiet_limit,quiet_basis='sufficient-for-every-frozen-median; absolute-and-relative-floor',
-                   node='account-batteries-and-containers-idle-at-both-observations',schedules='nothing')
-    (root/'.lane/gate-quiet-repeat.json').write_text(json.dumps(request,sort_keys=True)+'\n')
-    print('GATE-QUIET-REPEAT '+json.dumps(request,sort_keys=True),flush=True)
-    return request
-
-
-def repeat_close(obligation, directory, admission=None):
-    """One admitted quiet repeat discharges; its own classification stands."""
-    request=json.loads(obligation.read_text())
-    declaration=json.loads((directory/'gate-declaration.json').read_text())
-    whole=json.loads((directory/'gate-wall.json').read_text())
-    run=json.loads((directory/'gate-baseline.json').read_text())
-    failures = []
-    if (declaration.get('repeat_of') != request['obligation'] or declaration.get('source') != request['source']
-            or declaration.get('plan') != 'one-run' or declaration.get('sample') != request['sample']
-            or run.get('tree') != request['tree'] or run.get('import_base') != request['base']
-            or (Path(run['path']).parent.name if run.get('path') else None) != request['configuration_key']):
-        failures.append('quiet repeat identity differs from obligation')
-    if whole.get('status') != 0 or not quiet_baseline(run):
-        failures.append('quiet repeat is not functionally green with quiet boundaries')
-    required = {step for scope in request['scopes'] for step in scope['transition_compiling_steps']}
-    repeated = repeat_compile_evidence(run.get('cache',{}),run.get('tiers',{}))
-    unknown_steps = {step for step,owner in repeated['unknown']}
-    if not required <= set(repeated['transition_compiling_steps'])-unknown_steps:
-        failures.append('quiet repeat does not cover the obligation compiling steps')
-    pressure=baseline_stall(dict(whole=whole))
-    limit=request['whole_stall_at_most']
-    if admission is not None:
-        try:
-            admitted=json.loads(admission.read_text().removeprefix('GATE-SERIES-CHECK '))
-            if not isinstance(admitted, dict):
-                raise ValueError('quiet repeat admission is not a completed series check')
-            median=admitted.get('frozen_median')
-            valid = True
-            if admitted.get('outcome') != 'admitted' or type(median) not in (int,float) or not math.isfinite(median) or not 0 <= median <= 1:
-                failures.append('quiet repeat admission is not a completed series check')
-                valid = False
-            identity = admitted.get('declared_identity',{})
-            if not isinstance(identity,dict) or identity.get('configuration_key') != request['configuration_key']:
-                failures.append('quiet repeat admission identity differs from obligation')
-                valid = False
-            policy=admitted.get('policy')
-            if not isinstance(policy,dict):
-                raise ValueError('quiet repeat admission policy is malformed')
-            for name in ('series_absolute_pressure','series_relative_floor','series_pressure_multiple'):
-                value=policy.get(name)
-                if type(value) not in (int,float) or not math.isfinite(value) or not (value >= 1 if name == 'series_pressure_multiple' else 0 <= value <= 1):
-                    failures.append('quiet repeat admission policy is malformed: '+name)
-                    valid = False
-            if valid:
-                limit=min(policy['series_absolute_pressure'],max(policy['series_relative_floor'],median*policy['series_pressure_multiple']))
-        except (ValueError, KeyError, TypeError) as error:
-            failures.append(str(error))
-    if pressure is None or pressure > limit:
-        failures.append('quiet repeat exceeds its admission pressure bound')
-    for phase in ('start','end'):
-        idle=json.loads((directory/('gate-series-host-'+phase+'.json')).read_text())
-        if idle.get('identity',{}).get('PN_GATE_ENTRY') != declaration['entry'] or idle.get('boundary') != phase:
-            failures.append('quiet repeat '+phase+' idle receipt is foreign')
-        at=idle.get('at')
-        if type(at) not in (int,float) or not math.isfinite(at) or (at > whole['started'] if phase=='start' else at < whole['ended']):
-            failures.append('quiet repeat '+phase+' idle receipt does not bracket the run')
-    if failures:
-        raise ValueError('; '.join(failures))
-    print('GATE-QUIET-REPEAT-DISCHARGED '+json.dumps(dict(obligation=request['obligation'],owing_entry=request['owing_entry'],
-        entry=declaration['entry'],classification=whole['classification'],whole_stall=pressure,
-        unresolved_scopes=[dict(scope=row['scope'],steps=row['not_repeatable']) for row in request['scopes']
-                           if row.get('not_repeatable')]),sort_keys=True),flush=True)
-
-
 def wall_summary(root, status, interval=None):
     """Warn on the verdict's measured critical path without changing its exit."""
     from devperf import budgets
@@ -2419,7 +2259,6 @@ def wall_summary(root, status, interval=None):
                      value if isinstance(value, str) else json.dumps(value, separators=(',', ':')))
                      for key, value in result.items() if key not in {'wall', 'status'})
     print(f'GATE-WALL WALL={wall:.6f}s verdict={"green" if status == 0 else "red"} '+fields, flush=True)
-    repeat_obligation(root,pending,result,tiers,declared)
     return subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'gate::whole',
         '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
         '--budget', 'whole-gate', '--overrun-class', classification, '--findings', '.lane/performance-findings.jsonl'], cwd=root).returncode
@@ -2547,10 +2386,6 @@ def main():
     whole.add_argument('status', type=int)
     whole.add_argument('interval', nargs=2, type=float)
     sub.add_parser('retain-baseline')
-    repeat = sub.add_parser('repeat-close')
-    repeat.add_argument('obligation',type=Path)
-    repeat.add_argument('directory',type=Path)
-    repeat.add_argument('--admission',type=Path)
     supervisor = sub.add_parser('supervise')
     supervisor.add_argument('command', nargs=argparse.REMAINDER)
     measurements=sub.add_parser('resource-lines')
@@ -2621,13 +2456,6 @@ def main():
         return 0
     if args.action == 'parallel-declared':
         return int('gate_dependencies = {' not in Path('meson.build').read_text())
-    if args.action == 'repeat-close':
-        try:
-            repeat_close(args.obligation,args.directory,args.admission)
-        except (OSError,ValueError,KeyError,TypeError) as error:
-            print('GATE-QUIET-REPEAT-REFUSED '+str(error),flush=True)
-            return 4
-        return 0
     if args.action == 'retain-baseline':
         retain_baseline(Path.cwd())
         return 0

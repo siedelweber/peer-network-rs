@@ -16,85 +16,6 @@ import time
 
 import build_graph
 
-CONTROLLER_FILES = (
-    'authentication_bip340.py',
-    'authentication_crypto.py',
-    'authentication_encoding_vectors.py',
-    'authentication_vectors.py',
-    'binary64_vectors.py',
-    'build_graph.py',
-    'build_graph_evidence.py',
-    'calibrate.py',
-    'claims.py',
-    'credential_vectors.py',
-    'dependency_identity.py',
-    'devperf.py',
-    'discipline.py',
-    'doctest_identity.py',
-    'flake_ledger.py',
-    'gate_observation_counts.py',
-    'gate_resources.py',
-    'harness.py',
-    'hash_citations.py',
-    'home_vectors.py',
-    'host_postgresql.py',
-    'isolation.py',
-    'policy_vectors.py',
-    'position_vectors.py',
-    'properties.py',
-    'provision_vendor.py',
-    'registry_fragments.py',
-    'run_ci.py',
-    'run_tests.py',
-    'series_round.py',
-    'source_sites.py',
-    'storage_vectors.py',
-    'testkit_guard.py',
-    'wallet_boundary.py',
-    'wallet_cases.py',
-    'wallet_crypto.py',
-    'wallet_elements.py',
-)
-CONTROLLER_INPUTS = ('docs/inputs/devperf-measurements.toml', 'docs/inputs/devperf-budgets.toml')
-
-
-
-def stage_controller(root, directory):
-    """Preserve the current controller and its policy before an older checkout."""
-    if directory.resolve().is_relative_to(root.resolve()) or any(p.is_symlink() for p in (directory, *directory.parents)):
-        raise Refusal('controller directory must be outside checkout without links')
-    source = subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
-    selected = ['ci/'+name for name in CONTROLLER_FILES]
-    selected += list(CONTROLLER_INPUTS)
-    directory.mkdir(parents=True,exist_ok=True)
-    staged = Path(tempfile.mkdtemp(prefix='controller-',dir=directory))
-    for member in selected:
-        mode = subprocess.check_output(['git','ls-tree',source,'--',member],cwd=root,text=True)
-        if not mode.startswith('100644 blob '):
-            raise Refusal('controller member must be a regular object: '+member)
-        target = staged/member
-        target.parent.mkdir(parents=True,exist_ok=True)
-        target.write_bytes(subprocess.check_output(['git','show',source+':'+member],cwd=root))
-    write(staged/'controller.json',dict(source=source,members=selected))
-    print('GATE-CONTROLLER-STAGED '+json.dumps(dict(source=source,driver=str(staged/'ci/series_round.py'),arguments=['--staged-controller']),sort_keys=True),flush=True)
-    return staged
-
-
-def validate_controller(root, directory):
-    """Bind the outside controller to its producing objects before any work."""
-    record = json.loads((directory/'controller.json').read_text())
-    members = ['ci/'+name for name in CONTROLLER_FILES]+list(CONTROLLER_INPUTS)
-    if record['members'] != members:
-        raise Refusal('controller manifest differs from fixed roster')
-    for member in members:
-        path = directory/member
-        if Path(member).is_absolute() or '..' in Path(member).parts or path.is_symlink():
-            raise Refusal('unsafe controller member')
-        if path.read_bytes() != subprocess.check_output(['git','show',record['source']+':'+member],cwd=root):
-            raise Refusal('controller differs from its producing objects: '+member)
-    return record['source']
-
-
 class Refusal(ValueError):
     """A protocol refusal, not a verdict on the candidate."""
 
@@ -203,31 +124,14 @@ class Round:
             raise Refusal('sample ordinal outside declared count')
         if args.mode != 'sample' and args.ordinal is not None:
             raise Refusal('only a sample has an ordinal')
-        if (args.mode == 'repeat') != (args.repeat_of is not None):
-            raise Refusal('repeat requires its obligation and only repeat accepts one')
         self.log = None
         self.planned = None
         self.storage_token = None
-        directory = Path(__file__).resolve().parent
-        self.controller = directory if getattr(args, 'staged_controller', False) else self.root/'ci'
 
-    def controller_command(self, command, build=False):
-        """Controller helpers remain outside a switched workload checkout."""
-        if self.controller == self.root/'ci':
-            return command
-        interpreter = 'python3' if build else sys.executable
-        if command[:3] == ['python3','-B','ci/build_graph.py']:
-            return [interpreter,'-E','-s','-B',str(self.controller/'series_round.py'),'--controller-command',*command[3:]]
-        if command[:3] == ['python3','-B','ci/isolation.py']:
-            return [interpreter,'-E','-s','-B',str(self.controller/'isolation.py'),*command[3:]]
-        return command
 
     def gate_command(self):
-        """An old gate enters the current controller's watched storage boundary."""
-        command = ['bash','ci/gate.sh']
-        if self.controller != self.root/'ci':
-            command = ['python3','-E','-s','-B',str(self.controller/'isolation.py'),'gate-storage',*command,'--gate-storage-locked']
-        return command
+        """Run the source gate under the held storage boundary."""
+        return ['bash','ci/gate.sh']
 
     def check_store(self):
         """Reconcile label state only while the round lock is held."""
@@ -244,7 +148,6 @@ class Round:
     def command(self, command, environment=None, build=False):
         """Each command retains its output, status, wall and reaped CPU."""
         environment = dict(environment or {})
-        command = self.controller_command(command, build) if hasattr(self, 'controller') else command
         if self.storage_token:
             environment['PN_GATE_STORAGE_TOKEN'] = self.storage_token
         from isolation import PREFIX_STARTUP_VARIABLES
@@ -297,41 +200,13 @@ class Round:
                     self.storage_token = token
                     try:
                         self.check_store()
-                        if self.args.mode == 'repeat' and self.controller != self.root/'ci':
-                            return self.historical_run()
                         return self.locked_run()
                     finally:
                         self.storage_token = None
             except StorageBusy as error:
                 raise Busy('storage lock '+str(error)) from error
 
-    def historical_run(self):
-        """Switch and restore a historical workload while both locks are held."""
-        producing = json.loads((self.controller.parent/'controller.json').read_text())['source']
-        previous = self.require(['git','rev-parse','HEAD'])
-        source = self.require(['git','rev-parse','--verify',self.args.source+'^{commit}'])
-        if previous != producing or self.require(['git','status','--porcelain']):
-            raise Refusal('historical repeat requires clean producing-controller checkout; inspect and restore after a killed run')
-        base = self.require(['git','rev-parse','--verify',self.args.base+'^{commit}'])
-        self.repeat_pair(base, source)
-        self.historical_roster(source)
-        try:
-            self.require(['git','reset','--hard',source])
-            self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
-            return self.locked_run()
-        finally:
-            self.require(['git','reset','--hard',previous])
-            self.require(['git','clean','-fdx','-e','/.lane/build-graph/'])
-            print('GATE-ROUND-RESTORED source='+previous,flush=True)
 
-    def historical_roster(self, source):
-        """Refuse an owing source missing a current owner before switching."""
-        from source_sites import OWNERS
-        paths = set(self.require(['git','ls-tree','-r','--name-only',source,'--','packages']).splitlines())
-        missing = sorted('packages/'+owner+'/Cargo.toml' for owner in OWNERS
-                         if 'packages/'+owner+'/Cargo.toml' not in paths)
-        if missing:
-            raise Refusal('historical-roster-not-repeatable: missing registered owner manifests: '+', '.join(missing))
 
     def locked_run(self):
         try:
@@ -341,18 +216,6 @@ class Round:
                 write(self.store/'ended.json',dict(reason='planned round interrupted: '+str(error),entry=self.planned))
             raise
 
-    def repeat_pair(self, base, source):
-        """Require the original pair before any historical or preparation switch."""
-        path = self.args.repeat_of
-        for member in (path, path.parent/'gate-baseline.json'):
-            if member.resolve().is_relative_to(self.root):
-                raise Refusal('repeat obligation and sidecar must live outside checkout before reset')
-            if member.is_symlink() or not member.is_file():
-                raise Refusal('repeat obligation and sidecar must be original regular files before reset')
-        obligation = json.loads(path.read_text())
-        if obligation['base'] != base or obligation['source'] != source:
-            raise Refusal('repeat transition differs from obligation')
-        return obligation
 
     def execute(self):
         args = self.args
@@ -371,7 +234,6 @@ class Round:
         if args.mode == 'sample' and (not priming or priming.get('status') != 0 or priming.get('complete') is not True
                 or priming.get('base') != base or priming.get('source') != source):
             raise Refusal('sample requires green priming of this base and source')
-        obligation = self.repeat_pair(base, source) if args.mode == 'repeat' else None
         observed = json.loads(self.require(['python3','-B','ci/build_graph.py','series-identity'],build=True))
         key, identity = observed['key'], observed['identity']
         if not isinstance(identity, dict) or not re.fullmatch('[0-9a-f]{64}',key):
@@ -387,8 +249,6 @@ class Round:
             write(self.store/'ended.json',record)
             print('GATE-ROUND-ENDED '+json.dumps(record,sort_keys=True),flush=True)
             return 4
-        if obligation and key != obligation['configuration_key']:
-            raise Refusal('repeat configuration differs from obligation')
         if args.mode == 'sample':
             heads = json.loads(self.require(['python3','-B','ci/build_graph.py','series-owner-heads'],build=True))
             if any(head not in (base,source) for head in heads.values()):
@@ -421,14 +281,6 @@ class Round:
         if args.mode == 'sample':
             environment.update(PN_GATE_SAMPLE='import-transition',PN_GATE_SERIES_COUNT=str(self.count),
                 PN_GATE_SERIES_KEY=key,PN_GATE_SERIES_CACHE=priming['cache'])
-        if obligation:
-            environment.update(PN_GATE_SAMPLE=obligation['sample'],PN_GATE_REPEAT_OF=str(args.repeat_of.resolve()))
-            if obligation['sample'] == 'import-transition':
-                owed = json.loads((args.repeat_of.parent/'gate-baseline.json').read_text())
-                cache = owed['cache']['state']
-                if cache not in ('warm','cold'):
-                    raise Refusal('repeat requires the owed cache receipt')
-                environment.update(PN_GATE_SERIES_COUNT=str(self.count),PN_GATE_SERIES_KEY=key,PN_GATE_SERIES_CACHE=cache)
         plan_time = time.time()
         if args.mode != 'priming':
             status, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','start'],environment=environment)
@@ -468,9 +320,6 @@ class Round:
         gate, _ = self.command(self.gate_command(),environment=environment,build=True)
         end, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','end'],environment=environment)
         close, _ = self.command(['python3','-B','ci/build_graph.py','series-close',str(gate)],environment=environment)
-        discharge = 0
-        if obligation:
-            discharge, _ = self.command(['python3','-B','ci/build_graph.py','repeat-close',str(args.repeat_of.resolve()),str(self.root/'.lane')],environment=environment)
         exclusion = None
         if args.mode == 'sample' and not end:
             try:
@@ -488,7 +337,7 @@ class Round:
                 manifest = json.loads(output)
                 manifests = self.store/'manifests'; manifests.mkdir(exist_ok=True)
                 write(manifests/(entry+'.json'),manifest)
-                archive = self.store/('archive' if args.mode == 'sample' else 'repeats')
+                archive = self.store/'archive'
                 archive.mkdir(exist_ok=True)
                 copy_manifest(manifest,archive/entry)
                 sidecar_bytes = next((row['bytes'] for row in manifest['files'] if row['destination']=='gate-baseline.json'),None)
@@ -497,57 +346,31 @@ class Round:
                 print('GATE-ROUND-ARCHIVE-REFUSED '+str(error),flush=True)
         ledger = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,gate_status=gate,
             end_status=end,close_status=close,archive_status=archive_status,sidecar_bytes=sidecar_bytes,
-            discharge_status=discharge,exclusion=exclusion,
+            exclusion=exclusion,
             declared_identity=dict(base=base,source=source,configuration_key=key,cache=priming['cache'] if priming else 'unknown'))
-        append(self.store/('ledger.jsonl' if args.mode == 'sample' else 'repeat-ledger.jsonl'),ledger)
+        append(self.store/'ledger.jsonl',ledger)
         if end or close or archive_status:
             write(self.store/'ended.json',dict(reason='planned round evidence failed',entry=entry,
                 end_status=end,close_status=close,archive_status=archive_status))
         (self.store/'active.json').unlink()
         self.planned = None
         print('GATE-ROUND-CLOSED '+json.dumps(ledger),flush=True)
-        return 4 if end or close or archive_status or discharge else (1 if gate else (4 if exclusion else 0))
+        return 4 if end or close or archive_status else (1 if gate else (4 if exclusion else 0))
 
 
 def main():
-    if len(sys.argv) == 3 and sys.argv[1] == '--stage-controller':
-        try:
-            stage_controller(Path.cwd(),Path(sys.argv[2]))
-            return 0
-        except (OSError,ValueError,subprocess.SubprocessError) as error:
-            print('GATE-ROUND-REFUSED '+str(error),flush=True)
-            return 4
-    if len(sys.argv) > 2 and sys.argv[1] == '--controller-command':
-        # Code is the staged controller; registry data describes the workload.
-        import harness
-        import properties
-        harness.ROOT = Path.cwd()
-        properties.PATH = Path.cwd()/'docs/inputs/harness-properties.toml'
-        sys.argv = [str(Path(__file__).with_name('build_graph.py')),*sys.argv[2:]]
-        return build_graph.main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--label',required=True)
     parser.add_argument('--base',required=True)
     parser.add_argument('--source',required=True)
-    parser.add_argument('--mode',choices=('priming','sample','repeat'),required=True)
+    parser.add_argument('--mode',choices=('priming','sample'),required=True)
     parser.add_argument('--ordinal',type=int)
-    parser.add_argument('--repeat-of',type=Path)
     parser.add_argument('--directory',type=Path,required=True)
     parser.add_argument('--container-list',type=argv,required=True)
     parser.add_argument('--service-list',type=argv,required=True)
     parser.add_argument('--build-prefix',type=argv,required=True)
-    parser.add_argument('--staged-controller',action='store_true',help='use the object-bound outside controller printed by --stage-controller')
     args = parser.parse_args()
     try:
-        directory = Path(__file__).resolve().parent.parent
-        if args.staged_controller:
-            if args.mode != 'repeat':
-                raise Refusal('outside historical controller is a repeat route')
-            if directory == Path.cwd().resolve():
-                raise Refusal('staged controller must be outside checkout')
-            validate_controller(Path.cwd(),directory)
-            from isolation import storage_driver
-            storage_driver(Path.cwd(),args.build_prefix,prefix=True)
         return Round(Path.cwd(),args).run()
     except Busy as error:
         print('GATE-ROUND-RESTARTABLE '+str(error),flush=True)

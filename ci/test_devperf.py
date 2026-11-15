@@ -706,7 +706,6 @@ class Performance(unittest.TestCase):
         from round_fixtures import controls
         controls(self,'sequence')
         controls(self,'failures')
-        controls(self,'repeat')
         from build_graph import retain_baseline
         from contextlib import redirect_stdout
         with tempfile.TemporaryDirectory() as directory:
@@ -879,7 +878,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, retain busy host counts and load without refusing a switch, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, retain busy host counts and load without refusing a switch, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A failing real helper retains its output and raw status before an entry log exists. loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -1113,194 +1112,8 @@ class Performance(unittest.TestCase):
                     fixture.restart(root)
             self.assertEqual(len(waits), 2, 'restart reaches its second wait without a fresh budget')
 
-    def test_quiet_repeat_request(self):
-        """Loaded excess names a separately declared quiet repeat without scheduling or changing a verdict.
-        ´claim:devperf:quiet-repeat-request´
-        ´test:integration:test-quiet-repeat-request´
-        """
-        from build_graph import quiet_repeat
-        for excess, compiled, expected in ((9,[],False),(10,[],False),(11,[],True),(1,['build'],True)):
-            request = quiet_repeat('commit','tree','fast',dict(classification='load-unresolved',excess_s=excess),100,compiled)
-            self.assertEqual(request['required'],expected,'repeat trigger follows excess share or compilation')
-            self.assertEqual(request['transition_compiling_steps'],compiled,'trigger names transition compiles')
-        self.assertIsNone(quiet_repeat('commit','tree','fast',dict(classification='within-budget'),100,[]))
 
-    def test_repeat_transition_compiles(self):
-        """Only cache compilation or owner work outside each recurring set enters transition-compilation evidence; the obligation separately identifies reproducible scopes.
-        ´claim:devperf:repeat-transition-compiles´
-        ´test:integration:test-repeat-transition-compiles´
-        """
-        from build_graph import repeat_compilation, repeat_compile_evidence
-        rows=[dict(step='wallet-conformance',owner='wallet-conformance',cold_target=False,compiled=['Checking pn-wallet v0.1.0 (/fixture)'])]
-        tiers={'service':dict(isolated_compiling_steps=rows)}
-        self.assertEqual(repeat_compilation(dict(compiling_steps=[]),tiers),[],'recurring package check is not a cache rebuild')
-        evidence=repeat_compile_evidence({},tiers)
-        self.assertIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),evidence['exempted'],'observed exemption names versioned artifact')
-        self.assertNotIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),evidence['not_observed'],'observed recurring artifact is not missing')
-        self.assertEqual(repeat_compilation(dict(compiling_steps=['clippy']),tiers),['clippy'],'lint cache compilation triggers')
-        rows[0]['cold_target']=True
-        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a cold owner is not exempt as recurring work')
-        rows[0]['cold_target']=False
-        rows[0]['compiled'].append('Checking new-dependency v0.1.0 (/fixture)')
-        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'a new owner artifact triggers')
-        rows[0]['compiled']=[]
-        self.assertEqual(repeat_compilation({},tiers),[],'fresh owner invocation is not compilation')
-        self.assertIn(('wallet-conformance','wallet-conformance','pn-wallet@0.1.0'),repeat_compile_evidence({},tiers)['not_observed'],'a vanished recurring compile is reported')
-        rows[0].pop('compiled')
-        self.assertEqual(repeat_compilation({},tiers),['wallet-conformance'],'absent compilation evidence triggers conservatively')
-        self.assertEqual(repeat_compile_evidence({},tiers)['unknown'],[('wallet-conformance','wallet-conformance')],'unknown is not observed compilation')
 
-    def test_repeat_obligation_close(self):
-        """One linked green quiet repeat discharges requested reproducible scopes even over budget; foreign or loaded evidence refuses. Excess keeps a scope required beside its printed unresolved owner-history evidence, including unknown compilation, and independent work, pressure and functional failures are reported together. A non-required scope still prints its owner work, and discharge names the non-repeatable scopes left unresolved.
-        ´claim:devperf:repeat-obligation-close´
-        ´test:integration:test-repeat-obligation-close´
-        """
-        from build_graph import repeat_obligation, repeat_close, declare_run
-        from contextlib import redirect_stdout
-        with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);lane=root/'.lane';lane.mkdir()
-            declaration=dict(source='source',entry='owing',plan='one-run',sample='import')
-            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
-            declared={'whole-gate':dict(budget_ms=100000),'fast':dict(budget_ms=50000)}
-            tiers={'fast':dict(classification='load-unresolved',excess_s=10,budget='fast',steps=[],isolated_compiling_steps=[])}
-            whole=dict(classification='load-unresolved',excess_s=20)
-            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
-                request=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,tiers,declared)
-            self.assertEqual(sum(line.startswith('GATE-QUIET-REPEAT ') for line in output.getvalue().splitlines()),1,'one run owes one obligation for all scopes')
-            self.assertIn('GATE-REPEAT-COMPILES ',output.getvalue(),'each owing run discloses exemptions and missing recurring entries')
-            self.assertEqual(len(request['scopes']),2,'whole and tier scopes join one obligation')
-            self.assertEqual(request['base'],'base','request preserves import base')
-            self.assertTrue(request['required'],'excess share makes the obligation required')
-            self.assertEqual(request['whole_stall_at_most'],.08,'interim repeat bound is the absolute/floor minimum')
-            original_request=copy.deepcopy(request)
-            affected=copy.deepcopy(tiers)
-            affected['fast'].update(steps=['owner-step'],isolated_compiling_steps=[dict(step='owner-step',owner='owner',cold_target=False,compiled=['Compiling extra v1.0.0'])])
-            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
-                limited=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,affected,declared)
-            self.assertTrue(all(row['required'] for row in limited['scopes']),'excess-only scopes stay required beside owner compilation')
-            self.assertEqual(output.getvalue().count('GATE-REPEAT-NOT-REPEATABLE '),2,'every unresolved scope is printed')
-            self.assertTrue(all(row['not_repeatable'] for row in limited['scopes']),'whole and affected tier retain non-repeatable cause')
-            self.assertTrue(all(row['transition_compiling_steps']==[] for row in limited['scopes']),'non-repeatable work is not owed compiling work')
-            self.assertIn('cache history',limited['scopes'][0]['not_repeatable'][0]['reason'],'non-repeatable work names its preparation limit')
-            low=copy.deepcopy(affected);low['fast']['excess_s']=0
-            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
-                unrequired=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),dict(whole,excess_s=0),low,declared)
-            self.assertFalse(unrequired['required'],'owner work alone does not require reproducible coverage')
-            self.assertEqual(output.getvalue().count('GATE-REPEAT-NOT-REPEATABLE '),2,'not-required owner scopes still print unresolved evidence')
-            del affected['fast']['isolated_compiling_steps'][0]['compiled']
-            with patch.dict(os.environ,PN_IMPORT_BASE='base'),redirect_stdout(io.StringIO()) as output:
-                unknown=repeat_obligation(root,dict(tree='tree',cache={},path='key/tree.json'),whole,affected,declared)
-            self.assertTrue(all(row['required'] for row in unknown['scopes']),'unknown owner evidence does not suppress excess')
-            self.assertTrue(all(row['not_repeatable'] for row in unknown['scopes']),'unknown owner evidence remains unresolved')
-            (lane/'gate-quiet-repeat.json').write_text(json.dumps(original_request))
-            obligation=lane/'gate-quiet-repeat.json'
-            declaration.update(entry=request['entry'],repeat_of=request['obligation'])
-            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
-            with redirect_stdout(io.StringIO()) as output:
-                self.assertIsNone(repeat_obligation(root,{},whole,tiers,declared),'repeat must keep its original obligation')
-            self.assertIn('GATE-QUIET-REPEAT-PENDING',output.getvalue(),'a repeat does not recursively owe another obligation')
-            run=written_peer('source',100,.04);run.update(tree='tree',import_base='base',path='key/tree.json',load_unresolved_pressure_percent=10)
-            run['quiet_windows']={phase:dict(node_scope='node-wide',node_pressure_fraction={'cpu.some':0},wall_seconds=5) for phase in ('before','after')}
-            (lane/'gate-baseline.json').write_text(json.dumps(run))
-            whole=dict(status=0,stall=.04,node_scope='node-wide',classification='owned-regression',started=10,ended=20)
-            (lane/'gate-wall.json').write_text(json.dumps(whole))
-            for phase,at in [('start',9),('end',21)]:
-                idle=dict(identity={'PN_GATE_ENTRY':declaration['entry']},boundary=phase,at=at,
-                          processes=dict(status=0,stdout=''),containers=dict(status=0,stdout='[]'),services=dict(status=0,stdout='[]'))
-                (lane/('gate-series-host-'+phase+'.json')).write_text(json.dumps(idle))
-            with redirect_stdout(io.StringIO()) as output:
-                try:repeat_close(obligation,lane)
-                except ValueError as error:self.fail('quiet regression must discharge: '+str(error))
-            self.assertIn('GATE-QUIET-REPEAT-DISCHARGED',output.getvalue(),'quiet regression discharges, it need not be within budget')
-            original_request['scopes'][0]['not_repeatable']=[dict(step='owner-step',reason='owner cache history')]
-            obligation.write_text(json.dumps(original_request))
-            with redirect_stdout(io.StringIO()) as output:repeat_close(obligation,lane)
-            closed=json.loads(output.getvalue().removeprefix('GATE-QUIET-REPEAT-DISCHARGED '))
-            self.assertEqual(closed['unresolved_scopes'],[dict(scope='whole',steps=original_request['scopes'][0]['not_repeatable'])],'discharge retains unresolved scope and owner work')
-            for member,value in [('repeat_of','foreign'),('source','foreign'),('plan','refresh-second'),('sample','import-transition')]:
-                bad=dict(declaration);bad[member]=value;(lane/'gate-declaration.json').write_text(json.dumps(bad))
-                with self.assertRaisesRegex(ValueError,'identity',msg='repeat close refuses mismatched '+member):repeat_close(obligation,lane)
-            (lane/'gate-declaration.json').write_text(json.dumps(declaration))
-            request['scopes'][0]['transition_compiling_steps']=['clippy']
-            obligation.write_text(json.dumps(request))
-            with self.assertRaisesRegex(ValueError,'compiling steps',msg='a warm repeat cannot discharge omitted compilation'):repeat_close(obligation,lane)
-            (lane/'gate-wall.json').write_text(json.dumps(dict(whole,stall=.2,status=1)))
-            try:repeat_close(obligation,lane)
-            except ValueError as error:
-                for reason in ('compiling steps','pressure bound','functionally green'):
-                    self.assertIn(reason,str(error),'close reports every independent failure: '+reason)
-            else:self.fail('invalid repeat must refuse')
-            (lane/'gate-wall.json').write_text(json.dumps(whole))
-            run['cache']['compiling_steps']=['clippy'];(lane/'gate-baseline.json').write_text(json.dumps(run))
-            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane)
-            request['scopes'][0]['transition_compiling_steps']=[];obligation.write_text(json.dumps(request))
-            request['scopes'][0]['transition_compiling_steps']=['owner-step'];obligation.write_text(json.dumps(request))
-            saved_tiers=copy.deepcopy(run['tiers'])
-            run['tiers']={'fixture':dict(isolated_compiling_steps=[dict(step='owner-step',owner='owner')])}
-            (lane/'gate-baseline.json').write_text(json.dumps(run))
-            with self.assertRaisesRegex(ValueError,'compiling steps',msg='unknown owner work cannot discharge compilation'):repeat_close(obligation,lane)
-            run['tiers']['fixture']['isolated_compiling_steps'][0]['compiled']=['Compiling fresh v1.0.0']
-            (lane/'gate-baseline.json').write_text(json.dumps(run))
-            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane)
-            run['tiers']=saved_tiers;(lane/'gate-baseline.json').write_text(json.dumps(run))
-            request['scopes'][0]['transition_compiling_steps']=[];obligation.write_text(json.dumps(request))
-            for key,value,reason in [('stall',.2,'pressure'),('status',1,'functionally green')]:
-                bad=dict(whole);bad[key]=value;(lane/'gate-wall.json').write_text(json.dumps(bad))
-                with self.assertRaisesRegex(ValueError,reason,msg='nonadmitted repeat cannot discharge '+key):repeat_close(obligation,lane)
-            (lane/'gate-wall.json').write_text(json.dumps(whole))
-            run['import_base']='foreign';(lane/'gate-baseline.json').write_text(json.dumps(run))
-            with self.assertRaisesRegex(ValueError,'identity',msg='repeat must repay the same base transition'):repeat_close(obligation,lane)
-            run['import_base']='base';(lane/'gate-baseline.json').write_text(json.dumps(run))
-            admission=lane/'admission.json';admission.write_text(json.dumps(dict(outcome='admitted',frozen_median=.05,
-                declared_identity=dict(base='base',source='source',configuration_key='key',cache='warm'),
-                policy=dict(series_absolute_pressure=.1,series_relative_floor=.044,series_pressure_multiple=2))))
-            whole['stall']=.07;(lane/'gate-wall.json').write_text(json.dumps(whole))
-            with redirect_stdout(io.StringIO()):repeat_close(obligation,lane,admission)
-            good_admission=json.loads(admission.read_text())
-            for member,value in [('outcome','incomplete'),('frozen_median',None),('frozen_median',float('nan')),('frozen_median',2)]:
-                changed=copy.deepcopy(good_admission);changed[member]=value;admission.write_text(json.dumps(changed))
-                with self.assertRaisesRegex(ValueError,'completed series',msg='admission outcome and median must be valid'):repeat_close(obligation,lane,admission)
-            for member in ('configuration_key',):
-                changed=copy.deepcopy(good_admission);changed['declared_identity'][member]='foreign';admission.write_text(json.dumps(changed))
-                with self.assertRaisesRegex(ValueError,'admission identity',msg='admission must match obligation '+member):repeat_close(obligation,lane,admission)
-            compatible=copy.deepcopy(good_admission);compatible['declared_identity'].update(base='earlier-base',source='earlier-source')
-            admission.write_text(json.dumps(compatible))
-            with redirect_stdout(io.StringIO()):
-                try:repeat_close(obligation,lane,admission)
-                except ValueError as error:self.fail('compatible key includes lineage without requiring the same series transition: '+str(error))
-            for identity in (None,[],{}):
-                changed=copy.deepcopy(good_admission);changed['declared_identity']=identity;admission.write_text(json.dumps(changed))
-                try:
-                    with self.assertRaisesRegex(ValueError,'admission identity',msg='missing or malformed admission identity refuses'):repeat_close(obligation,lane,admission)
-                except (TypeError,AttributeError) as error:self.fail('admission identity needs a protocol refusal: '+str(error))
-            admission.write_text(json.dumps(good_admission))
-            for member,value,reason in [('tree','foreign','identity'),('path','foreign/tree.json','identity')]:
-                changed=dict(run);changed[member]=value;(lane/'gate-baseline.json').write_text(json.dumps(changed))
-                with self.assertRaisesRegex(ValueError,reason,msg='repeat refuses foreign '+member):repeat_close(obligation,lane,admission)
-            (lane/'gate-baseline.json').write_text(json.dumps(run))
-            valid_idle=json.loads((lane/'gate-series-host-end.json').read_text())
-            for changed,reason in [(dict(valid_idle,identity={'PN_GATE_ENTRY':'foreign'}),'foreign'),(dict(valid_idle,at=19),'bracket')]:
-                (lane/'gate-series-host-end.json').write_text(json.dumps(changed))
-                with self.assertRaisesRegex(ValueError,reason,msg='repeat refuses invalid idle join '+reason):repeat_close(obligation,lane,admission)
-            (lane/'gate-series-host-end.json').write_text(json.dumps(valid_idle))
-            badadmission=json.loads(admission.read_text());badadmission['policy']['series_absolute_pressure']=float('nan')
-            admission.write_text(json.dumps(badadmission))
-            with self.assertRaisesRegex(ValueError,'malformed',msg='nonfinite admission policy cannot discharge'):repeat_close(obligation,lane,admission)
-            badadmission['policy']['series_absolute_pressure']=.1;admission.write_text(json.dumps(badadmission))
-            badidle=json.loads((lane/'gate-series-host-end.json').read_text());badidle['containers']['stdout']='[{}]'
-            (lane/'gate-series-host-end.json').write_text(json.dumps(badidle))
-            try: repeat_close(obligation,lane,admission)
-            except ValueError as error: self.fail('busy repeat close retains measurement: '+str(error))
-            with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='wrong',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
-                with self.assertRaisesRegex(ValueError,'repeat declaration',msg='wrong repeat base refuses before work'):declare_run(root)
-            for change in ({'PN_GATE_ENTRY':'owing'},{'PN_GATE_PLAN':'refresh-second','PN_GATE_FIRST_CACHE':'warm'}):
-                env=dict(PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='base',PN_GATE_REPEAT_OF=str(obligation));env.update(change)
-                with patch.dict(os.environ,env),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
-                    with self.assertRaisesRegex(ValueError,'repeat declaration',msg='repeat entry and plan belong to the obligation'):declare_run(root)
-            for member in ('source','sample'):
-                bad=copy.deepcopy(request);bad[member]='foreign';obligation.write_text(json.dumps(bad))
-                with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='base',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
-                    with self.assertRaisesRegex(ValueError,'repeat declaration',msg='repeat declaration refuses '+member):declare_run(root)
 
     def test_reference_incumbent_tree(self):
         """Retention uses the previous reference tree even when an unrelated peer has a lower stall.
@@ -2036,7 +1849,7 @@ wait
                     self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)
 
     def test_whole_gate_warning(self):
-        """The whole critical path keeps its own warning and baseline while preserving the functional verdict.
+        """The whole critical path keeps its own warning and baseline while preserving the functional verdict. Injected loaded excess preserves both green and red verdicts, emits no repeat request or obligation, and leaves a retained entry unchanged.
         ´claim:devperf:whole-gate-warning-preserves-verdict´
         ´test:integration:test-whole-gate-warning´
         """
@@ -2135,15 +1948,16 @@ wait
             (lane/'gate-declaration.json').write_text(json.dumps(dict(source='fixture',entry='fixture-entry',plan='one-run',sample='import')))
             (lane/'gate-resources.json').write_text(json.dumps([measured]))
             (lane/'gate-steps.tsv').write_text('fixture\t0\t1.2\t1.9\n')
-            figures = dict(comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
+            figures = dict(classification='load-unresolved', budget='fixture', excess_s=1, steps=['fixture'], comparable_cases=True, comparable_cpu_s=1, baseline_comparable_cpu_s=1, comparable_build_cpu_s=.5,
                            baseline_comparable_build_cpu_s=.5, compile_wall_growth_s=0,
                            own_user_s=1, own_sys_s=0, baseline_cpu_s=1,
                            changed_build_inputs=[], baseline_source='prior', baseline_provisional=True, baseline_match='import-base-tree')
-            for status in (0, 1):
+            for status, retained_request in ((0,False), (1,False), (0,True)):
+                if retained_request: (lane/'gate-quiet-repeat.json').write_text('retained measurement\n')
                 pending = dict(source='fixture', tiers={'fast':figures}, previous_whole={'wall':2, 'stall':.1, 'own_user_s':1, 'own_sys_s':.1})
                 (lane/'gate-baseline.json').write_text(json.dumps(pending))
                 output = io.StringIO()
-                with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10,'series_pressure_multiple':2,'series_absolute_pressure':.1,'series_relative_floor':.08,'series_attempts_per_ordinal':3,'series_policy_provisional':True}, 'whole-gate':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
+                with patch('devperf.budgets', return_value={'gate':{'cpu_growth_percent':20,'load_unresolved_pressure_percent':10,'series_pressure_multiple':2,'series_absolute_pressure':.1,'series_relative_floor':.08,'series_attempts_per_ordinal':3,'series_policy_provisional':True}, 'whole-gate':{'budget_ms':1000}, 'fixture':{'budget_ms':1000}}), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, patch.dict(os.environ, PN_GATE_SOURCE='fixture', PN_GATE_PARALLEL='1'), redirect_stdout(output):
                     self.assertEqual(wall_summary(root, status), 0)
                 result = json.loads((lane/'gate-wall.json').read_text())
                 self.assertEqual(result['status'], status)
@@ -2153,11 +1967,11 @@ wait
                 self.assertAlmostEqual(result['preparation_s']+result['step_span_s']+result['closing_s'], result['wall'])
                 self.assertTrue(result['over_budget'])
                 self.assertEqual(result['classification'], 'load-unresolved')
-                requests = [line.removeprefix('GATE-QUIET-REPEAT ') for line in output.getvalue().splitlines()
-                            if line.startswith('GATE-QUIET-REPEAT ')]
-                self.assertTrue(requests, 'a loaded excess must print a quiet-repeat request')
-                repeat = json.loads(requests[0])
-                self.assertTrue(repeat['required'], 'a loaded excess must print its owed quiet repeat')
+                self.assertNotIn('GATE-QUIET-REPEAT',output.getvalue(),'loaded excess creates no repeat request')
+                if retained_request:
+                    self.assertEqual((lane/'gate-quiet-repeat.json').read_text(),'retained measurement\n','issued entries remain unchanged measurements')
+                else:
+                    self.assertFalse((lane/'gate-quiet-repeat.json').exists(),'loaded excess owes no obligation file')
                 self.assertEqual(result['baseline_stall'], .1)
                 self.assertEqual(result['baseline_source'], 'prior')
                 self.assertTrue(result['baseline_provisional'])

@@ -179,7 +179,7 @@ class Import(Round):
         except Exception as error:
             outcome, reason = 'process-exception', type(error).__name__+': '+str(error)
         for name in ('gate-declaration.json','gate-wall.json','gate-resources.json','gate-steps.tsv',
-                     'gate-baseline.json','gate-quiet-repeat.json'):
+                     'gate-baseline.json'):
             path = self.root/'.lane'/name
             if path.is_file() and not path.is_symlink():
                 shutil.copyfile(path,evidence/name)

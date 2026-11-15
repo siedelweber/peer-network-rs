@@ -85,7 +85,7 @@ def controls(test, group):
         root = area/'tree'; root.mkdir()
         (root/'.lane').mkdir()
         args = SimpleNamespace(label='fixture',base='base',source='source',mode='sample',ordinal=1,
-            repeat_of=None,directory=area/'evidence',build_prefix=['fixture-build'],
+            directory=area/'evidence',build_prefix=['fixture-build'],
             container_list=['fixture-containers'],service_list=['fixture-services'])
         calls = []
         state = dict(key='a'*64,gate=0,start=0,end=0,archive=0,complete=True,head='source',dirty='',ancestor=0,base_build=0)
@@ -127,7 +127,6 @@ def controls(test, group):
                 (root/'.lane/series-attempt.json').unlink(missing_ok=True)
                 series_close(root,state['gate'])
                 return state.get('close',0),''
-            if 'repeat-close' in command:return state.get('discharge',0),''
             if 'series-archive-list' in command:
                 sidecar=root/'.lane/gate-baseline.json'
                 paths=[sidecar,root/'.lane/series-attempt.json']
@@ -225,7 +224,7 @@ def controls(test, group):
                 write(round.store/'ended.json',dict(reason='ended'))
                 with refuses(test,'ended',message='ended labels never restart'): Round(root,args).run()
                 (round.store/'ended.json').unlink()
-                for field,value,pattern in [('label','../escape','label'),('ordinal',6,'ordinal'),('directory',root,'outside'),('repeat_of',area/'owed','repeat')]:
+                for field,value,pattern in [('label','../escape','label'),('ordinal',6,'ordinal'),('directory',root,'outside')]:
                     modified=SimpleNamespace(**vars(args));setattr(modified,field,value)
                     with refuses(test,pattern,message='round argument refuses '+field): Round(root,modified)
                 args.base='source'
@@ -326,29 +325,6 @@ def controls(test, group):
                 with patch.object(round,'check_store'),patch.object(round,'execute',side_effect=ValueError('controlled failure')):
                     with test.assertRaisesRegex(ValueError,'controlled failure'):round.run()
                 test.assertEqual(json.loads((round.store/'ended.json').read_text()).get('entry'),'exception-entry','caught post-plan failure ends label with its entry')
-            elif group == 'repeat':
-                args.mode='repeat';args.ordinal=None;args.repeat_of=area/'owed.json'
-                request=dict(base='base',source='source',configuration_key='a'*64,sample='import-transition',owing_entry='owing')
-                write(args.repeat_of,request);write(area/'gate-baseline.json',dict(cache=dict(state='warm')))
-                test.assertEqual(round.run(),0,'repeat completes through its close')
-                environment=next(c[1] for c in calls if c[0]==['bash','ci/gate.sh'])
-                test.assertEqual(environment['PN_GATE_REPEAT_OF'],str(args.repeat_of),'repeat carries exact obligation')
-                test.assertEqual(environment['PN_GATE_SERIES_CACHE'],'warm','transition repeat carries owed cache class')
-                test.assertTrue(any('repeat-close' in c[0] for c in calls),'repeat is discharged only through repeat-close')
-                test.assertFalse((round.store/'ledger.jsonl').exists(),'repeat is not a series attempt')
-                state['discharge']=4
-                test.assertEqual(round.run(),4,'failed discharge remains a refusal')
-                test.assertEqual(json.loads((round.store/'repeat-ledger.jsonl').read_text().splitlines()[-1])['discharge_status'],4,'repeat ledger preserves discharge status')
-                prior=args.repeat_of;args.repeat_of=root/'owed.json';write(args.repeat_of,request)
-                with refuses(test,'outside checkout',message='in-tree obligation refuses before reset'):round.run()
-                args.repeat_of=prior;write(prior,dict(request,sample='import'));(area/'gate-baseline.json').unlink()
-                with refuses(test,'original regular files before reset',message='missing repeat sidecar refuses before reset'):round.run()
-                write(prior,request)
-                write(area/'gate-baseline.json',dict(cache=dict(state='warm')))
-                write(args.repeat_of,dict(request,source='foreign'))
-                with refuses(test,'transition',message='foreign repeat transition refuses'): round.run()
-                write(args.repeat_of,dict(request,configuration_key='b'*64))
-                with refuses(test,'configuration',message='foreign repeat key refuses'): round.run()
             elif group == 'copy':
                 source=area/'source';source.write_text('evidence')
                 row=dict(source=str(source),destination='nested/receipt',bytes=source.stat().st_size)
@@ -526,8 +502,7 @@ def import_failure_controls(test):
             return subprocess.check_output(['git',*words],cwd=root,text=True).strip()
         git('init','-q');git('config','user.name','Fixture');git('config','user.email','fixture@example.invalid');git('config','commit.gpgsign','false')
         (root/'.gitignore').write_text('.lane/\n')
-        from series_round import CONTROLLER_FILES
-        for name in sorted(set(import_gate.ADAPTER_FILES) | set(CONTROLLER_FILES)):
+        for name in import_gate.ADAPTER_FILES:
             (ci/name).write_bytes(Path(__file__).with_name(name).read_bytes())
         (ci/'precheck.py').write_text('print("PRECHECK-EXIT=0 wall_s=0.1 execution=not-evaluated scope=all")\n')
         (ci/'gate.sh').write_text('echo GATE-EXIT=0\n')
@@ -612,29 +587,6 @@ def import_failure_controls(test):
             with refuses(test,'regular object','staging refuses executable object mode'):
                 import_gate.stage(root,git('rev-parse','HEAD'),area/'nonregular')
             git('reset','--hard',source)
-            from series_round import stage_controller, validate_controller, Round
-            staged=stage_controller(root,area/'controllers')
-            test.assertEqual(validate_controller(root,staged),source,'repeat controller binds its producing objects')
-            driver=Round.__new__(Round);driver.root=root;driver.controller=staged/'ci'
-            routed=driver.controller_command(['python3','-B','ci/build_graph.py','series-identity'])
-            test.assertEqual(routed,[sys.executable,'-E','-s','-B',str(staged/'ci/series_round.py'),'--controller-command','series-identity'],'historical identity uses outside current controller')
-            test.assertEqual(routed[-2:],['--controller-command','series-identity'],'historical identity reads workload data through current controller')
-            test.assertEqual(driver.controller_command(['python3','-B','ci/build_graph.py','series-identity'],build=True)[0],'python3','historical build uses the prefix interpreter')
-            driver.args=SimpleNamespace(source=base,base=base)
-            driver.repeat_pair=lambda base,source:None
-            driver.require=lambda command:git(*command[1:])
-            seen=[]
-            def historical_work():
-                seen.append(git('rev-parse','HEAD'))
-                raise Refusal('controlled historical refusal')
-            driver.locked_run=historical_work
-            with refuses(test,'controlled historical refusal','historical refusal preserves its cause'):
-                driver.historical_run()
-            test.assertEqual(seen,[base],'historical workload enters the owing source')
-            test.assertEqual(git('rev-parse','HEAD'),source,'historical refusal restores the original checkout')
-            member=staged/'ci/build_graph.py';member.write_text(member.read_text()+'\n')
-            with refuses(test,'differs from its producing objects','repeat refuses altered controller'):
-                validate_controller(root,staged)
             # Execute main with real staged children. The child uses tiny gate
             # commands, but real object staging, both locks and checkout resets.
             listing=area/'list.py';listing.write_text('print("[]")\n')
@@ -851,7 +803,7 @@ def storage_controls(test):
 
 
 def residue_controls(test, root, area, base, source, args):
-    """Witness the retained import and historical-controller refusal branches."""
+    """Witness the retained import refusal branches."""
     import ast
     import io
     import os
@@ -861,7 +813,6 @@ def residue_controls(test, root, area, base, source, args):
     import isolation
     import series_round
     import build_graph
-    from series_round import CONTROLLER_FILES, stage_controller, validate_controller
     for status in (0,1):
         row=dict(status=status,counted=False)
         with redirect_stdout(io.StringIO()):
@@ -922,54 +873,6 @@ sys.exit(result)
         test.assertEqual(actual,status,'outer reader preserves closing verdict before cleanup line')
         result=json.loads(next((area/('cleanup-real-'+str(status))).glob('import-*/result.json')).read_text())
         test.assertEqual((result['status'],result['counted']),(status,True),'real cleanup retains complete result')
-    roster={Path(name).stem for name in CONTROLLER_FILES}
-    for name in CONTROLLER_FILES:
-        tree=ast.parse(Path(__file__).with_name(name).read_text())
-        for item in ast.walk(tree):
-            imports=[x.name.split('.')[0] for x in item.names] if isinstance(item,ast.Import) else [item.module.split('.')[0]] if isinstance(item,ast.ImportFrom) and item.module else []
-            for imported in imports:
-                if Path(__file__).with_name(imported+'.py').is_file():
-                    test.assertIn(imported,roster,'controller includes transitive local import '+imported)
-    def git(*words):return subprocess.check_output(['git',*words],cwd=root,text=True).strip()
-    with refuses(test,'outside checkout','controller staging refuses checkout destination'):
-        stage_controller(root,root/'stage')
-    linked=area/'controller-link';linked.symlink_to(area,target_is_directory=True)
-    with refuses(test,'without links','controller staging refuses linked destination'):
-        stage_controller(root,linked)
-    git('update-index','--chmod=+x','ci/series_round.py');git('commit','-qm','controller mode')
-    with refuses(test,'regular object','controller staging refuses nonregular mode'):
-        stage_controller(root,area/'bad-controller')
-    git('reset','--hard',source)
-    staged=stage_controller(root,area/'residue-controllers')
-    manifest=staged/'controller.json';original=manifest.read_text();record=json.loads(original);record['members']=[];manifest.write_text(json.dumps(record))
-    with refuses(test,'fixed roster','controller validation refuses omitted roster'):
-        validate_controller(root,staged)
-    manifest.write_text(original)
-    member=staged/'ci/claims.py';content=member.read_bytes();member.unlink();member.symlink_to(root/'ci/claims.py')
-    with refuses(test,'unsafe controller member','controller validation refuses linked member'):
-        validate_controller(root,staged)
-    member.unlink();member.write_bytes(content+b'\n')
-    with refuses(test,'producing objects','controller validation refuses altered member'):
-        validate_controller(root,staged)
-    member.write_bytes(content)
-    driver=Round.__new__(Round);driver.root=root;driver.controller=staged/'ci';driver.args=SimpleNamespace(source=base,base=base,repeat_of=area/'missing-pair')
-    calls=[]
-    def require(command):
-        calls.append(command)
-        return git(*command[1:])
-    driver.require=require;driver.locked_run=lambda:0
-    with refuses(test,'before reset','historical missing pair refuses before switch'):
-        driver.historical_run()
-    test.assertFalse(any(x[:2]==['git','reset'] for x in calls),'missing pair performs no switch')
-    driver.repeat_pair=lambda base,source:None
-    git('rm','packages/node/Cargo.toml');git('commit','-qm','source before owner')
-    missing_owner=git('rev-parse','HEAD')
-    git('reset','--hard',source)
-    driver.args.source=missing_owner;calls.clear()
-    with refuses(test,'historical-roster-not-repeatable','historical missing owner refuses by name'):
-        driver.historical_run()
-    test.assertFalse(any(x[:2]==['git','reset'] for x in calls),'missing owner performs no switch')
-    driver.args.source=base
     output_driver=Round.__new__(Round);output_driver.root=root;output_driver.store=area/'early-output';output_driver.store.mkdir()
     output_driver.log=None;output_driver.storage_token=None;output_driver.args=args
     status,_=output_driver.command([sys.executable,'-c','import sys;print("early helper failure",flush=True);sys.exit(2)'])
@@ -1008,59 +911,3 @@ sys.exit(result)
             test.fail('adapter retains both invalid text streams across communicate waits')
         test.assertGreaterEqual(len(calls),2 if deferred else 1,'injected wait reaches the communicate retry without relying on scheduling')
         test.assertEqual((child.returncode,child.stdout,child.stderr),(2,'out\ufffd','err\ufffd'),'adapter retains both invalid text streams across communicate waits')
-    (root/'dirty').write_text('dirty')
-    with refuses(test,'producing-controller checkout','historical precondition refuses dirty checkout'):
-        driver.historical_run()
-    (root/'dirty').unlink()
-    git('reset','--hard',base)
-    with refuses(test,'producing-controller checkout','historical precondition refuses owing-source checkout'):
-        driver.historical_run()
-    git('reset','--hard',source)
-    common=['--label','fixture','--base',base,'--source',source,'--directory',str(area/'driver-entry'),'--container-list','["containers"]','--service-list','["services"]','--build-prefix',json.dumps(args.build_prefix),'--staged-controller']
-    with chdir(root),patch('series_round.__file__',str(staged/'ci/series_round.py')),patch.object(sys,'argv',['series_round.py',*common,'--mode','priming']),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
-        test.assertEqual(series_round.main(),4,'staged driver refuses nonrepeat mode')
-    with chdir(root),patch('series_round.__file__',str(root/'ci/series_round.py')),patch('series_round.validate_controller'),patch.object(sys,'argv',['series_round.py',*common,'--mode','repeat','--repeat-of',str(area/'pair')]),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
-        test.assertEqual(series_round.main(),4,'staged driver refuses checkout location')
-    bad=list(common);bad[bad.index('--build-prefix')+1]=json.dumps([sys.executable,'ENV=relative'])
-    with chdir(root),patch('series_round.__file__',str(staged/'ci/series_round.py')),patch('series_round.validate_controller'),patch.object(sys,'argv',['series_round.py',*bad,'--mode','repeat','--repeat-of',str(area/'pair')]),patch('series_round.Round.run',return_value=0),redirect_stdout(io.StringIO()):
-        test.assertEqual(series_round.main(),4,'historical entry validates prefix before switch')
-    # A real old-source workload is a tiny gate; its controller file is poison.
-    (root/'ci/series_round.py').write_text('raise RuntimeError("old controller executed")\n')
-    (root/'ci/gate.sh').write_text('printf "OLD-GATE argument=%s\\n" "$1"\n')
-    git('add','ci');git('commit','-qm','old workload');old=git('rev-parse','HEAD')
-    git('checkout',source,'--','ci');git('commit','-qm','current controller');producing=git('rev-parse','HEAD')
-    staged=stage_controller(root,area/'child-controllers')
-    pair=area/'child-pair';pair.mkdir();write(pair/'obligation.json',dict(base=base,source=old));write(pair/'gate-baseline.json',{})
-    child=area/'historical-child.py'
-    child.write_text('''import json,os,subprocess,sys
-from pathlib import Path
-from types import SimpleNamespace
-sys.path.insert(0,sys.argv[1])
-from series_round import Round
-from isolation import storage_binding,storage_lock
-root=Path.cwd();driver=Round.__new__(Round);driver.root=root;driver.controller=Path(sys.argv[1]);driver.store=Path(sys.argv[2]);driver.store.mkdir();driver.log=None;driver.storage_token=None
-args=json.loads(sys.argv[3]);driver.args=SimpleNamespace(**args);driver.args.repeat_of=Path(args['repeat_of'])
-result={}
-def work():
-    dispatched=subprocess.run([sys.executable,'-E','-s','-B',str(driver.controller/'series_round.py'),'--controller-command','--help'],capture_output=True,text=True)
-    result['dispatch']=dispatched.returncode==0 and 'series-identity' in dispatched.stdout
-    import claims,build_graph_evidence
-    result['modules']=Path(claims.__file__).parent==driver.controller and Path(build_graph_evidence.__file__).parent==driver.controller
-    status,output=driver.command(driver.gate_command(),build=True)
-    result['watched']=status==0 and 'GATE-STORAGE-LOCK action=joined' in output and 'OLD-GATE argument=--gate-storage-locked' in output
-    return 0
-with storage_lock(storage_binding(root),'series') as token:
-    driver.storage_token=token;driver.locked_run=work
-    result['status']=driver.historical_run()
-result['restored']=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==sys.argv[4]
-print('HISTORICAL-CONTROL '+json.dumps(result))
-''')
-    child_args=dict(base=base,source=old,repeat_of=str(pair/'obligation.json'),build_prefix=args.build_prefix)
-    completed=subprocess.run([sys.executable,'-E','-s','-B',str(child),str(staged/'ci'),str(area/'child-store'),json.dumps(child_args),producing],cwd=root,text=True,capture_output=True)
-    test.assertEqual(completed.returncode,0,'historical child completes: '+completed.stdout+completed.stderr)
-    row=json.loads(next(x.removeprefix('HISTORICAL-CONTROL ') for x in completed.stdout.splitlines() if x.startswith('HISTORICAL-CONTROL ')))
-    test.assertTrue(row['dispatch'],'historical child executes controller dispatch')
-    test.assertTrue(row['modules'],'historical child imports complete staged modules')
-    test.assertTrue(row['watched'],'historical child wraps old gate in current watch')
-    test.assertTrue(row['restored'],'historical child restores after success')
-    git('reset','--hard',source)
