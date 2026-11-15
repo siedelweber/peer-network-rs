@@ -54,6 +54,75 @@ fn declared() -> Generation {
         }],
     }
 }
+
+/// Claim: Nine explicit generation inputs and a result label containing U+0000 refuse Representation before either budget unit is charged, leaving the complete memory tree unchanged; private act-column validation refuses U+0000 in author and family, while text nested inside a bytea payload remains outside the text-column rule.
+/// ´claim:history:tree-stored-text-domain´
+/// ´test:unit:tree-stored-text-domain´
+#[test]
+fn tree_stored_text_domain() {
+    for field in [8, 2, 6, 0, 7, 4, 1, 5, 3] {
+        let mut input = declared();
+        match field {
+            0 => input.scope.history.push('\0'),
+            1 => input.scope.policy_identity.push('\0'),
+            2 => input.scope.policy_edition.push('\0'),
+            3 => input.scope.sequence.push('\0'),
+            4 => input.label.push('\0'),
+            5 => input.versions[0].key.push('\0'),
+            6 => input.versions[0].edition.push('\0'),
+            7 => input.closures[0].key.push('\0'),
+            8 => input.closures[0].edition.push('\0'),
+            _ => unreachable!("nine declared fields"),
+        }
+        let mut store = MemoryTree::default();
+        let before = snapshot(&store);
+        let mut usage = Usage::default();
+        assert_eq!(
+            store.install_generation(&input, ReadBudget { rows: 0, bytes: 0 }, &mut usage),
+            Err(Error::Storage(StorageError::Representation)),
+            "stored text field {field}"
+        );
+        assert_eq!(usage, Usage::default());
+        assert_eq!(snapshot(&store), before);
+    }
+    let mut input = declared();
+    input.versions[0].payload =
+        Some(super::super::Payload::rule(&pn_interchange::Value::Text(String::from("public\0payload").into())).unwrap());
+    let mut store = MemoryTree::default();
+    assert_eq!(
+        store.install_generation(&input, budget(), &mut Usage::default()),
+        Ok(true),
+        "bytea payload is outside the text column domain"
+    );
+    let root = &forks().main[0];
+    let mut store = MemoryTree::default();
+    let before = snapshot(&store);
+    let mut usage = Usage::default();
+    assert_eq!(
+        store.commit(root, Some("unstable\0"), ReadBudget { rows: 0, bytes: 0 }, &mut usage),
+        Err(Error::Storage(StorageError::Representation))
+    );
+    assert_eq!(usage, Usage::default());
+    assert_eq!(snapshot(&store), before);
+    for act in [
+        pn_records::ActId {
+            author: "public\0author".into(),
+            sequence: 0,
+            family: "Opinion".into(),
+        },
+        pn_records::ActId {
+            author: "public-author".into(),
+            sequence: 0,
+            family: "Opinion\0".into(),
+        },
+    ] {
+        assert_eq!(
+            super::super::stored_act(&act),
+            Err(StorageError::Representation),
+            "private act-column boundary"
+        );
+    }
+}
 pub(super) fn snapshot(store: &MemoryTree<'_>) -> String {
     format!("{store:?}")
 }
@@ -1564,6 +1633,13 @@ fn tree_read_shapes() {
     let store = read_store();
     let before = snapshot(&store);
     let scope = f.main[0].event().0;
+    let mut generous = store.reader(read_budget());
+    assert_eq!(
+        generous.children(scope, *f.main[0].event().1, None, 0),
+        Err(Error::Storage(StorageError::ReadLimit)),
+        "zero child page refuses with a generous allowance"
+    );
+    assert_eq!(generous.usage(), Usage::default(), "zero child page admits no work");
     let zero = ReadBudget { rows: 0, bytes: 0 };
     let mut reader = store.reader(zero);
     assert_eq!(

@@ -111,6 +111,7 @@ fn fields(scope: &EpochScope) -> [&str; 4] {
 fn scope_check(scope: &EpochScope) -> Result<(), Error> {
     let mut bytes = 2usize;
     for field in fields(scope) {
+        super::stored_text(field)?;
         let digits = if field.is_empty() {
             1
         } else {
@@ -166,6 +167,7 @@ fn unqualified(family: Family) -> bool {
 impl Generation {
     fn check(&self) -> Result<(), Error> {
         scope_check(&self.scope)?;
+        super::stored_text(&self.label)?;
         if self.ordinal > i64::MAX as u64 || self.minimum > i64::MAX as u64 || self.label.len() > 1024 {
             return Err(StorageError::Representation.into());
         }
@@ -187,6 +189,8 @@ impl Generation {
             return Err(Error::InvalidAdmissionGeneration);
         }
         for c in &self.closures {
+            super::stored_text(&c.key)?;
+            super::stored_text(&c.edition)?;
             if c.closes_at > i64::MAX as u64 || c.key.len() > 1024 || c.edition.len() > 1024 {
                 return Err(StorageError::Representation.into());
             }
@@ -389,6 +393,8 @@ impl<'a> MemoryTree<'a> {
         let (scope, identity, parent, depth) = input.event();
         let label = label.ok_or(Error::MissingGenerationLabel)?;
         scope_check(scope)?;
+        super::stored_text(label)?;
+        super::stored_projection(input.declarations(), input.debits())?;
         if label.len() > 1024 || depth > i64::MAX as u64 {
             return Err(StorageError::Representation.into());
         }

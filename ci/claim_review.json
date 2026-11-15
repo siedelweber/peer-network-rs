@@ -4371,6 +4371,22 @@
       "review": "The generic read roster compares complete retained values against two admitted inputs, before and after later publications and declarations, checks scope and opening/closing boundaries, exact and below-exact reconstruction budgets, and ten corruption variants per event. The instrumented fetch and allocation seams witness order; current-selection, late-bound and ignored-count runtime mutants fail. This is functional memory evidence, not PostgreSQL or re-admission."
     },
     {
+      "operation": "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles",
+      "path": "packages/host/src/storage/catalogue/tests/bounds.rs",
+      "claim": "HOST::claim:history:tree-catalogue-bounds-and-roles",
+      "before": "",
+      "after": "Claim: The real tree catalogue retains independent maximum text budgets through every index, whose leaf-entry sizes are measured; owner and runtime constraint attempts agree, runtime catalogue verification and SELECT/INSERT succeed, and UPDATE/DELETE on each of eleven relations and persistent DDL refuse with SQLSTATE 42501.",
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
+    },
+    {
+      "operation": "pn-host::storage::catalogue::tests::tree_catalogue_exact",
+      "path": "packages/host/src/storage/catalogue/tests.rs",
+      "claim": "HOST::claim:history:tree-catalogue-exact",
+      "before": "",
+      "after": "Claim: The exact eleven-relation tree catalogue creates and reopens without repair; twenty-seven independent catalogue variants refuse without changing their definitions, while first-layout and obsolete chain catalogues are not adopted.",
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
+    },
+    {
       "operation": "pn-host::storage::declaration_census::admitted_declaration_census",
       "path": "packages/host/src/storage/declaration_census.rs",
       "claim": "HOST::claim:history:admitted-declaration-census-covers-nested-references",
@@ -4391,8 +4407,8 @@
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
       "before": "",
-      "after": "Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append, with exact 1,024-byte key and edition bounds; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.",
-      "review": "Read shared 1024/1025-byte acceptance/refusal and invalid append inputs on both adapters, plus separate non-owner MAINTAIN role append, retry, load, audit, reopen and SQLSTATE 42501 update/delete refusals."
+      "after": "Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append without changing retained rows, with exact 1,024-byte key and edition bounds and U+0000 refusal; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.",
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
     },
     {
       "operation": "pn-host::storage::tests::storage_digest_vectors",
@@ -4448,7 +4464,7 @@
       "claim": "HOST::claim:history:closed-storage-statements-return-public-values",
       "before": "",
       "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; every invocation resets its dedicated fixture before observation so a retake exercises bootstrap again, and its private service configuration remains behind Session.",
-      "review": "Read the dedicated fixture reset before observation and before open_store on every invocation; the Python real-child retake control refuses if the reset is removed, because bootstrap statements then disappear."
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
     },
     {
       "operation": "pn-host::storage::tests::storage_scaling",
@@ -4560,7 +4576,7 @@
       "claim": "HOST::claim:history:tree-read-shapes",
       "before": "",
       "after": "Claim: Zero page work refuses without a visit, and unrepresentable page limits, signed depths and scopes refuse as representation before a zero allowance can admit any stored-state visit or buffer.",
-      "review": "Finite single-law memory reader conformance and request-boundary robustness. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare retained logical fields, with inspection outside the read meter. Functional reads and bounded enumeration, with three private index-damage shapes only; no server, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
     },
     {
       "operation": "pn-host::storage::tree::tests::tree_result_indexes",
@@ -4569,6 +4585,14 @@
       "before": "",
       "after": "Claim: Every result of a 32-result segment with no debit introductions after its root and three children of one parent has its complete placement and direct-child entry, including roots; an equal retry changes no retained field and executes no index publication site. Three private damage-adapter shapes alter only a missing or foreign placement entry or a missing child entry; these inspections claim no reader corruption refusal.",
       "review": "Finite single-law memory writer conformance, budget-boundary robustness and staged-interruption fault tolerance. Fixtures enter through public admission; retained-state damage is private-boundary evidence. Whole-state snapshots compare all retained logical fields. No server, read, enumeration, audit, rebuild, second-law or label-currency evidence, and no allocator census."
+    },
+    {
+      "operation": "pn-host::storage::tree::tests::tree_stored_text_domain",
+      "path": "packages/host/src/storage/tree/tests.rs",
+      "claim": "HOST::claim:history:tree-stored-text-domain",
+      "before": "",
+      "after": "Claim: Nine explicit generation inputs and a result label containing U+0000 refuse Representation before either budget unit is charged, leaving the complete memory tree unchanged; private act-column validation refuses U+0000 in author and family, while text nested inside a bytea payload remains outside the text-column rule.",
+      "review": "Finite catalogue, runtime privilege and shared stored-text-domain controls on the pinned service. Index entries are measured from committed public rows; catalogue variants and test-only SQLSTATE probes are deployment-state controls, not a proof of PostgreSQL. Public generation and label refusals are distinguished from the private act-column validator. The caller-owned carrier, position recipe, publication bytes and held result transaction remain unchanged."
     },
     {
       "operation": "pn-host::storage::tree::tests::tree_writer_atomic",

@@ -314,10 +314,33 @@ pub struct Boundary {
 mod admitted;
 pub use admitted::{EpochRead, ReadBudget, RetainedDebit};
 
+pub mod catalogue;
 pub mod tree;
 
 type History = BTreeMap<(Family, String), Vec<EffectiveRow>>;
+fn stored_text(value: &str) -> Result<(), StorageError> {
+    if value.contains('\0') {
+        return Err(StorageError::Representation);
+    }
+    Ok(())
+}
+fn stored_act(value: &pn_records::ActId) -> Result<(), StorageError> {
+    stored_text(&value.author)?;
+    stored_text(&value.family)
+}
+fn stored_projection(references: &[DeclarationUse], debits: &[DebitVintage]) -> Result<(), StorageError> {
+    for reference in references {
+        stored_text(&reference.version.key)?;
+        stored_text(&reference.version.edition)?;
+    }
+    for debit in debits {
+        stored_act(&debit.key.act)?;
+    }
+    Ok(())
+}
 pub(crate) fn check(version: &Version) -> Result<(), StorageError> {
+    stored_text(&version.key)?;
+    stored_text(&version.edition)?;
     if version.key.is_empty()
         || version.edition.is_empty()
         || version.key.len() > 1024
@@ -501,6 +524,8 @@ enum Statement {
     GetIdentity,
     EnsureIndexes,
     VerifyIndexes,
+    CreateEpochStore,
+    VerifyEpochStore,
     LockHistory,
     ReadHistory,
     ReadKey,
@@ -511,6 +536,8 @@ enum Statement {
 impl Statement {
     const fn sql(self) -> &'static str {
         match self {
+            Self::CreateEpochStore => catalogue::CREATE,
+            Self::VerifyEpochStore => catalogue::VERIFY,
             Self::BootstrapLock => "SELECT pg_advisory_xact_lock(73100481)",
             Self::HasTables => {
                 "SELECT EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND c.relkind IN ('r','p'))"

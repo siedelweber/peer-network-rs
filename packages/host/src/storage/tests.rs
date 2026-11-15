@@ -105,6 +105,8 @@ async fn representation(adapter: &mut Adapter) {
         version(Family::Rule, "", "one", 1, Some(1)),
         version(Family::Rule, &"k".repeat(1025), "one", 1, Some(1)),
         version(Family::Rule, "long-edition", &"e".repeat(1025), 1, Some(1)),
+        version(Family::Rule, "nul\0key", "one", 1, Some(1)),
+        version(Family::Rule, "nul-edition", "one\0two", 1, Some(1)),
         version(Family::Rule, "large-opening", "one", (i64::MAX as u64) + 1, Some(1)),
     ];
     let mut announced = version(Family::Rule, "late-announcement", "one", 1, Some(1));
@@ -114,8 +116,10 @@ async fn representation(adapter: &mut Adapter) {
     foreign.payload = version(Family::Constants, "unused", "one", 1, Some(1)).payload;
     invalid.push(foreign);
     for input in invalid {
+        let before = adapter.load(u64::MAX, &[]).await.unwrap();
         assert_eq!(check(&input), Err(StorageError::Representation));
         assert_eq!(adapter.append(input, None).await, Err(StorageError::Representation));
+        assert_eq!(adapter.load(u64::MAX, &[]).await.unwrap(), before);
     }
 }
 async fn conformance(mut adapter: Adapter, implementation: &str) {
@@ -192,7 +196,7 @@ async fn conformance(mut adapter: Adapter, implementation: &str) {
     representation(&mut adapter).await;
 }
 
-/// Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append, with exact 1,024-byte key and edition bounds; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.
+/// Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append without changing retained rows, with exact 1,024-byte key and edition bounds and U+0000 refusal; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.
 /// ´claim:history:atomic-effective-rows-preserve-earlier-verdicts´
 /// ´test:unit:storage-contract´
 #[test]
@@ -833,6 +837,7 @@ fn variant_vectors(
 fn storage_runtime() {
     let runtime = runtime();
     let fixture = std::env::var("PN_HOST_STORAGE_FIXTURE").unwrap_or_else(|_| "storage-trace-initial.json".into());
+    let tree_fixture = fixture.replace("storage-trace-", "storage-tree-trace-");
     // This database belongs only to this test. A prior capture must not turn
     // bootstrap coverage into reopen coverage on the next child invocation.
     runtime.block_on(async {
@@ -852,6 +857,14 @@ fn storage_runtime() {
                 .batch_execute("DROP TABLE public.pn_closures, public.pn_versions, public.pn_store_identity")
                 .await
                 .unwrap();
+        }
+        let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+        let mut file = std::fs::File::open(std::path::Path::new(&root).join(&tree_fixture)).unwrap();
+        let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+        let session = Session::connect(config).await.unwrap();
+        let initialized: bool = session.client().query_one("SELECT to_regclass('public.pn_store_identity') IS NOT NULL", &[]).await.unwrap().get(0);
+        if initialized {
+            session.client().batch_execute("DROP TABLE public.pn_admission_generations,public.pn_admission_versions,public.pn_admission_closures,public.pn_epoch_scopes,public.pn_epoch_branches,public.pn_epoch_results,public.pn_epoch_package_chunks,public.pn_epoch_references,public.pn_epoch_debits,public.pn_epoch_debit_chunks,public.pn_epoch_result_debits,public.pn_closures,public.pn_versions,public.pn_store_identity").await.unwrap();
         }
     });
     let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
@@ -887,6 +900,14 @@ fn storage_runtime() {
         store.audit_history().await.unwrap();
         // Drain the request queue before dropping the session and observer.
         store.load_boundary(2, &[]).await.unwrap();
+        for _ in 0..2 {
+            let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+            let mut file = std::fs::File::open(std::path::Path::new(&root).join(&tree_fixture)).unwrap();
+            let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+            super::catalogue::open(&mut Session::connect(config).await.unwrap())
+                .await
+                .unwrap();
+        }
     });
     drop(runtime);
     drop(guard);

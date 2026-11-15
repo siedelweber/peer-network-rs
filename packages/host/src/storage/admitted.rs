@@ -408,6 +408,11 @@ impl MemoryStore {
         input: &AdmittedEpoch,
         boundary: &mut impl FnMut(Write) -> Result<(), StorageError>,
     ) -> Result<bool, StorageError> {
+        let scope = &input.event().scope;
+        for field in [&scope.history, &scope.policy_identity, &scope.policy_edition, &scope.sequence] {
+            super::stored_text(field)?;
+        }
+        super::stored_projection(input.declarations(), input.debits())?;
         if let Some(row) = self.admitted.results.get(input.event()) {
             return if self.admitted.equal(row, input)? {
                 Ok(false)

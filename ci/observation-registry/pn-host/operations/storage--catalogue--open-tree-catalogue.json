@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/catalogue.rs",
+    "item": "storage::catalogue::open",
+    "owner": "HOST",
+    "signature": "async fn open (session : & mut Session) -> Result < () , StorageError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/catalogue.rs::storage::catalogue::open",
+    "body": "{ classified (open_inner (session) . await) }",
+    "class_decision": "host-storage",
+    "item_premise": "The tree catalogue borrows the existing protected Session without exposing its connection configuration. The two added closed statements create or inspect public relation metadata and return only catalogue equality. They introduce no secret borrow or driver escape and no tree result operation. The existing decoded-content trace census exercises both statements on bootstrap and reopen, with the same positive and private DataRow controls.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

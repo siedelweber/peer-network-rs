@@ -2968,6 +2968,9 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::tests::tree_stored_text_domain",
+        "pn-host::storage::catalogue::tests::tree_catalogue_exact",
+        "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles",
         "pn-host::storage::tree::tests::tree_read_shapes",
         "pn-host::storage::tree::tests::tree_read_page_limits",
         "pn-host::storage::tree::tests::tree_read_closure",

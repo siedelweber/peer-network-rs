@@ -93,8 +93,8 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-host"
-operations = 235
-instrumented = 48
+operations = 236
+instrumented = 49
 exceptions = 187
 helpers = 0
 generators = 186

@@ -408,11 +408,12 @@ def capture_regressions(test, prefix):
     public=b'{"store_link_case":"host-secured","persistence":"disabled","value":731}\n'
     source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
     statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
+    statements += re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
     method='test_storage_statements' if prefix=='storage' else 'test_public_transport'
     with tempfile.TemporaryDirectory(dir='.lane') as directory:
         root=Path(directory).resolve();(root/'.lane').mkdir()
         (root/'.lane/host-test-binary.txt').write_text('synthetic-child')
-        for name in ('storage-trace-default','storage-trace-trace','tcp'):
+        for name in ('storage-trace-default','storage-trace-trace','storage-tree-trace-default','storage-tree-trace-trace','tcp'):
             (root/(name+'.json')).write_text(json.dumps(config))
         path_type=Path
         def path(value):
@@ -540,7 +541,7 @@ class HostRuntime(unittest.TestCase):
         outputs=[]
         for level in ('default','trace'):
             env=dict(os.environ,PN_OBSERVE_LEVEL=level,PN_HOST_STORAGE_FIXTURE=f'storage-trace-{level}.json')
-            validate=capture_validator(self,lambda:[json.loads((root/f'storage-trace-{level}.json').read_text())],outputs)
+            validate=capture_validator(self,lambda:[json.loads((root/f'{prefix}-trace-{level}.json').read_text()) for prefix in ('storage','storage-tree')],outputs)
             result,rows,status,wall=traced_capture(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,level,validate)
             text=decoded_content(rows)
             config=json.loads((root/f'storage-trace-{level}.json').read_text())
@@ -552,7 +553,8 @@ class HostRuntime(unittest.TestCase):
                 self.assertIn('public_storage_payload_731',text)
                 source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
                 statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
-                self.assertEqual(len(statements),14)
+                statements += re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
+                self.assertEqual(len(statements),16)
                 for statement in statements:self.assertIn(statement,text)
             print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
         self.assertEqual(outputs[0],outputs[1])
