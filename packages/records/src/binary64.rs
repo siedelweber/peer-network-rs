@@ -896,6 +896,518 @@ fn validate_rungs(fields: &Fields, budget: &mut Budget) -> Result<(), Error> {
     Ok(())
 }
 
+/// Distinct structural refusals of the second edition, in the declared validation levels.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ErrorV2 {
+    /// An unchanged question, endpoint or arithmetic rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    Shared(Error),
+    /// The adjustment rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    Adjustment,
+    /// The after pass rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    AfterPass,
+    /// The anchor pass rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    AnchorPass,
+    /// The anchor polarity rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    AnchorPolarity,
+    /// The anchor row rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    AnchorRow,
+    /// The cause rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    Cause,
+    /// The complete operational rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    CompleteOperational,
+    /// The consumer polarity rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    ConsumerPolarity,
+    /// The consumer predicate rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    ConsumerPredicate,
+    /// The coordinate rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    Coordinate,
+    /// The empty grid rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    EmptyGrid,
+    /// The fixed predicate rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    FixedPredicate,
+    /// The grid descent rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridDescent,
+    /// The grid lower rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridLower,
+    /// The grid lower open rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridLowerOpen,
+    /// The grid upper rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridUpper,
+    /// The grid upper open rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridUpperOpen,
+    /// The grid zero rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    GridZero,
+    /// The incomplete anchor rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    IncompleteAnchor,
+    /// The lower fence rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    LowerFence,
+    /// The membership enclosures rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    MembershipEnclosures,
+    /// The missing pass rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    MissingPass,
+    /// The missing rungs rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    MissingRungs,
+    /// The missing test rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    MissingTest,
+    /// The negative grid rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    NegativeGrid,
+    /// The non rung anchor rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    NonRungAnchor,
+    /// The non rung data rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    NonRungData,
+    /// The operational pass rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    OperationalPass,
+    /// The operational polarity rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    OperationalPolarity,
+    /// The operational tests rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    OperationalTests,
+    /// The pass polarity rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    PassPolarity,
+    /// The row index rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RowIndex,
+    /// The row result rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RowResult,
+    /// The rung adjustment rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RungAdjustment,
+    /// The rung enclosures rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RungEnclosures,
+    /// The rung predicate rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RungPredicate,
+    /// The rung threshold rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    RungThreshold,
+    /// The single count rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    SingleCount,
+    /// The single polarity rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    SinglePolarity,
+    /// The single subject rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    SingleSubject,
+    /// The subject rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    Subject,
+    /// The test count rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    TestCount,
+    /// The test index rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    TestIndex,
+    /// The test verdict rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    TestVerdict,
+    /// The threshold adjustment rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    ThresholdAdjustment,
+    /// The threshold enclosures rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    ThresholdEnclosures,
+    /// The upper fence rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    UpperFence,
+}
+
+/// Edition-two ending; an operational cause is checked after the completed rows.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Ending {
+    Complete,
+    Anchor,
+    Operational(u64),
+}
+
+/// Untrusted edition-two members, separate from the preserved first edition.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FieldsV2 {
+    pub question: Question,
+    pub enclosures: Option<(Enclosure, Enclosure)>,
+    pub adjusted: bool,
+    pub predicate: Predicate,
+    pub polarity: Option<Polarity>,
+    pub consumer: Consumer,
+    pub tests: Vec<Test>,
+    pub rungs: Option<Rungs>,
+    pub ending: Ending,
+}
+
+/// Validated positive attempts and their ending; no soundness or admission capability.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CarrierV2(FieldsV2);
+
+impl CarrierV2 {
+    /// Check edition-two members in the declared outermost-first order.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    /// # Errors
+    /// Returns the first structural refusal or exhausted arithmetic budget.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "binary64-carrier-v2-new",
+            source_item = "binary64::CarrierV2::new"
+        ),
+        ret
+    )]
+    pub fn new(fields: FieldsV2, limits: Limits) -> Result<Self, ErrorV2> {
+        let mut budget = Budget::new(limits).map_err(|_| ErrorV2::Shared(Error::Resource))?;
+        validate_question(&fields.question, &mut budget).map_err(ErrorV2::Shared)?;
+        validate_v2(&fields, &mut budget)?;
+        Ok(Self(fields))
+    }
+
+    /// Read checked members without assigning numerical evidence.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "binary64-carrier-v2-fields",
+            source_item = "binary64::CarrierV2::fields"
+        ),
+        ret
+    )]
+    pub fn fields(&self) -> &FieldsV2 {
+        &self.0
+    }
+}
+
+fn validate_v2(f: &FieldsV2, budget: &mut Budget) -> Result<(), ErrorV2> {
+    // The common question is checked before the consumer and grid.
+    if f.consumer == Consumer::Rung {
+        if !matches!(f.predicate, Predicate::AtMost(_)) {
+            return Err(ErrorV2::RungPredicate);
+        }
+        let threshold = match &f.predicate {
+            Predicate::AtMost(q) | Predicate::Less(q) | Predicate::Equal(q) | Predicate::AtLeast(q) | Predicate::Greater(q) => {
+                Some(q.parts())
+            }
+            Predicate::Membership => None,
+        };
+        if threshold != Some(("1", "1")) {
+            return Err(ErrorV2::RungThreshold);
+        }
+        if f.adjusted {
+            return Err(ErrorV2::RungAdjustment);
+        }
+        if f.enclosures.is_some() {
+            return Err(ErrorV2::RungEnclosures);
+        }
+    } else {
+        match (&f.predicate, f.enclosures) {
+            (Predicate::Membership, Some((a, b))) => {
+                if f.adjusted == (a == b) {
+                    return Err(ErrorV2::Adjustment);
+                }
+            }
+            (Predicate::Membership, None) => return Err(ErrorV2::MembershipEnclosures),
+            (_, Some(_)) => return Err(ErrorV2::ThresholdEnclosures),
+            (_, None) if f.adjusted => return Err(ErrorV2::ThresholdAdjustment),
+            _ => {}
+        }
+        if matches!(f.consumer, Consumer::Value | Consumer::Map | Consumer::Residual) && f.predicate != Predicate::Membership {
+            return Err(ErrorV2::ConsumerPredicate);
+        }
+        if f.consumer == Consumer::Fixed && f.predicate == Predicate::Membership {
+            return Err(ErrorV2::FixedPredicate);
+        }
+        if f.rungs.is_some() {
+            return Err(ErrorV2::NonRungData);
+        }
+    }
+    // This view supplies the unchanged exact endpoint predicates, never the old rung validator.
+    let view = Fields {
+        question: f.question.clone(),
+        enclosures: f.enclosures,
+        adjusted: f.adjusted,
+        predicate: f.predicate.clone(),
+        polarity: Polarity::Uncertified,
+        consumer: f.consumer,
+        tests: Vec::new(),
+        rungs: None,
+        outcome: Outcome::Completed,
+    };
+    if f.consumer != Consumer::Rung {
+        return validate_v2_single(f, &view, budget);
+    }
+    let r = f.rungs.as_ref().ok_or(ErrorV2::MissingRungs)?;
+    validate_v2_grid(f, r, budget)?;
+    let passed = validate_v2_rows(f, r, &view, budget)?;
+    validate_v2_ending(f, r, passed)
+}
+
+fn validate_v2_grid(f: &FieldsV2, r: &Rungs, budget: &mut Budget) -> Result<(), ErrorV2> {
+    let coordinate = f
+        .question
+        .coordinates
+        .get(usize::try_from(r.coordinate).map_err(|_| ErrorV2::Coordinate)?)
+        .ok_or(ErrorV2::Coordinate)?;
+    if r.grid.is_empty() {
+        return Err(ErrorV2::EmptyGrid);
+    }
+    let mut previous: Option<Rational> = None;
+    let lower = coordinate.lower.read(budget).map_err(ErrorV2::Shared)?;
+    let upper = coordinate.upper.read(budget).map_err(ErrorV2::Shared)?;
+    for value in &r.grid {
+        let value = value.read(budget).map_err(ErrorV2::Shared)?;
+        if value.is_negative() {
+            return Err(ErrorV2::NegativeGrid);
+        }
+    }
+    for value in &r.grid {
+        let value = value.read(budget).map_err(ErrorV2::Shared)?;
+        if let Some(before) = &previous
+            && before.compare(&value, budget).map_err(|_| ErrorV2::Shared(Error::Resource))? != Ordering::Greater
+        {
+            return Err(ErrorV2::GridDescent);
+        }
+        previous = Some(value);
+    }
+    if r.grid.last().is_none_or(|q| q.parts() != ("0", "1")) {
+        return Err(ErrorV2::GridZero);
+    }
+    for value in &r.grid {
+        let value = value.read(budget).map_err(ErrorV2::Shared)?;
+        let lo = value.compare(&lower, budget).map_err(|_| ErrorV2::Shared(Error::Resource))?;
+        let hi = value.compare(&upper, budget).map_err(|_| ErrorV2::Shared(Error::Resource))?;
+        if lo == Ordering::Less {
+            return Err(ErrorV2::GridLower);
+        }
+        if lo == Ordering::Equal && !coordinate.lower_included {
+            return Err(ErrorV2::GridLowerOpen);
+        }
+        if hi == Ordering::Greater {
+            return Err(ErrorV2::GridUpper);
+        }
+        if hi == Ordering::Equal && !coordinate.upper_included {
+            return Err(ErrorV2::GridUpperOpen);
+        }
+    }
+    Ok(())
+}
+
+fn validate_v2_rows(f: &FieldsV2, r: &Rungs, view: &Fields, budget: &mut Budget) -> Result<bool, ErrorV2> {
+    let positive = r.grid.len() - 1;
+    let mut passed = false;
+    for (i, row) in r.rows.iter().enumerate() {
+        let ix = u64::try_from(i).map_err(|_| ErrorV2::Shared(Error::Resource))?;
+        if row.grid != ix {
+            return Err(ErrorV2::RowIndex);
+        }
+        if row.test != ix {
+            return Err(ErrorV2::TestIndex);
+        }
+        let test = f.tests.get(i).ok_or(ErrorV2::MissingTest)?;
+        if test.subject != Some(ix) {
+            return Err(ErrorV2::Subject);
+        }
+        if row.result != test.result {
+            return Err(ErrorV2::RowResult);
+        }
+        if !test.evaluated.lower_included {
+            return Err(ErrorV2::LowerFence);
+        }
+        if !test.evaluated.upper_included {
+            return Err(ErrorV2::UpperFence);
+        }
+        if test_result(test, view, budget).map_err(ErrorV2::Shared)? != test.result {
+            return Err(ErrorV2::TestVerdict);
+        }
+        if i == positive {
+            return Err(ErrorV2::AnchorRow);
+        }
+        if passed {
+            return Err(ErrorV2::AfterPass);
+        }
+        passed = test.result == Polarity::Proposition;
+    }
+    Ok(passed)
+}
+
+fn validate_v2_ending(f: &FieldsV2, r: &Rungs, passed: bool) -> Result<(), ErrorV2> {
+    let positive = r.grid.len() - 1;
+    if f.tests.len() != r.rows.len() {
+        return Err(ErrorV2::TestCount);
+    }
+    match f.ending {
+        Ending::Complete if !passed => return Err(ErrorV2::MissingPass),
+        Ending::Anchor => {
+            if r.rows.len() != positive {
+                return Err(ErrorV2::IncompleteAnchor);
+            }
+            if passed {
+                return Err(ErrorV2::AnchorPass);
+            }
+        }
+        Ending::Operational(cause) => {
+            if r.rows.len() >= positive {
+                return Err(ErrorV2::CompleteOperational);
+            }
+            if passed {
+                return Err(ErrorV2::OperationalPass);
+            }
+            if !(1..=7).contains(&cause) {
+                return Err(ErrorV2::Cause);
+            }
+        }
+        Ending::Complete => {}
+    }
+    match f.ending {
+        Ending::Complete if f.polarity != Some(Polarity::Proposition) => Err(ErrorV2::PassPolarity),
+        Ending::Anchor if f.polarity.is_some() => Err(ErrorV2::AnchorPolarity),
+        Ending::Operational(_) if f.polarity.is_some() => Err(ErrorV2::OperationalPolarity),
+        _ => Ok(()),
+    }
+}
+
+fn validate_v2_single(f: &FieldsV2, view: &Fields, budget: &mut Budget) -> Result<(), ErrorV2> {
+    for test in &f.tests {
+        if test.subject.is_some() {
+            return Err(ErrorV2::SingleSubject);
+        }
+        if test_result(test, view, budget).map_err(ErrorV2::Shared)? != test.result {
+            return Err(ErrorV2::TestVerdict);
+        }
+    }
+    match f.ending {
+        Ending::Complete if f.tests.len() != 1 => return Err(ErrorV2::SingleCount),
+        Ending::Anchor => return Err(ErrorV2::NonRungAnchor),
+        Ending::Operational(cause) => {
+            if !f.tests.is_empty() {
+                return Err(ErrorV2::OperationalTests);
+            }
+            if !(1..=7).contains(&cause) {
+                return Err(ErrorV2::Cause);
+            }
+        }
+        Ending::Complete => {}
+    }
+    match f.ending {
+        Ending::Complete => {
+            if f.tests.first().map(|t| t.result) != f.polarity {
+                return Err(ErrorV2::SinglePolarity);
+            }
+            if matches!(f.consumer, Consumer::Value | Consumer::Map | Consumer::Residual)
+                && f.polarity != Some(Polarity::Proposition)
+            {
+                return Err(ErrorV2::ConsumerPolarity);
+            }
+        }
+        Ending::Operational(_) if f.polarity.is_some() => return Err(ErrorV2::OperationalPolarity),
+        _ => {}
+    }
+    Ok(())
+}
+
+/// Independently supplied second-edition question and permissions; no soundness claim.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExpectedV2 {
+    pub question: Question,
+    pub enclosures: Option<(Enclosure, Enclosure)>,
+    pub adjusted: bool,
+    pub predicate: Predicate,
+    pub polarity: Option<Polarity>,
+    pub consumer: Consumer,
+    pub grid: Option<(u64, Vec<Fraction>)>,
+}
+
+impl CarrierV2 {
+    /// Bind the complete independently supplied question without evaluating its interval.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    /// # Errors
+    /// Refuses a substituted question, enclosure, polarity, permission or grid.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "binary64-carrier-v2-bind",
+            source_item = "binary64::CarrierV2::bind"
+        ),
+        ret
+    )]
+    pub fn bind(&self, expected: &ExpectedV2) -> Result<(), ErrorV2> {
+        let fields = &self.0;
+        if fields.question.inputs != expected.question.inputs {
+            return Err(ErrorV2::Shared(Error::OriginalInputs));
+        }
+        if fields.question.nodes != expected.question.nodes
+            || fields.question.root != expected.question.root
+            || fields.question.coordinates != expected.question.coordinates
+            || fields.question.hypotheses != expected.question.hypotheses
+        {
+            return Err(ErrorV2::Shared(Error::Question));
+        }
+        if fields.enclosures != expected.enclosures {
+            return Err(ErrorV2::Shared(Error::ActualEnclosure));
+        }
+        if fields.predicate != expected.predicate {
+            return Err(ErrorV2::Shared(Error::Predicate));
+        }
+        if fields.polarity != expected.polarity {
+            return Err(ErrorV2::Shared(Error::Polarity));
+        }
+        if fields.adjusted != expected.adjusted {
+            return Err(ErrorV2::Shared(Error::Adjustment));
+        }
+        if fields.consumer != expected.consumer {
+            return Err(ErrorV2::Shared(Error::Consumer));
+        }
+        let grid = fields.rungs.as_ref().map(|r| (r.coordinate, r.grid.clone()));
+        if grid != expected.grid {
+            return Err(ErrorV2::Shared(Error::RungPrefix));
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -7,7 +7,9 @@
     "membership": {
       "explicit": [
         "pn-host::packages/host/src/binary64.rs::binary64::decode",
-        "pn-host::packages/host/src/binary64.rs::binary64::encode"
+        "pn-host::packages/host/src/binary64.rs::binary64::decode_v2",
+        "pn-host::packages/host/src/binary64.rs::binary64::encode",
+        "pn-host::packages/host/src/binary64.rs::binary64::encode_v2"
       ]
     }
   }

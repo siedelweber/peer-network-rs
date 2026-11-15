@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::Ending",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Edition-two ending; an operational cause is checked after the completed rows.\"] # [doc = \" (´[ROOT-dec:design:rung-anchor-representation]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Ending { Complete , Anchor , Operational (u64) , }"
+  }
+}

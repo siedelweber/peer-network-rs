@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::FieldsV2",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Untrusted edition-two members, separate from the preserved first edition.\"] # [doc = \" (´[ROOT-dec:design:rung-anchor-representation]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FieldsV2 { pub question : Question , pub enclosures : Option < (Enclosure , Enclosure) > , pub adjusted : bool , pub predicate : Predicate , pub polarity : Option < Polarity > , pub consumer : Consumer , pub tests : Vec < Test > , pub rungs : Option < Rungs > , pub ending : Ending , }"
+  }
+}

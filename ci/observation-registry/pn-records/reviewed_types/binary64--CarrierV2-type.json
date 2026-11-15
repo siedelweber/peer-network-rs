@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::CarrierV2",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Validated positive attempts and their ending; no soundness or admission capability.\"] # [doc = \" (´[ROOT-dec:design:rung-anchor-representation]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CarrierV2 (FieldsV2) ;"
+  }
+}

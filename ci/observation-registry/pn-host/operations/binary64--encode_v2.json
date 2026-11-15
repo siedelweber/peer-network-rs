@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/binary64.rs",
+    "item": "binary64::encode_v2",
+    "owner": "HOST",
+    "signature": "fn encode_v2 (carrier : & model :: CarrierV2) -> Result < Vec < u8 > , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/binary64.rs::binary64::encode_v2",
+    "body": "{ let f = carrier . fields () ; let question = & f . question ; let (predicate , threshold) = match & f . predicate { Predicate :: Membership => (0 , Value :: Null) , Predicate :: AtMost (v) => (1 , q (v)) , Predicate :: Less (v) => (2 , q (v)) , Predicate :: Equal (v) => (3 , q (v)) , Predicate :: AtLeast (v) => (4 , q (v)) , Predicate :: Greater (v) => (5 , q (v)) , } ; let consumer = consumer_code (f . consumer) ; let ending = match f . ending { model :: Ending :: Complete => a ([u (0)]) , model :: Ending :: Anchor => a ([u (1)]) , model :: Ending :: Operational (cause) => a ([u (2) , u (cause)]) , } ; let values = [u (2) , a ([u (1) , a (question . nodes . iter () . map (node_value)) , u (question . root)]) , a (question . inputs . iter () . map (| v | a ([s (& v . name) , Value :: Bytes (v . source . clone ()) , data_value (& v . value)]))) , a ([a (question . coordinates . iter () . map (| v | { a ([s (& v . name) , q (& v . lower) , Value :: Boolean (v . lower_included) , q (& v . upper) , Value :: Boolean (v . upper_included) ,]) })) , a (question . hypotheses . iter () . map (| v | { a ([u (match v . relation { model :: Relation :: Equal => 0 , model :: Relation :: Less => 1 , model :: Relation :: AtMost => 2 , }) , u (v . left) , u (v . right) ,]) })) ,]) , match f . enclosures { None => a ([Value :: Null , Value :: Null]) , Some ((original , actual)) => a ([e (original) , e (actual)]) , } , u (u64 :: from (f . adjusted)) , a ([u (predicate) , threshold , f . polarity . map_or (Value :: Null , p) , u (consumer)]) , a (f . tests . iter () . map (| v | a ([v . subject . map_or (Value :: Null , u) , e (v . evaluated) , p (v . result)]))) , match & f . rungs { None => Value :: Null , Some (v) => a ([u (v . coordinate) , a (v . grid . iter () . map (q)) , a (v . rows . iter () . map (| row | a ([u (row . grid) , u (row . test) , p (row . result)]))) ,]) , } , ending ,] ; let entries = values . into_iter () . enumerate () . map (| (key , value) | { Ok ((pn_interchange :: Value :: Unsigned (u64 :: try_from (key) . map_err (| _ | Error :: Resource) ?) , interchange (value) ,)) }) . collect :: < Result < Vec < _ > , Error > > () ? ; let map = pn_interchange :: Map :: new (entries) . map_err (| _ | Error :: DuplicateKey) ? ; Ok (pn_interchange :: Value :: Map (map) . to_canonical_bytes ()) }",
+    "class_decision": "binary64-host",
+    "item_premise": "These separate fragments retain only declared public source bytes, exact data, finite endpoint patterns, mathematical syntax and supplied interval assertions. Structural checks grant no evidence, admission, publication or store capability. Complete arguments and results are recorded at the public tracing boundaries. No Session, secret container, credential acquisition, private path, I/O or observation-dependent computation enters these bodies. Derived copying, formatting and comparison expose the same public content.",
+    "assessments": {
+      "full_recording": "binary64-full_recording",
+      "secret_flow": "binary64-secret_flow",
+      "exposure_consumers": "binary64-exposure_consumers"
+    }
+  }
+}

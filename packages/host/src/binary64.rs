@@ -57,6 +57,9 @@ pub enum Error {
     /// A typed carrier invariant refuses the decoded members.
     /// (´[ROOT-rule:design:binary64-evidence]´)
     Structure(model::Error),
+    /// An edition-two structural rule refuses.
+    /// (´[ROOT-dec:design:rung-anchor-representation]´)
+    SecondEdition(model::ErrorV2),
 }
 
 /// Explicit reader ceilings; exhaustion supplies no mathematical result.
@@ -699,4 +702,229 @@ fn read_rungs(value: &Value, limits: &Limits) -> Result<Option<Rungs>, Error> {
         })
     };
     Ok(rungs)
+}
+
+/// Decode the explicitly selected second edition without numerical admission.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+/// # Errors
+/// Returns the first named byte or structural refusal under the supplied bounds.
+#[tracing::instrument(
+    name = "sig:design:storage",
+    fields(
+        execution_owner = "HOST",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:storage",
+        source_item = "binary64::decode_v2"
+    ),
+    ret
+)]
+pub fn decode_v2(bytes: &[u8], limits: &Limits) -> Result<model::CarrierV2, Error> {
+    if bytes.len() > limits.bytes {
+        return Err(Error::Resource);
+    }
+    let mut reader = Reader {
+        bytes,
+        offset: 0,
+        items: 0,
+        limits,
+    };
+    if reader.head()? != (5, 10) {
+        return Err(Error::Arity);
+    }
+    let mut values = Vec::new();
+    let mut seen = [false; 10];
+    for expected in 0..10 {
+        let (kind, key) = reader.head()?;
+        if kind != 0 {
+            return Err(Error::ItemKind);
+        }
+        let key = usize::try_from(key).map_err(|_| Error::UnknownKey)?;
+        if key >= 10 {
+            return Err(Error::UnknownKey);
+        }
+        if seen[key] {
+            return Err(Error::DuplicateKey);
+        }
+        if key != expected {
+            return Err(Error::MemberOrder);
+        }
+        seen[key] = true;
+        values.push(reader.value(1)?);
+    }
+    if reader.offset != bytes.len() {
+        return Err(Error::Trailing);
+    }
+    read_fields_v2(&values, limits)
+}
+
+fn read_fields_v2(values: &[Value], limits: &Limits) -> Result<model::CarrierV2, Error> {
+    if uint(&values[0])? != 2 {
+        return Err(Error::UnknownCode);
+    }
+    let question = read_question(values, limits)?;
+    let [original, actual] = members(&values[4])?;
+    let enclosures = if matches!((original, actual), (Value::Null, Value::Null)) {
+        None
+    } else {
+        Some((enclosure(original)?, enclosure(actual)?))
+    };
+    let adjusted = match uint(&values[5])? {
+        0 => false,
+        1 => true,
+        _ => return Err(Error::UnknownCode),
+    };
+    let [predicate, threshold, sign, consumer] = members(&values[6])?;
+    let predicate = match uint(predicate)? {
+        0 if matches!(threshold, Value::Null) => Predicate::Membership,
+        1 => Predicate::AtMost(fraction(threshold, limits)?),
+        2 => Predicate::Less(fraction(threshold, limits)?),
+        3 => Predicate::Equal(fraction(threshold, limits)?),
+        4 => Predicate::AtLeast(fraction(threshold, limits)?),
+        5 => Predicate::Greater(fraction(threshold, limits)?),
+        _ => return Err(Error::UnknownCode),
+    };
+    let consumer = match uint(consumer)? {
+        0 => model::Consumer::Free,
+        1 => model::Consumer::Value,
+        2 => model::Consumer::Map,
+        3 => model::Consumer::Residual,
+        4 => model::Consumer::Rung,
+        5 => model::Consumer::Fixed,
+        6 => model::Consumer::Local,
+        _ => return Err(Error::UnknownCode),
+    };
+    let tests = array(&values[7])?
+        .iter()
+        .map(|v| {
+            let [subject, evaluated, result] = members(v)?;
+            Ok(Test {
+                subject: if matches!(subject, Value::Null) {
+                    None
+                } else {
+                    Some(uint(subject)?)
+                },
+                evaluated: enclosure(evaluated)?,
+                result: polarity(result)?,
+            })
+        })
+        .collect::<Result<_, Error>>()?;
+    let rungs = read_rungs(&values[8], limits)?;
+    let ending = match array(&values[9])? {
+        [Value::UInt(0)] => model::Ending::Complete,
+        [Value::UInt(1)] => model::Ending::Anchor,
+        [Value::UInt(2), cause] => model::Ending::Operational(uint(cause)?),
+        [Value::UInt(0..=2), ..] => return Err(Error::Arity),
+        _ => return Err(Error::UnknownCode),
+    };
+    model::CarrierV2::new(
+        model::FieldsV2 {
+            question,
+            enclosures,
+            adjusted,
+            predicate,
+            polarity: if matches!(sign, Value::Null) {
+                None
+            } else {
+                Some(polarity(sign)?)
+            },
+            consumer,
+            tests,
+            rungs,
+            ending,
+        },
+        limits.arithmetic.clone(),
+    )
+    .map_err(Error::SecondEdition)
+}
+/// Encode the explicitly selected second edition without numerical admission.
+/// (´[ROOT-dec:design:rung-anchor-representation]´)
+/// # Errors
+/// Returns the first named byte or structural refusal under the supplied bounds.
+#[tracing::instrument(
+    name = "sig:design:storage",
+    fields(
+        execution_owner = "HOST",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:storage",
+        source_item = "binary64::encode_v2"
+    ),
+    ret
+)]
+pub fn encode_v2(carrier: &model::CarrierV2) -> Result<Vec<u8>, Error> {
+    let f = carrier.fields();
+    let question = &f.question;
+    let (predicate, threshold) = match &f.predicate {
+        Predicate::Membership => (0, Value::Null),
+        Predicate::AtMost(v) => (1, q(v)),
+        Predicate::Less(v) => (2, q(v)),
+        Predicate::Equal(v) => (3, q(v)),
+        Predicate::AtLeast(v) => (4, q(v)),
+        Predicate::Greater(v) => (5, q(v)),
+    };
+    let consumer = consumer_code(f.consumer);
+    let ending = match f.ending {
+        model::Ending::Complete => a([u(0)]),
+        model::Ending::Anchor => a([u(1)]),
+        model::Ending::Operational(cause) => a([u(2), u(cause)]),
+    };
+    let values = [
+        u(2),
+        a([u(1), a(question.nodes.iter().map(node_value)), u(question.root)]),
+        a(question
+            .inputs
+            .iter()
+            .map(|v| a([s(&v.name), Value::Bytes(v.source.clone()), data_value(&v.value)]))),
+        a([
+            a(question.coordinates.iter().map(|v| {
+                a([
+                    s(&v.name),
+                    q(&v.lower),
+                    Value::Boolean(v.lower_included),
+                    q(&v.upper),
+                    Value::Boolean(v.upper_included),
+                ])
+            })),
+            a(question.hypotheses.iter().map(|v| {
+                a([
+                    u(match v.relation {
+                        model::Relation::Equal => 0,
+                        model::Relation::Less => 1,
+                        model::Relation::AtMost => 2,
+                    }),
+                    u(v.left),
+                    u(v.right),
+                ])
+            })),
+        ]),
+        match f.enclosures {
+            None => a([Value::Null, Value::Null]),
+            Some((original, actual)) => a([e(original), e(actual)]),
+        },
+        u(u64::from(f.adjusted)),
+        a([u(predicate), threshold, f.polarity.map_or(Value::Null, p), u(consumer)]),
+        a(f.tests
+            .iter()
+            .map(|v| a([v.subject.map_or(Value::Null, u), e(v.evaluated), p(v.result)]))),
+        match &f.rungs {
+            None => Value::Null,
+            Some(v) => a([
+                u(v.coordinate),
+                a(v.grid.iter().map(q)),
+                a(v.rows.iter().map(|row| a([u(row.grid), u(row.test), p(row.result)]))),
+            ]),
+        },
+        ending,
+    ];
+    let entries = values
+        .into_iter()
+        .enumerate()
+        .map(|(key, value)| {
+            Ok((
+                pn_interchange::Value::Unsigned(u64::try_from(key).map_err(|_| Error::Resource)?),
+                interchange(value),
+            ))
+        })
+        .collect::<Result<Vec<_>, Error>>()?;
+    let map = pn_interchange::Map::new(entries).map_err(|_| Error::DuplicateKey)?;
+    Ok(pn_interchange::Value::Map(map).to_canonical_bytes())
 }

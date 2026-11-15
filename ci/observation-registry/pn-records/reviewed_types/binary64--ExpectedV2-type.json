@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "binary64::ExpectedV2",
+    "package": "pn-records",
+    "path": "packages/records/src/binary64.rs",
+    "syntax": "# [doc = \" Independently supplied second-edition question and permissions; no soundness claim.\"] # [doc = \" (´[ROOT-dec:design:rung-anchor-representation]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ExpectedV2 { pub question : Question , pub enclosures : Option < (Enclosure , Enclosure) > , pub adjusted : bool , pub predicate : Predicate , pub polarity : Option < Polarity > , pub consumer : Consumer , pub grid : Option < (u64 , Vec < Fraction >) > , }"
+  }
+}

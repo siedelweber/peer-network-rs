@@ -393,6 +393,165 @@ def vectors():
     add('simple-undefined', good, 'ItemKind', raw.replace(b'\x08\xf6', b'\x08\xf7', 1))
     add('negative-integer-unsigned', good, 'ItemKind', raw.replace(b'\x05\x00', b'\x05\x20', 1))
     add('nested-map', good, 'ItemKind', raw.replace(b'\x02\x80', b'\x02\xa0', 1))
+    # The earlier edition's rows remain complete values in their original order.
+    def add_v2(name, value, cause=None, raw=None):
+        add('positive-'+name, value, None if cause is None else ('SecondEdition('+cause+')' if cause[0].isupper() and cause not in ('UnknownCode', 'Arity', 'ItemKind') else cause), raw)
+        rows[-1]['edition'] = 2
+        rows[-1]['rungs'] = copy.deepcopy(value[8])
+
+    def rung_v2(results, ending, positive=3):
+        v = base(interval(0))
+        v[0] = 2
+        v[1] = [1, [[1, 0]], 0]
+        v[3] = [[['rung', q(0), True, q(positive), True]], []]
+        v[4] = [None, None]
+        v[6] = [1, q(1), 0 if ending == [0] else None, 4]
+        enclosures = [interval(one), interval(one+1), interval(one, one+1)]
+        v[7] = [[i, enclosures[result], result] for i, result in enumerate(results)]
+        v[8] = [0, [q(i) for i in range(positive, -1, -1)], [[i, i, result] for i, result in enumerate(results)]]
+        v[9] = ending
+        return v
+
+    for name, results, ending, count in [
+        ('pass-small', [0], [0], 1), ('pass-long', [1, 2, 0], [0], 3),
+        ('anchor-small', [1], [1], 1), ('anchor-long', [2, 1, 2], [1], 3),
+        ('anchor-empty', [], [1], 0), ('anchor-identical', [1, 1, 1], [1], 3),
+    ]:
+        add_v2(name, rung_v2(results, ending, count))
+    for cause in range(1, 8):
+        add_v2(f'operational-empty-{cause}', rung_v2([], [2, cause], 1))
+        add_v2(f'operational-prefix-{cause}', rung_v2([2, 1], [2, cause]))
+    small = rung_v2([0], [0], 1)
+    prefix = rung_v2([1], [2, 1], 3)
+    anchor = rung_v2([1], [1], 1)
+    def bad_v2(name, change, cause, source=small):
+        v = copy.deepcopy(source); change(v); add_v2(name, v, cause)
+    bad_v2('predicate', lambda v: (v[6].__setitem__(0, 2), v[7][0].__setitem__(1, interval(0))), 'RungPredicate')
+    bad_v2('threshold', lambda v: v[6].__setitem__(1, q(2)), 'RungThreshold')
+    bad_v2('adjustment', lambda v: v.__setitem__(5, 1), 'RungAdjustment')
+    bad_v2('enclosures', lambda v: v.__setitem__(4, [interval(0), interval(0)]), 'RungEnclosures')
+    bad_v2('missing-rungs', lambda v: v.__setitem__(8, None), 'MissingRungs')
+    bad_v2('coordinate', lambda v: v[8].__setitem__(0, 1), 'Coordinate')
+    bad_v2('empty-grid', lambda v: v[8].__setitem__(1, []), 'EmptyGrid', rung_v2([], [1], 0))
+    bad_v2('negative-grid', lambda v: (v[8].__setitem__(1, [q(-1), q(0)]), v[3][0][0].__setitem__(1, q(-1))), 'NegativeGrid')
+    bad_v2('repeated-grid', lambda v: v[8].__setitem__(1, [q(1), q(1), q(0)]), 'GridDescent')
+    bad_v2('increasing-grid', lambda v: (v[8].__setitem__(1, [q(1), q(2), q(0)]), v[3][0][0].__setitem__(3, q(2))), 'GridDescent')
+    bad_v2('missing-zero', lambda v: v[8].__setitem__(1, [q(1), q(Fraction(1, 2))]), 'GridZero')
+    bad_v2('grid-lower', lambda v: v[3][0][0].__setitem__(1, q(1)), 'GridLower')
+    bad_v2('grid-lower-open', lambda v: v[3][0][0].__setitem__(2, False), 'GridLowerOpen')
+    bad_v2('grid-upper', lambda v: v[8].__setitem__(1, [q(2), q(0)]), 'GridUpper')
+    bad_v2('grid-upper-open', lambda v: v[3][0][0].__setitem__(4, False), 'GridUpperOpen')
+    bad_v2('row-index', lambda v: v[8][2][0].__setitem__(0, 1), 'RowIndex')
+    bad_v2('test-index', lambda v: v[8][2][0].__setitem__(1, 1), 'TestIndex')
+    bad_v2('missing-test', lambda v: v.__setitem__(7, []), 'MissingTest', prefix)
+    bad_v2('subject', lambda v: v[7][0].__setitem__(0, 1), 'Subject')
+    bad_v2('row-result', lambda v: v[8][2][0].__setitem__(2, 1), 'RowResult')
+    bad_v2('lower-fence', lambda v: v[7][0].__setitem__(1, interval(0, one, li=False)), 'LowerFence')
+    bad_v2('upper-fence', lambda v: v[7][0].__setitem__(1, interval(0, one, ui=False)), 'UpperFence')
+    for result in (1, 2):
+        bad_v2(f'verdict-{result}', lambda v: v[7][0].__setitem__(1, interval(one+1) if result == 1 else interval(one, one+1)), 'TestVerdict')
+    bad_v2('anchor-row', lambda v: None, 'AnchorRow', rung_v2([1, 0], [0], 1))
+    bad_v2('zero-only-row', lambda v: None, 'AnchorRow', rung_v2([0], [0], 0))
+    bad_v2('after-pass', lambda v: None, 'AfterPass', rung_v2([0, 0], [0], 3))
+    bad_v2('extra-test', lambda v: v[7].append([1, interval(one+1), 1]), 'TestCount')
+    bad_v2('missing-pass', lambda v: (v.__setitem__(9, [0]), v[6].__setitem__(2, 0)), 'MissingPass', prefix)
+    bad_v2('incomplete-anchor', lambda v: v.__setitem__(9, [1]), 'IncompleteAnchor', prefix)
+    bad_v2('anchor-pass', lambda v: (v.__setitem__(9, [1]), v[6].__setitem__(2, None)), 'AnchorPass')
+    bad_v2('full-operational', lambda v: v.__setitem__(9, [2, 1]), 'CompleteOperational', anchor)
+    bad_v2('operational-pass', lambda v: v[6].__setitem__(2, None), 'OperationalPass', rung_v2([0], [2, 1], 3))
+    for cause in (0, 8):
+        bad_v2(f'cause-{cause}', lambda v: v.__setitem__(9, [2, cause]), 'Cause', prefix)
+    for sign in (None, 1, 2):
+        bad_v2(f'pass-polarity-{sign}', lambda v: v[6].__setitem__(2, sign), 'PassPolarity')
+    bad_v2('anchor-polarity', lambda v: v[6].__setitem__(2, 0), 'AnchorPolarity', anchor)
+    bad_v2('operational-polarity', lambda v: v[6].__setitem__(2, 2), 'OperationalPolarity', prefix)
+    bad_v2('unknown-ending', lambda v: v.__setitem__(9, [3]), 'UnknownCode')
+    bad_v2('ending-arity', lambda v: v.__setitem__(9, [1, 0]), 'Arity')
+    # Adjacent-level overlaps make precedence observable, separately from isolated guards.
+    bad_v2('order-framing-question', lambda v: (v.__setitem__(0, 1), v[6].__setitem__(0, 2)), 'UnknownCode')
+    bad_v2('order-question-grid', lambda v: (v[6].__setitem__(0, 2), v[8].__setitem__(1, [])), 'RungPredicate')
+    bad_v2('order-grid-row', lambda v: (v[8].__setitem__(1, [q(1), q(1), q(0)]), v[7][0].__setitem__(0, 1)), 'GridDescent')
+    bad_v2('order-row-ending', lambda v: (v[7][0].__setitem__(0, 1), v.__setitem__(9, [1])), 'Subject')
+    bad_v2('order-ending-polarity', lambda v: v.__setitem__(9, [1]), 'AnchorPass')
+    single = base(interval(0)); single[0] = 2; single[9] = [0]
+    add_v2('single-complete', single)
+    for cause in range(1, 8):
+        v = copy.deepcopy(single); v[7] = []; v[6][2] = None; v[9] = [2, cause]
+        add_v2(f'single-operational-{cause}', v)
+    bad_v2('single-anchor', lambda v: (v.__setitem__(9, [1]), v[6].__setitem__(2, None)), 'NonRungAnchor', single)
+    bad_v2('single-count', lambda v: (v.__setitem__(7, []), v[6].__setitem__(2, None)), 'SingleCount', single)
+    bad_v2('single-subject', lambda v: v[7][0].__setitem__(0, 0), 'SingleSubject', single)
+    bad_v2('single-polarity', lambda v: v[6].__setitem__(2, 1), 'SinglePolarity', single)
+    bad_v2('single-operational-tests', lambda v: (v.__setitem__(9, [2, 1]), v[6].__setitem__(2, None)), 'OperationalTests', single)
+    bad_v2('non-rung-data', lambda v: (v[6].__setitem__(3, 0), v[7][0].__setitem__(0, None)), 'NonRungData')
+
+    bad_v2('membership-enclosures', lambda v: v.__setitem__(4, [None, None]), 'MembershipEnclosures', single)
+    bad_v2('membership-adjustment', lambda v: v.__setitem__(5, 1), 'Adjustment', single)
+    threshold = copy.deepcopy(single); threshold[4] = [None, None]; threshold[6] = [1, q(1), 0, 5]
+    add_v2('single-threshold', threshold)
+    bad_v2('threshold-enclosures', lambda v: v.__setitem__(4, [interval(0), interval(0)]), 'ThresholdEnclosures', threshold)
+    bad_v2('threshold-adjustment', lambda v: v.__setitem__(5, 1), 'ThresholdAdjustment', threshold)
+    bad_v2('consumer-predicate', lambda v: v[6].__setitem__(3, 1), 'ConsumerPredicate', threshold)
+    bad_v2('fixed-predicate', lambda v: v[6].__setitem__(3, 5), 'FixedPredicate', single)
+    negative = base(interval(one), interval(0)); negative[0] = 2; negative[9] = [0]
+    bad_v2('consumer-polarity', lambda v: v[6].__setitem__(3, 1), 'ConsumerPolarity', negative)
+    bad_v2('single-operational-polarity', lambda v: v[6].__setitem__(2, 2), 'OperationalPolarity', {**copy.deepcopy(single), 7: [], 9: [2, 1], 6: [0, None, None, 0]})
+    bad_v2('single-verdict', lambda v: v[7][0].__setitem__(1, interval(one)), 'TestVerdict', single)
+    for cause in (0, 8):
+        bad_v2(f'single-cause-{cause}', lambda v: v.__setitem__(9, [2, cause]), 'Cause', {**copy.deepcopy(single), 7: [], 9: [2, 1], 6: [0, None, None, 0]})
+    for claimed, supplied in ((1, 0), (1, 2), (2, 0), (2, 1)):
+        source = rung_v2([claimed], [2, 1], 3)
+        enclosures = [interval(one), interval(one+1), interval(one, one+1)]
+        bad_v2(f'verdict-{claimed}-from-{supplied}', lambda v: v[7][0].__setitem__(1, enclosures[supplied]), 'TestVerdict', source)
+    bad_v2('repeated-row', lambda v: v[8][2][1].__setitem__(0, 0), 'RowIndex', rung_v2([1, 2, 0], [0], 3))
+    bad_v2('reordered-row', lambda v: (v[8][2][0].__setitem__(0, 1), v[8][2][1].__setitem__(0, 0)), 'RowIndex', rung_v2([1, 2, 0], [0], 3))
+    bad_v2('zero-only-complete', lambda v: (v.__setitem__(9, [0]), v[6].__setitem__(2, 0)), 'MissingPass', rung_v2([], [1], 0))
+    bad_v2('zero-only-operational', lambda v: v.__setitem__(9, [2, 1]), 'CompleteOperational', rung_v2([], [1], 0))
+    for name, ending in [('complete-extra', [0, 1]), ('operational-missing', [2]), ('operational-extra', [2, 1, 1])]:
+        bad_v2(name, lambda v: v.__setitem__(9, ending), 'Arity')
+    # Within-level overlaps witness first-refusal precedence; no verdict is detached from its enclosure.
+    bad_v2('within-predicate-threshold', lambda v: (v[6].__setitem__(0, 2), v[6].__setitem__(1, q(2))), 'RungPredicate')
+    bad_v2('within-threshold-adjustment', lambda v: (v[6].__setitem__(1, q(2)), v.__setitem__(5, 1)), 'RungThreshold')
+    bad_v2('within-adjustment-enclosures', lambda v: (v.__setitem__(5, 1), v.__setitem__(4, [interval(0), interval(0)])), 'RungAdjustment')
+    bad_v2('within-negative-descent', lambda v: (v[8].__setitem__(1, [q(-1), q(0)]), v[3][0][0].__setitem__(1, q(-2))), 'NegativeGrid')
+    bad_v2('within-descent-zero', lambda v: v[8].__setitem__(1, [q(1), q(1)]), 'GridDescent')
+    bad_v2('within-zero-domain', lambda v: (v[8].__setitem__(1, [q(3), q(2)]), v[3][0][0].__setitem__(slice(1, 5), [q(4), True, q(5), True])), 'GridZero')
+    bad_v2('within-domain-members', lambda v: (v[8].__setitem__(1, [q(2), q(0)]), v[3][0][0].__setitem__(slice(1, 5), [q(Fraction(1, 2)), True, q(Fraction(3, 2)), True])), 'GridUpper')
+    bad_v2('within-row-test-index', lambda v: v[8][2][0].__setitem__(slice(0, 2), [1, 1]), 'RowIndex')
+    bad_v2('within-test-index-missing', lambda v: (v[8][2][0].__setitem__(1, 1), v.__setitem__(7, [])), 'TestIndex', prefix)
+    bad_v2('within-subject-result', lambda v: (v[7][0].__setitem__(0, 1), v[8][2][0].__setitem__(2, 1)), 'Subject')
+    bad_v2('within-result-lower', lambda v: (v[8][2][0].__setitem__(2, 1), v[7][0].__setitem__(1, interval(0, one, li=False))), 'RowResult')
+    bad_v2('within-lower-upper', lambda v: v[7][0].__setitem__(1, interval(0, one, li=False, ui=False)), 'LowerFence')
+    bad_v2('within-upper-verdict', lambda v: v[7][0].__setitem__(1, interval(0, two, ui=False)), 'UpperFence')
+    bad_v2('within-verdict-anchor', lambda v: v[7][0].__setitem__(1, interval(one, one+1)), 'TestVerdict', rung_v2([0], [0], 0))
+    bad_v2('within-anchor-after-pass', lambda v: None, 'AnchorRow', rung_v2([0, 0], [0], 1))
+    bad_v2('within-count-complete', lambda v: v[7].append([1, interval(one+1), 1]), 'TestCount', rung_v2([1], [0], 3))
+    bad_v2('within-count-anchor', lambda v: v[7].append([1, interval(one+1), 1]), 'TestCount', rung_v2([1], [1], 3))
+    bad_v2('within-count-operational', lambda v: v[7].append([1, interval(one+1), 1]), 'TestCount', rung_v2([1], [2, 1], 1))
+    bad_v2('within-anchor-count-pass', lambda v: v[6].__setitem__(2, None), 'IncompleteAnchor', rung_v2([0], [1], 3))
+    bad_v2('within-operational-count-pass', lambda v: v[6].__setitem__(2, None), 'CompleteOperational', rung_v2([0], [2, 1], 1))
+    bad_v2('within-operational-pass-cause', lambda v: v[6].__setitem__(2, None), 'OperationalPass', rung_v2([0], [2, 8], 3))
+    bad_v2('within-single-subject-verdict', lambda v: (v[7][0].__setitem__(0, 0), v[7][0].__setitem__(1, interval(one))), 'SingleSubject', single)
+    bad_v2('within-single-tests-cause', lambda v: (v.__setitem__(9, [2, 8]), v[6].__setitem__(2, None)), 'OperationalTests', single)
+    bad_v2('within-single-polarities', lambda v: (v[6].__setitem__(3, 1), v[6].__setitem__(2, 1)), 'SinglePolarity', single)
+    bad_v2('anchor-one-short', lambda v: None, 'IncompleteAnchor', rung_v2([1, 2], [1], 3))
+    bad_v2('single-two-tests', lambda v: v[7].append(copy.deepcopy(v[7][0])), 'SingleCount', single)
+    # Active non-rung levels and key references retain the same first-refusal contract.
+    bad_v2('within-single-subject-count', lambda v: (v[7].append(copy.deepcopy(v[7][0])), v[7][0].__setitem__(0, 0)), 'SingleSubject', single)
+    bad_v2('within-single-subject-anchor', lambda v: (v[7][0].__setitem__(0, 0), v.__setitem__(9, [1]), v[6].__setitem__(2, None)), 'SingleSubject', single)
+    bad_v2('within-coordinate-empty', lambda v: (v[8].__setitem__(0, 1), v[8].__setitem__(1, [])), 'Coordinate', rung_v2([], [1], 0))
+    bad_v2('within-enclosures-missing-rungs', lambda v: (v.__setitem__(4, [interval(0), interval(0)]), v.__setitem__(8, None)), 'RungEnclosures')
+    bad_v2('within-threshold-enclosures-consumer', lambda v: (v.__setitem__(4, [interval(0), interval(0)]), v[6].__setitem__(3, 1)), 'ThresholdEnclosures', threshold)
+    bad_v2('within-threshold-adjustment-consumer', lambda v: (v.__setitem__(5, 1), v[6].__setitem__(3, 1)), 'ThresholdAdjustment', threshold)
+    bad_v2('within-fixed-data', lambda v: (v[6].__setitem__(3, 5), v.__setitem__(8, copy.deepcopy(small[8]))), 'FixedPredicate', single)
+    bad_v2('within-membership-enclosures-fixed', lambda v: (v.__setitem__(4, [None, None]), v[6].__setitem__(3, 5)), 'MembershipEnclosures', single)
+    bad_v2('within-membership-adjustment-fixed', lambda v: (v.__setitem__(5, 1), v[6].__setitem__(3, 5)), 'Adjustment', single)
+    bad_v2('within-consumer-data', lambda v: (v[6].__setitem__(3, 1), v.__setitem__(8, copy.deepcopy(small[8]))), 'ConsumerPredicate', threshold)
+    bad_v2('order-single-question-test', lambda v: (v.__setitem__(5, 1), v[7][0].__setitem__(0, 0)), 'ThresholdAdjustment', threshold)
+    bad_v2('order-single-test-ending', lambda v: (v[7].append(copy.deepcopy(v[7][0])), v[7][0].__setitem__(1, interval(one))), 'TestVerdict', single)
+    bad_v2('order-single-ending-polarity', lambda v: (v[7].append(copy.deepcopy(v[7][0])), v[6].__setitem__(2, 1)), 'SingleCount', single)
+    bad_v2('instance-rung-verdict-index', lambda v: (v[7][0].__setitem__(1, interval(one)), v[8][2][1].__setitem__(0, 0)), 'TestVerdict', rung_v2([1, 0], [0], 2))
+    bad_v2('instance-single-verdict-subject', lambda v: (v[7].append(copy.deepcopy(v[7][0])), v[7][0].__setitem__(1, interval(one)), v[7][1].__setitem__(0, 0)), 'TestVerdict', single)
     return dict(provenance='Independent RFC 8949 integer encoder and exact Fraction cross-products; records exact-route rational cross-check; no native-law evidence.',
                 distinct_inputs=len({row['canonical'] for row in rows}), cases=rows)
 
