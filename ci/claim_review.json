@@ -638,7 +638,7 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:credential-models-cannot-enter-production",
       "before": "",
-      "after": "The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry.",
+      "after": "The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry; the five source-guard mutations fail at their owning assertions.",
       "review": "Read the finite production-driver outcome tuples, test-only result and stream model, or process fixture as named; the external supervisor and physical installation remain outside these controls."
     },
     {
@@ -2350,8 +2350,8 @@
       "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
       "claim": "GENERATOR::claim:generator:rollback-endings-preserve-file-history",
       "before": "",
-      "after": "File endings distinguish source-only, destination-only, identical file identity,\ndifferent-object collisions and absent material; each authorization has its own\nending and synchronization state, with the rollback source pinned by the walk.\n\n# Panics\nPanics only if a finite ending reading changes history or admits missing material.",
-      "review": "Read all five file-name readings, comparing both device and inode and refusing each differing identity, absent material and unsupported semantics. The role walk separately pins a fresh rollback source and its synchronization, so these abstract file readings do not claim directory atomicity or durability."
+      "after": "File endings distinguish source-only, destination-only, identical file identity,\ndifferent-object collisions and absent material for file endings alone.\n\n# Panics\nPanics only if a finite ending reading changes history or admits missing material.",
+      "review": "Read all five file-name readings, both identity components, collision and missing-material refusals. This control concerns abstract file endings only; the walk separately witnesses per-record ending and synchronization state."
     },
     {
       "operation": "pn-credential-generator::models::reconciliation::controls::role_prerequisites",
@@ -2366,16 +2366,16 @@
       "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
       "claim": "GENERATOR::claim:generator:role-model-refuses-contradictory-recovery",
       "before": "",
-      "after": "Recovery refuses missing, ended or contradictory direction records and unknown\nroles; rollback admission is refused after a present disposal act, which recovery\nsynchronizes before further steps and never cancels.\n\n# Panics\nPanics only if a recorded direction or injected refusal differs from the model law.",
-      "review": "Read the independent old/new equality refusals, wrong direction and history, standing-disposal rollback refusals at every post-act phase and injected contradictory records. The walked present act synchronizes before further recovery; actual synchronization and administrator enforcement remain installation witnesses."
+      "after": "Recovery refuses missing, ended or contradictory direction records and unknown\nroles; rollback admission is refused by its reason after a present disposal act,\nsynchronized or not, and an unreadable present act freezes recovery.\n\n# Panics\nPanics only if a recorded direction or injected refusal differs from the model law.",
+      "review": "Read the independent equality, direction and history refusals, standing-disposal reason for synchronized and unsynchronized acts at every disposal phase, and the frozen readings of contradictory or unreadable present acts. No real filesystem or administrator action is witnessed."
     },
     {
       "operation": "pn-credential-generator::models::reconciliation::controls::role_walk",
       "path": "packages/credential-generator/tests/models/reconciliation/controls.rs",
       "claim": "GENERATOR::claim:generator:role-model-walks-directional-reconciliation",
       "before": "",
-      "after": "Finite paths permute role order and recovery stride, retaining separate equalities\nthrough uncertain writes, selection, both rotation endings and rollback before\nreadiness with its own pending ending; next rotation reaches admission only.\n\n# Panics\nPanics only if a finite admitted transition or its stated postcondition fails.",
-      "review": "Read the procedure-ordered paths with permuted role order and recovery stride: forward and abandonment, rollback from completed activation before readiness, fresh rollback source and separate synchronization, preserved rotation history, disposal and fresh next-rotation ending at admission only. This does not walk the next rotation to selection or establish physical completion."
+      "after": "Finite paths permute role order and recovery stride, retaining separate equalities\nthrough uncertain writes, selection, both rotation endings and rollback before\nreadiness with its own pending ending; the next rotation reaches a second act.\nRecovery synchronizes present acts; each authorization owns its ending and\nsynchronization, and every rotation reset is pinned before the next walk.\n\n# Panics\nPanics only if a finite admitted transition or its stated postcondition fails.",
+      "review": "Read both generations through selection, activation and the second disposal act, each rotation reset, the whole resulting state, fresh per-record endings, act synchronization and rename synchronization before removal. Role order and recovery stride are permuted; physical effects remain installation witnesses."
     },
     {
       "operation": "pn-credential-generator::process::process_protocol",

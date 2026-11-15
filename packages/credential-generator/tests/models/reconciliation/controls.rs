@@ -48,7 +48,8 @@ fn fixture(event: Event) -> State {
         Event::Ready => Phase::Started,
         Event::AuthorizeRollback | Event::RecordDisposal => Phase::Active,
         Event::SyncDisposal | Event::RenameDisposal => Phase::DisposalWritten,
-        Event::RemoveDisposal => Phase::DisposalRenamed,
+        Event::SyncDisposalRename => Phase::DisposalRenamed,
+        Event::RemoveDisposal => Phase::DisposalRenameSynced,
         Event::Rotate(_) => Phase::Disposed,
     };
     if matches!(event, Event::SyncEnd) {
@@ -62,6 +63,7 @@ fn fixture(event: Event) -> State {
             | Event::AuthorizeRollback
             | Event::RecordDisposal
             | Event::RenameDisposal
+            | Event::SyncDisposalRename
             | Event::RemoveDisposal
             | Event::Rotate(_)
     ) {
@@ -70,7 +72,7 @@ fn fixture(event: Event) -> State {
     }
     if matches!(
         event,
-        Event::SyncDisposal | Event::RenameDisposal | Event::RemoveDisposal | Event::Rotate(_)
+        Event::SyncDisposal | Event::RenameDisposal | Event::SyncDisposalRename | Event::RemoveDisposal | Event::Rotate(_)
     ) {
         s.disposal = Some(s.old.expected.reference.creation);
     }
@@ -783,6 +785,7 @@ fn cases_12() -> Vec<Case> {
             good: fixture(Event::AuthorizeRollback),
             change: |s| {
                 s.disposal = Some(s.old.expected.reference.creation);
+                s.disposal_durable = Proof::Missing;
             },
         },
         Case {
@@ -958,6 +961,14 @@ fn additional_cases() -> Vec<Case> {
 fn disposal_sync_cases() -> Vec<Case> {
     vec![
         Case {
+            name: "disposal rename sync phase",
+            event: Event::SyncDisposalRename,
+            good: fixture(Event::SyncDisposalRename),
+            change: |s| {
+                s.phase = Phase::Active;
+            },
+        },
+        Case {
             name: "disposal sync phase",
             event: Event::SyncDisposal,
             good: fixture(Event::SyncDisposal),
@@ -1053,7 +1064,7 @@ fn role_prerequisites() {
             }
         }
     }
-    assert_eq!(cases.len(), 96, "transition refusal fixtures");
+    assert_eq!(cases.len(), 97, "transition refusal fixtures");
     let state = fixture(Event::Rotate(fixture_set(4, 3)));
     for (name, reference) in [
         (
@@ -1207,7 +1218,9 @@ fn walk(mut state: State, states: &mut Vec<State>, transitions: &mut Vec<(State,
 
 /// Finite paths permute role order and recovery stride, retaining separate equalities
 /// through uncertain writes, selection, both rotation endings and rollback before
-/// readiness with its own pending ending; next rotation reaches admission only.
+/// readiness with its own pending ending; the next rotation reaches a second act.
+/// Recovery synchronizes present acts; each authorization owns its ending and
+/// synchronization, and every rotation reset is pinned before the next walk.
 ///
 /// # Panics
 /// Panics only if a finite admitted transition or its stated postcondition fails.
@@ -1281,16 +1294,22 @@ fn role_walk() {
                 "rollback record ends separately"
             );
             for active in [completed, rolled] {
-                walk_disposal(active, &mut states, &mut transitions);
+                let next = walk_disposal(active, &mut states, &mut transitions);
+                let ended = walk(next, &mut states, &mut transitions);
+                let started = advance(ended, Event::Start, &mut states, &mut transitions);
+                let active = advance(started, Event::Ready, &mut states, &mut transitions);
+                assert_eq!(active.disposal_durable, Proof::Present, "second act has synchronized history");
+                let written = advance(active, Event::RecordDisposal, &mut states, &mut transitions);
+                assert_eq!(written.disposal_durable, Proof::Missing, "second act starts unsynchronized");
             }
         }
     }
-    assert_eq!(states.len(), 67, "distinct walked states");
-    assert_eq!(transitions.len(), 68, "distinct walked transitions");
+    assert_eq!(states.len(), 107, "distinct walked states");
+    assert_eq!(transitions.len(), 108, "distinct walked transitions");
     interruption_checks(&states);
 }
 
-fn walk_disposal(active: State, states: &mut Vec<State>, transitions: &mut Vec<(State, Event, State)>) {
+fn walk_disposal(active: State, states: &mut Vec<State>, transitions: &mut Vec<(State, Event, State)>) -> State {
     let written = advance(active, Event::RecordDisposal, states, transitions);
     let synchronized = advance(written, Event::SyncDisposal, states, transitions);
     assert_eq!(
@@ -1304,13 +1323,28 @@ fn walk_disposal(active: State, states: &mut Vec<State>, transitions: &mut Vec<(
         "disposal synchronization is recorded"
     );
     let renamed = advance(synchronized, Event::RenameDisposal, states, transitions);
-    let disposed = advance(renamed, Event::RemoveDisposal, states, transitions);
+    assert_eq!(
+        renamed.apply(Event::RemoveDisposal),
+        Err("disposal remove phase"),
+        "removal requires synchronized rename"
+    );
+    let rename_synced = advance(renamed, Event::SyncDisposalRename, states, transitions);
+    let disposed = advance(rename_synced, Event::RemoveDisposal, states, transitions);
     assert_eq!(
         synchronized.recover(synchronized.direction),
         Ok(renamed),
         "disposal recovery only advances"
     );
-    assert_eq!(renamed.recover(renamed.direction), Ok(disposed), "disposal removal resumes");
+    assert_eq!(
+        renamed.recover(renamed.direction),
+        Ok(rename_synced),
+        "rename synchronization resumes"
+    );
+    assert_eq!(
+        rename_synced.recover(rename_synced.direction),
+        Ok(disposed),
+        "disposal removal resumes"
+    );
     assert_eq!(
         disposed.recover(disposed.direction),
         Ok(disposed),
@@ -1327,31 +1361,46 @@ fn walk_disposal(active: State, states: &mut Vec<State>, transitions: &mut Vec<(
         states,
         transitions,
     );
+    assert_eq!(next.old, disposed.target(), "rotation reset old");
+    assert_eq!(next.new, fixture_set(4, disposed.selected), "rotation reset new");
     assert_eq!(
-        next.old.expected.reference.creation, disposed.selected,
-        "next rotation uses the selected predecessor"
+        next.authorized,
+        fixture_set(4, disposed.selected).expected.reference,
+        "rotation reset authorized"
     );
-    assert_eq!(
-        next.authorization,
-        Authorization::Rotation,
-        "new rotation has fresh authority"
-    );
-    assert_eq!(next.disposal, disposed.disposal, "disposal history is retained");
-    assert_eq!(
-        next.ending,
-        pending_ending(4),
-        "next rotation ending starts at its own source name"
-    );
-    assert_eq!(
-        next.ending_durable,
-        Proof::Missing,
-        "next rotation ending synchronization starts pending"
-    );
+    assert_eq!(next.authorization, Authorization::Rotation, "rotation reset authorization");
+    assert_eq!(next.ending, pending_ending(4), "rotation reset ending");
+    assert_eq!(next.ending_durable, Proof::Missing, "rotation reset ending_durable");
+    assert_eq!(next.old_equal, [Proof::Present; 2], "rotation reset old_equal");
+    assert_eq!(next.new_equal, [Proof::Missing; 2], "rotation reset new_equal");
+    assert_eq!(next.rollback, None, "rotation reset rollback");
+    assert_eq!(next.direction, Direction::Forward, "rotation reset direction");
+    assert_eq!(next.phase, Phase::Authorized, "rotation reset phase");
+    assert_eq!(next.checked, Proof::Missing, "rotation reset checked");
+    assert_eq!(next.ready, Proof::Missing, "rotation reset ready");
+    let expected = State {
+        old: disposed.target(),
+        new: fixture_set(4, disposed.selected),
+        authorized: fixture_set(4, disposed.selected).expected.reference,
+        authorization: Authorization::Rotation,
+        ending: pending_ending(4),
+        ending_durable: Proof::Missing,
+        old_equal: [Proof::Present; 2],
+        new_equal: [Proof::Missing; 2],
+        rollback: None,
+        direction: Direction::Forward,
+        phase: Phase::Authorized,
+        checked: Proof::Missing,
+        ready: Proof::Missing,
+        ..disposed
+    };
+    assert_eq!(next, expected, "whole post-rotation state");
+    next
 }
 
 /// Recovery refuses missing, ended or contradictory direction records and unknown
-/// roles; rollback admission is refused after a present disposal act, which recovery
-/// synchronizes before further steps and never cancels.
+/// roles; rollback admission is refused by its reason after a present disposal act,
+/// synchronized or not, and an unreadable present act freezes recovery.
 ///
 /// # Panics
 /// Panics only if a recorded direction or injected refusal differs from the model law.
@@ -1417,24 +1466,43 @@ fn role_recovery() {
         Err("contradictory disposal and rollback"),
         "injected contradictory records freeze"
     );
+    recovery_disposal_checks(good);
+    ending_equalities();
+}
+
+fn recovery_disposal_checks(good: State) {
     let active = fixture(Event::AuthorizeRollback);
     assert!(
         active.apply(Event::AuthorizeRollback).is_ok(),
         "rollback admitted before disposal act"
     );
-    for phase in [Phase::Active, Phase::DisposalWritten, Phase::DisposalRenamed, Phase::Disposed] {
-        assert_eq!(
-            State {
-                disposal: Some(2),
-                phase,
-                ..active
-            }
-            .apply(Event::AuthorizeRollback),
-            Err("standing disposal"),
-            "clause: standing disposal"
-        );
+    for phase in [
+        Phase::Active,
+        Phase::DisposalWritten,
+        Phase::DisposalRenamed,
+        Phase::DisposalRenameSynced,
+        Phase::Disposed,
+    ] {
+        for disposal_durable in [Proof::Missing, Proof::Present] {
+            assert_eq!(
+                State {
+                    disposal: Some(2),
+                    disposal_durable,
+                    phase,
+                    ..active
+                }
+                .apply(Event::AuthorizeRollback),
+                Err("standing disposal"),
+                "clause: standing disposal"
+            );
+        }
     }
-    for phase in [Phase::DisposalWritten, Phase::DisposalRenamed, Phase::Disposed] {
+    for phase in [
+        Phase::DisposalWritten,
+        Phase::DisposalRenamed,
+        Phase::DisposalRenameSynced,
+        Phase::Disposed,
+    ] {
         let bad = State {
             phase,
             ..rollback_state(fixture(Event::RenameDisposal))
@@ -1454,7 +1522,41 @@ fn role_recovery() {
         .is_ok(),
         "an earlier creation's act is not this set's act"
     );
-    ending_equalities();
+    for phase in [
+        Phase::DisposalWritten,
+        Phase::DisposalRenamed,
+        Phase::DisposalRenameSynced,
+        Phase::Disposed,
+    ] {
+        let unreadable = State {
+            phase,
+            disposal_readable: Proof::Missing,
+            ..fixture(Event::RenameDisposal)
+        };
+        assert_eq!(
+            unreadable.recover(Direction::Forward),
+            Err("readable disposal act"),
+            "unreadable present act freezes"
+        );
+        assert!(
+            State {
+                disposal_readable: Proof::Present,
+                ..unreadable
+            }
+            .recover(Direction::Forward)
+            .is_ok(),
+            "readable act recovery admitted"
+        );
+    }
+    assert_eq!(
+        State {
+            disposal_readable: Proof::Missing,
+            ..good
+        }
+        .records(),
+        Ok(()),
+        "absent act has no unreadable content"
+    );
 }
 
 fn reference_bindings() {
@@ -1552,8 +1654,7 @@ fn reconciliation_call_sites() {
 }
 
 /// File endings distinguish source-only, destination-only, identical file identity,
-/// different-object collisions and absent material; each authorization has its own
-/// ending and synchronization state, with the rollback source pinned by the walk.
+/// different-object collisions and absent material for file endings alone.
 ///
 /// # Panics
 /// Panics only if a finite ending reading changes history or admits missing material.

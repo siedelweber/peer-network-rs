@@ -96,7 +96,7 @@ class WorkspaceChecks(unittest.TestCase):
                 compare('x',original,actual)
 
     def test_credential_model_census(self):
-        """The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry.
+        """The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry; the five source-guard mutations fail at their owning assertions.
         ´claim:discipline:credential-models-cannot-enter-production´
         ´test:integration:test-credential-model-census´
         """
@@ -119,6 +119,11 @@ class WorkspaceChecks(unittest.TestCase):
         self.assertTrue(credential_model_findings(changed, manifest), 'model export refuses')
         changed = copy.deepcopy(manifest);changed['features'] = {'models': []}
         self.assertTrue(credential_model_findings(sources, changed), 'feature activation refuses')
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run([sys.executable, '-B', 'ci/credential_guard_witnesses.py', '--output', str(Path(directory)/'mutants')], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, 'credential guard witnesses execute: '+result.stdout+result.stderr)
+            self.assertEqual(result.stdout.count('CREDENTIAL-GUARD-MUTANT '), 5, 'five credential guard witnesses execute')
 
     def test_credential_receiver_census(self):
         """One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.

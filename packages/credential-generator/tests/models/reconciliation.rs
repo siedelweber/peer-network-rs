@@ -40,10 +40,11 @@ enum Phase {
     Active,
     DisposalWritten,
     DisposalRenamed,
+    DisposalRenameSynced,
     Disposed,
 }
 
-const PHASES: [Phase; 19] = [
+const PHASES: [Phase; 20] = [
     Phase::Authorized,
     Phase::Stopped,
     Phase::Drained,
@@ -62,6 +63,7 @@ const PHASES: [Phase; 19] = [
     Phase::Active,
     Phase::DisposalWritten,
     Phase::DisposalRenamed,
+    Phase::DisposalRenameSynced,
     Phase::Disposed,
 ];
 
@@ -145,6 +147,7 @@ struct State {
     durable: Proof,
     ending_durable: Proof,
     disposal_durable: Proof,
+    disposal_readable: Proof,
     schema: Proof,
     grants: Proof,
     ready: Proof,
@@ -177,6 +180,7 @@ enum Event {
     RecordDisposal,
     SyncDisposal,
     RenameDisposal,
+    SyncDisposalRename,
     RemoveDisposal,
     Rotate(Set),
 }
@@ -288,6 +292,10 @@ impl State {
 
     fn records(self) -> Result<(), &'static str> {
         require(
+            "readable disposal act",
+            self.disposal.is_none() || self.disposal_readable == Proof::Present,
+        )?;
+        require(
             "contradictory disposal and rollback",
             self.rollback
                 .is_none_or(|r| r.ended == Proof::Present || self.disposal != Some(r.target)),
@@ -312,9 +320,12 @@ impl State {
             }
             Event::Stage | Event::SyncStage | Event::Select | Event::SyncSelection => self.selection(event),
             Event::Enable | Event::Check | Event::End | Event::SyncEnd | Event::Start | Event::Ready => self.activation(event),
-            Event::RecordDisposal | Event::SyncDisposal | Event::RenameDisposal | Event::RemoveDisposal | Event::Rotate(_) => {
-                self.custody(event)
-            }
+            Event::RecordDisposal
+            | Event::SyncDisposal
+            | Event::RenameDisposal
+            | Event::SyncDisposalRename
+            | Event::RemoveDisposal
+            | Event::Rotate(_) => self.custody(event),
         }
     }
 
@@ -579,8 +590,12 @@ impl State {
                 require("disposal unselected", self.disposal != Some(self.selected))?;
                 next.phase = Phase::DisposalRenamed;
             }
+            Event::SyncDisposalRename => {
+                require("disposal rename sync phase", self.phase == Phase::DisposalRenamed)?;
+                next.phase = Phase::DisposalRenameSynced;
+            }
             Event::RemoveDisposal => {
-                require("disposal remove phase", self.phase == Phase::DisposalRenamed)?;
+                require("disposal remove phase", self.phase == Phase::DisposalRenameSynced)?;
                 next.retained = Proof::Missing;
                 next.phase = Phase::Disposed;
             }
@@ -641,6 +656,10 @@ impl State {
                 };
             }
             Phase::DisposalRenamed => {
+                self.records()?;
+                return self.apply(Event::SyncDisposalRename);
+            }
+            Phase::DisposalRenameSynced => {
                 self.records()?;
                 return self.apply(Event::RemoveDisposal);
             }
@@ -725,6 +744,7 @@ fn initial(direction: Direction) -> State {
         durable: Proof::Present,
         ending_durable: Proof::Missing,
         disposal_durable: Proof::Missing,
+        disposal_readable: Proof::Present,
         schema: Proof::Present,
         grants: Proof::Present,
         ready: Proof::Missing,
