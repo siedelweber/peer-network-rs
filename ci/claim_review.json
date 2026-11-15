@@ -4135,8 +4135,8 @@
       "path": "packages/host/src/credential_fixture.rs",
       "claim": "HOST::claim:host:credential-artifact-binding-refuses-substitution",
       "before": "",
-      "after": "The host resolves only the selected build's artifact; each missing prerequisite\nand a same-length replacement refuses before any generator is launched.",
-      "review": "Read each child refusal before any executable launch, the genuine selected receipt, the same-length substituted file and the exact expected error. The receipt is local build binding, not artifact authenticity or an installation witness."
+      "after": "The host binds the selected build's artifact bytes at resolution; each missing prerequisite and a same-length replacement refuses before launch. Replacement between resolution and exec, and a caller setting runner variables or rewriting the receipt and its inputs, are outside the claim.",
+      "review": "Read each child refusal before any executable launch, the genuine selected receipt, the same-length substituted file and the exact expected error. The receipt is local build binding, not artifact authenticity or an installation witness. The control binds bytes at resolution only; replacement before exec and caller-controlled runner variables, receipt or inputs are outside its scope."
     },
     {
       "operation": "pn-host::credential_fixture::handovers",

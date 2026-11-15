@@ -10,8 +10,7 @@ fn artifact() -> std::io::Result<PathBuf> {
     runtime_path(RuntimePath::Executable("pn-credential-generator"))
 }
 
-/// The host resolves only the selected build's artifact; each missing prerequisite
-/// and a same-length replacement refuses before any generator is launched.
+/// The host binds the selected build's artifact bytes at resolution; each missing prerequisite and a same-length replacement refuses before launch. Replacement between resolution and exec, and a caller setting runner variables or rewriting the receipt and its inputs, are outside the claim.
 /// ´claim:host:credential-artifact-binding-refuses-substitution´
 /// ´test:unit:binding´
 #[test]
