@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::Question",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" The original operands supplied by the containing question, never by an interval.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Question { pub left : Wall , pub right : Wall , }"
+  }
+}

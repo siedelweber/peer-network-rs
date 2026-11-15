@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::comparison::Error",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/comparison.rs",
+    "syntax": "# [doc = \" Structural fragment refusal, never a mathematical verdict.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Debug)] pub enum Error { # [doc = \" Existing canonical reader refused the spelling.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Canonical (DecodeError) , # [doc = \" A caller-declared representation or arithmetic ceiling was exhausted.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Resource , # [doc = \" A tag is not part of a comparison fragment.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Tag , # [doc = \" A floating item is not an exact rational endpoint.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Float , # [doc = \" The explicitly selected edition does not match.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Edition , # [doc = \" An array does not have its exact stated arity.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Arity , # [doc = \" A member has the wrong item kind.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Member , # [doc = \" The result constructor is outside the closed three.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Constructor , # [doc = \" An exact rational pair is not canonical.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Number , # [doc = \" An inherited publication field projection refused.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Projection (super :: Error) , # [doc = \" The records validator refused its first semantic clause.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Record (pn_records :: numerics :: comparison :: Error) , }"
+  }
+}

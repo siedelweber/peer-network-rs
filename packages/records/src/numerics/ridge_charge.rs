@@ -6,7 +6,7 @@ use crate::ridge::{ChargeEvidence, ChargeVerifier};
 use nrz_cas::Rational;
 
 impl NumericContext {
-    fn ridge_envelope(&mut self, evidence: &ChargeEvidence) -> Result<Option<(Rational, Rational)>, NumericError> {
+    pub(super) fn ridge_envelope(&mut self, evidence: &ChargeEvidence) -> Result<Option<(Rational, Rational)>, NumericError> {
         let input = &evidence.input;
         let definition = &input.definition;
         if evidence.analytic_premises != "clean-ridge-analytic-v1"

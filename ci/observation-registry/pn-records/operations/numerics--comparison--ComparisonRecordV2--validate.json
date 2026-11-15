@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "item": "numerics::comparison::ComparisonRecordV2::validate",
+    "owner": "RECORDS",
+    "signature": "fn validate (& self , expected_wall : & Wall , expected_floor : Floor , expected : & Expected , proof : Option < & DefiningProof < '_ > > , budget : & mut nrz_cas :: limits :: Budget ,) -> Result < () , Error >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "comparison-ridge-validate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics/comparison.rs::numerics::comparison::ComparisonRecordV2::validate",
+    "body": "{ if self . wall != * expected_wall { return Err (Error :: WallBinding) ; } if self . floor != expected_floor { return Err (Error :: FloorBinding) ; } let right = match self . floor { Floor :: RationalThreeThirtySevenths => Wall :: Rational (\"3/37\" . into ()) , Floor :: RidgeImage => Wall :: DefiningRidge (Definition { schema : \"clean-elasticity-ridge-v1\" . into () , inverse_temperature : \"2*ln(2)\" . into () , bleed_squared : \"0\" . into () , core_power : \"1\" . into () , }) , } ; let question = Question { left : self . wall . clone () , right , } ; with_numeric (budget , | numeric | { numeric . comparison_inner (& self . comparison , & question , expected , proof) }) }",
+    "class_decision": "comparison-records",
+    "item_premise": "These explicitly selected comparison fragments contain only public original operands, defining identities, exact rational enclosures, result codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "comparison-full_recording",
+      "secret_flow": "comparison-secret_flow",
+      "exposure_consumers": "comparison-exposure_consumers"
+    }
+  }
+}

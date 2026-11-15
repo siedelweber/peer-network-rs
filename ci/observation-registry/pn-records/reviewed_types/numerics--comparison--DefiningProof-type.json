@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::DefiningProof",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" External defining evidence and the existing admitted replay boundary.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Debug)] pub struct DefiningProof < 'a > { pub evidence : & 'a ChargeEvidence , pub verifier : & 'a dyn ChargeVerifier , }"
+  }
+}

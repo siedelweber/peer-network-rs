@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::comparison::Request",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/comparison.rs",
+    "syntax": "# [doc = \" Independent original question and binding, with optional checked defining evidence.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Debug)] pub struct Request < 'a > { pub question : & 'a Question , pub expected : & 'a Expected , pub proof : Option < & 'a DefiningProof < 'a > > , }"
+  }
+}

@@ -6,6 +6,9 @@ use nrz_cas::{
 };
 use std::cmp::Ordering;
 
+/// Explicit comparison fragments with disjoint result kinds.
+/// (´[ROOT-dec:design:comparison-verdict-record]´)
+pub mod comparison;
 mod price_input;
 mod ridge_charge;
 pub use price_input::PriceInput;

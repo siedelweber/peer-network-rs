@@ -30,6 +30,8 @@
         "binary64-fraction-parts",
         "bind-constants",
         "bind-marker-policy",
+        "comparison-floor-validate",
+        "comparison-ridge-validate",
         "complete-act-access",
         "dependency-status",
         "digest-marker-policy",

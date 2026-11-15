@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::Enclosure",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" Exact rational enclosure with explicit endpoint inclusion.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Enclosure { pub lower : Fraction , pub lower_included : bool , pub upper : Fraction , pub upper_included : bool , }"
+  }
+}

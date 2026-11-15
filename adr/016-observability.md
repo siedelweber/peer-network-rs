@@ -82,9 +82,9 @@
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
-| pn-host | 236 | 49 | 187 | 0 | 186 |
+| pn-host | 240 | 53 | 187 | 0 | 189 |
 | pn-interchange | 167 | 130 | 36 | 1 | 100 |
-| pn-records | 132 | 58 | 74 | 0 | 183 |
+| pn-records | 134 | 60 | 74 | 0 | 191 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |
 | pn-wallet | 30 | 7 | 23 | 0 | 28 |
 

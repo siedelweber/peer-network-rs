@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/comparison.rs",
+    "item": "publication::comparison::decode_floor",
+    "owner": "HOST",
+    "signature": "fn decode_floor (bytes : & [u8] , request : & Request < '_ > , numeric : & mut NumericContext , limits : & Limits ,) -> Result < FloorComparisonV2 , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/comparison.rs::publication::comparison::decode_floor",
+    "body": "{ let value = read (bytes , limits) ? ; let comparison = floor_read (& value , & limits . arithmetic) ? ; comparison . validate (request . question , request . expected , request . proof , & mut context (numeric , & limits . arithmetic) ? . arithmetic ,) . map_err (Error :: Record) ? ; Ok (comparison) }",
+    "class_decision": "comparison-host",
+    "item_premise": "These explicitly selected comparison fragments contain only public original operands, defining identities, exact rational enclosures, result codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "comparison-full_recording",
+      "secret_flow": "comparison-secret_flow",
+      "exposure_consumers": "comparison-exposure_consumers"
+    }
+  }
+}

@@ -4339,6 +4339,30 @@
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
+      "operation": "pn-host::public::comparison::comparison_binding",
+      "path": "packages/host/tests/public/comparison.rs",
+      "claim": "HOST::claim:host:comparison-binding-keeps-enclosure-claim",
+      "before": "",
+      "after": "Claim: The comparison binding control substitutes both original operands, the declared reduction, predicate and exact threshold; an alternative consistent interval remains a claim rather than an origin check, and a complete INDECISIVE enclosure round-trips unchanged.",
+      "review": "Both original operands, reduction, predicate and expected threshold are substituted independently and compared with named errors. A different consistent interval remains accepted as a claim. An evaluated INDECISIVE value is encoded and decoded with its complete enclosure and threshold; decoder refusal is asserted before extracting the result."
+    },
+    {
+      "operation": "pn-host::public::comparison::comparison_ceilings",
+      "path": "packages/host/tests/public/comparison.rs",
+      "claim": "HOST::claim:host:comparison-ceilings-are-cumulative",
+      "before": "",
+      "after": "Claim: A comparison consumes one cumulative arithmetic ledger, retains prior question work, refuses one below its least admitting work ceiling and refuses a second comparison when only two complete first-call costs minus one are available; repeated ridge query projections add equal work to the nested comparison, and the byte reader refuses one below the complete fragment length.",
+      "review": "The control searches the least admitting work ceiling, checks one below it, retains a prior rational charge and denies a reset between two comparisons. Ridge query counts two, one and zero check equal cumulative increments and the final nested resource refusal. Exact and one-below byte lengths test the reader limit; this is no whole-process or external proof-verifier bound."
+    },
+    {
+      "operation": "pn-host::public::comparison::comparison_corpus",
+      "path": "packages/host/tests/public/comparison.rs",
+      "claim": "HOST::claim:host:comparison-corpus-refuses-first-clause",
+      "before": "",
+      "after": "Claim: Independently generated comparison fragments reach both explicit second-edition readers unsorted; supplied cases retain complete evaluated verdicts, exact results and operational causes or refuse their named first clause, with positive defining proofs bound to an independently restored finite fixture and a negative permissive replay premise isolating completeness.",
+      "review": "The independent integer corpus is consumed unsorted, comparing each stored first refusal or complete re-encoding. Positive defining proofs are bound to a transcript restored by the existing epoch verifier. A separate negative-only replay stub accepts the incomplete fixture so that completeness is tested independently of replay rejection. This establishes supplied-case structure and endpoint implications, not enclosure soundness, a native law, consumer acceptance or publication."
+    },
+    {
       "operation": "pn-host::public::configuration_carrier",
       "path": "packages/host/tests/public.rs",
       "claim": "HOST::claim:host:configuration-never-formats-private-input",
@@ -4425,6 +4449,14 @@
       "before": "",
       "after": "Claim: The sentinel check detects private retained configuration in the unmodified driver, so role-only shim formatting is checked against a leaking positive control.",
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+    },
+    {
+      "operation": "pn-host::publication::comparison::tests::comparison_editions",
+      "path": "packages/host/src/publication/comparison.rs",
+      "claim": "HOST::claim:host:comparison-editions-are-disjoint",
+      "before": "",
+      "after": "Claim: The existing floor and ridge projections reject second-edition fragments, the selected second-edition readers reject the existing projections, and an old comparison cannot occupy the new ridge's nested slot.",
+      "review": "The unchanged private Wire projections of all four old floor variants and an old ridge record are passed to the explicitly selected new framing, and new fragments are passed to the old projections. Both directions refuse, including an old nested floor value. No publication producer or schema is switched."
     },
     {
       "operation": "pn-host::scram::tests::ceiling_login_progress",

@@ -556,6 +556,202 @@ def vectors():
                 distinct_inputs=len({row['canonical'] for row in rows}), cases=rows)
 
 
+
+def comparison_vectors():
+    """Exact-rational comparison fragments; no claim of an enclosure's soundness."""
+    rows = []
+    def verdict(predicate, lower, li, upper, ui):
+        signs = set()
+        if lower < 0: signs.add(-1)
+        if upper > 0: signs.add(1)
+        if lower <= 0 <= upper and (lower != 0 or li) and (upper != 0 or ui): signs.add(0)
+        allowed = {1: {-1, 0}, 2: {-1}, 3: {0}, 4: {0, 1}, 5: {1}}[predicate]
+        return 0 if signs <= allowed else 1 if signs.isdisjoint(allowed) else 2
+    def relation(lower, li, upper, ui):
+        return 0 if upper < 0 or upper == 0 and not ui else 2 if lower > 0 or lower == 0 and not li else 1 if lower == upper == 0 else 3
+    def evaluated(predicate=1, lower=-1, upper=1, li=True, ui=True, reduction=0):
+        return [2, [0, reduction, predicate, [q(lower), li, q(upper), ui], q(0), relation(lower, li, upper, ui), verdict(predicate, lower, li, upper, ui)]]
+    def exact_value(predicate=1, left=1, right=2):
+        order = -1 if left < right else 1 if left > right else 0
+        allowed = {1: {-1, 0}, 2: {-1}, 3: {0}, 4: {0, 1}, 5: {1}}[predicate]
+        return [2, [1, q(left), predicate, q(right), order+1, 0 if order in allowed else 1]]
+    def row(name, value, result='valid', *, edition='floor', question=None, expected=None, proof='valid', raw=None, rule=None):
+        inner = value[1] if edition == 'floor' else value[4][1]
+        if not isinstance(inner,list): inner=evaluated()[1]
+        constructor = inner[0]
+        question = copy.deepcopy(question or (['1', 'ridge'] if constructor == 0 else ['1', '2']))
+        reduction=inner[1] if constructor == 0 and type(inner[1]) is int else 0
+        predicate=inner[2] if constructor in (0,1) and type(inner[2]) is int else 1
+        expected = copy.deepcopy(expected or dict(question=question, reduction=reduction, predicate=predicate, threshold=q(0)))
+        rows.append(dict(case=name, edition=edition, question=question, expected=expected, proof=proof, value=copy.deepcopy(value), canonical=(encode(value) if raw is None else raw).hex(), result=result, rule=rule or name))
+    def bad(name, mutate, cause, source=None, **kwargs):
+        value = copy.deepcopy(source or evaluated())
+        mutate(value)
+        row(name, value, cause, **kwargs)
+    intervals=[(-2,-1,True,True),(0,0,True,True),(1,2,True,True),(-1,1,True,True),(-1,0,True,True),(-1,0,True,False),(0,1,True,True),(0,1,False,True)]
+    for reduction in (0,1):
+        for predicate in range(1,6):
+            for index, bounds in enumerate(intervals):
+                row(f'evaluated-{reduction}-{predicate}-{index}', evaluated(predicate,*bounds,reduction=reduction), question=['1/10','ridge'] if reduction else None)
+    for predicate in range(1,6):
+        for left,right in [(1,2),(2,2),(3,2),(-2,Fraction(-1,3))]:
+            row(f'exact-{predicate}-{left}-{right}', exact_value(predicate,left,right), question=[str(left),str(right)])
+    for cause in range(1,8): row(f'operational-{cause}', [2,[2,cause]])
+    base=evaluated()
+    expected=dict(question=['1','ridge'],reduction=0,predicate=1,threshold=q(0))
+    exact_expected={**expected,'question':['1','2']}
+    bad('unknown-reduction',lambda v:v[1].__setitem__(1,2),'Reduction')
+    for predicate in (0,6): bad(f'unknown-predicate-{predicate}',lambda v:v[1].__setitem__(2,predicate),'Predicate')
+    row('question-left',base,'QuestionLeft',expected={**expected,'question':['2','ridge']})
+    row('question-right',base,'QuestionRight',expected={**expected,'question':['1','3']})
+    row('expected-reduction',base,'ExpectedReduction',expected={**expected,'reduction':1})
+    row('expected-predicate',base,'ExpectedPredicate',expected={**expected,'predicate':2})
+    row('expected-threshold',base,'ExpectedThreshold',expected={**expected,'threshold':q(1)})
+    bad('enclosure-order',lambda v:v[1].__setitem__(3,[q(1),True,q(-1),True]),'EnclosureOrder')
+    for side,cause in ((1,'LowerInclusion'),(3,'UpperInclusion')):
+        bad(cause,lambda v:v[1][3].__setitem__(side,False),cause,evaluated(lower=0,upper=0))
+    bad('threshold',lambda v:v[1].__setitem__(4,q(1)),'Threshold',expected={**expected,'threshold':q(1)})
+    bad('relation-code',lambda v:v[1].__setitem__(5,4),'Relation')
+    bad('relation-agreement',lambda v:v[1].__setitem__(5,0),'RelationAgreement')
+    bad('verdict-code',lambda v:v[1].__setitem__(6,3),'Verdict')
+    bad('verdict-agreement',lambda v:v[1].__setitem__(6,0),'VerdictAgreement')
+    ex=exact_value()
+    row('exact-context',ex,'ExactContext',question=['1','ridge'])
+    bad('exact-left',lambda v:v[1].__setitem__(1,q(0)),'ExactLeft',ex)
+    bad('exact-right',lambda v:v[1].__setitem__(3,q(3)),'ExactRight',ex)
+    bad('exact-relation-code',lambda v:v[1].__setitem__(4,4),'Relation',ex)
+    bad('exact-unresolved',lambda v:v[1].__setitem__(4,3),'ExactUnresolved',ex)
+    bad('exact-relation-agreement',lambda v:v[1].__setitem__(4,2),'RelationAgreement',ex)
+    bad('exact-verdict-code',lambda v:v[1].__setitem__(5,3),'Verdict',ex)
+    bad('exact-indecisive',lambda v:v[1].__setitem__(5,2),'ExactIndecisive',ex)
+    bad('exact-verdict-agreement',lambda v:v[1].__setitem__(5,1),'VerdictAgreement',ex)
+    for cause in (0,8): row(f'operational-cause-{cause}',[2,[2,cause]],'Cause')
+    derivative=evaluated(reduction=1)
+    for name,question,cause in [('derivative-left',['ridge','ridge'],'DerivativeLeft'),('derivative-right',['1/10','2'],'DerivativeRight'),('wall-zero',['0','ridge'],'WallLower'),('wall-negative',['-1','ridge'],'WallLower'),('wall-one',['1','ridge'],'WallUpper'),('wall-above',['2','ridge'],'WallUpper'),('definition',['1/10','foreign-ridge'],'Definition')]:
+        row(name,derivative,cause,question=question)
+    for mode,cause in [('missing','MissingProof'),('foreign','ProofIdentity'),('incomplete','Proof'),('invalid','Proof')]:
+        row(f'proof-{mode}',derivative,cause,question=['1/10','ridge'],proof=mode)
+    # Syntax rows have no verdict claim; their malformed member prevents downstream interpretation.
+    for name,mutate,cause in [
+        ('edition',lambda v:v.__setitem__(0,1),'Edition'),
+        ('outer-arity',lambda v:v.append(0),'Arity'),
+        ('constructor',lambda v:v[1].__setitem__(0,3),'Constructor'),
+        ('result-arity',lambda v:v[1].append(0),'Arity'),
+        ('missing-enclosure',lambda v:v[1].__setitem__(3,None),'Member'),
+        ('enclosure-arity',lambda v:v[1][3].pop(),'Arity'),
+        ('threshold-kind',lambda v:v[1].__setitem__(4,None),'Member'),
+        ('number-spelling',lambda v:v[1][4].__setitem__(0,'00'),'Number'),
+        ('number-reduction',lambda v:v[1].__setitem__(4,['0','2']),'Number'),
+        ('number-kind',lambda v:v[1][4].__setitem__(0,0),'Member'),
+        ('constructor-kind',lambda v:v[1].__setitem__(0,'0'),'Member'),
+        ('reduction-kind',lambda v:v[1].__setitem__(1,False),'Member'),
+        ('result-kind',lambda v:v.__setitem__(1,None),'Member'),
+        ('number-arity',lambda v:v[1][4].append('1'),'Arity'),
+        ('inclusion-kind',lambda v:v[1][3].__setitem__(1,0),'Member'),
+    ]:bad(name,mutate,cause)
+    raw=encode(base)
+    row('trailing',base,'TrailingBytes',raw=raw+b'\x00')
+    row('longer-head',base,'NonPreferredHead',raw=b'\x98\x02'+raw[1:])
+    row('indefinite',base,'IndefiniteLength',raw=b'\x9f'+raw[1:]+b'\xff')
+    row('tag',base,'Tag',raw=b'\xc0'+raw)
+    row('float',base,'Float',raw=b'\xf9\x00\x00')
+    row('negative-cause-kind',[2,[2,1]],'Member',raw=b'\x82\x02\x82\x02\x20')
+    # These overlap pairs are jointly invalid; the named earlier clause owns their stored refusal.
+    bad('order-question-reduction',lambda v:v[1].__setitem__(1,2),'QuestionLeft',expected={**expected,'question':['2','ridge']})
+    bad('order-domain-enclosure',lambda v:v[1].__setitem__(3,[q(1),True,q(-1),True]),'WallLower',derivative,question=['0','ridge'])
+    bad('order-enclosure-relation',lambda v:(v[1].__setitem__(3,[q(1),True,q(-1),True]),v[1].__setitem__(5,4)),'EnclosureOrder')
+    bad('order-relation-verdict',lambda v:(v[1].__setitem__(5,0),v[1].__setitem__(6,0)),'RelationAgreement')
+    row('order-question-operational', [2,[2,8]], 'QuestionLeft', expected={**expected,'question':['2','ridge']})
+    # Inherited ridge projections use their independent existing integer/text encodings.
+    def ridge(comparison): return [2,[0,['1/10',q(Fraction(1,10))]],[0],[],comparison,'0']
+    rational_question=['1/10','3/37']
+    for index,comparison in enumerate([evaluated(1,-1,-1),evaluated(1,1,1),evaluated(),exact_value(1,Fraction(1,10),Fraction(3,37))]+[[2,[2,c]] for c in range(1,8)]):
+        value=ridge(comparison)
+        if comparison[1][0] == 0: value[2]=[1]
+        row(f'ridge-{index}',value,edition='ridge',question=['1/10','ridge'] if comparison[1][0] == 0 else rational_question)
+    for name,mutate,cause in [('outer-edition',lambda v:v.__setitem__(0,1),'Edition'),('outer-size',lambda v:v.append(0),'Arity'),('nested-edition',lambda v:v[4].__setitem__(0,1),'Edition'),('wall-binding',lambda v:v.__setitem__(1,[0,['1/9',q(Fraction(1,9))]]),'WallBinding'),('floor-binding',lambda v:v.__setitem__(2,[1]),'FloorBinding'),('queries-not-enclosure',lambda v:v[4][1].__setitem__(3,[]),'Arity')]:
+        value=ridge(evaluated());mutate(value)
+        row('ridge-'+name,value,cause,edition='ridge',question=rational_question)
+    for predicate in range(1,6):
+        row(f'identity-ridge-{predicate}',evaluated(predicate),question=['1/10','ridge'])
+    row('identity-symbolic-left',evaluated(),question=['ridge','1'])
+    row('identity-symbolic-both',evaluated(),question=['ridge','ridge'])
+    row('identity-number',evaluated(),'Number',question=['not-a-number','ridge'])
+    row('identity-instance-definition-number',evaluated(),'Definition',question=['foreign-ridge','not-a-number'])
+    row('within-question-left-right',base,'QuestionLeft',expected={**expected,'question':['2','3']})
+    bad('within-reduction-predicate',lambda v:(v[1].__setitem__(1,2),v[1].__setitem__(2,0)),'Reduction')
+    bad('within-predicate-expected-reduction',lambda v:v[1].__setitem__(2,0),'Predicate',expected={**expected,'reduction':1})
+    row('within-expected-reduction-predicate',base,'ExpectedReduction',expected={**expected,'reduction':1,'predicate':2})
+    row('within-expected-predicate-domain',derivative,'ExpectedPredicate',question=['0','ridge'],expected=dict(question=['0','ridge'],reduction=1,predicate=2,threshold=q(0)))
+    row('within-derivative-left-right',derivative,'DerivativeLeft',question=['ridge','2'])
+    row('within-derivative-right-lower',derivative,'DerivativeRight',question=['0','2'])
+    row('within-upper-definition',derivative,'WallUpper',question=['1','foreign-ridge'])
+    row('within-definition-proof',derivative,'Definition',question=['1/10','foreign-ridge'],proof='missing')
+    bad('within-lower-upper-inclusion',lambda v:(v[1][3].__setitem__(1,False),v[1][3].__setitem__(3,False)),'LowerInclusion',evaluated(lower=0,upper=0))
+    bad('within-upper-threshold',lambda v:(v[1][3].__setitem__(3,False),v[1].__setitem__(4,q(1))),'UpperInclusion',evaluated(lower=0,upper=0),expected={**expected,'threshold':q(1)})
+    bad('within-threshold-binding',lambda v:v[1].__setitem__(4,q(1)),'Threshold',expected={**expected,'threshold':q(2)})
+    bad('within-relation-verdict-code',lambda v:(v[1].__setitem__(5,0),v[1].__setitem__(6,3)),'RelationAgreement')
+    bad('order-expected-threshold-relation',lambda v:v[1].__setitem__(5,4),'ExpectedThreshold',expected={**expected,'threshold':q(1)})
+    bad('order-predicate-enclosure',lambda v:(v[1].__setitem__(2,0),v[1].__setitem__(3,[q(1),True,q(-1),True])),'Predicate')
+    bad('order-edition-question',lambda v:v.__setitem__(0,1),'Edition',expected={**expected,'question':['2','ridge']})
+    bad('within-exact-left-right',lambda v:(v[1].__setitem__(1,q(0)),v[1].__setitem__(3,q(3))),'ExactLeft',ex)
+    bad('within-exact-right-predicate',lambda v:(v[1].__setitem__(3,q(3)),v[1].__setitem__(2,0)),'ExactRight',ex)
+    bad('within-exact-predicate-binding',lambda v:v[1].__setitem__(2,0),'Predicate',ex,expected=exact_expected)
+    bad('order-exact-binding-relation',lambda v:v[1].__setitem__(4,4),'ExpectedPredicate',ex,expected={**exact_expected,'predicate':2})
+    bad('within-exact-relation-verdict',lambda v:(v[1].__setitem__(4,2),v[1].__setitem__(5,3)),'RelationAgreement',ex)
+    # The unchanged publication schema names 37 BudgetUsage members, each decimal text.
+    primitive=[[[],[[0,['0',q(0)]]],'0',[0]],'1',[[5],None,None,'0',['0']*37,'0',False,'0',None]]
+    value=ridge(evaluated());value[2]=[1];value[3]=[copy.deepcopy(primitive),copy.deepcopy(primitive)]
+    row('ridge-query-pair',value,edition='ridge',question=['1/10','ridge'])
+    value[3][0][0][1][0][1]=['0',['0','2']]
+    value[3][1][0][0]={}
+    row('ridge-query-instance-number-shape',value,'Projection::CanonicalNumber',edition='ridge',question=['1/10','ridge'])
+    value=ridge(evaluated());value[1][1][1]=['1','20'];value[2]=[2]
+    row('ridge-projection-wall-floor',value,'Projection::CanonicalNumber',edition='ridge',question=rational_question)
+    value=ridge(evaluated());value[1]=[0,['1/9',q(Fraction(1,9))]];value[2]=[1]
+    row('ridge-binding-wall-floor',value,'WallBinding',edition='ridge',question=rational_question)
+    value=ridge(evaluated());value[2]=[1];value[4][1][1]=2
+    row('ridge-binding-nested-reduction',value,'FloorBinding',edition='ridge',question=rational_question)
+    value=ridge(evaluated());value[0]=1;value[1]=[0,['1/9',q(Fraction(1,9))]]
+    row('ridge-order-edition-wall',value,'Edition',edition='ridge',question=rational_question)
+    for reduction in (0,1):
+        for predicate in range(1,6):
+            for index,bounds in enumerate(intervals[:4]):
+                value=ridge(evaluated(predicate,*bounds,reduction=reduction));value[2]=[1]
+                row(f'ridge-symbolic-{reduction}-{predicate}-{index}',value,edition='ridge',question=['1/10','ridge'])
+    value=ridge(exact_value(1,Fraction(1,10),Fraction(3,37)));value[2]=[1]
+    row('ridge-exact-symbolic',value,'ExactContext',edition='ridge',question=['1/10','ridge'])
+    row('ridge-rounded-floor',ridge(evaluated()),'FloorBinding',edition='ridge',question=['1/10','ridge'])
+    for existing in rows:
+        if existing['case'] == 'ridge-queries-not-enclosure':
+            existing['value'][3]=[copy.deepcopy(primitive),copy.deepcopy(primitive)]
+            existing['canonical']=encode(existing['value']).hex()
+    # Exact operands use the exact constructor; the enclosure cannot change that fact.
+    row('evaluated-exact-context',evaluated(),'ExactEvaluated',question=['1','2'])
+    row('order-domain-exact-context',evaluated(),'Number',question=['1','not-a-number'])
+    bad('order-exact-context-enclosure',lambda v:v[1].__setitem__(3,[q(1),True,q(-1),True]),'ExactEvaluated',question=['1','2'])
+    row('ridge-evaluated-exact-context',ridge(evaluated()),'ExactEvaluated',edition='ridge',question=rational_question)
+    value=ridge(evaluated());value[4][1][3]=[q(1),True,q(-1),True]
+    row('ridge-order-exact-context-enclosure',value,'ExactEvaluated',edition='ridge',question=rational_question)
+    row('operational-with-verdict',[2,[2,1,2]],'Arity')
+    row('ridge-operational-with-verdict',ridge([2,[2,1,2]]),'Arity',edition='ridge',question=rational_question)
+    for code in (1,2,3):
+        value=evaluated(lower=-1,upper=-1);value[1][5]=code
+        row(f'relation-agreement-{code}',value,'RelationAgreement')
+        nested=ridge(value);nested[2]=[1]
+        row(f'ridge-relation-agreement-{code}',nested,'RelationAgreement',edition='ridge',question=['1/10','ridge'])
+    # Deterministic unsorted delivery avoids hiding a traversal defect behind fixture sorting.
+    rows=rows[::2][::-1]+rows[1::2]
+    return dict(provenance='Independent integer encoder and exact Fraction endpoint signs; no codec or interchange imports, no enclosure soundness or native-law evidence.',distinct_inputs=len({json.dumps({k:v for k,v in r.items() if k in ('canonical','edition','question','expected','proof')},sort_keys=True) for r in rows}),distinct_byte_inputs=len({r['canonical'] for r in rows}),cases=rows)
+
+
+def check_comparisons(path):
+    expected=comparison_vectors()
+    if json.loads(Path(path).read_text()) != expected:
+        raise ValueError('comparison corpus differs from independent integer derivation')
+    return expected
+
+
 def check(path):
     expected = vectors()
     if json.loads(Path(path).read_text()) != expected:
@@ -574,3 +770,9 @@ if __name__ == '__main__':
         path.write_text(json.dumps(vectors(), indent=2) + '\n')
     result = check(path)
     print(f"BINARY64-VECTORS cases={len(result['cases'])} distinct={result['distinct_inputs']} order=unsorted")
+
+    comparison_path = Path('packages/host/tests/data/comparison-carriers.json')
+    if args.write:
+        comparison_path.write_text(json.dumps(comparison_vectors(), indent=2) + '\n')
+    comparison_result = check_comparisons(comparison_path)
+    print(f"COMPARISON-VECTORS cases={len(comparison_result['cases'])} distinct={comparison_result['distinct_inputs']} byte_inputs={comparison_result['distinct_byte_inputs']} order=unsorted")

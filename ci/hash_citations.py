@@ -278,13 +278,14 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
-    if kind == "binary64-carrier-vectors" and standing == "defined":
-        from binary64_vectors import check
-        check(relative_file(root, rule['source']))
+    if kind in {"binary64-carrier-vectors", "comparison-carrier-vectors"} and standing == "defined":
+        from binary64_vectors import check, check_comparisons
+        reader = check if kind == "binary64-carrier-vectors" else check_comparisons
+        reader(relative_file(root, rule['source']))
         text = relative_file(root, rule['source']).read_text()
         values = {match.group() for match in occurrences(text)}
         cases = json.loads(text)['cases']
-        endpoints = {int(value, 16) for row in cases for value in row['endpoint_patterns']}
+        endpoints = {int(value, 16) for row in cases for value in row.get('endpoint_patterns', [])}
         octets = {value for row in cases for value in bytes.fromhex(row['canonical'])}
         characters = {ord(character) for character in json.dumps(cases, ensure_ascii=False)}
         # The generator's explicit operands and encoding bytes must occur in

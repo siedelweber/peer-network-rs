@@ -5,6 +5,8 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 #[path = "public/binary64.rs"]
 mod binary64;
+#[path = "public/comparison.rs"]
+mod comparison;
 
 fn runtime() -> tokio::runtime::Runtime {
     tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap()

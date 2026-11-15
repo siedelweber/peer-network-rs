@@ -1301,3 +1301,14 @@ reader = "binary64-carrier-vectors"
 source = "packages/host/tests/data/binary64-carriers.json"
 definition = "Regenerate distinct unsorted carrier inputs without the host codec or interchange helpers; the binary64-corpus gate step independently checks the same reproduction. The generator's explicit endpoint integers, escaped encoding bytes and Unicode characters must occur in that checked corpus, as must the test's substituted endpoint spelling. These golden values check representation and interval implications, not interval soundness or a native law; no carrier identity is assigned."
 paths = ["packages/host/tests/data/binary64-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/binary64.rs"]
+
+[[rows]]
+family = "comparison-carrier-vectors"
+group = "comparison carrier golden values"
+measures = "Canonical comparison fragment bytes derived independently from exact rational fixtures"
+producer = "ci/binary64_vectors.py with integer framing and exact Fraction endpoint arithmetic"
+establishment = "defined"
+reader = "comparison-carrier-vectors"
+source = "packages/host/tests/data/comparison-carriers.json"
+definition = "Regenerate unsorted explicitly selected comparison fragments through the existing integer generator, without the codec or interchange helpers. The binary64-corpus step checks both corpora independently of literal accounting. These supplied cases check structural refusal order and endpoint implications, not enclosure origin or soundness; no digest identity is assigned."
+paths = ["packages/host/tests/data/comparison-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/comparison.rs"]

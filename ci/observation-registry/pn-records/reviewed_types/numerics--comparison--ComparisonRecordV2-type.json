@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::ComparisonRecordV2",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" Explicitly selected ridge comparison edition two with unchanged context projections.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ComparisonRecordV2 { pub wall : Wall , pub floor : Floor , pub queries : Vec < PrimitiveRecord > , pub comparison : FloorComparisonV2 , pub work : u64 , }"
+  }
+}

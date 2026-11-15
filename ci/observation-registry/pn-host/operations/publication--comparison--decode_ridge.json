@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/comparison.rs",
+    "item": "publication::comparison::decode_ridge",
+    "owner": "HOST",
+    "signature": "fn decode_ridge (bytes : & [u8] , expected_floor : Floor , request : & Request < '_ > , numeric : & mut NumericContext , limits : & Limits ,) -> Result < ComparisonRecordV2 , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/comparison.rs::publication::comparison::decode_ridge",
+    "body": "{ let value = read (bytes , limits) ? ; let members = selected (& value , 6) ? ; let mut context = context (numeric , & limits . arithmetic) ? ; let wall = Wall :: read (& members [1] , & mut context) . map_err (Error :: Projection) ? ; let floor = Floor :: read (& members [2] , & mut context) . map_err (Error :: Projection) ? ; let queries = Vec :: read (& members [3] , & mut context) . map_err (Error :: Projection) ? ; let work = u64 :: read (& members [5] , & mut context) . map_err (Error :: Projection) ? ; let comparison = floor_read (& members [4] , & limits . arithmetic) ? ; let record = ComparisonRecordV2 { wall , floor , queries , comparison , work , } ; record . validate (& request . expected . question . left , expected_floor , request . expected , request . proof , & mut context . arithmetic ,) . map_err (Error :: Record) ? ; Ok (record) }",
+    "class_decision": "comparison-host",
+    "item_premise": "These explicitly selected comparison fragments contain only public original operands, defining identities, exact rational enclosures, result codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "comparison-full_recording",
+      "secret_flow": "comparison-secret_flow",
+      "exposure_consumers": "comparison-exposure_consumers"
+    }
+  }
+}

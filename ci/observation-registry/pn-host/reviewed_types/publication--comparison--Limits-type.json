@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::comparison::Limits",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/comparison.rs",
+    "syntax": "# [doc = \" Mandatory byte-reader and exact-arithmetic reconstruction ceilings.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug)] pub struct Limits { pub transport : TransportLimits , pub arithmetic : ExactLimits , }"
+  }
+}

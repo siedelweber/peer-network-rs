@@ -8,6 +8,9 @@ mod backend_enclosure_mod;
 mod backend_enclosure_model;
 mod backend_enclosure_power;
 mod backend_error;
+/// Explicit comparison fragments, separate from publication.
+/// (´[ROOT-dec:design:comparison-verdict-record]´)
+pub mod comparison;
 mod epoch_admission;
 mod epoch_admission_finalize;
 mod epoch_base;

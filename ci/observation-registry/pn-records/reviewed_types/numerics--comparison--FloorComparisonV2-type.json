@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::FloorComparisonV2",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" Explicitly selected `FloorComparison` edition two, not an admission carrier.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FloorComparisonV2 { pub result : ResultKind , }"
+  }
+}

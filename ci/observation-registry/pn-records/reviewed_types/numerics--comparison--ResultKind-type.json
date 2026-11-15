@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "numerics::comparison::ResultKind",
+    "package": "pn-records",
+    "path": "packages/records/src/numerics/comparison.rs",
+    "syntax": "# [doc = \" Disjoint evaluated, exact and operational constructors of the second edition.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ResultKind { # [doc = \" A claim about the reduction's quantity, with its endpoint-derived verdict.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Evaluated { reduction : u64 , predicate : u64 , enclosure : Enclosure , threshold : Fraction , relation : u64 , verdict : u64 , } , # [doc = \" Original exact operands; no enclosure or mathematical indecision is invented.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Exact { left : Fraction , predicate : u64 , right : Fraction , relation : u64 , verdict : u64 , } , # [doc = \" An operational outcome has a cause and has no verdict.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Operational { cause : u64 } , }"
+  }
+}
