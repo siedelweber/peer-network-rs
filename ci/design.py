@@ -74,7 +74,7 @@ def historical_references():
         if row['path'] in PAPER_EDITION_FIXTURES or row['path'] == PAPER_HISTORY.as_posix():
             raise ValueError('paper history: invalid binding path')
     for row in rows:
-        marks = re.finditer(r'\b(?:premise|relies|realizes)\{[^}]*\}', row['line'])
+        marks = re.finditer(r'\b(?:premise|relies|realizes|portion)\{[^}]*\}', row['line'])
         if any(row['release'] in mark.group() for mark in marks):
             raise ValueError('paper history: historical mention inside normative mark')
         path = Path(row['path'])

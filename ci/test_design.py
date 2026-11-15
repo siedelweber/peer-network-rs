@@ -672,7 +672,7 @@ class Correspondence(unittest.TestCase):
                 self.assertIn('continuation line in rendered Markdown', result.stderr)
 
     def test_release_tags(self):
-        """Release identities are pinned; stale references refuse unless exactly bound as older historical facts in a closed class, with changed, transplanted, orphaned and duplicate bindings refused; only the two named source fixtures are exempt.
+        """Release identities are pinned; stale references refuse unless exactly bound as older historical facts in a closed class, with changed, transplanted, orphaned and duplicate bindings refused; only the two named source fixtures are exempt. Mid-line normative marks include portion; template outputs, self-derived rows and independently mismatched source release or class refuse, and path uniqueness is explicit.
         ´claim:design:release-identities-are-pinned´
         ´test:integration:test-release-tags´
         """
@@ -766,8 +766,8 @@ class Correspondence(unittest.TestCase):
                                      ({**row, 'reason': ' '}, 'invalid row text')]:
                 with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, message):
                     run([invalid], [path])
-            for mark in ('premise', 'relies', 'realizes'):
-                marked = mark + '{' + source + '; asserted}'
+            for mark in ('premise', 'relies', 'realizes', 'portion'):
+                marked = 'Context before the mark: ' + mark + '{' + source + '; asserted}'
                 path.write_text(marked + '\n')
                 with self.subTest(mark=mark), self.assertRaisesRegex(ValueError, 'historical mention inside normative mark'):
                     run([{**row, 'line': marked}], [path])
@@ -782,6 +782,29 @@ class Correspondence(unittest.TestCase):
                                 ([row, {**copy, 'derived_from': other.as_posix()}], [path, generated])):
                 with self.subTest(derived=rows), self.assertRaisesRegex(ValueError, 'generated occurrence lacks unique registered source row'):
                     run(rows, paths)
+            # Each source predicate refuses independently before occurrence joining.
+            for kind, candidate in (
+                ('self source', {**copy, 'derived_from': generated.as_posix()}),
+                ('source release', {**row, 'release': 'network-v0.0.0'}),
+                ('source class', {**row, 'class': 'implemented-route'}),
+            ):
+                rows = [candidate] if kind == 'self source' else [candidate, copy]
+                register.write_text(json.dumps(rows))
+                with patch('design.PAPER_HISTORY', register), self.assertRaisesRegex(ValueError, 'generated occurrence lacks unique registered source row', msg=kind+' is not a matching source'):
+                    historical_references()
+            register.write_text(json.dumps([row, {**row, 'line': 'Another occurrence'}, copy]))
+            with patch('design.PAPER_HISTORY', register), self.assertRaisesRegex(ValueError, 'unique registered source row', msg='source path must identify one release and class occurrence'):
+                historical_references()
+            # A real template output is generated even outside the dataset directory.
+            from contextlib import chdir
+            with chdir(directory):
+                template = Path('docs/templates/render.md.j2')
+                template.parent.mkdir(parents=True, exist_ok=True)
+                template.write_text(source+'\n')
+                rendered = {**row, 'path': 'render.md', 'derived_from': ''}
+                register.write_text(json.dumps([rendered]))
+                with patch('design.PAPER_HISTORY', register), self.assertRaisesRegex(ValueError, 'unique registered source row', msg='template output needs its registered source'):
+                    historical_references()
             for release in (PAPER_TAG, 'network-v999.0.0'):
                 register.write_text(json.dumps([{**row, 'release': release}]))
                 with patch('design.PAPER_HISTORY', register), self.assertRaisesRegex(ValueError, 'release is not strictly older'):
