@@ -1770,7 +1770,7 @@
         }
       },
       "package": "pn-epoch",
-      "recipe": "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise.",
+      "recipe": "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second measurement threshold including sampling and the common 600-second child hang containment. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise.",
       "recipe_edition": "scaling-workloads/domain-dyadic-v5",
       "sizes": [
         2,
@@ -1895,7 +1895,7 @@
         }
       },
       "package": "pn-epoch",
-      "recipe": "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise.",
+      "recipe": "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second measurement threshold including sampling and the common 600-second child hang containment. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise.",
       "recipe_edition": "scaling-workloads/domain-dyadic-v5",
       "sizes": [
         2,

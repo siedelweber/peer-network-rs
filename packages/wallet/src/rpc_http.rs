@@ -522,38 +522,65 @@ mod tests {
     use std::io::{Read as _, Write as _};
 
     fn exchange_bytes(bytes: &'static [u8], drip: bool) -> Result<(u16, Vec<u8>), RpcRefusal> {
+        exchange_contained(bytes, drip, Duration::from_secs(600))
+    }
+
+    fn exchange_contained(bytes: &'static [u8], drip: bool, containment: Duration) -> Result<(u16, Vec<u8>), RpcRefusal> {
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let server = std::thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
+            stream.set_read_timeout(Some(Duration::from_secs(600))).unwrap();
+            stream.set_write_timeout(Some(Duration::from_secs(600))).unwrap();
             let mut request = [0; 1024];
-            let count = stream.read(&mut request).unwrap_or(0);
+            let count = stream.read(&mut request).unwrap_or_else(|error| {
+                assert!(
+                    !matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock),
+                    "HANG awaiting acquisition request; last state=request-incomplete"
+                );
+                0
+            });
             assert!(count <= request.len());
-            let mut sent = 0;
-            for byte in bytes {
-                // This acquisition drip is one-sided for the peer but bounded for the client: 42 bytes at 25 ms take 1.05 s nominally against a 100 ms deadline, so a starved correct client can lose the order; dripping until observed closure under hang containment is owed.
-                if drip {
-                    std::thread::sleep(Duration::from_millis(25));
-                }
-                if stream.write_all(&[*byte]).is_err() {
-                    break;
-                }
-                sent += 1;
+            if count == 0 && !drip {
+                return;
             }
-            stream.shutdown(std::net::Shutdown::Write).ok();
             if drip {
-                assert!(sent < bytes.len(), "single exchange deadline refuses before drip completes");
-                stream.set_read_timeout(Some(Duration::from_secs(600))).unwrap();
-                let mut sink = [0; 1024];
+                // Each controlled write is offered without Nagle buffering; successful writes alone do not prove when the client reads them.
+                stream.set_nodelay(true).unwrap();
+                // This open-ended body drip is one-sided on both sides: only client closure ends progress, witnessing deadline-class refusal during body progress, not non-renewal; the 600-second containment names a hang. At one byte per millisecond, containment precedes the admitted body length even without scheduling delay.
+                stream
+                    .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 8000000\r\n\r\n")
+                    .unwrap();
+                stream.set_nonblocking(true).unwrap();
+                let end = Instant::now() + Duration::from_secs(600);
                 loop {
-                    match stream.read(&mut sink) {
+                    assert!(Instant::now() < end, "HANG awaiting acquisition drip client closure");
+                    match stream.read(&mut request) {
                         Ok(0) => break,
                         Ok(_) => {}
                         Err(error) if error.kind() == std::io::ErrorKind::ConnectionReset => break,
-                        Err(error) => panic!("HANG or I/O failure before peer closure: {error}"),
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {}
+                        Err(error) => panic!("unexpected acquisition peer state: {error}"),
                     }
+                    match stream.write_all(b" ") {
+                        Ok(()) => {}
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {}
+                        Err(error)
+                            if matches!(
+                                error.kind(),
+                                std::io::ErrorKind::BrokenPipe | std::io::ErrorKind::ConnectionReset
+                            ) =>
+                        {
+                            break;
+                        }
+                        Err(error) => panic!("acquisition drip write failed: {error}"),
+                    }
+                    std::thread::sleep(Duration::from_millis(1));
                 }
                 assert!(count > 0, "deadline case reaches the controlled peer before closure");
+            } else {
+                stream.write_all(bytes).unwrap();
+                stream.shutdown(std::net::Shutdown::Write).ok();
             }
         });
         let stream = std::net::TcpStream::connect(address).unwrap();
@@ -564,22 +591,34 @@ mod tests {
             .header(header::CONNECTION, "close")
             .body(Full::new(Bytes::from_static(b"{}")))
             .unwrap();
-        // Incomplete peer progress and the Deadline class decide this finite-script control; client starvation can lose that order, and the open-ended form is owed.
-        let budget = if drip {
-            Duration::from_millis(100)
-        } else {
-            Duration::from_secs(600)
-        };
+        // The drip has no script end; a refusal under continuing progress witnesses its class, not non-renewal, while all other exchanges use hang containment only.
+        let budget = if drip { Duration::from_millis(100) } else { containment };
         let result = exchange(stream, request, RpcLimits::default(), Instant::now() + budget, &mut None);
-        server.join().unwrap();
+        let peer = server.join();
+        assert!(
+            drip || result != Err(RpcRefusal::Deadline),
+            "HANG awaiting acquisition exchange"
+        );
+        peer.expect("controlled acquisition peer failed; its panic names the event");
         result
     }
 
-    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and slow progress cannot renew the single exchange deadline: deadline-class refusal closes the dripping peer before its final byte; a real-network wall-time envelope is not claimed.
+    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and deadline-class refusal closes the progressing body peer before its response completes; neither read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result.
     /// ´claim:wallet:rpc-http-acquisition-is-bounded´
     /// ´test:unit:acquisition-cases´
     #[test]
     fn acquisition_cases() {
+        let trip = std::panic::catch_unwind(|| exchange_contained(b"", false, Duration::ZERO));
+        let error = trip.expect_err("acquisition containment must report its named hang");
+        let message = error
+            .downcast_ref::<&str>()
+            .copied()
+            .or_else(|| error.downcast_ref::<String>().map(String::as_str))
+            .unwrap();
+        assert!(
+            message.contains("HANG awaiting acquisition exchange"),
+            "acquisition containment names its event: {message}"
+        );
         assert_eq!(
             exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull", false)
                 .unwrap()

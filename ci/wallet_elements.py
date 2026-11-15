@@ -21,6 +21,8 @@ import tomllib
 import traceback
 
 PROFILE = Path('packages/wallet/provisioning.json')
+# Event containment under rule:devperf:comparison, not a service latency claim.
+HANG_SECONDS = 600
 
 
 def binary():
@@ -36,14 +38,16 @@ def allocation_lock():
     # Same kernel-owned mutex as every PostgreSQL gate allocator; reservation
     # remains serialized until the daemon owns the TCP socket.
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
-        deadline = time.monotonic() + 60
+        deadline = time.monotonic() + HANG_SECONDS
         while True:
             try:
                 lock.bind('\0pn-host-postgresql-ports-' + str(os.getuid()))
                 break
             except OSError as error:
-                if error.errno != 98 or time.monotonic() >= deadline:
-                    raise RuntimeError('Elements gate ports unavailable') from None
+                if error.errno != 98:
+                    raise RuntimeError('Elements gate port allocation failed') from None
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('HANG awaiting Elements allocation lock; last state=occupied') from None
                 time.sleep(0.05)
         yield
 
@@ -96,16 +100,24 @@ def installed_version(root):
     return result.stdout.splitlines()[0]
 
 
-RPC_TIMEOUT = 10
-# Setup may wait for trusted wallet database I/O; steady-state exchanges keep
-# their existing socket bound. Neither class retries a failed operation.
-RPC_ADMIN_TIMEOUT = 60
+def daemon_wait(root, log):
+    """Await daemon startup under rule:devperf:comparison hang containment."""
+    try:
+        return subprocess.run([binary(), '-datadir='+str(root), '-daemonwait'], stdout=log, stderr=log, timeout=HANG_SECONDS)
+    except subprocess.TimeoutExpired:
+        raise TimeoutError('HANG awaiting Elements startup; last state=daemonwait-pending; private fixture log retained') from None
+
+
+RPC_TIMEOUT = HANG_SECONDS
+RPC_SLOW_MEASUREMENT_SECONDS = 10
+# Every socket operation waits for its event under hang containment; none retries.
+RPC_ADMIN_TIMEOUT = HANG_SECONDS
 ADMIN_METHODS = frozenset(('createwallet', 'importprivkey'))
 # Each sequential fixture address request can replenish this small reserve.
 # Pre-generating the default legacy wallet pool does no useful fixture work.
 PRODUCER_KEYPOOL = 16
 RPC_DIAGNOSTIC_CHARS = 512
-WALLET_SYNC_TIMEOUT = 60
+WALLET_SYNC_TIMEOUT = HANG_SECONDS
 
 
 def diagnostic_text(value):
@@ -156,6 +168,8 @@ def wait_wallet(config, wallet='producer'):
         rpc(config, method)
     except Exception as error:
         failure = error
+    if isinstance(failure, TimeoutError):
+        raise TimeoutError('HANG awaiting Elements validation-queue barrier; last state=callback-drain-pending') from failure
     progress = wallet_progress(config, wallet)
     line = ('WALLET-SYNC condition=wallet-processed-height-equals-chain-height '
             f'wallet_height={diagnostic_text(progress["wallet"])} chain_height={diagnostic_text(progress["chain"])} '
@@ -213,7 +227,7 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
         # The bound applies to each socket operation, so a timeout names the
         # public method it stalled and the exchange's elapsed time against it.
         outcome = 'timeout'
-        raise TimeoutError(f'{method} exceeded the {timeout} s socket bound after {time.monotonic() - started:.3f} s') from None
+        raise TimeoutError(f'HANG awaiting Elements RPC method={method} last_state=exchange-incomplete containment_s={timeout} wall_s={time.monotonic() - started:.3f}') from None
     finally:
         connection.close()
         if administrative:
@@ -226,10 +240,10 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
                 source = os.environ.get('PN_GATE_SOURCE', 'standalone')
                 with Path(config['rpc_log']).open('a') as stream:
                     stream.write(line+f' commit={source} case={case} node_load='+json.dumps(list(os.getloadavg()))+'\n')
-                    if outcome == 'success' and elapsed > RPC_TIMEOUT:
+                    if outcome == 'success' and elapsed > RPC_SLOW_MEASUREMENT_SECONDS:
                         from flake_ledger import Session
-                        row = Session(source).record('slow-success', case, 'administrative call exceeded steady-state socket bound',
-                            method=method, outcome=outcome, duration_s=elapsed, steady_bound_s=RPC_TIMEOUT,
+                        row = Session(source).record('slow-success', case, 'administrative call exceeded slow-success measurement threshold',
+                            method=method, outcome=outcome, duration_s=elapsed, measurement_threshold_s=RPC_SLOW_MEASUREMENT_SECONDS,
                             administrative_bound_s=timeout, finding='recurrence')
                         stream.write('FLAKE-LEDGER '+json.dumps(row, sort_keys=True)+'\n')
 
@@ -250,12 +264,12 @@ def stop(root):
         rpc(config, 'stop')
     except Exception:
         os.kill(pid, signal.SIGTERM)
-    deadline = time.monotonic() + 20
+    deadline = time.monotonic() + HANG_SECONDS
     while pidfile.exists() and time.monotonic() < deadline:
         time.sleep(0.05)
     if pidfile.exists():
         os.kill(pid, signal.SIGKILL)
-        raise RuntimeError('Elements required forced shutdown')
+        raise RuntimeError('HANG awaiting Elements shutdown; last state=pid-file-present; forced shutdown sent')
 
 
 def start(root):
@@ -287,7 +301,7 @@ def start(root):
             (root/'elements.conf').chmod(0o600)
             (root/'elementsregtest'/'debug.log').unlink(missing_ok=True)
             with (root/'private.log').open('wb') as log:
-                result = subprocess.run([binary(), '-datadir='+str(root), '-daemonwait'], stdout=log, stderr=log, timeout=30)
+                result = daemon_wait(root, log)
             if not result.returncode:
                 break
             if not port_taken(root):
@@ -474,7 +488,7 @@ def restart(root):
     with allocation_lock():
         stop(root)
         with (root/'private.log').open('ab') as log:
-            result = subprocess.run([binary(), '-datadir='+str(root), '-daemonwait'], stdout=log, stderr=log, timeout=30)
+            result = daemon_wait(root, log)
         if result.returncode:
             raise RuntimeError('Elements restart failed')
 

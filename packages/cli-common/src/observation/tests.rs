@@ -516,7 +516,12 @@ fn status_after_stalled_delivery() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"public":"first"}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     for index in 0..59 {
         observation.emit(json!({"public":index}));
     }
@@ -609,7 +614,12 @@ fn trace_burst_capacity() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     for index in 1..ordinary {
         observation.emit(json!({"kind":"trace","public":index}));
     }
@@ -728,7 +738,12 @@ fn ordinary_queue_overflow() {
     observation.full_trace = true;
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     let excess = 7;
     for index in 0..QUEUE_RECORDS + excess {
         observation.emit(json!({"kind":"trace","public":index}));
@@ -1288,7 +1303,12 @@ fn exit_reports_pending_delivery() {
     observation.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
     observation.refuse_drain_wait = true;
     observation.emit(json!({"kind":"trace","index":0}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     for index in 1..241 {
         observation.emit(json!({"kind":"trace","index":index}));
     }
@@ -1303,7 +1323,10 @@ fn exit_reports_pending_delivery() {
     let returned = completion.recv_timeout(Duration::from_secs(600));
     release.send(()).unwrap();
     thread.join().unwrap();
-    returned.expect("guard drop waited for the blocked transport after its injected deadline");
+    returned.unwrap_or_else(|error| match error {
+        mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting guard drop acknowledgement after its injected deadline"),
+        mpsc::RecvTimeoutError::Disconnected => panic!("guard drop acknowledgement channel disconnected"),
+    });
     let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
     assert_eq!(row["attempted_records"], 242);
     assert_eq!(row["delivered_records"], 0);
@@ -1346,7 +1369,12 @@ fn deep_payload_delivery() {
     let (done, drained) = mpsc::sync_channel(1);
     observation.flush_sender.send(done).unwrap();
     observation.sender.send(Message::Wake).unwrap();
-    drained.recv_timeout(Duration::from_secs(600)).unwrap();
+    drained
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     assert_eq!(
         observation.lost.load(Ordering::Relaxed),
         0,
@@ -1828,10 +1856,20 @@ fn cutoff_before_publication() {
         finished.send(()).unwrap();
     }));
     observation.emit(json!({"kind":"trace","public":"queued"}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     drop(BootstrapGuard(Some(observation.clone())));
     release.send(()).unwrap();
-    completion.recv_timeout(Duration::from_secs(600)).unwrap();
+    completion
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     // A flush acknowledgement or disconnect follows the resumed delivery.
     observation.refuse_drain_wait = false;
     observation.flush_for(Duration::from_secs(30));
@@ -1899,10 +1937,20 @@ fn shared_transport_cutoff() {
         cutoff: Some(cutoff),
     })));
     observation.emit(json!({"kind":"trace"}));
-    entry.recv_timeout(Duration::from_secs(600)).unwrap();
+    entry
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     let guard = BootstrapGuard(Some(observation));
     let thread = std::thread::spawn(move || drop(guard));
-    at_cutoff.recv_timeout(Duration::from_secs(600)).unwrap();
+    at_cutoff
+        .recv_timeout(Duration::from_secs(600))
+        .unwrap_or_else(|error| match error {
+            mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
+            mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
+        });
     release.send(()).unwrap();
     thread.join().unwrap();
     let bytes = capture.0.lock().unwrap();

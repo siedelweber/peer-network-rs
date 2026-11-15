@@ -195,7 +195,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay. Unexpected RPC refusals retain the daemon log and quote bounded code, message and observed wallet/chain heights; expected refusals keep their result. The pinned daemon advertises the validation-queue barrier, and both fixture mining paths require a drained wallet at the chain height before dependent spends; stand-ins witness a lagging wallet, a failed barrier and unavailable observations without retrying a spend.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its hang, method and elapsed time against containment; injected allocation, startup and validation-queue hangs retain their awaited state, allocation and shutdown waits pin both sides of 600 seconds, and the ordinary and administrative socket waits pin 600-second containment. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay. Unexpected RPC refusals retain the daemon log and quote bounded code, message and observed wallet/chain heights; expected refusals keep their result. The pinned daemon advertises the validation-queue barrier, and both fixture mining paths require a drained wallet at the chain height before dependent spends; stand-ins witness a lagging wallet, a failed barrier and unavailable observations without retrying a spend.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -220,6 +220,32 @@ class WalletBoundary(unittest.TestCase):
                 check_ports(wallet_elements.PORTS, proc)
             (proc/'ip_local_reserved_ports').write_text('22100-22159\n')
             check_ports(wallet_elements.PORTS, proc)
+        import subprocess
+        with patch.object(wallet_elements, 'binary', return_value='elementsd'), patch.object(wallet_elements.subprocess, 'run', return_value=types.SimpleNamespace(returncode=0)) as child:
+            wallet_elements.daemon_wait(Path('fixture'), None)
+        self.assertEqual(child.call_args.kwargs['timeout'], 600, 'startup uses hang containment')
+        with patch.object(wallet_elements, 'binary', return_value='elementsd'), patch.object(wallet_elements.subprocess, 'run', side_effect=subprocess.TimeoutExpired(['elementsd'], 600)):
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting Elements startup; last state=daemonwait-pending'):
+                wallet_elements.daemon_wait(Path('fixture'), None)
+        with patch.object(wallet_elements, 'check_ports'), patch.object(wallet_elements.socket, 'socket') as socket_factory, patch.object(wallet_elements.time, 'monotonic', side_effect=[0, 599, 601]), patch.object(wallet_elements.time, 'sleep') as pause:
+            socket_factory.return_value.__enter__.return_value.bind.side_effect=OSError(98, 'occupied')
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting Elements allocation lock; last state=occupied'):
+                with wallet_elements.port_selection():
+                    self.fail('occupied allocation was admitted')
+            self.assertEqual(pause.call_count, 1, 'Elements allocation is pending at 599 and hangs at 601')
+        with patch.object(wallet_elements, 'rpc', side_effect=TimeoutError('HANG injected callback drain')):
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting Elements validation-queue barrier'):
+                wallet_elements.wait_wallet(dict(_wallet_sync_help=True))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'elementsregtest').mkdir()
+            (root/'elementsregtest/elementsd.pid').write_text('123')
+            (root/'producer.json').write_text('{}')
+            with patch.object(wallet_elements, 'rpc'), patch.object(wallet_elements.os, 'kill') as kill, patch.object(wallet_elements.time, 'monotonic', side_effect=[0, 599, 601]), patch.object(wallet_elements.time, 'sleep') as pause:
+                with self.assertRaisesRegex(RuntimeError, 'HANG awaiting Elements shutdown; last state=pid-file-present'):
+                    wallet_elements.stop(root)
+            self.assertEqual(pause.call_count, 1, 'Elements shutdown is pending at 599 and hangs at 601')
+            kill.assert_called_once_with(123, wallet_elements.signal.SIGKILL)
         # Closing the accepted side first leaves the server port in TIME_WAIT, as the daemon does.
         with socket.socket() as server:
             server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -302,7 +328,7 @@ class WalletBoundary(unittest.TestCase):
             bound = wallet_elements.RPC_TIMEOUT
             wallet_elements.RPC_TIMEOUT = 0.2
             try:
-                with self.assertRaisesRegex(TimeoutError, r'^getblockcount exceeded the 0\.2 s socket bound after \d+\.\d{3} s$'):
+                with self.assertRaisesRegex(TimeoutError, r'^HANG awaiting Elements RPC method=getblockcount last_state=exchange-incomplete containment_s=0\.2 wall_s=\d+\.\d{3}$'):
                     wallet_elements.rpc(dict(port=silent.getsockname()[1], producer='fixture:fixture'), 'getblockcount')
             finally:
                 wallet_elements.RPC_TIMEOUT = bound
@@ -312,7 +338,8 @@ class WalletBoundary(unittest.TestCase):
         from unittest.mock import patch, MagicMock
         from contextlib import redirect_stderr
         import io
-        self.assertGreater(wallet_elements.RPC_ADMIN_TIMEOUT, wallet_elements.RPC_TIMEOUT)
+        self.assertEqual(wallet_elements.RPC_ADMIN_TIMEOUT, 600, 'administrative calls use hang containment')
+        self.assertEqual(wallet_elements.RPC_TIMEOUT, 600, 'ordinary calls use hang containment')
         for method in ['createwallet', 'importprivkey', 'getblockcount', 'getnewaddress', 'invalidateblock']:
             administrative = method in ('createwallet', 'importprivkey')
             expected = wallet_elements.RPC_ADMIN_TIMEOUT if administrative else wallet_elements.RPC_TIMEOUT
@@ -378,7 +405,7 @@ class WalletBoundary(unittest.TestCase):
             row, = [json.loads(line) for line in (Path(directory)/'gate-flakes.jsonl').read_text().splitlines()]
             self.assertEqual((row['event'], row['commit'], row['case'], row['duration_s']),
                              ('slow-success', 'fixture-source', 'fixture::wallet', 10.25))
-            self.assertEqual(row['steady_bound_s'], wallet_elements.RPC_TIMEOUT)
+            self.assertEqual(row['measurement_threshold_s'], wallet_elements.RPC_SLOW_MEASUREMENT_SECONDS)
             self.assertEqual(row['administrative_bound_s'], wallet_elements.RPC_ADMIN_TIMEOUT)
             self.assertNotIn('private credential sentinel', retained+output.getvalue())
 
@@ -452,6 +479,9 @@ class WalletBoundary(unittest.TestCase):
                             self.fail('queue barrier must release the held wallet before checking height: '+str(error))
                         self.assertIn('wallet_height="5" chain_height="5"', output.getvalue(),
                                       'barrier reports the processed height after draining')
+                    elif mode == 'timeout':
+                        with self.assertRaisesRegex(TimeoutError, 'HANG awaiting Elements validation-queue barrier; last state=callback-drain-pending'):
+                            e.wait_wallet(config.copy())
                     else:
                         with self.assertRaisesRegex(RuntimeError, 'synchronization.*(help unavailable|wallet-processed-height-equals-chain-height)'):
                             e.wait_wallet(config.copy())
@@ -483,7 +513,7 @@ class WalletBoundary(unittest.TestCase):
         connection = MagicMock()
         connection.getresponse.side_effect = TimeoutError('queue stalled')
         with patch.object(e.http.client, 'HTTPConnection', return_value=connection) as factory:
-            with self.assertRaisesRegex(TimeoutError, 'syncwithvalidationinterfacequeue exceeded the 60 s socket bound'):
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting Elements RPC method=syncwithvalidationinterfacequeue last_state=exchange-incomplete containment_s=600'):
                 e.rpc(config, 'syncwithvalidationinterfacequeue')
         factory.assert_called_once_with('127.0.0.1', 1, timeout=e.WALLET_SYNC_TIMEOUT)
         connection.request.assert_called_once()

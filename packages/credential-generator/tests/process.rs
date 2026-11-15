@@ -42,6 +42,12 @@ if case=='reverse': os.environ['LISTEN_FDNAMES']='verifier:password'
 if case=='default': os.environ.pop('PN_OBSERVE_LEVEL',None)
 os.execv(sys.argv[1],[sys.argv[1]])
 '''
+def wait_output(process):
+    try: return process.communicate(timeout=600)
+    except subprocess.TimeoutExpired: raise TimeoutError('HANG awaiting generator process exit and output drain; last state=child-pending') from None
+def wait_exit(process):
+    try: return process.wait(timeout=600)
+    except subprocess.TimeoutExpired: raise TimeoutError('HANG awaiting killed generator process; last state=child-pending') from None
 for case in ('normal','reverse','default','missing','closed'):
     ar,aw=os.pipe(); br,bw=os.pipe()
     if case=='closed': os.close(ar); ar=None
@@ -49,7 +55,7 @@ for case in ('normal','reverse','default','missing','closed'):
     try:
         p=subprocess.Popen([sys.executable,'-c',child,binary,str(aw),str(bw),case],pass_fds=(aw,bw),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         os.close(aw); aw=None; os.close(bw); bw=None
-        out,err=p.communicate(timeout=600)
+        out,err=wait_output(p)
         a=os.read(ar,1024) if ar is not None else b''; b=os.read(br,1024)
         assert (ar is None or os.read(ar,1)==b'') and os.read(br,1)==b'', 'both private streams ended after exit'
         password,verifier=(b,a) if case=='reverse' else (a,b)
@@ -72,7 +78,7 @@ for case in ('normal','reverse','default','missing','closed'):
                 assert b'GENERATOR' in err and b'dec:observe:first-start-route' in err, ('registered generator trace observed',case,err.decode(errors='replace'))
         for line in err.splitlines(): json.loads(line)
     finally:
-        if p is not None and p.poll() is None: p.kill(); p.wait(timeout=600)
+        if p is not None and p.poll() is None: p.kill(); wait_exit(p)
         for fd in (ar,aw,br,bw):
             if fd is not None: os.close(fd)
 ar,aw=os.pipe(); br,bw=os.pipe(); p=None
@@ -97,18 +103,18 @@ try:
                     ready=True
         if ready: break
     if not ready or p.poll() is not None:
-        out,err=p.communicate(timeout=600)
+        out,err=wait_output(p)
         raise AssertionError(('construction event absent',p.returncode,out,diagnostic+err))
     count=array.array('i',[0]); fcntl.ioctl(ar,termios.FIONREAD,count,True)
     assert count[0]==capacity, 'reader retains the full pipe before termination'
-    p.terminate(); out,err=p.communicate(timeout=600); err=diagnostic+err
+    p.terminate(); out,err=wait_output(p); err=diagnostic+err
     assert p.returncode!=0 and out==b'', 'terminated full-pipe process has no success object'
     for line in err.splitlines(): json.loads(line)
     assert b'password_bytes' not in out and b'verifier_bytes' not in out, 'termination publishes no success fields'
     assert os.read(ar,capacity)==b'Z'*capacity and os.read(ar,1)==b'', 'no protected byte entered the full pipe'
     assert os.read(br,1)==b'', 'termination precedes the verifier delivery'
 finally:
-    if p is not None and p.poll() is None: p.kill(); p.wait(timeout=600)
+    if p is not None and p.poll() is None: p.kill(); wait_exit(p)
     for fd in (ar,aw,br,bw):
         if fd is not None: os.close(fd)
 print('process protocol passed')

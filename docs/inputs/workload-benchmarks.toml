@@ -307,7 +307,7 @@ smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::domain_solve_agreement"
 claim = "claim:numerics:domain-solves-retain-versioned-fallback"
-recipe = "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
+recipe = "Seed zero, constructor-backed B6 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second measurement threshold including sampling and the common 600-second child hang containment. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
 numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }
@@ -330,7 +330,7 @@ smoke_sizes = []
 smoke_variant = ""
 correctness_case = "pn-epoch::workload_correctness::domain_solve_agreement"
 claim = "claim:numerics:domain-solves-retain-versioned-fallback"
-recipe = "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second invocation bound including sampling. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
+recipe = "Seed zero, constructor-backed B7 recipe in packages/epoch/benches/support; complete validated causes; finite synthetic numerical limits, not deployment defaults. Separate fixture allowance: 20,000,000,000 Work (100 times former 200,000,000), with a 180-second measurement threshold including sampling and the common 600-second child hang containment. Integer N=2 through 8 tests growth; 16 is the bounded extension. No deployment capacity or completion promise."
 timed = "Public component operation and owned output destruction; B6 includes mandatory replay; B7 replays the exact returned B6 record, never an unrelated case."
 excluded = "Construction, validation, oracle/counter checks and fresh input/context setup; rejected points have no fitted samples."
 numeric_display = { "sizes" = { "display" = "exact", "exact_digits" = 32 }, "smoke_sizes" = { "display" = "exact", "exact_digits" = 32 }, "wall_seconds" = { "display" = "exact", "exact_digits" = 32 } }

@@ -682,32 +682,60 @@ mod tests {
             request: Read,
         ) -> (Result<ReadResult, RpcRefusal>, usize) {
             clock::expire_at(stage);
+            let finished = std::sync::atomic::AtomicBool::new(false);
             let outcome = std::thread::scope(|scope| {
-                let server = scope.spawn(|| self.serve(responses));
+                let server = scope.spawn(|| self.serve(responses, &finished));
                 let result = reader.read(request);
+                finished.store(true, std::sync::atomic::Ordering::Release);
                 (result, server.join().unwrap())
             });
             clock::expire_at(None);
             outcome
         }
 
-        fn serve(&self, responses: &[String]) -> usize {
+        fn serve(&self, responses: &[String], finished: &std::sync::atomic::AtomicBool) -> usize {
+            self.serve_contained(responses, finished, Duration::from_secs(600))
+        }
+
+        fn serve_contained(
+            &self,
+            responses: &[String],
+            finished: &std::sync::atomic::AtomicBool,
+            containment: Duration,
+        ) -> usize {
             use std::io::{Read as _, Write as _};
             let mut served = 0;
             for response in responses {
-                let deadline = Instant::now() + Duration::from_secs(10);
+                let deadline = Instant::now() + containment;
                 let mut stream = loop {
+                    // Read completion before polling: a connect completed by the reader is already queued, so a poll after completion drains it before stopping.
+                    let done = finished.load(std::sync::atomic::Ordering::Acquire);
                     match self.listener.accept() {
                         Ok((stream, _)) => break stream,
-                        Err(_) if Instant::now() < deadline => std::thread::sleep(Duration::from_millis(2)),
-                        Err(_) => return served,
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            if done {
+                                return served;
+                            }
+                            assert!(
+                                Instant::now() < deadline,
+                                "HANG awaiting fixture connection or reader completion"
+                            );
+                            std::thread::sleep(Duration::from_millis(2));
+                        }
+                        Err(error) => panic!("fixture accept failed: {error}"),
                     }
                 };
                 stream.set_nonblocking(false).unwrap();
-                stream.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+                stream.set_read_timeout(Some(Duration::from_secs(600))).unwrap();
+                stream.set_write_timeout(Some(Duration::from_secs(600))).unwrap();
                 let mut request = Vec::new();
                 let mut byte = [0; 1];
-                while !request.ends_with(b"\r\n\r\n") && stream.read(&mut byte).unwrap_or(0) == 1 {
+                while !request.ends_with(b"\r\n\r\n")
+                    && stream
+                        .read(&mut byte)
+                        .expect("HANG or I/O failure reading fixture request head")
+                        == 1
+                {
                     request.push(byte[0]);
                 }
                 let text = String::from_utf8_lossy(&request).to_ascii_lowercase();
@@ -716,10 +744,23 @@ mod tests {
                     .find_map(|line| line.strip_prefix("content-length:"))
                     .map_or(0, |value| value.trim().parse().unwrap());
                 let mut body = vec![0; length];
-                stream.read_exact(&mut body).unwrap();
-                stream.write_all(response.as_bytes()).ok();
+                stream
+                    .read_exact(&mut body)
+                    .expect("HANG or I/O failure reading fixture request body");
+                if let Err(error) = stream.write_all(response.as_bytes()) {
+                    assert!(
+                        !matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock),
+                        "HANG awaiting test response write; last state=response-incomplete"
+                    );
+                }
                 stream.shutdown(std::net::Shutdown::Write).ok();
-                while stream.read(&mut byte).is_ok_and(|count| count == 1) {}
+                while stream.read(&mut byte).unwrap_or_else(|error| {
+                    if matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock) {
+                        panic!("HANG awaiting fixture client closure");
+                    }
+                    0
+                }) == 1
+                {}
                 served += 1;
             }
             served
@@ -749,6 +790,19 @@ mod tests {
     /// Each synchronous phase is bracketed by the one deadline, on success and refusal alike.
     fn phase_brackets() {
         let fixture = Fixture::new();
+        let trip = std::panic::catch_unwind(|| {
+            fixture.serve_contained(&[String::new()], &std::sync::atomic::AtomicBool::new(false), Duration::ZERO)
+        });
+        let error = trip.expect_err("accept containment must report its named hang");
+        let message = error
+            .downcast_ref::<&str>()
+            .copied()
+            .or_else(|| error.downcast_ref::<String>().map(String::as_str))
+            .unwrap();
+        assert!(
+            message.contains("HANG awaiting fixture connection or reader completion"),
+            "accept containment names its event: {message}"
+        );
         let count = [answer(1, "\"result\":7")];
         let deadline = Err(RpcRefusal::Deadline);
         assert!(matches!(
@@ -844,7 +898,7 @@ mod tests {
         assert!(fixture.untouched());
     }
 
-    /// Claim: A shared rolling budget permits exactly eight attempts before any cookie access, refuses simultaneous callers, expires at sixty seconds, and retains the named decoder-limit hold; on a controlled clock the read's one deadline refuses on entry, after cookie acquisition whether it succeeds or fails, before decoding, after decoding or a decoding refusal and after projection, while a block's decoder-limit hold is still recorded and stays sticky and network-phase refusals and holds keep their own causes.
+    /// Claim: A shared rolling budget permits exactly eight attempts before any cookie access, refuses simultaneous callers, expires at sixty seconds, and retains the named decoder-limit hold; on a controlled clock the read's one deadline refuses on entry, after cookie acquisition whether it succeeds or fails, before decoding, after decoding or a decoding refusal and after projection, while a block's decoder-limit hold is still recorded and stays sticky and network-phase refusals and holds keep their own causes. An injected zero containment names the test server's missing-connection hang.
     /// ´claim:wallet:rpc-attempts-and-holds-are-shared´
     /// ´test:unit:attempts-and-holds´
     #[test]

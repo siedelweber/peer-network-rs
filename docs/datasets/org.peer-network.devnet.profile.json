@@ -231,7 +231,7 @@
             "bare LF, folded lines, 1xx and close-delimited bodies refused",
             "duplicate or conflicting lengths, transfer encoding, compression and redirects refused",
             "header/body truncation, trailing bytes and excessive size refused",
-            "slow-drip traffic cannot renew the single exchange deadline",
+            "deadline refusal closes controlled peers during head and body progress; read-path non-renewal remains held",
             "one attempt per exchange and aggregate reconnection ceiling before cookie access"
           ],
           "name": "http",

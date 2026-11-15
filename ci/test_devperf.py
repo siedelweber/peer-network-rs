@@ -1038,7 +1038,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text())['compiled'],['Compiling fixture v1'],'progress without final artifact still records compilation')
 
     def test_port_range_refusal(self):
-        """Unreadable and malformed automatic port ranges receive the check's own refusal.
+        """Unreadable and malformed automatic port ranges receive the check's own refusal; injected allocation and restart waits pin both sides of 600-second containment, and the service tool's start and stop expiry lines name hangs while a failed start keeps its failure class.
         ´claim:devperf:port-range-refusal´
         ´test:integration:test-port-range-refusal´
         """
@@ -1051,6 +1051,66 @@ class Performance(unittest.TestCase):
                     with self.assertRaisesRegex(RuntimeError,'automatic port range is unavailable',msg='port range must refuse in its own vocabulary'):
                         check_ports(POSTGRESQL_PORTS,root)
                 except (OSError,ValueError) as error:self.fail('raw port-range exception escaped: '+str(error))
+
+        import host_postgresql as fixture
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            with (Path(directory)/'log').open('a+b') as log:
+                with patch.object(fixture.subprocess, 'run', return_value=SimpleNamespace(returncode=0)) as run:
+                    fixture.command(['pg_ctl', '-w', 'start'], log)
+                self.assertEqual(run.call_args.args[0][-2:], ['-t', '600'], 'service containment reaches pg_ctl')
+                self.assertEqual(run.call_args.kwargs['env']['LC_ALL'], 'C', 'service timeout diagnostic has a pinned locale')
+                self.assertEqual(run.call_args.kwargs['timeout'], 600, 'service containment reaches child wait')
+                with patch.object(fixture.subprocess, 'run', side_effect=subprocess.TimeoutExpired(['pg_ctl'], 600)):
+                    with self.assertRaisesRegex(TimeoutError, 'HANG awaiting PostgreSQL fixture command; last state=running'):
+                        fixture.command(['pg_ctl'], log)
+                for diagnostic in (b'pg_ctl: server did not start in time\n', b'pg_ctl: server does not shut down\n', b'pg_ctl: could not start server\n'):
+                    def service_result(*args, **kwargs):
+                        log.write(b' stopped waiting\n' + diagnostic); log.flush()
+                        return SimpleNamespace(returncode=1)
+                    with patch.object(fixture.subprocess, 'run', side_effect=service_result):
+                        failure = None
+                        try:
+                            fixture.command(['pg_ctl'], log)
+                        except (RuntimeError, TimeoutError) as error:
+                            failure = error
+                        if b'could not start' in diagnostic:
+                            self.assertIsInstance(failure, RuntimeError, 'failed start is not a hang')
+                            self.assertIn('fixture command failed', str(failure))
+                        else:
+                            self.assertIsInstance(failure, TimeoutError, 'tool expiry names a service hang')
+                            self.assertIn('HANG awaiting PostgreSQL service transition', str(failure))
+                with patch.object(fixture.subprocess, 'run', return_value=SimpleNamespace(returncode=1)):
+                    with self.assertRaisesRegex(RuntimeError, 'fixture command failed'):
+                        fixture.command(['pg_ctl'], log)
+        with patch.object(fixture, 'check_ports'), patch.object(fixture.socket, 'socket') as socket, patch.object(fixture.time, 'monotonic', side_effect=[0, 599, 601]), patch.object(fixture.time, 'sleep') as pause:
+            socket.return_value.__enter__.return_value.bind.side_effect=OSError(98, 'occupied')
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting PostgreSQL allocation lock; last state=occupied'):
+                with fixture.port_selection():
+                    self.fail('occupied allocation was admitted')
+            self.assertEqual(pause.call_count, 1, 'PostgreSQL allocation is pending at 599 and hangs at 601')
+
+        import contextlib
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); (root/'data').mkdir(); (root/'socket-directory').write_text(str(root))
+            @contextlib.contextmanager
+            def selection(deadline):
+                self.assertEqual(deadline, 600, 'restart shares its original 600-second deadline')
+                yield 22000
+            waits=[]
+            def child(*args, **kwargs):
+                waits.append(kwargs['timeout'])
+                if len(waits)==1:
+                    self.assertEqual(waits, [1], 'restart remains pending at 599')
+                    return SimpleNamespace(returncode=0)
+                self.assertEqual(waits, [1, 0], 'restart exhausts its shared deadline at 601')
+                raise subprocess.TimeoutExpired(args[0], 0)
+            with patch.object(fixture.time, 'monotonic', side_effect=[0,599,601]), patch.object(fixture, 'port_selection', selection), patch.object(fixture, 'binary_directory', return_value=Path('/tool')), patch.object(fixture.subprocess, 'run', side_effect=child):
+                with self.assertRaisesRegex(TimeoutError, 'HANG awaiting PostgreSQL fixture command'):
+                    fixture.restart(root)
+            self.assertEqual(len(waits), 2, 'restart reaches its second wait without a fresh budget')
 
     def test_quiet_repeat_request(self):
         """Loaded excess names a separately declared quiet repeat without scheduling or changing a verdict.
@@ -2431,7 +2491,7 @@ wait
                          SimpleNamespace(ru_utime=3+cpu, ru_stime=2)]
                 with patch.dict(os.environ, CARGO_TARGET_DIR=str(root/'target')), \
                      patch.object(benchmarks.resource, 'getrusage', side_effect=usage), \
-                     patch.object(benchmarks, 'capture', return_value=(0, 7000)) as capture:
+                     patch.object(benchmarks, 'capture', return_value=(0, 7000, False)) as capture:
                     self.assertEqual(benchmarks.capture_build(command, root, 'build', rows), (0,7000))
                     capture.assert_called_once_with(command, root, 'build')
                 self.assertEqual(rows[0]['cargo_cpu_s'], cpu)

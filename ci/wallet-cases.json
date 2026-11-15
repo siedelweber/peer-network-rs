@@ -295,7 +295,7 @@
     },
     {
       "group": "http",
-      "case": "slow-drip traffic cannot renew the single exchange deadline",
+      "case": "deadline refusal closes controlled peers during head and body progress; read-path non-renewal remains held",
       "status": "scoped",
       "claims": [
         "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",

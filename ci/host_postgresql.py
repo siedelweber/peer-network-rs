@@ -14,6 +14,8 @@ from contextlib import contextmanager
 
 
 # Fixed daemon ports are declared outside the worker's automatic client range.
+# Event containment under rule:devperf:comparison, not a service latency claim.
+HANG_SECONDS = 600
 POSTGRESQL_PORTS = range(22100, 22120)
 ELEMENTS_PORTS = range(22120, 22160)
 
@@ -71,14 +73,16 @@ def port_selection(deadline=None):
     """
     check_ports(POSTGRESQL_PORTS)
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
-        if deadline is None: deadline = time.monotonic() + 60
+        if deadline is None: deadline = time.monotonic() + HANG_SECONDS
         while True:
             try:
                 lock.bind('\0pn-host-postgresql-ports-' + str(os.getuid()))
                 break
             except OSError as error:
-                if error.errno != 98 or time.monotonic() >= deadline:
-                    raise RuntimeError('PostgreSQL port allocation unavailable') from None
+                if error.errno != 98:
+                    raise RuntimeError('PostgreSQL port allocation failed') from None
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('HANG awaiting PostgreSQL allocation lock; last state=occupied') from None
                 time.sleep(0.05)
         for port in POSTGRESQL_PORTS:
             with socket.socket() as reservation:
@@ -144,9 +148,25 @@ def dependency_pins(packages, reviewed):
         raise ValueError('host dependency closure differs from reviewed archive pins')
     return len(actual)
 
-def command(args, log, env=None, timeout=None):
-    result = subprocess.run([str(v) for v in args], stdout=log, stderr=log, env=env, check=False, timeout=timeout)
+def command(args, log, env=None, timeout=HANG_SECONDS):
+    words = [str(v) for v in args]
+    offset = log.tell()
+    if Path(words[0]).name == 'pg_ctl':
+        words.extend(['-t', str(HANG_SECONDS)])
+        # Only pg_ctl's C-locale expiry lines name a service hang; a failed start is a command failure.
+        env = dict(os.environ if env is None else env, LC_ALL='C')
+    try:
+        result = subprocess.run(words, stdout=log, stderr=log, env=env, check=False, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise TimeoutError('HANG awaiting PostgreSQL fixture command; last state=running; private fixture log retained') from None
     if result.returncode:
+        log.flush()
+        with open(log.name, 'rb') as retained:
+            retained.seek(offset)
+            lines = retained.read().splitlines()
+        expiry = Path(words[0]).name == 'pg_ctl' and any(line in (b'pg_ctl: server did not start in time', b'pg_ctl: server does not shut down') for line in lines)
+        if expiry:
+            raise TimeoutError('HANG awaiting PostgreSQL service transition; last state=pg_ctl-expired; private fixture log retained')
         raise RuntimeError('PostgreSQL fixture command failed; private fixture log retained')
     return result
 
@@ -161,7 +181,7 @@ def stop(root):
 
 def restart(root):
     """Stop once, select an available port, and start once without replaying a failure."""
-    deadline = time.monotonic() + 60
+    deadline = time.monotonic() + HANG_SECONDS
     directory = Path((root / 'socket-directory').read_text())
     socket_path(directory, 65535)
     with (root/'fixture.log').open('ab') as log:

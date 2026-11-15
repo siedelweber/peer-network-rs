@@ -16,6 +16,29 @@ from build_graph import roster, selected, plan
 from build_graph_witnesses import declaration
 
 
+def contained_exit(child):
+    try:
+        return child.wait(timeout=600)
+    except subprocess.TimeoutExpired:
+        raise TimeoutError('HANG awaiting runtime fixture child exit; last state=child-pending') from None
+
+
+def contained_receive(connection):
+    connection.settimeout(600)
+    try:
+        return connection.recv(1)
+    except TimeoutError:
+        raise TimeoutError('HANG awaiting runtime fixture peer byte or closure; last state=receive-pending') from None
+
+
+def service_alive(port):
+    import socket
+    try:
+        with socket.create_connection(('127.0.0.1',port),timeout=600):return True
+    except TimeoutError:raise TimeoutError('HANG awaiting loopback fixture connection; last state=connect-pending') from None
+    except OSError:return False
+
+
 def invoke(root, argv, env=None):
     started = time.monotonic()
     result = subprocess.run(argv, cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -236,10 +259,7 @@ def service_instances(case):
                     result=invoke(root,argv,env)
                     with (root/'.lane/gate-steps.tsv').open('a') as output:output.write(f'{name}\t{result.returncode}\t1\t2\n')
                     case.assertEqual(result.returncode,0,result.stdout)
-                def alive(port):
-                    try:
-                        with socket.create_connection(('127.0.0.1',port),timeout=2):return True
-                    except OSError:return False
+                alive = service_alive
                 try:
                     with ThreadPoolExecutor(max_workers=2) as pool:
                         futures=[pool.submit(step,instance,'start') for instance in instances]
@@ -332,7 +352,7 @@ def interrupted_gate(case, repository):
             try:
                 observed=select.select([listener,descriptor],[],[],600)[0]
                 if descriptor in observed:
-                    status=child.wait(timeout=600)
+                    status=contained_exit(child)
                     case.fail('gate child exited before readiness: status='+str(status)+' diagnostic='+(root/'entry.log').read_text())
                 case.assertIn(listener,observed,'gate readiness HANG: 600s; diagnostic='+(root/'entry.log').read_text())
                 return listener.accept()
@@ -345,14 +365,14 @@ def interrupted_gate(case, repository):
                     ready(stopped)
             finally:
                 if stopped.poll() is None:stopped.kill()
-                stopped.wait(timeout=600)
+                contained_exit(stopped)
         with (root/'entry.log').open('wb') as output:
             child=subprocess.Popen(['bash','entry.sh'],cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             connection=None
             descendants={child.pid}
             identities={}
             try:
-                connection,_=ready(child);case.assertEqual(connection.recv(1),b'R')
+                connection,_=ready(child);case.assertEqual(contained_receive(connection),b'R')
                 # The socket handshake establishes that the actual command is
                 # running inside Ninja, rather than relying on a sleep.
                 descendants={child.pid}
@@ -369,9 +389,9 @@ def interrupted_gate(case, repository):
                 identities={pid:process_rows[pid][2] for pid in descendants}
                 case.assertTrue(any('ninja' in Path(f'/proc/{pid}/comm').read_text() for pid in descendants))
                 child.send_signal(signal.SIGTERM)
-                status=child.wait(timeout=600)
+                status=contained_exit(child)
                 case.assertEqual(status,143,(root/'entry.log').read_text())
-                connection.settimeout(600);case.assertEqual(connection.recv(1),b'')
+                case.assertEqual(contained_receive(connection),b'')
                 for name in ('host','wallet'):
                     case.assertTrue((root/'.lane'/name/'cleaned').exists())
                     case.assertFalse((root/'.lane'/name/'alive').exists())
@@ -391,7 +411,7 @@ def interrupted_gate(case, repository):
                         reap_cancelled_children(grace=0,deadline=0.03,signal_child=lambda pid,number:None)
                     case.assertIsNone(left.poll())
                 finally:
-                    left.kill();left.wait(timeout=600);left.stdin.close();left.stdout.close()
+                    left.kill();contained_exit(left);left.stdin.close();left.stdout.close()
                 case.assertEqual(surviving_processes(live),[])
                 print('RUNTIME-INTERRUPTION signal=SIGTERM inside=ninja status=143 roots=cleaned sibling=preserved descendants=0 escaped-session=reaped live-descendant-control=refused deadline=refusal-only')
             finally:
@@ -405,7 +425,7 @@ def interrupted_gate(case, repository):
                 if child.poll() is None:
                     print((root/'entry.log').read_text(),flush=True)
                     child.kill()
-                    child.wait(timeout=600)
+                    contained_exit(child)
                 if connection is not None:connection.close()
                 listener.close()
 

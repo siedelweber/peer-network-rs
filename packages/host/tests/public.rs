@@ -100,7 +100,7 @@ fn impostor_authentication() {
             assert_eq!(
                 tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                     .await
-                    .unwrap()
+                    .expect("HANG awaiting forbidden authentication refusal")
                     .unwrap_err(),
                 expected
             );
@@ -127,7 +127,7 @@ fn authentication_disconnect() {
         let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
         let result = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
             .await
-            .unwrap();
+            .expect("HANG awaiting startup disconnect refusal");
         assert_eq!(result.unwrap_err(), Refusal::Transport);
         server.await.unwrap();
     });
@@ -196,7 +196,7 @@ fn impostor_server_proof() {
         assert_eq!(
             tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                 .await
-                .unwrap()
+                .expect("HANG awaiting false server signature refusal")
                 .unwrap_err(),
             Refusal::ServerSignature
         );
@@ -265,7 +265,7 @@ fn scram_bound_refusals() {
             let config = Configuration::acquire(Some("host-secured"), &mut fixture(port).as_slice()).unwrap();
             let result = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(config))
                 .await
-                .unwrap();
+                .expect("HANG awaiting malformed SCRAM continuation refusal");
             assert_eq!(result.unwrap_err(), expected, "{case}");
             server.await.unwrap();
         }

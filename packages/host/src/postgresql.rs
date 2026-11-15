@@ -17,7 +17,7 @@ fn configuration(name: &str) -> Configuration {
 fn real_transports() {
     runtime().block_on(async {
         for transport in ["unix.json", "tcp.json"] {
-            let session = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(configuration(transport))).await.unwrap().unwrap();
+            let session = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(configuration(transport))).await.expect("HANG awaiting PostgreSQL authenticated connection").unwrap();
             let retained = format!("{session:?} {:?}", session.client());
             for sentinel in ["private_role_fixture_731", "private_password_fixture_731", "private_database_fixture_731", "42100", "127.0.0.1", "host-postgres/socket"] {
                 assert!(!retained.contains(sentinel));
@@ -60,7 +60,7 @@ fn real_authentication_refusals() {
         ] {
             let error = tokio::time::timeout(std::time::Duration::from_secs(600), Session::connect(configuration(name)))
                 .await
-                .unwrap()
+                .expect("HANG awaiting PostgreSQL refused connection")
                 .unwrap_err();
             let text = format!("{error:?} {error}");
             assert!(!text.contains("private_"));
@@ -79,8 +79,8 @@ fn real_cancellation() {
         let client = session.client();
         let pid: i32 = client.query_one("SELECT pg_backend_pid()", &[]).await.unwrap().get(0);
         let observer = Session::connect(configuration("unix.json")).await.unwrap();
-        let statement = "SELECT pg_sleep(30)";
-        // Active alone also includes Parse; PgSleep proves Execute reached the sleep.
+        // This lazy recursive stream has no final row. Its sleeps pace the fixture, not an assertion; only cancellation or hang containment ends it. PgSleep proves Execute reached the stream even if the observer is delayed.
+        let statement = "WITH RECURSIVE pending(n) AS (SELECT 1 UNION ALL SELECT 1 FROM pending) SELECT count(*) FROM (SELECT pg_sleep(1) FROM pending) AS paced";
         let activity = "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid = $1 AND state = 'active' AND query = $2 AND wait_event = 'PgSleep')";
         assert!(
             !observer
@@ -121,7 +121,7 @@ fn real_cancellation() {
             }),
         )
         .await
-        .expect("real-cancellation: 600 s hang bound to observe the active sleep and receive its cancellation result");
+        .unwrap_or_else(|_| panic!("HANG awaiting the active paced stream and its cancellation result; last state=cancelled:{cancelled}"));
         assert!(cancelled);
         assert_eq!(
             result.unwrap_err().code(),
@@ -190,7 +190,21 @@ fn connection_loss_and_drop() {
         assert!(!format!("{error:?} {error}").contains("private_role_fixture_731"));
         assert!(session.client().is_closed());
         let session = Session::connect(configuration("unix.json")).await.unwrap();
-        let query = session.client().query_one("SELECT pg_sleep(30)", &[]);
+        let observer = Session::connect(configuration("unix.json")).await.unwrap();
+        let key: i64 = session
+            .client()
+            .query_one("SELECT pg_backend_pid()::int8", &[])
+            .await
+            .unwrap()
+            .get(0);
+        observer
+            .client()
+            .query_one("SELECT pg_advisory_lock($1)", &[&key])
+            .await
+            .unwrap();
+        // The observer holds the server-side query unfinished through the session drop; the first poll queues the request.
+        let parameters: &[&(dyn tokio_postgres::types::ToSql + Sync)] = &[&key];
+        let query = session.client().query_one("SELECT pg_advisory_lock($1)", parameters);
         let mut query = Box::pin(query);
         std::future::poll_fn(|cx| {
             assert!(query.as_mut().poll(cx).is_pending());
@@ -199,6 +213,14 @@ fn connection_loss_and_drop() {
         .await;
         drop(query);
         drop(session);
+        assert!(
+            observer
+                .client()
+                .query_one("SELECT pg_advisory_unlock($1)", &[&key])
+                .await
+                .unwrap()
+                .get::<_, bool>(0)
+        );
         tokio::task::yield_now().await;
     });
 }
@@ -257,7 +279,7 @@ fn outbound_refusal() {
                 session.client().batch_execute(&statement),
             )
             .await
-            .expect("outbound refusal must close the driver")
+            .expect("HANG awaiting outbound driver closure")
             .unwrap_err();
             assert!(error.is_closed());
             assert_eq!(session.last_refusal(), Some(crate::Refusal::RepresentationLimit));
@@ -276,6 +298,6 @@ fn outbound_refusal() {
                 }
             })
             .await
-            .expect("refused connection must release its server session");
+            .expect("HANG awaiting refused backend absence");
         });
 }

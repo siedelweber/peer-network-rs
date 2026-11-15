@@ -259,12 +259,37 @@ class Conformance(unittest.TestCase):
         runtime_delegation(self)
 
     def test_service_ownership(self):
-        """Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return; pre-stop CPU samples are rooted at their pidfiles and include only that process tree and already waited children, with known-tick and absent-root controls.
+        """Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return; pre-stop CPU samples are rooted at their pidfiles and include only that process tree and already waited children, with known-tick and absent-root controls. Injected child-exit, peer-receive and loopback-connect expirations name hangs with their pending state, and the loopback call pins 600-second containment while a refused listener remains distinct.
         ´claim:discipline:service-delegation-preserves-ownership´
         ´test:integration:test-service-ownership´
         """
-        from build_graph_runtime_witnesses import service_instances
-        service_instances(self)
+        from build_graph_runtime_witnesses import service_instances, contained_exit, contained_receive, service_alive
+        from unittest.mock import MagicMock
+        child = MagicMock()
+        child.wait.side_effect = subprocess.TimeoutExpired(['fixture'], 600)
+        with self.assertRaisesRegex(TimeoutError, 'HANG awaiting runtime fixture child exit; last state=child-pending'):
+            contained_exit(child)
+        child.wait.assert_called_once_with(timeout=600)
+        peer = MagicMock()
+        peer.recv.side_effect = TimeoutError()
+        with self.assertRaisesRegex(TimeoutError, 'HANG awaiting runtime fixture peer byte or closure; last state=receive-pending'):
+            contained_receive(peer)
+        peer.settimeout.assert_called_once_with(600)
+        import socket
+        from unittest.mock import patch
+        with patch.object(socket, 'create_connection', side_effect=TimeoutError()) as stalled:
+            with self.assertRaisesRegex(TimeoutError, 'HANG awaiting loopback fixture connection; last state=connect-pending'):
+                service_alive(1)
+        self.assertEqual(stalled.call_args.kwargs['timeout'], 600, 'loopback probe uses hang containment')
+        with patch.object(socket, 'create_connection', side_effect=ConnectionRefusedError()):
+            self.assertFalse(service_alive(1), 'a refused listener remains distinct from a hang')
+        connect = socket.create_connection
+        def observed_connect(*args, **kwargs):
+            self.assertEqual(kwargs.get('timeout'), 600, 'loopback probe uses hang containment')
+            return connect(*args, **kwargs)
+        with patch.object(socket, 'create_connection', side_effect=observed_connect) as probe:
+            service_instances(self)
+        self.assertGreater(probe.call_count, 0, 'service liveness executes the controlled probe')
 
     def test_build_graph_completion(self):
         """Claim: The entry takes its complete command roster and completion dependencies from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins. Independent producers overlap under the declared job bound, a failed producer remains failed, and a join refuses missing, duplicated or prematurely ordered dependency reports.

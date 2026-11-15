@@ -128,7 +128,10 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
             let _ = hook.0.send(());
             hook.1
                 .recv_timeout(std::time::Duration::from_secs(600))
-                .map_err(|_| Refusal::ScramFormat)?;
+                .unwrap_or_else(|error| match error {
+                    std::sync::mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting permit release hook; last state=held"),
+                    std::sync::mpsc::RecvTimeoutError::Disconnected => panic!("permit release hook disconnected"),
+                });
         }
         #[cfg(test)]
         if password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-2]´) */) == b"public-progress-password"
@@ -138,7 +141,12 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
                 let _ = started.send(());
                 progress
                     .recv_timeout(std::time::Duration::from_secs(600))
-                    .map_err(|_| Refusal::ScramFormat)?;
+                    .unwrap_or_else(|error| match error {
+                        std::sync::mpsc::RecvTimeoutError::Timeout => {
+                            panic!("HANG awaiting progress release hook; last state=held")
+                        }
+                        std::sync::mpsc::RecvTimeoutError::Disconnected => panic!("progress release hook disconnected"),
+                    });
             }
         }
         let mut salted = SecretBox::new(Box::new([0; 32]));
@@ -333,7 +341,7 @@ mod tests {
                 let (release, receive) = std::sync::mpsc::channel();
                 PERMIT_HOOK.lock().unwrap().push((started, receive));
                 jobs.push(tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096)));
-                tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.unwrap().unwrap();
+                tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.expect("HANG awaiting initial derivation hook acknowledgement; last state=permit acquired, hook pending").unwrap();
                 releases.push(release);
             }
             assert_eq!(DERIVATIONS.available_permits(), 0);
@@ -363,12 +371,12 @@ mod tests {
             assert_eq!(PERMIT_HOOK.lock().unwrap().len(), 1, "cancelled excess leaves its hook queued");
             let excess = tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
             for release in releases { release.send(()).unwrap(); }
-            tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(600), ready).await.expect("HANG awaiting excess derivation hook acknowledgement; last state=hook queued").unwrap();
             release_excess.send(()).unwrap();
-            tokio::time::timeout(std::time::Duration::from_secs(600), excess).await.unwrap().unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(600), excess).await.expect("HANG awaiting excess derivation completion; last state=hook released").unwrap().unwrap();
             tokio::time::timeout(std::time::Duration::from_secs(600), async {
                 while DERIVATIONS.available_permits() != 2 { tokio::task::yield_now().await; }
-            }).await.unwrap();
+            }).await.expect("HANG awaiting derivation permit restoration; last state=waiting for two permits");
             cli_common::emit(&serde_json::json!({"kind":"derivation_permits","limit":2,"cancelled_jobs_retain_permits":true,"excess_waits":true})).unwrap();
         });
     }

@@ -82,23 +82,65 @@ class SupportGuard(unittest.TestCase):
 
 
     def test_workload_wall_bound(self):
-        """A declared point deadline reaches the child invocation; expiration returns status 124 and other failures retain their status.
+        """The benchmark child wait passes its containment to the invocation; expiration has its own hang flag, a child status of 124 remains a failure, and completed points classify their declared wall threshold with load without changing their verdict.
         ´claim:harness:workload-wall-bound-is-operational´
         ´test:integration:test-workload-wall-bound´
         """
         import subprocess
         with tempfile.TemporaryDirectory() as temporary:
             with patch.object(benchmarks.subprocess, 'run', side_effect=subprocess.TimeoutExpired(['probe'], 180)) as child:
-                status, elapsed = benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)
+                status, elapsed, hung = benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)
             self.assertEqual(status, 124)
+            self.assertTrue(hung, 'capture expiration has a distinct hang flag')
             self.assertGreaterEqual(elapsed, 0)
             self.assertEqual(child.call_args.kwargs['timeout'], 180)
+            self.assertIn('HANG awaiting benchmark child completion', (Path(temporary)/'probe.stderr.log').read_text())
             with patch.object(benchmarks.subprocess, 'run') as child:
                 child.return_value.returncode = 7
                 self.assertEqual(benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)[0], 7)
+                child.return_value.returncode = 124
+                code, _, hung = benchmarks.capture(['probe'], Path(temporary), 'probe', timeout=180)
+                self.assertEqual((code, hung), (124, False), 'child status 124 is not a hang')
         row = dict(kind='grid', name='probe', package='pn-epoch', target='workload-epoch', sizes=[2], variants=['ring'], wall_seconds=0)
         with self.assertRaisesRegex(StructuralError, 'wall bound'):
             benchmarks.workload_points([row], 'full')
+        point = dict(name='point', package='fixture', target='fixture', features=[], size=1, variant='fixture', wall_seconds=180)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            def build(*args):
+                (directory/'fixture-build.stdout.log').write_text(json.dumps(dict(reason='compiler-artifact', executable='fixture', target=dict(name='fixture'))))
+                args[-1].append(dict(cargo_cpu_s=0))
+                return 0, 0
+            with patch.object(benchmarks, 'workload_declarations', return_value=[]), patch.object(benchmarks, 'workload_points', return_value=[point]), patch.object(benchmarks, 'capture_build', side_effect=build), patch.object(benchmarks, 'resource_sample'), patch.object(benchmarks, 'raw_sample', return_value={}), patch.object(benchmarks, 'joined', return_value={}), patch.object(benchmarks, 'capture', return_value=(124, 600000, True)) as child:
+                result, status = benchmarks.measured_workloads('full', directory, [])
+            self.assertEqual(child.call_args.kwargs['timeout'], 600, 'point capture uses hang containment, not its measurement threshold')
+            self.assertEqual(status, 1)
+            self.assertEqual(result['points'][0]['reason'], 'HANG awaiting benchmark child completion')
+            self.assertEqual(result['points'][0]['refusal'], dict(kind='hang', limit_seconds=600))
+        for code, elapsed, expected in [(124, 1, 'within-threshold'), (0, 181000, 'over-threshold')]:
+            with tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                with patch.object(benchmarks, 'workload_declarations', return_value=[]), patch.object(benchmarks, 'workload_points', return_value=[point]), patch.object(benchmarks, 'capture_build', side_effect=build), patch.object(benchmarks, 'resource_sample'), patch.object(benchmarks, 'raw_sample', return_value={}), patch.object(benchmarks, 'joined', return_value={}), patch.object(benchmarks, 'capture', return_value=(code, elapsed, False)), patch.object(benchmarks, 'checked_result', return_value=({}, [], {})), patch.object(benchmarks.os, 'getloadavg', return_value=(41, 42, 43)):
+                    result, status = benchmarks.measured_workloads('full', directory, [])
+                row = result['points'][0]
+                self.assertNotIn('refusal', row, 'completed child is not a containment hang')
+                self.assertEqual(row['wall_measurement'], dict(threshold_s=180, classification=expected, verdict_effect='none'), 'completed point classifies its threshold without deciding')
+                self.assertEqual(row['start_load'], [41, 42, 43], 'threshold measurement retains load')
+                self.assertEqual(row['end_load'], [41, 42, 43])
+                self.assertEqual(status, int(code != 0), 'point wall does not decide success')
+        recipe = dict(kind='grid', name='default', package='pn-epoch', target='workload-epoch', features=[], sizes=[1], variants=['ring'])
+        point = benchmarks.workload_points([recipe], 'full')[0]
+        self.assertEqual(point.get('wall_seconds'), 180, 'omitted recipe wall is materialized before point readers')
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            def default_build(*args):
+                (directory/'workload-epoch-build.stdout.log').write_text(json.dumps(dict(reason='compiler-artifact', executable='fixture', target=dict(name='workload-epoch'))))
+                args[-1].append(dict(cargo_cpu_s=0))
+                return 0, 0
+            with patch.object(benchmarks, 'workload_declarations', return_value=[recipe]), patch.object(benchmarks, 'capture_build', side_effect=default_build), patch.object(benchmarks, 'resource_sample'), patch.object(benchmarks, 'raw_sample', return_value={}), patch.object(benchmarks, 'joined', return_value={}), patch.object(benchmarks, 'capture', return_value=(0, 181000, False)), patch.object(benchmarks, 'checked_result', return_value=({}, [], {})):
+                result, status = benchmarks.measured_workloads('full', directory, [])
+            self.assertEqual(result['points'][0]['wall_measurement'], dict(threshold_s=180, classification='over-threshold', verdict_effect='none'), 'omitted recipe wall classifies against its admitted default')
+            self.assertEqual(status, 0, 'default wall threshold does not decide success')
 
     def test_benchmark_terminal(self):
         """A benchmark command refuses terminal stdout before building, sampling or creating artifacts.
@@ -155,7 +197,7 @@ class SupportGuard(unittest.TestCase):
             child.write_text('import sys\nprint("raw stdout")\nprint("raw stderr", file=sys.stderr)\n')
             out, err = io.StringIO(), io.StringIO()
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-                status, _ = benchmarks.capture([sys.executable, str(child)], root, 'probe')
+                status, _, _ = benchmarks.capture([sys.executable, str(child)], root, 'probe')
             self.assertEqual(status, 0)
             self.assertEqual((out.getvalue(), err.getvalue()), ('', ''))
             self.assertEqual((root/'probe.stdout.log').read_text(), 'raw stdout\n')

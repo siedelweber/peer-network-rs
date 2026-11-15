@@ -148,10 +148,14 @@ fn rpc(node: &Node, identity: &Identity, wallet: &str, method: &str, params: Val
         [127, 0, 0, 1],
         *node.port.expose_secret(/* (´[ROOT-cav:observe:secret-study-port-connect]´) */),
     ));
-    let mut socket =
-        TcpStream::connect_timeout(&address, Duration::from_secs(10)).unwrap_or_else(|_| panic!("study connection refused"));
-    socket.set_read_timeout(Some(Duration::from_secs(60))).unwrap();
-    socket.set_write_timeout(Some(Duration::from_secs(10))).unwrap();
+    let mut socket = TcpStream::connect_timeout(&address, Duration::from_secs(600)).unwrap_or_else(|error| {
+        if matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock) {
+            panic!("HANG awaiting study connection");
+        }
+        panic!("study connection failed");
+    });
+    socket.set_read_timeout(Some(Duration::from_secs(600))).unwrap();
+    socket.set_write_timeout(Some(Duration::from_secs(600))).unwrap();
     let mut body = json!({"jsonrpc":"2.0","id":1,"method":method});
     body["params"] = params;
     let body = body.to_string();
@@ -165,12 +169,19 @@ fn rpc(node: &Node, identity: &Identity, wallet: &str, method: &str, params: Val
     ));
     socket
         .write_all(request.expose_secret(/* (´[ROOT-cav:observe:secret-study-request-write]´) */).as_bytes())
-        .unwrap_or_else(|_| panic!("study write refused"));
+        .unwrap_or_else(|error| {
+            if matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock) {
+                panic!("HANG awaiting study request write");
+            }
+            panic!("study write failed");
+        });
     let mut response = Vec::new();
-    socket
-        .take(1_048_577)
-        .read_to_end(&mut response)
-        .unwrap_or_else(|_| panic!("study response refused"));
+    socket.take(1_048_577).read_to_end(&mut response).unwrap_or_else(|error| {
+        if matches!(error.kind(), std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock) {
+            panic!("HANG awaiting study response");
+        }
+        panic!("study response read failed");
+    });
     assert!(response.len() <= 1_048_576);
     let split = response
         .windows(4)

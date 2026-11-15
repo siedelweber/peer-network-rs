@@ -258,6 +258,7 @@ fn serve(
     wire: Vec<(u64, Vec<u8>)>,
     hold: bool,
     deadline_case: bool,
+    drip: bool,
     finished: Arc<AtomicBool>,
 ) -> thread::JoinHandle<Exchange> {
     thread::spawn(move || {
@@ -286,7 +287,7 @@ fn serve(
         let total = wire.len();
         let mut delivered = 0;
         for (delay, bytes) in wire {
-            // Peer waits only lengthen the script; finite script completion still bounds a starved client, as the deadline cases state below.
+            // These waits pace offered bytes; the deadline peers continue until client closure or named hang containment.
             thread::sleep(Duration::from_millis(delay));
             if finished.load(Ordering::Acquire) || stream.write_all(&bytes).is_err() {
                 break;
@@ -296,7 +297,34 @@ fn serve(
         if !hold {
             stream.shutdown(Shutdown::Write).ok();
         }
-        let peer = observe(&mut stream);
+        let peer = if drip {
+            stream.set_nodelay(true).unwrap();
+            // Open-ended progress is one-sided on both sides: closure, not script completion, witnesses deadline-class refusal during head progress, not non-renewal. One byte per 100 milliseconds stays below the header ceiling until hang containment.
+            stream.set_nonblocking(true).unwrap();
+            let end = Instant::now() + OBSERVE;
+            let mut sink = [0; 256];
+            loop {
+                assert!(Instant::now() < end, "HANG awaiting wire drip client closure");
+                match stream.read(&mut sink) {
+                    Ok(0) => break Peer::Eof,
+                    Ok(_) => {}
+                    Err(error) if error.kind() == ErrorKind::ConnectionReset => break Peer::Reset,
+                    Err(error) if error.kind() == ErrorKind::WouldBlock => {}
+                    Err(error) => panic!("wire drip read failed: {error}"),
+                }
+                match stream.write_all(b" ") {
+                    Ok(()) => {}
+                    Err(error) if error.kind() == ErrorKind::WouldBlock => {}
+                    Err(error) if matches!(error.kind(), ErrorKind::BrokenPipe | ErrorKind::ConnectionReset) => {
+                        break Peer::Reset;
+                    }
+                    Err(error) => panic!("wire drip write failed: {error}"),
+                }
+                thread::sleep(Duration::from_millis(100));
+            }
+        } else {
+            observe(&mut stream)
+        };
         Exchange {
             requests,
             peer,
@@ -335,6 +363,7 @@ struct Case {
     name: &'static str,
     wire: Vec<(u64, Vec<u8>)>,
     hold: bool,
+    drip: bool,
     limits: RpcLimits,
     expected: Result<u64, RpcRefusal>,
     peer: Option<Peer>,
@@ -345,6 +374,7 @@ fn case(name: &'static str, wire: impl Into<Vec<u8>>, expected: Result<u64, RpcR
         name,
         wire: vec![(0, wire.into())],
         hold: false,
+        drip: false,
         limits: RpcLimits::default(),
         expected,
         peer: None,
@@ -719,7 +749,7 @@ fn bound_cases(ceiling: usize) -> Vec<Case> {
 fn acquisition_cases() -> Vec<Case> {
     let full = valid();
     let head = full.len() - body(3, "\"result\":7").len();
-    // The slow drip and after-head case deliver finite scripts unless client completion or closure stops them; only the held-before-any-byte case retains its closing step until observed closure.
+    // The slow drip progresses through an incomplete head until closure; the two held cases await closure without completing their response. Only hang containment ends these peers without closure.
     // Their provisioning reads share those limits, so which
     // attempt counts as evidence is selected conditionally: one that expires before its case
     // request reaches the server is inconclusive about the case and another is taken, its
@@ -748,18 +778,17 @@ fn acquisition_cases() -> Vec<Case> {
             wire: vec![(0, full.clone().into_bytes()), (50, b"x".to_vec())],
             ..case("delayed trailing byte", "", Err(RpcRefusal::Http))
         },
-        // This slow drip is one-sided for the peer but bounded for the client: 74 bytes at 40 ms take 2.96 s nominally against a 1 s deadline, so a starved correct client can lose the non-renewal order; dripping until observed closure under hang containment is owed.
+        // This open-ended drip is one-sided on both sides and witnesses deadline-class refusal during head progress until closure, not non-renewal; only named hang containment ends it without closure.
         Case {
-            wire: full.bytes().map(|byte| (40, vec![byte])).collect(),
+            wire: vec![(0, b"HTTP/1.1 200 OK\r\nX-Progress: ".to_vec())],
+            hold: true,
+            drip: true,
             limits: timeout,
             ..case("slow drip past the deadline", "", Err(RpcRefusal::Deadline))
         },
-        // This whole-head/body hold is one-sided for the peer but bounded for the client: the body follows a 6 s hold against a 1 s deadline, so a starved correct client can lose the body-phase order; holding after the whole head until observed closure under hang containment is owed.
+        // This open-ended hold after the complete head is one-sided on both sides and alone witnesses the deadline reaching the body phase; only named hang containment ends it without closure.
         Case {
-            wire: vec![
-                (0, full.as_bytes()[..head].to_vec()),
-                (6000, full.as_bytes()[head..].to_vec()),
-            ],
+            hold: true,
             limits: timeout,
             peer: Some(Peer::Eof),
             ..case(
@@ -957,6 +986,7 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Atte
         case.wire.clone(),
         case.hold,
         case.expected == Err(RpcRefusal::Deadline),
+        case.drip,
         Arc::clone(&finished),
     );
     let result = RpcClient::new(cookie.config(port), case.limits, decoder(), declaration, "wallet-genesis-1")
@@ -971,7 +1001,7 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Atte
     // the kernel has torn the joined task down, no exchange task of this read remains.
     if let Err(elapsed) = after_teardown(|| wallet_threads() == 0) {
         findings.push(format!(
-            "{name}: an exchange thread task remained {elapsed:?} after its read returned"
+            "HANG {name}: exchange thread remained after read completion; observed_wait={elapsed:?}"
         ));
     }
     if let Err(error) = &result {
@@ -1067,7 +1097,7 @@ fn conclude_cases() -> Vec<String> {
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and a single deadline not renewed by dripping progress, reaching through the complete head into the body phase and refusing before the controlled peer completes its response, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down under a hang guard, and the process returns to its starting task count under the same guard after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel; the real transport's wall-time budget is not claimed.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and deadline-class refusal during head progress and after the complete head in the body phase, before the controlled peer completes its response, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down under a hang guard, and the process returns to its starting task count under the same guard after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel; read-path non-renewal and the real transport's wall-time budget are not claimed by these peers.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]

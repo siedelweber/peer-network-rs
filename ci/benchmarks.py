@@ -40,7 +40,7 @@ def workload_points(rows, mode):
                     raise StructuralError('invalid workload wall bound')
                 if type(size) is not int or size <= 0:
                     raise StructuralError('invalid workload size')
-                points.append({**row, 'size': size, 'variant': variant,
+                points.append({**row, 'wall_seconds': row.get('wall_seconds', 180), 'size': size, 'variant': variant,
                                'name': f"{row['name']}-{variant}-{size}"})
     names = [row['name'] for row in points]
     if not points or len(names) != len(set(names)):
@@ -221,17 +221,19 @@ def measured_workloads(mode, directory, compile_records):
         load = list(os.getloadavg())
         resource_sample(owned/'start.resources')
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
-        status, elapsed = capture([binaries[point['target']], '--test' if mode == 'pilot' else '--bench'], owned, 'run', environment, timeout=point.get('wall_seconds', 180))
+        # A point's declared wall is a measurement threshold; only hang containment ends the child without its result.
+        status, elapsed, hung = capture([binaries[point['target']], '--test' if mode == 'pilot' else '--bench'], owned, 'run', environment, timeout=600)
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
         resource_sample(owned/'end.resources')
         result = dict(name=point['name'], package=point['package'], target=point['target'], size=point['size'],
                       variant=point['variant'], mode=mode, outcome='failed' if status else 'passed', returncode=status,
                       invocation_ms=elapsed, own_cpu_s=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,
                       start_load=load, end_load=list(os.getloadavg()),
+                      wall_measurement=dict(threshold_s=point['wall_seconds'], classification='hang' if hung else ('over-threshold' if elapsed > point['wall_seconds']*1000 else 'within-threshold'), verdict_effect='none'),
                       resource_scope="gate container cgroup; node-wide proc counters separately; own CPU from waited process accounting", resources=joined(raw_sample(owned/'start.resources'), raw_sample(owned/'end.resources'), elapsed/1000))
-        if status == 124:
-            result.update(outcome='incomplete', reason='declared per-point wall bound exhausted',
-                          refusal=dict(kind='wall-bound', limit_seconds=point.get('wall_seconds', 180)),
+        if hung:
+            result.update(outcome='incomplete', reason='HANG awaiting benchmark child completion',
+                          refusal=dict(kind='hang', limit_seconds=600),
                           samples=None, estimates=None,
                           raw_sample_unavailable_reason='terminated point; partial samples are not fitted')
         if not status:
@@ -263,13 +265,16 @@ def publish(records, declared, directory):
 
 def capture(command, directory, name, environment=None, timeout=None):
     start = time.monotonic()
+    hung = False
     with (directory / (name+'.stdout.log')).open('w') as out, (directory / (name+'.stderr.log')).open('w') as err:
         try:
             result = subprocess.run(command, stdout=out, stderr=err, env=environment, check=False, timeout=timeout)
             status = result.returncode
         except subprocess.TimeoutExpired:
+            print('HANG awaiting benchmark child completion; last state=child-running', file=err, flush=True)
             status = 124
-    return status, (time.monotonic()-start)*1000
+            hung = True
+    return status, (time.monotonic()-start)*1000, hung
 
 
 def capture_build(command, directory, name, compile_records):
@@ -283,7 +288,7 @@ def capture_build(command, directory, name, compile_records):
     cold = not (target/'gate').is_dir()
     source = (directory/'source.stdout.log').read_text().strip()
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
-    status, wall_ms = capture(command, directory, name)
+    status, wall_ms, _ = capture(command, directory, name)
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     artifacts = [json.loads(line) for line in (directory/(name+'.stdout.log')).read_text().splitlines()
                  if line.startswith('{')]
@@ -300,10 +305,10 @@ def capture_build(command, directory, name, compile_records):
 def campaign(mode, compile_records):
     directory = Path('.lane/benchmarks') / uuid.uuid4().hex
     directory.mkdir(parents=True)
-    status, _ = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
+    status, _, _ = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
     if status:
         raise StructuralError('benchmark source unavailable')
-    toolchain_status, _ = capture(['rustc', '-Vv'], directory, 'toolchain')
+    toolchain_status, _, _ = capture(['rustc', '-Vv'], directory, 'toolchain')
     if toolchain_status:
         raise StructuralError('benchmark toolchain unavailable')
     metadata = dict(source=(directory/'source.stdout.log').read_text().strip(), mode=mode,
@@ -339,11 +344,11 @@ def run(compile_records):
         raise StructuralError('benchmark lacks its registered correctness case or claim')
     directory = Path('.lane/benchmarks') / uuid.uuid4().hex
     directory.mkdir(parents=True)
-    source_status, source_wall = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
+    source_status, source_wall, _ = capture(['git', 'rev-parse', 'HEAD'], directory, 'source')
     if source_status:
         raise StructuralError('benchmark source unavailable')
     source = (directory/'source.stdout.log').read_text().strip()
-    toolchain_status, toolchain_wall = capture(['rustc', '-Vv'], directory, 'toolchain')
+    toolchain_status, toolchain_wall, _ = capture(['rustc', '-Vv'], directory, 'toolchain')
     if toolchain_status:
         raise StructuralError('benchmark toolchain unavailable')
     machine = dict(source=source, configuration=CONFIGURATION, utc=utc(),
@@ -378,7 +383,7 @@ def run(compile_records):
             raise StructuralError('benchmark sample policy differs from reviewed runner')
         name = workload['name']
         output = (directory/'criterion').resolve()
-        status, elapsed = capture([executable, name, '--bench'], directory, name,
+        status, elapsed, hung = capture([executable, name, '--bench'], directory, name,
                                   {**{key: value for key, value in os.environ.items() if not key.startswith('CARGO_CRITERION_')},
                                    'PN_BENCH_OUTPUT': str(output)})
         estimate = output/name/'new/estimates.json'
