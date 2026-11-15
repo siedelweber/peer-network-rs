@@ -1069,7 +1069,7 @@ fn tree_result_indexes() {
     index_damage(&chain[1], &chain[0], &fixture.generation);
 }
 
-fn index_events(events: &[Write]) {
+pub(super) fn index_events(events: &[Write]) {
     assert_eq!(
         events.iter().filter(|&&w| w == Write::Placement).count(),
         1,

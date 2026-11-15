@@ -368,6 +368,7 @@ pub(super) fn interruption_conformance<A: Contract<'static>>() {
         let (result, events) = store.staged(input, None);
         assert_eq!(result, Ok(true));
         assert_eq!(events.last(), Some(&Write::Publish));
+        super::tests::index_events(&events);
         for stop in 0..events.len() {
             let mut store = setup();
             let before = store.snapshot();
