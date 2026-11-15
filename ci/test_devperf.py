@@ -301,17 +301,18 @@ class Performance(unittest.TestCase):
             self.assertEqual(peer_intersection(pair,instructions=counts),peer_intersection([left,right],instructions=counts),'projection preserves the common-work answer')
 
     def test_series_battery_patterns(self):
-        """Every declared battery process family refuses an idle observation outside the collector ancestry.
+        """Every declared battery process family is counted outside the collector ancestry without affecting admission, and the rendered record carries the exact expression.
         ´claim:devperf:series-battery-patterns´
         ´test:integration:test-series-battery-patterns´
         """
-        from build_graph import series_idle_refusal,series_ledger
+        from build_graph import host_measurement,series_ledger,BATTERY_EXPRESSION
         commands=['ci/gate.sh','ci/precheck.py','ci/run_ci.py','ci/run_tests.py','cargo test','cargo nextest','cargo build','cargo check','cargo clippy','cargo fmt','cargo-nextest','focus.py','battery.py','test_fixture.py','fixture-node.py','fixture_probe.py','python3 -m unittest']
         for command in commands:
             idle=copy.deepcopy(series_records()[0]['host_idle_start']);idle['processes']['stdout']='123 1 '+command
-            self.assertEqual(series_idle_refusal(idle),'other account battery at boundary','battery family refuses: '+command)
+            self.assertEqual(host_measurement(idle)['counts']['batteries'],1,'battery family is measured: '+command)
             idle['collector_ancestors']=[123]
-            self.assertIsNone(series_idle_refusal(idle),'collector ancestor alone is exempt: '+command)
+            self.assertEqual(host_measurement(idle)['counts']['batteries'],0,'collector ancestor alone is exempt: '+command)
+        self.assertIn('`'+BATTERY_EXPRESSION+'`',Path('adr/021-development-performance.md').read_text(),'record uses the single code expression exactly')
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'ledger'
             for text in ('not-json\n',json.dumps(dict(series='fixture',entry='one',ordinal=6,gate_status=0,close_status=0,archive_status=0,declared_identity=dict(base='base',source='source',configuration_key='a'*64,cache='warm')))):
@@ -380,7 +381,7 @@ class Performance(unittest.TestCase):
             self.assertIn('gate',legacy,'legacy gate budget remains readable')
 
     def test_series_boundary_services(self):
-        """Both idle boundaries refuse unreadable services and any running service except the session bus.
+        """Both bound host observations retain busy and unavailable listings without rejecting a series measurement; receipt identity remains checked.
         ´claim:devperf:series-boundary-services´
         ´test:integration:test-series-boundary-services´
         """
@@ -394,15 +395,15 @@ class Performance(unittest.TestCase):
                 if kind=='shape':idle['services']['stdout']='{}'
                 if kind=='unit':idle['services']['stdout']='[{"unit":4}]'
                 status,result=check_series_records(rows)
-                self.assertEqual(status,4,'both boundaries refuse services: '+boundary+' '+kind)
-                self.assertIn(boundary+' ',result['excluded'][0]['reason'],'service refusal names boundary')
-                if kind in ('unit','shape'):
-                    self.assertIn('malformed',result['excluded'][0]['reason'],'malformed unit data is not a busy service')
+                self.assertEqual(status,0,'listings do not refuse at either boundary: '+boundary+' '+kind)
+                from build_graph import host_measurement
+                look=host_measurement(idle)
+                self.assertEqual(look['counts']['services'],1 if kind=='busy' else None,'busy count or unavailable is retained')
             for kind in ('process','container'):
                 rows=series_records();idle=rows[1]['host_idle_'+boundary]
                 if kind=='process':idle['processes']['stdout']='123 1 python3 ci/precheck.py'
                 else:idle['containers']['stdout']='["other"]'
-                self.assertEqual(check_series_records(rows)[0],4,'both boundaries refuse '+kind)
+                self.assertEqual(check_series_records(rows)[0],0,'both boundaries retain '+kind)
         rows=series_records()
         for row in rows:
             for boundary in ('start','end'):
@@ -566,7 +567,7 @@ class Performance(unittest.TestCase):
             if change=='container-shape':idle['containers']['stdout']='{}'
             if change=='process-shape':idle['processes']['stdout']='not ps fields'
             status,result=check_series_records(bad)
-            self.assertEqual(status,4,'end observation refuses '+change)
+            self.assertEqual(status,0,'end observation does not refuse '+change)
         own=copy.deepcopy(rows)
         own[0]['host_idle_end']['processes']['stdout']='123 1 python3 ci/precheck.py'
         own[0]['host_idle_end']['collector_ancestors']=[123]
@@ -878,7 +879,7 @@ class Performance(unittest.TestCase):
         self.assertEqual(largest_tier_gap([])['wall_s'],0,'empty tier has no invented gap')
 
     def test_series_declaration(self):
-        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, refuse busy hosts before switching, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
+        """Series declarations refuse missing and malformed members; real storage exclusion spans evidence roots, gate entry and pre-check before work. Controlled processes witness holder death and forwarded termination, and retained bindings refuse changed checkout, target or storage. Controlled rounds compare named key members before reset, end legacy priming without member evidence, end source or unknown differences and restart invoker differences while retaining label-state exclusion. Controlled joined processes end after holder death or foreign or unreadable watch evidence, even with no parent relationship; a workload that retains control after observing TERM ends through escalation with the watch call pinned to five seconds of grace; readiness and termination are awaited under a hang-only bound, with premature exit reporting status and both streams; temporary publication failures expose complete binding records or none, unreadable bindings refuse, and in-checkout drivers refuse before execution. Join output names the actual holder. Controlled imports stage candidate objects outside the checkout, retain busy host counts and load without refusing a switch, own pre-check and gate declarations, preserve their results and reconcile interruptions without rerunning. Import controls count only matching process verdicts, retain raw non-verdict statuses and exceptions, reconcile a written result, refuse both busy locks, linked stores, non-regular adapter objects and unsafe prefixes, and execute the staged entry in a real child with a poisoned interpreter path. Non-object lock records refuse at entry and while watched. Historical-controller controls bind staged objects, route identity through the outside controller, enter an older fixture commit and restore the checkout after a controlled refusal. Additional controls refuse loader assignments, equals-form flag paths, unresolvable prefixes, incomplete fixed controller rosters and invalid historical entries, clear inherited startup variables, preserve counted verdicts after cleanup failure, and distinguish release lines and uncounted closing reports. A real child dispatches the outside controller, imports its lazy modules, runs a tiny old gate through the current watch and restores the producing checkout after success; this is hermetic evidence, not a production repeat. Historical preflight controls refuse an owing commit missing a current owner before any switch, and a failing real helper retains its output and raw status before an entry log exists. The fixed-roster closure includes the position-vector reader; loader-audit assignments refuse and inherited loader-audit variables are cleared. Real child processes execute the import closing path for green and red fixture verdicts before an injected lock-release failure, and the outer reader preserves the closing verdict through the cleanup line. Failing child processes emitting invalid UTF-8 retain replacement-decoded output, raw status and command byte ranges both before and after entry-log creation; separate adapter streams retain replacement text through immediate completion and a communicate timeout.
         ´claim:devperf:series-declaration´
         ´test:integration:test-series-declaration´
         """
@@ -1288,7 +1289,8 @@ class Performance(unittest.TestCase):
             badadmission['policy']['series_absolute_pressure']=.1;admission.write_text(json.dumps(badadmission))
             badidle=json.loads((lane/'gate-series-host-end.json').read_text());badidle['containers']['stdout']='[{}]'
             (lane/'gate-series-host-end.json').write_text(json.dumps(badidle))
-            with self.assertRaisesRegex(ValueError,'container',msg='another account container blocks discharge'):repeat_close(obligation,lane,admission)
+            try: repeat_close(obligation,lane,admission)
+            except ValueError as error: self.fail('busy repeat close retains measurement: '+str(error))
             with patch.dict(os.environ,PN_GATE_PLAN='one-run',PN_GATE_ENTRY='next',PN_GATE_SAMPLE='import',PN_IMPORT_BASE='wrong',PN_GATE_REPEAT_OF=str(obligation)),patch('build_graph.subprocess.run',return_value=SimpleNamespace(stdout='source',returncode=0)):
                 with self.assertRaisesRegex(ValueError,'repeat declaration',msg='wrong repeat base refuses before work'):declare_run(root)
             for change in ({'PN_GATE_ENTRY':'owing'},{'PN_GATE_PLAN':'refresh-second','PN_GATE_FIRST_CACHE':'warm'}):

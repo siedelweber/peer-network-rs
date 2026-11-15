@@ -820,6 +820,7 @@ def series_idle(root, boundary):
     record = dict(identity=identity, boundary=boundary, at=time.time(),
                   processes=processes, collector_ancestors=ancestors,
                   container_command=command, containers=containers, service_command=service_command, services=services, load=list(os.getloadavg()))
+    record['measurement'] = host_measurement(record)
     path = root/('.lane/gate-series-host-'+boundary+'.json')
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(record,sort_keys=True)+'\n')
@@ -978,40 +979,34 @@ def series_close(root, status, archive_root=None):
     print('GATE-SERIES-ATTEMPT '+json.dumps(attempt, sort_keys=True), flush=True)
 
 
-def series_idle_refusal(idle):
-    """Both boundary observations must be readable and free of account batteries."""
-    processes, containers = idle.get('processes', {}), idle.get('containers', {})
-    if not isinstance(processes,dict) or not isinstance(containers,dict) or processes.get('status') != 0 or containers.get('status') != 0:
-        return 'idle listing unavailable'
+BATTERY_EXPRESSION = r'(?:ci/(?:gate\.sh|precheck\.py|run_ci\.py|run_tests\.py)|cargo(?:-|\s)(?:test|nextest|build|check|clippy|fmt)|(?:focus|battery|test_[\w-]+)\.py|[-_]node\.py|[-_]probe\.py|-m\s+unittest)'
+
+
+def host_measurement(record):
+    """Keep counts and unavailable observations without an admission predicate."""
+    counts = dict(batteries=None, containers=None, services=None)
+    unavailable = []
+    for name in ('containers', 'services'):
+        try:
+            listing = record[name]
+            values = json.loads(listing['stdout'])
+            if listing['status'] != 0 or not isinstance(values, list):
+                raise ValueError('unavailable listing')
+            if name == 'services' and any(not isinstance(value, dict) or not isinstance(value.get('unit'), str) or not value['unit'].endswith('.service') for value in values):
+                raise ValueError('malformed services')
+            counts[name] = len(values)
+        except (KeyError, ValueError, TypeError):
+            unavailable.append(name)
     try:
-        active = json.loads(containers['stdout'])
-    except (ValueError, KeyError, TypeError):
-        return 'idle container listing is not a JSON array'
-    if not isinstance(active,list):
-        return 'idle container listing is not a JSON array'
-    if active:
-        return 'other account container at boundary'
-    services = idle.get('services', {})
-    if not isinstance(services,dict) or services.get('status') != 0:
-        return 'idle service listing unavailable'
-    try:
-        units = json.loads(services['stdout'])
-    except (ValueError, KeyError, TypeError):
-        return 'idle service listing is not a JSON array'
-    if not isinstance(units,list) or any(not isinstance(unit,dict) or not isinstance(unit.get('unit'),str) or not unit['unit'].endswith('.service') for unit in units):
-        return 'idle service listing is malformed'
-    if any(unit['unit'] not in {'dbus.service','dbus-broker.service'} for unit in units):
-        return 'other account user service at boundary'
-    ancestors=idle.get('collector_ancestors',[])
-    for line in processes.get('stdout','').splitlines():
-        fields=line.split(None,2)
-        if len(fields)!=3 or not fields[0].isdigit() or not fields[1].isdigit():
-            return 'idle process listing malformed'
-        if int(fields[0]) in ancestors:
-            continue
-        if re.search(r'(?:ci/(?:gate\.sh|precheck\.py|run_ci\.py|run_tests\.py)|cargo(?:-|\s)(?:test|nextest|build|check|clippy|fmt)|(?:focus|battery|test_[\w-]+)\.py|[-_]node\.py|[-_]probe\.py|-m\s+unittest)',fields[2]):
-            return 'other account battery at boundary'
-    return None
+        listing = record['processes']
+        rows = [line.split(None, 2) for line in listing['stdout'].splitlines()]
+        if listing['status'] != 0 or any(len(row) != 3 or not row[0].isdigit() or not row[1].isdigit() for row in rows):
+            raise ValueError('unavailable processes')
+        ancestors = record.get('collector_ancestors', [])
+        counts['batteries'] = sum(int(row[0]) not in ancestors and bool(re.search(BATTERY_EXPRESSION, row[2])) for row in rows)
+    except (KeyError, ValueError, TypeError):
+        unavailable.append('processes')
+    return dict(counts=counts, load=record.get('load'), unavailable=unavailable, admission_effect='none', verdict_effect='none')
 
 
 def series_ledger(label, ledger):
@@ -1080,9 +1075,6 @@ def series_member(row, first):
         idle = row.get('host_idle_'+boundary, {})
         if idle.get('identity') != identity or idle.get('boundary') != boundary:
             raise ValueError('series requires both bound idle receipts')
-        refusal = series_idle_refusal(idle)
-        if refusal:
-            raise ValueError(boundary+' '+refusal)
     owner_reason = series_owner_refusal(row)
     if owner_reason:
         raise ValueError(owner_reason)
@@ -2336,8 +2328,6 @@ def repeat_close(obligation, directory, admission=None):
         idle=json.loads((directory/('gate-series-host-'+phase+'.json')).read_text())
         if idle.get('identity',{}).get('PN_GATE_ENTRY') != declaration['entry'] or idle.get('boundary') != phase:
             failures.append('quiet repeat '+phase+' idle receipt is foreign')
-        refusal=series_idle_refusal(idle)
-        if refusal:failures.append(phase+': '+refusal)
         at=idle.get('at')
         if type(at) not in (int,float) or not math.isfinite(at) or (at > whole['started'] if phase=='start' else at < whole['ended']):
             failures.append('quiet repeat '+phase+' idle receipt does not bracket the run')

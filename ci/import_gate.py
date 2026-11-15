@@ -98,7 +98,7 @@ class Import(Round):
         self.completed_result = None
 
     def census(self):
-        """Collect host listings before the build prefix and keep the refusal evidence."""
+        """Collect host listings before the build prefix as nonbinding measurements."""
         def listing(command):
             status, output = self.command(command)
             return dict(status=status,stdout=output)
@@ -112,11 +112,10 @@ class Import(Round):
         while ancestors[-1] in parents and parents[ancestors[-1]] not in ancestors:
             ancestors.append(parents[ancestors[-1]])
         record = dict(processes=processes,collector_ancestors=ancestors,
-            containers=listing(self.args.container_list),services=listing(self.args.service_list),at=time.time())
+            containers=listing(self.args.container_list),services=listing(self.args.service_list),at=time.time(),load=list(os.getloadavg()))
+        record['measurement'] = build_graph.host_measurement(record)
+        self.host_measurement = record['measurement']
         write(self.store/'host.json',record)
-        refusal = build_graph.series_idle_refusal(record)
-        if refusal:
-            raise Busy('host preflight: '+refusal)
 
     def reconcile(self):
         """Close a lost import as interrupted, never infer a verdict or rerun it."""
@@ -152,10 +151,10 @@ class Import(Round):
         evidence = self.store/entry
         evidence.mkdir()
         declaration = dict(entry=entry,base=base,source=source,plan='one-run',sample='import',
-            at=datetime.now(timezone.utc).isoformat(),log=str(self.log))
+            at=datetime.now(timezone.utc).isoformat(),log=str(self.log),host_measurement=getattr(self,'host_measurement',None))
         atomic(self.store/'active.json',declaration)
         append(self.store/'plans.jsonl',declaration)
-        print('GATE-PLAN '+' '.join(key+'='+str(value) for key,value in declaration.items()),flush=True)
+        print('GATE-PLAN '+' '.join(key+'='+(json.dumps(value,sort_keys=True,separators=(',',':')) if isinstance(value,(dict,list)) else str(value)) for key,value in declaration.items()),flush=True)
         # Every executing adapter and this driver are already outside the switch.
         self.require(['git','reset','--hard',base])
         self.require(['git','reset','--hard',source])

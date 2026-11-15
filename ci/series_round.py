@@ -434,14 +434,16 @@ class Round:
             status, _ = self.command(['python3','-B','ci/build_graph.py','series-idle','start'],environment=environment)
             idle_path = self.root/'.lane/gate-series-host-start.json'
             try:
-                reason = 'start receipt failed' if status else build_graph.series_idle_refusal(json.loads(idle_path.read_text()))
+                reason = 'start receipt failed' if status else None
+                observation = json.loads(idle_path.read_text())
             except (OSError,ValueError,TypeError) as error:
                 reason = 'start receipt unreadable: '+str(error)
             if reason:
                 append(self.store/'preparations.jsonl',dict(entry=entry,reason=reason,status=status))
                 print('GATE-ROUND-RESTARTABLE '+reason,flush=True)
                 return 5
-        plan = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,start=plan_time,mode=args.mode)
+        plan = dict(series=args.label,entry=entry,ordinal=args.ordinal or 1,start=plan_time,mode=args.mode,
+                    host_measurement=build_graph.host_measurement(observation) if args.mode != 'priming' else None)
         append(self.store/('plans.jsonl' if args.mode == 'sample' else 'preparations.jsonl'),plan)
         self.planned = entry
         write(self.store/'active.json',plan)

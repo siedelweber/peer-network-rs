@@ -298,12 +298,14 @@ def controls(test, group):
                 test.assertFalse(any(c[0]==['bash','ci/gate.sh'] for c in calls),'failed start never launches gate')
                 state['start']=0;state['archive']=0;state['start_processes']='321 1 cargo test busy';calls.clear()
                 plans=(round.store/'plans.jsonl').read_text()
-                test.assertEqual(round.run(),5,'busy start refuses before measurement')
-                test.assertEqual((round.store/'plans.jsonl').read_text(),plans,'busy start consumes no plan or attempt')
-                test.assertFalse(any(c[0]==['bash','ci/gate.sh'] for c in calls),'busy start never launches gate')
+                test.assertEqual(round.run(),0,'busy start permits measurement')
+                test.assertNotEqual((round.store/'plans.jsonl').read_text(),plans,'busy start retains its plan')
+                test.assertTrue(any(c[0]==['bash','ci/gate.sh'] for c in calls),'busy start launches gate')
+                test.assertEqual(json.loads((round.store/'plans.jsonl').read_text().splitlines()[-1])['host_measurement']['counts']['batteries'],1,'series plan records the busy look')
+                args.ordinal=2
                 state['start_processes']='';state['end_processes']='321 1 cargo test busy'
-                test.assertEqual(round.run(),4,'busy end reports excluded measurement')
-                test.assertIn('end other account battery',json.loads((round.store/'ledger.jsonl').read_text().splitlines()[-1])['exclusion'],'ledger names end exclusion')
+                test.assertEqual(round.run(),0,'busy end permits measurement')
+                args.ordinal=3
                 state['end_processes']='';state['pressure']=.2
                 test.assertEqual(round.run(),4,'absolute pressure exclusion is reported')
                 state['pressure']=.05;state['close']=4
@@ -468,11 +470,21 @@ def import_controls(test):
             with refuses(test,'clean base','import refuses dirty checkout'):Controlled(root,args).run()
             (root/'dirty').unlink()
             state['busy']=True
-            with refuses(test,'host preflight','import refuses busy host before switch'):Controlled(root,args).run()
-            test.assertEqual(git('rev-parse','HEAD'),base,'busy import leaves checkout untouched')
-            test.assertFalse((args.directory/'plans.jsonl').exists(),'busy import has no plan')
+            with patch('import_gate.os.getloadavg',return_value=(82,70,60)):
+                try: status=Controlled(root,args).run()
+                except ValueError as error: test.fail('busy import executes switch pre-check and gate: '+str(error))
+                test.assertEqual(status,0,'busy import executes switch pre-check and gate')
+            host=json.loads((args.directory/'host.json').read_text())
+            plan=json.loads((args.directory/'plans.jsonl').read_text().splitlines()[-1])
+            test.assertEqual(host['measurement']['counts']['containers'],1,'host records busy container count')
+            test.assertEqual(host['measurement']['load'],[82,70,60],'host records one-minute load beside counts')
+            test.assertEqual(plan['host_measurement'],host['measurement'],'plan retains the same host measurement')
+            from isolation import storage_lock,StorageBusy
+            alternate=SimpleNamespace(**(vars(args)|dict(directory=area/'alternate-store')))
+            with storage_lock(storage_binding(root),'gate'):
+                with refuses(test,'holder=gate','different evidence store still refuses held checkout storage'):
+                    Controlled(root,alternate).run()
             state['busy']=False
-            test.assertEqual(Controlled(root,args).run(),0,'import executes switch pre-check and gate')
             commands=[row[0] for row in calls]
             test.assertLess(commands.index(['python3','-B','ci/precheck.py']),commands.index(['bash','ci/gate.sh']),'import pre-check precedes gate')
             rows=[json.loads(x) for x in (args.directory/'ledger.jsonl').read_text().splitlines()]
