@@ -558,14 +558,15 @@ class Evidence(unittest.TestCase):
             with self.assertRaisesRegex(StructuralError,'unresolved or duplicate'): evaluate(**data)
 
     def test_uncited_evidence_and_holds(self):
-        """A data-only coverage edge and an unowned hold both refuse invented completion.
+        """A data-only coverage edge and an unowned hold both refuse invented completion; a real pre-check child runs the design correspondence stage on an isolated checkout, accepts its unchanged render and refuses an injected repeated blank line with the checker's own diagnostic.
         ´claim:testing:cited-evidence-or-owned-holds´
         ´test:integration:test-uncited-evidence-and-holds´
         """
         from claims import registrations
         from precheck import commands
+        self.precheck_design_control()
         stages = dict(commands(Path('/prepared'), '/deployed/linter'))
-        self.assertEqual(set(stages), {'census', 'deployment-claims', 'linter', 'claims', 'observations', 'datasets', 'documents'})
+        self.assertEqual(set(stages), {'census', 'deployment-claims', 'linter', 'claims', 'design-correspondence', 'observations', 'datasets', 'documents'})
         self.assertEqual(stages['claims'][-2:], ['ci/claims.py', 'registration'])
         self.assertEqual(stages['linter'], ['/deployed/linter', 'check', '--root', '.'])
         self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', '--check'])
@@ -603,6 +604,33 @@ class Evidence(unittest.TestCase):
         with self.assertRaisesRegex(StructuralError,'uncited evidence'): evaluate(**data)
         data=fixture(); data['declared'][0].update(status='held',claims=[])
         with self.assertRaisesRegex(StructuralError,'hold lacks owner'): evaluate(**data)
+
+    def precheck_design_control(self):
+        import shutil
+        import subprocess
+        import sys
+        from run_ci import fixture_environment
+        source = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as directory, fixture_environment():
+            root = Path(directory)/'tree'
+            subprocess.run(['git', 'clone', '--quiet', '--shared', str(source), str(root)],
+                           check=True, capture_output=True)
+            # Exercise the caller's pre-check bytes, including an uncommitted mutation.
+            shutil.copyfile(source/'ci/precheck.py', root/'ci/precheck.py')
+            env = dict(os.environ, PN_ISOLATION_ROOT=directory+'/isolation',
+                       CARGO_TARGET_DIR=directory+'/target', PN_IMPORT_BASE='HEAD',
+                       LINTER_BIN=sys.executable)
+            command = [sys.executable, '-B', 'ci/precheck.py', '--only', 'design-correspondence']
+            clean = subprocess.run(command, cwd=root, env=env, capture_output=True, text=True)
+            self.assertEqual(clean.returncode, 0, clean.stdout+clean.stderr)
+            render = root/'adr/007-crate-decomposition.md'
+            render.write_text(render.read_text()+'\n\n')
+            refused = subprocess.run(command, cwd=root, env=env, capture_output=True, text=True)
+            output = refused.stdout+refused.stderr
+            self.assertEqual(refused.returncode, 1,
+                             'pre-check refuses the repeated-blank render through design correspondence: '+output)
+            self.assertIn('adr/007-crate-decomposition.md: repeated blank lines in rendered Markdown', output)
+            self.assertIn('PRECHECK step=design-correspondence status=1', output)
 
     def prepared_checker_control(self):
         import subprocess

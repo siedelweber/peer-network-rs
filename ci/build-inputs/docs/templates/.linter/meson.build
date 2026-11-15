@@ -2,10 +2,10 @@
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
   ['ci/build-inputs/docs/templates/.linter/meson.build', 'build-graph', ''],
-  ['docs/templates/.linter/environments.toml.j2', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
-  ['docs/templates/.linter/lists.toml.j2', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
-  ['docs/templates/.linter/owners.toml.j2', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
-  ['docs/templates/.linter/policies.toml.j2', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/templates/.linter/environments.toml.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/templates/.linter/lists.toml.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/templates/.linter/owners.toml.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/templates/.linter/policies.toml.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
 ]
 foreach row : local_inputs
   graph_files += files(meson.project_source_root() / row[0])

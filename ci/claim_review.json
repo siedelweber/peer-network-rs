@@ -42,6 +42,14 @@
       "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
     },
     {
+      "operation": "ci::test_claims.Evidence.test_uncited_evidence_and_holds",
+      "path": "ci/test_claims.py",
+      "claim": "ROOT::claim:testing:cited-evidence-or-owned-holds",
+      "before": "A data-only coverage edge and an unowned hold both refuse invented completion.",
+      "after": "A data-only coverage edge and an unowned hold both refuse invented completion; a real pre-check child runs the design correspondence stage on an isolated checkout, accepts its unchanged render and refuses an injected repeated blank line with the checker's own diagnostic.",
+      "review": "The existing declaration controls retain their coverage-edge and owned-hold refusals. The added control clones a disposable checkout, copies the pre-check under test, runs its selected stage in a real child on the clean render, then adds repeated blank lines and requires status one, the design checker’s path-specific message and the pre-check’s stage line. Other stages are not exercised by that child; the full pre-check and gate remain separate evidence."
+    },
+    {
       "operation": "ci::test_claims.Evidence.test_unknown_evidence_edge",
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:python-edges-require-known-claims",

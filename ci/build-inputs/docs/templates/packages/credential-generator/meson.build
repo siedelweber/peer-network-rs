@@ -1,7 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 local_inputs = [
   ['ci/build-inputs/docs/templates/packages/credential-generator/meson.build', 'build-graph', ''],
-  ['docs/templates/packages/credential-generator/README.md.j2', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/templates/packages/credential-generator/README.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
 ]
 foreach row : local_inputs
   graph_files += files(meson.project_source_root() / row[0])
