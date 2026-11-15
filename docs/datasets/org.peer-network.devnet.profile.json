@@ -80,7 +80,7 @@
             "zerocopy 0.8.63"
           ],
           "procedural_macros": 1,
-          "role": "preferred transaction decoder, evaluated only",
+          "role": "preferred transaction decoder, evaluated only; package closure refreshed 2026-11-15 from syn 3.0.9 to syn 3.0.10 for the current decoder boundary check",
           "version": "0.27.0"
         },
         {
@@ -102,7 +102,7 @@
             "serde_core 1.0.229",
             "serde_derive 1.0.229",
             "serde_json 1.0.154",
-            "syn 3.0.10",
+            "syn 3.0.9",
             "unicode-ident 1.0.27",
             "zmij 1.0.23"
           ],
@@ -275,7 +275,7 @@
           "title": "Secret-safe observations"
         }
       ],
-      "wallet_closure_status": "informational evaluation snapshot; exact package versions and features are re-reviewed and pinned at implementation admission",
+      "wallet_closure_status": "informational evaluation snapshot dated 2026-10-25; elements package closure refreshed 2026-11-15 from syn 3.0.9 to syn 3.0.10 for the current decoder boundary check; other candidate closures retain the evaluated versions; exact package versions and features are re-reviewed and pinned at implementation admission",
       "wallet_connection_attempts": 8,
       "wallet_connection_window_seconds": 60,
       "wallet_evaluated_at": "2026-10-25T00:08:35Z",
