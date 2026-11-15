@@ -795,6 +795,10 @@ fn held_complete_delivery() {
                 .recv_timeout(Duration::from_secs(600))
                 .expect("HANG awaiting held delivery release; last state=held");
         }));
+        let (completed, completion_event) = mpsc::sync_channel(1);
+        *observation.after_drain.lock().unwrap() = Some(Box::new(move || {
+            completed.send(()).unwrap();
+        }));
         observation.sender.send(Message::Wake).unwrap();
         entry
             .recv_timeout(Duration::from_secs(600))
@@ -857,9 +861,17 @@ fn held_complete_delivery() {
                 "complete evidence has no window expiry"
             );
         }
-        observation.drain_wait_observer = None;
-        observation.refuse_drain_wait = false;
-        observation.flush();
+        // A timed-out caller has returned, but its worker request is still live.
+        // Await that request's completion instead of issuing a cleanup
+        // request whose wake the first request's prefix could consume.
+        completion_event
+            .recv_timeout(Duration::from_secs(600))
+            .expect("HANG awaiting held delivery worker completion; last state=released");
+        assert_eq!(
+            observation.delivered.load(Ordering::Acquire),
+            3,
+            "released delivery completes its original request"
+        );
     }
 }
 
@@ -886,7 +898,7 @@ fn pinned_drain_containment() {
     );
 }
 
-/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered.
+/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered. Both routes await the original worker request’s completion after release, observed after its acknowledgement attempt; a caller timeout does not stand for worker completion and starts no second cleanup drain.
 /// ´claim:cli:drain-timeouts-are-not-record-loss´
 /// ´test:unit:drain-timeout-preserves-loss´
 #[test]
