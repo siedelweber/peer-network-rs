@@ -172,7 +172,7 @@ async fn populate_vintage(owner: &Session, seed: u64, root: &[u8]) {
         .unwrap();
 }
 
-/// Claim: The real tree catalogue retains independent maximum text budgets through every index, whose leaf-entry sizes are measured; owner and runtime constraint attempts agree, runtime catalogue verification and SELECT/INSERT succeed, and UPDATE/DELETE on each of eleven relations and persistent DDL refuse with SQLSTATE 42501.
+/// Claim: The real tree catalogue retains independent maximum text budgets through every index, whose leaf-entry sizes and current server limit are measured; owner and runtime constraint attempts agree, runtime catalogue verification and SELECT/INSERT succeed, its exact SELECT/INSERT privilege set is checked on every tree relation, and UPDATE/DELETE and persistent DDL including schema creation refuse with SQLSTATE 42501.
 /// ´claim:history:tree-catalogue-bounds-and-roles´
 /// ´test:unit:tree-catalogue-bounds-and-roles´
 #[test]
@@ -195,6 +195,7 @@ fn tree_catalogue_bounds_and_roles() {
             assert!(maximum<=2704,"entry fits pinned btree: {name} {maximum}");
             cli_common::emit(&serde_json::json!({"kind":"tree_index_size","index":name,"measured":maximum,"entries":sizes.len()})).unwrap();
         }
+        measure_limit(owner).await;
         open(&mut runtime_session().await).await.unwrap();
         let runtime=runtime_session().await;
         populate(&runtime, 1).await;
@@ -204,8 +205,10 @@ fn tree_catalogue_bounds_and_roles() {
             assert_eq!(attempt(&runtime,&format!("INSERT INTO {name} SELECT * FROM {name} WHERE false")).await,"00000","runtime INSERT privilege {name}");
             assert_eq!(attempt(&runtime,&format!("UPDATE {name} SET scope=scope")).await,"42501","runtime UPDATE {name}");
             assert_eq!(attempt(&runtime,&format!("DELETE FROM {name}")).await,"42501","runtime DELETE {name}");
+            let privileges: bool=runtime.client().query_one("SELECT has_table_privilege(current_user,$1,'SELECT') AND has_table_privilege(current_user,$1,'INSERT') AND NOT has_table_privilege(current_user,$1,'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')", &[&name]).await.unwrap().get(0);
+            assert!(privileges,"runtime privilege set {name}");
         }
-        for sql in ["CREATE TABLE public.forbidden(value bigint)","ALTER TABLE pn_epoch_results ADD forbidden bigint","CREATE SEQUENCE public.forbidden"] {
+        for sql in ["CREATE SCHEMA forbidden", "CREATE TABLE public.forbidden(value bigint)","ALTER TABLE pn_epoch_results ADD forbidden bigint","CREATE SEQUENCE public.forbidden"] {
             assert_eq!(attempt(&runtime,sql).await,"42501","runtime DDL {sql}");
         }
         for sql in [
@@ -235,4 +238,49 @@ fn tree_catalogue_bounds_and_roles() {
         assert!(raw.client().query_one("SELECT $1::text", &[&"public\0bound-parameter"]).await.is_err(), "the service refuses U+0000 delivered as a bound parameter");
         assert_eq!(raw.last_refusal(), Some(crate::Refusal::PrivateDiagnostic), "the unclassified server diagnostic stays protected");
     });
+}
+
+async fn measure_limit(owner: &Session) {
+    owner
+        .client()
+        .batch_execute(
+            "CREATE TABLE fixture_limit(value text COLLATE \"C\"); CREATE INDEX fixture_limit_index ON fixture_limit(value)",
+        )
+        .await
+        .unwrap();
+    let mut low = 1_usize;
+    let mut high = 4000_usize;
+    while low + 1 < high {
+        let length = usize::midpoint(low, high);
+        let value = public_text(length, 723);
+        let outcome = attempt(owner, &format!("INSERT INTO fixture_limit VALUES('{value}')")).await;
+        if outcome == "00000" {
+            low = length;
+        } else {
+            assert_eq!(outcome, "54000", "btree refusal class");
+            high = length;
+        }
+        owner.client().batch_execute("TRUNCATE fixture_limit").await.unwrap();
+    }
+    let value = public_text(low, 723);
+    owner
+        .client()
+        .execute("INSERT INTO fixture_limit VALUES($1)", &[&value])
+        .await
+        .unwrap();
+    let limit: i32 = owner
+        .client()
+        .query_one("SELECT max(itemlen)::int4 FROM bt_page_items('fixture_limit_index',1)", &[])
+        .await
+        .unwrap()
+        .get(0);
+    assert_eq!(limit, 2704, "pinned service btree limit read back");
+    let value = public_text(high, 723);
+    assert_eq!(
+        attempt(owner, &format!("INSERT INTO fixture_limit VALUES('{value}')")).await,
+        "54000",
+        "next entry refuses"
+    );
+    cli_common::emit(&serde_json::json!({"kind":"tree_index_limit","measured":limit,"accepted_text":low,"refused_text":high,"largest_margin":limit-2136,"generation_margin":limit-2088})).unwrap();
+    owner.client().batch_execute("DROP TABLE fixture_limit").await.unwrap();
 }

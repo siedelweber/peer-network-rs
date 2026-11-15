@@ -26,7 +26,8 @@ pub(super) struct Placement {
 }
 
 // This test-only contract exposes complete snapshots and interruption boundaries,
-// not a production reader. A server adapter can run these assertions unchanged.
+// not a production reader. Logical outcomes at sufficient budgets are shared;
+// interruption points, charge plans and damage hooks belong to each representation.
 pub(super) trait Contract<'a>: Default {
     fn install(&mut self, input: &'a Generation) -> Result<bool, Error>;
     fn write(&mut self, input: &'a Retained) -> Result<bool, Error>;

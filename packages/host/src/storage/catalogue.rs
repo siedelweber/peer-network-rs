@@ -512,7 +512,15 @@ WITH expected_columns(relation,name,ordinal,kind,required,collation_name) AS (VA
  FROM pg_catalog.pg_index i JOIN pg_catalog.pg_class r ON r.oid=i.indrelid JOIN pg_catalog.pg_class x ON x.oid=i.indexrelid
  WHERE r.relnamespace='public'::regnamespace AND r.relname IN (SELECT relation FROM expected_columns)
 )
-SELECT NOT EXISTS ((SELECT * FROM expected_columns EXCEPT ALL SELECT * FROM actual_columns)
+SELECT NOT EXISTS (
+ SELECT 1 FROM pg_catalog.pg_class r
+ WHERE r.relnamespace='public'::regnamespace
+ AND (r.relname IN (SELECT relation FROM expected_columns) OR r.relname IN ('pn_versions','pn_closures','pn_store_identity'))
+ AND (r.relkind<>'r' OR r.relpersistence<>'p' OR r.relrowsecurity OR r.relforcerowsecurity
+ OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t WHERE t.tgrelid=r.oid AND (NOT t.tgisinternal OR t.tgenabled<>'O'))
+ OR EXISTS (SELECT 1 FROM pg_catalog.pg_rewrite w WHERE w.ev_class=r.oid)
+ OR EXISTS (SELECT 1 FROM pg_catalog.pg_inherits h WHERE h.inhparent=r.oid OR h.inhrelid=r.oid)))
+ AND NOT EXISTS ((SELECT * FROM expected_columns EXCEPT ALL SELECT * FROM actual_columns)
  UNION ALL (SELECT * FROM actual_columns EXCEPT ALL SELECT * FROM expected_columns))
  AND NOT EXISTS ((SELECT * FROM expected_constraints EXCEPT ALL SELECT * FROM actual_constraints)
  UNION ALL (SELECT * FROM actual_constraints EXCEPT ALL SELECT * FROM expected_constraints))
