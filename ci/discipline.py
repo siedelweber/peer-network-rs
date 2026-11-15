@@ -403,6 +403,31 @@ def credential_receiver_findings(sources):
     return findings
 
 
+def credential_fixture_findings(sources):
+    """Read host Rust sources and its exact test entry; resolver owns environment access."""
+    normalized = {str(path): source for path, source in sources.items()}
+    entry = normalized.get('packages/host/src/lib.rs', '')
+    fixture = normalized.get('packages/host/src/credential_fixture.rs', '')
+    findings = []
+    if '#[cfg(test)]\nmod credential_fixture;' not in entry or re.search(r'pub(?:\([^)]*\))?\s+(?:fn|mod|struct|enum)', fixture):
+        findings.append('credential fixture requires a private exact test module')
+    expected = 'fn artifact() -> std::io::Result<PathBuf> {\n    runtime_path(RuntimePath::Executable("pn-credential-generator"))\n}'
+    if fixture.count(expected) != 1 or fixture.count('RuntimePath::Executable(') != 1:
+        findings.append('credential artifact requires the sole runtime resolver call')
+    for path, source in normalized.items():
+        if path not in {'packages/host/src/credential_fixture.rs', 'packages/credential-generator/tests/process.rs'} and (
+                'CARGO_BIN_EXE_pn-credential-generator' in source or
+                'RuntimePath::Executable("pn-credential-generator")' in source):
+            findings.append('credential executable reference outside its closed test owners')
+        if not path.startswith('packages/host/'):
+            continue
+        if re.search(r'(?:var|var_os)\s*\(\s*"CARGO_BIN_EXE', source) or re.search(r'\bvars(?:_os)?\s*\(', source):
+            findings.append('host executable variable may only be read by the runtime resolver')
+        if path != 'packages/host/src/credential_fixture.rs' and ('RuntimePath::Executable' in source or 'CARGO_BIN_EXE_pn-credential-generator' in source):
+            findings.append('credential artifact reference outside private host test module')
+    return findings
+
+
 def credential_model_findings(sources, manifest):
     """Keep administrator and supervisor models outside the installed binary."""
     root = pathlib.Path('packages/credential-generator')
@@ -927,6 +952,11 @@ def main():
             print(finding)
         failed |= bool(receiver_findings)
         print(f'CREDENTIAL-RECEIVER-CENSUS sites=1 findings={len(receiver_findings)}')
+        fixture_findings = credential_fixture_findings(sources)
+        for finding in fixture_findings:
+            print(finding)
+        failed |= bool(fixture_findings)
+        print(f'CREDENTIAL-FIXTURE-CENSUS exits=0 findings={len(fixture_findings)}')
         generator_manifest = pathlib.Path('packages/credential-generator/Cargo.toml')
         if generator_manifest.exists():
             model_findings = credential_model_findings(sources, tomllib.loads(generator_manifest.read_text()))

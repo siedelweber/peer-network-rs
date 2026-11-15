@@ -264,6 +264,10 @@
         {
           "owner": "GENERATOR",
           "target": "CLICOMMON"
+        },
+        {
+          "owner": "HOST",
+          "target": "TESTKIT"
         }
       ],
       "name": "declaration",

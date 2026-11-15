@@ -95,6 +95,29 @@ class WorkspaceChecks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'protected package closure differs'):
                 compare('x',original,actual)
 
+    def test_credential_fixture_census(self):
+        """Host executable access remains in one private exact-test module and uses the resolver, with direct reads and foreign references refused.
+        ´claim:discipline:credential-fixture-binds-test-only-resolution´
+        ´test:integration:test-credential-fixture-census´
+        """
+        from discipline import credential_fixture_findings
+        entry = 'packages/host/src/lib.rs'
+        fixture = 'packages/host/src/credential_fixture.rs'
+        sources = {entry: '#[cfg(test)]\nmod credential_fixture;', fixture:
+                   'fn artifact() -> std::io::Result<PathBuf> {\n    runtime_path(RuntimePath::Executable("pn-credential-generator"))\n}'}
+        self.assertEqual(credential_fixture_findings(sources), [], 'private resolver entry admitted')
+        for changed in [dict(sources, **{entry: 'mod credential_fixture;'}),
+                        dict(sources, **{fixture: sources[fixture]+'\npub fn export() {}'})]:
+            self.assertIn('credential fixture requires a private exact test module', credential_fixture_findings(changed), 'production or exported fixture refuses')
+        changed = dict(sources, **{fixture: sources[fixture].replace('runtime_path(', 'bypass(')})
+        self.assertIn('credential artifact requires the sole runtime resolver call', credential_fixture_findings(changed), 'resolver bypass refuses')
+        changed = dict(sources, **{fixture: sources[fixture]+'\nstd::env::var_os("CARGO_BIN_EXE_pn-credential-generator");'})
+        self.assertIn('host executable variable may only be read by the runtime resolver', credential_fixture_findings(changed), 'direct variable read refuses')
+        changed = dict(sources, **{'packages/host/src/other.rs': 'RuntimePath::Executable("pn-credential-generator")'})
+        self.assertIn('credential artifact reference outside private host test module', credential_fixture_findings(changed), 'foreign reference refuses')
+        changed = dict(sources, **{'packages/wallet/src/other.rs': 'RuntimePath::Executable("pn-credential-generator")'})
+        self.assertIn('credential executable reference outside its closed test owners', credential_fixture_findings(changed), 'other package cannot acquire generator artifact')
+
     def test_credential_model_census(self):
         """The generator's model entry remains private and test-only, with no library, feature, export or alternate production source entry; the five source-guard mutations fail at their owning assertions.
         ´claim:discipline:credential-models-cannot-enter-production´

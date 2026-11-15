@@ -28,6 +28,8 @@ gate_steps = [
   ['fixed-point-generate', 'python3 -B ci/isolation.py generate', 'build-graph'],
   ['fixed-point-write', 'python3 -B ci/isolation.py write', 'fixed-point-generate'],
   ['fixed-point-clean', 'python3 ci/discipline.py tree-clean', 'fixed-point-write'],
+  # Builds the named generator and binds its bytes in the manifest before service-tests.
+  # python3 is both a configure prerequisite and the bound host wrapper interpreter.
   ['test-build', 'python3 -B ci/run_tests.py prepare', 'fixed-point-clean'],
   ['host-postgresql-start', 'python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"', 'test-build'],
   ['wallet-elements-start', 'python3 -B ci/wallet_elements.py start --root "$PN_WALLET_TEST_ROOT"', 'host-postgresql-start'],

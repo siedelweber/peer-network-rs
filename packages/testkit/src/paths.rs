@@ -10,6 +10,7 @@ pub enum RuntimePath<'a> {
     /// A relative path within the running test's package.
     Package(&'a str),
     /// A binary target supplied by the runner, outside the workspace if needed.
+    /// The host's generator target additionally requires its selected build receipt.
     Executable(&'a str),
 }
 
@@ -19,6 +20,8 @@ pub enum RuntimePath<'a> {
 /// # Errors
 /// Refuses absent or foreign package/workspace identity, escaping relative paths,
 /// and absent or non-file executable targets, naming the input and remedy.
+/// The host generator also refuses a missing interpreter or build receipt and
+/// any mismatch with the selected workspace, invocation or artifact bytes.
 pub fn runtime_path(request: RuntimePath<'_>) -> io::Result<PathBuf> {
     let refuse = |found: String| {
         io::Error::other(format!(
@@ -79,6 +82,12 @@ pub fn runtime_path(request: RuntimePath<'_>) -> io::Result<PathBuf> {
                     path.display()
                 )));
             }
+            if name == "pn-credential-generator" {
+                if std::env::var("CARGO_PKG_NAME").as_deref() != Ok("pn-host") {
+                    return Err(refuse("credential executable requires the host test owner".into()));
+                }
+                bound_executable(root, &path)?;
+            }
             return Ok(path);
         }
     };
@@ -106,6 +115,55 @@ pub fn runtime_path(request: RuntimePath<'_>) -> io::Result<PathBuf> {
     }
     Ok(result)
 }
+
+fn bound_executable(root: &Path, executable: &Path) -> io::Result<()> {
+    let interpreter = std::env::var_os("PN_TEST_PYTHON")
+        .map(PathBuf::from)
+        .filter(|path| path.is_absolute() && path.is_file())
+        .ok_or_else(|| io::Error::other("test executable interpreter absent"))?;
+    let manifest = std::env::var_os("PN_TEST_BUILD_MANIFEST")
+        .map(PathBuf::from)
+        .filter(|path| path.is_absolute() && path.is_file())
+        .ok_or_else(|| io::Error::other("test executable build manifest absent"))?;
+    let output = std::process::Command::new(interpreter)
+        .args(["-c", EXECUTABLE_CHECK])
+        .arg(manifest)
+        .arg(root)
+        .arg(executable)
+        .output()
+        .map_err(|_| io::Error::other("test executable interpreter unavailable"))?;
+    if !output.status.success() {
+        return Err(io::Error::other(match output.status.code() {
+            Some(4) => "test executable artifact record absent",
+            Some(5) => "test executable artifact bytes differ",
+            _ => "test executable build binding refused",
+        }));
+    }
+    Ok(())
+}
+
+// The receipt is local build evidence, never an installed artifact identifier.
+// (´[ROOT-rule:observe:credential-store-contract]´)
+const EXECUTABLE_CHECK: &str = r"
+import hashlib,json,os,pathlib,sys
+try:
+    manifest=json.loads(pathlib.Path(sys.argv[1]).read_text())
+    row=manifest.get('credential_executable')
+    if row is None: sys.exit(4)
+    assert set(row)=={'name','path','length','sha256','workspace'}
+    assert row['name']=='pn-credential-generator'
+    assert row['workspace']==str(pathlib.Path(sys.argv[2]).resolve())
+    path=pathlib.Path(sys.argv[3])
+    assert row['path']==str(path.resolve())
+    assert manifest['source']==os.environ['PN_HARNESS_SOURCE']
+    assert manifest['configuration']==os.environ['PN_HARNESS_CONFIGURATION']
+    assert manifest['run'] and manifest['run']==os.environ['PN_BUILDGRAPH_RUN']
+    with path.open('rb') as stream:
+        assert os.fstat(stream.fileno()).st_size==row['length']
+        if hashlib.file_digest(stream,'sha256').hexdigest()!=row['sha256']: sys.exit(5)
+except (OSError,ValueError,KeyError,TypeError,AssertionError):
+    sys.exit(2)
+";
 
 #[cfg(test)]
 mod tests {

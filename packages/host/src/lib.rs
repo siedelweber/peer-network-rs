@@ -12,6 +12,8 @@ pub mod binary64;
 /// (´[ROOT-amend:identity:result-position-recipe]´)
 pub use admitted_result::position;
 mod config;
+#[cfg(test)]
+mod credential_fixture;
 pub mod publication;
 mod scram;
 mod secret;

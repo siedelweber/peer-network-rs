@@ -577,6 +577,7 @@
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "calibrated-discipline-secret-carrier-traits-case"
       },
       "cases": [
+        "ci::test_discipline.WorkspaceChecks.test_credential_fixture_census",
         "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
         "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",
@@ -3084,6 +3085,20 @@
       "runner": "nextest",
       "status": "active",
       "tier": "extended"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::credential_fixture::binding",
+        "pn-host::credential_fixture::handovers"
+      ],
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::credential-launch",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
     },
     {
       "budget": "pure-suite",

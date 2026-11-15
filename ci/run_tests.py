@@ -6,6 +6,7 @@ The reporter reads normalized events; it cannot control the execution roster.
 """
 
 import datetime
+import hashlib
 import json
 import os
 import shlex
@@ -332,6 +333,21 @@ def split_main(action):
             '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing', '--config-file', str(policy),
             '--profile', 'default', '--user-config-file', 'none', '--list-type', 'binaries-only', '--message-format', 'json'], 'incremental-build')
         if status: return status
+        status = execute('credential-executable', ['cargo', 'build', '--locked', '--offline',
+            '--profile', 'gate', '-p', 'pn-credential-generator', '--bin', 'pn-credential-generator',
+            '--message-format=json'], 'incremental-build')
+        if status: return status
+        artifacts = [row for line in (run/'credential-executable.stdout').read_text().splitlines()
+                     if (row := json.loads(line)).get('reason') == 'compiler-artifact'
+                     and row.get('target', {}).get('name') == 'pn-credential-generator'
+                     and row.get('target', {}).get('kind') == ['bin'] and row.get('executable')]
+        if len(artifacts) != 1:
+            raise StructuralError('generator executable build must produce one named artifact')
+        artifact = Path(artifacts[0]['executable']).resolve(strict=True)
+        with artifact.open('rb') as stream:
+            executable = dict(name='pn-credential-generator', path=str(artifact),
+                length=os.fstat(stream.fileno()).st_size,
+                sha256=hashlib.file_digest(stream, 'sha256').hexdigest(), workspace=str(Path.cwd().resolve()))
         status = execute('inventory', ['cargo', 'nextest', 'list', '--binaries-metadata', str(run/'build.stdout'),
             '--config-file', str(policy), '--profile', 'default', '--user-config-file', 'none', '--message-format', 'json'])
         if status: return status
@@ -339,7 +355,7 @@ def split_main(action):
         registry.roster('nextest', [f'{binary}::{case}' for binary, suite in inventory['rust-suites'].items() for case in suite['testcases']])
         (run/'contracts').mkdir(exist_ok=True)
         (run/'manifest.json').write_text(json.dumps(dict(source=source, configuration=CONFIGURATION,
-            run=os.environ.get('PN_BUILDGRAPH_RUN'), records=records)))
+            run=os.environ.get('PN_BUILDGRAPH_RUN'), records=records, credential_executable=executable)))
         return 0
     manifest = json.loads((run/'manifest.json').read_text())
     if any(manifest[key] != value for key, value in dict(source=source, configuration=CONFIGURATION,
@@ -384,6 +400,9 @@ def split_main(action):
            **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON':'1',
            'PN_CONTRACT_RESULTS':str((run/'contracts').resolve()), 'PN_HARNESS_SOURCE':source,
            'PN_HARNESS_CONFIGURATION':CONFIGURATION, 'PN_HARNESS_UTC':instant()}
+    env['CARGO_BIN_EXE_pn-credential-generator'] = manifest['credential_executable']['path']
+    env['PN_TEST_BUILD_MANIFEST'] = str((run/'manifest.json').resolve())
+    env['PN_TEST_PYTHON'] = str(Path(sys.executable).resolve())
     cpu_directory = case_cpu_environment(env, run/(action+'.case-cpu'))
     budget = {'fast':'test-command', 'service':'service-gate', 'reference-certificate':'reference-gate', 'extended':'extended-gate'}[action]
     status = execute(action, ['cargo', 'nextest', 'run', '--config-file', str(config_path), '--user-config-file', 'none',

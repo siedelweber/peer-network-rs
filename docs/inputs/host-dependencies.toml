@@ -172,27 +172,27 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "bit-set 0.11.1"
 version = "0.11.1"
 checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
 licence = "Apache-2.0 OR MIT"
 msrv = "1.85.0"
-features = []
+features = ["default", "std"]
 build_time = "none"
 procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "bit-vec 0.10.1"
 version = "0.10.1"
 checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
 licence = "Apache-2.0 OR MIT"
 msrv = "1.85.0"
-features = []
+features = ["default", "std"]
 build_time = "none"
 procedural_macros = []
 
@@ -497,14 +497,14 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "core_detect 1.0.0"
 version = "1.0.0"
 checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
 licence = "MIT/Apache-2.0"
 msrv = "not declared"
-features = []
+features = ["default"]
 build_time = "none"
 procedural_macros = []
 
@@ -718,14 +718,14 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "fnv 1.0.7"
 version = "1.0.7"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 licence = "Apache-2.0 / MIT"
 msrv = "not declared"
-features = []
+features = ["default", "std"]
 build_time = "none"
 procedural_macros = []
 
@@ -1745,14 +1745,14 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "proptest 1.12.0"
 version = "1.12.0"
 checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
 licence = "MIT OR Apache-2.0"
 msrv = "1.88"
-features = []
+features = ["bit-set", "default", "fork", "regex-syntax", "rusty-fork", "std", "tempfile", "timeout"]
 build_time = "none"
 procedural_macros = []
 
@@ -1784,7 +1784,7 @@ procedural_macros = ["prost_derive"]
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "quick-error 1.2.3"
 version = "1.2.3"
@@ -1901,7 +1901,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "rand_xorshift 0.5.0"
 version = "0.5.0"
@@ -1973,7 +1973,7 @@ version = "0.8.11"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 licence = "MIT OR Apache-2.0"
 msrv = "1.65"
-features = ["std"]
+features = ["default", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"]
 build_time = "none"
 procedural_macros = []
 
@@ -2005,14 +2005,14 @@ procedural_macros = ["rustversion"]
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "rusty-fork 0.3.1"
 version = "0.3.1"
 checksum = "cc6bf79ff24e648f6da1f8d1f011e9cac26491b619e6b9280f2b47f1774e6ee2"
 licence = "MIT/Apache-2.0"
 msrv = "not declared"
-features = []
+features = ["timeout", "wait-timeout"]
 build_time = "none"
 procedural_macros = []
 
@@ -2564,7 +2564,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "unarray 0.1.4"
 version = "0.1.4"
@@ -2668,7 +2668,7 @@ procedural_macros = []
 
 [[rows]]
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
-built_for_host = false
+built_for_host = true
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "wait-timeout 0.2.1"
 version = "0.2.1"

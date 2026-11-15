@@ -203,10 +203,13 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "default",
+        "std"
+      ],
       "licence": "Apache-2.0 OR MIT",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "1.85.0",
@@ -216,10 +219,13 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "default",
+        "std"
+      ],
       "licence": "Apache-2.0 OR MIT",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "1.85.0",
@@ -568,10 +574,12 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "default"
+      ],
       "licence": "MIT/Apache-2.0",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "not declared",
@@ -810,10 +818,13 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "default",
+        "std"
+      ],
       "licence": "Apache-2.0 / MIT",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "not declared",
@@ -2002,10 +2013,19 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "bit-set",
+        "default",
+        "fork",
+        "regex-syntax",
+        "rusty-fork",
+        "std",
+        "tempfile",
+        "timeout"
+      ],
       "licence": "MIT OR Apache-2.0",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "1.88",
@@ -2047,7 +2067,7 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [],
@@ -2186,7 +2206,7 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "60aa6af80be32871323012e02e6e65f8a7cc7890931ae421d217ad8fe0df2ccf",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [],
@@ -2266,7 +2286,16 @@
       "checksum": "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [
-        "std"
+        "default",
+        "std",
+        "unicode",
+        "unicode-age",
+        "unicode-bool",
+        "unicode-case",
+        "unicode-gencat",
+        "unicode-perl",
+        "unicode-script",
+        "unicode-segment"
       ],
       "licence": "MIT OR Apache-2.0",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
@@ -2310,10 +2339,13 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "cc6bf79ff24e648f6da1f8d1f011e9cac26491b619e6b9280f2b47f1774e6ee2",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
-      "features": [],
+      "features": [
+        "timeout",
+        "wait-timeout"
+      ],
       "licence": "MIT/Apache-2.0",
       "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
       "msrv": "not declared",
@@ -2997,7 +3029,7 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "eaea85b334db583fe3274d12b4cd1880032beab409c0d774be044d4480ab9a94",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [],
@@ -3114,7 +3146,7 @@
     },
     {
       "build_time": "none",
-      "built_for_host": false,
+      "built_for_host": true,
       "checksum": "09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [],
