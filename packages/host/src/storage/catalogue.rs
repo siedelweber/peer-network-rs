@@ -161,7 +161,7 @@ CREATE TABLE public.pn_epoch_package_chunks (
  bytes bytea NOT NULL,
  PRIMARY KEY (scope,identity,ordinal),
  CHECK (ordinal >= 0),
- CHECK (octet_length(bytes) BETWEEN 1 AND 0x40000)
+ CHECK (octet_length(bytes) BETWEEN 1 AND 262144)
 );
 CREATE TABLE public.pn_epoch_references (
  scope text COLLATE "C" NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE public.pn_epoch_debit_chunks (
  bytes bytea NOT NULL,
  PRIMARY KEY (scope,origin,author,act_sequence,act_family,ordinal),
  CHECK (ordinal >= 0),
- CHECK (octet_length(bytes) BETWEEN 1 AND 0x40000)
+ CHECK (octet_length(bytes) BETWEEN 1 AND 262144)
 );
 CREATE TABLE public.pn_epoch_result_debits (
  scope text COLLATE "C" NOT NULL,
@@ -386,7 +386,7 @@ WITH expected_columns(relation,name,ordinal,kind,required,collation_name) AS (VA
  ('pn_epoch_debit_chunks','NOT NULL act_family','n','false','false'),
  ('pn_epoch_debit_chunks','NOT NULL act_sequence','n','false','false'),
  ('pn_epoch_debit_chunks','NOT NULL author','n','false','false'),
- ('pn_epoch_debit_chunks','CHECK (((octet_length(bytes) >= 1) AND (octet_length(bytes) <= ' || 0x40000::text || ')))','c','false','false'),
+ ('pn_epoch_debit_chunks','CHECK (((octet_length(bytes) >= 1) AND (octet_length(bytes) <= 262144)))','c','false','false'),
  ('pn_epoch_debit_chunks','NOT NULL bytes','n','false','false'),
  ('pn_epoch_debit_chunks','CHECK ((ordinal >= 0))','c','false','false'),
  ('pn_epoch_debit_chunks','NOT NULL ordinal','n','false','false'),
@@ -410,7 +410,7 @@ WITH expected_columns(relation,name,ordinal,kind,required,collation_name) AS (VA
  ('pn_epoch_debits','NOT NULL vintage_chunks','n','false','false'),
  ('pn_epoch_debits','CHECK ((writing_boundary > 0))','c','false','false'),
  ('pn_epoch_debits','NOT NULL writing_boundary','n','false','false'),
- ('pn_epoch_package_chunks','CHECK (((octet_length(bytes) >= 1) AND (octet_length(bytes) <= ' || 0x40000::text || ')))','c','false','false'),
+ ('pn_epoch_package_chunks','CHECK (((octet_length(bytes) >= 1) AND (octet_length(bytes) <= 262144)))','c','false','false'),
  ('pn_epoch_package_chunks','NOT NULL bytes','n','false','false'),
  ('pn_epoch_package_chunks','NOT NULL identity','n','false','false'),
  ('pn_epoch_package_chunks','CHECK ((ordinal >= 0))','c','false','false'),
