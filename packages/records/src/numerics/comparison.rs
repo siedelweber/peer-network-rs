@@ -400,16 +400,7 @@ impl NumericContext {
                 relation,
                 verdict,
             } => {
-                if *reduction > 1 {
-                    return Err(Error::Reduction);
-                }
-                predicate(*code)?;
-                if *reduction != expected.reduction {
-                    return Err(Error::ExpectedReduction);
-                }
-                if *code != expected.predicate {
-                    return Err(Error::ExpectedPredicate);
-                }
+                comparison_codes(*reduction, *code, expected.reduction, expected.predicate)?;
                 self.comparison_domain(*reduction, question, proof)?;
                 if matches!((&question.left, &question.right), (Wall::Rational(_), Wall::Rational(_))) {
                     return Err(Error::ExactEvaluated);
@@ -493,7 +484,72 @@ fn with_numeric<T>(
     result
 }
 
+fn comparison_codes(reduction: u64, code: u64, expected_reduction: u64, expected_predicate: u64) -> Result<(), Error> {
+    if reduction > 1 {
+        return Err(Error::Reduction);
+    }
+    predicate(code)?;
+    if reduction != expected_reduction {
+        return Err(Error::ExpectedReduction);
+    }
+    if code != expected_predicate {
+        return Err(Error::ExpectedPredicate);
+    }
+    Ok(())
+}
+
 impl FloorComparisonV2 {
+    pub(crate) fn validate_controller(
+        &self,
+        exact: Option<(&str, &str)>,
+        expected_predicate: u64,
+        ridge: Option<(&Definition, Option<&DefiningProof<'_>>)>,
+        budget: &mut nrz_cas::limits::Budget,
+    ) -> Result<(), Error> {
+        with_numeric(budget, |numeric| {
+            if let Some((left, right)) = exact {
+                let question = Question {
+                    left: Wall::Rational(left.to_owned()),
+                    right: Wall::Rational(right.to_owned()),
+                };
+                let expected = Expected {
+                    question: question.clone(),
+                    reduction: 0,
+                    predicate: expected_predicate,
+                    threshold: Fraction::new("0".into(), "1".into(), numeric.budget.limits().clone())
+                        .map_err(|_| Error::Resource)?,
+                };
+                return numeric.comparison_inner(self, &question, &expected, None);
+            }
+            match &self.result {
+                ResultKind::Operational { cause } => {
+                    if !(1..=7).contains(cause) {
+                        return Err(Error::Cause);
+                    }
+                }
+                ResultKind::Exact { .. } => return Err(Error::ExactContext),
+                ResultKind::Evaluated {
+                    reduction,
+                    predicate: code,
+                    enclosure,
+                    threshold,
+                    relation,
+                    verdict,
+                } => {
+                    comparison_codes(*reduction, *code, 0, expected_predicate)?;
+                    if let Some((definition, proof)) = ridge {
+                        numeric.comparison_proof(definition, proof)?;
+                    }
+                    let zero =
+                        Fraction::new("0".into(), "1".into(), numeric.budget.limits().clone()).map_err(|_| Error::Resource)?;
+                    let (lower, upper) = numeric.comparison_evaluated(enclosure, threshold, &zero)?;
+                    endpoint_verdict(*code, enclosure, lower, upper, *relation, *verdict)?;
+                }
+            }
+            Ok(())
+        })
+    }
+
     /// Check the explicit second edition against an independent original question.
     /// (´[ROOT-dec:design:comparison-verdict-record]´)
     /// # Errors

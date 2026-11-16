@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "controller-host",
+    "status": "reviewer-confirmed",
+    "premises": "These explicitly selected controller fragments contain only public procedure declarations, inputs, retained inverse and floor records, exact rational enclosures, result and stage codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "membership": {
+      "explicit": [
+        "pn-host::packages/host/src/publication/controller.rs::publication::controller::<Error as From < comparison :: Error >>::from",
+        "pn-host::packages/host/src/publication/controller.rs::publication::controller::decode_attempt",
+        "pn-host::packages/host/src/publication/controller.rs::publication::controller::decode_record",
+        "pn-host::packages/host/src/publication/controller.rs::publication::controller::encode_attempt",
+        "pn-host::packages/host/src/publication/controller.rs::publication::controller::encode_record"
+      ]
+    }
+  }
+}

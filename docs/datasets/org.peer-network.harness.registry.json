@@ -3015,7 +3015,8 @@
         "pn-host::scram::tests::ceiling_login_progress",
         "pn-host::scram::tests::derivation_permits",
         "pn-host::scram::tests::derivation_cost",
-        "pn-host::publication::comparison::tests::comparison_editions"
+        "pn-host::publication::comparison::tests::comparison_editions",
+        "pn-host::publication::controller::tests::controller_editions"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",
@@ -3211,7 +3212,10 @@
         "pn-host::public::stock_configuration_control",
         "pn-host::public::comparison::comparison_binding",
         "pn-host::public::comparison::comparison_ceilings",
-        "pn-host::public::comparison::comparison_corpus"
+        "pn-host::public::comparison::comparison_corpus",
+        "pn-host::public::controller::controller_corpus",
+        "pn-host::public::controller::controller_retained_evidence",
+        "pn-host::public::controller::controller_ceilings"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::Record",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" An ordered nonempty attempt sequence with no duplicate summary verdict.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub procedure : Procedure , pub inputs : Inputs , pub attempts : Vec < Attempt > , }"
+  }
+}

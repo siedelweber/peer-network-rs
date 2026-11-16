@@ -278,9 +278,9 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
-    if kind in {"binary64-carrier-vectors", "comparison-carrier-vectors"} and standing == "defined":
-        from binary64_vectors import check, check_comparisons
-        reader = check if kind == "binary64-carrier-vectors" else check_comparisons
+    if kind in {"binary64-carrier-vectors", "comparison-carrier-vectors", "controller-carrier-vectors"} and standing == "defined":
+        from binary64_vectors import check, check_comparisons, check_controllers
+        reader = {"binary64-carrier-vectors": check, "comparison-carrier-vectors": check_comparisons, "controller-carrier-vectors": check_controllers}[kind]
         reader(relative_file(root, rule['source']))
         text = relative_file(root, rule['source']).read_text()
         values = {match.group() for match in occurrences(text)}

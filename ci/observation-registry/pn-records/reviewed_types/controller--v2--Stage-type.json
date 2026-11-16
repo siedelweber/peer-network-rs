@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::Stage",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" The second edition distinguishes the three step-cap questions.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Stage { Floor , InverseGain , Deadband , Direction , AbsoluteCap , RelativeCap , Delivery , }"
+  }
+}

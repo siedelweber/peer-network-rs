@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::Attempt",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" One explicitly selected attempt; no first-edition value is reinterpreted.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub precision : u32 , pub stopped_at : Option < Stage > , pub inverse : Option < InverseRecord > , pub floor_checks : Vec < ComparisonRecordV2 > , pub branches : Option < Branches > , pub delivered : Option < String > , pub delivery_error : Option < Range > , pub result : ResultKind , }"
+  }
+}

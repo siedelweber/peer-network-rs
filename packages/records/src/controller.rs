@@ -3,6 +3,10 @@
 
 use crate::{numerics::Floor, primitive::Range, ridge::ComparisonRecord, wall::Record as InverseRecord};
 
+/// Explicit second-edition carriers without a controller producer or admission path.
+/// (´[ROOT-dec:design:comparison-verdict-record]´)
+pub mod v2;
+
 /// Public representation rule, in reduced-wall units.
 /// (´[ROOT-alg:design:production-wall-controller]´)
 #[derive(Clone, Debug, PartialEq, Eq)]

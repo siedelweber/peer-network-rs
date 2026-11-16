@@ -68,7 +68,7 @@ pub enum Error {
     Record(pn_records::numerics::comparison::Error),
 }
 
-fn fields(value: &Value, length: usize) -> Result<&[Value], Error> {
+pub(super) fn fields(value: &Value, length: usize) -> Result<&[Value], Error> {
     let Value::Array(values) = value else {
         return Err(Error::Member);
     };
@@ -78,7 +78,7 @@ fn fields(value: &Value, length: usize) -> Result<&[Value], Error> {
     Ok(values.as_slice())
 }
 
-fn unsigned(value: &Value) -> Result<u64, Error> {
+pub(super) fn unsigned(value: &Value) -> Result<u64, Error> {
     let Value::Unsigned(value) = value else {
         return Err(Error::Member);
     };
@@ -115,7 +115,7 @@ fn q_value(value: &Fraction) -> Value {
     ])
 }
 
-fn floor_read(value: &Value, limits: &ExactLimits) -> Result<FloorComparisonV2, Error> {
+pub(super) fn floor_read(value: &Value, limits: &ExactLimits) -> Result<FloorComparisonV2, Error> {
     let outer = selected(value, 2)?;
     let Value::Array(result) = &outer[1] else {
         return Err(Error::Member);
@@ -160,7 +160,7 @@ fn floor_read(value: &Value, limits: &ExactLimits) -> Result<FloorComparisonV2, 
     Ok(FloorComparisonV2 { result })
 }
 
-fn selected(value: &Value, length: usize) -> Result<&[Value], Error> {
+pub(super) fn selected(value: &Value, length: usize) -> Result<&[Value], Error> {
     let Value::Array(values) = value else {
         return Err(Error::Member);
     };
@@ -170,7 +170,7 @@ fn selected(value: &Value, length: usize) -> Result<&[Value], Error> {
     fields(value, length)
 }
 
-fn floor_value(comparison: &FloorComparisonV2) -> Value {
+pub(super) fn floor_value(comparison: &FloorComparisonV2) -> Value {
     let result = match &comparison.result {
         ResultKind::Evaluated {
             reduction,
@@ -212,7 +212,7 @@ fn floor_value(comparison: &FloorComparisonV2) -> Value {
     array([Value::Unsigned(2), result])
 }
 
-fn read(bytes: &[u8], limits: &Limits) -> Result<Value, Error> {
+pub(super) fn read(bytes: &[u8], limits: &Limits) -> Result<Value, Error> {
     if bytes.len() > limits.transport.input_bytes {
         return Err(Error::Resource);
     }
@@ -239,11 +239,38 @@ fn read(bytes: &[u8], limits: &Limits) -> Result<Value, Error> {
     Value::from_transport_bytes(bytes, limits.transport, &mut TransportUsage::default()).map_err(Error::Canonical)
 }
 
-fn context<'a>(numeric: &'a mut NumericContext, limits: &ExactLimits) -> Result<Context<'a>, Error> {
+pub(super) fn context<'a>(numeric: &'a mut NumericContext, limits: &ExactLimits) -> Result<Context<'a>, Error> {
     Ok(Context {
         numeric,
         arithmetic: pn_epoch::publication::disclosures::limits::Budget::new(limits.clone()).map_err(|_| Error::Resource)?,
     })
+}
+
+pub(super) fn ridge_read(value: &Value, context: &mut Context<'_>, limits: &ExactLimits) -> Result<ComparisonRecordV2, Error> {
+    let members = selected(value, 6)?;
+    let wall = Wall::read(&members[1], context).map_err(Error::Projection)?;
+    let floor = Floor::read(&members[2], context).map_err(Error::Projection)?;
+    let queries = Vec::read(&members[3], context).map_err(Error::Projection)?;
+    let work = u64::read(&members[5], context).map_err(Error::Projection)?;
+    let comparison = floor_read(&members[4], limits)?;
+    Ok(ComparisonRecordV2 {
+        wall,
+        floor,
+        queries,
+        comparison,
+        work,
+    })
+}
+
+pub(super) fn ridge_value(record: &ComparisonRecordV2, context: &mut Context<'_>) -> Result<Value, Error> {
+    Ok(array([
+        Value::Unsigned(2),
+        record.wall.write(context).map_err(Error::Projection)?,
+        record.floor.write(context).map_err(Error::Projection)?,
+        record.queries.write(context).map_err(Error::Projection)?,
+        floor_value(&record.comparison),
+        record.work.write(context).map_err(Error::Projection)?,
+    ]))
 }
 
 /// Decode only the explicitly selected second-edition floor fragment.
@@ -337,20 +364,9 @@ pub fn decode_ridge(
     limits: &Limits,
 ) -> Result<ComparisonRecordV2, Error> {
     let value = read(bytes, limits)?;
-    let members = selected(&value, 6)?;
+    selected(&value, 6)?;
     let mut context = context(numeric, &limits.arithmetic)?;
-    let wall = Wall::read(&members[1], &mut context).map_err(Error::Projection)?;
-    let floor = Floor::read(&members[2], &mut context).map_err(Error::Projection)?;
-    let queries = Vec::read(&members[3], &mut context).map_err(Error::Projection)?;
-    let work = u64::read(&members[5], &mut context).map_err(Error::Projection)?;
-    let comparison = floor_read(&members[4], &limits.arithmetic)?;
-    let record = ComparisonRecordV2 {
-        wall,
-        floor,
-        queries,
-        comparison,
-        work,
-    };
+    let record = ridge_read(&value, &mut context, &limits.arithmetic)?;
     record
         .validate(
             &request.expected.question.left,
@@ -395,14 +411,7 @@ pub fn encode_ridge(
             &mut context.arithmetic,
         )
         .map_err(Error::Record)?;
-    let value = array([
-        Value::Unsigned(2),
-        record.wall.write(&mut context).map_err(Error::Projection)?,
-        record.floor.write(&mut context).map_err(Error::Projection)?,
-        record.queries.write(&mut context).map_err(Error::Projection)?,
-        floor_value(&record.comparison),
-        record.work.write(&mut context).map_err(Error::Projection)?,
-    ]);
+    let value = ridge_value(record, &mut context)?;
     let bytes = value.to_canonical_bytes();
     read(&bytes, limits)?;
     Ok(bytes)

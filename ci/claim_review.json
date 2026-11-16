@@ -4427,6 +4427,30 @@
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
+      "operation": "pn-host::public::controller::controller_ceilings",
+      "path": "packages/host/tests/public/controller.rs",
+      "claim": "HOST::claim:host:controller-ceilings-are-cumulative",
+      "before": "",
+      "after": "Claim: Controller validation retains prior arithmetic charges, shares one ledger across attempts, refuses below the least admitting work ceiling and checks the fragment byte ceiling at its boundary.",
+      "review": "The control preserves a prior rational charge, compares one and two complete attempts, searches the least admitting arithmetic ceiling and checks one below it, then checks the fragment byte ceiling at and one below its length. It does not bound external proof replay or whole-process resources."
+    },
+    {
+      "operation": "pn-host::public::controller::controller_corpus",
+      "path": "packages/host/tests/public/controller.rs",
+      "claim": "HOST::claim:host:controller-corpus-refuses-first-clause",
+      "before": "",
+      "after": "Claim: Independent integer-generated controller fragments reach both explicit readers unsorted; supplied cases retain complete result constructors and stage meanings, round-trip their canonical bytes, or refuse their named first clause without claiming controller execution or enclosure soundness.",
+      "review": "Fresh integer-derived fragments arrive unsorted. Each case checks its stored first refusal or complete canonical round trip and explicit result and stage constructor meanings. Expected procedure and input substitutions bind independently supplied context; no controller execution or interval soundness follows."
+    },
+    {
+      "operation": "pn-host::public::controller::controller_retained_evidence",
+      "path": "packages/host/tests/public/controller.rs",
+      "claim": "HOST::claim:host:controller-indecision-is-retained",
+      "before": "",
+      "after": "Claim: A complete evaluated indecision retains both rational endpoints, their inclusion and its exact threshold through the explicitly selected controller fragment codec.",
+      "review": "The floor target straddle is decoded independently of its producer. The control asserts each exact endpoint pair, both fences, zero threshold and INDECISIVE constructor and code; no optional summary replaces this evidence."
+    },
+    {
       "operation": "pn-host::public::impostor_authentication",
       "path": "packages/host/tests/public.rs",
       "claim": "HOST::claim:host:only-scram-can-authenticate-the-service",
@@ -4513,6 +4537,14 @@
       "before": "",
       "after": "Claim: The existing floor and ridge projections reject second-edition fragments, the selected second-edition readers reject the existing projections, and an old comparison cannot occupy the new ridge's nested slot.",
       "review": "The unchanged private Wire projections of all four old floor variants and an old ridge record are passed to the explicitly selected new framing, and new fragments are passed to the old projections. Both directions refuse, including an old nested floor value. No publication producer or schema is switched."
+    },
+    {
+      "operation": "pn-host::publication::controller::tests::controller_editions",
+      "path": "packages/host/src/publication/controller.rs",
+      "claim": "HOST::claim:host:controller-editions-are-disjoint",
+      "before": "",
+      "after": "Claim: First-edition controller projections still round-trip their own values and refuse valid second-edition fragments; selected second-edition framing refuses first-edition attempts and records and an old attempt nested inside a new record.",
+      "review": "The explicit first-edition projections retain their own round trips. Cross-edition and mixed nesting controls refuse both directions without selecting an edition from payload content."
     },
     {
       "operation": "pn-host::scram::tests::ceiling_login_progress",

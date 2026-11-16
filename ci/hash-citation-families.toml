@@ -1322,3 +1322,14 @@ establishment = "defined"
 reader = "interchange-literal"
 definition = "The explicit SQL integer denotes the payload bound of amend:storage:canonical-values in bounded projections and matching catalogue checks, not an identity or a protocol discriminator. Catalogue comparison renders that same integer in PostgreSQL canonical decimal form."
 paths = ["packages/host/src/storage.rs", "packages/host/src/storage/catalogue.rs"]
+
+[[rows]]
+family = "controller-carrier-vectors"
+group = "controller carrier golden values"
+measures = "Canonical controller fragment bytes derived independently from contextual exact rational fixtures"
+producer = "ci/binary64_vectors.py with integer framing and exact Fraction endpoint arithmetic"
+establishment = "defined"
+reader = "controller-carrier-vectors"
+source = "packages/host/tests/data/controller-carriers.json"
+definition = "Regenerate unsorted explicitly selected controller fragments through the existing independent integer generator. The binary64-corpus step checks this reproduction separately from literal accounting. These supplied cases check contextual binding, structural refusal order and endpoint implications, not enclosure soundness, controller execution or publication; no digest identity is assigned."
+paths = ["packages/host/tests/data/controller-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/controller.rs"]

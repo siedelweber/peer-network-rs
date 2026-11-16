@@ -745,6 +745,286 @@ def comparison_vectors():
     return dict(provenance='Independent integer encoder and exact Fraction endpoint signs; no codec or interchange imports, no enclosure soundness or native-law evidence.',distinct_inputs=len({json.dumps({k:v for k,v in r.items() if k in ('canonical','edition','question','expected','proof')},sort_keys=True) for r in rows}),distinct_byte_inputs=len({r['canonical'] for r in rows}),cases=rows)
 
 
+def controller_vectors():
+    """Fresh contextual fixtures; only integer encoding and exact Fraction signs."""
+    rows = []
+    def source(value): return [str(value), q(value)]
+    def rng(lower, upper): return [source(lower), source(upper)]
+    def evaluated(predicate=4, lower=-1, upper=1, li=True, ui=True):
+        lower, upper = Fraction(lower), Fraction(upper)
+        signs = ({-1} if lower < 0 else set()) | ({1} if upper > 0 else set())
+        if lower <= 0 <= upper and (lower != 0 or li) and (upper != 0 or ui): signs.add(0)
+        allowed = {1:{-1,0},2:{-1},3:{0},4:{0,1},5:{1}}[predicate]
+        verdict = 0 if signs <= allowed else 1 if signs.isdisjoint(allowed) else 2
+        relation = 0 if upper < 0 or upper == 0 and not ui else 2 if lower > 0 or lower == 0 and not li else 1 if lower == upper == 0 else 3
+        return [2,[0,0,predicate,[q(lower),li,q(upper),ui],q(0),relation,verdict]]
+    def exact(predicate, left, right):
+        left,right=Fraction(left),Fraction(right)
+        order=-1 if left<right else 1 if left>right else 0
+        return [2,[1,q(left),predicate,q(right),order+1,0 if order in {1:{-1,0},2:{-1},3:{0},4:{0,1},5:{1}}[predicate] else 1]]
+    def fraction(value): return Fraction(int(value[0]),int(value[1]))
+    def foreign_predicate(value):
+        enclosure=value[1][3]
+        value[1]=evaluated({1:2,2:1,4:5}[value[1][2]],fraction(enclosure[0]),fraction(enclosure[2]),enclosure[1],enclosure[3])[1]
+    def foreign_threshold(value):
+        enclosure=value[1][3]
+        enclosure[0]=q(fraction(enclosure[0])+1);enclosure[2]=q(fraction(enclosure[2])+1)
+        value[1][4]=q(1)
+    def foreign_exact(value,side):
+        left=Fraction(9) if side==1 else fraction(value[1][1])
+        right=Fraction(9) if side==3 else fraction(value[1][3])
+        value[1]=exact(value[1][2],left,right)[1]
+    def foreign_exact_position(value,position,side):
+        branches=value[5];foreign_exact(branches[position],side)
+        if branches[2][1][5]==0:
+            ideal=Fraction(1,4);branches[3]=branches[4]=branches[5]=None
+        elif branches[3][1][5]==0 or branches[4][1][5]==0:
+            ideal=Fraction(1,4)+(-1 if branches[5][1][5]==0 else 1)*Fraction(1,8)
+        else:
+            ideal=Fraction(3,37)
+        branches[7]=rng(ideal,ideal);value[6]=source(ideal)
+    def inputs(**changes):
+        data=dict(width='0',previous='1/4',floor=0,absolute_cap='1/2',relative_cap='1/2',deadband='1/10',delivery='exact',quantum='1/10',maximum_error='1/10')
+        data.update(changes)
+        return data
+    def input_value(data):
+        return [source(data['width']),False,source('0'),source('1'),source('1/400'),source(data['previous']),[data['floor']],source(data['absolute_cap']),source(data['relative_cap']),source(data['deadband']),rng('1/20','3/4'),source('1/100'),'10','1000000','1000000',[0] if data['delivery']=='exact' else [1,source(data['quantum']),source(data['maximum_error'])]]
+    def procedure(name='controller-carrier', precision=None):
+        return [['controller','carrier','1'],'0',name,'exact',[],[2,[str(n) for n in (precision or [8,16,24])]], [0],[],source('2'),'1000000','1000000','1000000','10',source('1/100'),None,None]
+    def inverse(lower='1/2',upper='3/4'):
+        return [rng(lower,upper),[],'0',[],None,False,'0']
+    def point(value='1/4',floor=0,comparison=None):
+        return [2,[0,source(value)],[floor],[],comparison or exact(4,value,'3/37'),'0']
+    def operational(stage=1,cause=5):
+        value=[2,'8',[stage],None,[],None,None,None,[2,[stage],cause]]
+        if stage>=3:
+            branches=zero_branches(inputs())
+            for index in {3:(3,4,5),4:(3,4),5:(4,),6:()}[stage]:branches[index]=None
+            if stage!=6:branches[7]=None
+            value[5]=branches
+        return value
+    def zero_branches(data):
+        p=Fraction(data['previous']);f=Fraction(3,37);distance=abs(f-p)
+        cap=min(Fraction(data['absolute_cap']),Fraction(data['relative_cap'])*p)
+        hold=distance<=Fraction(data['deadband'])*p
+        ideal=p if hold else p-cap if distance>=cap and f<p else p+cap if distance>=cap else f
+        return [True,None,exact(1,distance,Fraction(data['deadband'])*p),None if hold else exact(4,distance,data['absolute_cap']),None if hold else exact(4,distance,Fraction(data['relative_cap'])*p),None if hold else exact(2,f,p),rng(f,f),rng(ideal,ideal)]
+    def delivered(data=None):
+        data=data or inputs();branches=zero_branches(data)
+        return [2,'8',None,None,[],branches,source(branches[7][0][0]),rng(0,0),[0]]
+    def positive_branches():
+        return [False,evaluated(4,0,1,False),evaluated(1,1,2),evaluated(4,-2,-1),evaluated(4,-2,-1),evaluated(2,1,2),rng('1/2','3/4'),rng('1/2','3/4')]
+    def positive_delivered():
+        return [2,'8',None,inverse(),[],positive_branches(),source('1/2'),rng(0,0),[0]]
+    def stopped(stage=2):
+        branches=positive_branches()
+        for index in {0:(1,2,3,4,5),2:(2,3,4,5),3:(3,4,5),4:(3,4),5:(4,)}[stage]:branches[index]=None
+        branches[7]=None
+        return [2,'8',[stage],inverse(),[],None if stage==0 else branches,None,None,[1,[stage],evaluated({0:4,2:1,3:2,4:4,5:4}[stage])]]
+    def floor_stop():
+        value=stopped(0);value[3]=inverse('1/20','1/10');value[8][2]=evaluated(4,Fraction(-23,740),Fraction(7,370));return value
+    def point_stop():
+        comparison=evaluated(4)
+        return [2,'8',[0],None,[point(floor=1,comparison=comparison)],None,None,None,[1,[0],copy.deepcopy(comparison)]]
+    def refused():
+        value=positive_delivered();value[2]=[6];value[6]=None;value[8]=[3,[6],exact(3,'1/2','3/4')];return value
+    def grid_stop(selection=True,refusal=False):
+        value=positive_delivered();value[2]=[6];value[6]=None
+        value[3]=inverse('11/10','7/5');value[5][6]=rng('11/10','7/5')
+        value[5][7]=rng('11/10','7/5') if selection else rng('111/100','112/100')
+        if not selection:
+            value[3]=inverse('111/100','112/100');value[5][6]=rng('111/100','112/100')
+        value[8]=[3 if refusal else 1,[6],evaluated(1,1,2) if refusal else evaluated(1)]
+        return value
+    def row(name,value,result='valid',*,data=None,expected=None,edition='attempt',index=0,expected_index=None,proc=None,expected_proc=None,proof='valid',raw=None,rule=None):
+        data=copy.deepcopy(data or inputs())
+        proc=copy.deepcopy(proc or procedure())
+        rows.append(dict(case=name,edition=edition,inputs=data,expected=copy.deepcopy(expected or data),procedure=proc,expected_procedure=copy.deepcopy(expected_proc or proc),index=index,expected_index=index if expected_index is None else expected_index,proof=proof,value=value,canonical=(encode(value) if raw is None else raw).hex(),result=result,rule=rule or name))
+    def bad(name,factory,mutation,cause,**kwargs):
+        value=factory();mutation(value);row(name,value,cause,**kwargs)
+    positive=inputs(width='1')
+    ridge=inputs(floor=1)
+    grid=inputs(width='1',previous='1',deadband='1/100',delivery='grid')
+    row('delivered-zero',delivered())
+    hold=inputs(previous='3/37')
+    row('delivered-exact-hold',delivered(hold),data=hold)
+    def symbolic_hold():
+        value=positive_delivered();value[5][2]=evaluated(1,-2,-1)
+        value[5][3]=value[5][4]=value[5][5]=None
+        value[5][7]=rng('1/4','1/4');value[6]=source('1/4');return value
+    row('delivered-symbolic-hold',symbolic_hold(),data=positive)
+    absolute_clip=inputs(absolute_cap='1/10')
+    row('delivered-absolute-clip',delivered(absolute_clip),data=absolute_clip)
+    row('delivered-relative-clip',delivered())
+    grid_delivered=inputs(previous='1',delivery='grid')
+    row('delivered-grid-clip',delivered(grid_delivered),data=grid_delivered)
+    ridge_hold=inputs(floor=1,deadband='9/10')
+    def ridge_hold_value():
+        value=delivered()
+        value[5]=[True,None,evaluated(1,Fraction(1,40)-Fraction(17,233),Fraction(1,40)-Fraction(679,9321)),None,None,None,rng('679/9321','17/233'),rng('1/4','1/4')]
+        value[6]=source('1/4');return value
+    row('delivered-ridge-hold',ridge_hold_value(),data=ridge_hold)
+    def positive_floor_failure(ridge_floor=False):
+        value=ridge_hold_value() if ridge_floor else delivered(inputs(deadband='9/10'))
+        value[3]=inverse('1/20','3/50');value[5][0]=False;value[5][1]=evaluated(4,-2,-1);return value
+    row('delivered-positive-rational-floor-hold',positive_floor_failure(),data=inputs(width='1',deadband='9/10'))
+    row('delivered-positive-ridge-floor-hold',positive_floor_failure(True),data=inputs(width='1',floor=1,deadband='9/10'))
+    def failed_floor_stop(ridge_floor=False):
+        value=positive_floor_failure(ridge_floor);value[5][2]=None;value[5][7]=None
+        value[2]=[2];value[6]=None;value[8]=[1,[2],evaluated(1)];return value
+    row('ridge-floor-failed-deadband-stop',failed_floor_stop(True),data=inputs(width='1',floor=1,deadband='9/10'))
+    row('rational-floor-failed-evaluated-stop',failed_floor_stop(),'Comparison::ExactEvaluated',data=inputs(width='1',deadband='9/10'))
+    def incomplete_floor_stop():
+        value=point_stop();value[3]=inverse();value[5]=stopped(2)[5];return value
+    row('floor-stop-incomplete-prefix',incomplete_floor_stop(),'IncompleteDecision',data=inputs(width='1',floor=1))
+    row('delivered-positive',positive_delivered(),data=positive)
+    row('floor-target-straddle',floor_stop(),data=positive)
+    row('floor-point-straddle',point_stop(),data=ridge)
+    row('floor-point-missing-proof',point_stop(),'Comparison::MissingProof',data=ridge,proof='missing')
+    for stage in (2,3,4,5):row(f'position-stop-{stage}',stopped(stage),data=positive)
+    row('exact-representation-refused',refused(),data=positive)
+    row('grid-selection-straddle',grid_stop(),data=grid)
+    row('grid-error-straddle',grid_stop(False),data=grid)
+    row('grid-error-refused',grid_stop(False,True),data=grid)
+    no_grid=inputs(absolute_cap='1/10',delivery='grid',quantum='1',maximum_error='1')
+    def empty_grid_delivery():
+        value=delivered(no_grid);value[2]=[6];value[6]=None;value[8]=[3,[6],exact(1,2,1)];return value
+    row('grid-no-admissible-point',empty_grid_delivery(),'Grid',data=no_grid)
+    for stage in range(7):
+        for cause in range(1,8):row(f'operational-{stage}-{cause}',operational(stage,cause))
+    bad('edition',operational,lambda v:v.__setitem__(0,1),'Edition')
+    bad('attempt-arity',operational,lambda v:v.append(None),'Arity')
+    bad('stage-code',operational,lambda v:v.__setitem__(2,[7]),'Stage')
+    bad('stage-arity',operational,lambda v:v.__setitem__(2,[1,0]),'Arity')
+    bad('result-code',operational,lambda v:v.__setitem__(8,[4]),'Result')
+    bad('operational-extra-verdict',operational,lambda v:v[8].append(2),'Arity')
+    bad('delivered-extra-member',delivered,lambda v:v[8].append(0),'Arity')
+    bad('result-stage-code',operational,lambda v:v[8].__setitem__(1,[7]),'Stage')
+    bad('precision',operational,lambda v:v.__setitem__(1,'16'),'Precision')
+    row('attempt-index',operational(), 'AttemptIndex',index=1,expected_index=0)
+    row('undeclared-index',operational(),'AttemptIndex',index=3)
+    wrong=procedure();wrong[5]=[0]
+    row('precision-kind',operational(),'PrecisionKind',proc=wrong)
+    for key,value,cause in [('width','bad','Number'),('width','-1','Width'),('previous','0','Previous')]:
+        row('context-'+key+'-'+cause,operational(),cause,data=inputs(**{key:value}))
+    for key,value in [('quantum','0'),('quantum','-1'),('maximum_error','1/100')]:
+        row('grid-declaration-'+key+'-'+value.replace('/','-'),operational(),'DeliveryDeclaration',data=inputs(delivery='grid',**{key:value}))
+    row('procedure-binding',operational(),'Procedure',expected_proc=procedure('foreign'))
+    for name,key in [('floor','width'),('deadband','deadband'),('direction','previous'),('absolute','absolute_cap'),('relative','relative_cap'),('delivery','maximum_error')]:
+        actual=inputs(delivery='grid') if name=='delivery' else inputs()
+        changed=dict(actual,**{key:'2'})
+        row('operand-binding-'+name,operational(),'Inputs',data=actual,expected=changed)
+    def with_check():
+        value=operational();value[4]=[point()];return value
+    bad('floor-check-floor',with_check,lambda v:v[4][0].__setitem__(2,[1]),'FloorBinding')
+    bad('floor-check-point',with_check,lambda v:v[4][0].__setitem__(1,[1,['clean-elasticity-ridge-v1','2*ln(2)',source(0),source(1)]]),'Point')
+    bad('zero-width-flag',delivered,lambda v:v[5].__setitem__(0,False),'ZeroWidth')
+    bad('zero-width-floor',delivered,lambda v:(v[5].__setitem__(1,evaluated(4,1,2)),v.__setitem__(3,inverse())),'ZeroFloor')
+    bad('positive-missing-floor',positive_delivered,lambda v:v[5].__setitem__(1,None),'MissingFloor',data=positive)
+    bad('missing-target',positive_delivered,lambda v:v.__setitem__(3,None),'Target',data=positive)
+    for position,predicate in [(1,4),(2,1),(3,4),(4,4),(5,2)]:
+        for key,mutate,cause in [('predicate',foreign_predicate,'Comparison::ExpectedPredicate'),('reduction',lambda c:c[1].__setitem__(1,1),'Comparison::ExpectedReduction'),('threshold',foreign_threshold,'Comparison::Threshold')]:
+            bad(f'position-{position}-{key}',positive_delivered,lambda v,position=position,mutate=mutate:mutate(v[5][position]),cause,data=positive)
+        bad(f'position-{position}-operational',positive_delivered,lambda v,position=position:v[5].__setitem__(position,[2,[2,5]]),'BranchOperational',data=positive)
+        bad(f'position-{position}-indecisive',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,evaluated(predicate)),'BranchIndecisive',data=positive)
+        bad(f'position-{position}-exact-symbolic',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,exact(predicate,1,2)),'Comparison::ExactContext',data=positive)
+    for position,predicate in [(2,1),(3,4),(4,4),(5,2)]:
+        bad(f'position-{position}-evaluated-exact',delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,evaluated(predicate)),'Comparison::ExactEvaluated')
+        for side,cause in [(1,'Comparison::ExactLeft'),(3,'Comparison::ExactRight')]:
+            bad(f'position-{position}-exact-operand-{side}',delivered,lambda v,position=position,side=side:foreign_exact_position(v,position,side),cause)
+    bad('floor-point-rational',point_stop,lambda v:v.__setitem__(4,[]),'PointFloor')
+    bad('floor-point-missing',point_stop,lambda v:v.__setitem__(4,[]),'LastFloor',data=ridge)
+    bad('floor-point-equality',point_stop,lambda v:v[8][2][1].__setitem__(3,[q(-2),True,q(2),True]),'FloorEquality',data=ridge)
+    bad('inverse-with-comparison',lambda:stopped(2),lambda v:(v.__setitem__(5,None),v.__setitem__(2,[1]),v[8].__setitem__(1,[1])),'InverseComparison',data=positive)
+    bad('delivery-without-branches',refused,lambda v:v.__setitem__(5,None),'IncompleteDecision',data=positive)
+    bad('delivery-range-reversed',refused,lambda v:v[5].__setitem__(7,rng(2,1)),'Range',data=positive)
+    bad('indecisive-kind',lambda:stopped(2),lambda v:v[8].__setitem__(2,[2,[2,5]]),'IndecisiveKind',data=positive)
+    bad('indecisive-verdict',lambda:stopped(2),lambda v:v[8].__setitem__(2,evaluated(1,1,2)),'IndecisiveVerdict',data=positive)
+    bad('refusal-stage',lambda:stopped(2),lambda v:v.__setitem__(8,[3,[2],evaluated(1,1,2)]),'RefusalStage',data=positive)
+    bad('refusal-kind',refused,lambda v:v[8].__setitem__(2,[2,[2,5]]),'RefusalKind',data=positive)
+    bad('exact-delivery-evaluated',refused,lambda v:v[8].__setitem__(2,evaluated(3)),'Comparison::ExactEvaluated',data=positive)
+    bad('exact-delivery-indecisive-exact',refused,lambda v:v[8].__setitem__(0,1),'IndecisiveKind',data=positive)
+    bad('refusal-verdict',symbolic_hold,lambda v:(v.__setitem__(2,[6]),v.__setitem__(6,None),v.__setitem__(8,[3,[6],exact(3,'1/4','1/4')])),'RefusalVerdict',data=positive)
+    for cause in (0,8):bad(f'cause-{cause}',operational,lambda v,cause=cause:v[8].__setitem__(2,cause),'Cause')
+    bad('delivered-branches',delivered,lambda v:v.__setitem__(5,None),'IncompleteDecision')
+    bad('delivered-value',delivered,lambda v:v.__setitem__(6,None),'DeliveredValue')
+    bad('delivered-stop',delivered,lambda v:v.__setitem__(2,[6]),'DeliveredStop')
+    bad('missing-stop',operational,lambda v:v.__setitem__(2,None),'MissingStop')
+    bad('stop-stage',operational,lambda v:v.__setitem__(2,[2]),'StopStage')
+    bad('stopped-value',operational,lambda v:v.__setitem__(6,source(1)),'StoppedValue')
+    bad('order-context-floor-check',with_check,lambda v:v[4][0].__setitem__(2,[1]),'Inputs',expected=inputs(width='2'),rule='outer input binding before floor-check binding')
+    bad('order-floor-check-branches',positive_delivered,lambda v:(v.__setitem__(4,[point(floor=1)]),v[5].__setitem__(0,True)),'FloorBinding',data=positive,rule='floor check before branch width')
+    bad('order-floor-point-binding-kind',with_check,lambda v:(v[4][0].__setitem__(2,[1]),v[4][0].__setitem__(1,[1,['clean-elasticity-ridge-v1','2*ln(2)',source(0),source(1)]])),'FloorBinding',rule='floor binding before point kind')
+    bad('instance-floor-verdict-binding',with_check,lambda v:(v[4][0][4][1].__setitem__(5,1),v[4].append(point(floor=1))),'Comparison::VerdictAgreement',rule='earlier point verdict before later point floor binding')
+    for name,first,second,cause in [
+        ('edition-arity',lambda v:v.__setitem__(0,1),lambda v:v.append(0),'Edition'),
+        ('cause-missing-stop',lambda v:v[8].__setitem__(2,8),lambda v:v.__setitem__(2,None),'Cause'),
+        ('precision-cause',lambda v:v.__setitem__(1,'16'),lambda v:v[8].__setitem__(2,8),'Precision'),
+        ('missing-stop-value',lambda v:v.__setitem__(2,None),lambda v:v.__setitem__(6,source(1)),'MissingStop'),
+        ('stage-value',lambda v:v.__setitem__(2,[2]),lambda v:v.__setitem__(6,source(1)),'StopStage'),
+    ]:bad('order-'+name,operational,lambda v,first=first,second=second:(first(v),second(v)),cause,rule='overlap '+name)
+    bad('order-zero-flag-floor',delivered,lambda v:(v[5].__setitem__(0,False),v[5].__setitem__(1,evaluated(4,1,2)),v.__setitem__(3,inverse())),'ZeroWidth',rule='overlap zero-width agreement then floor presence')
+    bad('order-delivered-value-stop',delivered,lambda v:(v.__setitem__(6,None),v.__setitem__(2,[6])),'DeliveredValue',rule='overlap delivered value then stopped-at')
+    bad('order-branch-result',positive_delivered,lambda v:(foreign_predicate(v[5][2]),v.__setitem__(8,[2,[6],8]),v.__setitem__(2,[6]),v.__setitem__(6,None)),'Comparison::ExpectedPredicate',data=positive,rule='overlap branch then result')
+    bad('instance-branch-verdict-predicate',positive_delivered,lambda v:(v[5][2][1].__setitem__(6,0),v[5][3][1].__setitem__(2,5)),'Comparison::VerdictAgreement',data=positive,rule='earlier branch verdict before later branch predicate')
+    for constructor in (1,3):
+        bad(f'result-{constructor}-extra',refused,lambda v,constructor=constructor:(v[8].__setitem__(0,constructor),v[8].append(0)),'Arity',data=positive)
+    for code in range(4):
+        bad(f'relation-{code}-agreement',lambda:stopped(2),lambda v,code=code:(v[8][2].__setitem__(1,evaluated(1,1,2)[1] if code==3 else evaluated(1)[1]),v[8][2][1].__setitem__(5,code)),'Comparison::RelationAgreement',data=positive)
+
+    bad('prefix-empty',lambda:operational(2),lambda v:v.__setitem__(5,[True,None,None,None,None,None,rng('3/37','3/37'),None]),'EmptyPrefix')
+    bad('prefix-gap-direction',positive_delivered,lambda v:v[5].__setitem__(2,None),'BrokenPrefix',data=positive)
+    bad('prefix-gap-absolute',positive_delivered,lambda v:v[5].__setitem__(5,None),'BrokenPrefix',data=positive)
+    bad('prefix-gap-relative',positive_delivered,lambda v:v[5].__setitem__(3,None),'BrokenPrefix',data=positive)
+    for field in (3,4,5):
+        bad(f'hold-past-end-{field}',symbolic_hold,lambda v,field=field:v[5].__setitem__(field,evaluated(2 if field==5 else 4,1,2)),'PastEnd',data=positive)
+    bad('prefix-early-ideal',lambda:stopped(2),lambda v:v[5].__setitem__(7,rng('1/2','3/4')),'EarlyIdeal',data=positive)
+    bad('complete-missing-ideal',positive_delivered,lambda v:v[5].__setitem__(7,None),'MissingIdeal',data=positive)
+    bad('proposal-range-substitution',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,rng('2/3','3/4'))),'ProposalRange',data=positive)
+    bad('ideal-range-substitution',positive_delivered,lambda v:v[5].__setitem__(7,rng('2/3','3/4')),'IdealRange',data=positive)
+    bad('hold-ideal-substitution',symbolic_hold,lambda v:v[5].__setitem__(7,rng('1/4','1/3')),'IdealRange',data=positive)
+    bad('stop-missing-floor',lambda:stopped(2),lambda v:v.__setitem__(5,None),'MissingBeforeStop',data=positive)
+    bad('stop-missing-direction',lambda:stopped(4),lambda v:v[5].__setitem__(5,None),'MissingBeforeStop',data=positive)
+    bad('stop-present-direction',lambda:stopped(3),lambda v:v[5].__setitem__(5,evaluated(2,1,2)),'PresentAfterStop',data=positive)
+    bad('stop-after-hold',symbolic_hold,lambda v:(v.__setitem__(2,[3]),v.__setitem__(6,None),v.__setitem__(8,[1,[3],evaluated(2)])),'StopAfterHold',data=positive)
+    bad('hold-refusal-foreign-ideal',symbolic_hold,lambda v:(v[5].__setitem__(7,rng('1/4','1/3')),v.__setitem__(2,[6]),v.__setitem__(6,None),v.__setitem__(8,[3,[6],exact(3,'1/4','1/3')])),'IdealRange',data=positive)
+    bad('hold-refusal-point',symbolic_hold,lambda v:(v.__setitem__(2,[6]),v.__setitem__(6,None),v.__setitem__(8,[3,[6],exact(3,'1/4','1/4')])),'RefusalVerdict',data=positive)
+    bad('order-proposal-ideal',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,None)),'ProposalRange',data=positive,rule='proposal binding before ideal presence')
+    bad('order-ideal-result',symbolic_hold,lambda v:(v[5].__setitem__(7,rng('1/4','1/3')),v.__setitem__(8,[2,[6],8]),v.__setitem__(2,[6]),v.__setitem__(6,None)),'IdealRange',data=positive,rule='ideal binding before result cause')
+
+    def record(attempts=None):return [2,procedure(),input_value(inputs()),attempts if attempts is not None else [operational()]]
+    row('record-operational',record(),edition='record')
+    row('record-delivered',record([delivered()]),edition='record')
+    r=[2,procedure(),input_value(positive),[refused()]];row('record-refused',r,data=positive,edition='record')
+    r=[2,procedure(),input_value(positive),[floor_stop()]];row('record-indecisive',r,data=positive,edition='record')
+    r=record([operational(),operational(2)]);r[3][1][1]='16';row('record-two-attempts',r,edition='record')
+    bad('record-empty',record,lambda v:v.__setitem__(3,[]),'Empty',edition='record')
+    bad('record-summary',record,lambda v:v.append(2),'Arity',edition='record')
+    bad('record-old-attempt',record,lambda v:v[3].__setitem__(0,operational()[1:8]),'Member',edition='record')
+    bad('record-inputs',record,lambda v:v[2].__setitem__(5,source('1/3')),'Inputs',edition='record')
+    bad('record-procedure',record,lambda v:v[1].__setitem__(2,'foreign'),'Procedure',edition='record')
+    bad('order-record-procedure-inputs',record,lambda v:(v[1].__setitem__(2,'foreign'),v[2].__setitem__(5,source('1/3'))),'Procedure',edition='record',rule='procedure binding before input binding')
+    bad('order-record-inputs-empty',record,lambda v:(v[2].__setitem__(5,source('1/3')),v.__setitem__(3,[])),'Inputs',edition='record',rule='input binding before nonempty attempts')
+    bad('order-record-inputs-attempt',record,lambda v:(v[2].__setitem__(5,source('1/3')),v[3][0].__setitem__(2,None)),'Inputs',edition='record',rule='record input binding before nested attempt stop')
+    bad('order-record-terminal-successor',lambda:record([delivered(),operational()]),lambda v:v[3][1].__setitem__(1,'24'),'Successor',edition='record',rule='terminal predecessor before successor precision')
+    bad('record-successor',lambda:record([delivered(),operational()]),lambda v:v[3][1].__setitem__(1,'16'),'Successor',edition='record')
+    r=[2,procedure(),input_value(positive),[refused(),operational()]];r[3][1][1]='16';row('record-refusal-successor',r,'Successor',data=positive,edition='record')
+    r=record([operational(),operational()]);r[3][0][2]=None;r[3][1][1]='24';row('instance-attempt-stop-precision',r,'MissingStop',edition='record',rule='earlier attempt stop before later attempt precision')
+    for raw,name in [(b'\x9f\xff','indefinite'),(b'\xc0'+encode(operational()),'tag'),(encode(operational())+b'\x00','trailing')]:
+        row('framing-'+name,operational(),{'indefinite':'IndefiniteLength','tag':'Tag','trailing':'TrailingBytes'}[name],raw=raw)
+    for value in rows:
+        value['structural_only']=True
+    rows=rows[::2][::-1]+rows[1::2]
+    return dict(provenance='Fresh controller values; independent integer encoder and Fraction endpoint comparisons. No codec or interchange imports; no enclosure soundness, controller execution or publication claim.',distinct_inputs=len({json.dumps({k:v for k,v in row.items() if k not in ('case','rule','result','value')},sort_keys=True) for row in rows}),distinct_byte_inputs=len({row['canonical'] for row in rows}),cases=rows)
+
+
+def check_controllers(path):
+    expected=controller_vectors()
+    if json.loads(Path(path).read_text())!=expected:
+        raise ValueError('controller corpus differs from independent integer derivation')
+    return expected
+
+
 def check_comparisons(path):
     expected=comparison_vectors()
     if json.loads(Path(path).read_text()) != expected:
@@ -776,3 +1056,9 @@ if __name__ == '__main__':
         comparison_path.write_text(json.dumps(comparison_vectors(), indent=2) + '\n')
     comparison_result = check_comparisons(comparison_path)
     print(f"COMPARISON-VECTORS cases={len(comparison_result['cases'])} distinct={comparison_result['distinct_inputs']} byte_inputs={comparison_result['distinct_byte_inputs']} order=unsorted")
+
+    controller_path = Path('packages/host/tests/data/controller-carriers.json')
+    if args.write:
+        controller_path.write_text(json.dumps(controller_vectors(), indent=2) + '\n')
+    controller_result = check_controllers(controller_path)
+    print(f"CONTROLLER-VECTORS cases={len(controller_result['cases'])} distinct={controller_result['distinct_inputs']} byte_inputs={controller_result['distinct_byte_inputs']} order=unsorted")

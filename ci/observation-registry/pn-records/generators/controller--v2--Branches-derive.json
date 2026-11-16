@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "controller::v2::Branches",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "controller-records",
+    "expansion_review": "These explicitly selected controller fragments contain only public procedure declarations, inputs, retained inverse and floor records, exact rational enclosures, result and stage codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content."
+  }
+}

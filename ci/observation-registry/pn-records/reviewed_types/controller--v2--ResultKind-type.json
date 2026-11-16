@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::ResultKind",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" Disjoint results retain a complete comparison or an operational cause.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ResultKind { # [doc = \" All required branch decisions accompany a delivered value.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Delivered , # [doc = \" An evaluated straddle retains its enclosure and exact threshold.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Indecisive { stage : Stage , comparison : FloorComparisonV2 } , # [doc = \" No mathematical verdict is manufactured for an operational stop.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Operational { stage : Stage , cause : u64 } , # [doc = \" A complete failing comparison certifies a representation refusal.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Refused { stage : Stage , comparison : FloorComparisonV2 } , }"
+  }
+}

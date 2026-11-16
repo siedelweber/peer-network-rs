@@ -11,6 +11,10 @@ mod backend_error;
 /// Explicit comparison fragments, separate from publication.
 /// (´[ROOT-dec:design:comparison-verdict-record]´)
 pub mod comparison;
+
+/// Explicit controller fragments, separate from every publication producer.
+/// (´[ROOT-dec:design:comparison-verdict-record]´)
+pub mod controller;
 mod epoch_admission;
 mod epoch_admission_finalize;
 mod epoch_base;

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "item": "controller::v2::Attempt::validate",
+    "owner": "RECORDS",
+    "signature": "fn validate (& self , context : & Context < '_ > , expected : & Context < '_ > , budget : & mut Budget) -> Result < () , Error >",
+    "claim": "ROOT::sig:design:records",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "controller-attempt-validate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/controller/v2.rs::controller::v2::Attempt::validate",
+    "body": "{ validate_context (context , expected , self . precision , budget) ? ; point_checks (self , context , budget) ? ; branches (self , context , budget) ? ; let stage = result (self , context , budget) ? ; if let Some (stage) = stage { let stopped = self . stopped_at . ok_or (Error :: MissingStop) ? ; if stopped != stage { return Err (Error :: StopStage) ; } if self . delivered . is_some () { return Err (Error :: StoppedValue) ; } } else { if ! self . branches . as_ref () . is_some_and (complete) { return Err (Error :: IncompleteDecision) ; } if self . delivered . is_none () { return Err (Error :: DeliveredValue) ; } if self . stopped_at . is_some () { return Err (Error :: DeliveredStop) ; } } Ok (()) }",
+    "class_decision": "controller-records",
+    "item_premise": "These explicitly selected controller fragments contain only public procedure declarations, inputs, retained inverse and floor records, exact rational enclosures, result and stage codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "controller-full_recording",
+      "secret_flow": "controller-secret_flow",
+      "exposure_consumers": "controller-exposure_consumers"
+    }
+  }
+}

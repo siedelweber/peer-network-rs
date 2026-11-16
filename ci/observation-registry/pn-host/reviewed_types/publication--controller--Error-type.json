@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::controller::Error",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/controller.rs",
+    "syntax": "# [doc = \" Structural decoding or carrier-validation refusal, never a verdict.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Debug)] pub enum Error { # [doc = \" Shared canonical or nested comparison framing refused.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Comparison (comparison :: Error) , # [doc = \" An inherited publication projection refused its member.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Projection (super :: Error) , # [doc = \" A stage code is outside the second edition's closed seven.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Stage , # [doc = \" A result code is outside the four disjoint constructors.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Result , # [doc = \" The typed carrier refused its first semantic clause.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] Record (pn_records :: controller :: v2 :: Error) , }"
+  }
+}

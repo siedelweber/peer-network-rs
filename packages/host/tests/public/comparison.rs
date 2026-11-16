@@ -122,7 +122,7 @@ fn fixture() -> &'static VerifiedFixture {
     })
 }
 
-fn defining_proof() -> DefiningProof<'static> {
+pub(super) fn defining_proof() -> DefiningProof<'static> {
     let fixture = fixture();
     DefiningProof {
         evidence: &fixture.0,

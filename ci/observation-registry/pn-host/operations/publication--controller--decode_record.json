@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/controller.rs",
+    "item": "publication::controller::decode_record",
+    "owner": "HOST",
+    "signature": "fn decode_record (bytes : & [u8] , expected : & Request < '_ > , numeric : & mut NumericContext , limits : & Limits ,) -> Result < Record , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/controller.rs::publication::controller::decode_record",
+    "body": "{ let value = comparison :: read (bytes , limits) ? ; let members = comparison :: selected (& value , 4) ? ; let mut context = comparison :: context (numeric , & limits . arithmetic) ? ; let procedure = Procedure :: read (& members [1] , & mut context) . map_err (Error :: Projection) ? ; let inputs = Inputs :: read (& members [2] , & mut context) . map_err (Error :: Projection) ? ; let Value :: Array (attempts) = & members [3] else { return Err (comparison :: Error :: Member . into ()) ; } ; let attempts = attempts . as_slice () . iter () . map (| value | attempt (value , & mut context , & limits . arithmetic)) . collect :: < Result < _ , _ > > () ? ; let record = Record { procedure , inputs , attempts , } ; record . validate (expected . procedure , expected . inputs , expected . proof , & mut context . arithmetic) . map_err (Error :: Record) ? ; Ok (record) }",
+    "class_decision": "controller-host",
+    "item_premise": "These explicitly selected controller fragments contain only public procedure declarations, inputs, retained inverse and floor records, exact rational enclosures, result and stage codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "controller-full_recording",
+      "secret_flow": "controller-secret_flow",
+      "exposure_consumers": "controller-exposure_consumers"
+    }
+  }
+}

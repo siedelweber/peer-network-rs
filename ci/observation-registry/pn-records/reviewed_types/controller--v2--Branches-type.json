@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::Branches",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" A prefix of decided comparisons, with ranges bound to the recorded decision.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Branches { pub zero_width : bool , pub floor : Option < FloorComparisonV2 > , pub deadband : Option < FloorComparisonV2 > , pub absolute_cap : Option < FloorComparisonV2 > , pub relative_cap : Option < FloorComparisonV2 > , pub direction : Option < FloorComparisonV2 > , pub proposal : Range , pub ideal : Option < Range > , }"
+  }
+}

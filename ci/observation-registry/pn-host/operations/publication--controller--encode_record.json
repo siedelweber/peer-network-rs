@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/publication/controller.rs",
+    "item": "publication::controller::encode_record",
+    "owner": "HOST",
+    "signature": "fn encode_record (record : & Record , expected : & Request < '_ > , numeric : & mut NumericContext , limits : & Limits ,) -> Result < Vec < u8 > , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/controller.rs::publication::controller::encode_record",
+    "body": "{ let mut context = comparison :: context (numeric , & limits . arithmetic) ? ; record . validate (expected . procedure , expected . inputs , expected . proof , & mut context . arithmetic) . map_err (Error :: Record) ? ; let value = array ([Value :: Unsigned (2) , record . procedure . write (& mut context) . map_err (Error :: Projection) ? , record . inputs . write (& mut context) . map_err (Error :: Projection) ? , array (record . attempts . iter () . map (| attempt | attempt_value (attempt , & mut context)) . collect :: < Result < Vec < _ > , _ > > () ? ,) ,]) ; let bytes = value . to_canonical_bytes () ; comparison :: read (& bytes , limits) ? ; Ok (bytes) }",
+    "class_decision": "controller-host",
+    "item_premise": "These explicitly selected controller fragments contain only public procedure declarations, inputs, retained inverse and floor records, exact rational enclosures, result and stage codes, declared limits and public proof transcripts. The caller supplies the existing ChargeVerifier replay boundary. Carrier checks establish structure and endpoint consistency, not enclosure origin, soundness, admission or publication. Complete arguments and results are recorded at each public tracing boundary. No secret acquisition, secret container, private path or I/O occurs in these bodies; derived copies and formatting expose the same public content.",
+    "assessments": {
+      "full_recording": "controller-full_recording",
+      "secret_flow": "controller-secret_flow",
+      "exposure_consumers": "controller-exposure_consumers"
+    }
+  }
+}

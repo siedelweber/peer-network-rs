@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "controller::v2::Context",
+    "package": "pn-records",
+    "path": "packages/records/src/controller/v2.rs",
+    "syntax": "# [doc = \" Independently supplied context and optional defining-ridge proof.\"] # [doc = \" (´[ROOT-dec:design:comparison-verdict-record]´)\"] # [derive (Debug)] pub struct Context < 'a > { pub procedure : & 'a Procedure , pub inputs : & 'a Inputs , pub index : usize , pub proof : Option < & 'a DefiningProof < 'a > > , }"
+  }
+}
