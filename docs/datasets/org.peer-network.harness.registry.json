@@ -671,6 +671,9 @@
         "ci::test_host_runtime.HostRuntime.test_storage_statements": "calibrated-host-runtime-storage-statements-case"
       },
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory",
+        "ci::test_host_runtime.HostRuntime.test_fixture_helper_form",
+        "ci::test_host_runtime.HostRuntime.test_fixture_descriptor_census",
         "ci::test_host_runtime.HostRuntime.test_credential_fixture_launch_boundary",
         "ci::test_host_runtime.HostRuntime.test_credential_fixture_connection_boundary",
         "ci::test_host_runtime.HostRuntime.test_statement_type_boundary",
@@ -3094,6 +3097,7 @@
     {
       "budget": "postgresql-suite",
       "cases": [
+        "pn-host::credential_fixture::raw::raw_inventory",
         "pn-host::credential_fixture::owned_instances"
       ],
       "implementation": "pn-host-postgresql",
@@ -3107,6 +3111,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::credential_fixture::raw::public_facts",
         "pn-host::credential_fixture::instance_prerequisites",
         "pn-host::credential_fixture::binding",
         "pn-host::credential_fixture::handovers"

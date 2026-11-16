@@ -21,7 +21,7 @@ establishment = "defined"
 reader = "credential-vectors"
 source = "packages/credential-derivation/src/tests/vectors.rs"
 definition = "Reconstruct every byte without the Rust library, host or their helpers; refuse any difference in the entire generated fixture source before accounting literals."
-paths = ["packages/credential-derivation/src/tests/vectors.rs", "packages/credential-derivation/src/lib.rs", "packages/credential-derivation/README.md", "docs/templates/packages/credential-derivation/README.md.j2", "ci/observation-registry/pn-credential-derivation/operations/operation-5.json"]
+paths = ["packages/credential-derivation/src/tests/vectors.rs", "packages/credential-derivation/src/lib.rs", "packages/credential-derivation/README.md", "docs/templates/packages/credential-derivation/README.md.j2", "ci/observation-registry/pn-credential-derivation/operations/operation-5.json", "packages/host/src/credential_fixture/raw.rs", "ci/host_statements.py"]
 
 [[rows]]
 family = "authentication-signature-publication"

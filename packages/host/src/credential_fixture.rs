@@ -589,3 +589,5 @@ fn owned_instances() {
         assert!(!root.exists(), "owned directory absent after shutdown");
     }
 }
+
+mod raw;

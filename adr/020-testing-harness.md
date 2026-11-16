@@ -45,7 +45,7 @@
 | ci::test_devperf | active | unit | ci-python | fast | 71 |
 | ci::test_discipline | active | integration | ci-python | fast | 38 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
-| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 11 |
+| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 14 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
@@ -163,8 +163,8 @@
 | pn-host::admitted-carrier | active | integration | pn-host-rust | extended | 1 |
 | pn-host::admitted-carrier-held | active | integration | pn-host-memory-and-postgresql | service | 1 |
 | pn-host::admitted-memory | active | integration | pn-host-rust | extended | 2 |
-| pn-host::credential-instance | active | integration | pn-host-postgresql | service | 1 |
-| pn-host::credential-launch | active | integration | pn-host-rust | service | 3 |
+| pn-host::credential-instance | active | integration | pn-host-postgresql | service | 2 |
+| pn-host::credential-launch | active | integration | pn-host-rust | service | 4 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
 | pn-host::public | active | public-surface | pn-host-rust | fast | 17 |

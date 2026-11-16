@@ -754,6 +754,30 @@
       "review": "Read the checked default/optional host feature declaration and explicit disabled-wallet exclusion, then the checksum, omitted-row, duplicate-row and enabled-wallet mutations. The wallet closure is independently checked by its own suite."
     },
     {
+      "operation": "ci::test_host_runtime.HostRuntime.test_fixture_descriptor_census",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:credential-fixture-descriptor-census",
+      "before": "",
+      "after": "The lexical wrapper census pins the two named pass_fds entries and both parent closes; adding a passed descriptor or dropping a parent close refuses. Interpreter payload semantics and successful stream custody remain outside this control.",
+      "review": "The control first admits the actual source, then changes one source condition at a time and requires its own refusal message before restoring the original. The exact placements witness only the stated lexical boundary; no private input or server operation occurs."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:credential-fixture-exit-inventory",
+      "before": "",
+      "after": "The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
+      "review": "The control first admits the actual source, then changes one source condition at a time and requires its own refusal message before restoring the original. The exact placements witness only the stated lexical boundary; no private input or server operation occurs."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_fixture_helper_form",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:credential-fixture-helper-form",
+      "before": "",
+      "after": "The helper source census pins the fixed public function body and refuses an assignment, a strict-parameter directive and a changed role target; runtime controls separately pin its created attributes.",
+      "review": "The control first admits the actual source, then changes one source condition at a time and requires its own refusal message before restoring the original. The exact placements witness only the stated lexical boundary; no private input or server operation occurs."
+    },
+    {
       "operation": "ci::test_host_runtime.HostRuntime.test_independent_instances",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:postgresql-instances-own-distinct-ports",
@@ -4185,6 +4209,22 @@
       "before": "",
       "after": "Two fresh instances with published SCRAM setup inputs retain their distinct text-exposing statistics profiles and one/one inherited core limits, read through the unchanged host Session; an incompatible backend-start connection is refused, and every owned directory is removed after shutdown. No generated credential material is handled.",
       "review": "Read the selected target check, interpreter lowering and read-back before startup, inherited limits from the postmaster and its children, both real statistics profiles, backend-start refusal and shutdown before directory removal. Published SCRAM setup inputs are acquired through Configuration and every connection uses the unchanged Session shim; no generated credential, raw provisioning session or installation witness is claimed."
+    },
+    {
+      "operation": "pn-host::credential_fixture::raw::public_facts",
+      "path": "packages/host/src/credential_fixture/raw.rs",
+      "claim": "HOST::claim:host:credential-raw-public-facts",
+      "before": "",
+      "after": "Protected inventory parsing admits only the fixed public boolean row and completion shapes; unexpected, truncated and extra fields refuse without returning their contents.",
+      "review": "The control constructs only public frames in protected Buffer storage. Exact boolean and idle-completion comparisons admit their assigned classes, while unexpected data, extra and short fields, a non-idle transaction, an error and a cancellation-key-shaped frame refuse. No response text is returned."
+    },
+    {
+      "operation": "pn-host::credential_fixture::raw::raw_inventory",
+      "path": "packages/host/src/credential_fixture/raw.rs",
+      "claim": "HOST::claim:host:credential-raw-inventory",
+      "before": "",
+      "after": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter and helper states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
+      "review": "Both fresh instances retain the existing owned lifecycle and limits. Raw startup uses the unchanged host Socket, SCRAM and protected read, with named containment. Every inventory row is queried in the issuing session; each injected false predicate refuses independently. Actual parameter, plan-mode and helper-attribute changes refuse and are restored. The fixed unnamed Parse has no Bind or execution. Host core and custody rows combine existing process read-back and the source census, not an SQL proof of those properties."
     },
     {
       "operation": "pn-host::postgresql::connection_loss_and_drop",

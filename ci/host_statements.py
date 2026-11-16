@@ -32,6 +32,7 @@ def check(root=Path('.')):
     pending.extend((path,True,False) for directory in ('tests','benches')
                    for path in (root/'packages/host'/directory).rglob('*.rs'))
     seen=set()
+    fixture_sources={}
     while pending:
         path,test_only,fixture=pending.pop()
         visit=(path,fixture)
@@ -87,6 +88,7 @@ def check(root=Path('.')):
                      if fixture else 'connection constructor outside Session in production: ')
             raise ValueError(message+relative)
         if fixture:
+            fixture_sources[relative]=source
             # Closed lexical call shapes; the bindings and interpreter payload
             # remain reviewed, rather than inferred by this source check.
             admitted={'interpreter', 'program', '&programs[0]',
@@ -100,4 +102,43 @@ def check(root=Path('.')):
                 argument=re.sub(r'\s+', '', source[begin:end-1])
                 if depth or argument not in admitted:
                     raise ValueError('launch outside credential fixture lexical roster: '+relative)
+    fixture_contract(root,fixture_sources)
     return True
+
+
+def fixture_contract(root,sources):
+    """Join planned fixture exits and pin the public helper and handoff source."""
+    template=(root/'docs/templates/adr/016-observability.md.j2').read_text()
+    planned={name for cell in re.findall(r'^\| (cav:observe:secret-host-credential-[^|]+)\|',template,re.M)
+             for name in re.findall(r'cav:observe:secret-host-credential-[a-z0-9-]+',cell)}
+    if len(planned)!=13:raise ValueError('credential planned exit inventory differs')
+    from discipline import exposure_sites
+    present=set()
+    site_count=0
+    for path,source in sources.items():
+        sites,findings=exposure_sites(path,source)
+        site_count+=len(sites)
+        if findings:raise ValueError('credential fixture exit inventory malformed')
+        present.update(site['label'] for site in sites)
+    if present-planned:raise ValueError('credential fixture exit outside planned inventory')
+    wrapper=sources['packages/host/src/credential_fixture.rs']
+    if wrapper.count('pass_fds=(a,b)')!=1 or wrapper.count('os.close(a);os.close(b)')!=1:
+        raise ValueError('credential wrapper descriptor handoff differs')
+    raw=sources.get('packages/host/src/credential_fixture/raw.rs','')
+    if not raw:raise ValueError('credential raw fixture module missing')
+    helper=re.search(r'const HELPER_BODY: &str = r"(.*?)";',raw,re.S)
+    if helper is None or helper[1]!=HELPER_BODY:
+        raise ValueError('credential helper source differs from fixed public form')
+    code=rust_mask(raw)
+    variants=re.search(r'enum Inventory\s*\{([^}]+)\}',code,re.S)
+    roster=re.search(r'const INVENTORY[^=]*=\s*\[([^;]+)\];',code,re.S)
+    if variants is None or roster is None:
+        raise ValueError('credential inventory closed roster missing')
+    names=re.findall(r'\b([A-Z]\w*)\b',variants[1])
+    rows=re.findall(r'Inventory::(\w+)',roster[1])
+    if len(names)!=31 or sorted(names)!=sorted(rows) or len(set(rows))!=31:
+        raise ValueError('credential inventory closed roster differs')
+    print(f'HOST-CREDENTIAL-EXITS sites={site_count} labels={len(present)} planned={len(planned)} findings=0 names='+','.join(sorted(present)))
+    return present
+
+HELPER_BODY = "BEGIN\nIF $1 IS NULL OR pg_catalog.octet_length($1) <> 135 OR $1 !~ '^SCRAM-SHA-256[$]600000:[A-Za-z0-9+/]{22}==[$][A-Za-z0-9+/]{43}=:[A-Za-z0-9+/]{43}=$' THEN\nRAISE EXCEPTION USING MESSAGE = 'credential framing refused', ERRCODE = '22023';\nEND IF;\nEXECUTE 'ALTER ROLE credential_target PASSWORD ' || pg_catalog.quote_literal($1);\nEND"

@@ -542,6 +542,63 @@ class HostRuntime(unittest.TestCase):
             if not any(child.parent.iterdir()):child.parent.rmdir()
         print('HOST-LAUNCH-CENSUS admitted=4 foreign-refused=2 binding-and-payload=reviewed')
 
+    def test_fixture_exit_inventory(self):
+        """The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.
+        ´claim:discipline:credential-fixture-exit-inventory´
+        ´test:integration:test-fixture-exit-inventory´
+        """
+        from host_statements import check
+        self.assertTrue(check())
+        paths={'entry':Path('packages/host/src/credential_fixture.rs'),'raw':Path('packages/host/src/credential_fixture/raw.rs')}
+        for target,before,after,message in [('raw', 'cav:observe:secret-host-credential-inventory-readback', 'cav:observe:secret-host-credential-inventory-readback2', 'credential fixture exit outside planned inventory'), ('raw', 'cav:observe:secret-host-credential-inventory-readback', 'cav:observe:secret-other-fixture', 'credential fixture exit outside planned inventory'), ('raw', '    Inventory::Parameters,', '', 'credential inventory closed roster differs')]:
+            path=paths[target];original=path.read_text()
+            if after is None:mutant=original+'\n'+before+'\n'
+            else:
+                self.assertEqual(original.count(before),2 if before.startswith('cav:') else 1,'source pre-image count')
+                mutant=original.replace(before,after)
+            try:
+                path.write_text(mutant)
+                with self.assertRaisesRegex(ValueError,message):check()
+            finally:path.write_text(original)
+
+    def test_fixture_helper_form(self):
+        """The helper source census pins the fixed public function body and refuses an assignment, a strict-parameter directive and a changed role target; runtime controls separately pin its created attributes.
+        ´claim:discipline:credential-fixture-helper-form´
+        ´test:integration:test-fixture-helper-form´
+        """
+        from host_statements import check
+        self.assertTrue(check())
+        paths={'entry':Path('packages/host/src/credential_fixture.rs'),'raw':Path('packages/host/src/credential_fixture/raw.rs')}
+        for target,before,after,message in [('raw', 'BEGIN\nIF', 'BEGIN\n$1 := $1;\nIF', 'credential helper source differs'), ('raw', 'BEGIN\nIF', '#print_strict_params on\nBEGIN\nIF', 'credential helper source differs'), ('raw', 'ALTER ROLE credential_target PASSWORD', 'ALTER ROLE other_target PASSWORD', 'credential helper source differs')]:
+            path=paths[target];original=path.read_text()
+            if after is None:mutant=original+'\n'+before+'\n'
+            else:
+                self.assertEqual(original.count(before),1,'source pre-image is unique')
+                mutant=original.replace(before,after)
+            try:
+                path.write_text(mutant)
+                with self.assertRaisesRegex(ValueError,message):check()
+            finally:path.write_text(original)
+
+    def test_fixture_descriptor_census(self):
+        """The lexical wrapper census pins the two named pass_fds entries and both parent closes; adding a passed descriptor or dropping a parent close refuses. Interpreter payload semantics and successful stream custody remain outside this control.
+        ´claim:discipline:credential-fixture-descriptor-census´
+        ´test:integration:test-fixture-descriptor-census´
+        """
+        from host_statements import check
+        self.assertTrue(check())
+        paths={'entry':Path('packages/host/src/credential_fixture.rs'),'raw':Path('packages/host/src/credential_fixture/raw.rs')}
+        for target,before,after,message in [('entry', 'pass_fds=(a,b)', 'pass_fds=(a,b,2)', 'credential wrapper descriptor handoff differs'), ('entry', 'os.close(a);os.close(b)', 'os.close(a)', 'credential wrapper descriptor handoff differs')]:
+            path=paths[target];original=path.read_text()
+            if after is None:mutant=original+'\n'+before+'\n'
+            else:
+                self.assertEqual(original.count(before),1,'source pre-image is unique')
+                mutant=original.replace(before,after)
+            try:
+                path.write_text(mutant)
+                with self.assertRaisesRegex(ValueError,message):check()
+            finally:path.write_text(original)
+
     def test_statement_type_boundary(self):
         """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.
         ´claim:discipline:storage-statement-types-refuse-inline-sql´
