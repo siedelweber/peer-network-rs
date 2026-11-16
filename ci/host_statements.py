@@ -193,7 +193,7 @@ def fixture_contract(root,sources):
     template=(root/'docs/templates/adr/016-observability.md.j2').read_text()
     planned={name for cell in re.findall(r'^\| (cav:observe:secret-host-credential-[^|]+)\|',template,re.M)
              for name in re.findall(r'cav:observe:secret-host-credential-[a-z0-9-]+',cell)}
-    if len(planned)!=13:raise ValueError('credential planned exit inventory differs')
+    if len(planned)!=14:raise ValueError('credential planned exit inventory differs')
     from discipline import exposure_sites
     present=set()
     site_count=0

@@ -591,7 +591,7 @@ class HostRuntime(unittest.TestCase):
         finally:source.write_bytes(original)
 
     def test_fixture_exit_inventory(self):
-        """The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.
+        """The fixture exit census accepts the implemented subset of fourteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.
         ´claim:discipline:credential-fixture-exit-inventory´
         ´test:integration:test-fixture-exit-inventory´
         """

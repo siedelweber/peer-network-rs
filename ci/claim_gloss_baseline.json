@@ -169,7 +169,7 @@
     "ci::test_host_runtime.HostRuntime.test_credential_fixture_launch_boundary": "",
     "ci::test_host_runtime.HostRuntime.test_dependency_pins": "",
     "ci::test_host_runtime.HostRuntime.test_fixture_descriptor_census": "",
-    "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory": "",
+    "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory": "The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
     "ci::test_host_runtime.HostRuntime.test_fixture_helper_form": "",
     "ci::test_host_runtime.HostRuntime.test_fixture_statement_text": "",
     "ci::test_host_runtime.HostRuntime.test_independent_instances": "",
