@@ -1096,7 +1096,7 @@
       "hold": "ROOT::open:design:secret-integrations",
       "missing": "Installed swap/hibernation exclusion under ROOT::amend:crypto:protected-verifier-residue, actual generator delivery/completion and custody, installation composition and restricted delivery of the complete connection input, and C9 node/schema startup integration. Shared derivation, checked completion, protected construction, named delivery, terminal generator and host reader retain scoped evidence; C5/C6 remain test-only models, not host publication or rollback enforcement.",
       "name": "ROOT::dec:observe:credential-packages",
-      "owner": "Foundation implementer, storage reviewer and secret-boundary reviewer",
+      "owner": "Foundation implementer, storage reviewer, secret-boundary reviewer and deployment administrator",
       "path": "adr/016-observability.md",
       "realizers": [],
       "status": "held",
