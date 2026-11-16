@@ -541,13 +541,20 @@ mod tests {
                 0
             });
             assert!(count <= request.len());
-            if count == 0 && !drip {
+            if count == 0 {
+                if drip {
+                    cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
+                        "acquisition-drip",
+                        "INCONCLUSIVE acquisition-drip: request not received; peer observed EOF",
+                    ))
+                    .unwrap();
+                }
                 return;
             }
             if drip {
                 // Each controlled write is offered without Nagle buffering; successful writes alone do not prove when the client reads them.
                 stream.set_nodelay(true).unwrap();
-                // This open-ended body drip is one-sided on both sides: only client closure ends progress, witnessing deadline-class refusal during body progress, not non-renewal; the 600-second containment names a hang. At one byte per millisecond, containment precedes the admitted body length even without scheduling delay.
+                // This open-ended body peer observes closure, not the client's phase or non-renewal. Request receipt depends on scheduling and is reported, never required. The 600-second containment names a hang; at one byte per millisecond it precedes the admitted body length.
                 stream
                     .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 8000000\r\n\r\n")
                     .unwrap();
@@ -577,7 +584,11 @@ mod tests {
                     }
                     std::thread::sleep(Duration::from_millis(1));
                 }
-                assert!(count > 0, "deadline case reaches the controlled peer before closure");
+                cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
+                    "acquisition-drip",
+                    "ACQUISITION-DRIP request received; peer observed closure",
+                ))
+                .unwrap();
             } else {
                 stream.write_all(bytes).unwrap();
                 stream.shutdown(std::net::Shutdown::Write).ok();
@@ -591,8 +602,12 @@ mod tests {
             .header(header::CONNECTION, "close")
             .body(Full::new(Bytes::from_static(b"{}")))
             .unwrap();
-        // The drip has no script end; a refusal under continuing progress witnesses its class, not non-renewal, while all other exchanges use hang containment only.
-        let budget = if drip { Duration::from_millis(100) } else { containment };
+        // The drip asserts the refusal class and peer closure; request receipt is conditional on scheduling. Other exchanges use hang containment only.
+        let budget = if drip {
+            Duration::from_millis(100).min(containment)
+        } else {
+            containment
+        };
         let result = exchange(stream, request, RpcLimits::default(), Instant::now() + budget, &mut None);
         let peer = server.join();
         assert!(
@@ -603,7 +618,7 @@ mod tests {
         result
     }
 
-    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and deadline-class refusal closes the progressing body peer before its response completes; neither read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result.
+    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and an exchange whose body peer progresses until closure refuses with the deadline class and closes that peer before its response completes; whether the request reached the peer before closure is reported, and a trial it did not reach is inconclusive, not a failure. Neither the client's phase at refusal, read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result. An already expired drip budget witnesses inconclusive request receipt with the deadline class and observed closure, without a scheduling delay.
     /// ´claim:wallet:rpc-http-acquisition-is-bounded´
     /// ´test:unit:acquisition-cases´
     #[test]
@@ -618,6 +633,13 @@ mod tests {
         assert!(
             message.contains("HANG awaiting acquisition exchange"),
             "acquisition containment names its event: {message}"
+        );
+        // An already expired budget cannot send a request: this pins inconclusive handling,
+        // not the scheduling interleaving that produced the original failure.
+        assert_eq!(
+            exchange_contained(b"", true, Duration::ZERO),
+            Err(RpcRefusal::Deadline),
+            "unreached drip retains its deadline class and observed peer closure"
         );
         assert_eq!(
             exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull", false)

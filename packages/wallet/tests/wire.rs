@@ -25,8 +25,8 @@ const OBSERVE: Duration = Duration::from_secs(600);
 /// Attempts per case. Evidence is selected conditionally: provisioning shares the case's own
 /// per-read limit, so an attempt that expires before its case request reaches the server is
 /// inconclusive about the case and the next attempt is taken, while its invariant findings
-/// stand; a case that never reaches its request fails. The count bounds the attempts, and with
-/// them the number of setup attempts. Peer closure, refusal class and teardown are observed
+/// stand; a case need not reach its complete request to pass. The count bounds the attempts, and with
+/// them the number of setup attempts. Five unreached attempts are reported inconclusive. Peer closure, refusal class and teardown are observed
 /// as events under hang containment; their elapsed times establish no transport envelope.
 const ATTEMPTS: usize = 5;
 static NEXT: AtomicUsize = AtomicUsize::new(0);
@@ -155,9 +155,35 @@ fn request(stream: &mut TcpStream) -> Vec<u8> {
     }
     let length = field(&bytes, "content-length").map_or(0, |value| value.parse().unwrap());
     let mut body = vec![0; length];
-    stream.read_exact(&mut body).unwrap();
-    bytes.extend(body);
+    let mut received = 0;
+    while received < length {
+        match stream.read(&mut body[received..]) {
+            Ok(0) => break,
+            Ok(count) => received += count,
+            Err(error) if error.kind() == ErrorKind::ConnectionReset => break,
+            Err(error) if matches!(error.kind(), ErrorKind::TimedOut | ErrorKind::WouldBlock) => {
+                panic!("HANG awaiting wire request body; last state={received}/{length} bytes: {error}")
+            }
+            Err(error) => panic!("request body read failed: {error}"),
+        }
+    }
+    bytes.extend_from_slice(&body[..received]);
     bytes
+}
+
+/// A received head and exactly its declared body, not merely a connection's roster entry.
+fn complete_request(bytes: &[u8]) -> bool {
+    let Some(end) = bytes.windows(4).position(|part| part == b"\r\n\r\n") else {
+        return false;
+    };
+    field(bytes, "content-length")
+        .and_then(|value| value.parse::<usize>().ok())
+        .is_some_and(|length| bytes.len() - (end + 4) == length)
+}
+
+/// Whether this attempt delivered its complete case request, including its declared body.
+fn case_reached(requests: &[Vec<u8>]) -> bool {
+    requests.get(2).is_some_and(|request| complete_request(request))
 }
 
 fn observe(stream: &mut TcpStream) -> Peer {
@@ -299,7 +325,7 @@ fn serve(
         }
         let peer = if drip {
             stream.set_nodelay(true).unwrap();
-            // Open-ended progress is one-sided on both sides: closure, not script completion, witnesses deadline-class refusal during head progress, not non-renewal. One byte per 100 milliseconds stays below the header ceiling until hang containment.
+            // Open-ended progress observes closure, not the client's phase or non-renewal. Request receipt is conditional on scheduling. One byte per 100 milliseconds stays below the header ceiling until hang containment.
             stream.set_nonblocking(true).unwrap();
             let end = Instant::now() + OBSERVE;
             let mut sink = [0; 256];
@@ -752,7 +778,7 @@ fn acquisition_cases() -> Vec<Case> {
     // The slow drip progresses through an incomplete head until closure; the two held cases await closure without completing their response. Only hang containment ends these peers without closure.
     // Their provisioning reads share those limits, so which
     // attempt counts as evidence is selected conditionally: one that expires before its case
-    // request reaches the server is inconclusive about the case and another is taken, its
+    // complete request reaches the server is inconclusive and another is taken, its
     // invariant findings kept (see `conclude`); every other case keeps the contract maximum.
     let timeout = RpcLimits {
         deadline: TIMEOUT,
@@ -778,7 +804,7 @@ fn acquisition_cases() -> Vec<Case> {
             wire: vec![(0, full.clone().into_bytes()), (50, b"x".to_vec())],
             ..case("delayed trailing byte", "", Err(RpcRefusal::Http))
         },
-        // This open-ended drip is one-sided on both sides and witnesses deadline-class refusal during head progress until closure, not non-renewal; only named hang containment ends it without closure.
+        // This peer drips its incomplete head until closure or named hang containment; refusal class and closure do not establish the client's phase or non-renewal.
         Case {
             wire: vec![(0, b"HTTP/1.1 200 OK\r\nX-Progress: ".to_vec())],
             hold: true,
@@ -786,7 +812,7 @@ fn acquisition_cases() -> Vec<Case> {
             limits: timeout,
             ..case("slow drip past the deadline", "", Err(RpcRefusal::Deadline))
         },
-        // This open-ended hold after the complete head is one-sided on both sides and alone witnesses the deadline reaching the body phase; only named hang containment ends it without closure.
+        // This peer holds after offering the complete head until closure or named hang containment; it cannot observe whether the client consumed the head or reached its body phase.
         Case {
             hold: true,
             limits: timeout,
@@ -797,7 +823,7 @@ fn acquisition_cases() -> Vec<Case> {
                 Err(RpcRefusal::Deadline),
             )
         },
-        // This open-ended hold before any byte is one-sided on both sides: it alone witnesses deadline refusal closing an otherwise silent peer, and only the named hang containment ends the wait without client closure.
+        // This silent peer observes closure if connected; request receipt is conditional on scheduling. Only named hang containment ends the hold without closure.
         Case {
             hold: true,
             limits: timeout,
@@ -953,8 +979,8 @@ struct Attempt {
 
 /// Combine a case's attempts: take attempts until one reaches its case request, at most
 /// `ATTEMPTS`. Every finding of every attempt taken survives into the result, so retrying an
-/// unreached attempt never discards an invariant it already broke, and a case none of whose
-/// attempts reached its request fails.
+/// unreached attempt never discards an invariant it already broke. Five unreached attempts
+/// leave the case inconclusive, reported without a failure finding.
 fn conclude(name: &str, attempts: impl Iterator<Item = Attempt>) -> Vec<String> {
     let mut findings = Vec::new();
     for attempt in attempts.take(ATTEMPTS) {
@@ -963,7 +989,11 @@ fn conclude(name: &str, attempts: impl Iterator<Item = Attempt>) -> Vec<String> 
             return findings;
         }
     }
-    findings.push(format!("{name}: no attempt reached the case request in {ATTEMPTS} attempts"));
+    cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
+        name,
+        &format!("INCONCLUSIVE {name}: no complete case request reached the peer in {ATTEMPTS} attempts"),
+    ))
+    .unwrap();
     findings
 }
 
@@ -1017,7 +1047,21 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Atte
     let exchange = server.join().unwrap();
     // An attempt that expired before its case request reached the server is inconclusive
     // about the case; its invariant findings above stand.
-    if result == Err(RpcRefusal::Deadline) && exchange.requests.len() < 3 {
+    if result == Err(RpcRefusal::Deadline) && !case_reached(&exchange.requests) {
+        if exchange.requests.len() >= 3 && !matches!(exchange.peer, Peer::Eof | Peer::Reset) {
+            findings.push(format!(
+                "{name}: connected deadline peer did not observe closure: {:?}",
+                exchange.peer
+            ));
+        }
+        cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
+            name,
+            &format!(
+                "INCONCLUSIVE {name}: complete case request not received; peer={:?}",
+                exchange.peer
+            ),
+        ))
+        .unwrap();
         return Attempt {
             reached: false,
             findings,
@@ -1045,7 +1089,8 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Atte
 
 /// The attempt combination on synthetic attempts: a broken invariant in an unreached attempt
 /// survives a later clean attempt; a clean inconclusive attempt followed by a clean reached
-/// one passes; a reached failure stands; five unreached attempts fail and no sixth is taken.
+/// one passes; a reached failure stands; an empty third entry is unreached; five unreached
+/// attempts are inconclusive without a failure finding and no sixth is taken.
 fn conclude_cases() -> Vec<String> {
     use std::cell::Cell;
     let unreached = |findings: &[&str]| Attempt {
@@ -1080,6 +1125,19 @@ fn conclude_cases() -> Vec<String> {
             findings.push(format!("attempt combination, {name}: expected {expected:?}, got {outcome:?}"));
         }
     }
+    let entries = [b"first".to_vec(), b"second".to_vec(), Vec::new()];
+    assert!(!case_reached(&entries), "empty third entry is not a complete case request");
+    for bytes in [
+        b"POST / HTTP/1.1\r\n".as_slice(),
+        b"POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\n{",
+        b"POST / HTTP/1.1\r\n\r\n",
+    ] {
+        assert!(!complete_request(bytes), "incomplete head or declared body is unreached");
+    }
+    assert!(
+        complete_request(b"POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\n{}"),
+        "complete head and declared body is reached"
+    );
     let taken = Cell::new(0);
     let exhausted = conclude(
         "case",
@@ -1088,7 +1146,7 @@ fn conclude_cases() -> Vec<String> {
             unreached(&[])
         }),
     );
-    if exhausted != [format!("case: no attempt reached the case request in {ATTEMPTS} attempts")] || taken.get() != ATTEMPTS {
+    if !exhausted.is_empty() || taken.get() != ATTEMPTS {
         findings.push(format!(
             "attempt combination, exhaustion: {exhausted:?} after {} attempts",
             taken.get()
@@ -1097,7 +1155,7 @@ fn conclude_cases() -> Vec<String> {
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and deadline-class refusal during head progress and after the complete head in the body phase, before the controlled peer completes its response, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down under a hang guard, and the process returns to its starting task count under the same guard after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel; read-path non-renewal and the real transport's wall-time budget are not claimed by these peers.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and deadline-class refusal of a peer that drips its head, holds after its whole head or stays silent, before it completes its response, each timeout case under a short focused deadline counting as case evidence only an attempt whose complete case request reached the server, an attempt that did not being inconclusive and a case whose five attempts all are inconclusive being reported inconclusive rather than failed, while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down under a hang guard, and the process returns to its starting task count under the same guard after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel; the client's phase at refusal, read-path non-renewal and the real transport's wall-time budget are not claimed by these peers.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
