@@ -473,7 +473,7 @@ def capture_regressions(test, prefix):
 
 class HostRuntime(unittest.TestCase):
     def test_credential_fixture_connection_boundary(self):
-        """Claim: Three direct-driver constructor spellings placed in the credential fixture refuse, while a direct connection placed in another test item is accepted. This is a masked-source boundary check, not macro-expansion or runtime evidence.
+        """Claim: Three direct-driver constructor spellings placed in the credential fixture and a constructor in its declared child module refuse, while a direct connection placed in another test item is accepted. This is a masked-source boundary check, not macro-expansion or runtime evidence.
         ´claim:discipline:credential-fixture-uses-host-transport´
         ´test:integration:test-credential-fixture-connection-boundary´
         """
@@ -494,10 +494,53 @@ class HostRuntime(unittest.TestCase):
         ):
             try:
                 source.write_bytes(original+fixture)
-                with self.assertRaisesRegex(ValueError,'connection constructor outside Session in production or credential fixture'):
+                with self.assertRaisesRegex(ValueError,'connection constructor outside Session in the credential fixture'):
                     check()
             finally:source.write_bytes(original)
-        print('HOST-DRIVER-CENSUS fixture-placements=3 refused=3 other-test-placements=1 accepted=1')
+        child=test_source.with_suffix('')/'boundary_probe.rs'
+        self.assertFalse(child.exists())
+        child.parent.mkdir(exist_ok=True)
+        try:
+            child.write_text('async fn probe() { configuration.connect(tls).await; }\n')
+            test_source.write_bytes(test_original+b'\nmod boundary_probe;\n')
+            with self.assertRaisesRegex(ValueError,'connection constructor outside Session in the credential fixture: packages/host/src/credential_fixture/boundary_probe.rs'):
+                check()
+        finally:
+            test_source.write_bytes(test_original)
+            child.unlink()
+            if not any(child.parent.iterdir()):child.parent.rmdir()
+        print('HOST-DRIVER-CENSUS fixture-placements=4 refused=4 other-test-placements=1 accepted=1')
+
+    def test_credential_fixture_launch_boundary(self):
+        """Claim: The credential fixture launch census accepts the registered-interpreter, validated-server and own-test-executable call shapes and refuses a foreign literal launch in the fixture and its declared child. The lexical check does not resolve bindings, aliases, macros or interpreter payloads.
+        ´claim:discipline:credential-fixture-launch-roster´
+        ´test:integration:test-credential-fixture-launch-boundary´
+        """
+        from host_statements import check
+        source=Path('packages/host/src/credential_fixture.rs')
+        original=source.read_bytes()
+        for argument in ('interpreter', 'program', '&programs[0]', 'std::env::current_exe().unwrap()'):
+            try:
+                source.write_bytes(original+f'\nfn launch_probe() {{ Command::new({argument}); }}\n'.encode())
+                self.assertTrue(check(), 'admitted lexical launch shape')
+            finally:source.write_bytes(original)
+        child=source.with_suffix('')/'launch_probe.rs'
+        self.assertFalse(child.exists())
+        child.parent.mkdir(exist_ok=True)
+        try:
+            for nested in (False,True):
+                probe=b'\nfn launch_probe() { Command::new("psql"); }\n'
+                if nested:
+                    child.write_bytes(probe)
+                    source.write_bytes(original+b'\nmod launch_probe;\n')
+                else:source.write_bytes(original+probe)
+                with self.assertRaisesRegex(ValueError,'launch outside credential fixture lexical roster'):
+                    check()
+        finally:
+            source.write_bytes(original)
+            child.unlink(missing_ok=True)
+            if not any(child.parent.iterdir()):child.parent.rmdir()
+        print('HOST-LAUNCH-CENSUS admitted=4 foreign-refused=2 binding-and-payload=reviewed')
 
     def test_statement_type_boundary(self):
         """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.
@@ -523,6 +566,7 @@ class HostRuntime(unittest.TestCase):
         source=Path('packages/host/src/lib.rs')
         original=source.read_bytes()
         for fixture,message in (
+            (b'\nasync fn inferred_connection() { configuration.connect(tls).await; }\n', 'connection constructor outside Session in production: packages/host/src/lib.rs'),
             (b'\nasync fn inferred_driver(stream: impl tokio::io::AsyncRead + tokio::io::AsyncWrite + Unpin + Send) { let (driver, _) = tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await.unwrap(); let _ = driver.simple_query("SELECT current_user").await; }\n',
              'driver path outside the closed statement wrapper and Session constructor: packages/host/src/lib.rs'),
             (b'\ninclude!("hidden.rs");\n', 'production include is not an admitted module: packages/host/src/lib.rs'),

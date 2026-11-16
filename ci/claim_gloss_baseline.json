@@ -166,6 +166,7 @@
     "ci::test_harness.Harness.test_wallet_commit_isolation": "",
     "ci::test_host_runtime.HostRuntime.test_binary_reachability_control": "",
     "ci::test_host_runtime.HostRuntime.test_credential_fixture_connection_boundary": "",
+    "ci::test_host_runtime.HostRuntime.test_credential_fixture_launch_boundary": "",
     "ci::test_host_runtime.HostRuntime.test_dependency_pins": "",
     "ci::test_host_runtime.HostRuntime.test_independent_instances": "",
     "ci::test_host_runtime.HostRuntime.test_public_transport": "",

@@ -96,7 +96,7 @@ class WorkspaceChecks(unittest.TestCase):
                 compare('x',original,actual)
 
     def test_credential_fixture_census(self):
-        """Host executable access remains in one private exact-test module and uses the resolver, with direct reads and foreign references refused.
+        """The lexical census confines explicit host executable references to one private exact-test module using the resolver and refuses literal direct reads and environment enumeration; computed keys, bound keys and macro expansion remain reviewed.
         ´claim:discipline:credential-fixture-binds-test-only-resolution´
         ´test:integration:test-credential-fixture-census´
         """

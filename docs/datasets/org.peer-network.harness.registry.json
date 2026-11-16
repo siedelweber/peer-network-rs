@@ -671,6 +671,7 @@
         "ci::test_host_runtime.HostRuntime.test_storage_statements": "calibrated-host-runtime-storage-statements-case"
       },
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_credential_fixture_launch_boundary",
         "ci::test_host_runtime.HostRuntime.test_credential_fixture_connection_boundary",
         "ci::test_host_runtime.HostRuntime.test_statement_type_boundary",
         "ci::test_host_runtime.HostRuntime.test_storage_statements",

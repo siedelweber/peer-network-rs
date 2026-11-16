@@ -83,7 +83,21 @@ def check(root=Path('.')):
         # their own disposable connections. Production keeps its masked check.
         constructors=re.sub(r'\b(?:Session|UnixStream|TcpStream)\s*::\s*connect\b','',full if fixture else text)
         if re.search(r'\b(?:connect_raw|connect)\b',constructors):
-            message=('connection constructor outside Session in production or credential fixture: '
-                     if fixture else 'connection constructor outside Session, including test code: ')
+            message=('connection constructor outside Session in the credential fixture: '
+                     if fixture else 'connection constructor outside Session in production: ')
             raise ValueError(message+relative)
+        if fixture:
+            # Closed lexical call shapes; the bindings and interpreter payload
+            # remain reviewed, rather than inferred by this source check.
+            admitted={'interpreter', 'program', '&programs[0]',
+                      'std::env::current_exe().unwrap()'}
+            for launch in re.finditer(r'\bCommand\s*::\s*new\s*\(',full):
+                begin=launch.end();end=begin;depth=1
+                while depth and end<len(full):
+                    if full[end]=='(':depth+=1
+                    elif full[end]==')':depth-=1
+                    end+=1
+                argument=re.sub(r'\s+', '', source[begin:end-1])
+                if depth or argument not in admitted:
+                    raise ValueError('launch outside credential fixture lexical roster: '+relative)
     return True
