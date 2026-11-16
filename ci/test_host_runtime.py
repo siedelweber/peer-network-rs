@@ -542,6 +542,31 @@ class HostRuntime(unittest.TestCase):
             if not any(child.parent.iterdir()):child.parent.rmdir()
         print('HOST-LAUNCH-CENSUS admitted=4 foreign-refused=2 binding-and-payload=reviewed')
 
+    def test_fixture_statement_text(self):
+        """Claim: The fixture statement census admits literal SQL and formatting from literal public constants, refuses unknown bindings and formatting inputs in fixture modules, and pins predicate forwarding. The lexical check does not resolve macro expansion or aliases; the closed inventory and profile builders remain reviewed public producers.
+        ´claim:discipline:credential-fixture-public-statement-text´
+        ´test:integration:test-fixture-statement-text´
+        """
+        from host_statements import check
+        source=Path('packages/host/src/credential_fixture/raw.rs')
+        original=source.read_bytes()
+        for expression in ('"SELECT true"', '&format!("SELECT {}", "true")', '&format!("SELECT {}", HELPER_BODY)'):
+            try:
+                source.write_bytes(original+f'\nasync fn public_probe(raw: &mut RawSession) {{ raw.query({expression}, false).await; }}\n'.encode())
+                self.assertTrue(check(), 'public statement expression admitted')
+            finally:source.write_bytes(original)
+        for expression in ('private_statement', '&format!("SELECT {{}}", private_statement)', '&format!("SELECT {private_statement}")'):
+            try:
+                source.write_bytes(original+f'\nasync fn private_probe(raw: &mut RawSession, private_statement: &str) {{ raw.query({expression}, false).await; }}\n'.encode())
+                with self.assertRaisesRegex(ValueError,'credential statement text is not a literal or public constant formatting'):
+                    check()
+            finally:source.write_bytes(original)
+        try:
+            source.write_bytes(original.replace(b'format!("SELECT ({predicate}) IS TRUE AS ok")',b'format!("SELECT ({private_statement}) IS TRUE AS ok")'))
+            with self.assertRaisesRegex(ValueError,'credential public predicate forwarding differs'):
+                check()
+        finally:source.write_bytes(original)
+
     def test_fixture_exit_inventory(self):
         """The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.
         ´claim:discipline:credential-fixture-exit-inventory´

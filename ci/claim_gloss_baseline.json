@@ -171,6 +171,7 @@
     "ci::test_host_runtime.HostRuntime.test_fixture_descriptor_census": "",
     "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory": "",
     "ci::test_host_runtime.HostRuntime.test_fixture_helper_form": "",
+    "ci::test_host_runtime.HostRuntime.test_fixture_statement_text": "",
     "ci::test_host_runtime.HostRuntime.test_independent_instances": "",
     "ci::test_host_runtime.HostRuntime.test_public_transport": "",
     "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory": "",

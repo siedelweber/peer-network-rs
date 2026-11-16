@@ -956,7 +956,7 @@ def main():
         for finding in fixture_findings:
             print(finding)
         failed |= bool(fixture_findings)
-        print(f'CREDENTIAL-FIXTURE-CENSUS exits=0 findings={len(fixture_findings)}')
+        print(f'CREDENTIAL-FIXTURE-CENSUS findings={len(fixture_findings)}')
         generator_manifest = pathlib.Path('packages/credential-generator/Cargo.toml')
         if generator_manifest.exists():
             model_findings = credential_model_findings(sources, tomllib.loads(generator_manifest.read_text()))

@@ -113,6 +113,8 @@ class WorkspaceChecks(unittest.TestCase):
         self.assertIn('credential artifact requires the sole runtime resolver call', credential_fixture_findings(changed), 'resolver bypass refuses')
         changed = dict(sources, **{fixture: sources[fixture]+'\nstd::env::var_os("CARGO_BIN_EXE_pn-credential-generator");'})
         self.assertIn('host executable variable may only be read by the runtime resolver', credential_fixture_findings(changed), 'direct variable read refuses')
+        changed = dict(sources, **{fixture: sources[fixture]+'\nstd::env::vars();'})
+        self.assertIn('host executable variable may only be read by the runtime resolver', credential_fixture_findings(changed), 'environment enumeration refuses')
         changed = dict(sources, **{'packages/host/src/other.rs': 'RuntimePath::Executable("pn-credential-generator")'})
         self.assertIn('credential artifact reference outside private host test module', credential_fixture_findings(changed), 'foreign reference refuses')
         changed = dict(sources, **{'packages/wallet/src/other.rs': 'RuntimePath::Executable("pn-credential-generator")'})

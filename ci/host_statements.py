@@ -88,6 +88,7 @@ def check(root=Path('.')):
                      if fixture else 'connection constructor outside Session in production: ')
             raise ValueError(message+relative)
         if fixture:
+            public_statements(source,relative)
             fixture_sources[relative]=source
             # Closed lexical call shapes; the bindings and interpreter payload
             # remain reviewed, rather than inferred by this source check.
@@ -104,6 +105,84 @@ def check(root=Path('.')):
                     raise ValueError('launch outside credential fixture lexical roster: '+relative)
     fixture_contract(root,fixture_sources)
     return True
+
+
+def separated(source):
+    """Split a lexical argument list, retaining string bytes for admission."""
+    mask=rust_mask(source);depth=0;start=0;parts=[]
+    for i,char in enumerate(mask):
+        if char in '([{':depth+=1
+        elif char in ')]}':depth-=1
+        elif char==',' and depth==0:parts.append(source[start:i].strip());start=i+1
+    parts.append(source[start:].strip())
+    return [part for part in parts if part]
+
+
+def enclosure(source,start):
+    mask=rust_mask(source);opening=mask[start];closing={'(':')','[':']','{':'}'}[opening]
+    depth=1;end=start+1
+    while depth and end<len(mask):
+        if mask[end]==opening:depth+=1
+        elif mask[end]==closing:depth-=1
+        end+=1
+    if depth:raise ValueError('credential statement source has an unclosed expression')
+    return source[start+1:end-1],end
+
+
+def public_statements(source,path):
+    """Admit public statement expressions; no binding-name exemption."""
+    mask=rust_mask(source)
+    constants=set()
+    for declaration in re.finditer(r'\bconst\s+([A-Z][A-Z_0-9]*)\s*:',mask):
+        start=mask.index('=',declaration.end())+1;end=mask.index(';',start)
+        value=source[start:end].strip()
+        if not re.search(r'\b[A-Za-z_]\w*\b',rust_mask(value)):
+            constants.add(declaration[1])
+    def public(value,bindings):
+        value=value.strip().removeprefix('&').strip()
+        if value in constants or value in bindings:return True
+        if re.fullmatch(r'"(?:[^"\\]|\\.)*"|r"[\s\S]*"',value):return True
+        if value.startswith('format!(') and value.endswith(')'):
+            args=separated(value[8:-1])
+            if not args or not re.fullmatch(r'"(?:[^"\\]|\\.)*"',args[0]):return False
+            names=re.findall(r'(?<!\{)\{([A-Za-z_]\w*)(?::[^}]*)?\}(?!\})',args[0])
+            return all(public(name,bindings) for name in names) and all(public(arg,bindings) for arg in args[1:])
+        call=re.fullmatch(r'(literal|setting)\((.*)\)',value,re.S)
+        if call:return all(public(arg,bindings) for arg in separated(call[2]))
+        replaced=re.fullmatch(r'(.*)\.replace\((.*)\)',value,re.S)
+        if replaced:return public(replaced[1],bindings) and all(public(arg,bindings) for arg in separated(replaced[2]))
+        return bool(re.fullmatch(r'(?:Inventory::[A-Z]\w*|row)\.(?:predicate|recorded)\(\)',value) and ('row' in bindings or value.startswith('Inventory::')))
+    for function in re.finditer(r'\b(?:async\s+)?fn\s+(\w+)\s*\(',mask):
+        opening=mask.find('{',function.end())
+        if opening<0:continue
+        body,_=enclosure(source,opening);code=rust_mask(body);bindings=set();loops=[]
+        # These arguments flow only from the checked call sites below. Their
+        # fixed helper definitions are checked separately, not inferred by name.
+        if function[1]=='require':
+            expected='if !self.query(&format!("SELECT ({predicate}) IS TRUE AS ok"), true).await? { return Err(Refusal::Inventory); } Ok(())'
+            if re.sub(r'\s+','',body)!=re.sub(r'\s+','',expected):
+                raise ValueError('credential public predicate forwarding differs: '+path)
+            bindings.add('predicate')
+        for loop in re.finditer(r'\bfor\s+(\([^)]*\)|\w+)\s+in\s+',code):
+            begin=loop.end();finish=code.find('{',begin)
+            expression=body[begin:finish].strip()
+            names=set(re.findall(r'\b[a-z_]\w*\b',loop[1]))
+            literal_rows=expression.startswith('[') and not re.search(r'\b[A-Za-z_]\w*\b',rust_mask(expression))
+            if literal_rows or expression=='SUPPRESSIONS' or expression=='profile.settings()' or (expression=='INVENTORY' and names=={'row'}):
+                _,end=enclosure(body,finish)
+                loops.append((finish,end,names))
+        for call in re.finditer(r'\.\s*(query|require)\s*\(',code):
+            visible=bindings.copy()
+            for begin,end,names in loops:
+                if begin<call.start()<end:visible.update(names)
+            # Shadowed or reassigned locals never inherit a loop's public origin.
+            for binding in tuple(visible):
+                if re.search(r'\blet\s+(?:mut\s+)?'+re.escape(binding)+r'\b|(?<![.=])\b'+re.escape(binding)+r'\s*=(?!=)',code):
+                    visible.remove(binding)
+            arguments,_=enclosure(body,call.end()-1)
+            args=separated(arguments)
+            if not args or not public(args[0],visible):
+                raise ValueError('credential statement text is not a literal or public constant formatting: '+path)
 
 
 def fixture_contract(root,sources):

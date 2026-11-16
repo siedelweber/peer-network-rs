@@ -631,7 +631,7 @@
       "claim": "ROOT::claim:discipline:credential-fixture-binds-test-only-resolution",
       "before": "",
       "after": "The lexical census confines explicit host executable references to one private exact-test module using the resolver and refuses literal direct reads and environment enumeration; computed keys, bound keys and macro expansion remain reviewed.",
-      "review": "The control pins the exact module entry, resolver call, literal executable-variable read, enumeration and foreign explicit reference refusals. Bound or computed environment keys and macro expansion are outside the lexical census, so the gloss no longer claims them."
+      "review": "The control places the exact module entry, resolver bypass, literal executable-variable read, std::env::vars enumeration and foreign explicit references and asserts their assigned refusals. Bound or computed environment keys and macro expansion remain outside this lexical evidence."
     },
     {
       "operation": "ci::test_discipline.WorkspaceChecks.test_credential_model_census",
@@ -776,6 +776,14 @@
       "before": "",
       "after": "The helper source census pins the fixed public function body and refuses an assignment, a strict-parameter directive and a changed role target; runtime controls separately pin its created attributes.",
       "review": "The control first admits the actual source, then changes one source condition at a time and requires its own refusal message before restoring the original. The exact placements witness only the stated lexical boundary; no private input or server operation occurs."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_fixture_statement_text",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:credential-fixture-public-statement-text",
+      "before": "",
+      "after": "Claim: The fixture statement census admits literal SQL and formatting from literal public constants, refuses unknown bindings and formatting inputs in fixture modules, and pins predicate forwarding. The lexical check does not resolve macro expansion or aliases; the closed inventory and profile builders remain reviewed public producers.",
+      "review": "Literal SQL, a formatted literal and a formatted public constant pass. An unknown statement binding and unknown positional and captured formatting operands refuse at the statement assertion; changing the fixed predicate forwarder refuses separately. Literal loop rows and the reviewed data-free inventory/profile builders supply existing public statements. No alias resolution, macro expansion or general information-flow proof is claimed."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_independent_instances",

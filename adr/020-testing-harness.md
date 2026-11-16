@@ -45,7 +45,7 @@
 | ci::test_devperf | active | unit | ci-python | fast | 71 |
 | ci::test_discipline | active | integration | ci-python | fast | 38 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
-| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 14 |
+| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 15 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |

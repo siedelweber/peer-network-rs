@@ -671,6 +671,7 @@
         "ci::test_host_runtime.HostRuntime.test_storage_statements": "calibrated-host-runtime-storage-statements-case"
       },
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_fixture_statement_text",
         "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory",
         "ci::test_host_runtime.HostRuntime.test_fixture_helper_form",
         "ci::test_host_runtime.HostRuntime.test_fixture_descriptor_census",

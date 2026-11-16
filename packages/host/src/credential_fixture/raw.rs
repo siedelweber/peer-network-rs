@@ -126,8 +126,7 @@ impl RawSession {
     }
 
     async fn require(&mut self, predicate: &str) -> Result<(), Refusal> {
-        let sql = format!("SELECT ({predicate}) IS TRUE AS ok");
-        if !self.query(&sql, true).await? {
+        if !self.query(&format!("SELECT ({predicate}) IS TRUE AS ok"), true).await? {
             return Err(Refusal::Inventory);
         }
         Ok(())
@@ -307,6 +306,9 @@ impl Inventory {
             ],
             _ => &[],
         };
+        if values.is_empty() {
+            return "true".into();
+        }
         values
             .iter()
             .map(|(name, value)| {
@@ -380,18 +382,13 @@ async fn prepare(session: &mut RawSession) -> Result<(), Refusal> {
 
 async fn inventory(session: &mut RawSession, injected: Option<Inventory>) -> Result<(), Refusal> {
     for row in INVENTORY {
-        let predicate = if injected == Some(row) {
-            "false".into()
+        if injected == Some(row) {
+            session.require("false").await?;
         } else {
-            let predicate = row.predicate();
-            let recorded = row.recorded();
-            if recorded.is_empty() {
-                predicate
-            } else {
-                format!("({predicate}) AND ({recorded})")
-            }
-        };
-        session.require(&predicate).await?;
+            session
+                .require(&format!("({}) AND ({})", row.predicate(), row.recorded()))
+                .await?;
+        }
         cli_common::emit(&serde_json::json!({"credential_inventory":format!("{row:?}"),"confirmed":true})).unwrap();
     }
     Ok(())
@@ -466,16 +463,11 @@ fn raw_inventory() {
             inventory(&mut raw, None)
                 .await
                 .expect("complete inventory confirmed in issuing session");
-            for (name, correct) in [
-                ("log_parameter_max_length", "0"),
-                ("log_parameter_max_length_on_error", "0"),
-                ("plan_cache_mode", "force_generic_plan"),
+            for (name, correct, wrong) in [
+                ("log_parameter_max_length", "0", "-1"),
+                ("log_parameter_max_length_on_error", "0", "-1"),
+                ("plan_cache_mode", "force_generic_plan", "force_custom_plan"),
             ] {
-                let wrong = if name == "plan_cache_mode" {
-                    "force_custom_plan"
-                } else {
-                    "-1"
-                };
                 raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
                 assert_eq!(
                     raw.require(&setting(name, correct)).await,
@@ -511,8 +503,7 @@ fn raw_inventory() {
                     "assigned inventory row refusal: {row:?}"
                 );
             }
-            let changed=HELPER_BODY.replace("credential_target", "other_target");
-            raw.query(&format!("CREATE OR REPLACE FUNCTION credential_fixture.provision(text) RETURNS void LANGUAGE plpgsql VOLATILE SECURITY INVOKER PARALLEL UNSAFE SET search_path=pg_catalog AS {}",literal(&changed)),false).await.unwrap();
+            raw.query(&format!("CREATE OR REPLACE FUNCTION credential_fixture.provision(text) RETURNS void LANGUAGE plpgsql VOLATILE SECURITY INVOKER PARALLEL UNSAFE SET search_path=pg_catalog AS {}",literal(&HELPER_BODY.replace("credential_target", "other_target"))),false).await.unwrap();
             assert_eq!(raw.require(&Inventory::Helper.predicate()).await,Err(Refusal::Inventory),"changed stored helper source refuses");
             raw.query(&format!("CREATE OR REPLACE FUNCTION credential_fixture.provision(text) RETURNS void LANGUAGE plpgsql VOLATILE SECURITY INVOKER PARALLEL UNSAFE SET search_path=pg_catalog AS {}",literal(HELPER_BODY)),false).await.unwrap();
             raw.require(&Inventory::Helper.predicate()).await.unwrap();
