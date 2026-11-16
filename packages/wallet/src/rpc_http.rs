@@ -618,7 +618,7 @@ mod tests {
         result
     }
 
-    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and an exchange whose body peer progresses until closure refuses with the deadline class and closes that peer before its response completes; whether the request reached the peer before closure is reported, and a trial it did not reach is inconclusive, not a failure. Neither the client's phase at refusal, read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result. An already expired drip budget witnesses inconclusive request receipt with the deadline class and observed closure, without a scheduling delay.
+    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and an exchange whose body peer progresses until closure refuses with the deadline class and closes that peer before its response completes; whether the request reached the peer before closure is reported, and a trial it did not reach is inconclusive, not a failure. Neither the client's phase at refusal, read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result. An already expired drip budget drives the unreached branch, asserting the deadline class and the peer thread's clean end, without asserting which observation the peer made or using a scheduling delay.
     /// ´claim:wallet:rpc-http-acquisition-is-bounded´
     /// ´test:unit:acquisition-cases´
     #[test]
@@ -639,7 +639,7 @@ mod tests {
         assert_eq!(
             exchange_contained(b"", true, Duration::ZERO),
             Err(RpcRefusal::Deadline),
-            "unreached drip retains its deadline class and observed peer closure"
+            "unreached drip retains its deadline class after the peer's clean end"
         );
         assert_eq!(
             exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull", false)
