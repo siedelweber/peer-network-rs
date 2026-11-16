@@ -1,3 +1,11 @@
+#[track_caller]
+fn receive<T>(receiver: &mpsc::Receiver<T>, event: &str) -> T {
+    let caller = std::panic::Location::caller();
+    receiver.recv_timeout(Duration::from_secs(600)).unwrap_or_else(|error| {
+        panic!("HANG awaiting observation test event {event}; caller={caller}; last state={error}");
+    })
+}
+
 use super::*;
 
 /// Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal.
@@ -186,9 +194,9 @@ fn default_return_outcomes() {
     });
     observation.summarize();
     let (done, drained) = mpsc::sync_channel(1);
-    observation.flush_sender.send(done).unwrap();
-    observation.sender.send(Message::Wake).unwrap();
-    drained.recv().unwrap();
+    observation.flush_sender.try_send(done).unwrap();
+    observation.sender.try_send(Message::Wake).unwrap();
+    receive(&drained, "drained");
     let rows = records(&observation, &capture);
     let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
     let series = summary["metrics"]["instruments"].as_array().unwrap();
@@ -234,9 +242,9 @@ fn explicit_refusal_precedence() {
         });
         observation.summarize();
         let (done, drained) = mpsc::sync_channel(1);
-        observation.flush_sender.send(done).unwrap();
-        observation.sender.send(Message::Wake).unwrap();
-        drained.recv().unwrap();
+        observation.flush_sender.try_send(done).unwrap();
+        observation.sender.try_send(Message::Wake).unwrap();
+        receive(&drained, "drained");
         let rows = records(&observation, &capture);
         let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
         let mut instruments = summary["metrics"]["instruments"].clone();
@@ -359,9 +367,9 @@ fn artifact_root_survives_directory_change() {
         std::env::set_current_dir(&changed).unwrap();
         observation.emit(json!({"kind":"trace","payload":"x".repeat(INLINE_BYTES)}));
         let (done, drained) = mpsc::sync_channel(1);
-        observation.flush_sender.send(done).unwrap();
-        observation.sender.send(Message::Wake).unwrap();
-        drained.recv().unwrap();
+        observation.flush_sender.try_send(done).unwrap();
+        observation.sender.try_send(Message::Wake).unwrap();
+        receive(&drained, "drained");
         let rows = records(&observation, &capture);
         let path = std::path::Path::new(rows[0]["payload"]["artifact"]["path"].as_str().unwrap());
         assert!(path.is_absolute());
@@ -418,8 +426,8 @@ fn summary_capacity() {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             if self.first {
                 self.first = false;
-                self.entered.send(()).unwrap();
-                self.release.recv().unwrap();
+                self.entered.try_send(()).unwrap();
+                receive(&self.release, "self.release");
             }
             let row: Value = serde_json::from_slice(bytes).unwrap();
             if row["level"] == "ERROR" {
@@ -427,7 +435,7 @@ fn summary_capacity() {
                 self.diagnostic.store(true, Ordering::Relaxed);
             }
             if row["kind"] == "metric_summary" {
-                self.summary.send(()).unwrap();
+                self.summary.try_send(()).unwrap();
             }
             if row["kind"] == "export_summary" {
                 self.export.store(true, Ordering::Relaxed);
@@ -458,7 +466,7 @@ fn summary_capacity() {
     .unwrap();
     observation.full_trace = true;
     observation.emit(json!({"public":"first"}));
-    entry.recv().unwrap();
+    receive(&entry, "entry");
     for i in 0..QUEUE_RECORDS {
         observation.emit(json!({"public":i}));
     }
@@ -467,9 +475,9 @@ fn summary_capacity() {
     observation.summarize();
     let (done, drained) = mpsc::sync_channel(1);
     observation.flush_sender.try_send(done).unwrap();
-    release.send(()).unwrap();
-    seen.recv().unwrap();
-    drained.recv().unwrap();
+    release.try_send(()).unwrap();
+    receive(&seen, "seen");
+    receive(&drained, "drained");
     assert!(diagnostic.load(Ordering::Relaxed));
     assert!(export.load(Ordering::Relaxed));
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
@@ -490,8 +498,8 @@ fn status_after_stalled_delivery() {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             if self.first {
                 self.first = false;
-                self.entered.send(()).unwrap();
-                self.release.recv().unwrap();
+                self.entered.try_send(()).unwrap();
+                receive(&self.release, "self.release");
             }
             let result = self.capture.write(bytes)?;
             Ok(result)
@@ -538,7 +546,7 @@ fn status_after_stalled_delivery() {
     observation.attempted.fetch_add(9, Ordering::Relaxed);
     // 60 ordinary records, nine diagnostics (one dropped), export and metrics:
     // 71 attempts, with 69 records still queued behind the in-flight writer.
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     drop(BootstrapGuard(Some(observation.clone())));
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
@@ -574,8 +582,8 @@ fn trace_burst_capacity() {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             if self.first {
                 self.first = false;
-                self.entered.send(()).unwrap();
-                self.release.recv().unwrap();
+                self.entered.try_send(()).unwrap();
+                receive(&self.release, "self.release");
             }
             let result = self.capture.write(bytes)?;
             Ok(result)
@@ -624,7 +632,7 @@ fn trace_burst_capacity() {
         observation.emit(json!({"kind":"trace","public":index}));
     }
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     drop(BootstrapGuard(Some(observation.clone())));
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
@@ -712,8 +720,8 @@ fn ordinary_queue_overflow() {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             if self.first {
                 self.first = false;
-                self.entered.send(()).unwrap();
-                self.release.recv().unwrap();
+                self.entered.try_send(()).unwrap();
+                receive(&self.release, "self.release");
             }
             let result = self.capture.write(bytes)?;
             Ok(result)
@@ -749,7 +757,7 @@ fn ordinary_queue_overflow() {
         observation.emit(json!({"kind":"trace","public":index}));
     }
     assert_eq!(observation.lost.load(Ordering::Relaxed), u64::try_from(excess).unwrap());
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     drop(BootstrapGuard(Some(observation.clone())));
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
@@ -790,16 +798,16 @@ fn held_complete_delivery() {
         let (entered, entry) = mpsc::sync_channel(1);
         let (release, released) = mpsc::sync_channel(1);
         *observation.before_drain.lock().unwrap() = Some(Box::new(move || {
-            entered.send(()).unwrap();
+            entered.try_send(()).unwrap();
             released
                 .recv_timeout(Duration::from_secs(600))
                 .expect("HANG awaiting held delivery release; last state=held");
         }));
         let (completed, completion_event) = mpsc::sync_channel(1);
         *observation.after_drain.lock().unwrap() = Some(Box::new(move || {
-            completed.send(()).unwrap();
+            completed.try_send(()).unwrap();
         }));
-        observation.sender.send(Message::Wake).unwrap();
+        observation.sender.try_send(Message::Wake).unwrap();
         entry
             .recv_timeout(Duration::from_secs(600))
             .expect("HANG awaiting delivery hold; last state=pending");
@@ -812,7 +820,7 @@ fn held_complete_delivery() {
         let (finished, completion) = mpsc::sync_channel(1);
         let thread = std::thread::spawn(move || {
             draining.flush_for(Duration::ZERO);
-            finished.send(()).unwrap();
+            finished.try_send(()).unwrap();
         });
         let window = selections
             .recv_timeout(Duration::from_secs(600))
@@ -832,7 +840,7 @@ fn held_complete_delivery() {
                 "windowed drain reports its injected expiry"
             );
         }
-        release.send(()).unwrap();
+        release.try_send(()).unwrap();
         if window.is_none() {
             completion
                 .recv_timeout(Duration::from_secs(600))
@@ -888,7 +896,7 @@ fn pinned_drain_containment() {
     requests
         .recv_timeout(Duration::from_secs(600))
         .expect("HANG awaiting test drain request")
-        .send(())
+        .try_send(())
         .unwrap();
     thread.join().unwrap();
     assert_eq!(
@@ -898,7 +906,7 @@ fn pinned_drain_containment() {
     );
 }
 
-/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered. Both routes await the original worker request’s completion after release, observed after its acknowledgement attempt; a caller timeout does not stand for worker completion and starts no second cleanup drain.
+/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the complete-evidence route whose deployed wait is unwindowed; the windowed test-build wait is pinned at its 600-second containment; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered. Both routes await the original worker request’s completion after release, observed after its acknowledgement attempt; a caller timeout does not stand for worker completion and starts no second cleanup drain.
 /// ´claim:cli:drain-timeouts-are-not-record-loss´
 /// ´test:unit:drain-timeout-preserves-loss´
 #[test]
@@ -916,16 +924,16 @@ fn drain_timeout_preserves_loss() {
             let (entered, entry) = mpsc::sync_channel(1);
             let (release, released) = mpsc::sync_channel(1);
             *ordered.before_drain.lock().unwrap() = Some(Box::new(move || {
-                entered.send(()).unwrap();
-                released.recv().unwrap();
+                entered.try_send(()).unwrap();
+                receive(&released, "released");
             }));
             // Prevent later delivery from masking an early acknowledgement.
             let (continue_worker, continuation) = mpsc::sync_channel(1);
             *ordered.after_drain.lock().unwrap() = Some(Box::new(move || {
-                let _continued = continuation.recv();
+                receive(&continuation, "ordered after-drain continuation");
             }));
-            ordered.sender.send(Message::Wake).unwrap();
-            entry.recv().unwrap();
+            ordered.sender.try_send(Message::Wake).unwrap();
+            receive(&entry, "entry");
             for index in 0..count {
                 ordered.emit(json!({"public":index}));
             }
@@ -937,8 +945,8 @@ fn drain_timeout_preserves_loss() {
                 ordered.flush_sender = proxy;
                 let guard = BootstrapGuard(Some(ordered.clone()));
                 let closing = std::thread::spawn(move || drop(guard));
-                worker_requests.send(requests.recv().unwrap()).unwrap();
-                release.send(()).unwrap();
+                worker_requests.try_send(receive(&requests, "requests")).unwrap();
+                release.try_send(()).unwrap();
                 closing.join().unwrap();
                 let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
                 assert_eq!(row["undelivered_records"], 0, "close={close} count={count} status={row}");
@@ -947,9 +955,9 @@ fn drain_timeout_preserves_loss() {
                 assert_eq!(row["delivered_records"], count + 1);
             } else {
                 let (done, drained) = mpsc::sync_channel(1);
-                ordered.flush_sender.send(done).unwrap();
-                release.send(()).unwrap();
-                drained.recv().unwrap();
+                ordered.flush_sender.try_send(done).unwrap();
+                release.try_send(()).unwrap();
+                receive(&drained, "drained");
                 assert_eq!(ordered.delivered.load(Ordering::Relaxed), count as u64);
                 assert_eq!(
                     String::from_utf8(capture.0.lock().unwrap().clone()).unwrap().lines().count(),
@@ -961,7 +969,7 @@ fn drain_timeout_preserves_loss() {
                 0,
                 "ordered drain close={close} count={count} loses no records"
             );
-            continue_worker.send(()).unwrap();
+            continue_worker.try_send(()).unwrap();
         }
     }
     let (mut observation, _, _) = fixture();
@@ -1422,8 +1430,8 @@ fn exit_reports_pending_delivery() {
     }
     impl Write for Blocked {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-            self.entered.send(()).unwrap();
-            self.release.recv().unwrap();
+            self.entered.try_send(()).unwrap();
+            receive(&self.release, "self.release");
             Ok(bytes.len())
         }
         fn flush(&mut self) -> io::Result<()> {
@@ -1457,12 +1465,12 @@ fn exit_reports_pending_delivery() {
     let guard = BootstrapGuard(Some(observation.clone()));
     let thread = std::thread::spawn(move || {
         drop(guard);
-        finished.send(()).unwrap();
+        finished.try_send(()).unwrap();
     });
     // The deadline is injected as zero. This watchdog only prevents a broken
     // implementation from wedging the harness; release happens after the check.
     let returned = completion.recv_timeout(Duration::from_secs(600));
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     thread.join().unwrap();
     returned.unwrap_or_else(|error| match error {
         mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting guard drop acknowledgement after its injected deadline"),
@@ -1508,8 +1516,8 @@ fn deep_payload_delivery() {
     .unwrap();
     observation.emit(json!({"kind":"trace","payload":value}));
     let (done, drained) = mpsc::sync_channel(1);
-    observation.flush_sender.send(done).unwrap();
-    observation.sender.send(Message::Wake).unwrap();
+    observation.flush_sender.try_send(done).unwrap();
+    observation.sender.try_send(Message::Wake).unwrap();
     drained
         .recv_timeout(Duration::from_secs(600))
         .unwrap_or_else(|error| match error {
@@ -1608,8 +1616,8 @@ fn drained_records_with_loss(observation: &Observation, capture: &Capture) -> Ve
     // Inspect only after the delivery thread acknowledges the requested drain.
     // The production flush deadline is not evidence that this buffer is ready.
     let (done, drained) = mpsc::sync_channel(1);
-    observation.flush_sender.send(done).unwrap();
-    observation.sender.send(Message::Wake).unwrap();
+    observation.flush_sender.try_send(done).unwrap();
+    observation.sender.try_send(Message::Wake).unwrap();
     drained
         .recv_timeout(Duration::from_secs(600))
         .expect("capture: 600 s drain acknowledgement hang bound");
@@ -1998,9 +2006,9 @@ fn cutoff_before_publication() {
     let (release, released) = mpsc::sync_channel(1);
     let (finished, completion) = mpsc::sync_channel(1);
     *observation.before_publication.lock().unwrap() = Some(Box::new(move || {
-        entered.send(()).unwrap();
-        released.recv().unwrap();
-        finished.send(()).unwrap();
+        entered.try_send(()).unwrap();
+        receive(&released, "released");
+        finished.try_send(()).unwrap();
     }));
     observation.emit(json!({"kind":"trace","public":"queued"}));
     entry
@@ -2010,7 +2018,7 @@ fn cutoff_before_publication() {
             mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
         });
     drop(BootstrapGuard(Some(observation.clone())));
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     completion
         .recv_timeout(Duration::from_secs(600))
         .unwrap_or_else(|error| match error {
@@ -2041,8 +2049,8 @@ fn shared_transport_cutoff() {
     impl Write for RecordWriter {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             let mut capture = self.capture.0.lock().unwrap();
-            self.entered.send(()).unwrap();
-            self.release.recv().unwrap();
+            self.entered.try_send(()).unwrap();
+            receive(&self.release, "self.release");
             capture.extend_from_slice(bytes);
             Ok(bytes.len())
         }
@@ -2057,7 +2065,7 @@ fn shared_transport_cutoff() {
     impl Write for StatusWriter {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
             if let Some(cutoff) = self.cutoff.take() {
-                cutoff.send(()).unwrap();
+                cutoff.try_send(()).unwrap();
             }
             self.capture.write(bytes)
         }
@@ -2098,7 +2106,7 @@ fn shared_transport_cutoff() {
             mpsc::RecvTimeoutError::Timeout => panic!("HANG awaiting observation acknowledgement; last state=pending"),
             mpsc::RecvTimeoutError::Disconnected => panic!("observation acknowledgement channel disconnected"),
         });
-    release.send(()).unwrap();
+    release.try_send(()).unwrap();
     thread.join().unwrap();
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
@@ -2394,4 +2402,64 @@ fn epoch_owner_accounting() {
                 .all(|row| row["counter"] == 0)
         );
     }
+}
+
+/// Claim: A disconnected fixture-event wait names its invoking file and line in its hang-containment message. The position is obtained at runtime and selects no file; this control does not witness the timeout duration or acknowledgement-route containment.
+/// ´claim:cli:event-wait-names-caller´
+/// ´test:unit:event-wait-caller´
+#[test]
+fn event_wait_caller() {
+    let (sender, disconnected) = mpsc::sync_channel::<()>(1);
+    drop(sender);
+    let position = std::panic::Location::caller();
+    let refused = std::panic::catch_unwind(|| receive(&disconnected, "caller control")).unwrap_err();
+    let message = refused.downcast_ref::<String>().unwrap();
+    assert!(
+        message.contains(&format!("caller={}:{}:", position.file(), position.line() + 1)),
+        "event containment names its invoking caller"
+    );
+}
+
+/// Claim: A request accepted while an earlier request drains its FIFO prefix is acknowledged before the worker parks, even when that prefix consumes the later request's wake. The control orders both requests and publication by events and observes the acknowledgement at a pre-park hold, without a duration verdict.
+/// ´claim:cli:overlapping-drains-acknowledged´
+/// ´test:unit:overlapping-drains´
+#[test]
+fn overlapping_drains() {
+    let (observation, _, _) = fixture();
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    *observation.before_drain.lock().unwrap() = Some(Box::new(move || {
+        entered.try_send(()).unwrap();
+        receive(&released, "first batch release");
+    }));
+    let (publishing, publication) = mpsc::sync_channel(1);
+    let (publish, published) = mpsc::sync_channel(1);
+    *observation.before_publication.lock().unwrap() = Some(Box::new(move || {
+        publishing.try_send(()).unwrap();
+        receive(&published, "first prefix publication release");
+    }));
+    let (parking, parked) = mpsc::sync_channel(1);
+    let (resume, resumed) = mpsc::sync_channel(1);
+    *observation.before_park.lock().unwrap() = Some(Box::new(move || {
+        parking.try_send(()).unwrap();
+        receive(&resumed, "pre-park release");
+    }));
+    observation.sender.try_send(Message::Wake).unwrap();
+    receive(&entry, "first batch hold");
+    observation.emit(json!({"public":"first-prefix"}));
+    let (first, first_ack) = mpsc::sync_channel(1);
+    observation.flush_sender.try_send(first).unwrap();
+    release.try_send(()).unwrap();
+    receive(&publication, "first prefix publication hold");
+    let (second, second_ack) = mpsc::sync_channel(1);
+    observation.flush_sender.try_send(second).unwrap();
+    observation.sender.try_send(Message::Wake).unwrap();
+    publish.try_send(()).unwrap();
+    receive(&first_ack, "first drain acknowledgement");
+    receive(&parked, "worker pre-park hold");
+    let acknowledgement = second_ack.try_recv();
+    resume.try_send(()).unwrap();
+    assert_eq!(acknowledgement, Ok(()), "second drain acknowledged before worker parks");
+    assert_eq!(observation.delivered.load(Ordering::Acquire), 1);
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }

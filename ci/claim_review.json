@@ -1198,8 +1198,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:drain-timeouts-are-not-record-loss",
       "before": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
-      "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the unwindowed wait branch that complete evidence selects; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered. Both routes await the original worker request’s completion after release, observed after its acknowledgement attempt; a caller timeout does not stand for worker completion and starts no second cleanup drain.",
-      "review": "The held-delivery contrast injects a zero window and observes its expiry before release; the complete route selects an unwindowed wait, then acknowledges every held record after release. A private test-build call observer pins the wait selection and the 600-second containment independently of scheduling, without exposing delivery hooks to dependents. The batch-end, full-queue, timeout and unavailable controls remain. The windowed caller returns before its worker request completes; the after-drain event observes completion after that original acknowledgement attempt and the delivered count after release. No second cleanup request can overlap the first request’s prefix or lose its wake there. Production call sites issue one drain per observation lifetime; this choreography does not claim support for overlapping private requests."
+      "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue. A private test-build observer pins the complete-evidence route whose deployed wait is unwindowed; the windowed test-build wait is pinned at its 600-second containment; delivery held behind an event completes after release, while the windowed contrast expires at its injected zero window with records still undelivered. Both routes await the original worker request’s completion after release, observed after its acknowledgement attempt; a caller timeout does not stand for worker completion and starts no second cleanup drain.",
+      "review": "The held-delivery contrast injects a zero window and observes its expiry before release; the complete route selects an unwindowed deployed wait, then acknowledges every held record after release. The private route observer pins the windowed test-build wait at its 600-second containment independently of scheduling. The batch-end, full-queue, timeout and unavailable controls remain. The after-drain event observes completion after the original acknowledgement attempt, so a caller timeout starts no second cleanup request. This claim does not witness the complete route's test-build timeout bound or caller naming. The separate overlapping-drains and event-wait-caller controls own their distinct propositions."
     },
     {
       "operation": "cli-common::observation::tests::epoch_owner_accounting",
@@ -1208,6 +1208,14 @@
       "before": "",
       "after": "Claim: A EPOCH-labelled compiler operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
       "review": "Read the epoch owner span and its own stem counters, independently of other owner totals."
+    },
+    {
+      "operation": "cli-common::observation::tests::event_wait_caller",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:event-wait-names-caller",
+      "before": "",
+      "after": "Claim: A disconnected fixture-event wait names its invoking file and line in its hang-containment message. The position is obtained at runtime and selects no file; this control does not witness the timeout duration or acknowledgement-route containment.",
+      "review": "The control disconnects an event channel before calling the receive helper and catches its immediate refusal. It compares the message with the file and next-line position obtained at runtime at the call site, without selecting a filesystem path. Restoring the location read inside the error closure fails the invoking-caller assertion. No elapsed timeout or acknowledgement-route bound is exercised."
     },
     {
       "operation": "cli-common::observation::tests::exit_reports_pending_delivery",
@@ -1240,6 +1248,14 @@
       "before": "",
       "after": "Claim: With the writer held by rendezvous, an ordinary queue filled beyond its slot capacity returns from every producer call before release, counts exactly the excess as queue-full loss, and reconciles delivered plus lost with attempted records after drain.",
       "review": "Read the writer entry/release rendezvous: producer calls finish before release with capacity plus excess queued attempts. The final status asserts exact excess loss, its queue-full cause, and complete accounting including the reserved summary."
+    },
+    {
+      "operation": "cli-common::observation::tests::overlapping_drains",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:overlapping-drains-acknowledged",
+      "before": "",
+      "after": "Claim: A request accepted while an earlier request drains its FIFO prefix is acknowledged before the worker parks, even when that prefix consumes the later request's wake. The control orders both requests and publication by events and observes the acknowledgement at a pre-park hold, without a duration verdict.",
+      "review": "The before-drain event admits the first request before releasing its prefix. The publication event proves that request has left the slot before the second request and wake are sent. At the pre-park event the second acknowledgement must already be available by try_recv; restoring the single slot check fails that assertion without awaiting a timeout. Delivery and loss totals remain one and zero. This witnesses the forced two-request history, not arbitrary writer progress."
     },
     {
       "operation": "cli-common::observation::tests::private_configuration",

@@ -889,6 +889,8 @@
         "cli-common::observation::tests::provider_bridge": "integration"
       },
       "cases": [
+        "cli-common::observation::tests::event_wait_caller",
+        "cli-common::observation::tests::overlapping_drains",
         "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::typed_export_bootstrap",
         "cli-common::observation::tests::default_emission",

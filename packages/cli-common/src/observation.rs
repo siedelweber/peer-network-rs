@@ -282,6 +282,8 @@ pub struct Observation {
     before_drain: PublicationPause,
     #[cfg(test)]
     after_drain: PublicationPause,
+    #[cfg(test)]
+    before_park: PublicationPause,
     drain_timeouts: Arc<AtomicU64>,
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
@@ -319,6 +321,8 @@ struct Delivery {
     before_drain: PublicationPause,
     #[cfg(test)]
     after_drain: PublicationPause,
+    #[cfg(test)]
+    before_park: PublicationPause,
     closing: Arc<std::sync::atomic::AtomicBool>,
     worker_bridge: Option<Arc<crate::observation_export::Bridge>>,
     worker_queued: Arc<AtomicU64>,
@@ -361,7 +365,9 @@ impl Delivery {
             if let Some(pause) = self.before_drain.lock().unwrap().take() {
                 pause();
             }
-            for done in flush_receiver.try_iter().take(1) {
+            // A prefix may consume a later request's wake. Recheck the slot
+            // after every prefix before returning to the blocking record receive.
+            while let Ok(done) = flush_receiver.try_recv() {
                 // A request can arrive after the batch's final empty poll.
                 // At most QUEUE_RECORDS earlier messages remain in this bounded
                 // channel. Drain that prefix before acknowledging; later sends
@@ -393,6 +399,10 @@ impl Delivery {
                 if let Some(pause) = self.after_drain.lock().unwrap().take() {
                     pause();
                 }
+            }
+            #[cfg(test)]
+            if let Some(pause) = self.before_park.lock().unwrap().take() {
+                pause();
             }
         }
     }
@@ -487,11 +497,9 @@ impl Observation {
         queue_records: usize,
         hold_until_flush: bool,
     ) -> io::Result<Self> {
-        let (delivery_start, started) = if hold_until_flush {
-            let (start, started) = mpsc::sync_channel(1);
-            (Some(Arc::new(Mutex::new(Some(start)))), Some(started))
-        } else {
-            (None, None)
+        let (delivery_start, started) = match hold_until_flush.then(|| mpsc::sync_channel(1)) {
+            Some((start, started)) => (Some(Arc::new(Mutex::new(Some(start)))), Some(started)),
+            None => (None, None),
         };
         let (sender, receiver) = mpsc::sync_channel(queue_records);
         let (summary_sender, summary_receiver) = Self::reserved(queue_records, SUMMARY_RECORDS, hold_until_flush);
@@ -507,15 +515,12 @@ impl Observation {
         let worker_closing = closing.clone();
         let publication = Arc::new(Mutex::new(false));
         #[cfg(test)]
-        let (before_publication, worker_before_publication) = publication_pause_pair();
-        #[cfg(test)]
-        let before_drain = Arc::new(Mutex::new(None));
-        #[cfg(test)]
-        let worker_before_drain = Arc::clone(&before_drain);
-        #[cfg(test)]
-        let after_drain = Arc::new(Mutex::new(None));
-        #[cfg(test)]
-        let worker_after_drain = Arc::clone(&after_drain);
+        let [
+            (before_publication, worker_before_publication),
+            (before_drain, worker_before_drain),
+            (after_drain, worker_after_drain),
+            (before_park, worker_before_park),
+        ] = std::array::from_fn(|_| publication_pause_pair());
         let worker_publication = publication.clone();
         let drain_timeouts = Arc::new(AtomicU64::new(0));
         let worker_timeouts = drain_timeouts.clone();
@@ -547,6 +552,8 @@ impl Observation {
                 before_drain: worker_before_drain,
                 #[cfg(test)]
                 after_drain: worker_after_drain,
+                #[cfg(test)]
+                before_park: worker_before_park,
                 closing: worker_closing.clone(),
                 worker_queued,
             };
@@ -573,6 +580,8 @@ impl Observation {
             before_drain,
             #[cfg(test)]
             after_drain,
+            #[cfg(test)]
+            before_park,
             drain_timeouts,
             drain_unavailable,
             #[cfg(test)]
@@ -648,11 +657,15 @@ impl Observation {
         }
     }
 
+    #[track_caller]
     fn flush(&self) {
         self.flush_for(Duration::from_millis(100));
     }
 
+    #[track_caller]
     fn flush_for(&self, duration: Duration) {
+        #[cfg(test)]
+        let caller = std::panic::Location::caller();
         if let Some(release) = &self.delivery_start
             && let Some(start) = release.lock().unwrap_or_else(std::sync::PoisonError::into_inner).take()
         {
@@ -677,7 +690,9 @@ impl Observation {
         let completed = if self.queue_records == QUEUE_RECORDS {
             #[cfg(test)]
             if let Some(observer) = &self.drain_wait_observer {
-                observer.send(Some(duration)).unwrap();
+                observer.try_send(Some(duration)).unwrap_or_else(|error| {
+                    panic!("HANG reporting windowed drain selection; caller={caller}; state={error}");
+                });
             }
             wait.recv_timeout(duration)
         } else {
@@ -685,17 +700,23 @@ impl Observation {
             // watchdog only refuses. Production retains its bounded drain.
             #[cfg(test)]
             if let Some(observer) = &self.drain_wait_observer {
-                observer.send(None).unwrap();
+                observer.try_send(None).unwrap_or_else(|error| {
+                    panic!("HANG reporting complete drain selection; caller={caller}; state={error}");
+                });
             }
-            wait.recv().map_err(|_| mpsc::RecvTimeoutError::Disconnected)
+            #[cfg(test)]
+            let completed = wait.recv_timeout(Duration::from_secs(600));
+            #[cfg(not(test))]
+            let completed = wait.recv().map_err(|_| mpsc::RecvTimeoutError::Disconnected);
+            completed
         };
         match completed {
             Ok(()) => {}
             Err(mpsc::RecvTimeoutError::Timeout) => {
                 #[cfg(test)]
                 assert!(
-                    self.refuse_drain_wait,
-                    "HANG awaiting observation drain acknowledgement; last state=pending"
+                    self.queue_records == QUEUE_RECORDS && self.refuse_drain_wait,
+                    "HANG awaiting observation drain acknowledgement; caller={caller}; last state=pending"
                 );
                 self.drain_timeouts.fetch_add(1, Ordering::Relaxed);
             }
@@ -705,6 +726,7 @@ impl Observation {
         }
     }
 
+    #[track_caller]
     fn final_status(&self) {
         // Exit drainage scales with the outstanding byte charge, up to the
         // declared 64 MiB queue: one second plus one second per charged MiB.
