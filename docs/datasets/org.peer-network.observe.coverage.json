@@ -944,7 +944,7 @@
     },
     {
       "exceptions": 23,
-      "generators": 28,
+      "generators": 30,
       "helpers": 0,
       "instrumented": 7,
       "name": "pn-wallet",
@@ -958,10 +958,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "28",
+          "exact": "30",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "30",
           "num_exact": true,
           "num_relation": "="
         },

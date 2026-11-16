@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_http::Deadline",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [doc = \" One deadline fixed at admission; progress never replaces its instant.\"] # [derive (Clone)] pub (crate) struct Deadline { source : Source , at : Instant , }"
+  }
+}

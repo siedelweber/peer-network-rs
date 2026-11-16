@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "rpc_http::Source",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [derive (Clone)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "Clone copies the private monotonic clock marker and fixed instant; the controlled shared state exists only in crate tests. It generates no formatting, encoding or secret exposure."
+  }
+}

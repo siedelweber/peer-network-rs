@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "rpc_http::Source",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/rpc_http.rs",
+    "syntax": "# [doc = \" The reader's clock. Only the monotonic variant is present outside crate tests.\"] # [derive (Clone)] pub (crate) enum Source { Monotonic , # [cfg (test)] Controlled (std :: sync :: Arc < std :: sync :: Mutex < clock :: State > >) , }"
+  }
+}

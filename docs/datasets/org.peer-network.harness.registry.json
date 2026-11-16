@@ -4673,6 +4673,7 @@
         "pn-wallet::rpc_cookie::tests::grammar_cases",
         "pn-wallet::rpc_cookie::tests::descriptor_cases",
         "pn-wallet::rpc_http::tests::framing_cases",
+        "pn-wallet::rpc_http::tests::deadline_source",
         "pn-wallet::rpc_http::tests::acquisition_cases",
         "pn-wallet::rpc_json::tests::parser_cases",
         "pn-wallet::rpc_json::tests::envelope_cases",

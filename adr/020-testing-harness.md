@@ -210,7 +210,7 @@
 | pn-verification::properties | active | integration | pn-records-rust | fast | 4 |
 | pn-verification::recognition | active | integration | pn-graph-rust | fast | 10 |
 | pn-verification::title | active | public-surface | pn-graph-rust | fast | 3 |
-| pn-wallet | active | unit | pn-wallet-rust | fast | 18 |
+| pn-wallet | active | unit | pn-wallet-rust | fast | 19 |
 | pn-wallet::allocation | active | integration | pn-wallet-rust | fast | 1 |
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 11 |

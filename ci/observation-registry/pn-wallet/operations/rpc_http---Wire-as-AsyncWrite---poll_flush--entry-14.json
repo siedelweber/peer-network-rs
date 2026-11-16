@@ -21,12 +21,12 @@
   "review": {
     "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncWrite>::poll_flush",
     "class_decision": "wallet-decoder",
-    "body": "{ Pin :: new (& mut self . get_mut () . stream) . poll_flush (cx) }",
+    "body": "{ let this = self . get_mut () ; let result = Pin :: new (& mut this . stream) . poll_flush (cx) ; # [cfg (test)] if matches ! (result , Poll :: Ready (Ok (()))) && ! this . request_written && this . watch . borrow () . written > 0 { this . request_written = true ; this . source . reach (clock :: Stage :: RequestWritten) ; } result }",
     "assessments": {
       "full_recording": "wallet-full_recording",
       "secret_flow": "wallet-secret_flow",
       "exposure_consumers": "wallet-exposure_consumers"
     },
-    "item_premise": "This body forwards a flush to the owned socket; it carries no payload and no connection detail."
+    "item_premise": "This body forwards a flush to the owned socket; it carries no payload and no connection detail. The private deadline source preserves the monotonic production checks and durations; controlled time and stage callbacks exist only in crate tests and add no recorded secret or public result."
   }
 }

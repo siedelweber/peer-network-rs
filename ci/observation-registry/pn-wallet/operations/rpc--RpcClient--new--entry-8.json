@@ -13,12 +13,12 @@
   "review": {
     "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::new",
     "class_decision": "wallet-decoder",
-    "body": "{ if ! limits . valid () || config . endpoint . expose_secret () . len () > 64 || config . endpoint . expose_secret () . parse :: < IpAddr > () . is_err () || * config . port . expose_secret () == 0 || config . cookie . expose_secret () . len () > 4096 || ! crate :: decoder :: valid_limits (decode) { return Err (RpcRefusal :: Configuration) ; } provisioning . check (run , decode) ? ; let client = Self { config , limits , decode , state : Mutex :: new (State :: default ()) , } ; if ! provisioning . matches_hash (& client . read (Read :: BlockHash (0)) ?) { return Err (RpcRefusal :: Provisioning) ; } if ! matches ! (client . read (Read :: BlockHeader (provisioning . genesis)) ?, ReadResult :: Header (bytes) if bytes == provisioning . header) { return Err (RpcRefusal :: Provisioning) ; } Ok (client) }",
+    "body": "{ if ! limits . valid () || config . endpoint . expose_secret () . len () > 64 || config . endpoint . expose_secret () . parse :: < IpAddr > () . is_err () || * config . port . expose_secret () == 0 || config . cookie . expose_secret () . len () > 4096 || ! crate :: decoder :: valid_limits (decode) { return Err (RpcRefusal :: Configuration) ; } provisioning . check (run , decode) ? ; let client = Self { config , limits , decode , state : Mutex :: new (State :: default ()) , source : rpc_http :: Source :: Monotonic , } ; if ! provisioning . matches_hash (& client . read (Read :: BlockHash (0)) ?) { return Err (RpcRefusal :: Provisioning) ; } if ! matches ! (client . read (Read :: BlockHeader (provisioning . genesis)) ?, ReadResult :: Header (bytes) if bytes == provisioning . header) { return Err (RpcRefusal :: Provisioning) ; } Ok (client) }",
     "assessments": {
       "full_recording": "wallet-full_recording",
       "secret_flow": "wallet-secret_flow",
       "exposure_consumers": "wallet-exposure_consumers"
     },
-    "item_premise": "This body performs the declared public RPC operation with role-only secret argument formatting and complete public return recording."
+    "item_premise": "This body performs the declared public RPC operation with role-only secret argument formatting and complete public return recording. The private deadline source preserves the monotonic production checks and durations; controlled time and stage callbacks exist only in crate tests and add no recorded secret or public result."
   }
 }

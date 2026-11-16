@@ -24,53 +24,183 @@ use std::{
 };
 use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
 
-pub(crate) fn remaining(deadline: Instant) -> Result<Duration, RpcRefusal> {
-    let now = Instant::now();
+/// The reader's clock. Only the monotonic variant is present outside crate tests.
+#[derive(Clone)]
+pub(crate) enum Source {
+    Monotonic,
     #[cfg(test)]
-    let now = now + clock::SKEW.with(std::cell::Cell::get);
-    deadline
-        .checked_duration_since(now)
-        .filter(|duration| !duration.is_zero())
-        .ok_or(RpcRefusal::Deadline)
+    Controlled(std::sync::Arc<std::sync::Mutex<clock::State>>),
 }
 
-/// A controlled clock for deadline regressions: a test names one synchronous stage, and when
-/// the read reaches it this thread's view of the time jumps past any admitted deadline.
+/// One deadline fixed at admission; progress never replaces its instant.
+#[derive(Clone)]
+pub(crate) struct Deadline {
+    source: Source,
+    at: Instant,
+}
+
+impl Source {
+    pub(crate) fn admission(&self) -> (Instant, Instant) {
+        let observed = Instant::now();
+        match self {
+            Self::Monotonic => (observed, observed),
+            #[cfg(test)]
+            Self::Controlled(state) => (state.lock().unwrap().now, observed),
+        }
+    }
+
+    pub(crate) fn fixed(&self, start: Instant, budget: Duration) -> Result<Deadline, RpcRefusal> {
+        let at = start.checked_add(budget).ok_or(RpcRefusal::Configuration)?;
+        #[cfg(test)]
+        self.reach(clock::Stage::Admission);
+        Ok(Deadline {
+            source: self.clone(),
+            at,
+        })
+    }
+}
+
+impl Deadline {
+    pub(crate) fn remaining(&self) -> Result<Duration, RpcRefusal> {
+        let now = match &self.source {
+            Source::Monotonic => Instant::now(),
+            #[cfg(test)]
+            Source::Controlled(state) => state.lock().unwrap().now,
+        };
+        self.at
+            .checked_duration_since(now)
+            .filter(|duration| !duration.is_zero())
+            .ok_or(RpcRefusal::Deadline)
+    }
+
+    pub(crate) fn nested(&self) -> Result<Duration, RpcRefusal> {
+        let remaining = self.remaining()?;
+        match self.source {
+            Source::Monotonic => Ok(remaining),
+            #[cfg(test)]
+            Source::Controlled(_) => Ok(clock::CONTAINMENT),
+        }
+    }
+
+    pub(crate) fn connect_error(&self, error: &io::Error) -> RpcRefusal {
+        match &self.source {
+            Source::Monotonic => {}
+            #[cfg(test)]
+            Source::Controlled(_) => assert!(
+                error.kind() != io::ErrorKind::TimedOut,
+                "HANG awaiting controlled RPC connection"
+            ),
+        }
+        let _ = error;
+        RpcRefusal::Transport
+    }
+
+    async fn enclose<T>(&self, future: impl Future<Output = Result<T, RpcRefusal>>) -> Result<T, RpcRefusal> {
+        match &self.source {
+            Source::Monotonic => tokio::time::timeout_at(tokio::time::Instant::from_std(self.at), future)
+                .await
+                .unwrap_or(Err(RpcRefusal::Deadline)),
+            #[cfg(test)]
+            Source::Controlled(state) => {
+                let mut future = pin!(future);
+                let enclosed = poll_fn(|cx| {
+                    // Like Tokio's timeout, a ready inner future wins. The virtual check does
+                    // not consume cooperative budget, including after the inner poll exhausts it.
+                    if let Poll::Ready(result) = future.as_mut().poll(cx) {
+                        return Poll::Ready(result);
+                    }
+                    let mut state = state.lock().unwrap();
+                    if state.now >= self.at {
+                        Poll::Ready(Err(RpcRefusal::Deadline))
+                    } else {
+                        state.waker = Some(cx.waker().clone());
+                        Poll::Pending
+                    }
+                });
+                tokio::time::timeout(clock::CONTAINMENT, enclosed)
+                    .await
+                    .expect("HANG awaiting controlled RPC exchange or virtual deadline")
+            }
+        }
+    }
+}
+
+/// Scripted time and exchange events, shared with the exchange thread only in crate tests.
 #[cfg(test)]
 pub(crate) mod clock {
-    use std::{cell::Cell, time::Duration};
+    use super::{Duration, Instant, Source, Waker};
+    use std::sync::{Arc, Mutex};
+
+    pub(crate) const CONTAINMENT: Duration = Duration::from_secs(600);
 
     #[derive(Clone, Copy, Debug, PartialEq)]
     pub(crate) enum Stage {
-        /// After cookie acquisition returns, whatever its outcome.
+        Admission,
         Cookie,
-        /// After the HTTP exchange returns a response, before JSON decoding.
         Response,
-        /// After JSON decoding and the envelope, on success or refusal, before the closing check.
         Decoded,
-        /// At the start of typed projection.
         Projection,
+        RequestWritten,
+        HeadByte,
+        HeadReleased,
+        BodyFrame,
     }
 
-    thread_local! {
-        pub(crate) static SKEW: Cell<Duration> = const { Cell::new(Duration::ZERO) };
-        static PAUSE: Cell<Option<Stage>> = const { Cell::new(None) };
+    pub(crate) struct State {
+        pub(super) now: Instant,
+        pub(super) waker: Option<Waker>,
+        expire: Option<Stage>,
+        hook: Option<Arc<dyn Fn(Stage) + Send + Sync>>,
     }
 
-    /// Expire this thread's deadline at `stage`, or with `None`, run on the real clock.
-    pub(crate) fn expire_at(stage: Option<Stage>) {
-        PAUSE.with(|pause| pause.set(stage));
-        SKEW.with(|skew| skew.set(Duration::ZERO));
-    }
+    impl Source {
+        pub(crate) fn controlled() -> Self {
+            Self::Controlled(Arc::new(Mutex::new(State {
+                now: Instant::now(),
+                waker: None,
+                expire: None,
+                hook: None,
+            })))
+        }
 
-    /// Expire every deadline on this thread now.
-    pub(crate) fn expire_now() {
-        SKEW.with(|skew| skew.set(Duration::from_secs(11)));
-    }
+        pub(crate) fn expire_at(&self, stage: Option<Stage>) {
+            if let Self::Controlled(state) = self {
+                state.lock().unwrap().expire = stage;
+            }
+        }
 
-    pub(crate) fn reach(stage: Stage) {
-        if PAUSE.with(Cell::get) == Some(stage) {
-            expire_now();
+        pub(crate) fn advance(&self, duration: Duration) {
+            if let Self::Controlled(state) = self {
+                let waker = {
+                    let mut state = state.lock().unwrap();
+                    state.now += duration;
+                    state.waker.take()
+                };
+                if let Some(waker) = waker {
+                    waker.wake();
+                }
+            }
+        }
+
+        pub(crate) fn on_stage(&self, hook: Arc<dyn Fn(Stage) + Send + Sync>) {
+            if let Self::Controlled(state) = self {
+                state.lock().unwrap().hook = Some(hook);
+            }
+        }
+
+        pub(crate) fn reach(&self, stage: Stage) {
+            if let Self::Controlled(state) = self {
+                let (expire, hook) = {
+                    let observed = state.lock().unwrap();
+                    (observed.expire == Some(stage), observed.hook.clone())
+                };
+                if expire {
+                    self.advance(Duration::from_secs(11));
+                }
+                if let Some(hook) = hook {
+                    hook(stage);
+                }
+            }
         }
     }
 }
@@ -210,6 +340,10 @@ fn status(line: &[u8]) -> Result<u16, RpcRefusal> {
 struct Wire {
     stream: tokio::net::TcpStream,
     watch: Rc<RefCell<Watch>>,
+    #[cfg(test)]
+    source: Source,
+    #[cfg(test)]
+    request_written: bool,
 }
 
 fn refused() -> io::Error {
@@ -245,6 +379,8 @@ impl AsyncRead for Wire {
                             return Poll::Ready(Err(refused()));
                         }
                     }
+                    #[cfg(test)]
+                    this.source.reach(clock::Stage::HeadByte);
                 }
                 buf.put_slice(head.filled());
                 Poll::Ready(Ok(()))
@@ -269,7 +405,14 @@ impl AsyncWrite for Wire {
 
     /// Justified: Connection plumbing inside the instrumented RPC read; flushing has no public payload.
     fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-        Pin::new(&mut self.get_mut().stream).poll_flush(cx)
+        let this = self.get_mut();
+        let result = Pin::new(&mut this.stream).poll_flush(cx);
+        #[cfg(test)]
+        if matches!(result, Poll::Ready(Ok(()))) && !this.request_written && this.watch.borrow().written > 0 {
+            this.request_written = true;
+            this.source.reach(clock::Stage::RequestWritten);
+        }
+        result
     }
 
     /// Justified: Connection plumbing inside the instrumented RPC read; shutdown has no public payload.
@@ -301,11 +444,16 @@ impl tower::Service<Request<Full<Bytes>>> for Exchange {
 }
 
 /// A refusal recorded at the wire wins; otherwise hyper's error maps to a typed cause.
-fn cause(watch: &RefCell<Watch>, error: &(dyn std::error::Error + 'static)) -> RpcRefusal {
+fn cause(watch: &RefCell<Watch>, deadline: &Deadline, error: &(dyn std::error::Error + 'static)) -> RpcRefusal {
+    let _ = deadline;
     if let Some(refusal) = watch.borrow_mut().refusal.take() {
         return refusal;
     }
     if error.is::<tower::timeout::error::Elapsed>() {
+        #[cfg(test)]
+        if matches!(deadline.source, Source::Controlled(_)) {
+            panic!("HANG awaiting controlled RPC response head");
+        }
         return RpcRefusal::Deadline;
     }
     let mut source = Some(error);
@@ -387,7 +535,7 @@ async fn run(
     stream: std::net::TcpStream,
     request: Request<Full<Bytes>>,
     limits: RpcLimits,
-    deadline: Instant,
+    deadline: &Deadline,
     observed_status: &mut Option<u16>,
 ) -> Result<(u16, Vec<u8>), RpcRefusal> {
     stream.set_nonblocking(true).map_err(|_| RpcRefusal::Transport)?;
@@ -396,6 +544,10 @@ async fn run(
     let wire = Wire {
         stream,
         watch: Rc::clone(&watch),
+        #[cfg(test)]
+        source: deadline.source.clone(),
+        #[cfg(test)]
+        request_written: false,
     };
     let (sender, mut connection) = http1::Builder::new()
         .max_headers(limits.header_count)
@@ -403,23 +555,22 @@ async fn run(
         .max_buf_size(8192)
         .handshake(TokioIo::new(wire))
         .await
-        .map_err(|error| cause(&watch, &error))?;
+        .map_err(|error| cause(&watch, deadline, &error))?;
     let mut done = false;
-    let mut service =
-        tower::limit::ConcurrencyLimit::new(tower::timeout::Timeout::new(Exchange(sender), remaining(deadline)?), 1);
+    let mut service = tower::limit::ConcurrencyLimit::new(tower::timeout::Timeout::new(Exchange(sender), deadline.nested()?), 1);
     drive(
         &mut connection,
         &mut done,
         poll_fn(|cx| tower::Service::poll_ready(&mut service, cx)),
     )
     .await
-    .map_err(|error| cause(&watch, &error))?
-    .map_err(|error| cause(&watch, &*error))?;
+    .map_err(|error| cause(&watch, deadline, &error))?
+    .map_err(|error| cause(&watch, deadline, &*error))?;
     let reply = tower::Service::call(&mut service, request);
     let response = drive(&mut connection, &mut done, reply)
         .await
-        .map_err(|error| cause(&watch, &error))?
-        .map_err(|error| cause(&watch, &*error))?;
+        .map_err(|error| cause(&watch, deadline, &error))?
+        .map_err(|error| cause(&watch, deadline, &*error))?;
     let (status, length) = admit_head(&response, limits).inspect_err(|error| match error {
         RpcRefusal::Authentication => *observed_status = Some(401),
         RpcRefusal::Status(code) => *observed_status = Some(*code),
@@ -427,16 +578,20 @@ async fn run(
     })?;
     *observed_status = Some(status);
     watch.borrow_mut().release();
+    #[cfg(test)]
+    deadline.source.reach(clock::Stage::HeadReleased);
     let mut body = Limited::new(response.into_body(), length);
     // The body is public service data under (´[ROOT-amend:devnet:rpc-bounds]´), collected as
     // ordinary bytes within its declared, admitted length.
     let mut buffer = Vec::with_capacity(length);
     while let Some(frame) = drive(&mut connection, &mut done, body.frame())
         .await
-        .map_err(|error| cause(&watch, &error))?
+        .map_err(|error| cause(&watch, deadline, &error))?
     {
-        let frame = frame.map_err(|error| cause(&watch, &*error))?;
+        let frame = frame.map_err(|error| cause(&watch, deadline, &*error))?;
         if let Ok(data) = frame.into_data() {
+            #[cfg(test)]
+            deadline.source.reach(clock::Stage::BodyFrame);
             if data.len() > length - buffer.len() {
                 return Err(RpcRefusal::ResponseBytes);
             }
@@ -475,11 +630,13 @@ pub(crate) fn exchange(
     stream: std::net::TcpStream,
     request: Request<Full<Bytes>>,
     limits: RpcLimits,
-    deadline: Instant,
+    deadline: Deadline,
     observed_status: &mut Option<u16>,
 ) -> Result<(u16, Vec<u8>), RpcRefusal> {
     std::thread::scope(|scope| {
-        std::thread::Builder::new()
+        #[cfg(test)]
+        let controlled = matches!(deadline.source, Source::Controlled(_));
+        let joined = std::thread::Builder::new()
             .name("pn-wallet-rpc".into())
             .spawn_scoped(scope, move || {
                 let runtime = tokio::runtime::Builder::new_current_thread()
@@ -488,19 +645,20 @@ pub(crate) fn exchange(
                     .build()
                     .map_err(|_| RpcRefusal::Transport)?;
                 let result = runtime.block_on(async {
-                    tokio::time::timeout_at(
-                        tokio::time::Instant::from_std(deadline),
-                        run(stream, request, limits, deadline, observed_status),
-                    )
-                    .await
-                    .unwrap_or(Err(RpcRefusal::Deadline))
+                    deadline
+                        .enclose(run(stream, request, limits, &deadline, observed_status))
+                        .await
                 });
                 drop(runtime);
                 result
             })
             .map_err(|_| RpcRefusal::Transport)?
-            .join()
-            .unwrap_or(Err(RpcRefusal::Transport))
+            .join();
+        #[cfg(test)]
+        if controlled {
+            return joined.unwrap_or_else(|panic| std::panic::resume_unwind(panic));
+        }
+        joined.unwrap_or(Err(RpcRefusal::Transport))
     })
 }
 
@@ -520,6 +678,68 @@ pub(crate) fn head(wire: &[u8], limits: RpcLimits) -> Result<u16, RpcRefusal> {
 mod tests {
     use super::*;
     use std::io::{Read as _, Write as _};
+
+    /// Claim: The test-only deadline source supplies 600-second containment to nested bounds while virtual budget remains, refuses them once it expires, preserves inner-ready priority, checks expiry after a pending inner poll, and wakes a registered encloser across threads; its stage callback receives the named event. This unit control claims no transport phase, frame count or real-time envelope.
+    /// ´claim:wallet:rpc-controlled-deadline-source´
+    /// ´test:unit:deadline-source´
+    #[test]
+    fn deadline_source() {
+        use std::sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        };
+        struct Wake(AtomicBool);
+        impl std::task::Wake for Wake {
+            fn wake(self: Arc<Self>) {
+                self.0.store(true, Ordering::Release);
+            }
+        }
+        let source = Source::controlled();
+        let stage_seen = Arc::new(AtomicBool::new(false));
+        let seen = Arc::clone(&stage_seen);
+        source.on_stage(Arc::new(move |stage| {
+            seen.store(stage == clock::Stage::BodyFrame, Ordering::Release);
+        }));
+        source.reach(clock::Stage::BodyFrame);
+        assert!(stage_seen.load(Ordering::Acquire), "source forwards the named stage");
+        let deadline = source.fixed(source.admission().0, Duration::from_secs(2)).unwrap();
+        assert_eq!(deadline.nested(), Ok(Duration::from_secs(600)), "nested bound is containment");
+        source.advance(Duration::from_secs(1));
+        assert_eq!(
+            deadline.nested(),
+            Ok(Duration::from_secs(600)),
+            "progress does not shrink containment"
+        );
+        let runtime = tokio::runtime::Builder::new_current_thread().enable_time().build().unwrap();
+        let _entered = runtime.enter();
+        let wake = Arc::new(Wake(AtomicBool::new(false)));
+        let waker = Waker::from(Arc::clone(&wake));
+        let mut cx = Context::from_waker(&waker);
+        let mut enclosed = pin!(deadline.enclose(std::future::pending::<Result<(), RpcRefusal>>()));
+        assert_eq!(
+            enclosed.as_mut().poll(&mut cx),
+            Poll::Pending,
+            "unexpired encloser registers its wake"
+        );
+        std::thread::scope(|scope| scope.spawn(|| source.advance(Duration::from_secs(1))).join().unwrap());
+        assert!(wake.0.load(Ordering::Acquire), "virtual expiry wakes across threads");
+        assert_eq!(
+            enclosed.as_mut().poll(&mut cx),
+            Poll::Ready(Err(RpcRefusal::Deadline)),
+            "pending inner exposes expiry"
+        );
+        assert_eq!(
+            deadline.nested(),
+            Err(RpcRefusal::Deadline),
+            "expired budget refuses before a nested wait"
+        );
+        let mut ready = pin!(deadline.enclose(std::future::ready(Ok(7))));
+        assert_eq!(
+            ready.as_mut().poll(&mut cx),
+            Poll::Ready(Ok(7)),
+            "inner-ready wins before expiry"
+        );
+    }
 
     fn exchange_bytes(bytes: &'static [u8], drip: bool) -> Result<(u16, Vec<u8>), RpcRefusal> {
         exchange_contained(bytes, drip, Duration::from_secs(600))
@@ -608,7 +828,13 @@ mod tests {
         } else {
             containment
         };
-        let result = exchange(stream, request, RpcLimits::default(), Instant::now() + budget, &mut None);
+        let result = exchange(
+            stream,
+            request,
+            RpcLimits::default(),
+            Source::Monotonic.fixed(Instant::now(), budget).unwrap(),
+            &mut None,
+        );
         let peer = server.join();
         assert!(
             drip || result != Err(RpcRefusal::Deadline),
