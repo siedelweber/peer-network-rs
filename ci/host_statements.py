@@ -151,7 +151,7 @@ def public_statements(source,path):
         if call:return all(public(arg,bindings) for arg in separated(call[2]))
         replaced=re.fullmatch(r'(.*)\.replace\((.*)\)',value,re.S)
         if replaced:return public(replaced[1],bindings) and all(public(arg,bindings) for arg in separated(replaced[2]))
-        return bool(re.fullmatch(r'(?:Inventory::[A-Z]\w*|row)\.(?:predicate|recorded)\(\)',value) and ('row' in bindings or value.startswith('Inventory::')))
+        return bool(re.fullmatch(r'(?:Inventory::[A-Z]\w*|row)\.(?:predicate|recorded)\(\)',re.sub(r'\s+','',value)) and ('row' in bindings or value.startswith('Inventory::')))
     for function in re.finditer(r'\b(?:async\s+)?fn\s+(\w+)\s*\(',mask):
         opening=mask.find('{',function.end())
         if opening<0:continue
@@ -168,10 +168,12 @@ def public_statements(source,path):
             expression=body[begin:finish].strip()
             names=set(re.findall(r'\b[a-z_]\w*\b',loop[1]))
             literal_rows=expression.startswith('[') and not re.search(r'\b[A-Za-z_]\w*\b',rust_mask(expression))
-            if literal_rows or expression=='SUPPRESSIONS' or expression=='profile.settings()' or (expression=='INVENTORY' and names=={'row'}):
+            constant_rows=re.fullmatch(r"([A-Z][A-Z_0-9]*)\.split\(','\)",expression)
+            constant_rows=bool(constant_rows and constant_rows[1] in constants)
+            if constant_rows or literal_rows or expression=='SUPPRESSIONS' or expression=='profile.settings()' or (expression=='INVENTORY' and names=={'row'}):
                 _,end=enclosure(body,finish)
                 loops.append((finish,end,names))
-        for call in re.finditer(r'\.\s*(query|require)\s*\(',code):
+        for call in re.finditer(r'(?:\.\s*(query|require|rows)|RawSession\s*::\s*(query|require|rows))\s*\(',code):
             visible=bindings.copy()
             for begin,end,names in loops:
                 if begin<call.start()<end:visible.update(names)
@@ -181,7 +183,8 @@ def public_statements(source,path):
                     visible.remove(binding)
             arguments,_=enclosure(body,call.end()-1)
             args=separated(arguments)
-            if not args or not public(args[0],visible):
+            argument=1 if call[2] else 0
+            if len(args)<=argument or not public(args[argument],visible):
                 raise ValueError('credential statement text is not a literal or public constant formatting: '+path)
 
 

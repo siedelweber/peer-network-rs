@@ -783,7 +783,7 @@
       "claim": "ROOT::claim:discipline:credential-fixture-public-statement-text",
       "before": "",
       "after": "Claim: The fixture statement census admits literal SQL and formatting from literal public constants, refuses unknown bindings and formatting inputs in fixture modules, and pins predicate forwarding. The lexical check does not resolve macro expansion or aliases; the closed inventory and profile builders remain reviewed public producers.",
-      "review": "Literal SQL, a formatted literal and a formatted public constant pass. An unknown statement binding and unknown positional and captured formatting operands refuse at the statement assertion; changing the fixed predicate forwarder refuses separately. Literal loop rows and the reviewed data-free inventory/profile builders supply existing public statements. No alias resolution, macro expansion or general information-flow proof is claimed."
+      "review": "Literal SQL, formatted literals and public constants pass for direct and qualified query, require and rows calls. Unknown bindings and positional or captured formatting operands refuse; only a literal constant supplies a split roster. Changing the fixed predicate forwarder to skip its query refuses even when the forwarded expression remains public. Literal loop rows and the reviewed data-free inventory/profile builders supply existing public statements. No alias resolution, macro expansion or general information-flow proof is claimed."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_independent_instances",
@@ -4219,20 +4219,44 @@
       "review": "Read the selected target check, interpreter lowering and read-back before startup, inherited limits from the postmaster and its children, both real statistics profiles, backend-start refusal and shutdown before directory removal. Published SCRAM setup inputs are acquired through Configuration and every connection uses the unchanged Session shim; no generated credential, raw provisioning session or installation witness is claimed."
     },
     {
+      "operation": "pn-host::credential_fixture::raw::configuration_refusals",
+      "path": "packages/host/src/credential_fixture/raw.rs",
+      "claim": "HOST::claim:host:credential-public-configuration-refusals",
+      "before": "",
+      "after": "Changed public startup configurations and retained public transaction state refuse at their assigned inventory rows before any Bind; separate instances isolate backend-only settings, recorded inactive defaults, replication capacities and inactive archive configuration, without an archive destination, sender, slot or replica.",
+      "review": "Twenty separate public instances change required startup or recorded inactive facts; the prepared-transaction case also retains one public transaction. Each assigned predicate or recorded-fact conjunction refuses before Bind. No archive destination or active replication connection is introduced. Each instance stops and its whole directory is removed. This witnesses the selected configuration refusals, not a storage failure or crash."
+    },
+    {
       "operation": "pn-host::credential_fixture::raw::public_facts",
       "path": "packages/host/src/credential_fixture/raw.rs",
       "claim": "HOST::claim:host:credential-raw-public-facts",
+      "before": "Protected inventory parsing admits only the fixed public boolean row and completion shapes; unexpected, truncated and extra fields refuse without returning their contents.",
+      "after": "Protected inventory parsing admits exactly the public `ParseComplete`, boolean `RowDescription`, boolean `DataRow`, `CommandComplete` and idle `ReadyForQuery` shapes; each shape has an admitted and a refused vector, and unexpected fields remain protected.",
+      "review": "All five admitted frame classes have a matching refusal: nonempty ParseComplete, changed RowDescription, malformed boolean DataRow, empty or unterminated or multiply terminated CommandComplete, and non-idle ReadyForQuery. Error and cancellation frames remain protected and refuse."
+    },
+    {
+      "operation": "pn-host::credential_fixture::raw::public_mechanism",
+      "path": "packages/host/src/credential_fixture/raw.rs",
+      "claim": "HOST::claim:host:credential-public-mechanism",
       "before": "",
-      "after": "Protected inventory parsing admits only the fixed public boolean row and completion shapes; unexpected, truncated and extra fields refuse without returning their contents.",
-      "review": "The control constructs only public frames in protected Buffer storage. Exact boolean and idle-completion comparisons admit their assigned classes, while unexpected data, extra and short fields, a non-idle transaction, an error and a cancellation-key-shaped frame refuse. No response text is returned."
+      "after": "Both pinned helper operations reach an observed catalog lock on each owned profile, public Bind data stays protected through read-back and equality, null, malformed and password-shaped inputs refuse at helper framing, and completed server/client captures, process titles and protected views contain neither public sentinel; client captures have owner-only modes.",
+      "review": "Each owned profile runs the fixed target and absent-role helpers while another host Session holds the catalogue lock; an ungranted lock is observed before protected view searches and release. Both helper forms have source and attributes read back, with a changed absent-helper attribute refused. Stored verifier equality follows protected read-back. Null, malformed and 64-byte public password-shaped inputs fail helper framing. Server capture follows orderly process end. A fresh child captures stdout and stderr to owner-only files in an owner-only root; child exit precedes protected acquisition and presence-only searches. Protected view rows are searched during and after each hold, while public titles contain only the trusted server’s tags and fixed test identities. All inputs are public vectors, and no generator, private reception, protected login or timing property is claimed."
+    },
+    {
+      "operation": "pn-host::credential_fixture::raw::public_wire_vectors",
+      "path": "packages/host/src/credential_fixture/raw.rs",
+      "claim": "HOST::claim:host:credential-public-wire-vectors",
+      "before": "",
+      "after": "Public vectors pin protected Bind framing, bounded verifier parsing and copying, equality-only results, constant error classes, bounded capture acquisition and presence-only searches; helper work factor and verifier length match the derivation constants, without a generator or ordinary response buffer.",
+      "review": "A protected socket pair carries one exact public Bind vector. Protected parsing, copy, equality, constant SQLSTATE classes and sentinel presence checks each have positive and negative public inputs. No generated material is handled and no timing property is claimed. The helper work-factor spelling is compared with the derivation constant and the public verifier length with its framing constant. A public sparse capture larger than the acquisition ceiling refuses before reading, and the control removes its file before asserting."
     },
     {
       "operation": "pn-host::credential_fixture::raw::raw_inventory",
       "path": "packages/host/src/credential_fixture/raw.rs",
       "claim": "HOST::claim:host:credential-raw-inventory",
-      "before": "",
-      "after": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter and helper states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
-      "review": "Both fresh instances retain the existing owned lifecycle and limits. Raw startup uses the unchanged host Socket, SCRAM and protected read, with named containment. Every inventory row is queried in the issuing session; each injected false predicate refuses independently. Actual parameter, plan-mode and helper-attribute changes refuse and are restored. The fixed unnamed Parse has no Bind or execution. Host core and custody rows combine existing process read-back and the source census, not an SQL proof of those properties."
+      "before": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter and helper states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
+      "after": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter, helper, session-facility and public catalog states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
+      "review": "Both fresh instances retain the existing owned lifecycle and limits. Raw startup uses the unchanged host Socket, SCRAM and protected read, with named containment. Every inventory row is queried in the issuing session; each injected false predicate refuses independently. Actual parameter, plan-mode and helper-attribute changes refuse and are restored. The fixed unnamed Parse has no Bind or execution. Host core and custody rows combine existing process read-back and the source census, not an SQL proof of those properties. Changed session facilities, a retained prepared statement, an inactive subscription and a changed counter-view roster each refuse at their assigned row; the view and subscription are public catalog metadata. Present statement-statistics and explain facilities refuse in the final backend."
     },
     {
       "operation": "pn-host::postgresql::connection_loss_and_drop",

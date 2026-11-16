@@ -550,17 +550,40 @@ class HostRuntime(unittest.TestCase):
         from host_statements import check
         source=Path('packages/host/src/credential_fixture/raw.rs')
         original=source.read_bytes()
-        for expression in ('"SELECT true"', '&format!("SELECT {}", "true")', '&format!("SELECT {}", HELPER_BODY)'):
+        for method in ('query','rows','require'):
+            tail=', false' if method=='query' else ''
+            for expression in ('"SELECT true"', '&format!("SELECT {}", "true")', '&format!("SELECT {}", HELPER_BODY)'):
+                try:
+                    source.write_bytes(original+f'\nasync fn public_probe(raw: &mut RawSession) {{ raw.{method}({expression}{tail}).await; }}\n'.encode())
+                    self.assertTrue(check(), 'public statement expression admitted')
+                finally:source.write_bytes(original)
+            for expression in ('private_statement', '&format!("SELECT {}", private_statement)', '&format!("SELECT {private_statement}")'):
+                try:
+                    source.write_bytes(original+f'\nasync fn private_probe(raw: &mut RawSession, private_statement: &str) {{ raw.{method}({expression}{tail}).await; }}\n'.encode())
+                    with self.assertRaisesRegex(ValueError,'credential statement text is not a literal or public constant formatting'):
+                        check()
+                finally:source.write_bytes(original)
+        for method in ('query','rows','require'):
+            tail=', false' if method=='query' else ''
+            for expression,admitted in [('"SELECT true"',True),('private_statement',False)]:
+                try:
+                    source.write_bytes(original+f'\nasync fn qualified_probe(raw: &mut RawSession, private_statement: &str) {{ RawSession::{method}(raw, {expression}{tail}).await; }}\n'.encode())
+                    if admitted:self.assertTrue(check(),'qualified public statement admitted')
+                    else:
+                        with self.assertRaisesRegex(ValueError,'credential statement text is not a literal or public constant formatting'):check()
+                finally:source.write_bytes(original)
+        for origin,admitted in [("VIEW_NAMES",True),("private_statement",False),("PRIVATE_NAMES",False)]:
             try:
-                source.write_bytes(original+f'\nasync fn public_probe(raw: &mut RawSession) {{ raw.query({expression}, false).await; }}\n'.encode())
-                self.assertTrue(check(), 'public statement expression admitted')
+                source.write_bytes(original+f"\nasync fn roster_probe(raw: &mut RawSession, private_statement: &str) {{ for name in {origin}.split(',') {{ raw.rows(&format!(\"SELECT {{name}}\")).await; }} }}\n".encode())
+                if admitted:self.assertTrue(check(),'literal constant roster admitted')
+                else:
+                    with self.assertRaisesRegex(ValueError,'credential statement text is not a literal or public constant formatting'):check()
             finally:source.write_bytes(original)
-        for expression in ('private_statement', '&format!("SELECT {{}}", private_statement)', '&format!("SELECT {private_statement}")'):
-            try:
-                source.write_bytes(original+f'\nasync fn private_probe(raw: &mut RawSession, private_statement: &str) {{ raw.query({expression}, false).await; }}\n'.encode())
-                with self.assertRaisesRegex(ValueError,'credential statement text is not a literal or public constant formatting'):
-                    check()
-            finally:source.write_bytes(original)
+        try:
+            self.assertEqual(original.count(b'if !self.query('),1,'public predicate pre-image')
+            source.write_bytes(original.replace(b'if !self.query(',b'if false && !self.query('))
+            with self.assertRaisesRegex(ValueError,'credential public predicate forwarding differs'):check()
+        finally:source.write_bytes(original)
         try:
             source.write_bytes(original.replace(b'format!("SELECT ({predicate}) IS TRUE AS ok")',b'format!("SELECT ({private_statement}) IS TRUE AS ok")'))
             with self.assertRaisesRegex(ValueError,'credential public predicate forwarding differs'):

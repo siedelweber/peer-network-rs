@@ -330,6 +330,10 @@ impl OwnedInstance {
     }
 
     fn start(programs: &[PathBuf; 3], root: PathBuf, profile: StandingProfile) -> Self {
+        Self::configured(programs, root, profile, &[])
+    }
+
+    fn configured(programs: &[PathBuf; 3], root: PathBuf, profile: StandingProfile, public_settings: &[(&str, &str)]) -> Self {
         instance_directory(&root).expect("leftover directory refuses before setup");
         std::fs::create_dir(&root).unwrap();
         std::fs::set_permissions(&root, std::fs::Permissions::from_mode(0o700)).unwrap();
@@ -359,6 +363,9 @@ impl OwnedInstance {
         let mut config = String::from("listen_addresses=''\nport=5432\nshared_buffers='16MB'\nmax_connections=8\n");
         writeln!(config, "unix_socket_directories='{}'", instance.root.display()).unwrap();
         for (name, value) in profile.settings() {
+            writeln!(config, "{name}='{value}'").unwrap();
+        }
+        for (name, value) in public_settings {
             writeln!(config, "{name}='{value}'").unwrap();
         }
         std::fs::write(data.join("postgresql.conf"), config).unwrap();
@@ -397,7 +404,7 @@ impl OwnedInstance {
             .collect()
     }
 
-    fn finish(&mut self) {
+    fn stop(&mut self) {
         if self.running && self.root.join("data/postmaster.pid").exists() {
             Self::command(
                 &self.control,
@@ -414,6 +421,10 @@ impl OwnedInstance {
             );
             self.running = false;
         }
+    }
+
+    fn finish(&mut self) {
+        self.stop();
         std::fs::remove_dir_all(&self.root).expect("owned instance directory removed after process end");
     }
 }

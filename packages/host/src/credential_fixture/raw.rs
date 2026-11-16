@@ -3,6 +3,7 @@
 
 use super::{OwnedInstance, StandingProfile};
 use crate::{Configuration, scram, wire};
+use std::os::unix::fs::PermissionsExt as _;
 use std::time::Duration;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -11,6 +12,8 @@ enum Refusal {
     Protocol,
     Server,
     Inventory,
+    Framing,
+    MissingRole,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -380,6 +383,16 @@ async fn prepare(session: &mut RawSession) -> Result<(), Refusal> {
     Ok(())
 }
 
+async fn absent_inventory(raw: &mut RawSession) -> Result<(), Refusal> {
+    raw.require(
+        &Inventory::Helper
+            .predicate()
+            .replace("p.proname='provision'", "p.proname='absent'")
+            .replace("credential_target", "credential_absent"),
+    )
+    .await
+}
+
 async fn inventory(session: &mut RawSession, injected: Option<Inventory>) -> Result<(), Refusal> {
     for row in INVENTORY {
         if injected == Some(row) {
@@ -394,12 +407,23 @@ async fn inventory(session: &mut RawSession, injected: Option<Inventory>) -> Res
     Ok(())
 }
 
-/// Protected inventory parsing admits only the fixed public boolean row and completion shapes; unexpected, truncated and extra fields refuse without returning their contents.
+/// Protected inventory parsing admits exactly the public `ParseComplete`, boolean `RowDescription`, boolean `DataRow`, `CommandComplete` and idle `ReadyForQuery` shapes; each shape has an admitted and a refused vector, and unexpected fields remain protected.
 /// ´claim:host:credential-raw-public-facts´
 /// ´test:unit:public-facts´
 #[test]
 fn public_facts() {
     for (kind, bytes, expected) in [
+        (b'1', b"".as_slice(), Ok(PublicFrame::Parsed)),
+        (b'1', b"x".as_slice(), Err(Refusal::Protocol)),
+        (
+            b'T',
+            b"\0\x01ok\0\0\0\0\0\0\0\0\0\0\x10\0\x01\xff\xff\xff\xff\0\0".as_slice(),
+            Ok(PublicFrame::Description),
+        ),
+        (b'T', b"\0\x01bad".as_slice(), Err(Refusal::Protocol)),
+        (b'C', b"SET".as_slice(), Err(Refusal::Protocol)),
+        (b'C', b"SET\0extra\0".as_slice(), Err(Refusal::Protocol)),
+        (b'C', b"".as_slice(), Err(Refusal::Protocol)),
         (b'D', b"\0\x01\0\0\0\x01t".as_slice(), Ok(PublicFrame::Boolean(true))),
         (b'D', b"\0\x01\0\0\0\x01f".as_slice(), Ok(PublicFrame::Boolean(false))),
         (b'Z', b"I".as_slice(), Ok(PublicFrame::Ready)),
@@ -419,22 +443,12 @@ fn public_facts() {
     }
 }
 
-/// The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter and helper states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.
+/// The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter, helper, session-facility and public catalog states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.
 /// ´claim:host:credential-raw-inventory´
 /// ´test:unit:raw-inventory´
 #[test]
 fn raw_inventory() {
-    let programs = super::server_programs(&std::path::PathBuf::from(
-        std::env::var_os("PN_POSTGRESQL_BIN").expect("registered server location"),
-    ))
-    .unwrap();
-    let target = std::fs::read_to_string(
-        pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("packages/host/postgresql-target.txt")).unwrap(),
-    )
-    .unwrap();
-    let version = std::process::Command::new(&programs[0]).arg("--version").output().unwrap();
-    assert!(version.status.success());
-    super::server_version(std::str::from_utf8(&version.stdout).unwrap(), &target).unwrap();
+    let programs = public_programs();
     let interpreter = std::path::PathBuf::from(std::env::var_os("PN_TEST_PYTHON").expect("registered interpreter"));
     super::core_policy(
         &std::fs::read_to_string("/proc/sys/kernel/osrelease").unwrap(),
@@ -470,7 +484,7 @@ fn raw_inventory() {
             ] {
                 raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
                 assert_eq!(
-                    raw.require(&setting(name, correct)).await,
+                    inventory(&mut raw, None).await,
                     Err(Refusal::Inventory),
                     "changed parameter or plan refuses: {name}"
                 );
@@ -479,6 +493,8 @@ fn raw_inventory() {
             for (change, restore) in [
                 ("STABLE", "VOLATILE"),
                 ("SECURITY DEFINER", "SECURITY INVOKER"),
+                ("STRICT", "CALLED ON NULL INPUT"),
+                ("PARALLEL SAFE", "PARALLEL UNSAFE"),
                 ("SET search_path=public", "SET search_path=pg_catalog"),
             ] {
                 raw.query(&format!("ALTER FUNCTION credential_fixture.provision(text) {change}"), false)
@@ -493,6 +509,7 @@ fn raw_inventory() {
                     .await
                     .unwrap();
             }
+            facility_refusals(&mut raw, &instance).await;
             inventory(&mut raw, None)
                 .await
                 .expect("restored inventory confirmed before later input");
@@ -511,9 +528,962 @@ fn raw_inventory() {
             raw.outer().await.expect("fixed unnamed public Parse admitted without Bind");
             raw.query("LOAD 'auto_explain'",false).await.unwrap();
             assert_eq!(raw.require(&Inventory::Modules.predicate()).await,Err(Refusal::Inventory),"changed loaded module roster refuses");
+            assert_eq!(raw.require(&Inventory::Explain.predicate()).await, Err(Refusal::Inventory), "loaded explain facility refuses");
+            assert_eq!(raw.require(&Inventory::UnknownFacilities.predicate()).await, Err(Refusal::Inventory), "unknown facility roster refuses");
+            raw.query("CREATE EXTENSION pg_stat_statements",false).await.unwrap();
+            assert_eq!(raw.require(&Inventory::StatementExtension.predicate()).await, Err(Refusal::Inventory), "present statement statistics view refuses");
             raw.close().await.unwrap();
         });
         instance.finish();
         assert!(!root.exists(), "raw instance removed after shutdown");
     }
+}
+
+// Public independent derivation vector, never a generated credential.
+// (´[ROOT-rule:observe:credential-store-contract]´)
+const PUBLIC_VERIFIER: &[u8] = b"SCRAM-SHA-256$600000:AAECAwQFBgcICQoLDA0ODw==$BG6/sqb6MmuibgKDe5DlkjPxurUg316/oHIioBj66LM=:SeM0pJFLIAn5TIkOu/3be11lr38vXTvN870vLIMdDqw=";
+const PUBLIC_PASSWORD: &[u8] = b"public-credential-vector";
+
+// Fixture-only secret boundary: Public vectors exercise the protected parameter copy used by the receiver.
+// Caveat: The verifier borrow ends at its bounded copy directly into protected Bind storage; the fixture uses public test material and retains no ordinary view.
+// (´[ROOT-cav:observe:secret-host-credential-verifier-parameter]´)
+// Justified: The wire parameter copy needs a byte slice and the destination remains protected.
+#[allow(clippy::disallowed_methods)]
+fn bind_parameter(verifier: &crate::secret::Buffer) -> Result<crate::secret::Buffer, Refusal> {
+    let length = u32::try_from(verifier.len()).map_err(|_| Refusal::Framing)?;
+    let mut bind = crate::secret::Buffer::new();
+    bind.append(&[0, 0, 0, 0, 0, 1]).map_err(|_| Refusal::Framing)?;
+    bind.append(&length.to_be_bytes()).map_err(|_| Refusal::Framing)?;
+    bind.append(verifier.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-verifier-parameter]´) */))
+        .map_err(|_| Refusal::Framing)?;
+    bind.append(&[0, 0]).map_err(|_| Refusal::Framing)?;
+    Ok(bind)
+}
+
+// Fixture-only secret boundary: The protected Bind is sent without an ordinary intermediate frame.
+// Caveat: The Bind borrow ends at the protected wire send; only public vectors are supplied by these controls.
+// (´[ROOT-cav:observe:secret-host-credential-parameter-send]´)
+// Justified: The existing protected wire sender requires a byte slice.
+#[allow(clippy::disallowed_methods)]
+async fn send_parameter(socket: &mut wire::Socket, bind: &crate::secret::Buffer) -> Result<(), Refusal> {
+    wire::send(
+        socket,
+        b'B',
+        bind.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-parameter-send]´) */),
+    )
+    .await
+    .map_err(|_| Refusal::Transport)
+}
+
+// Fixture-only secret boundary: Only a constant SQLSTATE class leaves protected error storage.
+// Caveat: The error borrow is bounded by the protocol field parse and returns only a constant refusal class; message and context never leave the protected frame.
+// (´[ROOT-cav:observe:secret-host-credential-error-class]´)
+// Justified: SQLSTATE field classification requires a byte slice.
+#[allow(clippy::disallowed_methods)]
+fn error_class(frame: &wire::Frame) -> Refusal {
+    let bytes = frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-error-class]´) */);
+    if frame.kind != b'E' || bytes.last() != Some(&0) {
+        return Refusal::Protocol;
+    }
+    let mut cursor = 0;
+    let mut class = None;
+    while cursor < bytes.len() {
+        let tag = bytes[cursor];
+        cursor += 1;
+        if tag == 0 {
+            return if cursor == bytes.len() {
+                class.unwrap_or(Refusal::Protocol)
+            } else {
+                Refusal::Protocol
+            };
+        }
+        let Some(end) = bytes[cursor..].iter().position(|byte| *byte == 0) else {
+            return Refusal::Protocol;
+        };
+        if tag == b'C' {
+            if class.is_some() {
+                return Refusal::Protocol;
+            }
+            class = Some(match &bytes[cursor..cursor + end] {
+                b"22023" => Refusal::Framing,
+                b"42704" => Refusal::MissingRole,
+                _ => Refusal::Server,
+            });
+        }
+        cursor += end + 1;
+    }
+    Refusal::Protocol
+}
+
+// Fixture-only secret boundary: Read-back parsing returns offsets and lengths, not verifier bytes.
+// Caveat: The read-back borrow ends at validation of one bounded text field; only its public offset and length leave the parse.
+// (´[ROOT-cav:observe:secret-host-credential-readback-parse]´)
+// Justified: The protocol field boundary must be checked before a protected copy.
+#[allow(clippy::disallowed_methods)]
+fn verifier_field(frame: &wire::Frame) -> Result<(usize, usize), Refusal> {
+    let bytes = frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-readback-parse]´) */);
+    if frame.kind != b'D' || bytes.len() != 141 || bytes[..6] != [0, 1, 0, 0, 0, 135] {
+        return Err(Refusal::Protocol);
+    }
+    Ok((6, 135))
+}
+
+// Fixture-only secret boundary: Read-back bytes are copied only to the receiver's protected buffer.
+// Caveat: The bounded verifier field borrow ends at a protected-to-protected copy and never becomes an ordinary query result.
+// (´[ROOT-cav:observe:secret-host-credential-readback-copy]´)
+// Justified: The protected append consumer requires the validated field slice.
+#[allow(clippy::disallowed_methods)]
+fn copy_verifier(frame: &wire::Frame) -> Result<crate::secret::Buffer, Refusal> {
+    let (start, length) = verifier_field(frame)?;
+    crate::secret::Buffer::from_bytes(
+        &frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-readback-copy]´) */)[start..start + length],
+    )
+    .map_err(|_| Refusal::Protocol)
+}
+
+// Fixture-only secret boundary: Equality exposes no verifier value or timing guarantee.
+// Caveat: The expected verifier borrow ends at the receiver's equality expression; only equality over public test material is reported.
+// (´[ROOT-cav:observe:secret-host-credential-equality-expected]´)
+// Caveat: The stored verifier borrow ends at the receiver's equality expression; no slice is retained and no timing property is claimed.
+// (´[ROOT-cav:observe:secret-host-credential-equality-stored]´)
+// Justified: Byte equality requires both bounded borrowed slices.
+#[allow(clippy::disallowed_methods)]
+fn verifier_equal(expected: &crate::secret::Buffer, stored: &crate::secret::Buffer) -> bool {
+    expected.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-equality-expected]´) */)
+        == stored.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-equality-stored]´) */)
+}
+
+// Fixture-only secret boundary: Completed captures enter protected storage directly.
+// Caveat: The mutable capture loan ends at bounded acquisition through EOF after the writer ends; no ordinary intermediate holds captured bytes.
+// (´[ROOT-cav:observe:secret-host-credential-custody-capture]´)
+// Justified: File acquisition requires a mutable destination slice.
+#[allow(clippy::disallowed_methods)]
+fn capture(path: &std::path::Path) -> Result<crate::secret::Buffer, Refusal> {
+    use std::io::Read as _;
+    let mut file = std::fs::File::open(path).map_err(|_| Refusal::Transport)?;
+    let length = usize::try_from(file.metadata().map_err(|_| Refusal::Transport)?.len()).map_err(|_| Refusal::Framing)?;
+    if length > 16 * 1024 * 1024 {
+        return Err(Refusal::Framing);
+    }
+    let mut buffer = crate::secret::Buffer::with_capacity(length + 1);
+    {
+        let storage = buffer.expose_storage(/* (´[ROOT-cav:observe:secret-host-credential-custody-capture]´) */);
+        file.read_exact(&mut storage[..length]).map_err(|_| Refusal::Transport)?;
+        if file.read(&mut storage[length..]).map_err(|_| Refusal::Transport)? != 0 {
+            return Err(Refusal::Framing);
+        }
+    }
+    buffer.set_length(length).map_err(|_| Refusal::Framing)?;
+    Ok(buffer)
+}
+
+// Fixture-only secret boundary: Sentinel searches disclose only presence.
+// Caveat: The protected capture or view borrow ends at the public sentinel search and returns only presence, never captured content.
+// (´[ROOT-cav:observe:secret-host-credential-custody-search]´)
+// Justified: The bounded byte search needs a slice and retains none.
+#[allow(clippy::disallowed_methods)]
+fn contains(buffer: &crate::secret::Buffer, public: &[u8]) -> bool {
+    !public.is_empty()
+        && buffer.expose_bytes(/* (´[ROOT-cav:observe:secret-host-credential-custody-search]´) */).windows(public.len()).any(|window| window == public)
+}
+
+impl RawSession {
+    async fn rows(&mut self, sql: &str) -> Result<Vec<wire::Frame>, Refusal> {
+        let mut public = sql.as_bytes().to_vec();
+        public.push(0);
+        tokio::time::timeout(Duration::from_secs(600), async {
+            wire::send(&mut self.socket, b'Q', &public)
+                .await
+                .map_err(|_| Refusal::Transport)?;
+            let mut rows = Vec::new();
+            let mut error = None;
+            let mut complete = false;
+            loop {
+                let frame = wire::read(&mut self.socket).await.map_err(|_| Refusal::Transport)?;
+                match frame.kind {
+                    b'T' | b'D' => rows.push(frame),
+                    b'E' => error = Some(error_class(&frame)),
+                    b'C' if public_frame(&frame)? == PublicFrame::Completion => complete = true,
+                    b'Z' if public_frame(&frame)? == PublicFrame::Ready => {
+                        return if let Some(error) = error {
+                            Err(error)
+                        } else if complete {
+                            Ok(rows)
+                        } else {
+                            Err(Refusal::Protocol)
+                        };
+                    }
+                    _ => return Err(Refusal::Protocol),
+                }
+            }
+        })
+        .await
+        .expect("HANG awaiting protected public statement rows; last state=protected response")
+    }
+
+    async fn parameter(&mut self, verifier: &crate::secret::Buffer, absent: bool) -> Result<(), Refusal> {
+        tokio::time::timeout(Duration::from_secs(600), async {
+            let mut parse = vec![0];
+            parse.extend_from_slice(if absent {
+                b"SELECT credential_fixture.absent($1::text)"
+            } else {
+                OUTER.as_bytes()
+            });
+            parse.extend_from_slice(&[0, 0, 1, 0, 0, 0, 25]);
+            wire::send(&mut self.socket, b'P', &parse)
+                .await
+                .map_err(|_| Refusal::Transport)?;
+            send_parameter(&mut self.socket, &bind_parameter(verifier)?).await?;
+            wire::send(&mut self.socket, b'E', &[0, 0, 0, 0, 0])
+                .await
+                .map_err(|_| Refusal::Transport)?;
+            wire::send(&mut self.socket, b'S', &[])
+                .await
+                .map_err(|_| Refusal::Transport)?;
+            let mut parsed = false;
+            let mut bound = false;
+            let mut completed = false;
+            let mut error = None;
+            loop {
+                let frame = wire::read(&mut self.socket).await.map_err(|_| Refusal::Transport)?;
+                match frame.kind {
+                    b'1' if !parsed && public_frame(&frame)? == PublicFrame::Parsed => parsed = true,
+                    b'2' if parsed && !bound && frame.payload.len() == 0 => bound = true,
+                    b'D' if bound => { /* void result remains protected, not interpreted */ }
+                    b'C' if bound && public_frame(&frame)? == PublicFrame::Completion => completed = true,
+                    b'E' => error = Some(error_class(&frame)),
+                    b'Z' if public_frame(&frame)? == PublicFrame::Ready => break,
+                    _ => return Err(Refusal::Protocol),
+                }
+            }
+            // The unnamed portal and statement have separate explicit Close messages.
+            for target in *b"PS" {
+                wire::send(&mut self.socket, b'C', &[target, 0])
+                    .await
+                    .map_err(|_| Refusal::Transport)?;
+            }
+            wire::send(&mut self.socket, b'S', &[])
+                .await
+                .map_err(|_| Refusal::Transport)?;
+            for _ in 0..2 {
+                let frame = wire::read(&mut self.socket).await.map_err(|_| Refusal::Transport)?;
+                if frame.kind != b'3' || frame.payload.len() != 0 {
+                    return Err(Refusal::Protocol);
+                }
+            }
+            let ready = wire::read(&mut self.socket).await.map_err(|_| Refusal::Transport)?;
+            if public_frame(&ready)? != PublicFrame::Ready {
+                return Err(Refusal::Protocol);
+            }
+            if let Some(error) = error {
+                Err(error)
+            } else if parsed && bound && completed {
+                Ok(())
+            } else {
+                Err(Refusal::Protocol)
+            }
+        })
+        .await
+        .expect("HANG awaiting public protected Bind execution and Close; last state=protected protocol")
+    }
+}
+
+/// Public vectors pin protected Bind framing, bounded verifier parsing and copying, equality-only results, constant error classes, bounded capture acquisition and presence-only searches; helper work factor and verifier length match the derivation constants, without a generator or ordinary response buffer.
+/// ´claim:host:credential-public-wire-vectors´
+/// ´test:unit:public-wire-vectors´
+#[test]
+fn public_wire_vectors() {
+    assert!(
+        HELPER_BODY.contains(&format!("[$]{}:", pn_credential_derivation::MAX_ITERATIONS)),
+        "helper work factor equals derivation bound"
+    );
+    assert_eq!(
+        PUBLIC_VERIFIER.len(),
+        pn_credential_derivation::VERIFIER_LENGTH,
+        "public verifier matches derivation framing"
+    );
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(async {
+        let value = crate::secret::Buffer::from_bytes(PUBLIC_VERIFIER).unwrap();
+        let bind = bind_parameter(&value).unwrap();
+        let (mut socket, mut peer) = wire::fixture_pair();
+        send_parameter(&mut socket, &bind).await.unwrap();
+        let frame = wire::read(&mut peer).await.unwrap();
+        let mut expected = vec![0, 0, 0, 0, 0, 1, 0, 0, 0, 135];
+        expected.extend_from_slice(PUBLIC_VERIFIER);
+        expected.extend_from_slice(&[0, 0]);
+        assert_eq!(frame.kind, b'B', "protected parameter frame kind");
+        assert_eq!(frame.payload.len(), expected.len(), "protected parameter exact length");
+        assert!(contains(&frame.payload, &expected), "protected parameter exact public vector");
+    });
+    readback_vectors();
+    custody_vectors();
+}
+
+fn readback_vectors() {
+    let mut public = vec![0, 1, 0, 0, 0, 135];
+    public.extend_from_slice(PUBLIC_VERIFIER);
+    let frame = wire::Frame {
+        kind: b'D',
+        payload: crate::secret::Buffer::from_bytes(&public).unwrap(),
+    };
+    assert_eq!(verifier_field(&frame), Ok((6, 135)), "read-back field boundaries");
+    let copy = copy_verifier(&frame).unwrap();
+    let expected = crate::secret::Buffer::from_bytes(PUBLIC_VERIFIER).unwrap();
+    assert!(verifier_equal(&expected, &copy), "protected copy equality");
+    assert!(
+        !verifier_equal(
+            &crate::secret::Buffer::from_bytes(b"different public material").unwrap(),
+            &copy
+        ),
+        "unequal protected buffers refuse"
+    );
+    for bytes in [&public[..public.len() - 1], b"\0\x01\xff\xff\xff\xff", b"\0\x02\0\0\0\x00"] {
+        let invalid = wire::Frame {
+            kind: b'D',
+            payload: crate::secret::Buffer::from_bytes(bytes).unwrap(),
+        };
+        assert_eq!(
+            verifier_field(&invalid),
+            Err(Refusal::Protocol),
+            "invalid read-back field refuses"
+        );
+    }
+    for (offset, value) in [(1, 2), (5, 134)] {
+        let mut changed = public.clone();
+        changed[offset] = value;
+        let invalid = wire::Frame {
+            kind: b'D',
+            payload: crate::secret::Buffer::from_bytes(&changed).unwrap(),
+        };
+        assert_eq!(
+            verifier_field(&invalid),
+            Err(Refusal::Protocol),
+            "read-back field header refuses"
+        );
+    }
+    let invalid = wire::Frame {
+        kind: b'T',
+        payload: crate::secret::Buffer::from_bytes(&public).unwrap(),
+    };
+    assert_eq!(verifier_field(&invalid), Err(Refusal::Protocol), "read-back kind refuses");
+    for (bytes, expected) in [
+        (b"C\x32\x32\x30\x32\x33\0Mpublic sentinel\0\0".as_slice(), Refusal::Framing),
+        (b"C\x34\x32\x37\x30\x34\0\0", Refusal::MissingRole),
+        (b"C\x39\x39\x39\x39\x39\0\0", Refusal::Server),
+        (b"C\x32\x32\x30\x32\x33\0C\x34\x32\x37\x30\x34\0\0", Refusal::Protocol),
+        (b"C\x32\x32\x30\x32\x33", Refusal::Protocol),
+    ] {
+        assert_eq!(
+            error_class(&wire::Frame {
+                kind: b'E',
+                payload: crate::secret::Buffer::from_bytes(bytes).unwrap()
+            }),
+            expected,
+            "constant SQLSTATE class"
+        );
+    }
+    let mut changed = PUBLIC_VERIFIER.to_vec();
+    changed[0] ^= 1;
+    assert!(
+        !verifier_equal(&crate::secret::Buffer::from_bytes(&changed).unwrap(), &copy),
+        "equal-length different verifier refuses"
+    );
+    custody_file_vector();
+}
+
+fn custody_file_vector() {
+    let path = std::env::temp_dir().join(format!("credential-public-capture-{}", std::process::id()));
+    assert!(!path.exists(), "public capture vector path starts absent");
+    std::fs::write(&path, b"before public sentinel after").unwrap();
+    let acquired = capture(&path);
+    std::fs::remove_file(&path).unwrap();
+    let acquired = acquired.unwrap();
+    assert!(
+        contains(&acquired, b"public sentinel"),
+        "protected capture acquisition retains public marker"
+    );
+    std::fs::File::create(&path).unwrap().set_len(16 * 1024 * 1024 + 1).unwrap();
+    let oversized = capture(&path);
+    std::fs::remove_file(&path).unwrap();
+    assert!(
+        matches!(oversized, Err(Refusal::Framing)),
+        "oversized public capture refuses before acquisition"
+    );
+}
+
+fn custody_vectors() {
+    let captured = crate::secret::Buffer::from_bytes(b"before public sentinel after").unwrap();
+    assert!(
+        contains(&captured, b"public sentinel"),
+        "presence search detects public marker"
+    );
+    assert!(
+        !contains(&captured, b"absent marker"),
+        "presence search rejects absent marker"
+    );
+    assert!(!contains(&captured, b""), "empty search is not evidence");
+    for refusal in [
+        Refusal::Transport,
+        Refusal::Protocol,
+        Refusal::Server,
+        Refusal::Inventory,
+        Refusal::Framing,
+        Refusal::MissingRole,
+    ] {
+        assert!(
+            !format!("{refusal:?}").contains("public sentinel"),
+            "constant public refusal formatting"
+        );
+    }
+}
+
+fn search_views(frames: Vec<wire::Frame>) {
+    for frame in frames {
+        assert!(
+            !contains(&frame.payload, PUBLIC_VERIFIER),
+            "view contains no public verifier sentinel"
+        );
+        assert!(
+            !contains(&frame.payload, PUBLIC_PASSWORD),
+            "view contains no public password sentinel"
+        );
+    }
+}
+
+async fn view_walk(observer: &mut RawSession) {
+    for name in VIEW_NAMES.split(',') {
+        search_views(
+            observer
+                .rows(&format!("SELECT row_to_json(public_view) FROM pg_catalog.{name} public_view"))
+                .await
+                .expect("protected complete view roster walk"),
+        );
+    }
+    search_views(
+        observer
+            .rows("SELECT prosrc FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='credential_fixture'")
+            .await
+            .expect("protected helper source walk"),
+    );
+}
+
+// The pinned server's titles contain command tags and fixed test identities, not SQL or Bind data.
+// This public title check is not protected acquisition of arbitrary process memory.
+fn public_titles(instance: &OwnedInstance) {
+    for (pid, _) in instance.process_limits() {
+        let title = match std::fs::read(format!("/proc/{pid}/cmdline")) {
+            Ok(title) => title,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => panic!("owned process title read-back refuses: {:?}", error.kind()),
+        };
+        assert!(
+            !title.windows(PUBLIC_VERIFIER.len()).any(|part| part == PUBLIC_VERIFIER),
+            "public title contains no verifier sentinel"
+        );
+        assert!(
+            !title.windows(PUBLIC_PASSWORD.len()).any(|part| part == PUBLIC_PASSWORD),
+            "public title contains no password sentinel"
+        );
+    }
+}
+
+async fn lock_operation(instance: &OwnedInstance, mut issuer: RawSession, observer: &mut RawSession, absent: bool) -> RawSession {
+    tokio::time::timeout(Duration::from_secs(600), async {
+
+    let holder = super::admitted_connection(instance).await.unwrap();
+    let witness = super::admitted_connection(instance).await.unwrap();
+    let hold = holder.client();
+    hold.batch_execute("BEGIN; LOCK TABLE pg_catalog.pg_authid IN SHARE ROW EXCLUSIVE MODE")
+        .await
+        .unwrap();
+    let verifier = crate::secret::Buffer::from_bytes(PUBLIC_VERIFIER).unwrap();
+    let execution = tokio::spawn(async move {
+        let result = issuer.parameter(&verifier, absent).await;
+        (issuer, result)
+    });
+    let observation = async {
+        tokio::time::timeout(Duration::from_secs(600),async {
+            loop {
+                let rows=witness.client().query("SELECT EXISTS(SELECT FROM pg_locks WHERE relation='pg_authid'::regclass AND mode='RowExclusiveLock' AND NOT granted)",&[]).await.unwrap();
+                if rows[0].get::<_,bool>(0) { break; }
+                assert!(!execution.is_finished(), "helper cannot complete before observed lock release");
+                tokio::task::yield_now().await;
+            }
+        }).await.expect("HANG awaiting credential helper lock; last state=no ungranted RowExclusiveLock");
+        public_titles(instance);
+        view_walk(observer).await;
+        hold.batch_execute("COMMIT").await.unwrap();
+    };
+    observation.await;
+    let (mut issuer, result) = execution.await.expect("public helper task completes");
+    assert_eq!(
+        result,
+        if absent { Err(Refusal::MissingRole) } else { Ok(()) },
+        "assigned lock-held helper outcome"
+    );
+    issuer
+        .require(&Inventory::Listings.predicate())
+        .await
+        .expect("issuer listings empty after Close");
+    view_walk(observer).await;
+    issuer
+    }).await.expect("HANG awaiting credential lock witness; last state=hold, observe, release or completion")
+}
+
+fn client_capture() {
+    let root = std::env::temp_dir().join(format!("credential-client-capture-{}", std::process::id()));
+    assert!(!root.exists(), "client capture directory starts absent");
+    std::fs::create_dir(&root).unwrap();
+    std::fs::set_permissions(&root, std::fs::Permissions::from_mode(0o700)).unwrap();
+    assert_eq!(
+        std::fs::metadata(&root).unwrap().permissions().mode() & 0o777,
+        0o700,
+        "client capture root confines access"
+    );
+    let output = std::fs::File::create(root.join("output")).unwrap();
+    let error = std::fs::File::create(root.join("error")).unwrap();
+    for file in [&output, &error] {
+        file.set_permissions(std::fs::Permissions::from_mode(0o600)).unwrap();
+        assert_eq!(
+            file.metadata().unwrap().permissions().mode() & 0o777,
+            0o600,
+            "client capture file confines access"
+        );
+    }
+    drop((output, error));
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "credential_fixture::raw::public_mechanism",
+            "--exact",
+            "--include-ignored",
+            "--nocapture",
+        ])
+        .stdout(std::fs::File::create(root.join("output")).unwrap())
+        .stderr(std::fs::File::create(root.join("error")).unwrap())
+        .status()
+        .expect("public mechanism child starts");
+    let output = capture(&root.join("output"));
+    let error = capture(&root.join("error"));
+    std::fs::remove_dir_all(&root).unwrap();
+    let output = output.unwrap();
+    let error = error.unwrap();
+    assert!(
+        status.success(),
+        "public mechanism child completed; captures remain protected"
+    );
+    for captured in [&output, &error] {
+        assert!(
+            !contains(captured, PUBLIC_VERIFIER),
+            "completed client capture contains no public verifier sentinel"
+        );
+        assert!(
+            !contains(captured, PUBLIC_PASSWORD),
+            "completed client capture contains no public password sentinel"
+        );
+    }
+}
+
+/// Both pinned helper operations reach an observed catalog lock on each owned profile, public Bind data stays protected through read-back and equality, null, malformed and password-shaped inputs refuse at helper framing, and completed server/client captures, process titles and protected views contain neither public sentinel; client captures have owner-only modes.
+/// ´claim:host:credential-public-mechanism´
+/// ´test:unit:public-mechanism´
+#[test]
+fn public_mechanism() {
+    if !std::env::args().any(|arg| arg == "--include-ignored") {
+        client_capture();
+        return;
+    }
+    let programs = public_programs();
+    let interpreter = std::path::PathBuf::from(std::env::var_os("PN_TEST_PYTHON").expect("registered interpreter"));
+    super::core_policy(
+        &std::fs::read_to_string("/proc/sys/kernel/osrelease").unwrap(),
+        &std::fs::read_to_string("/proc/sys/kernel/core_pattern").unwrap(),
+    )
+    .unwrap();
+    super::lower_core_limit(&interpreter);
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    for (index, profile) in [StandingProfile::Statement, StandingProfile::Stages].into_iter().enumerate() {
+        let root = std::env::temp_dir().join(format!("credential-mechanism-{}-{index}", std::process::id()));
+        let mut instance = OwnedInstance::start(&programs, root.clone(), profile);
+        runtime.block_on(async {
+            let mut issuer=RawSession::open(&instance).await.unwrap();
+            prepare(&mut issuer).await.unwrap();
+            issuer.query(&format!("CREATE FUNCTION credential_fixture.absent(text) RETURNS void LANGUAGE plpgsql VOLATILE SECURITY INVOKER PARALLEL UNSAFE SET search_path=pg_catalog AS {}",literal(&HELPER_BODY.replace("credential_target","credential_absent"))),false).await.unwrap();
+            issuer.query("REVOKE ALL ON FUNCTION credential_fixture.absent(text) FROM PUBLIC",false).await.unwrap();
+            assert_eq!(absent_inventory(&mut issuer).await, Ok(()), "fixed absent helper metadata confirmed");
+            issuer.query("ALTER FUNCTION credential_fixture.absent(text) SECURITY DEFINER",false).await.unwrap();
+            assert_eq!(absent_inventory(&mut issuer).await, Err(Refusal::Inventory), "changed absent helper metadata refuses");
+            issuer.query("ALTER FUNCTION credential_fixture.absent(text) SECURITY INVOKER",false).await.unwrap();
+            assert_eq!(absent_inventory(&mut issuer).await, Ok(()), "restored absent helper metadata confirmed");
+            inventory(&mut issuer,None).await.unwrap();
+            let mut observer=RawSession::open(&instance).await.unwrap();
+            for (name,value) in SUPPRESSIONS { observer.query(&format!("SET {name}={}",literal(value)),false).await.unwrap(); }
+            issuer.require(&Inventory::Listings.predicate()).await.unwrap();
+            issuer = lock_operation(&instance, issuer, &mut observer, false).await;
+            let frames=issuer.rows("SELECT rolpassword FROM pg_authid WHERE rolname='credential_target'").await.unwrap();
+            let values=frames.iter().filter(|frame|frame.kind==b'D').collect::<Vec<_>>();
+            assert_eq!(values.len(),1,"one protected role read-back");
+            let stored=copy_verifier(values[0]).unwrap();
+            assert!(verifier_equal(&crate::secret::Buffer::from_bytes(PUBLIC_VERIFIER).unwrap(),&stored),"stored verifier equals public Bind vector");
+            assert!(matches!(issuer.rows("SELECT credential_fixture.provision(NULL)").await, Err(Refusal::Framing)), "null parameter refuses at helper framing");
+            let malformed = crate::secret::Buffer::from_bytes(&[b'A';135]).unwrap();
+            assert_eq!(issuer.parameter(&malformed,false).await, Err(Refusal::Framing), "fixed-length malformed parameter refuses at helper framing");
+            let plaintext=crate::secret::Buffer::from_bytes(&[b'a';64]).unwrap();
+            assert_eq!(issuer.parameter(&plaintext,false).await,Err(Refusal::Framing),"plaintext provisioning refuses at helper framing");
+            issuer = lock_operation(&instance, issuer, &mut observer, true).await;
+            observer.close().await.unwrap();issuer.close().await.unwrap();
+        });
+        instance.stop();
+        let log = capture(&root.join("server.log")).unwrap();
+        assert!(
+            !contains(&log, PUBLIC_VERIFIER),
+            "completed server log contains no public verifier sentinel"
+        );
+        assert!(
+            !contains(&log, PUBLIC_PASSWORD),
+            "completed server log contains no public password sentinel"
+        );
+        instance.finish();
+        assert!(!root.exists(), "public mechanism instance removed after capture");
+    }
+}
+
+async fn facility_refusals(raw: &mut RawSession, instance: &OwnedInstance) {
+    for (name, wrong, required) in [("log_statement", "all", "none")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Statements.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Statements refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [("log_min_duration_statement", "0", "-1"), ("log_duration", "on", "off")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Durations.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Durations refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [
+        ("log_min_duration_sample", "0", "-1"),
+        ("log_statement_sample_rate", "1", "0"),
+        ("log_transaction_sample_rate", "1", "0"),
+    ] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Samples.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Samples refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [
+        ("log_min_error_statement", "error", "panic"),
+        ("log_min_messages", "error", "panic"),
+        ("log_error_verbosity", "verbose", "terse"),
+    ] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Errors.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Errors refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [
+        ("debug_print_raw_parse", "on", "off"),
+        ("debug_print_parse", "on", "off"),
+        ("debug_print_rewritten", "on", "off"),
+        ("debug_print_plan", "on", "off"),
+    ] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Trees.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Trees refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [
+        ("log_statement_stats", "on", "off"),
+        ("log_parser_stats", "on", "off"),
+        ("log_planner_stats", "on", "off"),
+        ("log_executor_stats", "on", "off"),
+    ] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Statistics.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Statistics refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [
+        ("log_lock_waits", "on", "off"),
+        ("log_lock_failures", "on", "off"),
+        ("log_replication_commands", "on", "off"),
+        ("log_temp_files", "0", "-1"),
+        ("backtrace_functions", "exec_simple_query", ""),
+    ] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::OtherLogs.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility OtherLogs refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    remaining_facility_refusals(raw, instance).await;
+}
+
+async fn remaining_facility_refusals(raw: &mut RawSession, instance: &OwnedInstance) {
+    for (name, wrong, required) in [("track_activities", "on", "off")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Activity.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Activity refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [("track_activities", "on", "off")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::CrashReport.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility CrashReport refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [("client_min_messages", "notice", "error")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Client.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Client refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    for (name, wrong, required) in [("update_process_title", "off", "on")] {
+        raw.query(&format!("SET {name}={}", literal(wrong)), false).await.unwrap();
+        assert_eq!(
+            raw.require(&Inventory::Titles.predicate()).await,
+            Err(Refusal::Inventory),
+            "facility Titles refuses changed state: {name}"
+        );
+        raw.query(&format!("SET {name}={}", literal(required)), false).await.unwrap();
+    }
+    raw.query("SET debug_pretty_print=off", false).await.unwrap();
+    assert_eq!(
+        inventory(raw, None).await,
+        Err(Refusal::Inventory),
+        "recorded parse formatting refuses"
+    );
+    raw.query("SET debug_pretty_print=on", false).await.unwrap();
+    raw.query("SET compute_query_id=off", false).await.unwrap();
+    assert_eq!(
+        inventory(raw, None).await,
+        Err(Refusal::Inventory),
+        "recorded query identifier mode refuses"
+    );
+    raw.query("SET compute_query_id=auto", false).await.unwrap();
+    raw.query("PREPARE public_listing AS SELECT true", false).await.unwrap();
+    assert_eq!(
+        raw.require(&Inventory::Listings.predicate()).await,
+        Err(Refusal::Inventory),
+        "retained statement listing refuses"
+    );
+    raw.query("DEALLOCATE public_listing", false).await.unwrap();
+    raw.rows("BEGIN; DECLARE public_cursor CURSOR WITH HOLD FOR SELECT 1; COMMIT")
+        .await
+        .unwrap();
+    assert_eq!(
+        raw.require(&Inventory::Listings.predicate()).await,
+        Err(Refusal::Inventory),
+        "retained public cursor refuses"
+    );
+    raw.query("CLOSE public_cursor", false).await.unwrap();
+
+    // Subscription DDL loads a backend module; keep that public refusal in its own backend.
+    let mut catalog = RawSession::open(instance).await.unwrap();
+    for (name, value) in SUPPRESSIONS {
+        catalog.query(&format!("SET {name}={}", literal(value)), false).await.unwrap();
+    }
+    catalog.query("CREATE SUBSCRIPTION public_subscription CONNECTION 'dbname=postgres' PUBLICATION public_publication WITH (connect=false, enabled=false, create_slot=false, slot_name=NONE)", false).await.unwrap();
+    assert_eq!(
+        catalog.require(&Inventory::Replicas.predicate()).await,
+        Err(Refusal::Inventory),
+        "subscription metadata refuses without a connection"
+    );
+    catalog.query("DROP SUBSCRIPTION public_subscription", false).await.unwrap();
+    catalog.query("SET allow_system_table_mods=on", false).await.unwrap();
+    catalog
+        .query("CREATE VIEW pg_catalog.pg_stat_fixture_public AS SELECT 1", false)
+        .await
+        .unwrap();
+    assert_eq!(
+        catalog.require(&Inventory::Counters.predicate()).await,
+        Err(Refusal::Inventory),
+        "changed public counter view roster refuses"
+    );
+    catalog
+        .query("DROP VIEW pg_catalog.pg_stat_fixture_public", false)
+        .await
+        .unwrap();
+    catalog.query("SET allow_system_table_mods=off", false).await.unwrap();
+    catalog.close().await.unwrap();
+}
+
+/// Changed public startup configurations and retained public transaction state refuse at their assigned inventory rows before any Bind; separate instances isolate backend-only settings, recorded inactive defaults, replication capacities and inactive archive configuration, without an archive destination, sender, slot or replica.
+/// ´claim:host:credential-public-configuration-refusals´
+/// ´test:unit:configuration-refusals´
+#[test]
+fn configuration_refusals() {
+    let programs = public_programs();
+    let interpreter = std::path::PathBuf::from(std::env::var_os("PN_TEST_PYTHON").expect("registered interpreter"));
+    super::lower_core_limit(&interpreter);
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    let cases: &[(Inventory, &[(&str, &str)])] = &[
+        (Inventory::Jit, &[("jit_debugging_support", "on")]),
+        (Inventory::Destinations, &[("log_destination", "stderr,csvlog")]),
+        (Inventory::ConnectionLogs, &[("log_disconnections", "on")]),
+        (Inventory::Background, &[("log_checkpoints", "off")]),
+        (Inventory::Wal, &[("wal_level", "replica")]),
+        (Inventory::Archive, &[("archive_command", ":")]),
+        (Inventory::Senders, &[("wal_level", "replica"), ("max_wal_senders", "1")]),
+        (Inventory::Slots, &[("max_replication_slots", "1")]),
+        (Inventory::Counters, &[("max_prepared_transactions", "1")]),
+        (Inventory::Activity, &[("track_activity_query_size", "2048")]),
+        (Inventory::Destinations, &[("log_directory", "public_unused_log")]),
+        (Inventory::Destinations, &[("log_filename", "public-unused-%Y.log")]),
+        (Inventory::Destinations, &[("log_file_mode", "0640")]),
+        (Inventory::Destinations, &[("log_rotation_age", "2d")]),
+        (Inventory::Destinations, &[("log_rotation_size", "20MB")]),
+        (Inventory::Destinations, &[("log_truncate_on_rotation", "on")]),
+        (Inventory::Destinations, &[("syslog_facility", "local1")]),
+        (Inventory::Destinations, &[("syslog_ident", "public_unused")]),
+        (Inventory::Destinations, &[("syslog_sequence_numbers", "off")]),
+        (Inventory::Destinations, &[("syslog_split_messages", "off")]),
+    ];
+    for (index, (row, settings)) in cases.iter().enumerate() {
+        let root = std::env::temp_dir().join(format!("credential-configuration-{}-{index}", std::process::id()));
+        let mut instance = OwnedInstance::configured(&programs, root.clone(), StandingProfile::Statement, settings);
+        runtime.block_on(configuration_refusal(&instance, *row));
+        instance.finish();
+        assert!(!root.exists(), "refused public configuration removed");
+    }
+}
+
+async fn configuration_refusal(instance: &OwnedInstance, row: Inventory) {
+    let mut raw = RawSession::open(instance).await.unwrap();
+    prepare(&mut raw).await.unwrap();
+    if row == Inventory::Counters {
+        raw.rows("BEGIN; PREPARE TRANSACTION 'public_xact'").await.unwrap();
+    }
+    let result = match row {
+        Inventory::Jit => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Jit.predicate(),
+                Inventory::Jit.recorded()
+            ))
+            .await
+        }
+        Inventory::Destinations => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Destinations.predicate(),
+                Inventory::Destinations.recorded()
+            ))
+            .await
+        }
+        Inventory::ConnectionLogs => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::ConnectionLogs.predicate(),
+                Inventory::ConnectionLogs.recorded()
+            ))
+            .await
+        }
+        Inventory::Background => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Background.predicate(),
+                Inventory::Background.recorded()
+            ))
+            .await
+        }
+        Inventory::Wal => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Wal.predicate(),
+                Inventory::Wal.recorded()
+            ))
+            .await
+        }
+        Inventory::Archive => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Archive.predicate(),
+                Inventory::Archive.recorded()
+            ))
+            .await
+        }
+        Inventory::Senders => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Senders.predicate(),
+                Inventory::Senders.recorded()
+            ))
+            .await
+        }
+        Inventory::Slots => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Slots.predicate(),
+                Inventory::Slots.recorded()
+            ))
+            .await
+        }
+        Inventory::Activity => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Activity.predicate(),
+                Inventory::Activity.recorded()
+            ))
+            .await
+        }
+        Inventory::Counters => {
+            raw.require(&format!(
+                "({}) AND ({})",
+                Inventory::Counters.predicate(),
+                Inventory::Counters.recorded()
+            ))
+            .await
+        }
+        _ => unreachable!("closed public configuration cases"),
+    };
+    assert_eq!(result, Err(Refusal::Inventory), "configured {row:?} refuses before Bind");
+    if row == Inventory::Counters {
+        raw.query("ROLLBACK PREPARED 'public_xact'", false).await.unwrap();
+    }
+    raw.close().await.unwrap();
+}
+
+fn public_programs() -> [std::path::PathBuf; 3] {
+    let programs = super::server_programs(&std::path::PathBuf::from(
+        std::env::var_os("PN_POSTGRESQL_BIN").expect("registered server location"),
+    ))
+    .unwrap();
+    let target = std::fs::read_to_string(
+        pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace("packages/host/postgresql-target.txt")).unwrap(),
+    )
+    .unwrap();
+    let version = std::process::Command::new(&programs[0]).arg("--version").output().unwrap();
+    assert!(version.status.success());
+    super::server_version(std::str::from_utf8(&version.stdout).unwrap(), &target).unwrap();
+    programs
 }
