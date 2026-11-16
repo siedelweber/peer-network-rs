@@ -765,9 +765,9 @@
       "operation": "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:credential-fixture-exit-inventory",
-      "before": "The fixture exit census accepts the implemented subset of thirteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
-      "after": "The fixture exit census accepts the implemented subset of fourteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
-      "review": "Read the unchanged subset check against the fourteen-name planned roster: the implemented subset passes, foreign exit placements refuse, and a missing inventory iteration row refuses. Adding an unimplemented planned needle requires no present exit and gives no runtime custody evidence."
+      "before": "The fixture exit census accepts the implemented subset of fourteen planned names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
+      "after": "The fixture exit census accepts the ten implemented inventory names and refuses a foreign fixture exit; the thirty-one-row inventory type and iteration roster must agree. This is source evidence, not runtime custody.",
+      "review": "Read the unchanged subset check against the ten-name implemented roster: every registered fixture exit remains admitted, the same foreign exit placements refuse, and the same missing inventory iteration row refuses. Four unimplemented reception-only names are withdrawn; no implemented exit, runtime control or custody proposition is removed."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_fixture_helper_form",
