@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "Session::take_server_error",
+    "owner": "HOST",
+    "signature": "fn take_server_error (& self) -> Option < ServerError >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::Session::take_server_error",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"Session::take_server_error\" , & self) ; let result = self . server_error . lock () . unwrap_or_else (std :: sync :: PoisonError :: into_inner) . take () ; operation . finish (& result) ; result }",
+    "item_premise": "The operation takes Option<ServerError> under its mutex and records only the role-only session and closed result. It clears the slot; teardown discards an unconsumed value through the same operation."
+  }
+}

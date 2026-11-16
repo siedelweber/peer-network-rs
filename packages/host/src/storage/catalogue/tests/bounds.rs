@@ -240,7 +240,7 @@ fn tree_catalogue_bounds_and_roles() {
         let raw = session("storage-tree-bounds.json").await;
         raw.client().batch_execute("SET log_error_verbosity='verbose'").await.unwrap();
         assert!(raw.client().query_one("SELECT $1::text", &[&"public\0bound-parameter"]).await.is_err(), "the service refuses U+0000 delivered as a bound parameter");
-        assert_eq!(raw.last_refusal(), Some(crate::Refusal::PrivateDiagnostic), "the unclassified server diagnostic stays protected");
+        assert_eq!(raw.last_refusal(), Some(crate::Refusal::Server(crate::ServerError::Failed(crate::Cause::StatementRejected))), "the server rejects the bound value without publishing diagnostic content");
     });
 }
 

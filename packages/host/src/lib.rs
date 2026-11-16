@@ -242,8 +242,8 @@ pub enum Refusal {
     Transport,
     /// Invalid framing or message order.
     Protocol,
-    /// Password authentication failed inside the secret boundary.
-    ServerAuthentication,
+    /// The server answered with a closed value translated inside the secret boundary.
+    Server(ServerError),
     /// Cleartext password requests are forbidden.
     Cleartext,
     /// MD5 authentication is forbidden.
@@ -270,7 +270,7 @@ pub enum Refusal {
     Entropy,
     /// The public placeholder driver handoff failed.
     DriverHandoff,
-    /// A server diagnostic remains private and terminates the driver stream.
+    /// A private notice or quarantine ownership failure terminates the driver stream.
     PrivateDiagnostic,
     /// A server parameter is outside the declared public configuration.
     UnclassifiedParameter,
@@ -322,6 +322,7 @@ pub struct Session {
     backend_key: Arc<Mutex<Option<Buffer>>>,
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
     last_refusal: Arc<Mutex<Option<Refusal>>>,
+    server_error: Arc<Mutex<Option<ServerError>>>,
     tasks: Vec<tokio::task::JoinHandle<()>>,
 }
 impl fmt::Debug for Session {
@@ -338,6 +339,7 @@ impl fmt::Debug for Session {
 impl Drop for Session {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn drop(&mut self) {
+        let _unconsumed = self.take_server_error();
         for task in &self.tasks {
             task.abort();
         }
@@ -372,16 +374,20 @@ impl Session {
             let key = Arc::new(Mutex::new(None));
             let diagnostics = Arc::new(Mutex::new(Vec::new()));
             let last_refusal = Arc::new(Mutex::new(None));
+            let server_error = Arc::new(Mutex::new(None));
             let mut startup = Vec::new();
             loop {
                 let frame = wire::read(&mut socket).await?;
+                if frame.kind == b'E' {
+                    return Err(Refusal::Server(crate::server_error(&frame)));
+                }
                 if frame.kind == b'Z' {
                     if frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-connect-buffer-1]´) */) != b"I" {
                         return Err(Refusal::Protocol);
                     }
                     break;
                 }
-                if let Some(frame) = filter(frame, &key, &diagnostics)? {
+                if let Some(frame) = filter(frame, &key, &diagnostics, &server_error)? {
                     startup.push(frame);
                 }
             }
@@ -392,6 +398,7 @@ impl Session {
             let bridge_key = Arc::clone(&key);
             let bridge_diagnostics = Arc::clone(&diagnostics);
             let bridge_refusal = Arc::clone(&last_refusal);
+            let bridge_error = Arc::clone(&server_error);
             let bridge = tokio::spawn(async move {
                 let _result = relay(Relay {
                     shim,
@@ -400,6 +407,7 @@ impl Session {
                     key: bridge_key,
                     diagnostics: bridge_diagnostics,
                     refusal: bridge_refusal,
+                    server_error: bridge_error,
                 })
                 .await;
             });
@@ -422,6 +430,7 @@ impl Session {
                 backend_key: key,
                 diagnostics,
                 last_refusal,
+                server_error,
                 tasks: vec![bridge, connection],
             })
         }
@@ -436,6 +445,20 @@ impl Session {
                 }
             );
         }
+        result
+    }
+
+    /// Take and clear the first server answer since the preceding take.
+    /// (´sig:host:take-server-error´)
+    /// The storage request owner consumes answers; teardown discards an unconsumed answer.
+    pub(crate) fn take_server_error(&self) -> Option<ServerError> {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "Session::take_server_error", &self);
+        let result = self
+            .server_error
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        operation.finish(&result);
         result
     }
 
@@ -535,6 +558,7 @@ async fn forward(
     bridge_key: Arc<Mutex<Option<Buffer>>>,
     bridge_diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
     refusal: Arc<Mutex<Option<Refusal>>>,
+    server_error: Arc<Mutex<Option<ServerError>>>,
 ) -> Result<(), Refusal> {
     let length = shim.read_u32().await.map_err(|_| Refusal::DriverHandoff)?;
     let mut placeholder = Buffer::new();
@@ -571,7 +595,7 @@ async fn forward(
     let inbound = async {
         loop {
             let frame = wire::read(&mut server_read).await?;
-            if let Some(frame) = filter(frame, &bridge_key, &bridge_diagnostics)? {
+            if let Some(frame) = filter(frame, &bridge_key, &bridge_diagnostics, &server_error)? {
                 observe_public_frame(&frame);
                 wire::send(
                     &mut client_write,
@@ -614,6 +638,7 @@ struct Relay {
     key: Arc<Mutex<Option<Buffer>>>,
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
     refusal: Arc<Mutex<Option<Refusal>>>,
+    server_error: Arc<Mutex<Option<ServerError>>>,
 }
 impl fmt::Debug for Relay {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
@@ -653,8 +678,9 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
         key,
         diagnostics,
         refusal,
+        server_error,
     } = state;
-    let result = forward(shim, socket, startup, key, diagnostics, refusal).await;
+    let result = forward(shim, socket, startup, key, diagnostics, refusal, server_error).await;
     if let Err(cause) = &result {
         tracing::warn!(cause = ?cause, outcome = if matches!(cause, Refusal::Transport) { "error" } else { "refusal" }, "store relay refused");
     }
@@ -731,6 +757,80 @@ fn observe_public_frame(frame: &wire::Frame) {
     operation.finish(&result);
 }
 
+// Caveat: The diagnostic frame is lent only to the severity-and-code classifier until its closed value is returned; the field parser requires bytes and retains neither a field nor a diagnostic copy.
+// (´[ROOT-cav:observe:secret-host-lib-server-error-buffer-1]´)
+// Justified: The private field parser requires a byte slice; only the closed error value leaves this borrow.
+#[allow(clippy::disallowed_methods)]
+fn server_error(frame: &wire::Frame) -> ServerError {
+    let operation = cli_common::observation::scope("HOST", "sig:design:storage", "server_error", &frame.kind);
+    let bytes = frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-server-error-buffer-1]´) */);
+    let mut severity = None;
+    let mut code = None;
+    let mut rest = bytes;
+    let mut valid = false;
+    while let Some((&field, tail)) = rest.split_first() {
+        if field == 0 {
+            valid = tail.is_empty();
+            break;
+        }
+        let Some(end) = tail.iter().position(|byte| *byte == 0) else {
+            break;
+        };
+        let value = &tail[..end];
+        match field {
+            b'V' => {
+                if severity.replace(value).is_some() {
+                    break;
+                }
+            }
+            b'C' => {
+                if code.replace(value).is_some() {
+                    break;
+                }
+            }
+            _ => (),
+        }
+        rest = &tail[end + 1..];
+    }
+    let code = code
+        .filter(|code| valid && code.len() == 5 && code.iter().all(|byte| byte.is_ascii_digit() || byte.is_ascii_uppercase()));
+    let cause = match code {
+        Some(b"08P01" | b"0L000" | b"0LP01" | b"55P02" | b"55P04") => Cause::StatementRejected,
+        Some(b"25006") => Cause::ReadOnly,
+        Some(b"25P03" | b"25P04" | b"55P03" | b"57014" | b"57P05") => Cause::Cancelled,
+        Some(b"40002") => Cause::ConstraintViolation,
+        Some(b"42501") => Cause::PermissionDenied,
+        Some(b"53400") => Cause::Misconfigured,
+        Some(b"57P01" | b"57P02" | b"57P03") => Cause::Unavailable,
+        Some(b"XX001" | b"XX002") => Cause::StorageDamaged,
+        Some(code) => match &code[..2] {
+            b"03" | b"09" | b"0A" | b"0B" | b"0F" | b"0Z" | b"10" | b"20" | b"21" | b"22" | b"24" | b"26" | b"27" | b"2B"
+            | b"2D" | b"2F" | b"34" | b"38" | b"39" | b"3B" | b"44" | b"54" | b"HV" | b"P0" | b"25" | b"42" => {
+                Cause::StatementRejected
+            }
+            b"08" => Cause::Unavailable,
+            b"0L" => Cause::PermissionDenied,
+            b"0P" | b"3D" | b"3F" | b"F0" | b"55" => Cause::Misconfigured,
+            b"23" => Cause::ConstraintViolation,
+            b"28" => Cause::LoginRejected,
+            b"40" => Cause::Conflict,
+            b"53" => Cause::Resources,
+            b"57" => Cause::Terminated,
+            b"58" | b"XX" => Cause::ServerFault,
+            _ => Cause::Unrecognized,
+        },
+        None => Cause::Unrecognized,
+    };
+    let uncertain_code = code.is_some_and(|code| code == b"40003" || (code.starts_with(b"08") && code != b"08P01"));
+    let result = if valid && severity == Some(b"ERROR".as_slice()) && !uncertain_code {
+        ServerError::Failed(cause)
+    } else {
+        ServerError::Uncertain(cause)
+    };
+    operation.finish(&result);
+    result
+}
+
 // Caveat: The parameter frame is lent to the session_authorization prefix predicate; the borrow ends when starts_with returns because private-role classification requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-filter-buffer-2]´)
 // Caveat: The parameter frame is lent to public_parameter for classification against its declared public forms; the borrow ends when that predicate returns because classification requires bytes.
@@ -743,7 +843,15 @@ fn filter(
     mut frame: wire::Frame,
     key: &Mutex<Option<Buffer>>,
     diagnostics: &Mutex<Vec<PrivateDiagnostic>>,
+    answer: &Mutex<Option<ServerError>>,
 ) -> Result<Option<wire::Frame>, Refusal> {
+    let value = (frame.kind == b'E').then(|| server_error(&frame));
+    if let Some(value) = value {
+        answer
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get_or_insert(value);
+    }
     match frame.kind {
         b'K' => {
             if frame.payload.len() != 8 {
@@ -770,7 +878,7 @@ fn filter(
                 .lock()
                 .map_err(|_| Refusal::PrivateDiagnostic)?
                 .push(PrivateDiagnostic(frame.payload));
-            return Err(Refusal::PrivateDiagnostic);
+            return Err(value.map_or(Refusal::PrivateDiagnostic, Refusal::Server));
         }
         _ => (),
     }
@@ -869,7 +977,9 @@ mod tests {
             kind,
             payload: Buffer::from_bytes(bytes).unwrap(),
         };
-        let dummy = filter(frame(b'K', b"private!"), &key, &diagnostics).unwrap().unwrap();
+        let dummy = filter(frame(b'K', b"private!"), &key, &diagnostics, &Mutex::new(None))
+            .unwrap()
+            .unwrap();
         assert_eq!(
             dummy.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-1]´) */),
             [0, 0, 0, 1, 0, 0, 0, 2]
@@ -879,9 +989,14 @@ mod tests {
             b"private!"
         );
         assert!(
-            filter(frame(b'S', b"session_authorization\0private_role\0"), &key, &diagnostics)
-                .unwrap()
-                .is_none()
+            filter(
+                frame(b'S', b"session_authorization\0private_role\0"),
+                &key,
+                &diagnostics,
+                &Mutex::new(None)
+            )
+            .unwrap()
+            .is_none()
         );
         for (kind, bytes, expected) in [
             (
@@ -889,9 +1004,16 @@ mod tests {
                 b"application_name\0private_application\0".as_slice(),
                 Refusal::UnclassifiedParameter,
             ),
-            (b'E', b"Mprivate_error\0\0", Refusal::PrivateDiagnostic),
+            (
+                b'E',
+                b"Mprivate_error\0\0",
+                Refusal::Server(super::ServerError::Uncertain(super::Cause::Unrecognized)),
+            ),
         ] {
-            assert_eq!(filter(frame(kind, bytes), &key, &diagnostics).err(), Some(expected));
+            assert_eq!(
+                filter(frame(kind, bytes), &key, &diagnostics, &Mutex::new(None)).err(),
+                Some(expected)
+            );
         }
         let retained = diagnostics.lock().unwrap();
         assert_eq!(
@@ -907,7 +1029,7 @@ mod tests {
         drop(retained);
         let public = [b"SERROR\0VERROR\0C".as_slice(), b"22012\0Mdivision by zero\0\0"].concat();
         assert_eq!(
-            filter(frame(b'E', &public), &key, &diagnostics)
+            filter(frame(b'E', &public), &key, &diagnostics, &Mutex::new(None))
                 .unwrap()
                 .unwrap()
                 .payload
@@ -923,6 +1045,7 @@ mod tests {
             Refusal::Transport,
             Refusal::Protocol,
             Refusal::PrivateDiagnostic,
+            Refusal::Server(super::ServerError::Uncertain(super::Cause::Unrecognized)),
         ] {
             let (socket, mut server) = crate::wire::fixture_pair();
             let (mut driver, shim) = tokio::io::duplex(1024);
@@ -935,6 +1058,7 @@ mod tests {
                 key,
                 diagnostics,
                 refusal: std::sync::Arc::new(Mutex::new(None)),
+                server_error: std::sync::Arc::new(Mutex::new(None)),
             }));
             let startup = b"\0\x03\0\0client_encoding\0UTF8\0user\0pn_public_placeholder\0database\0pn_public_placeholder\0\0";
             driver.write_u32(u32::try_from(startup.len()).unwrap() + 4).await.unwrap();
@@ -944,7 +1068,10 @@ mod tests {
             match cause {
                 Refusal::RepresentationLimit => server.write_all(&[b'D', 0, 16, 0, 5]).await.unwrap(),
                 Refusal::Protocol => crate::wire::send(&mut server, b'K', b"bad").await.unwrap(),
-                Refusal::PrivateDiagnostic => crate::wire::send(&mut server, b'E', b"Mprivate_relay_fixture\0\0")
+                Refusal::PrivateDiagnostic => crate::wire::send(&mut server, b'N', b"Mprivate_relay_fixture\0\0")
+                    .await
+                    .unwrap(),
+                Refusal::Server(_) => crate::wire::send(&mut server, b'E', b"Mprivate_relay_fixture\0\0")
                     .await
                     .unwrap(),
                 Refusal::Transport => server.shutdown().await.unwrap(),
@@ -1133,5 +1260,232 @@ mod server_error_value_tests {
                 );
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod server_error_classification_tests {
+    use super::{Buffer, Cause, Refusal, ServerError, filter, server_error};
+    use std::sync::Mutex;
+
+    fn frame(severity: Option<&str>, code: Option<&str>, message: &str) -> crate::wire::Frame {
+        let mut bytes = Vec::new();
+        for (tag, value) in [(b'V', severity), (b'C', code), (b'M', Some(message))] {
+            if let Some(value) = value {
+                bytes.push(tag);
+                bytes.extend_from_slice(value.as_bytes());
+                bytes.push(0);
+            }
+        }
+        bytes.push(0);
+        crate::wire::Frame {
+            kind: b'E',
+            payload: Buffer::from_bytes(&bytes).unwrap(),
+        }
+    }
+
+    /// Claim: The forty-three documented PostgreSQL 19rc1 classes and the twenty-one explicit member entries map to their closed causes; the declared version is pinned, and unknown, missing and malformed codes map to Unrecognized.
+    /// ´claim:host:server-error-table´
+    /// ´test:unit:server-error-table´
+    #[test]
+    fn server_error_table() {
+        use Cause::*;
+        assert_eq!(
+            include_str!("../postgresql-target.txt").trim(),
+            "19rc1",
+            "review the documented class roster when the declared version changes"
+        );
+        let groups = [
+            ("00 01 02", Unrecognized),
+            (
+                "03 09 0A 0B 0F 0Z 10 20 21 22 24 26 27 2B 2D 2F 34 38 39 3B 44 54 HV P0",
+                StatementRejected,
+            ),
+            ("08", Unavailable),
+            ("0L", PermissionDenied),
+            ("0P 3D 3F F0 55", Misconfigured),
+            ("23", ConstraintViolation),
+            ("25 42", StatementRejected),
+            ("28", LoginRejected),
+            ("40", Conflict),
+            ("53", Resources),
+            ("57", Terminated),
+            ("58 XX", ServerFault),
+        ];
+        let mut count = 0;
+        for (classes, cause) in groups {
+            for class in classes.split_whitespace() {
+                // A new member inherits its class; explicit members are checked separately.
+                let code = format!("{class}ZZZ");
+                assert_eq!(
+                    server_error(&frame(Some("ERROR"), Some(&code), "public fixture")).cause(),
+                    cause,
+                    "documented class {class}"
+                );
+                count += 1;
+            }
+        }
+        assert_eq!(count, 43);
+        let exceptions = [
+            ("08P01", StatementRejected),
+            ("0L000", StatementRejected),
+            ("0LP01", StatementRejected),
+            ("25006", ReadOnly),
+            ("25P03", Cancelled),
+            ("25P04", Cancelled),
+            ("40002", ConstraintViolation),
+            ("40003", Conflict),
+            ("42501", PermissionDenied),
+            ("53400", Misconfigured),
+            ("55P03", Cancelled),
+            ("55006", Misconfigured),
+            ("55P02", StatementRejected),
+            ("55P04", StatementRejected),
+            ("57014", Cancelled),
+            ("57P01", Unavailable),
+            ("57P02", Unavailable),
+            ("57P03", Unavailable),
+            ("57P05", Cancelled),
+            ("XX001", StorageDamaged),
+            ("XX002", StorageDamaged),
+        ];
+        for (code, cause) in exceptions {
+            assert_eq!(
+                server_error(&frame(Some("ERROR"), Some(code), "public fixture")).cause(),
+                cause,
+                "member exception {code}"
+            );
+        }
+        for code in [None, Some("72000"), Some("YY000"), Some("bad00"), Some("23"), Some("23!00")] {
+            assert_eq!(
+                server_error(&frame(Some("ERROR"), code, "public fixture")).cause(),
+                Unrecognized,
+                "unknown or malformed code"
+            );
+        }
+    }
+
+    /// Claim: Error severity alone permits the Failed form, with uncertain forms for fatal, panic, absent or unknown severity, malformed framing and the documented uncertain-outcome code exceptions.
+    /// ´claim:host:server-error-forms´
+    /// ´test:unit:server-error-forms´
+    #[test]
+    fn server_error_forms() {
+        for severity in [Some("ERROR"), Some("FATAL"), Some("PANIC"), None, Some("UNKNOWN")] {
+            let expected = if severity == Some("ERROR") {
+                ServerError::Failed(Cause::ConstraintViolation)
+            } else {
+                ServerError::Uncertain(Cause::ConstraintViolation)
+            };
+            assert_eq!(
+                server_error(&frame(severity, Some("23505"), "public fixture")),
+                expected,
+                "severity determines effect {severity:?}"
+            );
+        }
+        for code in ["40003", "08000", "08006"] {
+            assert!(
+                !server_error(&frame(Some("ERROR"), Some(code), "public fixture")).took_no_effect(),
+                "uncertain answer {code}"
+            );
+        }
+        assert_eq!(
+            server_error(&frame(Some("ERROR"), Some("08P01"), "public fixture")),
+            ServerError::Failed(Cause::StatementRejected)
+        );
+        let mut fields = Vec::from(b"VERROR\0".as_slice());
+        fields.push(b'C');
+        fields.extend_from_slice(b"23505\0");
+        let malformed = crate::wire::Frame {
+            kind: b'E',
+            payload: Buffer::from_bytes(&fields).unwrap(),
+        };
+        assert_eq!(
+            server_error(&malformed),
+            ServerError::Uncertain(Cause::Unrecognized),
+            "malformed frame cannot assert no effect"
+        );
+    }
+
+    /// Claim: Distinct diagnostic message, detail and object-field sentinels change no closed value, fixed Display or role-only Debug output of the private classifier.
+    /// ´claim:host:server-error-content-independent´
+    /// ´test:unit:server-error-content-independent´
+    #[test]
+    fn server_error_content_independent() {
+        let mut values = Vec::new();
+        for sentinel in ["constraint_sentinel_937", "relation_sentinel_684", "detail_sentinel_291"] {
+            let input = crate::wire::Frame {
+                kind: b'E',
+                payload: Buffer::from_bytes(
+                    format!(
+                        "VERROR\0C{code}\0M{sentinel}\0D{sentinel}\0s{sentinel}\0t{sentinel}\0n{sentinel}\0\0",
+                        code = "23505"
+                    )
+                    .as_bytes(),
+                )
+                .unwrap(),
+            };
+            let value = server_error(&input);
+            assert!(
+                !format!("{value} {value:?}").contains(sentinel),
+                "value contains no diagnostic content"
+            );
+            values.push(value);
+        }
+        assert!(
+            values
+                .iter()
+                .all(|value| *value == ServerError::Failed(Cause::ConstraintViolation))
+        );
+    }
+
+    /// Claim: The filter publishes the first error value before returning a public frame or a private-error refusal, preserves that first value across a later fatal error and records no value for a private notice.
+    /// ´claim:host:server-error-recording´
+    /// ´test:unit:server-error-recording´
+    #[test]
+    fn server_error_recording() {
+        let key = Mutex::new(None);
+        let diagnostics = Mutex::new(Vec::new());
+        let answer = Mutex::new(None);
+        let first = ServerError::Failed(Cause::StatementRejected);
+        let public = frame(Some("ERROR"), Some("22012"), "division by zero");
+        assert!(filter(public, &key, &diagnostics, &answer).unwrap().is_some());
+        assert_eq!(*answer.lock().unwrap(), Some(first), "answer recorded before forwarding");
+        let second = ServerError::Uncertain(Cause::Unavailable);
+        assert_eq!(
+            filter(
+                frame(Some("FATAL"), Some("57P01"), "private later error"),
+                &key,
+                &diagnostics,
+                &answer
+            )
+            .err(),
+            Some(Refusal::Server(second))
+        );
+        assert_eq!(*answer.lock().unwrap(), Some(first), "first answer wins over later fatal");
+        answer.lock().unwrap().take();
+        let private = ServerError::Failed(Cause::ConstraintViolation);
+        assert_eq!(
+            filter(
+                frame(Some("ERROR"), Some("23505"), "private constraint"),
+                &key,
+                &diagnostics,
+                &answer
+            )
+            .err(),
+            Some(Refusal::Server(private))
+        );
+        assert_eq!(
+            *answer.lock().unwrap(),
+            Some(private),
+            "answer recorded before private refusal"
+        );
+        answer.lock().unwrap().take();
+        let mut notice = frame(Some("NOTICE"), Some("23505"), "private notice");
+        notice.kind = b'N';
+        assert_eq!(
+            filter(notice, &key, &diagnostics, &answer).err(),
+            Some(Refusal::PrivateDiagnostic)
+        );
+        assert_eq!(*answer.lock().unwrap(), None, "notice is not an error answer");
     }
 }

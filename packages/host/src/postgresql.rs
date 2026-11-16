@@ -1,5 +1,5 @@
 //! Real PostgreSQL transport evidence; the gate owns the isolated instance.
-use crate::{Configuration, Session};
+use crate::{Cause, Configuration, Refusal, ServerError, Session};
 
 fn runtime() -> tokio::runtime::Runtime {
     tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap()
@@ -8,6 +8,201 @@ fn configuration(name: &str) -> Configuration {
     let root = std::env::var_os("PN_HOST_TEST_ROOT").expect("gate must provision PostgreSQL evidence");
     let mut file = std::fs::File::open(std::path::Path::new(&root).join(name)).unwrap();
     Configuration::acquire(Some("host-secured"), &mut file).unwrap()
+}
+
+fn limited_configuration() -> Configuration {
+    let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+    let bytes = std::fs::read(std::path::Path::new(&root).join("unix.json")).unwrap();
+    let mut value: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    value["user"] = "public_error_limit_role".into();
+    value["password"] = "public-error-limit-password".into();
+    Configuration::acquire(Some("host-secured"), &mut serde_json::to_vec(&value).unwrap().as_slice()).unwrap()
+}
+
+async fn error_setup() -> Session {
+    let owner = Session::connect(configuration("unix.json")).await.unwrap();
+    let exists = owner
+        .client()
+        .query_one("SELECT to_regclass('private_error_relation_983') IS NOT NULL", &[])
+        .await
+        .unwrap()
+        .get::<_, bool>(0);
+    if !exists {
+        owner.client().batch_execute("CREATE TABLE private_error_relation_983 (value text CONSTRAINT private_error_constraint_284 UNIQUE); INSERT INTO private_error_relation_983 VALUES ('private_error_detail_692'); CREATE FUNCTION public_error_constraint() RETURNS void LANGUAGE plpgsql AS $$ BEGIN INSERT INTO private_error_relation_983 VALUES ('private_error_detail_692'); END $$").await.unwrap();
+    }
+    owner
+}
+
+static ERROR_FIXTURE_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+async fn constraint_answer() {
+    let session = Session::connect(configuration("unix.json")).await.unwrap();
+    let error = session
+        .client()
+        .query_one("SELECT public_error_constraint()", &[])
+        .await
+        .unwrap_err();
+    let expected = ServerError::Failed(Cause::ConstraintViolation);
+    assert_eq!(
+        session.take_server_error(),
+        Some(expected),
+        "private answer published before driver result"
+    );
+    assert_eq!(session.take_server_error(), None, "take clears the private answer");
+    assert_eq!(
+        session.last_refusal(),
+        Some(Refusal::Server(expected)),
+        "private error ends with its translated cause"
+    );
+    assert!(session.client().is_closed(), "private error ends the stream");
+    let diagnostics = session.private_diagnostics().unwrap();
+    assert_eq!(diagnostics.len(), 1);
+    let rendered = format!("{expected} {expected:?} {error} {error:?} {session:?} {diagnostics:?}");
+    for sentinel in [
+        "private_error_relation_983",
+        "private_error_constraint_284",
+        "private_error_detail_692",
+    ] {
+        assert!(
+            !rendered.contains(sentinel),
+            "no diagnostic content in public representations"
+        );
+    }
+}
+
+/// Claim: A native private unique-constraint error publishes Failed(ConstraintViolation) before the driver returns, ends the relay with that value, and a take clears it; the driver error and public formatting retain none of the three distinct private diagnostic sentinels.
+/// ´claim:host:server-error-private-answer´
+/// ´test:unit:server-error-private-answer´
+#[test]
+fn server_error_private_answer() {
+    let _fixture = ERROR_FIXTURE_LOCK.lock().unwrap();
+    runtime().block_on(async {
+        let owner = error_setup().await;
+        constraint_answer().await;
+        drop(owner);
+    });
+}
+
+async fn login_answers() {
+    for (file, cause) in [
+        ("wrong-password.json", Cause::LoginRejected),
+        ("unknown-role.json", Cause::LoginRejected),
+        ("unknown-database.json", Cause::Misconfigured),
+    ] {
+        assert_eq!(
+            Session::connect(configuration(file)).await.unwrap_err(),
+            Refusal::Server(ServerError::Uncertain(cause)),
+            "login error retains its own cause: {file}"
+        );
+    }
+}
+
+/// Claim: Native wrong-password, unknown-role and unknown-database login answers retain their distinct translated causes instead of one authentication refusal.
+/// ´claim:host:server-error-login-answers´
+/// ´test:unit:server-error-login-answers´
+#[test]
+fn server_error_login_answers() {
+    runtime().block_on(login_answers());
+}
+
+/// Claim: A native zero role-connection allowance refuses login as Uncertain(Resources), with no diagnostic content in the refusal.
+/// ´claim:host:server-error-login-resource´
+/// ´test:unit:server-error-login-resource´
+#[test]
+fn server_error_login_resource() {
+    runtime().block_on(async {
+        let owner = Session::connect(configuration("unix.json")).await.unwrap();
+        owner
+            .client()
+            .batch_execute("CREATE ROLE public_error_limit_role LOGIN CONNECTION LIMIT 0 PASSWORD 'public-error-limit-password'")
+            .await
+            .unwrap();
+        let result = Session::connect(limited_configuration()).await;
+        owner
+            .client()
+            .batch_execute("DROP ROLE public_error_limit_role")
+            .await
+            .unwrap();
+        assert_eq!(
+            result.unwrap_err(),
+            Refusal::Server(ServerError::Uncertain(Cause::Resources)),
+            "native connection allowance cause"
+        );
+    });
+}
+
+/// Claim: An owner-terminated native session publishes Uncertain(Unavailable), which covers both administrator termination and the same native code's unexpected postmaster-exit emissions.
+/// ´claim:host:server-error-terminated-answer´
+/// ´test:unit:server-error-terminated-answer´
+#[test]
+fn server_error_terminated_answer() {
+    runtime().block_on(async {
+        let owner = Session::connect(configuration("unix.json")).await.unwrap();
+        let session = Session::connect(configuration("unix.json")).await.unwrap();
+        let pid: i32 = session
+            .client()
+            .query_one("SELECT pg_backend_pid()", &[])
+            .await
+            .unwrap()
+            .get(0);
+        assert!(
+            owner
+                .client()
+                .query_one("SELECT pg_terminate_backend($1,600000)", &[&pid])
+                .await
+                .unwrap()
+                .get::<_, bool>(0)
+        );
+        session.client().query_one("SELECT 1", &[]).await.unwrap_err();
+        assert_eq!(
+            session.take_server_error(),
+            Some(ServerError::Uncertain(Cause::Unavailable)),
+            "native termination answer precedes EOF"
+        );
+    });
+}
+
+async fn notice_answer() {
+    let session = Session::connect(configuration("unix.json")).await.unwrap();
+    let error = session
+        .client()
+        .batch_execute("DO $$ BEGIN RAISE NOTICE '%', current_user; END $$")
+        .await
+        .unwrap_err();
+    assert_eq!(session.take_server_error(), None, "a private notice is not an error answer");
+    assert_eq!(session.last_refusal(), Some(Refusal::PrivateDiagnostic));
+    assert!(!format!("{error:?} {error} {:?}", session.private_diagnostics().unwrap()).contains("private_role_fixture_731"));
+}
+
+/// Claim: A native private notice terminates the relay as `PrivateDiagnostic` and records no server-error value.
+/// ´claim:host:server-error-private-notice´
+/// ´test:unit:server-error-private-notice´
+#[test]
+fn server_error_private_notice() {
+    runtime().block_on(notice_answer());
+}
+
+/// Claim: The classified native constraint, login and notice cases have identical successful public outcomes under captured default and trace observation; private setup precedes capture and no private statement is submitted during it.
+/// ´claim:host:server-error-observation-fixture´
+/// ´test:unit:server-error-observation-fixture´
+#[test]
+fn server_error_observation_fixture() {
+    let _fixture = ERROR_FIXTURE_LOCK.lock().unwrap();
+    let runtime = runtime();
+    let owner = runtime.block_on(error_setup());
+    drop(owner);
+    let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
+    runtime.block_on(async {
+        constraint_answer().await;
+        login_answers().await;
+        notice_answer().await;
+    });
+    drop(runtime);
+    drop(guard);
+    cli_common::emit(
+        &serde_json::json!({"kind":"startup_status","store_link_case":"host-secured","result":"Ok(())","persistence":"disabled"}),
+    )
+    .unwrap();
 }
 
 /// Claim: PostgreSQL 19 RC 1 authenticates through SCRAM over both host-secured transports, while the driver sees public placeholders and preserves public extended-protocol values and SQL errors.
@@ -37,6 +232,8 @@ fn real_transports() {
             let error = session.client().query_one("SELECT 1 / 0", &[]).await.unwrap_err();
             assert_eq!(error.code(), Some(&tokio_postgres::error::SqlState::DIVISION_BY_ZERO));
             assert_eq!(error.as_db_error().unwrap().message(), "division by zero");
+            assert_eq!(session.take_server_error(), Some(ServerError::Failed(Cause::StatementRejected)), "public error answer is published before the driver result");
+            assert_eq!(session.take_server_error(), None, "take clears the answer");
             assert!(session.private_diagnostics().unwrap().is_empty());
             session.client().batch_execute("BEGIN; CREATE TEMP TABLE public_fixture(value integer); INSERT INTO public_fixture VALUES (3); COMMIT; BEGIN; INSERT INTO public_fixture VALUES (4); ROLLBACK;").await.unwrap();
             assert_eq!(session.client().query_one("SELECT sum(value)::int4 FROM public_fixture", &[]).await.unwrap().get::<_, i32>(0), 3);
@@ -127,6 +324,7 @@ fn real_cancellation() {
             result.unwrap_err().code(),
             Some(&tokio_postgres::error::SqlState::QUERY_CANCELED)
         );
+        assert_eq!(session.take_server_error(), Some(ServerError::Failed(Cause::Cancelled)), "public cancellation retains its closed cause");
         assert_eq!(client.query_one("SELECT 17::int4", &[]).await.unwrap().get::<_, i32>(0), 17);
     });
 }
@@ -170,6 +368,7 @@ fn serialization_conflict() {
         let error = second.client().execute("UPDATE public_serial_fixture SET value=$1 WHERE id=$2", &[&2_i32,&1_i32]).await.unwrap_err();
         assert_eq!(error.code(), Some(&tokio_postgres::error::SqlState::T_R_SERIALIZATION_FAILURE));
         assert_eq!(error.as_db_error().unwrap().message(), "could not serialize access due to concurrent update");
+        assert_eq!(second.take_server_error(), Some(ServerError::Failed(Cause::Conflict)), "public serialization retains its closed cause");
         second.client().batch_execute("ROLLBACK").await.unwrap();
         first.client().batch_execute("DROP TABLE public_serial_fixture").await.unwrap();
     });

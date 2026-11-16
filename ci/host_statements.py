@@ -41,6 +41,7 @@ def check(root=Path('.')):
         relative=path.relative_to(root).as_posix()
         source=path.read_text()
         full=rust_mask(source)
+        diagnostic_access(source,relative,test_only,fixture)
         text=' '*len(full) if test_only else production(source)
         if re.search(r'#\s*\[\s*path\s*=',text):
             raise ValueError('production module path needs reviewed traversal')
@@ -105,6 +106,28 @@ def check(root=Path('.')):
                     raise ValueError('launch outside credential fixture lexical roster: '+relative)
     fixture_contract(root,fixture_sources)
     return True
+
+
+def diagnostic_access(source,relative,test_only,fixture):
+    """Keep production diagnostic interpretation at the registered shim boundary."""
+    if test_only and not fixture:
+        return
+    text=production(source)
+    # The credential fixture's exact parser has its own consumer-specific exit;
+    # no exemption applies to another item in that module.
+    if fixture and relative=='packages/host/src/credential_fixture/raw.rs':
+        match=re.search(r'\bfn\s+error_class\s*\(',text)
+        if not match:raise ValueError('credential diagnostic boundary missing')
+        begin=text.index('{',match.end());_,end=enclosure(source,begin)
+        if source[match.start():end].count('ROOT-cav:observe:secret-host-credential-error-class')!=1:
+            raise ValueError('credential diagnostic boundary exit missing')
+        text=text[:match.start()]+' '*(end-match.start())+text[end:]
+    # Rust driver diagnostic APIs cannot be selected, aliased or called outside
+    # the shim. Tests of the three public grammars retain their direct assertions.
+    if re.search(r'\b(?:as_db_error|SqlState|DbError|ErrorPosition|Severity)\b',text):
+        raise ValueError('diagnostic interpretation outside the shim: '+relative)
+    if not fixture and re.search(r'\.\s*(?:code|message|detail|hint|where_|schema|table|column|datatype|constraint)\s*\(',text):
+        raise ValueError('diagnostic accessor outside the shim: '+relative)
 
 
 def separated(source):

@@ -52,7 +52,7 @@
 | pn-credential-generator | 9 | 0 |
 | pn-epoch | 55 | 19 |
 | pn-graph | 78 | 34 |
-| pn-host | 28 | 0 |
+| pn-host | 29 | 0 |
 | pn-interchange | 28 | 0 |
 | pn-readouts | 0 | 0 |
 | pn-records | 52 | 20 |
@@ -61,7 +61,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 1 752 | 214 |
+| ROOT (repository-wide) | 1 753 | 214 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

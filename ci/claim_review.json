@@ -799,7 +799,7 @@
       "claim": "ROOT::claim:discipline:host-transport-observation-retains-the-secret-boundary",
       "before": "",
       "after": "Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss is recorded as a completeness finding and refuses without recovery, with a failed child retaining its original exit outcome before refusal, and acquisition uses one bounded evidence capture; unexpected loss refuses without a retake.",
-      "review": "The successful-query barrier precedes the default/trace comparison of public bytes and operation totals. Synthetic unexpected loss refuses after one attempt, while a failed child retains exactly one exit:7 completeness finding and its original witnessed exit before refusal."
+      "review": "The complete default/trace leakage and equality assertions remain. Its warning count rises by one for the added private-notice fixture while retaining the original private error."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory",
@@ -816,6 +816,22 @@
       "before": "",
       "after": "Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and unexpected counted loss refuses as incomplete evidence.",
       "review": "The private role is absent from encoded JSON and present only after decoding the base64 DataRow beside its binary integer. This distinguishes result content from outbound bind values; an incomplete acquisition refuses."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_server_error_boundary",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:server-error-interpretation-stays-in-shim",
+      "before": "",
+      "after": "Claim: The existing driver boundary check refuses diagnostic API interpretation in production, retains public-grammar test assertions and admits only the credential fixture's exact registered error-classification function rather than another item as that exception.",
+      "review": "Four production diagnostic API spellings refuse; public-grammar tests and the exact registered credential parser pass. A second fixture item and a removed exit refuse. Lexical evidence is complemented by secret-exit review."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_server_error_leakage",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:server-error-classification-retains-private-content",
+      "before": "",
+      "after": "Claim: Complete default and trace captures of native private constraint, login and notice cases contain none of the distinct constraint, relation, key-value, role or database sentinels in observation or public output, while both captures return the same successful public result.",
+      "review": "Complete default and trace captures scan decoded observations and public output for all configured private values and three distinct constraint sentinels. Trace must also contain the closed causes; loss cannot count as absence."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_statement_type_boundary",
@@ -4328,7 +4344,7 @@
       "claim": "HOST::claim:host:cancellation-keeps-the-backend-capability-private",
       "before": "",
       "after": "Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.",
-      "review": "The observer now requires PgSleep as well as the session, active state and exact query: Parse cannot authorize cancellation. The unchanged deadline only fails; cancelled, QUERY_CANCELED and same-connection recovery assertions remain. Re-reviewed the unchanged claim after replacing the query-start delay with a second-session pg_stat_activity observation, an initially inactive control and a 10 s observation/result deadline. The cancelled flag, QUERY_CANCELED cause and same-connection SELECT 17 recovery assertions remain. Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The exact public cancellation code and subsequent usable session remain asserted, with the closed Cancelled answer added at the driver return boundary."
     },
     {
       "operation": "pn-host::postgresql::real_transports",
@@ -4336,7 +4352,7 @@
       "claim": "HOST::claim:host:real-service-preserves-public-statements",
       "before": "",
       "after": "Claim: PostgreSQL 19 RC 1 authenticates through SCRAM over both host-secured transports, while the driver sees public placeholders and preserves public extended-protocol values and SQL errors.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "Existing exact public code and message assertions remain on both transports. The added immediate closed-answer and empty second-take assertions do not replace placeholder or result evidence."
     },
     {
       "operation": "pn-host::postgresql::relay_throughput",
@@ -4352,7 +4368,55 @@
       "claim": "HOST::claim:host:serialization-conflicts-retain-the-public-cause",
       "before": "",
       "after": "Claim: Two real repeatable-read transactions preserve the public serialization-failure cause through the shim and permit rollback, rather than hiding transaction conflicts as connection loss.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The concurrent transactions retain their public code, message and rollback assertions; the closed Conflict answer is additionally asserted at the same return boundary."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_login_answers",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-login-answers",
+      "before": "",
+      "after": "Claim: Native wrong-password, unknown-role and unknown-database login answers retain their distinct translated causes instead of one authentication refusal.",
+      "review": "Three owned-instance configurations execute wrong-password, unknown-role and unknown-database refusals through deployed login and startup, asserting each cause independently."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_login_resource",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-login-resource",
+      "before": "",
+      "after": "Claim: A native zero role-connection allowance refuses login as Uncertain(Resources), with no diagnostic content in the refusal.",
+      "review": "An ordinary owned role with zero connection allowance produces the native resource refusal, then is removed. The assertion distinguishes this from a fixed login cause."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_observation_fixture",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-observation-fixture",
+      "before": "",
+      "after": "Claim: The classified native constraint, login and notice cases have identical successful public outcomes under captured default and trace observation; private setup precedes capture and no private statement is submitted during it.",
+      "review": "Private fixture setup precedes observation. The captured phase executes a native constraint error, three login refusals and a notice through deployed paths; CI owns complete-capture absence assertions."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_private_answer",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-private-answer",
+      "before": "",
+      "after": "Claim: A native private unique-constraint error publishes Failed(ConstraintViolation) before the driver returns, ends the relay with that value, and a take clears it; the driver error and public formatting retain none of the three distinct private diagnostic sentinels.",
+      "review": "One native unique violation checks the immediately available answer, exact refusal, stream closure and empty second take. Three distinct private diagnostic sentinels are absent from public formatting."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_private_notice",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-private-notice",
+      "before": "",
+      "after": "Claim: A native private notice terminates the relay as `PrivateDiagnostic` and records no server-error value.",
+      "review": "One native notice echoes the fixture role. The exact PrivateDiagnostic refusal, empty answer slot and absence from public formatting are asserted."
+    },
+    {
+      "operation": "pn-host::postgresql::server_error_terminated_answer",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:server-error-terminated-answer",
+      "before": "",
+      "after": "Claim: An owner-terminated native session publishes Uncertain(Unavailable), which covers both administrator termination and the same native code's unexpected postmaster-exit emissions.",
+      "review": "A second owned session terminates the target and waits. Its next driver result is followed immediately by the conservative source-reviewed closed-cause assertion."
     },
     {
       "operation": "pn-host::public::acquisition_bound_refusals",
@@ -4528,7 +4592,7 @@
       "claim": "HOST::claim:host:scram-bounds-precede-proof-disclosure",
       "before": "",
       "after": "Claim: Each hostile SCRAM premise refuses with its own bounded cause before a client proof is sent: missing mechanism, server error, excessive frame, weak or excessive work, wrong nonce and malformed attributes.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The original hostile error bytes now expect their translated uncertain fallback. Every other authentication-policy, bounds, nonce and attribute assertion is unchanged."
     },
     {
       "operation": "pn-host::public::stock_configuration_control",
@@ -4560,7 +4624,7 @@
       "claim": "HOST::claim:host:ceiling-login-leaves-relay-progress-independent",
       "before": "",
       "after": "Claim: A current-thread executor forwards a public relay frame while a ceiling login is inside its blocking derivation job; a bounded rendezvous fails if that job is moved back onto the executor.",
-      "review": "Read the current-thread login against a controlled server at 600000 rounds and its bounded blocking-job rendezvous: another task forwards a public frame before the proof completes; inline derivation prevents that progress."
+      "review": "The original malformed error ends the fixture after proof and now expects its uncertain fallback. Executor progress, work-factor and exact public-progress assertions remain intact."
     },
     {
       "operation": "pn-host::scram::tests::derivation_cost",
@@ -4585,6 +4649,38 @@
       "before": "",
       "after": "Claim: Buffer length reports public bookkeeping after bounded append and explicit length changes; refused growth preserves that bookkeeping without borrowing the protected bytes.",
       "review": "Read each bounded append and length assignment, including refused growth leaving length unchanged; this fixture never borrows protected bytes."
+    },
+    {
+      "operation": "pn-host::server_error_classification_tests::server_error_content_independent",
+      "path": "packages/host/src/lib.rs",
+      "claim": "HOST::claim:host:server-error-content-independent",
+      "before": "",
+      "after": "Claim: Distinct diagnostic message, detail and object-field sentinels change no closed value, fixed Display or role-only Debug output of the private classifier.",
+      "review": "Three different sentinels in message, detail, schema, table and constraint fields yield one constraint value and cannot occur in its fixed Display or Debug. The separate capture control owns observation-stream evidence."
+    },
+    {
+      "operation": "pn-host::server_error_classification_tests::server_error_forms",
+      "path": "packages/host/src/lib.rs",
+      "claim": "HOST::claim:host:server-error-forms",
+      "before": "",
+      "after": "Claim: Error severity alone permits the Failed form, with uncertain forms for fatal, panic, absent or unknown severity, malformed framing and the documented uncertain-outcome code exceptions.",
+      "review": "Ten inputs distinguish five severity cases, three uncertain-outcome codes, the protocol exception and malformed framing. These assert classification, not actual live transaction effects."
+    },
+    {
+      "operation": "pn-host::server_error_classification_tests::server_error_recording",
+      "path": "packages/host/src/lib.rs",
+      "claim": "HOST::claim:host:server-error-recording",
+      "before": "",
+      "after": "Claim: The filter publishes the first error value before returning a public frame or a private-error refusal, preserves that first value across a later fatal error and records no value for a private notice.",
+      "review": "Four frames check recording before filter return, first-value retention across a fatal error and no notice answer. The native control additionally reads immediately after the driver result."
+    },
+    {
+      "operation": "pn-host::server_error_classification_tests::server_error_table",
+      "path": "packages/host/src/lib.rs",
+      "claim": "HOST::claim:host:server-error-table",
+      "before": "",
+      "after": "Claim: The forty-three documented PostgreSQL 19rc1 classes and the twenty-one explicit member entries map to their closed causes; the declared version is pinned, and unknown, missing and malformed codes map to Unrecognized.",
+      "review": "The 19rc1 roster executes 43 class defaults, 21 explicit member entries and six absent, malformed or undocumented codes. Independent cause assertions include the source-reviewed exceptions; extension-defined codes are not proved."
     },
     {
       "operation": "pn-host::server_error_value_tests::server_error_cause",
@@ -5008,7 +5104,7 @@
       "claim": "HOST::claim:host:relay-refusals-retain-their-bounded-cause",
       "before": "",
       "after": "Claim: Every relay-time framing, transport and private-diagnostic refusal closes the driver with its exact bounded cause, rather than discarding the forwarding result.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The original private-error, framing and transport cases retain their exact refusal and EOF assertions. An additional private notice distinguishes PrivateDiagnostic from the translated error value."
     },
     {
       "operation": "pn-host::tests::wire_filter_boundary",
@@ -5016,7 +5112,7 @@
       "claim": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
       "before": "",
       "after": "Claim: Backend keys and private session parameters are intercepted before driver allocation; an unclassified parameter or diagnostic is retained whole behind role-only Debug, while fixed public diagnostics retain their exact bytes.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "The original whole private bytes and exact public bytes are still asserted. The error refusal now carries the translated uncertain fallback; key and parameter assertions remain unchanged."
     },
     {
       "operation": "pn-host::transport_evidence::public_transport",

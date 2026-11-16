@@ -82,7 +82,7 @@
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
-| pn-host | 263 | 71 | 192 | 0 | 200 |
+| pn-host | 265 | 73 | 192 | 0 | 200 |
 | pn-interchange | 167 | 130 | 36 | 1 | 100 |
 | pn-records | 137 | 63 | 74 | 0 | 198 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |
@@ -369,6 +369,8 @@
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-lib-filter-buffer-3` In `packages/host/src/lib.rs`, function `filter`: The parameter frame is lent to public_parameter for classification against its declared public forms; the borrow ends when that predicate returns because classification requires bytes. Source method: `expose_bytes`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-lib-filter-buffer-4` In `packages/host/src/lib.rs`, function `filter`: The diagnostic frame is lent to public_diagnostic for classification against its declared public fields; the borrow ends when that predicate returns because classification requires bytes. Source method: `expose_bytes`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-lib-server-error-buffer-1` In `packages/host/src/lib.rs`, function `server_error`: The diagnostic frame is lent only to the severity-and-code classifier until its closed value is returned; the field parser requires bytes and retains neither a field nor a diagnostic copy. Source method: `expose_bytes`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-lib-observe-public-frame-buffer-1` In `packages/host/src/lib.rs`, function `observe_public_frame`: Classified-public frame bytes are borrowed only to construct the full public observation after classification, ending when public_bytes returns; that representation API requires a slice. Source method: `expose_bytes`. Production boundary.
 

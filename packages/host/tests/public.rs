@@ -221,7 +221,10 @@ fn scram_bound_refusals() {
             ("nonce", Refusal::ServerNonce),
             ("format", Refusal::ScramFormat),
             ("offer", Refusal::UnsupportedAuthentication),
-            ("error", Refusal::ServerAuthentication),
+            (
+                "error",
+                Refusal::Server(pn_host::ServerError::Uncertain(pn_host::Cause::Unrecognized)),
+            ),
         ] {
             let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
                 .await

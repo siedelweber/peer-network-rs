@@ -4,6 +4,6 @@
     "item": "Relay",
     "package": "pn-host",
     "path": "packages/host/src/lib.rs",
-    "syntax": "struct Relay { shim : tokio :: io :: DuplexStream , socket : wire :: Socket , startup : Vec < wire :: Frame > , key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , refusal : Arc < Mutex < Option < Refusal > > > , }"
+    "syntax": "struct Relay { shim : tokio :: io :: DuplexStream , socket : wire :: Socket , startup : Vec < wire :: Frame > , key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , refusal : Arc < Mutex < Option < Refusal > > > , server_error : Arc < Mutex < Option < ServerError > > > , }"
   }
 }

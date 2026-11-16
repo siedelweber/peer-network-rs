@@ -251,7 +251,12 @@ async fn runtime_role() {
         let configuration = crate::Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
         let session = Session::connect(configuration).await.unwrap();
         session.client().execute(sql, &[]).await.unwrap_err();
-        assert_eq!(session.last_refusal(), Some(crate::Refusal::PrivateDiagnostic));
+        assert_eq!(
+            session.last_refusal(),
+            Some(crate::Refusal::Server(crate::ServerError::Failed(
+                crate::Cause::PermissionDenied
+            )))
+        );
         let diagnostics = session.private_diagnostics().unwrap();
         assert_eq!(diagnostics.len(), 1);
         // Inspect the fixture diagnostic in its existing private carrier: the shim

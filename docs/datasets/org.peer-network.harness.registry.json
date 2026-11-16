@@ -671,6 +671,8 @@
         "ci::test_host_runtime.HostRuntime.test_storage_statements": "calibrated-host-runtime-storage-statements-case"
       },
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_server_error_boundary",
+        "ci::test_host_runtime.HostRuntime.test_server_error_leakage",
         "ci::test_host_runtime.HostRuntime.test_fixture_statement_text",
         "ci::test_host_runtime.HostRuntime.test_fixture_exit_inventory",
         "ci::test_host_runtime.HostRuntime.test_fixture_helper_form",
@@ -2977,6 +2979,10 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::server_error_classification_tests::server_error_recording",
+        "pn-host::server_error_classification_tests::server_error_content_independent",
+        "pn-host::server_error_classification_tests::server_error_forms",
+        "pn-host::server_error_classification_tests::server_error_table",
         "pn-host::server_error_value_tests::server_error_cause",
         "pn-host::server_error_value_tests::server_error_sentences",
         "pn-host::server_error_value_tests::server_error_concern",
@@ -3165,6 +3171,12 @@
         "pn-host::postgresql::relay_throughput": "calibrated-host-postgresql-relay-throughput-case"
       },
       "cases": [
+        "pn-host::postgresql::server_error_observation_fixture",
+        "pn-host::postgresql::server_error_private_notice",
+        "pn-host::postgresql::server_error_terminated_answer",
+        "pn-host::postgresql::server_error_login_resource",
+        "pn-host::postgresql::server_error_login_answers",
+        "pn-host::postgresql::server_error_private_answer",
         "pn-host::postgresql::real_transports",
         "pn-host::postgresql::real_authentication_refusals",
         "pn-host::postgresql::real_cancellation",

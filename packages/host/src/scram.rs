@@ -94,7 +94,7 @@ fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
 fn expose_auth(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> {
     if frame.kind != b'R' {
         return Err(if frame.kind == b'E' {
-            Refusal::ServerAuthentication
+            Refusal::Server(crate::server_error(frame))
         } else {
             Refusal::Protocol
         });
@@ -428,7 +428,7 @@ mod tests {
             assert_eq!(wire::read(&mut receiving).await.unwrap().payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-4]´) */),b"public-progress");
             progress.send(()).unwrap();
             relay.await.unwrap();
-            assert_eq!(login.await.unwrap(),Err(Refusal::ServerAuthentication));
+            assert_eq!(login.await.unwrap(),Err(Refusal::Server(crate::ServerError::Uncertain(crate::Cause::Unrecognized))));
             peer.await.unwrap();
         });
     }

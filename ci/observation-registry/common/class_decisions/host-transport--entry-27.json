@@ -16,9 +16,11 @@
         "pn-host::packages/host/src/lib.rs::Session::connect",
         "pn-host::packages/host/src/lib.rs::Session::last_refusal",
         "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+        "pn-host::packages/host/src/lib.rs::Session::take_server_error",
         "pn-host::packages/host/src/lib.rs::observe_public_frame",
         "pn-host::packages/host/src/lib.rs::relay",
-        "pn-host::packages/host/src/lib.rs::relay_outbound"
+        "pn-host::packages/host/src/lib.rs::relay_outbound",
+        "pn-host::packages/host/src/lib.rs::server_error"
       ]
     }
   }

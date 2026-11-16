@@ -430,7 +430,7 @@ def capture_regressions(test, prefix):
                 if level=='trace' and not control:trace_attempts.append(command)
                 incomplete=level=='trace' and len(trace_attempts)==1 and not control
                 rows=[dict(kind='public',value='public_storage_payload_731 public_result_sentinel_731 '+('public_row_'*3)+' SELECT division by zero',statements=statements)]
-                rows.extend(dict(kind='diagnostic',level='WARN',value='MissingCase HeldCase UnknownCase RepresentationLimit Transport Protocol PrivateDiagnostic') for _ in range(13))
+                rows.extend(dict(kind='diagnostic',level='WARN',value='MissingCase HeldCase UnknownCase RepresentationLimit Transport Protocol PrivateDiagnostic') for _ in range(14))
                 rows.append(dict(kind='metric_summary',metrics=dict(counter_accuracy='exact',lost_counter_updates=0,
                     instruments=[dict(name='host__started_operations',counter=1),dict(name='host__completed_operations',outcome='success',counter=1)])))
                 if control or incomplete and fault in ('role','password','binary'):
@@ -903,7 +903,7 @@ class HostRuntime(unittest.TestCase):
             result,rows,status,wall=traced_capture(self,command,env,level,validate,prefix='host')
             stderr=Path(f'.lane/host-{level}.stderr.jsonl').read_bytes()
             warnings=[line for line in stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
-            self.assertEqual(len(warnings),13)
+            self.assertEqual(len(warnings),14)
             for line in warnings:
                 print(line.decode(),flush=True)
             text=decoded_content(rows)
@@ -928,6 +928,49 @@ class HostRuntime(unittest.TestCase):
         self.assertEqual(outputs[0],outputs[1])
         self.assertEqual(counts[0],counts[1])
         print(flush=True)
+
+    def test_server_error_leakage(self):
+        """Claim: Complete default and trace captures of native private constraint, login and notice cases contain none of the distinct constraint, relation, key-value, role or database sentinels in observation or public output, while both captures return the same successful public result.
+        ´claim:discipline:server-error-classification-retains-private-content´
+        ´test:integration:test-server-error-leakage´
+        """
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
+        root=Path(os.environ['PN_HOST_TEST_ROOT']);outputs=[]
+        ordinary=capture_validator(self,lambda:[json.loads(path.read_text()) for path in root.glob('*.json')],outputs)
+        sentinels=('private_error_constraint_284','private_error_relation_983','private_error_detail_692')
+        def validate(result,rows):
+            ordinary(result,rows)
+            for sentinel in sentinels:
+                self.assertNotIn(sentinel,decoded_content(rows),'diagnostic sentinel in observation')
+                self.assertNotIn(sentinel,result.stdout.decode(),'diagnostic sentinel in public output')
+        for level in ('default','trace'):
+            env=dict(os.environ,PN_OBSERVE_LEVEL=level)
+            command=[target,'postgresql::server_error_observation_fixture','--exact','--nocapture']
+            _,rows,status,wall=traced_capture(self,command,env,level,validate,prefix='server-error')
+            self.assertEqual(status['delivered_records'],len(rows)-1)
+            if level=='trace':
+                text=decoded_content(rows)
+                for cause in ('ConstraintViolation','LoginRejected','Misconfigured'):
+                    self.assertIn(cause,text,'classified public value is observed')
+            print(f'SERVER-ERROR-LEAKAGE level={level} status=0 wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}',flush=True)
+        self.assertEqual(outputs[0],outputs[1])
+
+    def test_server_error_boundary(self):
+        """Claim: The existing driver boundary check refuses diagnostic API interpretation in production, retains public-grammar test assertions and admits only the credential fixture's exact registered error-classification function rather than another item as that exception.
+        ´claim:discipline:server-error-interpretation-stays-in-shim´
+        ´test:integration:test-server-error-boundary´
+        """
+        from host_statements import diagnostic_access
+        for text in ('fn f() { error.as_db_error(); }','fn f() { error.code(); }','use driver::error::SqlState as State;','fn f() { error.message(); }'):
+            with self.assertRaisesRegex(ValueError,'diagnostic'):
+                diagnostic_access(text,'packages/host/src/storage.rs',False,False)
+        diagnostic_access('fn f() { error.as_db_error(); }','packages/host/tests/public.rs',True,False)
+        path='packages/host/src/credential_fixture/raw.rs';source=Path(path).read_text()
+        diagnostic_access(source,path,True,True)
+        with self.assertRaisesRegex(ValueError,'diagnostic interpretation'):
+            diagnostic_access(source+'\nfn another() { error.as_db_error(); }',path,True,True)
+        with self.assertRaisesRegex(ValueError,'boundary exit missing'):
+            diagnostic_access(source.replace('ROOT-cav:observe:secret-host-credential-error-class','removed'),path,True,True)
 
     def test_sensitive_result_control(self):
         """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and unexpected counted loss refuses as incomplete evidence.
