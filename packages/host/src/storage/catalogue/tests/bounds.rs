@@ -172,7 +172,7 @@ async fn populate_vintage(owner: &Session, seed: u64, root: &[u8]) {
         .unwrap();
 }
 
-/// Claim: The real tree catalogue retains independent maximum text budgets through every index, whose leaf-entry sizes and current server limit are measured; owner and runtime constraint attempts agree, runtime catalogue verification and SELECT/INSERT succeed, its exact SELECT/INSERT privilege set is checked on every tree relation, and UPDATE/DELETE and persistent DDL including schema creation refuse with SQLSTATE 42501.
+/// Claim: The real tree catalogue retains independent maximum text budgets through every index, whose leaf-entry sizes and current server limit are measured; owner and runtime constraint attempts agree, runtime catalogue verification and SELECT/INSERT succeed, its exact table and column SELECT/INSERT privilege set is checked on every tree relation, and UPDATE/DELETE and persistent DDL including schema creation refuse with SQLSTATE 42501.
 /// ´claim:history:tree-catalogue-bounds-and-roles´
 /// ´test:unit:tree-catalogue-bounds-and-roles´
 #[test]
@@ -205,9 +205,13 @@ fn tree_catalogue_bounds_and_roles() {
             assert_eq!(attempt(&runtime,&format!("INSERT INTO {name} SELECT * FROM {name} WHERE false")).await,"00000","runtime INSERT privilege {name}");
             assert_eq!(attempt(&runtime,&format!("UPDATE {name} SET scope=scope")).await,"42501","runtime UPDATE {name}");
             assert_eq!(attempt(&runtime,&format!("DELETE FROM {name}")).await,"42501","runtime DELETE {name}");
-            let privileges: bool=runtime.client().query_one("SELECT has_table_privilege(current_user,$1,'SELECT') AND has_table_privilege(current_user,$1,'INSERT') AND NOT has_table_privilege(current_user,$1,'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')", &[&name]).await.unwrap().get(0);
+            let privileges = runtime_privileges(&runtime, name).await;
             assert!(privileges,"runtime privilege set {name}");
         }
+        owner.client().batch_execute("GRANT UPDATE(depth) ON pn_epoch_results TO tree_runtime").await.unwrap();
+        assert!(!runtime_privileges(&runtime, "pn_epoch_results").await, "column UPDATE grant is outside runtime privileges");
+        owner.client().batch_execute("REVOKE UPDATE(depth) ON pn_epoch_results FROM tree_runtime").await.unwrap();
+        assert!(runtime_privileges(&runtime, "pn_epoch_results").await, "column grant restoration");
         for sql in ["CREATE SCHEMA forbidden", "CREATE TABLE public.forbidden(value bigint)","ALTER TABLE pn_epoch_results ADD forbidden bigint","CREATE SEQUENCE public.forbidden"] {
             assert_eq!(attempt(&runtime,sql).await,"42501","runtime DDL {sql}");
         }
@@ -283,4 +287,8 @@ async fn measure_limit(owner: &Session) {
     );
     cli_common::emit(&serde_json::json!({"kind":"tree_index_limit","measured":limit,"accepted_text":low,"refused_text":high,"largest_margin":limit-2136,"generation_margin":limit-2088})).unwrap();
     owner.client().batch_execute("DROP TABLE fixture_limit").await.unwrap();
+}
+
+async fn runtime_privileges(runtime: &Session, name: &str) -> bool {
+    runtime.client().query_one("SELECT has_table_privilege(current_user,$1,'SELECT') AND has_table_privilege(current_user,$1,'INSERT') AND NOT has_table_privilege(current_user,$1,'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN') AND NOT has_any_column_privilege(current_user,$1,'UPDATE,REFERENCES')", &[&name]).await.unwrap().get(0)
 }

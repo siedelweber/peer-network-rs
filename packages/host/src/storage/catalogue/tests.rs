@@ -88,6 +88,7 @@ fn tree_catalogue_exact() {
         owner.client().batch_execute("CREATE INDEX pn_epoch_results_children ON pn_epoch_results(scope,parent,identity)").await.unwrap();
         open(&mut session("storage-tree-schema.json").await).await.unwrap();
         execution_properties(owner).await;
+        execution_context(owner).await;
         owner.client().batch_execute("DROP TABLE public.pn_admission_generations,public.pn_admission_versions,public.pn_admission_closures,public.pn_epoch_scopes,public.pn_epoch_branches,public.pn_epoch_results,public.pn_epoch_package_chunks,public.pn_epoch_references,public.pn_epoch_debits,public.pn_epoch_debit_chunks,public.pn_epoch_result_debits,public.pn_closures,public.pn_versions,public.pn_store_identity").await.unwrap();
         owner.client().batch_execute(&Statement::Create.sql().replace("PRIMARY KEY(family,key,edition)", "PRIMARY KEY(key,family,edition)")).await.unwrap();
         owner.client().batch_execute(Statement::EnsureIndexes.sql()).await.unwrap();
@@ -109,8 +110,44 @@ fn tree_catalogue_exact() {
         let before = shape(&old.session).await;
         assert_eq!(open(&mut session("storage-tree-foreign.json").await).await, Err(StorageError::IndexDefinition));
         assert_eq!(shape(&old.session).await, before, "obsolete chain catalogue is not migrated");
-        cli_common::emit(&serde_json::json!({"kind":"tree_catalogue","variants":variants.len()+32,"refused_layouts":2})).unwrap();
+        cli_common::emit(&serde_json::json!({"kind":"tree_catalogue","variants":variants.len()+34,"refused_layouts":2})).unwrap();
     });
+}
+
+async fn execution_context(owner: &Session) {
+    let mut replica = session("storage-tree-schema.json").await;
+    replica
+        .client()
+        .batch_execute("SET session_replication_role=replica")
+        .await
+        .unwrap();
+    let before = execution_shape(owner).await;
+    assert_eq!(
+        open(&mut replica).await,
+        Err(StorageError::IndexDefinition),
+        "replication role refuses"
+    );
+    assert_eq!(execution_shape(owner).await, before);
+    replica
+        .client()
+        .batch_execute("SET session_replication_role=origin")
+        .await
+        .unwrap();
+    open(&mut replica).await.unwrap();
+    owner.client().batch_execute("CREATE ACCESS METHOD fixture_heap TYPE TABLE HANDLER heap_tableam_handler; ALTER TABLE pn_epoch_package_chunks SET ACCESS METHOD fixture_heap").await.unwrap();
+    let before = execution_shape(owner).await;
+    assert_eq!(
+        open(&mut session("storage-tree-schema.json").await).await,
+        Err(StorageError::IndexDefinition),
+        "table access method refuses"
+    );
+    assert_eq!(execution_shape(owner).await, before);
+    owner
+        .client()
+        .batch_execute("ALTER TABLE pn_epoch_package_chunks SET ACCESS METHOD heap; DROP ACCESS METHOD fixture_heap")
+        .await
+        .unwrap();
+    open(&mut session("storage-tree-schema.json").await).await.unwrap();
 }
 
 async fn execution_properties(owner: &Session) {
@@ -211,6 +248,7 @@ async fn history_properties(owner: &Session) {
             ))
             .await
             .unwrap();
+        open(&mut session("storage-tree-schema.json").await).await.unwrap();
     }
     for field in ["indisvalid", "indisready", "indnullsnotdistinct"] {
         let value = field == "indnullsnotdistinct";
@@ -236,5 +274,6 @@ async fn history_properties(owner: &Session) {
             ))
             .await
             .unwrap();
+        open(&mut session("storage-tree-schema.json").await).await.unwrap();
     }
 }
