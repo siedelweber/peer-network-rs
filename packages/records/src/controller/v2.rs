@@ -198,15 +198,24 @@ pub enum Error {
     /// The operational cause lies outside the closed seven.
     /// (´[ROOT-dec:design:comparison-verdict-record]´)
     Cause,
-    /// A delivered result lacks complete branches.
-    /// (´[ROOT-dec:design:comparison-verdict-record]´)
-    DeliveredBranches,
     /// A delivered result lacks its delivered value.
     /// (´[ROOT-dec:design:comparison-verdict-record]´)
     DeliveredValue,
     /// A delivered result also claims a stop.
     /// (´[ROOT-dec:design:comparison-verdict-record]´)
     DeliveredStop,
+    /// A delivered result omits its delivery error.
+    /// (´[ROOT-dec:design:comparison-verdict-record]´)
+    DeliveredError,
+    /// A stopped result carries a delivery error.
+    /// (´[ROOT-dec:design:comparison-verdict-record]´)
+    StoppedError,
+    /// The delivery error differs from the retained ideal and delivered value.
+    /// (´[ROOT-dec:design:comparison-verdict-record]´)
+    DeliveryErrorRange,
+    /// The bound delivery error exceeds the delivery declaration.
+    /// (´[ROOT-dec:design:comparison-verdict-record]´)
+    DeliveryErrorBound,
     /// A stopped result omits stopped-at.
     /// (´[ROOT-dec:design:comparison-verdict-record]´)
     MissingStop,
@@ -352,9 +361,14 @@ fn point_checks(attempt: &Attempt, context: &Context<'_>, budget: &mut Budget) -
         if !matches!(check.wall, Wall::Rational(_)) {
             return Err(Error::Point);
         }
-        let reduction = match &check.comparison.result {
-            Comparison::Evaluated { reduction, .. } => *reduction,
-            _ => 0,
+        let reduction = if context.inputs.floor == Floor::RidgeImage {
+            let Wall::Rational(wall) = &check.wall else {
+                return Err(Error::Point);
+            };
+            let wall = rat(wall, budget)?;
+            u64::from(!wall.is_negative() && !wall.is_zero() && wall.compare(&rat("1", budget)?, budget)?.is_lt())
+        } else {
+            0
         };
         let expected = Expected {
             question: Question {
@@ -908,6 +922,9 @@ impl Attempt {
             if self.delivered.is_some() {
                 return Err(Error::StoppedValue);
             }
+            if self.delivery_error.is_some() {
+                return Err(Error::StoppedError);
+            }
         } else {
             if !self.branches.as_ref().is_some_and(complete) {
                 return Err(Error::IncompleteDecision);
@@ -917,6 +934,41 @@ impl Attempt {
             }
             if self.stopped_at.is_some() {
                 return Err(Error::DeliveredStop);
+            }
+            let error = self.delivery_error.as_ref().ok_or(Error::DeliveredError)?;
+            let ideal = self
+                .branches
+                .as_ref()
+                .and_then(|branches| branches.ideal.as_ref())
+                .ok_or(Error::MissingIdeal)?;
+            let (lower, upper) = pair(ideal, budget)?;
+            let selected = rat(self.delivered.as_deref().ok_or(Error::DeliveredValue)?, budget)?;
+            let lower = lower.sub(&selected, budget)?;
+            let upper = upper.sub(&selected, budget)?;
+            let zero = rat("0", budget)?;
+            let bound = if !lower.is_negative() {
+                (lower, upper)
+            } else if upper.is_negative() || upper.is_zero() {
+                (zero.sub(&upper, budget)?, zero.sub(&lower, budget)?)
+            } else {
+                let magnitude = zero.sub(&lower, budget)?;
+                let maximum = if magnitude.compare(&upper, budget)?.is_gt() {
+                    magnitude
+                } else {
+                    upper
+                };
+                (zero, maximum)
+            };
+            let actual = pair(error, budget)?;
+            if actual.0.compare(&bound.0, budget)?.is_ne() || actual.1.compare(&bound.1, budget)?.is_ne() {
+                return Err(Error::DeliveryErrorRange);
+            }
+            let within = match &context.inputs.delivery {
+                Delivery::ExactRational => bound.0.is_zero() && bound.1.is_zero(),
+                Delivery::Grid { maximum_error, .. } => bound.1.compare(&rat(maximum_error, budget)?, budget)?.is_le(),
+            };
+            if !within {
+                return Err(Error::DeliveryErrorBound);
             }
         }
         Ok(())

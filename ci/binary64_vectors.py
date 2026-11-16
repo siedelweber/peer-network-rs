@@ -836,9 +836,28 @@ def controller_vectors():
             value[3]=inverse('111/100','112/100');value[5][6]=rng('111/100','112/100')
         value[8]=[3 if refusal else 1,[6],evaluated(1,1,2) if refusal else evaluated(1)]
         return value
-    def row(name,value,result='valid',*,data=None,expected=None,edition='attempt',index=0,expected_index=None,proc=None,expected_proc=None,proof='valid',raw=None,rule=None):
+    def bind_evidence(value):
+        if not isinstance(value,list) or len(value)<9: return
+        if value[6] is None:
+            value[7]=None
+        elif value[5] is not None and value[5][7] is not None:
+            lower,upper=(fraction(endpoint[1]) for endpoint in value[5][7])
+            selected=fraction(value[6][1]);lower-=selected;upper-=selected
+            bound=(lower,upper) if lower>=0 else (-upper,-lower) if upper<=0 else (Fraction(0),max(-lower,upper))
+            value[7]=rng(*bound)
+        for check in value[4]:
+            if check[2]==[1] and check[1][0]==0 and check[4][1][0]==0:
+                old=copy.deepcopy(check[4]);wall=fraction(check[1][1][1])
+                check[4][1][1]=int(0<wall<1)
+                if len(value[8])==3 and value[8][1]==[0] and value[8][2]==old:
+                    value[8][2]=copy.deepcopy(check[4])
+    def row(name,value,result='valid',*,data=None,expected=None,edition='attempt',index=0,expected_index=None,proc=None,expected_proc=None,proof='valid',raw=None,rule=None,bind=True):
         data=copy.deepcopy(data or inputs())
         proc=copy.deepcopy(proc or procedure())
+        if bind:
+            if edition=='attempt': bind_evidence(value)
+            else:
+                for attempt in value[3]: bind_evidence(attempt)
         rows.append(dict(case=name,edition=edition,inputs=data,expected=copy.deepcopy(expected or data),procedure=proc,expected_procedure=copy.deepcopy(expected_proc or proc),index=index,expected_index=index if expected_index is None else expected_index,proof=proof,value=value,canonical=(encode(value) if raw is None else raw).hex(),result=result,rule=rule or name))
     def bad(name,factory,mutation,cause,**kwargs):
         value=factory();mutation(value);row(name,value,cause,**kwargs)
@@ -877,7 +896,7 @@ def controller_vectors():
     def incomplete_floor_stop():
         value=point_stop();value[3]=inverse();value[5]=stopped(2)[5];return value
     row('floor-stop-incomplete-prefix',incomplete_floor_stop(),'IncompleteDecision',data=inputs(width='1',floor=1))
-    row('delivered-positive',positive_delivered(),data=positive)
+    row('delivered-positive',positive_delivered(),data=inputs(width='1',delivery='grid',maximum_error='1/4'))
     row('floor-target-straddle',floor_stop(),data=positive)
     row('floor-point-straddle',point_stop(),data=ridge)
     row('floor-point-missing-proof',point_stop(),'Comparison::MissingProof',data=ridge,proof='missing')
@@ -979,7 +998,7 @@ def controller_vectors():
     for field in (3,4,5):
         bad(f'hold-past-end-{field}',symbolic_hold,lambda v,field=field:v[5].__setitem__(field,evaluated(2 if field==5 else 4,1,2)),'PastEnd',data=positive)
     bad('prefix-early-ideal',lambda:stopped(2),lambda v:v[5].__setitem__(7,rng('1/2','3/4')),'EarlyIdeal',data=positive)
-    bad('complete-missing-ideal',positive_delivered,lambda v:v[5].__setitem__(7,None),'MissingIdeal',data=positive)
+    bad('complete-missing-ideal',symbolic_hold,lambda v:v[5].__setitem__(7,None),'MissingIdeal',data=positive)
     bad('proposal-range-substitution',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,rng('2/3','3/4'))),'ProposalRange',data=positive)
     bad('ideal-range-substitution',positive_delivered,lambda v:v[5].__setitem__(7,rng('2/3','3/4')),'IdealRange',data=positive)
     bad('hold-ideal-substitution',symbolic_hold,lambda v:v[5].__setitem__(7,rng('1/4','1/3')),'IdealRange',data=positive)
@@ -991,6 +1010,36 @@ def controller_vectors():
     bad('hold-refusal-point',symbolic_hold,lambda v:(v.__setitem__(2,[6]),v.__setitem__(6,None),v.__setitem__(8,[3,[6],exact(3,'1/4','1/4')])),'RefusalVerdict',data=positive)
     bad('order-proposal-ideal',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,None)),'ProposalRange',data=positive,rule='proposal binding before ideal presence')
     bad('order-ideal-result',symbolic_hold,lambda v:(v[5].__setitem__(7,rng('1/4','1/3')),v.__setitem__(8,[2,[6],8]),v.__setitem__(2,[6]),v.__setitem__(6,None)),'IdealRange',data=positive,rule='ideal binding before result cause')
+
+    def cap_after_hold():
+        value=symbolic_hold();value[2]=[4];value[6]=None;value[8]=[1,[4],evaluated(4)];return value
+    row('cap-stop-after-hold',cap_after_hold(),'StopAfterHold',data=positive)
+    def hold_floor_stop(positive_width):
+        value=positive_floor_failure(True) if positive_width else ridge_hold_value()
+        value[2]=[0];value[6]=None;value[7]=None
+        comparison=evaluated(4);comparison[1][1]=1
+        decided=evaluated(4,1,2);decided[1][1]=1
+        value[4]=[point('1/4',1,decided),point('1/10',1,copy.deepcopy(decided)),point('729/10000',1,comparison)]
+        value[8]=[1,[0],copy.deepcopy(comparison)]
+        return value
+    for positive_width in (True,False):
+        row('hold-grid-walk-floor-stop-'+('positive' if positive_width else 'zero'),hold_floor_stop(positive_width),data=inputs(width='1' if positive_width else '0',floor=1,deadband='9/10',delivery='grid',quantum='1/10000',maximum_error='1/10000'))
+    def new_error_row(name,mutation,cause,*,data=None,factory=None):
+        data=data or grid_delivered
+        value=(factory or (lambda:delivered(data)))();bind_evidence(value);mutation(value)
+        row(name,value,cause,data=data,bind=False)
+    new_error_row('delivered-without-error',lambda v:v.__setitem__(7,None),'DeliveredError')
+    new_error_row('stop-with-error',lambda v:v.__setitem__(7,rng(0,0)),'StoppedError',data=positive,factory=lambda:stopped(2))
+    new_error_row('delivered-wrong-error',lambda v:v[7].__setitem__(1,source('1/100')),'DeliveryErrorRange')
+    def far_delivery(data):
+        value=delivered(data);value[6]=source('2');return value
+    for kind in ('grid','exact'):
+        data=inputs(previous='1',delivery=kind)
+        new_error_row('delivered-error-bound-'+kind,lambda v:None,'DeliveryErrorBound',data=data,factory=lambda data=data:far_delivery(data))
+    for inside in (True,False):
+        value=operational();comparison=evaluated(4,1,2);comparison[1][1]=0 if inside else 1
+        value[4]=[point('1/4' if inside else '1',1,comparison)]
+        row('floor-check-identity-inside' if inside else 'floor-check-derivative-outside',value,'Comparison::ExpectedReduction',data=ridge,bind=False)
 
     def record(attempts=None):return [2,procedure(),input_value(inputs()),attempts if attempts is not None else [operational()]]
     row('record-operational',record(),edition='record')

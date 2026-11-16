@@ -208,11 +208,19 @@ fn controller_corpus() {
         };
         let outcome = if row["edition"] == "attempt" {
             codec::decode_attempt(&raw, &request, &expected, &mut numeric(), &limits()).map(|value| {
+                assert_eq!(
+                    row["result"], "valid",
+                    "{name}: first structural refusal: decoder accepted refused input"
+                );
                 assert_result(&value, &row["value"], name);
                 codec::encode_attempt(&value, &request, &expected, &mut numeric(), &limits()).unwrap()
             })
         } else {
             codec::decode_record(&raw, &expected, &mut numeric(), &limits()).map(|value| {
+                assert_eq!(
+                    row["result"], "valid",
+                    "{name}: first structural refusal: decoder accepted refused input"
+                );
                 for (attempt, raw) in value.attempts.iter().zip(row["value"][3].as_array().unwrap()) {
                     assert_result(attempt, raw, name);
                 }
