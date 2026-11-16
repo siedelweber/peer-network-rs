@@ -6,6 +6,6 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Wallet implementer and transport reviewer"
-missing = "Implementation of the deadline source of (`amend:devnet:transport-deadline-source`) and its controlled integration evidence; real-network wall-time envelopes and read-path non-renewal are not claimed by the real-time peers."
+missing = "Controlled integration evidence on the implemented deadline source of (`amend:devnet:transport-deadline-source`); real-network wall-time envelopes and read-path non-renewal are not claimed by the real-time peers."
 closing_condition = "Review the implemented deadline source against its design and execute deterministic controls on it for read-path non-renewal and the configured transport budget, without inferring conformance from real-time scheduling; the real wall-time envelope stays unclaimed."
 closing_step = "Wallet transport-clock design and evidence cut"

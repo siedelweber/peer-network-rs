@@ -734,11 +734,7 @@ mod tests {
             "expired budget refuses before a nested wait"
         );
         let mut ready = pin!(deadline.enclose(std::future::ready(Ok(7))));
-        assert_eq!(
-            ready.as_mut().poll(&mut cx),
-            Poll::Ready(Ok(7)),
-            "inner-ready wins before expiry"
-        );
+        assert_eq!(ready.as_mut().poll(&mut cx), Poll::Ready(Ok(7)), "inner-ready wins at expiry");
     }
 
     fn exchange_bytes(bytes: &'static [u8], drip: bool) -> Result<(u16, Vec<u8>), RpcRefusal> {

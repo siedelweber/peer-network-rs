@@ -7,6 +7,6 @@
     "path": "packages/wallet/src/rpc_http.rs",
     "syntax": "# [derive (Clone)]",
     "class_decision": "wallet-decoder",
-    "expansion_review": "Clone copies the private monotonic clock marker and fixed instant; the controlled shared state exists only in crate tests. It generates no formatting, encoding or secret exposure."
+    "expansion_review": "Clone copies the private monotonic clock marker; under crate tests it shares the controlled state through its reference count. It generates no formatting, encoding or secret exposure."
   }
 }
