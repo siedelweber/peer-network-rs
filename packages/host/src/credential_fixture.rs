@@ -435,8 +435,9 @@ async fn admitted_connection(instance: &OwnedInstance) -> Result<crate::Session,
     }))
     .unwrap();
     let configuration = crate::Configuration::acquire(Some("host-secured"), &mut input.as_slice()).unwrap();
-    let session = crate::Session::connect(configuration)
+    let session = tokio::time::timeout(std::time::Duration::from_secs(600), crate::Session::connect(configuration))
         .await
+        .expect("HANG awaiting credential fixture authenticated setup connection")
         .expect("host Session authenticates setup");
     for (pid, limits) in instance.process_limits() {
         cli_common::emit(&serde_json::json!({"owned_pid":pid,"limits":limits})).unwrap();

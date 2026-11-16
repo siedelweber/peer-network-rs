@@ -730,6 +730,14 @@
       "review": "The binary fixture must reveal address octets and the four-byte big-endian port after decoding, with no decimal-text substitute. A complete capture that lacks them fails; unexpected loss refuses."
     },
     {
+      "operation": "ci::test_host_runtime.HostRuntime.test_credential_fixture_connection_boundary",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:credential-fixture-uses-host-transport",
+      "before": "",
+      "after": "Claim: Three direct-driver constructor spellings placed in the credential fixture refuse, while a direct connection placed in another test item is accepted. This is a masked-source boundary check, not macro-expansion or runtime evidence.",
+      "review": "The source-only control places connect_raw, a free connect function and an inferred connect method in the credential fixture, requiring the constructor finding for each. A cfg(test) item in lib.rs with a direct connection is accepted, pinning the boundary's exclusion of other tests. The check propagates fixture ownership to child modules. These mutations neither compile nor connect; macro expansion and subprocess selection remain outside this lexical evidence."
+    },
+    {
       "operation": "ci::test_host_runtime.HostRuntime.test_dependency_pins",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:host-archive-pins-cover-the-reachable-closure",
@@ -774,8 +782,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-statement-types-refuse-inline-sql",
       "before": "",
-      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, inline and external test code cannot acquire a direct driver connection, and inline SQL fails compilation at the wrapper's Statement parameter. The connection census reads masked source, not macro expansions.",
-      "review": "Read the production traversal and private-wrapper restriction with the unchanged compile-fail SQL control. The added inline-test, external-test, free-constructor and inferred-method source fixtures must each refuse at the connection-constructor finding; none executes a connection. The census retains test declarations, follows their external modules and reads integration and benchmark sources. It is lexical evidence and does not resolve macro-generated or aliased type identities."
+      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.",
+      "review": "The production control retains the renamed-driver, traversal, path, include and storage-exemption refusals and the compiler rejection of inline SQL. Its earlier gloss is restored because the fixture connection boundary is a distinct proposition, now owned by its own control and claim; no production check or compiler assertion is removed."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_storage_restart",

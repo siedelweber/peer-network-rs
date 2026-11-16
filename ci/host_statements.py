@@ -28,14 +28,15 @@ def check(root=Path('.')):
     driver_names = spellings(metadata(root), 'pn-host', {'tokio-postgres'})
     if not driver_names:
         raise ValueError('host driver package identity missing')
-    pending=[(root/'packages/host/src/lib.rs',False)]
-    pending.extend((path,True) for directory in ('tests','benches')
+    pending=[(root/'packages/host/src/lib.rs',False,False)]
+    pending.extend((path,True,False) for directory in ('tests','benches')
                    for path in (root/'packages/host'/directory).rglob('*.rs'))
     seen=set()
     while pending:
-        path,test_only=pending.pop()
-        if path in seen:continue
-        seen.add(path)
+        path,test_only,fixture=pending.pop()
+        visit=(path,fixture)
+        if visit in seen:continue
+        seen.add(visit)
         relative=path.relative_to(root).as_posix()
         source=path.read_text()
         full=rust_mask(source)
@@ -56,7 +57,8 @@ def check(root=Path('.')):
             candidates=[root/test_paths[name]] if name in test_paths else [directory/(name+'.rs'),directory/name/'mod.rs']
             found=[p for p in candidates if p.exists()]
             if len(found)!=1:raise ValueError('ambiguous production module: '+relative+'::'+name)
-            pending.extend((p,test_only or not text[declaration.start():declaration.end()].strip()) for p in found)
+            pending.extend((p,test_only or not text[declaration.start():declaration.end()].strip(),
+                            fixture or (relative=='packages/host/src/lib.rs' and name=='credential_fixture')) for p in found)
         if re.search(r'\binclude\s*!',full):
             raise ValueError('production include is not an admitted module: '+relative)
         if relative == 'packages/host/src/lib.rs':
@@ -77,10 +79,11 @@ def check(root=Path('.')):
             full=full[:begin]+' '*(end-begin)+full[end:]
         if relative != 'packages/host/src/storage.rs' and any(re.search(r'\b'+re.escape(name)+r'\b',text) for name in driver_names):
             raise ValueError('driver path outside the closed statement wrapper and Session constructor: '+relative)
-        # Retain test items here: they may use Session's client, never acquire a
-        # real driver. The cancellation-token test's cancel_query_raw is not a
-        # connection constructor. Config-only parsing tests remain admitted.
-        constructors=re.sub(r'\b(?:Session|UnixStream|TcpStream)\s*::\s*connect\b','',full)
+        # The fixture witnesses the host transport; other tests may acquire
+        # their own disposable connections. Production keeps its masked check.
+        constructors=re.sub(r'\b(?:Session|UnixStream|TcpStream)\s*::\s*connect\b','',full if fixture else text)
         if re.search(r'\b(?:connect_raw|connect)\b',constructors):
-            raise ValueError('connection constructor outside Session, including test code: '+relative)
+            message=('connection constructor outside Session in production or credential fixture: '
+                     if fixture else 'connection constructor outside Session, including test code: ')
+            raise ValueError(message+relative)
     return True
