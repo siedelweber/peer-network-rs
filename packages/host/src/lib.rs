@@ -39,6 +39,187 @@ impl Drop for ForwardingTask {
     }
 }
 
+/// A server answer contains only a form and a closed cause, with no diagnostic content.
+/// (´def:host:server-error´)
+/// Failed denotes no effect; Uncertain requires an equality-checked operation before repetition.
+/// The type is implemented independently of the designed diagnostic translator and store mapping.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ServerError {
+    /// The server reported a definite failure of the request.
+    Failed(Cause),
+    /// The request may have taken effect.
+    Uncertain(Cause),
+}
+
+/// Closed meanings of server failures under (´def:host:server-error´).
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Cause {
+    /// A rule declared on the store (no duplicate, every reference present, every value within its declared check, no required value missing) refused a change.
+    ConstraintViolation,
+    /// The request collided with other sessions' work at the same moment (a serialization failure or a deadlock).
+    Conflict,
+    /// A cancellation, or a time limit set on the server for a statement, a lock wait, an idle session or a transaction, stopped it.
+    Cancelled,
+    /// An administrator ended the session, shut the server down, or dropped the database.
+    Terminated,
+    /// The server is starting, stopping or recovering from a crash, or the connection to it failed.
+    Unavailable,
+    /// The server ran out of disk space, memory or connections, or hit a configured limit.
+    Resources,
+    /// The server is a standby, or set to accept only reads.
+    ReadOnly,
+    /// The server refused the login: wrong password, or its access rules do not admit the role from this host.
+    LoginRejected,
+    /// The role lacks a privilege the request needs.
+    PermissionDenied,
+    /// A database, schema or role the configuration names is missing, or the server is not in the state the request needs.
+    Misconfigured,
+    /// The server refused the host's own statement or a value it carried (a syntax, type, object, state or value error).
+    StatementRejected,
+    /// The server reported an internal or system failure, such as a disk read or write error.
+    ServerFault,
+    /// The server found the stored data or an index physically damaged.
+    StorageDamaged,
+    /// The server reported something this host does not know; this is kept rare by mapping every kind the declared server documents.
+    Unrecognized,
+}
+
+/// When repeating can help under (´def:host:server-error´), not permission to repeat an uncertain operation.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Retry {
+    /// Repeating the whole transaction can succeed at once.
+    Immediately,
+    /// A wait may allow the condition to pass.
+    AfterWait,
+    /// A configuration, input, implementation or data change is needed.
+    AfterChange,
+}
+
+/// The owner of a condition under (´def:host:server-error´).
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Concern {
+    /// Retained data or the validation that admitted it.
+    StoredData,
+    /// The host's implementation.
+    Host,
+    /// Concurrent sessions.
+    OtherSessions,
+    /// The server operator.
+    Operator,
+    /// Deployment configuration.
+    Deployment,
+    /// Resources available to the server.
+    ServerResources,
+    /// The server itself.
+    Server,
+    /// No recognized owner.
+    Unknown,
+}
+
+impl ServerError {
+    /// Return the closed cause under (´def:host:server-error´).
+    #[must_use]
+    pub fn cause(self) -> Cause {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "ServerError::cause", &self);
+        let result = match self {
+            Self::Failed(cause) | Self::Uncertain(cause) => cause,
+        };
+        operation.finish(&result);
+        result
+    }
+
+    /// Whether the server reported no effect, under (´def:host:server-error´).
+    #[must_use]
+    pub fn took_no_effect(self) -> bool {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "ServerError::took_no_effect", &self);
+        let result = matches!(self, Self::Failed(_));
+        operation.finish(&result);
+        result
+    }
+
+    /// When repeating can help under (´def:host:server-error´); uncertainty still requires equality-checked repetition.
+    #[must_use]
+    pub fn retry(self) -> Retry {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "ServerError::retry", &self);
+        let cause = match self {
+            Self::Failed(cause) | Self::Uncertain(cause) => cause,
+        };
+        let result = match cause {
+            Cause::Conflict => Retry::Immediately,
+            Cause::Cancelled | Cause::Terminated | Cause::Unavailable | Cause::Resources | Cause::ServerFault => Retry::AfterWait,
+            Cause::ConstraintViolation
+            | Cause::ReadOnly
+            | Cause::LoginRejected
+            | Cause::PermissionDenied
+            | Cause::Misconfigured
+            | Cause::StatementRejected
+            | Cause::StorageDamaged
+            | Cause::Unrecognized => Retry::AfterChange,
+        };
+        operation.finish(&result);
+        result
+    }
+
+    /// The concern owner under (´def:host:server-error´).
+    #[must_use]
+    pub fn concern(self) -> Concern {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "ServerError::concern", &self);
+        let cause = match self {
+            Self::Failed(cause) | Self::Uncertain(cause) => cause,
+        };
+        let result = match cause {
+            Cause::ConstraintViolation | Cause::StorageDamaged => Concern::StoredData,
+            Cause::Conflict => Concern::OtherSessions,
+            Cause::Cancelled | Cause::Terminated => Concern::Operator,
+            Cause::Unavailable | Cause::ServerFault => Concern::Server,
+            Cause::Resources => Concern::ServerResources,
+            Cause::ReadOnly | Cause::LoginRejected | Cause::PermissionDenied | Cause::Misconfigured => Concern::Deployment,
+            Cause::StatementRejected => Concern::Host,
+            Cause::Unrecognized => Concern::Unknown,
+        };
+        operation.finish(&result);
+        result
+    }
+}
+
+impl fmt::Display for ServerError {
+    /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (form, cause) = match self {
+            Self::Failed(cause) => ("The request failed and took no effect.", cause),
+            Self::Uncertain(cause) => (
+                "The request may have taken effect: the server ended the session or did not report the outcome.",
+                cause,
+            ),
+        };
+        let sentence = match cause {
+            Cause::ConstraintViolation => {
+                "A constraint declared on the store refused the change; the stored data or the host's own validation is in question."
+            }
+            Cause::Conflict => {
+                "It conflicted with another session's concurrent work; repeating the whole transaction can succeed."
+            }
+            Cause::Cancelled => "A cancellation or a time limit configured on the server stopped it.",
+            Cause::Terminated => "An administrator ended the session or is shutting the server down.",
+            Cause::Unavailable => "The server is starting, stopping or recovering from a failure, or its connection failed.",
+            Cause::Resources => "The server ran short of a resource such as disk space, memory or connections.",
+            Cause::ReadOnly => "The server accepts only reads: it is a standby or set read-only.",
+            Cause::LoginRejected => "The server did not admit the login under its credentials or access rules.",
+            Cause::PermissionDenied => "The role lacks a privilege the request needs.",
+            Cause::Misconfigured => {
+                "The server is not set up as the host's configuration declares: a database, schema, role or state it needs is missing or not ready."
+            }
+            Cause::StatementRejected => {
+                "The server rejected the host's statement or a value it carried; the host's statements are fixed, so this is a defect of the host or a change to the store's schema made outside it."
+            }
+            Cause::ServerFault => "The server reported an internal or system failure, such as an input or output error.",
+            Cause::StorageDamaged => "The server found its stored data or an index damaged.",
+            Cause::Unrecognized => "The server reported a condition this host does not recognize.",
+        };
+        write!(f, "{form} {sentence} The server's own log holds the detail.")
+    }
+}
+
 /// Bounded refusal causes contain no service-supplied strings or source errors.
 /// (´def:host:refusal´)
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -792,3 +973,165 @@ mod tests {
 mod postgresql;
 #[cfg(test)]
 mod transport_evidence;
+
+#[cfg(test)]
+mod server_error_value_tests {
+    use super::{Cause, Concern, Retry, ServerError};
+    const TABLE: [(Cause, Retry, Concern, &str); 14] = [
+        (
+            Cause::ConstraintViolation,
+            Retry::AfterChange,
+            Concern::StoredData,
+            "A constraint declared on the store refused the change; the stored data or the host's own validation is in question.",
+        ),
+        (
+            Cause::Conflict,
+            Retry::Immediately,
+            Concern::OtherSessions,
+            "It conflicted with another session's concurrent work; repeating the whole transaction can succeed.",
+        ),
+        (
+            Cause::Cancelled,
+            Retry::AfterWait,
+            Concern::Operator,
+            "A cancellation or a time limit configured on the server stopped it.",
+        ),
+        (
+            Cause::Terminated,
+            Retry::AfterWait,
+            Concern::Operator,
+            "An administrator ended the session or is shutting the server down.",
+        ),
+        (
+            Cause::Unavailable,
+            Retry::AfterWait,
+            Concern::Server,
+            "The server is starting, stopping or recovering from a failure, or its connection failed.",
+        ),
+        (
+            Cause::Resources,
+            Retry::AfterWait,
+            Concern::ServerResources,
+            "The server ran short of a resource such as disk space, memory or connections.",
+        ),
+        (
+            Cause::ReadOnly,
+            Retry::AfterChange,
+            Concern::Deployment,
+            "The server accepts only reads: it is a standby or set read-only.",
+        ),
+        (
+            Cause::LoginRejected,
+            Retry::AfterChange,
+            Concern::Deployment,
+            "The server did not admit the login under its credentials or access rules.",
+        ),
+        (
+            Cause::PermissionDenied,
+            Retry::AfterChange,
+            Concern::Deployment,
+            "The role lacks a privilege the request needs.",
+        ),
+        (
+            Cause::Misconfigured,
+            Retry::AfterChange,
+            Concern::Deployment,
+            "The server is not set up as the host's configuration declares: a database, schema, role or state it needs is missing or not ready.",
+        ),
+        (
+            Cause::StatementRejected,
+            Retry::AfterChange,
+            Concern::Host,
+            "The server rejected the host's statement or a value it carried; the host's statements are fixed, so this is a defect of the host or a change to the store's schema made outside it.",
+        ),
+        (
+            Cause::ServerFault,
+            Retry::AfterWait,
+            Concern::Server,
+            "The server reported an internal or system failure, such as an input or output error.",
+        ),
+        (
+            Cause::StorageDamaged,
+            Retry::AfterChange,
+            Concern::StoredData,
+            "The server found its stored data or an index damaged.",
+        ),
+        (
+            Cause::Unrecognized,
+            Retry::AfterChange,
+            Concern::Unknown,
+            "The server reported a condition this host does not recognize.",
+        ),
+    ];
+
+    /// Claim: Both forms return each of fourteen constructed causes unchanged.
+    /// ´claim:host:server-error-cause´
+    /// ´test:unit:server-error-cause´
+    #[test]
+    fn server_error_cause() {
+        for (cause, _, _, _) in TABLE {
+            assert_eq!(ServerError::Failed(cause).cause(), cause, "failed preserves cause");
+            assert_eq!(ServerError::Uncertain(cause).cause(), cause, "uncertain preserves cause");
+        }
+    }
+
+    /// Claim: Across all fourteen causes only Failed reports that the request took no effect.
+    /// ´claim:host:server-error-effect´
+    /// ´test:unit:server-error-effect´
+    #[test]
+    fn server_error_effect() {
+        for (cause, _, _, _) in TABLE {
+            assert!(ServerError::Failed(cause).took_no_effect(), "failed reports no effect");
+            assert!(
+                !ServerError::Uncertain(cause).took_no_effect(),
+                "uncertain never reports no effect"
+            );
+        }
+    }
+
+    /// Claim: The retry answer for each of fourteen causes agrees with the timing table in both forms.
+    /// ´claim:host:server-error-retry´
+    /// ´test:unit:server-error-retry´
+    #[test]
+    fn server_error_retry() {
+        for (cause, expected, _, _) in TABLE {
+            for value in [ServerError::Uncertain(cause), ServerError::Failed(cause)] {
+                assert_eq!(value.retry(), expected, "cause fixes retry timing independently of form");
+            }
+        }
+    }
+
+    /// Claim: Each of fourteen causes names the approved concern owner in both forms.
+    /// ´claim:host:server-error-concern´
+    /// ´test:unit:server-error-concern´
+    #[test]
+    fn server_error_concern() {
+        for (cause, _, expected, _) in TABLE {
+            for value in [ServerError::Uncertain(cause), ServerError::Failed(cause)] {
+                assert_eq!(value.concern(), expected, "cause fixes concern independently of form");
+            }
+        }
+    }
+
+    /// Claim: All twenty-eight server-error values display exactly their fixed form sentence, approved cause sentence and fixed log sentence, without a diagnostic payload.
+    /// ´claim:host:server-error-sentences´
+    /// ´test:unit:server-error-sentences´
+    #[test]
+    fn server_error_sentences() {
+        for (cause, _, _, sentence) in TABLE {
+            for (value, form) in [
+                (ServerError::Failed(cause), "The request failed and took no effect."),
+                (
+                    ServerError::Uncertain(cause),
+                    "The request may have taken effect: the server ended the session or did not report the outcome.",
+                ),
+            ] {
+                assert_eq!(
+                    value.to_string(),
+                    format!("{form} {sentence} The server's own log holds the detail."),
+                    "exact three-part operator sentence"
+                );
+            }
+        }
+    }
+}

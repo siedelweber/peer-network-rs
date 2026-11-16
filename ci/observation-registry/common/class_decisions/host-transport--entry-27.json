@@ -7,13 +7,18 @@
     "membership": {
       "explicit": [
         "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
-        "pn-host::packages/host/src/lib.rs::Session::connect",
+        "pn-host::packages/host/src/lib.rs::<ServerError as fmt :: Display>::fmt",
+        "pn-host::packages/host/src/lib.rs::ServerError::cause",
+        "pn-host::packages/host/src/lib.rs::ServerError::concern",
+        "pn-host::packages/host/src/lib.rs::ServerError::retry",
+        "pn-host::packages/host/src/lib.rs::ServerError::took_no_effect",
         "pn-host::packages/host/src/lib.rs::Session::cancel",
-        "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+        "pn-host::packages/host/src/lib.rs::Session::connect",
         "pn-host::packages/host/src/lib.rs::Session::last_refusal",
+        "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+        "pn-host::packages/host/src/lib.rs::observe_public_frame",
         "pn-host::packages/host/src/lib.rs::relay",
-        "pn-host::packages/host/src/lib.rs::relay_outbound",
-        "pn-host::packages/host/src/lib.rs::observe_public_frame"
+        "pn-host::packages/host/src/lib.rs::relay_outbound"
       ]
     }
   }

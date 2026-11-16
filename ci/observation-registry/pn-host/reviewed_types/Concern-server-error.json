@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Concern",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" The owner of a condition under (´def:host:server-error´).\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Concern { # [doc = \" Retained data or the validation that admitted it.\"] StoredData , # [doc = \" The host's implementation.\"] Host , # [doc = \" Concurrent sessions.\"] OtherSessions , # [doc = \" The server operator.\"] Operator , # [doc = \" Deployment configuration.\"] Deployment , # [doc = \" Resources available to the server.\"] ServerResources , # [doc = \" The server itself.\"] Server , # [doc = \" No recognized owner.\"] Unknown , }"
+  }
+}

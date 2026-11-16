@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Retry",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" When repeating can help under (´def:host:server-error´), not permission to repeat an uncertain operation.\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Retry { # [doc = \" Repeating the whole transaction can succeed at once.\"] Immediately , # [doc = \" A wait may allow the condition to pass.\"] AfterWait , # [doc = \" A configuration, input, implementation or data change is needed.\"] AfterChange , }"
+  }
+}

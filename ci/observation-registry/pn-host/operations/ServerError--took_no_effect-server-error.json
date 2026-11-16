@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "ServerError::took_no_effect",
+    "owner": "HOST",
+    "signature": "fn took_no_effect (self) -> bool",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::ServerError::took_no_effect",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"ServerError::took_no_effect\" , & self) ; let result = matches ! (self , Self :: Failed (_)) ; operation . finish (& result) ; result }",
+    "item_premise": "The input is a public closed form and cause with no diagnostic payload. The method records the complete input and returned closed value; Display emits only the fixed approved three-part sentence and performs no diagnostic access. This is value-level evidence, not classification, login, relay or leakage evidence."
+  }
+}

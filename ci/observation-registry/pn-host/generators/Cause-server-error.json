@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Cause",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+    "class_decision": "host-transport",
+    "expansion_review": "Copy, equality and Debug expose only the closed error form, fourteen payload-free causes and the closed retry/concern enums. No generated operation can access a diagnostic, code, message or private carrier."
+  }
+}

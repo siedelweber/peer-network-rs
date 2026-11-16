@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "ServerError",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" A server answer contains only a form and a closed cause, with no diagnostic content.\"] # [doc = \" (´def:host:server-error´)\"] # [doc = \" Failed denotes no effect; Uncertain requires an equality-checked operation before repetition.\"] # [doc = \" The type is implemented independently of the designed diagnostic translator and store mapping.\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum ServerError { # [doc = \" The server reported a definite failure of the request.\"] Failed (Cause) , # [doc = \" The request may have taken effect.\"] Uncertain (Cause) , }"
+  }
+}

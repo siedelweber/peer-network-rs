@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "ServerError::retry",
+    "owner": "HOST",
+    "signature": "fn retry (self) -> Retry",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::ServerError::retry",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"ServerError::retry\" , & self) ; let cause = match self { Self :: Failed (cause) | Self :: Uncertain (cause) => cause , } ; let result = match cause { Cause :: Conflict => Retry :: Immediately , Cause :: Cancelled | Cause :: Terminated | Cause :: Unavailable | Cause :: Resources | Cause :: ServerFault => Retry :: AfterWait , Cause :: ConstraintViolation | Cause :: ReadOnly | Cause :: LoginRejected | Cause :: PermissionDenied | Cause :: Misconfigured | Cause :: StatementRejected | Cause :: StorageDamaged | Cause :: Unrecognized => Retry :: AfterChange , } ; operation . finish (& result) ; result }",
+    "item_premise": "The input is a public closed form and cause with no diagnostic payload. The method records the complete input and returned closed value; Display emits only the fixed approved three-part sentence and performs no diagnostic access. This is value-level evidence, not classification, login, relay or leakage evidence."
+  }
+}
