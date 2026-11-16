@@ -430,6 +430,7 @@
         "ci::test_claims.Evidence.test_shared_failure",
         "ci::test_claims.Evidence.test_source_carriers",
         "ci::test_claims.Evidence.test_stale_result",
+        "ci::test_claims.Evidence.test_precheck_design_correspondence",
         "ci::test_claims.Evidence.test_uncited_evidence_and_holds",
         "ci::test_claims.Evidence.test_undeclared_site",
         "ci::test_claims.Evidence.test_unknown_evidence_edge"

@@ -18,6 +18,14 @@
       "review": "Read both attention syntaxes and their controls: portions and premises preserve held or unassigned status even beside executed claims; independent plain occurrences still design the statement, and malformed or unknown attention targets refuse."
     },
     {
+      "operation": "ci::test_claims.Evidence.test_precheck_design_correspondence",
+      "path": "ci/test_claims.py",
+      "claim": "ROOT::claim:testing:precheck-propagates-design-refusals",
+      "before": "",
+      "after": "A real pre-check child accepts an isolated checkout's unchanged render and refuses an injected repeated blank line through its design correspondence stage, preserving the checker's path-specific diagnostic and failed-stage status; this witnesses the evidence-free render check before execution, not the other pre-check stages.",
+      "review": "The test clones a disposable checkout, copies the pre-check bytes under test and invokes only its design-correspondence stage in a real child. It first requires the unchanged render to pass, then appends repeated blank lines and requires status one, the checker’s exact record path and spacing message, and the pre-check’s failed-stage line. Separate isolation and target roots and cleared invoker declarations keep the fixture independent. The control neither runs other pre-check stages nor claims candidate execution evidence."
+    },
+    {
       "operation": "ci::test_claims.Evidence.test_python_exhibits",
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:evidence-exhibits-cannot-claim-support",
@@ -45,9 +53,9 @@
       "operation": "ci::test_claims.Evidence.test_uncited_evidence_and_holds",
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:cited-evidence-or-owned-holds",
-      "before": "A data-only coverage edge and an unowned hold both refuse invented completion.",
-      "after": "A data-only coverage edge and an unowned hold both refuse invented completion; a real pre-check child runs the design correspondence stage on an isolated checkout, accepts its unchanged render and refuses an injected repeated blank line with the checker's own diagnostic.",
-      "review": "The existing declaration controls retain their coverage-edge and owned-hold refusals. The added control clones a disposable checkout, copies the pre-check under test, runs its selected stage in a real child on the clean render, then adds repeated blank lines and requires status one, the design checker’s path-specific message and the pre-check’s stage line. Other stages are not exercised by that child; the full pre-check and gate remain separate evidence."
+      "before": "A data-only coverage edge and an unowned hold both refuse invented completion; a real pre-check child runs the design correspondence stage on an isolated checkout, accepts its unchanged render and refuses an injected repeated blank line with the checker's own diagnostic.",
+      "after": "A data-only coverage edge and an unowned hold both refuse invented completion.",
+      "review": "The coverage-edge and owned-hold assertions retain their original proposition and stage-registration checks. The real-child render control has its own test and claim, so this gloss no longer attributes its separate design-correspondence refusal to the evidence-completion claim. The baseline retains the superseded combined wording for this narrowing review."
     },
     {
       "operation": "ci::test_claims.Evidence.test_unknown_evidence_edge",

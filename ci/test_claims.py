@@ -558,13 +558,12 @@ class Evidence(unittest.TestCase):
             with self.assertRaisesRegex(StructuralError,'unresolved or duplicate'): evaluate(**data)
 
     def test_uncited_evidence_and_holds(self):
-        """A data-only coverage edge and an unowned hold both refuse invented completion; a real pre-check child runs the design correspondence stage on an isolated checkout, accepts its unchanged render and refuses an injected repeated blank line with the checker's own diagnostic.
+        """A data-only coverage edge and an unowned hold both refuse invented completion.
         ´claim:testing:cited-evidence-or-owned-holds´
         ´test:integration:test-uncited-evidence-and-holds´
         """
         from claims import registrations
         from precheck import commands
-        self.precheck_design_control()
         stages = dict(commands(Path('/prepared'), '/deployed/linter'))
         self.assertEqual(set(stages), {'census', 'deployment-claims', 'linter', 'claims', 'design-correspondence', 'observations', 'datasets', 'documents'})
         self.assertEqual(stages['claims'][-2:], ['ci/claims.py', 'registration'])
@@ -605,7 +604,11 @@ class Evidence(unittest.TestCase):
         data=fixture(); data['declared'][0].update(status='held',claims=[])
         with self.assertRaisesRegex(StructuralError,'hold lacks owner'): evaluate(**data)
 
-    def precheck_design_control(self):
+    def test_precheck_design_correspondence(self):
+        """A real pre-check child accepts an isolated checkout's unchanged render and refuses an injected repeated blank line through its design correspondence stage, preserving the checker's path-specific diagnostic and failed-stage status; this witnesses the evidence-free render check before execution, not the other pre-check stages.
+        ´claim:testing:precheck-propagates-design-refusals´
+        ´test:integration:test-precheck-design-correspondence´
+        """
         import shutil
         import subprocess
         import sys
