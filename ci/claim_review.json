@@ -4206,9 +4206,9 @@
       "operation": "pn-host::credential_fixture::cleanup_reporting",
       "path": "packages/host/src/credential_fixture.rs",
       "claim": "HOST::claim:host:credential-cleanup-report-preserves-panic",
-      "before": "",
-      "after": "Cleanup-error reporting during unwinding preserves the original panic for public UTF-8 and non-UTF-8 paths instead of raising a second panic.",
-      "review": "Read the injected IO error in a destructor during an exact public panic for both path encodings; recovery of that original payload witnesses the non-panicking reporter. This does not inject a server stop or filesystem failure and does not guarantee output delivery to a closed stream."
+      "before": "Cleanup-error reporting during unwinding preserves the original panic for public UTF-8 and non-UTF-8 paths instead of raising a second panic.",
+      "after": "Cleanup reporting completes in a normally exited child, preserves the original panic, and emits the displayed path and cause for public UTF-8 and non-UTF-8 paths.",
+      "review": "Read the exact child selection, normal zero exit, single public completion marker emitted after the child assertions, and the independent captured-report assertions for both path encodings. The child pins its original panic and lowers and reads back its core limit before the injected reporter error. This witnesses the reporter, not an injected server-stop or filesystem failure, and does not guarantee output delivery to a closed stream."
     },
     {
       "operation": "pn-host::credential_fixture::handovers",
@@ -4230,9 +4230,9 @@
       "operation": "pn-host::credential_fixture::instance_prerequisites",
       "path": "packages/host/src/credential_fixture.rs",
       "claim": "HOST::claim:host:credential-instance-prerequisites",
-      "before": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits and a leftover directory before instance use.",
-      "after": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits; atomic creation skips an existing same-number path without altering it.",
-      "review": "Read the unchanged independent prerequisite refusals and the atomic-creation control: an occupied same-number path retains its marker while the next candidate is acquired. The retired leftover refusal is replaced by collision avoidance, not a sweep or an installation witness."
+      "before": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits; atomic creation skips an existing same-number path without altering it.",
+      "after": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, and unchanged core limits.",
+      "review": "Read the unchanged independent refusal assertions for missing or relative programs, wrong version, unreviewed kernel series, non-piped collector and unchanged core limits. Atomic creation has its own root-creation claim and control; this claim covers only prerequisites before instance use."
     },
     {
       "operation": "pn-host::credential_fixture::owned_instances",
@@ -4281,6 +4281,14 @@
       "before": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter and helper states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
       "after": "The protected raw session authenticates with public setup material on both owned standing profiles, suppresses and reads the closed inventory in that backend, pins helper source and attributes, and refuses changed parameter, helper, session-facility and public catalog states. No generated credential, helper execution, sentinel, acceptance or installation property is exercised.",
       "review": "Both fresh instances retain the existing owned lifecycle and limits. Raw startup uses the unchanged host Socket, SCRAM and protected read, with named containment. Every inventory row is queried in the issuing session; each injected false predicate refuses independently. Actual parameter, plan-mode and helper-attribute changes refuse and are restored. The fixed unnamed Parse has no Bind or execution. Host core and custody rows combine existing process read-back and the source census, not an SQL proof of those properties. Changed session facilities, a retained prepared statement, an inactive subscription and a changed counter-view roster each refuse at their assigned row; the view and subscription are public catalog metadata. Present statement-statistics and explain facilities refuse in the final backend."
+    },
+    {
+      "operation": "pn-host::credential_fixture::root_creation",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-root-creation-skips-occupied",
+      "before": "",
+      "after": "Atomic root creation skips an occupied same-number path without acquiring or changing it.",
+      "review": "Read atomic acquisition with a counter starting at the occupied candidate: creation succeeds at another path and the pre-existing marker remains unchanged. The test witnesses occupied-path avoidance, not permanent historical uniqueness, a sweep or another process namespace."
     },
     {
       "operation": "pn-host::postgresql::connection_loss_and_drop",

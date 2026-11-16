@@ -3116,6 +3116,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::credential_fixture::root_creation",
         "pn-host::credential_fixture::cleanup_reporting",
         "pn-host::credential_fixture::binding_panic",
         "pn-host::credential_fixture::raw::public_wire_vectors",

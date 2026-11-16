@@ -59,6 +59,24 @@ impl Drop for FixtureRoot {
     }
 }
 
+/// Atomic root creation skips an occupied same-number path without acquiring or changing it.
+/// ´claim:host:credential-root-creation-skips-occupied´
+/// ´test:unit:root-creation´
+#[test]
+fn root_creation() {
+    let guard = FixtureRoot::create("credential-prerequisites");
+    let root = &guard.path;
+    let counter = std::sync::atomic::AtomicU64::new(0);
+    let occupied = root.join(format!("candidate-{}-0", std::process::id()));
+    std::fs::create_dir(&occupied).unwrap();
+    std::fs::write(occupied.join("unchanged"), b"public owner").unwrap();
+    let created = FixtureRoot::create_in(root, "candidate", &counter);
+    assert!(created.is_ok(), "existing same-number path does not refuse");
+    let created = created.unwrap();
+    assert_ne!(created.path, occupied, "existing same-number path is not acquired");
+    assert_eq!(std::fs::read(occupied.join("unchanged")).unwrap(), b"public owner");
+}
+
 fn artifact() -> std::io::Result<PathBuf> {
     runtime_path(RuntimePath::Executable("pn-credential-generator"))
 }
@@ -524,7 +542,7 @@ async fn admitted_connection(instance: &OwnedInstance) -> Result<crate::Session,
     Ok(session)
 }
 
-/// Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits; atomic creation skips an existing same-number path without altering it.
+/// Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, and unchanged core limits.
 /// ´claim:host:credential-instance-prerequisites´
 /// ´test:unit:instance-prerequisites´
 #[test]
@@ -562,15 +580,6 @@ fn instance_prerequisites() {
         "skipped lowering refuses at readback"
     );
     core_limits("Max core file size        1 1 bytes").unwrap();
-    let counter = std::sync::atomic::AtomicU64::new(0);
-    let occupied = root.join(format!("candidate-{}-0", std::process::id()));
-    std::fs::create_dir(&occupied).unwrap();
-    std::fs::write(occupied.join("unchanged"), b"public owner").unwrap();
-    let created = FixtureRoot::create_in(root, "candidate", &counter);
-    assert!(created.is_ok(), "existing same-number path does not refuse");
-    let created = created.unwrap();
-    assert_ne!(created.path, occupied, "existing same-number path is not acquired");
-    assert_eq!(std::fs::read(occupied.join("unchanged")).unwrap(), b"public owner");
 }
 
 /// Two fresh instances with published SCRAM setup inputs retain their distinct text-exposing statistics profiles and one/one inherited core limits, read through the unchanged host Session; an incompatible backend-start connection is refused, and every owned directory is removed after shutdown. No generated credential material is handled.
@@ -761,7 +770,14 @@ fn instance_panic() {
     assert!(removed, "panicked owner's root removed");
 }
 
-/// Cleanup-error reporting during unwinding preserves the original panic for public UTF-8 and non-UTF-8 paths instead of raising a second panic.
+const CHILD_COMPLETION: &str = "credential fixture child complete";
+const CLEANUP_PATHS: [&[u8]; 2] = [b"public-root", b"public-root-\xff"];
+
+fn child_complete() {
+    cli_common::emit(&CHILD_COMPLETION).expect("child completion emitted after assertions");
+}
+
+/// Cleanup reporting completes in a normally exited child, preserves the original panic, and emits the displayed path and cause for public UTF-8 and non-UTF-8 paths.
 /// ´claim:host:credential-cleanup-report-preserves-panic´
 /// ´test:unit:cleanup-reporting´
 #[test]
@@ -773,7 +789,49 @@ fn cleanup_reporting() {
             cleanup_result(Err(std::io::Error::other("public cleanup failure")), self.0);
         }
     }
-    for bytes in [b"public-root".as_slice(), b"public-root-\xff".as_slice()] {
+    if !std::env::args().any(|arg| arg == "--include-ignored") {
+        let output = Command::new(std::env::current_exe().unwrap())
+            .args([
+                "credential_fixture::cleanup_reporting",
+                "--exact",
+                "--include-ignored",
+                "--nocapture",
+            ])
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .output()
+            .expect("cleanup reporting child starts");
+        assert_eq!(output.status.code(), Some(0), "cleanup reporting child did not abort");
+        assert_eq!(
+            output
+                .stdout
+                .windows(CHILD_COMPLETION.len())
+                .filter(|part| *part == CHILD_COMPLETION.as_bytes())
+                .count(),
+            1,
+            "cleanup reporting child ran its single test"
+        );
+        for bytes in CLEANUP_PATHS {
+            let path = std::path::Path::new(std::ffi::OsStr::from_bytes(bytes));
+            let report = serde_json::to_vec(
+                &serde_json::json!({"fixture_cleanup":path.display().to_string(),"error":"public cleanup failure"}),
+            )
+            .unwrap();
+            assert!(
+                output.stdout.windows(report.len()).any(|part| part == report),
+                "cleanup report names path and cause"
+            );
+        }
+        return;
+    }
+    core_policy(
+        &std::fs::read_to_string("/proc/sys/kernel/osrelease").unwrap(),
+        &std::fs::read_to_string("/proc/sys/kernel/core_pattern").unwrap(),
+    )
+    .expect("reviewed core policy before reporter control");
+    lower_core_limit(&PathBuf::from(std::env::var_os("PN_TEST_PYTHON").unwrap()));
+    core_limits(&std::fs::read_to_string("/proc/self/limits").unwrap()).expect("reporter child core limit read back");
+    for bytes in CLEANUP_PATHS {
         let path = std::path::Path::new(std::ffi::OsStr::from_bytes(bytes));
         let outcome = std::panic::catch_unwind(|| {
             let _failure = Failure(path);
@@ -786,6 +844,7 @@ fn cleanup_reporting() {
             "cleanup error preserves original panic"
         );
     }
+    child_complete();
 }
 
 mod raw;
