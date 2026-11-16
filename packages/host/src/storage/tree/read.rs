@@ -531,7 +531,7 @@ fn copy_bytes(parts: &[&[u8]], expected: &[u8], meter: &mut Meter) -> Result<Vec
 #[cfg(test)]
 thread_local! { pub(super) static FETCHES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) }; }
 
-fn page_shape(scope: &EpochScope, limit: usize) -> Result<(), Error> {
+pub(super) fn page_shape(scope: &EpochScope, limit: usize) -> Result<(), Error> {
     scope_check(scope)?;
     if i64::try_from(limit).is_err() {
         return Err(StorageError::Representation.into());

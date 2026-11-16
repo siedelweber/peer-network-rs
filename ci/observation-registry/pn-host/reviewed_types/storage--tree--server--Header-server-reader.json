@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::Header",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "struct Header { identity : Identity , parent : Option < Identity > , parent_segment : Option < Identity > , segment : Identity , depth : u64 , generation : u64 , bytes : u64 , chunks : u64 , references : u64 , debits : u64 , }"
+  }
+}

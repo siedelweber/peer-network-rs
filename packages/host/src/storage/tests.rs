@@ -836,8 +836,10 @@ fn variant_vectors(
 #[test]
 fn storage_runtime() {
     let runtime = runtime();
+    let reader_only = std::env::var_os("PN_HOST_STORAGE_READER_TRACE").is_some();
     let fixture = std::env::var("PN_HOST_STORAGE_FIXTURE").unwrap_or_else(|_| "storage-trace-initial.json".into());
     let tree_fixture = fixture.replace("storage-trace-", "storage-tree-trace-");
+    let reader_fixture = fixture.replace("storage-trace-", "storage-reader-trace-");
     // This database belongs only to this test. A prior capture must not turn
     // bootstrap coverage into reopen coverage on the next child invocation.
     runtime.block_on(async {
@@ -867,8 +869,12 @@ fn storage_runtime() {
             session.client().batch_execute("DROP TABLE public.pn_admission_generations,public.pn_admission_versions,public.pn_admission_closures,public.pn_epoch_scopes,public.pn_epoch_branches,public.pn_epoch_results,public.pn_epoch_package_chunks,public.pn_epoch_references,public.pn_epoch_debits,public.pn_epoch_debit_chunks,public.pn_epoch_result_debits,public.pn_closures,public.pn_versions,public.pn_store_identity").await.unwrap();
         }
     });
+    let mut tree_reader = reader_only.then(|| runtime.block_on(super::tree::prepare_reader_trace(&reader_fixture)));
     let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
     runtime.block_on(async {
+        if reader_only {
+            return;
+        }
         let mut store = store(&fixture).await;
         let value = Payload::rule(&encoding::text("public_storage_payload_731")).unwrap();
         let one = Version {
@@ -909,6 +915,10 @@ fn storage_runtime() {
                 .unwrap();
         }
     });
+    if let Some(tree_reader) = &mut tree_reader {
+        runtime.block_on(super::tree::reader_trace_fixture(tree_reader));
+    }
+    drop(tree_reader);
     drop(runtime);
     drop(guard);
     cli_common::emit(

@@ -1,0 +1,530 @@
+mod bounds;
+mod branches;
+mod plans;
+thread_local! {static FETCHES:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};static EVENTS:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};}
+pub(super) fn validated_event() {
+    EVENTS.set(EVENTS.get() + 1);
+}
+fn reset_events() {
+    EVENTS.set(0);
+}
+fn events() -> usize {
+    EVENTS.get()
+}
+pub(super) fn fetched() {
+    FETCHES.set(FETCHES.get() + 1);
+}
+fn reset_fetches() {
+    FETCHES.set(0);
+}
+fn fetches() -> usize {
+    FETCHES.get()
+}
+use super::super::{MemoryTree, tests::forks};
+use super::*;
+
+fn allowance() -> ReadBudget {
+    ReadBudget {
+        rows: 100_000,
+        bytes: 100_000_000,
+    }
+}
+
+async fn session() -> Session {
+    connect_named("storage-tree-reads.json").await
+}
+
+async fn connect_named(name: &str) -> Session {
+    let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+    let mut file = std::fs::File::open(std::path::Path::new(&root).join(name)).unwrap();
+    let configuration = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+    Session::connect(configuration).await.unwrap()
+}
+
+// This is explicit fixture installation, not the production writer. The functional
+// reference supplies placement for each arrival order; no read consults this model.
+async fn setup(reverse: bool) -> MemoryTree<'static> {
+    setup_named(reverse, "storage-tree-reads.json").await
+}
+
+async fn setup_named(reverse: bool, name: &str) -> MemoryTree<'static> {
+    let f = forks();
+    let mut model = MemoryTree::default();
+    model
+        .install_generation(&f.generation, allowance(), &mut Usage::default())
+        .unwrap();
+    let children = if reverse {
+        [&f.side[2], &f.main[2]]
+    } else {
+        [&f.main[2], &f.side[2]]
+    };
+    for input in [&f.main[0], &f.other_root[0], &f.main[1]]
+        .into_iter()
+        .chain(children)
+        .chain([&f.main[3]])
+    {
+        model
+            .commit(input, Some("unstable"), allowance(), &mut Usage::default())
+            .unwrap();
+    }
+    install(&model, &f.generation, name).await;
+    model
+}
+async fn install(model: &MemoryTree<'_>, generation: &super::super::Generation, name: &str) {
+    let mut owner = connect_named(name).await;
+    catalogue::open(&mut owner).await.unwrap();
+    let client = owner.client();
+    client.batch_execute("TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes,pn_admission_versions,pn_admission_closures,pn_admission_generations,pn_versions,pn_closures").await.unwrap();
+    client.batch_execute("BEGIN; SET CONSTRAINTS ALL DEFERRED").await.unwrap();
+    let scope = ServerReader::scope(&generation.scope).unwrap();
+    let scope = scope.text().unwrap();
+    client
+        .execute(
+            "INSERT INTO pn_admission_generations VALUES($1,1,'unstable',NULL,1,$2,$3)",
+            &[
+                &scope,
+                &(signed(generation.versions.len())),
+                &(signed(generation.closures.len())),
+            ],
+        )
+        .await
+        .unwrap();
+    for version in generation.versions.iter().rev() {
+        insert_version(&owner, version).await;
+        client
+            .execute(
+                "INSERT INTO pn_admission_versions VALUES($1,1,$2,$3,$4)",
+                &[&scope, &version.family.name(), &version.key, &version.edition],
+            )
+            .await
+            .unwrap();
+    }
+    for closure in &generation.closures {
+        client
+            .execute(
+                "INSERT INTO pn_closures VALUES($1,$2,$3,$4)",
+                &[
+                    &closure.family.name(),
+                    &closure.key,
+                    &closure.edition,
+                    &(signed(closure.closes_at)),
+                ],
+            )
+            .await
+            .unwrap();
+        client
+            .execute(
+                "INSERT INTO pn_admission_closures VALUES($1,1,$2,$3,$4)",
+                &[&scope, &closure.family.name(), &closure.key, &closure.edition],
+            )
+            .await
+            .unwrap();
+    }
+    populate_nodes(&owner, model, &generation.scope, scope).await;
+    client.batch_execute("COMMIT").await.unwrap();
+}
+
+async fn insert_version(owner: &Session, version: &super::super::Version) {
+    let payload = version.payload.as_ref();
+    owner
+        .client()
+        .execute(
+            "INSERT INTO pn_versions VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+            &[
+                &version.family.name(),
+                &version.key,
+                &version.edition,
+                &(signed(version.announced_at)),
+                &(signed(version.opens_at)),
+                &payload.map(|p| &p.bytes[..]),
+                &payload.map(|p| &p.digest[..]),
+                &payload.and_then(|p| p.disclosure.as_ref().map(|v| &v[..])),
+            ],
+        )
+        .await
+        .unwrap();
+}
+
+struct Fixture<'a> {
+    runtime: &'a tokio::runtime::Runtime,
+    store: std::cell::RefCell<ServerTree>,
+}
+
+impl super::super::roster::ReadContract for Fixture<'_> {
+    fn snapshot(&self) -> String {
+        let store = self.store.borrow();
+        self.runtime.block_on(async {
+            let mut snapshot = String::new();
+            for relation in [
+                "pn_store_identity",
+                "pn_versions",
+                "pn_closures",
+                "pn_admission_generations",
+                "pn_admission_versions",
+                "pn_admission_closures",
+                "pn_epoch_scopes",
+                "pn_epoch_branches",
+                "pn_epoch_results",
+                "pn_epoch_package_chunks",
+                "pn_epoch_references",
+                "pn_epoch_debits",
+                "pn_epoch_debit_chunks",
+                "pn_epoch_result_debits",
+            ] {
+                let sql = format!("SELECT row_to_json(t)::text FROM {relation} t ORDER BY row_to_json(t)::text");
+                for row in store.session.client().query(&sql, &[]).await.unwrap() {
+                    let value: &str = row.get(0);
+                    writeln!(snapshot, "{relation} {value}").unwrap();
+                }
+            }
+            snapshot
+        })
+    }
+    fn read(
+        &self,
+        scope: &EpochScope,
+        identity: Identity,
+        depth: Option<u64>,
+    ) -> Result<Option<super::super::roster::ReadView>, Error> {
+        let mut store = self.store.borrow_mut();
+        let result = self.runtime.block_on(async {
+            let mut reader = store.reader(allowance()).await?;
+            match depth {
+                Some(depth) => reader.as_of(scope, identity, depth).await,
+                None => reader.exact(scope, identity).await,
+            }
+        })?;
+        Ok(result.map(|value| super::super::roster::ReadView {
+            identity: value.identity,
+            parent: value.parent,
+            depth: value.depth,
+            label: value.label,
+            generation: value.generation,
+            bytes: value.bytes,
+            selections: value
+                .selections
+                .into_iter()
+                .map(|selected| (selected.use_, selected.origin))
+                .collect(),
+            debits: value
+                .debits
+                .into_iter()
+                .map(|debit| {
+                    (
+                        crate::admitted_result::DebitKey {
+                            scope: scope.clone(),
+                            act: debit.act,
+                        },
+                        debit.writing_boundary,
+                        debit.origin,
+                        debit.bytes,
+                    )
+                })
+                .collect(),
+        }))
+    }
+}
+
+/// Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; nested forks and empty interiors preserve branch-relative results, and a closure-bearing generation retains the original edition. Six read and page shapes cross the server charge plan's exact and one-below row and allocation ceilings, including an empty advancing tip page and late refusal after validation events; maximum version delivery and its overflow refuse before a query when not admitted. A chunk surplus reaches the bounded production count check, and inspected index-ordered plans use LIMIT without a sort under the stated fixture planner settings. These finite controls claim no general corruption coverage, writer atomicity, admission, audit, public label carrier or production budget.
+/// ´claim:history:tree-server-reads´
+/// ´test:unit:tree-server-reads´
+#[test]
+fn tree_server_reads() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    for reverse in [false, true] {
+        let model = runtime.block_on(setup(reverse));
+        let fixture = Fixture {
+            runtime: &runtime,
+            store: std::cell::RefCell::new(runtime.block_on(async { ServerTree::open(session().await).await.unwrap() })),
+        };
+        super::super::roster::read_assertions(&fixture);
+        runtime.block_on(page_assertions(&model, &mut fixture.store.borrow_mut()));
+        if !reverse {
+            bounds::run(&fixture);
+            let before = super::super::roster::ReadContract::snapshot(&fixture);
+            runtime.block_on(plans::run(&mut fixture.store.borrow_mut()));
+            runtime.block_on(plans::surplus(&mut fixture.store.borrow_mut()));
+            assert_eq!(
+                super::super::roster::ReadContract::snapshot(&fixture),
+                before,
+                "surplus restoration and plans preserve fixture"
+            );
+            runtime.block_on(bounds::chunk_delivery(&mut fixture.store.borrow_mut()));
+            assert_eq!(
+                super::super::roster::ReadContract::snapshot(&fixture),
+                before,
+                "maximum chunk restoration is exact"
+            );
+            runtime.block_on(bounds::delivery(&mut fixture.store.borrow_mut()));
+            runtime.block_on(branches::run());
+        }
+    }
+}
+
+async fn page_assertions(model: &MemoryTree<'static>, store: &mut ServerTree) {
+    let f = forks();
+    let scope = f.main[0].event().0;
+    let mut reader = store.reader(allowance()).await.unwrap();
+    let mut reference = model.reader(allowance());
+    assert_eq!(
+        reader.roots(scope, None, 10).await.unwrap(),
+        reference.roots(scope, None, 10).unwrap()
+    );
+    let parent = *f.main[1].event().1;
+    assert_eq!(
+        reader.children(scope, parent, None, 10).await.unwrap(),
+        reference.children(scope, parent, None, 10).unwrap()
+    );
+    let mut cursor = None;
+    loop {
+        let page = reader.tips(scope, cursor, 1).await.unwrap();
+        assert_eq!(page, reference.tips(scope, cursor, 1).unwrap());
+        if page.end {
+            break;
+        }
+        assert!(page.after > cursor, "an empty tip page advances by its candidate");
+        cursor = page.after;
+    }
+    assert_eq!(reader.children(scope, [255; 32], None, 1).await, Err(Error::MissingTip));
+    assert_eq!(
+        reader.children(scope, parent, None, 0).await,
+        Err(StorageError::ReadLimit.into())
+    );
+}
+
+fn signed(value: impl TryInto<i64>) -> i64 {
+    value
+        .try_into()
+        .unwrap_or_else(|_| panic!("fixture coordinate exceeds the layout"))
+}
+
+async fn populate_nodes(owner: &Session, model: &MemoryTree<'_>, identity_scope: &EpochScope, scope: &str) {
+    let client = owner.client();
+    for (_, root) in model.scopes.iter() {
+        client
+            .execute("INSERT INTO pn_epoch_scopes VALUES($1,$2)", &[&scope, &&root[..]])
+            .await
+            .unwrap();
+    }
+    let mut nodes: Vec<_> = model.results.iter().map(|(_, node)| node).collect();
+    nodes.sort_by_key(|node| node.input.event().3);
+    for node in nodes {
+        populate_node(owner, model, identity_scope, scope, node).await;
+    }
+}
+async fn populate_node(
+    owner: &Session,
+    model: &MemoryTree<'_>,
+    identity_scope: &EpochScope,
+    scope: &str,
+    node: &super::super::Node<'_>,
+) {
+    let client = owner.client();
+    let (_, identity, parent, depth) = node.input.event();
+    if identity == &node.segment {
+        let descriptor = model.segments.get(&(identity_scope, node.segment)).unwrap();
+        client
+            .execute(
+                "INSERT INTO pn_epoch_branches VALUES($1,$2,$3,$4,$5,$6)",
+                &[
+                    &scope,
+                    &&node.segment[..],
+                    &(signed(descriptor.start)),
+                    &descriptor.parent_segment.as_ref().map(|v| &v[..]),
+                    &descriptor.fork.as_ref().map(|v| &v[..]),
+                    &(signed(descriptor.cutoff)),
+                ],
+            )
+            .await
+            .unwrap();
+    }
+    let parent_segment = parent.map(|p| model.results.get(&(identity_scope, *p)).unwrap().segment);
+    client
+        .execute(
+            "INSERT INTO pn_epoch_results VALUES($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11)",
+            &[
+                &scope,
+                &&identity[..],
+                &(signed(depth)),
+                &parent.map(|v| &v[..]),
+                &parent.map(|_| signed(depth - 1)),
+                &parent_segment.as_ref().map(|v| &v[..]),
+                &&node.segment[..],
+                &(signed(node.input.bytes().len())),
+                &(signed(node.chunks.len())),
+                &(signed(node.references.len())),
+                &(signed(node.input.debits().len())),
+            ],
+        )
+        .await
+        .unwrap();
+    for (ordinal, bytes) in node.chunks.iter().enumerate() {
+        client
+            .execute(
+                "INSERT INTO pn_epoch_package_chunks VALUES($1,$2,$3,$4)",
+                &[&scope, &&identity[..], &(signed(ordinal)), bytes],
+            )
+            .await
+            .unwrap();
+    }
+    for version in &node.observations {
+        insert_version(owner, version).await;
+    }
+    for reference in &node.references {
+        let u = reference.use_;
+        client
+            .execute(
+                "INSERT INTO pn_epoch_references VALUES($1,$2,$3,$4,$5,$6,$7)",
+                &[
+                    &scope,
+                    &&identity[..],
+                    &(signed(u.selected_at)),
+                    &u.version.family.name(),
+                    &u.version.key,
+                    &u.version.edition,
+                    &&reference.origin[..],
+                ],
+            )
+            .await
+            .unwrap();
+    }
+    populate_debits(owner, scope, node).await;
+}
+async fn populate_debits(owner: &Session, scope: &str, node: &super::super::Node<'_>) {
+    let client = owner.client();
+    let (_, identity, _, depth) = node.input.event();
+    for introduction in &node.introductions {
+        let vintage = introduction.vintage;
+        let act = &vintage.key.act;
+        let sequence = act.sequence.to_string();
+        client
+            .execute(
+                "INSERT INTO pn_epoch_debits VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+                &[
+                    &scope,
+                    &&identity[..],
+                    &act.author,
+                    &sequence,
+                    &act.family,
+                    &(signed(vintage.disclosure.boundary)),
+                    &(signed(vintage.bytes.len())),
+                    &(signed(introduction.chunks.len())),
+                ],
+            )
+            .await
+            .unwrap();
+        client
+            .execute(
+                "INSERT INTO pn_epoch_result_debits VALUES($1,$2,$3,$4,$5,$6,$7)",
+                &[
+                    &scope,
+                    &&identity[..],
+                    &&node.segment[..],
+                    &(signed(depth)),
+                    &act.author,
+                    &sequence,
+                    &act.family,
+                ],
+            )
+            .await
+            .unwrap();
+        for (ordinal, bytes) in introduction.chunks.iter().enumerate() {
+            client
+                .execute(
+                    "INSERT INTO pn_epoch_debit_chunks VALUES($1,$2,$3,$4,$5,$6,$7)",
+                    &[
+                        &scope,
+                        &&identity[..],
+                        &act.author,
+                        &sequence,
+                        &act.family,
+                        &(signed(ordinal)),
+                        bytes,
+                    ],
+                )
+                .await
+                .unwrap();
+        }
+    }
+}
+
+pub(in crate::storage::tree) async fn prepare_trace(name: &str) -> ServerTree {
+    setup_named(false, name).await;
+    ServerTree::open(connect_named(name).await).await.unwrap()
+}
+
+pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
+    let f = forks();
+    let mut reader = store.reader(allowance()).await.unwrap();
+    let encoded = ServerReader::scope(f.main[0].event().0).unwrap();
+    let scope = encoded.text().unwrap();
+    let root = f.main[0].event().1;
+    let parent = f.main[1].event().1;
+    let origin = f.main[2].event().1;
+    let root_bytes = &root[..];
+    let parent_bytes = &parent[..];
+    let origin_bytes = &origin[..];
+    let selected = f.main[0]
+        .declarations()
+        .iter()
+        .find(|u| u.version.family == Family::Rule)
+        .unwrap();
+    let family = selected.version.family.name();
+    let coordinate = signed(selected.selected_at);
+    let act = &f.main[2].debits()[0].key.act;
+    let sequence = act.sequence.to_string();
+    // This trace witnesses one bounded invocation of each closed statement.
+    // Whole-reader semantic controls run separately without duplicating their
+    // many ancestor validations inside the finite complete-evidence capture.
+    let requests: Vec<(Statement, Vec<StatementParameter<'_>>, usize)> = vec![
+        (Statement::HasEpoch, vec![&scope, &root_bytes], 7),
+        (Statement::HasChild, vec![&scope, &root_bytes], 7),
+        (Statement::ReadScope, vec![&scope], 50),
+        (Statement::ReadEpoch, vec![&scope, &root_bytes], 278),
+        (Statement::ReadEpochAsOf, vec![&scope, &root_bytes, &3_i64], 278),
+        (Statement::ReadBranch, vec![&scope, &root_bytes], 170),
+        (Statement::ReadEpochChunks, vec![&scope, &root_bytes, &1_i64], 262_174),
+        (Statement::ReadAdmissionGeneration, vec![&scope, &1_i64], 1102),
+        (Statement::ReadEpochReferences, vec![&scope, &root_bytes, &1_i64], 264_459),
+        (
+            Statement::ReadEpochUse,
+            vec![&scope, &root_bytes, &coordinate, &family, &selected.version.key],
+            264_459,
+        ),
+        (
+            Statement::ReadAdmissionVersions,
+            vec![&scope, &1_i64, &family, &selected.version.key, &None::<&str>, &1_i64],
+            264_411,
+        ),
+        (
+            Statement::ReadAdmissionClosures,
+            vec![&scope, &1_i64, &family, &selected.version.key, &None::<&str>, &1_i64],
+            2143,
+        ),
+        (
+            Statement::ReadEpochDebitKeys,
+            vec![&scope, &root_bytes, &1_i64, &3_i64, &1_i64],
+            2178,
+        ),
+        (
+            Statement::ReadDebit,
+            vec![&scope, &origin_bytes, &act.author, &sequence, &act.family],
+            38,
+        ),
+        (
+            Statement::ReadDebitChunks,
+            vec![&scope, &origin_bytes, &act.author, &sequence, &act.family, &1_i64],
+            262_174,
+        ),
+        (Statement::ReadRoots, vec![&scope, &None::<&[u8]>, &1_i64], 50),
+        (
+            Statement::ReadChildren,
+            vec![&scope, &None::<&[u8]>, &1_i64, &parent_bytes],
+            50,
+        ),
+        (Statement::ReadResultCandidates, vec![&scope, &None::<&[u8]>, &1_i64], 50),
+    ];
+    for (statement, parameters, maximum) in requests {
+        reader.request(statement, &parameters, 1, maximum, true).await.unwrap();
+    }
+}

@@ -8,6 +8,8 @@ use index::Index;
 mod index;
 mod read;
 pub use read::{DebitRead, Page, Reader, ResultRead};
+mod server;
+pub use server::{ServerDebit, ServerReader, ServerResult, ServerSelection, ServerTree};
 mod stage;
 
 type Identity = [u8; 32];
@@ -899,4 +901,13 @@ impl<'a> Publication<'a> {
             introductions,
         })
     }
+}
+
+#[cfg(test)]
+pub(super) async fn prepare_reader_trace(name: &str) -> ServerTree {
+    server::prepare_trace(name).await
+}
+#[cfg(test)]
+pub(super) async fn reader_trace_fixture(store: &mut ServerTree) {
+    server::trace_fixture(store).await;
 }

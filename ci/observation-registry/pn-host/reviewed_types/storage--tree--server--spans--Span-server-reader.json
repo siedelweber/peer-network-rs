@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::spans::Span",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/spans.rs",
+    "syntax": "# [derive (Clone , Copy)] struct Span { offset : usize , length : usize , payload : usize , depth : usize , major : u8 , argument : u64 , }"
+  }
+}

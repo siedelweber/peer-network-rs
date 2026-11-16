@@ -514,6 +514,11 @@ impl MemoryStore {
 }
 
 // Closed statement vocabulary: only this module can construct a statement.
+// The closed wrapper owns the driver spelling; consumers receive only rows
+// of admitted statements and borrowed typed parameters, never a raw client.
+type StatementRow = tokio_postgres::Row;
+type StatementParameter<'a> = &'a (dyn tokio_postgres::types::ToSql + Sync);
+
 #[derive(Clone, Copy)]
 enum Statement {
     BootstrapLock,
@@ -532,10 +537,78 @@ enum Statement {
     ReadBoundary,
     Close,
     Insert,
+    HasEpoch,
+    HasChild,
+    ReadRoots,
+    ReadChildren,
+    ReadResultCandidates,
+    ReadScope,
+    ReadEpoch,
+    ReadEpochAsOf,
+    ReadBranch,
+    ReadEpochChunks,
+    ReadAdmissionGeneration,
+    ReadEpochDebitKeys,
+    ReadDebit,
+    ReadDebitChunks,
+    ReadAdmissionClosures,
+    ReadAdmissionVersions,
+    ReadEpochUse,
+    ReadEpochReferences,
 }
 impl Statement {
     const fn sql(self) -> &'static str {
         match self {
+            Self::ReadEpochDebitKeys => {
+                "SELECT substring(origin FROM 1 FOR 32),octet_length(origin)::bigint,origin_depth,CASE WHEN octet_length(author)<=1024 THEN author ELSE '' END,octet_length(author)::bigint,CASE WHEN octet_length(act_sequence)<=20 THEN act_sequence ELSE '' END,octet_length(act_sequence)::bigint,CASE WHEN octet_length(act_family)<=1024 THEN act_family ELSE '' END,octet_length(act_family)::bigint FROM public.pn_epoch_result_debits WHERE scope=$1 AND segment=$2 AND origin_depth BETWEEN $3 AND $4 ORDER BY author,length(act_sequence),act_sequence,act_family,origin LIMIT $5"
+            }
+            Self::ReadDebit => {
+                "SELECT writing_boundary,vintage_bytes,vintage_chunks FROM public.pn_epoch_debits WHERE scope=$1 AND origin=$2 AND author=$3 AND act_sequence=$4 AND act_family=$5 LIMIT 1"
+            }
+            Self::ReadDebitChunks => {
+                "SELECT ordinal,octet_length(bytes)::bigint,substring(bytes FROM 1 FOR 0x40000) FROM public.pn_epoch_debit_chunks WHERE scope=$1 AND origin=$2 AND author=$3 AND act_sequence=$4 AND act_family=$5 ORDER BY ordinal LIMIT $6"
+            }
+            Self::ReadAdmissionClosures => {
+                "SELECT CASE WHEN octet_length(m.family)<=21 THEN m.family ELSE '' END,octet_length(m.family)::bigint,CASE WHEN octet_length(m.key)<=1024 THEN m.key ELSE '' END,octet_length(m.key)::bigint,CASE WHEN octet_length(m.edition)<=1024 THEN m.edition ELSE '' END,octet_length(m.edition)::bigint,c.closes,m.generation FROM public.pn_admission_closures m JOIN LATERAL (SELECT q.* FROM public.pn_closures q WHERE q.family=m.family COLLATE \"default\" AND q.family COLLATE \"C\"=m.family AND q.key=m.key COLLATE \"default\" AND q.key COLLATE \"C\"=m.key AND q.edition=m.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=m.edition LIMIT 1) c ON true WHERE m.scope=$1 AND m.generation<=$2 AND m.family=$3 AND m.key=$4 AND ($5::text IS NULL OR m.edition>$5) ORDER BY m.edition LIMIT $6"
+            }
+            Self::ReadAdmissionVersions => {
+                "SELECT CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint,m.generation FROM public.pn_admission_versions m JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=m.family COLLATE \"default\" AND q.family COLLATE \"C\"=m.family AND q.key=m.key COLLATE \"default\" AND q.key COLLATE \"C\"=m.key AND q.edition=m.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=m.edition LIMIT 1) v ON true WHERE m.scope=$1 AND m.generation<=$2 AND m.family=$3 AND m.key=$4 AND ($5::text IS NULL OR m.edition>$5) ORDER BY m.edition LIMIT $6"
+            }
+            Self::ReadEpochUse => {
+                "SELECT r.selected_at,substring(r.judgement_origin FROM 1 FOR 32),octet_length(r.judgement_origin)::bigint,CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint FROM public.pn_epoch_references r JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=r.family COLLATE \"default\" AND q.family COLLATE \"C\"=r.family AND q.key=r.key COLLATE \"default\" AND q.key COLLATE \"C\"=r.key AND q.edition=r.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=r.edition LIMIT 1) v ON true WHERE r.scope=$1 AND r.identity=$2 AND r.selected_at=$3 AND r.family=$4 AND r.key=$5 LIMIT 1"
+            }
+            Self::ReadEpochReferences => {
+                "SELECT r.selected_at,substring(r.judgement_origin FROM 1 FOR 32),octet_length(r.judgement_origin)::bigint,CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint FROM public.pn_epoch_references r JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=r.family COLLATE \"default\" AND q.family COLLATE \"C\"=r.family AND q.key=r.key COLLATE \"default\" AND q.key COLLATE \"C\"=r.key AND q.edition=r.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=r.edition LIMIT 1) v ON true WHERE r.scope=$1 AND r.identity=$2 ORDER BY r.selected_at,r.family,r.key LIMIT $3"
+            }
+            Self::ReadScope => {
+                "SELECT substring(context_root FROM 1 FOR 32),octet_length(context_root)::bigint FROM public.pn_epoch_scopes WHERE scope=$1 LIMIT 1"
+            }
+            Self::ReadEpoch => {
+                "SELECT substring(identity FROM 1 FOR 32),octet_length(identity)::bigint,depth,substring(parent FROM 1 FOR 32),octet_length(parent)::bigint,parent_depth,substring(parent_segment FROM 1 FOR 32),octet_length(parent_segment)::bigint,substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,generation,package_bytes,package_chunks,reference_count,debit_count FROM public.pn_epoch_results WHERE scope=$1 AND identity=$2 LIMIT 1"
+            }
+            Self::ReadEpochAsOf => {
+                "SELECT substring(identity FROM 1 FOR 32),octet_length(identity)::bigint,depth,substring(parent FROM 1 FOR 32),octet_length(parent)::bigint,parent_depth,substring(parent_segment FROM 1 FOR 32),octet_length(parent_segment)::bigint,substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,generation,package_bytes,package_chunks,reference_count,debit_count FROM public.pn_epoch_results WHERE scope=$1 AND segment=$2 AND depth<=$3 ORDER BY depth DESC LIMIT 1"
+            }
+            Self::ReadBranch => {
+                "SELECT substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,start_depth,substring(parent_segment FROM 1 FOR 32),octet_length(parent_segment)::bigint,substring(fork_parent FROM 1 FOR 32),octet_length(fork_parent)::bigint,fork_depth FROM public.pn_epoch_branches WHERE scope=$1 AND segment=$2 LIMIT 1"
+            }
+            Self::ReadEpochChunks => {
+                "SELECT ordinal,octet_length(bytes)::bigint,substring(bytes FROM 1 FOR 0x40000) FROM public.pn_epoch_package_chunks WHERE scope=$1 AND identity=$2 ORDER BY ordinal LIMIT $3"
+            }
+            Self::ReadAdmissionGeneration => {
+                "SELECT generation,previous,minimum,version_count,closure_count,CASE WHEN octet_length(label)<=1024 THEN label ELSE '' END,octet_length(label)::bigint FROM public.pn_admission_generations WHERE scope=$1 AND generation=$2 LIMIT 1"
+            }
+            Self::HasEpoch => "SELECT EXISTS(SELECT 1 FROM public.pn_epoch_results WHERE scope=$1 AND identity=$2)",
+            Self::HasChild => "SELECT EXISTS(SELECT 1 FROM public.pn_epoch_results WHERE scope=$1 AND parent=$2)",
+            Self::ReadRoots => {
+                "SELECT substring(identity FROM 1 FOR 32),octet_length(identity)::bigint FROM public.pn_epoch_results WHERE scope=$1 AND parent IS NULL AND ($2::bytea IS NULL OR identity>$2) ORDER BY parent,identity LIMIT $3"
+            }
+            Self::ReadChildren => {
+                "SELECT substring(identity FROM 1 FOR 32),octet_length(identity)::bigint FROM public.pn_epoch_results WHERE scope=$1 AND parent=$4 AND ($2::bytea IS NULL OR identity>$2) ORDER BY identity LIMIT $3"
+            }
+            Self::ReadResultCandidates => {
+                "SELECT substring(identity FROM 1 FOR 32),octet_length(identity)::bigint FROM public.pn_epoch_results WHERE scope=$1 AND ($2::bytea IS NULL OR identity>$2) ORDER BY identity LIMIT $3"
+            }
             Self::CreateEpochStore => catalogue::CREATE,
             Self::VerifyEpochStore => catalogue::VERIFY,
             Self::BootstrapLock => "SELECT pg_advisory_xact_lock(73100481)",

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::projection::Uses",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/projection.rs",
+    "syntax": "struct Uses < 'a , 'm > { scope : & 'a EpochScope , header : & 'a Header , document : & 'a Validated < 'a > , frame : Item < 'a > , selections : & 'a [ServerSelection] , found : Vec < bool > , meter : & 'm mut Meter , }"
+  }
+}

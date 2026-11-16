@@ -36,7 +36,20 @@
         "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::has_child",
         "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::roots",
         "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::tips",
-        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::usage"
+        "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::usage",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::<Scope as std :: fmt :: Write>::write_str",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::<ServerReader < '_ > as std :: fmt :: Debug>::fmt",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::as_of",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::candidates",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::children",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::exact",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::has_child",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::roots",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::tips",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::usage",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::open",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::reader",
+        "pn-host::packages/host/src/storage/tree/server/spans.rs::storage::tree::server::spans::<Children < 'a > as Iterator>::next"
       ]
     }
   }

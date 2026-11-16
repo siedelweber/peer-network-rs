@@ -456,20 +456,24 @@ pub(super) fn refusal_conformance<A: Contract<'static>>() {
 // public read evidence here without prescribing the production carrier of another store.
 #[derive(Debug, PartialEq, Eq)]
 pub(super) struct ReadView {
-    identity: Identity,
-    parent: Option<Identity>,
-    depth: u64,
-    label: String,
-    generation: u64,
-    bytes: Vec<u8>,
-    selections: Vec<(DeclarationUse, Identity)>,
-    debits: Vec<(crate::admitted_result::DebitVintage, Identity, Vec<u8>)>,
+    pub(super) identity: Identity,
+    pub(super) parent: Option<Identity>,
+    pub(super) depth: u64,
+    pub(super) label: String,
+    pub(super) generation: u64,
+    pub(super) bytes: Vec<u8>,
+    pub(super) selections: Vec<(DeclarationUse, Identity)>,
+    pub(super) debits: Vec<(crate::admitted_result::DebitKey, u64, Identity, Vec<u8>)>,
 }
 
-pub(super) trait ReadContract: Contract<'static> {
+pub(super) trait ReadContract {
+    fn snapshot(&self) -> String;
     fn read(&self, scope: &super::EpochScope, identity: Identity, depth: Option<u64>) -> Result<Option<ReadView>, Error>;
 }
 impl ReadContract for MemoryTree<'static> {
+    fn snapshot(&self) -> String {
+        Contract::snapshot(self)
+    }
     fn read(&self, scope: &super::EpochScope, identity: Identity, depth: Option<u64>) -> Result<Option<ReadView>, Error> {
         let mut reader = self.reader(super::ReadBudget {
             rows: 100_000,
@@ -488,19 +492,23 @@ impl ReadContract for MemoryTree<'static> {
                 generation: r.generation,
                 bytes: r.bytes,
                 selections: r.selections.into_iter().map(|s| (s.use_.clone(), s.origin)).collect(),
-                debits: r.debits.into_iter().map(|d| (d.vintage.clone(), d.origin, d.bytes)).collect(),
+                debits: r
+                    .debits
+                    .into_iter()
+                    .map(|d| (d.vintage.key.clone(), d.vintage.disclosure.boundary, d.origin, d.bytes))
+                    .collect(),
             })
         })
     }
 }
 
-pub(super) fn read_conformance<A: ReadContract>() {
+pub(super) fn read_conformance<A: ReadContract + Contract<'static>>() {
     for main_first in [true, false] {
         read_arrangement::<A>(main_first);
     }
 }
 
-fn read_arrangement<A: ReadContract>(main_first: bool) {
+fn read_arrangement<A: ReadContract + Contract<'static>>(main_first: bool) {
     let f = forks();
     let mut store = A::default();
     assert_eq!(store.install(&f.generation), Ok(true));
@@ -512,10 +520,20 @@ fn read_arrangement<A: ReadContract>(main_first: bool) {
     for input in [&f.main[0], &f.main[1], siblings[0], siblings[1], &f.main[3], &f.other_root[0]] {
         assert_eq!(store.write(input), Ok(true));
     }
+    read_assertions(&store);
+}
+
+pub(super) fn read_assertions<A: ReadContract>(store: &A) {
+    let f = forks();
     let before = store.snapshot();
     for tip in [&f.side[2], &f.main[3]] {
         for depth in [4, 0, 2, 5, 1, 3] {
-            let got = store.read(tip.event().0, *tip.event().1, Some(depth)).unwrap();
+            let got = store.read(tip.event().0, *tip.event().1, Some(depth));
+            assert!(
+                got.is_ok(),
+                "valid branch read preserves its named path and recorded selections: {got:?}"
+            );
+            let got = got.unwrap();
             let expected = match depth {
                 0 => None,
                 1 => Some(&f.main[0]),
@@ -550,17 +568,15 @@ fn read_arrangement<A: ReadContract>(main_first: bool) {
                     assert_eq!(*origin, *first.event().1, "selection origin is its first ancestor use");
                 }
                 assert!(
-                    got.debits.windows(2).all(|pair| pair[0].0.key.act < pair[1].0.key.act),
+                    got.debits.windows(2).all(|pair| pair[0].0.act < pair[1].0.act),
                     "debits are in act order"
                 );
-                for (vintage, origin, bytes) in got.debits {
-                    let first = path
-                        .iter()
-                        .find(|r| r.debits().iter().any(|v| v.key.act == vintage.key.act))
-                        .unwrap();
+                for (key, writing_boundary, origin, bytes) in got.debits {
+                    let first = path.iter().find(|r| r.debits().iter().any(|v| v.key.act == key.act)).unwrap();
                     assert_eq!(origin, *first.event().1, "debit origin is its ancestor introduction");
-                    assert_eq!(&vintage.bytes, &bytes);
-                    assert!(expected.debits().contains(&vintage));
+                    let vintage = expected.debits().iter().find(|v| v.key == key).unwrap();
+                    assert_eq!(writing_boundary, vintage.disclosure.boundary);
+                    assert_eq!(&bytes, &vintage.bytes, "complete vintage bytes are unchanged");
                 }
             }
             assert_eq!(store.snapshot(), before, "reads preserve the complete state");

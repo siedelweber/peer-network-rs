@@ -581,7 +581,7 @@ pub(super) struct Forks {
     pub(super) other_binding: Vec<Retained>,
     pub(super) generation: Generation,
 }
-fn retain_chain(packages: &[pn_epoch::publication::AdmittedPackage]) -> Vec<Retained> {
+pub(super) fn retain_chain(packages: &[pn_epoch::publication::AdmittedPackage]) -> Vec<Retained> {
     use crate::admitted_result::position::{Position, RECIPE};
     let mut previous = None;
     let mut output = Vec::new();

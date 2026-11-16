@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::server::spans::Span",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/spans.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Derived operations expose public immutable result fields, strict-validation spans, counters and fixture selectors only. ServerTree Debug delegates connection custody to the existing opaque Session; ServerReader Debug reports counters alone. No value conveys admission or a new secret borrow; formatting is outside reconstruction accounting."
+  }
+}

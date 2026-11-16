@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::ServerSelection",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [doc = \" A complete retained selection and its original judgement's result identity.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct ServerSelection { pub use_ : DeclarationUse , pub origin : Identity , }"
+  }
+}

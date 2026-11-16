@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "item": "storage::tree::server::ServerReader < '_ >::exact",
+    "owner": "HOST",
+    "signature": "async fn exact (& mut self , scope : & EpochScope , identity : Identity) -> Result < Option < ServerResult > , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::exact",
+    "body": "{ scope_check (scope) ? ; let key = Self :: scope (scope) ? ; let key = key . text () ? ; self . meter . allocation (7) ? ; # [cfg (test)] tests :: fetched () ; let rows = observed (self . transaction . query (Statement :: HasEpoch , & [& key , & & identity [..]])) . await ? ; if rows . len () != 1 { return Err (StorageError :: CorruptHistory . into ()) ; } let exists : bool = rows [0] . try_get (0) . map_err (| _ | StorageError :: CorruptHistory) ? ; if ! exists { return Ok (None) ; } let header = self . header (key , identity) . await ? ; let result = self . reconstruct (scope , key , header) . await ? ; Ok (Some (result)) }",
+    "class_decision": "host-storage",
+    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

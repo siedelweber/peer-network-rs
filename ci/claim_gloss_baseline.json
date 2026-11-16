@@ -763,6 +763,7 @@
     "pn-host::storage::tests::storage_scaling": "",
     "pn-host::storage::tests::storage_schema_identity": "",
     "pn-host::storage::tests::storage_tamper": "",
+    "pn-host::storage::tree::server::tests::tree_server_reads": "",
     "pn-host::storage::tree::tests::tree_generation_atomic": "",
     "pn-host::storage::tree::tests::tree_generation_refusals": "",
     "pn-host::storage::tree::tests::tree_index_reservations": "",

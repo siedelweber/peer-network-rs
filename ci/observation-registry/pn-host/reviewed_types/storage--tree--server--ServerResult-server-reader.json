@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::ServerResult",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [doc = \" Untrusted retained public evidence, validated for storage consistency without granting admission.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct ServerResult { pub identity : Identity , pub parent : Option < Identity > , pub depth : u64 , pub label : String , pub generation : u64 , pub bytes : Vec < u8 > , pub selections : Vec < ServerSelection > , pub debits : Vec < ServerDebit > , }"
+  }
+}

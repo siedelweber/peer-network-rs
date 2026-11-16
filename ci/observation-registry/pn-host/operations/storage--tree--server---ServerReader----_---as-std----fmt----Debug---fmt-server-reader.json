@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "item": "storage::tree::server::<ServerReader < '_ > as std :: fmt :: Debug>::fmt",
+    "owner": "HOST",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Formatting inherits the reader's bounded operation observation.",
+      "witness": "HOST::claim:history:tree-server-reads",
+      "boundary": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::exact",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::<ServerReader < '_ > as std :: fmt :: Debug>::fmt",
+    "body": "{ f . debug_struct (\"ServerReader\") . field (\"usage\" , & self . meter . used) . finish_non_exhaustive () }",
+    "class_decision": "host-storage",
+    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

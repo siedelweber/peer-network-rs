@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::ServerDebit",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [doc = \" Exact retained debit bytes and their unique introduction on the selected ancestor path.\"] # [doc = \" (´[ROOT-amend:storage:admitted-reads]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct ServerDebit { pub act : pn_records :: ActId , pub origin : Identity , pub writing_boundary : u64 , pub bytes : Vec < u8 > , }"
+  }
+}

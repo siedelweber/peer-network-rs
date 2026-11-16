@@ -470,7 +470,7 @@ producer = "The base-sixteen positional alphabet"
 establishment = "defined"
 reader = "hex-alphabet"
 definition = "Reconstruct the exact alphabet by formatting integers zero through fifteen in lowercase base sixteen. Refuse any different spelling or identity context."
-paths = ["packages/wallet/src/rpc.rs", "ci/wallet_elements.py"]
+paths = ["packages/wallet/src/rpc.rs", "ci/wallet_elements.py", "packages/host/src/storage/tree/server/projection.rs"]
 
 [[rows]]
 family = "wallet-c-base"
