@@ -163,8 +163,8 @@
 | pn-host::admitted-carrier | active | integration | pn-host-rust | extended | 1 |
 | pn-host::admitted-carrier-held | active | integration | pn-host-memory-and-postgresql | service | 1 |
 | pn-host::admitted-memory | active | integration | pn-host-rust | extended | 2 |
-| pn-host::credential-instance | active | integration | pn-host-postgresql | service | 4 |
-| pn-host::credential-launch | active | integration | pn-host-rust | service | 5 |
+| pn-host::credential-instance | active | integration | pn-host-postgresql | service | 5 |
+| pn-host::credential-launch | active | integration | pn-host-rust | service | 7 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
 | pn-host::public | active | public-surface | pn-host-rust | fast | 20 |

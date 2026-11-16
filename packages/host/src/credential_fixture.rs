@@ -8,6 +8,57 @@ use std::os::unix::fs::PermissionsExt as _;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
+struct FixtureRoot {
+    path: PathBuf,
+    remove: bool,
+}
+
+impl FixtureRoot {
+    fn create(prefix: &str) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+        Self::create_in(&std::env::temp_dir(), prefix, &NEXT).expect("fixture root atomic creation")
+    }
+
+    fn create_in(parent: &std::path::Path, prefix: &str, counter: &std::sync::atomic::AtomicU64) -> std::io::Result<Self> {
+        loop {
+            let number = counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let path = parent.join(format!("{prefix}-{}-{number}", std::process::id()));
+            match std::fs::create_dir(&path) {
+                Ok(()) => return Ok(Self { path, remove: true }),
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
+                Err(error) => return Err(error),
+            }
+        }
+    }
+
+    fn finish(&mut self) -> std::io::Result<()> {
+        if self.remove {
+            std::fs::remove_dir_all(&self.path)?;
+            self.remove = false;
+        }
+        Ok(())
+    }
+}
+
+fn cleanup_result(result: std::io::Result<()>, path: &std::path::Path) {
+    if let Err(error) = result {
+        if std::thread::panicking() {
+            drop(cli_common::emit(
+                &serde_json::json!({"fixture_cleanup":path.display().to_string(),"error":error.to_string()}),
+            ));
+        } else {
+            panic!("fixture cleanup failed at {}: {error}", path.display());
+        }
+    }
+}
+
+impl Drop for FixtureRoot {
+    fn drop(&mut self) {
+        let result = self.finish();
+        cleanup_result(result, &self.path);
+    }
+}
+
 fn artifact() -> std::io::Result<PathBuf> {
     runtime_path(RuntimePath::Executable("pn-credential-generator"))
 }
@@ -35,9 +86,17 @@ fn binding() {
     let binary = artifact().expect("selected runner artifact required, without fallback");
     let manifest = PathBuf::from(std::env::var_os("PN_TEST_BUILD_MANIFEST").unwrap());
     let original: serde_json::Value = serde_json::from_slice(&std::fs::read(manifest).unwrap()).unwrap();
-    let directory = std::env::temp_dir().join(format!("credential-binding-{}", std::process::id()));
-    std::fs::create_dir(&directory).unwrap();
-    for case in ["missing", "substituted", "record", "focused", "interpreter"] {
+    binding_cases(
+        &binary,
+        &original,
+        FixtureRoot::create("credential-binding"),
+        &["missing", "substituted", "record", "focused", "interpreter"],
+    );
+}
+
+fn binding_cases(binary: &std::path::Path, original: &serde_json::Value, mut root: FixtureRoot, cases: &[&str]) {
+    let directory = &root.path;
+    for &case in cases {
         let mut data = original.clone();
         let mut child = Command::new(std::env::current_exe().unwrap());
         child
@@ -50,7 +109,7 @@ fn binding() {
             "substituted" => {
                 let substitute = directory.join("substitute");
                 let file = std::fs::File::create(&substitute).unwrap();
-                file.set_len(std::fs::metadata(&binary).unwrap().len()).unwrap();
+                file.set_len(std::fs::metadata(binary).unwrap().len()).unwrap();
                 data["credential_executable"]["path"] = substitute.to_str().unwrap().into();
                 child.env("CARGO_BIN_EXE_pn-credential-generator", substitute);
             }
@@ -63,6 +122,7 @@ fn binding() {
             "interpreter" => {
                 child.env_remove("PN_TEST_PYTHON");
             }
+            "injected" => panic!("public binding failure before launch"),
             _ => unreachable!(),
         }
         if case != "focused" {
@@ -78,7 +138,7 @@ fn binding() {
             String::from_utf8_lossy(&output.stderr)
         );
     }
-    std::fs::remove_dir_all(directory).unwrap();
+    root.finish().unwrap();
 }
 
 fn refuse_handover(case: &str) -> (std::process::Output, Vec<u8>, Vec<u8>) {
@@ -181,7 +241,6 @@ enum InstanceRefusal {
     Kernel,
     Collector,
     Limits,
-    Leftover,
 }
 
 fn server_programs(directory: &std::path::Path) -> Result<[PathBuf; 3], InstanceRefusal> {
@@ -215,13 +274,6 @@ fn core_limits(limits: &str) -> Result<(), InstanceRefusal> {
     let row = limits.lines().find(|line| line.starts_with("Max core file size"));
     if !row.is_some_and(|line| line.split_whitespace().skip(4).eq(["1", "1", "bytes"])) {
         return Err(InstanceRefusal::Limits);
-    }
-    Ok(())
-}
-
-fn instance_directory(path: &std::path::Path) -> Result<(), InstanceRefusal> {
-    if path.symlink_metadata().is_ok() {
-        return Err(InstanceRefusal::Leftover);
     }
     Ok(())
 }
@@ -312,6 +364,7 @@ impl StandingProfile {
 
 struct OwnedInstance {
     root: PathBuf,
+    directory: FixtureRoot,
     control: PathBuf,
     running: bool,
 }
@@ -329,16 +382,21 @@ impl OwnedInstance {
         );
     }
 
-    fn start(programs: &[PathBuf; 3], root: PathBuf, profile: StandingProfile) -> Self {
-        Self::configured(programs, root, profile, &[])
+    fn start(programs: &[PathBuf; 3], directory: FixtureRoot, profile: StandingProfile) -> Self {
+        Self::configured(programs, directory, profile, &[])
     }
 
-    fn configured(programs: &[PathBuf; 3], root: PathBuf, profile: StandingProfile, public_settings: &[(&str, &str)]) -> Self {
-        instance_directory(&root).expect("leftover directory refuses before setup");
-        std::fs::create_dir(&root).unwrap();
+    fn configured(
+        programs: &[PathBuf; 3],
+        directory: FixtureRoot,
+        profile: StandingProfile,
+        public_settings: &[(&str, &str)],
+    ) -> Self {
+        let root = directory.path.clone();
         std::fs::set_permissions(&root, std::fs::Permissions::from_mode(0o700)).unwrap();
         let mut instance = Self {
             root,
+            directory,
             control: programs[2].clone(),
             running: false,
         };
@@ -404,36 +462,38 @@ impl OwnedInstance {
             .collect()
     }
 
-    fn stop(&mut self) {
-        if self.running && self.root.join("data/postmaster.pid").exists() {
-            Self::command(
-                &self.control,
-                &[
-                    "-D",
-                    self.root.join("data").to_str().unwrap(),
-                    "-m",
-                    "fast",
-                    "-w",
-                    "-t",
-                    "600",
-                    "stop",
-                ],
-            );
-            self.running = false;
+    fn stop(&mut self) -> std::io::Result<()> {
+        if self.running && self.root.join("data/postmaster.pid").try_exists()? {
+            let program = &self.control;
+            let output = Command::new(program)
+                .arg("-D")
+                .arg(self.root.join("data"))
+                .args(["-m", "fast", "-w", "-t", "600", "stop"])
+                .output()?;
+            if !output.status.success() {
+                return Err(std::io::Error::other("owned server stop failed"));
+            }
         }
+        self.running = false;
+        Ok(())
     }
 
     fn finish(&mut self) {
-        self.stop();
-        std::fs::remove_dir_all(&self.root).expect("owned instance directory removed after process end");
+        self.stop().expect("owned server stops before removal");
+        self.directory
+            .finish()
+            .expect("owned instance directory removed after process end");
     }
 }
 
 impl Drop for OwnedInstance {
     fn drop(&mut self) {
-        if self.root.exists() {
-            self.finish();
+        let result = self.stop();
+        if self.running {
+            // A possibly live server keeps its files, including during unwinding.
+            self.directory.remove = false;
         }
+        cleanup_result(result, &self.root);
     }
 }
 
@@ -464,14 +524,15 @@ async fn admitted_connection(instance: &OwnedInstance) -> Result<crate::Session,
     Ok(session)
 }
 
-/// Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits and a leftover directory before instance use.
+/// Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits; atomic creation skips an existing same-number path without altering it.
 /// ´claim:host:credential-instance-prerequisites´
 /// ´test:unit:instance-prerequisites´
 #[test]
 fn instance_prerequisites() {
-    let root = std::env::temp_dir().join(format!("credential-prerequisites-{}", std::process::id()));
+    let guard = FixtureRoot::create("credential-prerequisites");
+    let root = &guard.path;
     assert_eq!(
-        server_programs(&root),
+        server_programs(root),
         Err(InstanceRefusal::Programs),
         "absent server programs refuse"
     );
@@ -501,10 +562,15 @@ fn instance_prerequisites() {
         "skipped lowering refuses at readback"
     );
     core_limits("Max core file size        1 1 bytes").unwrap();
-    std::fs::create_dir(&root).unwrap();
-    let refusal = instance_directory(&root);
-    std::fs::remove_dir(&root).unwrap();
-    assert_eq!(refusal, Err(InstanceRefusal::Leftover), "leftover instance refuses");
+    let counter = std::sync::atomic::AtomicU64::new(0);
+    let occupied = root.join(format!("candidate-{}-0", std::process::id()));
+    std::fs::create_dir(&occupied).unwrap();
+    std::fs::write(occupied.join("unchanged"), b"public owner").unwrap();
+    let created = FixtureRoot::create_in(root, "candidate", &counter);
+    assert!(created.is_ok(), "existing same-number path does not refuse");
+    let created = created.unwrap();
+    assert_ne!(created.path, occupied, "existing same-number path is not acquired");
+    assert_eq!(std::fs::read(occupied.join("unchanged")).unwrap(), b"public owner");
 }
 
 /// Two fresh instances with published SCRAM setup inputs retain their distinct text-exposing statistics profiles and one/one inherited core limits, read through the unchanged host Session; an incompatible backend-start connection is refused, and every owned directory is removed after shutdown. No generated credential material is handled.
@@ -542,8 +608,9 @@ fn owned_instances() {
     .into_iter()
     .enumerate()
     {
-        let root = std::env::temp_dir().join(format!("credential-instance-{}-{index}", std::process::id()));
-        let mut instance = OwnedInstance::start(&programs, root.clone(), profile);
+        let directory = FixtureRoot::create("credential-instance");
+        let root = directory.path.clone();
+        let mut instance = OwnedInstance::start(&programs, directory, profile);
         runtime.block_on(async {
             if matches!(profile, StandingProfile::Incompatible) {
                 assert!(
@@ -598,6 +665,126 @@ fn owned_instances() {
         });
         instance.finish();
         assert!(!root.exists(), "owned directory absent after shutdown");
+    }
+}
+
+/// A binding run that panics after acquiring its root removes that root during unwinding, before any executable is launched.
+/// ´claim:host:credential-binding-panic-removes-root´
+/// ´test:unit:binding-panic´
+#[test]
+fn binding_panic() {
+    let directory = FixtureRoot::create("credential-binding");
+    let path = directory.path.clone();
+    let outcome =
+        std::panic::catch_unwind(|| binding_cases(std::path::Path::new(""), &serde_json::Value::Null, directory, &["injected"]));
+    let panic = outcome.expect_err("binding failure injected before child launch");
+    assert_eq!(
+        panic.downcast_ref::<&str>(),
+        Some(&"public binding failure before launch"),
+        "assigned binding panic reached"
+    );
+    let removed = !path.exists();
+    if !removed {
+        std::fs::remove_dir_all(&path).unwrap();
+    }
+    assert!(removed, "failed binding run leaves no directory");
+}
+
+/// A panic before server setup removes the owned root; a panic after startup stops the owned server before removing its root, witnessed by its process identity and directory absence.
+/// ´claim:host:credential-instance-panic-cleans-up´
+/// ´test:unit:instance-panic´
+#[test]
+fn instance_panic() {
+    let directory = FixtureRoot::create("credential-instance");
+    let path = directory.path.clone();
+    let outcome = std::panic::catch_unwind(|| {
+        let _instance = OwnedInstance {
+            root: path.clone(),
+            directory,
+            control: PathBuf::new(),
+            running: false,
+        };
+        panic!("public panic before server setup");
+    });
+    let panic = outcome.expect_err("pre-start panic injected");
+    assert_eq!(
+        panic.downcast_ref::<&str>(),
+        Some(&"public panic before server setup"),
+        "assigned pre-start panic reached"
+    );
+    let removed = !path.exists();
+    if !removed {
+        std::fs::remove_dir_all(&path).unwrap();
+    }
+    assert!(removed, "panicked pre-start owner's root removed");
+    lower_core_limit(&PathBuf::from(std::env::var_os("PN_TEST_PYTHON").unwrap()));
+    core_limits(&std::fs::read_to_string("/proc/self/limits").unwrap()).unwrap();
+    let programs = server_programs(&PathBuf::from(std::env::var_os("PN_POSTGRESQL_BIN").unwrap())).unwrap();
+    let directory = FixtureRoot::create("credential-instance");
+    let path = directory.path.clone();
+    let mut identity = String::new();
+    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let instance = OwnedInstance::start(&programs, directory, StandingProfile::Statement);
+        let pid = std::fs::read_to_string(path.join("data/postmaster.pid")).unwrap();
+        identity = pid.lines().next().unwrap().to_owned();
+        assert!(
+            std::path::Path::new(&format!("/proc/{identity}")).exists(),
+            "owned server running before panic"
+        );
+        let _owned = instance;
+        panic!("public panic after server startup");
+    }));
+    let panic = outcome.expect_err("post-start panic injected");
+    assert_eq!(
+        panic.downcast_ref::<&str>(),
+        Some(&"public panic after server startup"),
+        "assigned post-start panic reached"
+    );
+    let stopped = match std::fs::read_to_string(format!("/proc/{identity}/status")) {
+        Ok(status) => status.lines().any(|line| line.starts_with("State:\tZ")),
+        Err(error) => error.kind() == std::io::ErrorKind::NotFound,
+    };
+    let removed = !path.exists();
+    if !removed {
+        let mut rescue = OwnedInstance {
+            root: path.clone(),
+            directory: FixtureRoot {
+                path: path.clone(),
+                remove: true,
+            },
+            control: programs[2].clone(),
+            running: !stopped,
+        };
+        rescue.finish();
+    }
+    assert!(stopped, "panicked owner's server stopped");
+    assert!(removed, "panicked owner's root removed");
+}
+
+/// Cleanup-error reporting during unwinding preserves the original panic for public UTF-8 and non-UTF-8 paths instead of raising a second panic.
+/// ´claim:host:credential-cleanup-report-preserves-panic´
+/// ´test:unit:cleanup-reporting´
+#[test]
+fn cleanup_reporting() {
+    use std::os::unix::ffi::OsStrExt as _;
+    struct Failure<'a>(&'a std::path::Path);
+    impl Drop for Failure<'_> {
+        fn drop(&mut self) {
+            cleanup_result(Err(std::io::Error::other("public cleanup failure")), self.0);
+        }
+    }
+    for bytes in [b"public-root".as_slice(), b"public-root-\xff".as_slice()] {
+        let path = std::path::Path::new(std::ffi::OsStr::from_bytes(bytes));
+        let outcome = std::panic::catch_unwind(|| {
+            let _failure = Failure(path);
+            panic!("public original panic");
+        });
+        let panic = outcome.expect_err("original panic reaches its catcher");
+        assert_eq!(
+            panic.downcast_ref::<&str>(),
+            Some(&"public original panic"),
+            "cleanup error preserves original panic"
+        );
     }
 }
 

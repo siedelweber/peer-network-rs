@@ -3098,6 +3098,7 @@
     {
       "budget": "postgresql-suite",
       "cases": [
+        "pn-host::credential_fixture::instance_panic",
         "pn-host::credential_fixture::raw::configuration_refusals",
         "pn-host::credential_fixture::raw::public_mechanism",
         "pn-host::credential_fixture::raw::raw_inventory",
@@ -3114,6 +3115,8 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::credential_fixture::cleanup_reporting",
+        "pn-host::credential_fixture::binding_panic",
         "pn-host::credential_fixture::raw::public_wire_vectors",
         "pn-host::credential_fixture::raw::public_facts",
         "pn-host::credential_fixture::instance_prerequisites",

@@ -458,9 +458,10 @@ fn raw_inventory() {
     super::lower_core_limit(&interpreter);
     super::core_limits(&std::fs::read_to_string("/proc/self/limits").unwrap()).unwrap();
     let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
-    for (index, profile) in [StandingProfile::Statement, StandingProfile::Stages].into_iter().enumerate() {
-        let root = std::env::temp_dir().join(format!("credential-raw-{}-{index}", std::process::id()));
-        let mut instance = OwnedInstance::start(&programs, root.clone(), profile);
+    for profile in [StandingProfile::Statement, StandingProfile::Stages] {
+        let directory = super::FixtureRoot::create("credential-raw");
+        let root = directory.path.clone();
+        let mut instance = OwnedInstance::start(&programs, directory, profile);
         runtime.block_on(async {
             let session = super::admitted_connection(&instance).await.unwrap();
             drop(session);
@@ -893,8 +894,8 @@ fn readback_vectors() {
 }
 
 fn custody_file_vector() {
-    let path = std::env::temp_dir().join(format!("credential-public-capture-{}", std::process::id()));
-    assert!(!path.exists(), "public capture vector path starts absent");
+    let directory = super::FixtureRoot::create("credential-public-capture");
+    let path = directory.path.join("capture");
     std::fs::write(&path, b"before public sentinel after").unwrap();
     let acquired = capture(&path);
     std::fs::remove_file(&path).unwrap();
@@ -1032,12 +1033,11 @@ async fn lock_operation(instance: &OwnedInstance, mut issuer: RawSession, observ
 }
 
 fn client_capture() {
-    let root = std::env::temp_dir().join(format!("credential-client-capture-{}", std::process::id()));
-    assert!(!root.exists(), "client capture directory starts absent");
-    std::fs::create_dir(&root).unwrap();
-    std::fs::set_permissions(&root, std::fs::Permissions::from_mode(0o700)).unwrap();
+    let mut directory = super::FixtureRoot::create("credential-client-capture");
+    let root = &directory.path;
+    std::fs::set_permissions(root, std::fs::Permissions::from_mode(0o700)).unwrap();
     assert_eq!(
-        std::fs::metadata(&root).unwrap().permissions().mode() & 0o777,
+        std::fs::metadata(root).unwrap().permissions().mode() & 0o777,
         0o700,
         "client capture root confines access"
     );
@@ -1065,7 +1065,7 @@ fn client_capture() {
         .expect("public mechanism child starts");
     let output = capture(&root.join("output"));
     let error = capture(&root.join("error"));
-    std::fs::remove_dir_all(&root).unwrap();
+    directory.finish().unwrap();
     let output = output.unwrap();
     let error = error.unwrap();
     assert!(
@@ -1102,9 +1102,10 @@ fn public_mechanism() {
     .unwrap();
     super::lower_core_limit(&interpreter);
     let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
-    for (index, profile) in [StandingProfile::Statement, StandingProfile::Stages].into_iter().enumerate() {
-        let root = std::env::temp_dir().join(format!("credential-mechanism-{}-{index}", std::process::id()));
-        let mut instance = OwnedInstance::start(&programs, root.clone(), profile);
+    for profile in [StandingProfile::Statement, StandingProfile::Stages] {
+        let directory = super::FixtureRoot::create("credential-mechanism");
+        let root = directory.path.clone();
+        let mut instance = OwnedInstance::start(&programs, directory, profile);
         runtime.block_on(async {
             let mut issuer=RawSession::open(&instance).await.unwrap();
             prepare(&mut issuer).await.unwrap();
@@ -1133,7 +1134,7 @@ fn public_mechanism() {
             issuer = lock_operation(&instance, issuer, &mut observer, true).await;
             observer.close().await.unwrap();issuer.close().await.unwrap();
         });
-        instance.stop();
+        instance.stop().expect("owned server stops before capture");
         let log = capture(&root.join("server.log")).unwrap();
         assert!(
             !contains(&log, PUBLIC_VERIFIER),
@@ -1368,9 +1369,10 @@ fn configuration_refusals() {
         (Inventory::Destinations, &[("syslog_sequence_numbers", "off")]),
         (Inventory::Destinations, &[("syslog_split_messages", "off")]),
     ];
-    for (index, (row, settings)) in cases.iter().enumerate() {
-        let root = std::env::temp_dir().join(format!("credential-configuration-{}-{index}", std::process::id()));
-        let mut instance = OwnedInstance::configured(&programs, root.clone(), StandingProfile::Statement, settings);
+    for (row, settings) in cases {
+        let directory = super::FixtureRoot::create("credential-configuration");
+        let root = directory.path.clone();
+        let mut instance = OwnedInstance::configured(&programs, directory, StandingProfile::Statement, settings);
         runtime.block_on(configuration_refusal(&instance, *row));
         instance.finish();
         assert!(!root.exists(), "refused public configuration removed");

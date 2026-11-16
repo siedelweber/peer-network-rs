@@ -4195,6 +4195,22 @@
       "review": "Read each child refusal before any executable launch, the genuine selected receipt, the same-length substituted file and the exact expected error. The receipt is local build binding, not artifact authenticity or an installation witness. The control binds bytes at resolution only; replacement before exec and caller-controlled runner variables, receipt or inputs are outside its scope."
     },
     {
+      "operation": "pn-host::credential_fixture::binding_panic",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-binding-panic-removes-root",
+      "before": "",
+      "after": "A binding run that panics after acquiring its root removes that root during unwinding, before any executable is launched.",
+      "review": "Read the binding case dispatcher with an injected invalid case, its caught panic and the independent directory-absence assertion; the same owned root used by normal binding cases unwinds before any child launch."
+    },
+    {
+      "operation": "pn-host::credential_fixture::cleanup_reporting",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-cleanup-report-preserves-panic",
+      "before": "",
+      "after": "Cleanup-error reporting during unwinding preserves the original panic for public UTF-8 and non-UTF-8 paths instead of raising a second panic.",
+      "review": "Read the injected IO error in a destructor during an exact public panic for both path encodings; recovery of that original payload witnesses the non-panicking reporter. This does not inject a server stop or filesystem failure and does not guarantee output delivery to a closed stream."
+    },
+    {
       "operation": "pn-host::credential_fixture::handovers",
       "path": "packages/host/src/credential_fixture.rs",
       "claim": "HOST::claim:host:credential-handover-refuses-before-construction",
@@ -4203,12 +4219,20 @@
       "review": "Read the real exec wrapper and each acquisition class, exact nonzero status, empty streams and absence of terminal success. Each mutant retains an independent later refusal so this control constructs no credential. Successful delivery, framing and retained-writer hangs remain unwitnessed."
     },
     {
+      "operation": "pn-host::credential_fixture::instance_panic",
+      "path": "packages/host/src/credential_fixture.rs",
+      "claim": "HOST::claim:host:credential-instance-panic-cleans-up",
+      "before": "",
+      "after": "A panic before server setup removes the owned root; a panic after startup stops the owned server before removing its root, witnessed by its process identity and directory absence.",
+      "review": "Read both caught public panics, the live postmaster observation before the second panic, and the independent stopped-process and removed-directory assertions after unwinding. Kill cleanup and cross-container liveness are not witnessed."
+    },
+    {
       "operation": "pn-host::credential_fixture::instance_prerequisites",
       "path": "packages/host/src/credential_fixture.rs",
       "claim": "HOST::claim:host:credential-instance-prerequisites",
-      "before": "",
-      "after": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits and a leftover directory before instance use.",
-      "review": "Read the independent typed refusal assertions for missing or relative programs, wrong version, unreviewed series, non-piped collector, unchanged core limits and a pre-existing instance directory. These checks admit only the recorded public fixture prerequisites; they witness no installation policy."
+      "before": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits and a leftover directory before instance use.",
+      "after": "Public prerequisites reject absent programs, a different version, an unreviewed kernel or collector, unchanged core limits; atomic creation skips an existing same-number path without altering it.",
+      "review": "Read the unchanged independent prerequisite refusals and the atomic-creation control: an occupied same-number path retains its marker while the next candidate is acquired. The retired leftover refusal is replaced by collision avoidance, not a sweep or an installation witness."
     },
     {
       "operation": "pn-host::credential_fixture::owned_instances",
