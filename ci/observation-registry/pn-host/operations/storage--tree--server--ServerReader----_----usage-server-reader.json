@@ -13,7 +13,7 @@
       "rule": "ROOT::rule:observe:spans",
       "kind": "inherited",
       "justification": "Justified: Counter observation inherits the enclosing read operation and performs no storage work.",
-      "witness": "HOST::claim:history:tree-server-reads",
+      "witness": "HOST::claim:history:tree-server-limits",
       "boundary": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::exact",
       "class_decision": "host-storage"
     }

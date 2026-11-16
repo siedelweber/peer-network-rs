@@ -225,7 +225,7 @@ impl super::super::roster::ReadContract for Fixture<'_> {
     }
 }
 
-/// Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; nested forks and empty interiors preserve branch-relative results, and a closure-bearing generation retains the original edition. Six read and page shapes cross the server charge plan's exact and one-below row and allocation ceilings, including an empty advancing tip page and late refusal after validation events; maximum version delivery and its overflow refuse before a query when not admitted. A chunk surplus reaches the bounded production count check, and inspected index-ordered plans use LIMIT without a sort under the stated fixture planner settings. These finite controls claim no general corruption coverage, writer atomicity, admission, audit, public label carrier or production budget.
+/// Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; this finite evidence establishes no writer atomicity, admission, audit, public label carrier or production budget.
 /// ´claim:history:tree-server-reads´
 /// ´test:unit:tree-server-reads´
 #[test]
@@ -237,28 +237,136 @@ fn tree_server_reads() {
             runtime: &runtime,
             store: std::cell::RefCell::new(runtime.block_on(async { ServerTree::open(session().await).await.unwrap() })),
         };
+        drop(model);
         super::super::roster::read_assertions(&fixture);
-        runtime.block_on(page_assertions(&model, &mut fixture.store.borrow_mut()));
-        if !reverse {
-            bounds::run(&fixture);
-            let before = super::super::roster::ReadContract::snapshot(&fixture);
-            runtime.block_on(plans::run(&mut fixture.store.borrow_mut()));
-            runtime.block_on(plans::surplus(&mut fixture.store.borrow_mut()));
-            assert_eq!(
-                super::super::roster::ReadContract::snapshot(&fixture),
-                before,
-                "surplus restoration and plans preserve fixture"
-            );
-            runtime.block_on(bounds::chunk_delivery(&mut fixture.store.borrow_mut()));
-            assert_eq!(
-                super::super::roster::ReadContract::snapshot(&fixture),
-                before,
-                "maximum chunk restoration is exact"
-            );
-            runtime.block_on(bounds::delivery(&mut fixture.store.borrow_mut()));
-            runtime.block_on(branches::run());
-        }
     }
+}
+
+/// Claim: Root, child and bounded tip pages on two explicit server arrival orders equal the memory reference pages, including empty advancing tip pages and end cursors, without changing stored state.
+/// ´claim:history:tree-server-pages´
+/// ´test:unit:tree-server-pages´
+#[test]
+fn tree_server_pages() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    for reverse in [false, true] {
+        let model = runtime.block_on(setup(reverse));
+        let fixture = Fixture {
+            runtime: &runtime,
+            store: std::cell::RefCell::new(runtime.block_on(async { ServerTree::open(session().await).await.unwrap() })),
+        };
+        let before = super::super::roster::ReadContract::snapshot(&fixture);
+        runtime.block_on(page_assertions(&model, &mut fixture.store.borrow_mut()));
+        assert_eq!(
+            super::super::roster::ReadContract::snapshot(&fixture),
+            before,
+            "pages preserve complete state"
+        );
+    }
+}
+
+/// Claim: Explicit server fixtures preserve branch-relative exact and as-of results across nested forks, side branches and long empty interiors, with descriptor work determined by the named ancestry rather than segment length or side-branch count.
+/// ´claim:history:tree-server-nested´
+/// ´test:unit:tree-server-nested´
+#[test]
+fn tree_server_nested() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(branches::run());
+}
+
+/// Claim: A closure-bearing explicit server generation preserves the original selected edition under the one law.
+/// ´claim:history:tree-server-closure´
+/// ´test:unit:tree-server-closure´
+#[test]
+fn tree_server_closure() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(branches::closure());
+}
+
+/// Claim: Six server read and page shapes cross their adapter charge plan at exact and one-below row and allocation ceilings, including an empty advancing tip page and late refusal after validation events, with no reconstructed result on refusal and unchanged stored state.
+/// ´claim:history:tree-server-limits´
+/// ´test:unit:tree-server-limits´
+#[test]
+fn tree_server_limits() {
+    with_fixture(|fixture| {
+        bounds::run(fixture);
+    });
+}
+
+/// Claim: Malformed server read requests refuse their own shape before any row or allocation allowance is charged, including a child page with zero limit at a generous allowance, without changing stored state.
+/// ´claim:history:tree-server-shapes´
+/// ´test:unit:tree-server-shapes´
+#[test]
+fn tree_server_shapes() {
+    with_fixture(|fixture| {
+        let before = super::super::roster::ReadContract::snapshot(fixture);
+        fixture.runtime.block_on(bounds::shapes(&mut fixture.store.borrow_mut()));
+        assert_eq!(
+            super::super::roster::ReadContract::snapshot(fixture),
+            before,
+            "shapes preserves complete state"
+        );
+    });
+}
+
+/// Claim: The production server reader reserves maximum chunk and version delivery before execution, refuses one below each delivery boundary and checked reservation overflow with no fetch, and reconstructs the admitted complete chunk without changing its fixture.
+/// ´claim:history:tree-server-delivery´
+/// ´test:unit:tree-server-delivery´
+#[test]
+fn tree_server_delivery() {
+    with_fixture(|fixture| {
+        let before = super::super::roster::ReadContract::snapshot(fixture);
+        fixture
+            .runtime
+            .block_on(bounds::chunk_delivery(&mut fixture.store.borrow_mut()));
+        assert_eq!(
+            super::super::roster::ReadContract::snapshot(fixture),
+            before,
+            "delivery preserves complete state"
+        );
+        fixture.runtime.block_on(bounds::delivery(&mut fixture.store.borrow_mut()));
+    });
+}
+
+/// Claim: A charged bounded surplus probe delivers one excess package chunk to the production count check, which refuses corrupt history without reconstructing a result; restoring the explicit surplus leaves the complete fixture unchanged.
+/// ´claim:history:tree-server-surplus´
+/// ´test:unit:tree-server-surplus´
+#[test]
+fn tree_server_surplus() {
+    with_fixture(|fixture| {
+        let before = super::super::roster::ReadContract::snapshot(fixture);
+        fixture.runtime.block_on(plans::surplus(&mut fixture.store.borrow_mut()));
+        assert_eq!(
+            super::super::roster::ReadContract::snapshot(fixture),
+            before,
+            "surplus preserves complete state"
+        );
+    });
+}
+
+/// Claim: Eight index-ordered closed server reads use LIMIT and an index without a sort on the explicit fixture with sequential and bitmap scans disabled; this witnesses index capability rather than a universal optimizer choice and leaves stored state unchanged.
+/// ´claim:history:tree-server-plans´
+/// ´test:unit:tree-server-plans´
+#[test]
+fn tree_server_plans() {
+    with_fixture(|fixture| {
+        let before = super::super::roster::ReadContract::snapshot(fixture);
+        fixture.runtime.block_on(plans::run(&mut fixture.store.borrow_mut()));
+        assert_eq!(
+            super::super::roster::ReadContract::snapshot(fixture),
+            before,
+            "plans preserves complete state"
+        );
+    });
+}
+
+fn with_fixture(check: impl FnOnce(&Fixture<'_>)) {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(setup(false));
+    let fixture = Fixture {
+        runtime: &runtime,
+        store: std::cell::RefCell::new(runtime.block_on(async { ServerTree::open(session().await).await.unwrap() })),
+    };
+    check(&fixture);
 }
 
 async fn page_assertions(model: &MemoryTree<'static>, store: &mut ServerTree) {

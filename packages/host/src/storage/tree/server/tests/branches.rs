@@ -66,10 +66,9 @@ pub(super) async fn run() {
     for depth in [11, 4, 8, 3, 7] {
         read(&mut store, &main[11], &main[depth - 1], false).await;
     }
-    closure().await;
 }
 
-async fn closure() {
+pub(super) async fn closure() {
     let f = forks();
     let mut generation = f.generation.clone();
     let selected = f.main[0]

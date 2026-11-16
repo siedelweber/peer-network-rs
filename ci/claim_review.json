@@ -4627,12 +4627,76 @@
       "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
     },
     {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_closure",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-closure",
+      "before": "",
+      "after": "Claim: A closure-bearing explicit server generation preserves the original selected edition under the one law.",
+      "review": "The existing closure fixture is isolated without changing its contents or assertions. The production read retains the edition selected at its recorded coordinate despite a later closure. One law and explicit fixture installation do not establish succession or label currency."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_delivery",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-delivery",
+      "before": "",
+      "after": "Claim: The production server reader reserves maximum chunk and version delivery before execution, refuses one below each delivery boundary and checked reservation overflow with no fetch, and reconstructs the admitted complete chunk without changing its fixture.",
+      "review": "The maximum chunk is restored before a full-state comparison. Separate explicit maximum-field request fixtures exercise version delivery and checked multiplication overflow before execution, without claiming those rows form a complete admitted package. The control distinguishes reservations from final retained allocation and does not bound relay or driver bookkeeping."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_limits",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-limits",
+      "before": "",
+      "after": "Claim: Six server read and page shapes cross their adapter charge plan at exact and one-below row and allocation ceilings, including an empty advancing tip page and late refusal after validation events, with no reconstructed result on refusal and unchanged stored state.",
+      "review": "The existing six-query sweep measures this server adapter, including its empty advancing tip page. Binary ceiling searches and exact/one-below checks include provisional delivery and late strict-validation events; snapshots show the read failures change no retained state. Memory budget figures are not reused."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_nested",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-nested",
+      "before": "",
+      "after": "Claim: Explicit server fixtures preserve branch-relative exact and as-of results across nested forks, side branches and long empty interiors, with descriptor work determined by the named ancestry rather than segment length or side-branch count.",
+      "review": "The existing nested and long-interior fixture assertions remain unchanged and now execute at their own site. They compare whole exact and as-of reads before and after side growth and on nested ancestry; explicit installation is setup and not writer evidence."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_pages",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-pages",
+      "before": "",
+      "after": "Claim: Root, child and bounded tip pages on two explicit server arrival orders equal the memory reference pages, including empty advancing tip pages and end cursors, without changing stored state.",
+      "review": "Two arrival orders compare roots, direct children and one-candidate tip pages with the memory logical reference. The loop asserts cursor progress on empty pages and equality through the end cursor; a complete-state snapshot brackets the production reads. This does not claim corruption enumeration or whole-tree audit."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_plans",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-plans",
+      "before": "",
+      "after": "Claim: Eight index-ordered closed server reads use LIMIT and an index without a sort on the explicit fixture with sequential and bitmap scans disabled; this witnesses index capability rather than a universal optimizer choice and leaves stored state unchanged.",
+      "review": "The eight existing EXPLAIN assertions inspect index capability with enable_seqscan and enable_bitmapscan disabled, then restore those settings. LIMIT, index use and absence of Sort are asserted only for index-ordered projections, not introduction act sorting or an optimizer decision on arbitrary data; snapshots bracket the queries."
+    },
+    {
       "operation": "pn-host::storage::tree::server::tests::tree_server_reads",
       "path": "packages/host/src/storage/tree/server/tests.rs",
       "claim": "HOST::claim:history:tree-server-reads",
       "before": "",
-      "after": "Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; nested forks and empty interiors preserve branch-relative results, and a closure-bearing generation retains the original edition. Six read and page shapes cross the server charge plan's exact and one-below row and allocation ceilings, including an empty advancing tip page and late refusal after validation events; maximum version delivery and its overflow refuse before a query when not admitted. A chunk surplus reaches the bounded production count check, and inspected index-ordered plans use LIMIT without a sort under the stated fixture planner settings. These finite controls claim no general corruption coverage, writer atomicity, admission, audit, public label carrier or production budget.",
-      "review": "Finite explicit server fixtures exercise the production closed decoder and the unchanged logical branch assertions in two arrival orders. Whole-state snapshots are test-only SQL inspections, not a hidden reader model. Charge ceilings belong to this adapter and include provisional delivery reservations; surplus is the named set-count witness, not general corruption coverage. Plans inspect index capability on a tiny fixture with sequential and bitmap scans disabled, not a universal optimizer choice. Nested and closure controls establish no writer, audit, admission, public label carrier, second-law machinery or production budget."
+      "after": "Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; this finite evidence establishes no writer atomicity, admission, audit, public label carrier or production budget.",
+      "review": "The unchanged shared logical roster executes on two explicit server fixture arrival orders through production reconstruction and strict validation. Its snapshot and exact identity, byte, selection-origin and debit-order assertions support branch reads alone; paging, budgets, planner capability and delivery have separate sites. No writer, audit or general corruption evidence is inferred."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_shapes",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-shapes",
+      "before": "",
+      "after": "Claim: Malformed server read requests refuse their own shape before any row or allocation allowance is charged, including a child page with zero limit at a generous allowance, without changing stored state.",
+      "review": "The existing request-shape checks run separately before either budget unit is admitted. Zero allowances and the generous child-page allowance distinguish shape precedence from exhausted admission. Complete-state snapshots bracket the control; no damaged stored-state predicate is claimed."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::tree_server_surplus",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:history:tree-server-surplus",
+      "before": "",
+      "after": "Claim: A charged bounded surplus probe delivers one excess package chunk to the production count check, which refuses corrupt history without reconstructing a result; restoring the explicit surplus leaves the complete fixture unchanged.",
+      "review": "One explicit surplus package chunk is the narrow corruption witness required by the set-read contract. The production bounded count check refuses reconstruction; restoration is verified against a complete-state snapshot. Other damaged shapes are not inferred from this witness."
     },
     {
       "operation": "pn-host::storage::tree::tests::tree_generation_atomic",

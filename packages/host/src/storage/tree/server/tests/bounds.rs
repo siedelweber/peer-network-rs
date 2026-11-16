@@ -122,7 +122,6 @@ pub(super) fn run(fixture: &Fixture<'_>) {
             }))
             .unwrap();
         }
-        shapes(&mut store).await;
     });
     drop(store);
     assert_eq!(
@@ -132,7 +131,7 @@ pub(super) fn run(fixture: &Fixture<'_>) {
     );
 }
 
-async fn shapes(store: &mut ServerTree) {
+pub(super) async fn shapes(store: &mut ServerTree) {
     let f = forks();
     let scope = f.main[0].event().0;
     let mut reader = store.reader(ReadBudget { rows: 0, bytes: 0 }).await.unwrap();

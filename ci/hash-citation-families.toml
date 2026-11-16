@@ -1312,3 +1312,13 @@ reader = "comparison-carrier-vectors"
 source = "packages/host/tests/data/comparison-carriers.json"
 definition = "Regenerate unsorted explicitly selected comparison fragments through the existing integer generator, without the codec or interchange helpers. The binary64-corpus step checks both corpora independently of literal accounting. These supplied cases check structural refusal order and endpoint implications, not enclosure origin or soundness; no digest identity is assigned."
 paths = ["packages/host/tests/data/comparison-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/comparison.rs"]
+
+[[rows]]
+family = "storage-payload-bound"
+group = "bounded storage delivery"
+measures = "The 262144-octet storage payload and chunk bound"
+producer = "Record 015 canonical values and admitted layout"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "The explicit SQL integer denotes the payload bound of amend:storage:canonical-values in bounded projections and matching catalogue checks, not an identity or a protocol discriminator. Catalogue comparison renders that same integer in PostgreSQL canonical decimal form."
+paths = ["packages/host/src/storage.rs", "packages/host/src/storage/catalogue.rs"]

@@ -2975,17 +2975,8 @@
         "pn-host::scram::tests::derivation_cost": "calibrated-host-scram-derivation-cost-case",
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
-      "case_level_reasons": {
-        "pn-host::storage::tree::server::tests::tree_server_reads": "Composes the protected production session, pinned PostgreSQL service, bounded closed statements, strict validator and shared logical roster; private placement permits charged-step assertions and explicit fixture installation, not a local-unit claim."
-      },
-      "case_levels": {
-        "pn-host::storage::tree::server::tests::tree_server_reads": "integration"
-      },
       "cases": [
-        "pn-host::storage::tree::server::tests::tree_server_reads",
         "pn-host::storage::tree::tests::tree_stored_text_domain",
-        "pn-host::storage::catalogue::tests::tree_catalogue_exact",
-        "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles",
         "pn-host::storage::tree::tests::tree_read_shapes",
         "pn-host::storage::tree::tests::tree_read_page_limits",
         "pn-host::storage::tree::tests::tree_read_closure",
@@ -3264,6 +3255,29 @@
       "kind": "suite",
       "level": "unit",
       "name": "pn-host::storage",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
+    },
+    {
+      "budget": "postgresql-suite",
+      "cases": [
+        "pn-host::storage::tree::server::tests::tree_server_reads",
+        "pn-host::storage::tree::server::tests::tree_server_pages",
+        "pn-host::storage::tree::server::tests::tree_server_nested",
+        "pn-host::storage::tree::server::tests::tree_server_closure",
+        "pn-host::storage::tree::server::tests::tree_server_limits",
+        "pn-host::storage::tree::server::tests::tree_server_shapes",
+        "pn-host::storage::tree::server::tests::tree_server_delivery",
+        "pn-host::storage::tree::server::tests::tree_server_surplus",
+        "pn-host::storage::tree::server::tests::tree_server_plans",
+        "pn-host::storage::catalogue::tests::tree_catalogue_exact",
+        "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles"
+      ],
+      "implementation": "pn-host-postgresql",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::storage-tree",
       "runner": "nextest",
       "status": "active",
       "tier": "service"
