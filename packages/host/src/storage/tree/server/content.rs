@@ -36,9 +36,14 @@ fn optional(a: Item<'_>, b: Item<'_>, compare: impl FnOnce(Item<'_>, Item<'_>) -
 }
 fn rational(a: Item<'_>, b: Item<'_>) -> Result<(), Error> {
     let text = a.text()?;
-    let (numerator, denominator) = text.split_once('/').unwrap_or((text, "1"));
     b.array(2)?;
-    require(b.field(0)?.text()? == numerator && b.field(1)?.text()? == denominator)
+    let numerator = b.field(0)?.text()?;
+    let denominator = b.field(1)?.text()?;
+    require(if denominator == "1" {
+        text == numerator
+    } else {
+        text.strip_prefix(numerator).and_then(|tail| tail.strip_prefix('/')) == Some(denominator)
+    })
 }
 fn amount(a: Item<'_>, b: Item<'_>) -> Result<(), Error> {
     a.array(2)?;
@@ -386,5 +391,66 @@ pub(super) fn marker_identity(a: Item<'_>, b: Item<'_>) -> Result<(), Error> {
         0 | 1 => same(a.field(1)?, b.field(1)?),
         2 => Ok(()),
         _ => Err(StorageError::CorruptHistory.into()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::{Meter, ReadBudget, Usage, spans::Validated};
+    use super::*;
+    use pn_interchange::{Array, Value};
+    use pn_records::numerics::{ComparisonLimits, ExactLimits, NumericContext};
+
+    /// Claim: The server reader's in-place rational comparison accepts the records carrier's canonical exact spelling and refuses a distinct respelling for seven public rational pairs at its private comparison boundary, without claiming an end-to-end damaged-store read.
+    /// ´claim:history:tree-server-rational-spelling´
+    /// ´test:unit:tree-server-rational-spelling´
+    #[test]
+    fn tree_server_rational_spelling() {
+        let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
+        for (numerator, denominator, alternate) in [
+            ("23", "11", "46/22"),
+            ("0", "1", "0/1"),
+            ("-3", "7", "-6/14"),
+            ("2", "1", "2/1"),
+            ("1", "3", "2/6"),
+            ("-2", "1", "-2/1"),
+            ("123456789012345678901234567890", "1", "123456789012345678901234567890/1"),
+        ] {
+            let joined = format!("{numerator}/{denominator}");
+            let literal = context.literal(&joined).unwrap();
+            let canonical = literal.exact();
+            assert_eq!(
+                context.literal(alternate).unwrap().exact(),
+                canonical,
+                "the respelling retains the exact value"
+            );
+            assert_ne!(canonical, alternate, "the negative input changes the stored spelling");
+            let pair = Value::Array(Array::new([
+                Value::Text(numerator.to_owned().into()),
+                Value::Text(denominator.to_owned().into()),
+            ]))
+            .to_canonical_bytes();
+            for (text, accepted) in [(canonical, true), (alternate, false)] {
+                let bytes = Value::Text(text.to_owned().into()).to_canonical_bytes();
+                let mut meter = Meter {
+                    limit: ReadBudget {
+                        rows: 0,
+                        bytes: 1_000_000,
+                    },
+                    used: Usage::default(),
+                };
+                let stored = Validated::new(&bytes, &mut meter).unwrap();
+                let published = Validated::new(&pair, &mut meter).unwrap();
+                let result = rational(stored.root().unwrap(), published.root().unwrap());
+                if accepted {
+                    assert!(result.is_ok(), "the writer's canonical spelling compares equal");
+                } else {
+                    assert!(
+                        matches!(result, Err(Error::Storage(StorageError::CorruptHistory))),
+                        "a respelled rational refuses at the comparison"
+                    );
+                }
+            }
+        }
     }
 }

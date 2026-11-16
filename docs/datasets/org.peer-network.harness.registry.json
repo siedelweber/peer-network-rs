@@ -2977,6 +2977,7 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",
         "pn-host::storage::tree::tests::tree_stored_text_domain",
         "pn-host::storage::tree::tests::tree_read_shapes",
         "pn-host::storage::tree::tests::tree_read_page_limits",

@@ -4659,6 +4659,14 @@
       "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
     },
     {
+      "operation": "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",
+      "path": "packages/host/src/storage/tree/server/content.rs",
+      "claim": "HOST::claim:history:tree-server-rational-spelling",
+      "before": "",
+      "after": "Claim: The server reader's in-place rational comparison accepts the records carrier's canonical exact spelling and refuses a distinct respelling for seven public rational pairs at its private comparison boundary, without claiming an end-to-end damaged-store read.",
+      "review": "Seven unsorted rational pairs cover zero, signed whole numbers, proper fractions, an improper fraction and a large whole number. The records constructor supplies the accepted canonical spelling; one distinct noncanonical text per pair must refuse CorruptHistory after strict span validation at the private comparator. This pure unit control does not install damaged server state or claim the full reader's corruption route."
+    },
+    {
       "operation": "pn-host::storage::tree::server::tests::tree_server_closure",
       "path": "packages/host/src/storage/tree/server/tests.rs",
       "claim": "HOST::claim:history:tree-server-closure",
