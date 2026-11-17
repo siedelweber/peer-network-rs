@@ -76,6 +76,115 @@ fn entry_origin_root_once() {
     assert_eq!(rows.iter().filter(|row| row["event_kind"] == "completion").count(), 1);
 }
 
+/// Claim: The shared installation decision passes the captured instant unchanged to its bootstrap step and returns one precreated zero-start root.
+/// ´claim:cli:entry-origin-installation-transfer´
+/// ´test:unit:entry-origin-installation-transfer´
+#[test]
+fn entry_origin_installation_transfer() {
+    let (observation, clock, capture) = fixture();
+    let captured = Instant::now().checked_sub(Duration::from_secs(7)).unwrap();
+    let origin = EntryOrigin::capture_with(|| captured);
+    let mut calls = 0;
+    let mut installation = install_from_origin_with(
+        origin,
+        true,
+        tracing::Level::INFO,
+        json!({"command":"fixture"}),
+        |enabled, debug, level, bridge, started| {
+            calls += 1;
+            assert!(enabled);
+            assert!(debug);
+            assert_eq!(level, tracing::Level::INFO);
+            assert!(bridge.is_none());
+            assert_eq!(started, captured);
+            Ok(BootstrapGuard(Some(observation.clone())))
+        },
+    )
+    .unwrap();
+    assert_eq!(calls, 1);
+    let next_id = observation.next_id.load(Ordering::Relaxed);
+    let lease = installation.take_root().unwrap();
+    assert_eq!(lease.operation.started, Duration::ZERO);
+    assert_eq!(next_id, 2);
+    clock.0.store(7000, Ordering::Relaxed);
+    lease.finish(Outcome::Success, json!("done"));
+    assert!(matches!(installation.take_root(), Err(RootAlreadyTaken)));
+    drop(installation);
+    let rows = records(&observation, &capture);
+    assert_eq!(rows.iter().filter(|row| row["event_kind"] == "start").count(), 1);
+    assert_eq!(rows.iter().filter(|row| row["event_kind"] == "completion").count(), 1);
+    assert_eq!(
+        rows.iter().find(|row| row["event_kind"] == "completion").unwrap()["detail"]["duration_seconds"],
+        7.0
+    );
+}
+
+/// Claim: Only the lease's scoped private hand-off authorizes adoption, without emitted or forgeable marker fields or retention after construction.
+/// ´claim:cli:entry-origin-adoption-is-private´
+/// ´test:unit:entry-origin-adoption-is-private´
+#[test]
+fn entry_origin_adoption_is_private() {
+    for trace in [false, true] {
+        let (mut observation, clock, capture) = fixture();
+        observation.full_trace = trace;
+        let mut installation =
+            OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+        let lease = installation.take_root().unwrap();
+        with_fixture_subscriber(&observation, || {
+            let scope = lease.enter_command_scope("fixture");
+            assert!(ROOT_HANDOFF.with(std::cell::Cell::get).is_none());
+            tracing::info!(message = "inside adopted scope");
+            scope.finish_with(Outcome::Success, &());
+            assert_eq!(observation.next_id.load(Ordering::Relaxed), 2);
+            let forged = tracing::info_span!(
+                "rule:observe:spans",
+                execution_owner = "CLICOMMON",
+                source_item = "run_stdout_json_command_from_origin",
+                adopted_root_id = lease.operation.id
+            );
+            let entered = forged.enter();
+            drop(entered);
+            drop(forged);
+            assert_eq!(observation.next_id.load(Ordering::Relaxed), 3);
+        });
+        assert!(ROOT_HANDOFF.with(std::cell::Cell::get).is_none());
+
+        let (other, _, other_capture) = fixture();
+        let ticket = RootHandoff {
+            observation: Arc::as_ptr(&observation.next_id) as usize,
+            root_id: lease.operation.id,
+        };
+        with_fixture_subscriber(&other, || {
+            let span = with_root_handoff(ticket, || command_scope_span("wrong-owner"));
+            assert!(ROOT_HANDOFF.with(std::cell::Cell::get).is_none());
+            drop(span);
+        });
+        let mismatch_rows = records(&other, &other_capture);
+        assert_eq!(mismatch_rows.iter().filter(|row| row["event_kind"] == "start").count(), 1);
+
+        let unwind = std::panic::catch_unwind(|| {
+            with_root_handoff(ticket, || panic!("construction unwind"));
+        });
+        assert!(unwind.is_err());
+        assert!(ROOT_HANDOFF.with(std::cell::Cell::get).is_none());
+        clock.0.store(25, Ordering::Relaxed);
+        lease.finish(Outcome::Success, json!("done"));
+        drop(installation);
+        let rows = records(&observation, &capture);
+        let own_span_rows: Vec<_> = rows
+            .iter()
+            .filter(|row| row["kind"] == "trace" || row["fields"]["command_name"] == "fixture")
+            .collect();
+        assert!(own_span_rows.iter().all(|row| !row.to_string().contains("adopted_root_id")));
+        assert_eq!(
+            rows.iter()
+                .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+                .count(),
+            1
+        );
+    }
+}
+
 /// Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal.
 /// ´claim:cli:unavailable-observation-preserves-command-execution´
 /// ´test:unit:unavailable-observation´
@@ -1653,9 +1762,34 @@ pub(crate) fn existing_path_records() -> Vec<Value> {
     let child = root.child(OperationKind::PublicCli, json!({"operation":"fixture-child"}));
     clock.0.store(250, Ordering::Relaxed);
     child.finish(Outcome::Success, json!({"child":"done"}));
+    with_fixture_subscriber(&observation, || {
+        clock.0.store(300, Ordering::Relaxed);
+        let parent = tracing::info_span!(
+            "rule:observe:spans",
+            execution_owner = "CLICOMMON",
+            source_item = "fixture-parent"
+        );
+        let parent_entered = parent.enter();
+        clock.0.store(350, Ordering::Relaxed);
+        let nested = tracing::info_span!(
+            "rule:observe:spans",
+            execution_owner = "CLICOMMON",
+            source_item = "fixture-nested"
+        );
+        let nested_entered = nested.enter();
+        clock.0.store(400, Ordering::Relaxed);
+        drop(nested_entered);
+        drop(nested);
+        clock.0.store(450, Ordering::Relaxed);
+        drop(parent_entered);
+        drop(parent);
+    });
     clock.0.store(500, Ordering::Relaxed);
     root.finish(Outcome::Success, json!({"root":"done"}));
     records(&observation, &capture)
+        .into_iter()
+        .filter(|row| row["kind"] == "metering")
+        .collect()
 }
 pub(crate) fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     if observation.closing.load(Ordering::Acquire) {

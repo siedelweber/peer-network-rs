@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::<ArmedRootHandoff as Drop>::drop",
+    "owner": "CLICOMMON",
+    "signature": "fn drop (& mut self)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This private construction ticket is contained by the explicit command root and must be restored even during unwinding.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-adoption-is-private",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<ArmedRootHandoff as Drop>::drop",
+    "body": "{ ROOT_HANDOFF . set (self . 0) ; }",
+    "class_decision": "delivery",
+    "item_premise": "This private body belongs to the opt-in origin installation and adoption decision; it creates no independent operation and leaves ordinary accounting paths unchanged.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

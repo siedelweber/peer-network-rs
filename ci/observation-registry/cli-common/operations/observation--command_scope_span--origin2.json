@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::command_scope_span",
+    "owner": "CLICOMMON",
+    "signature": "fn command_scope_span (command_name : & str) -> tracing :: Span",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This private span constructor lends the explicit command root to the accounting layer without creating another operation.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-adoption-is-private",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::command_scope_span",
+    "body": "{ COMMAND_SCOPE_CALLSITE . register () ; let meta = COMMAND_SCOPE_CALLSITE . metadata () ; let fields = meta . fields () ; let execution_owner = fields . field (\"execution_owner\") . unwrap () ; let claim_owner = fields . field (\"claim_owner\") . unwrap () ; let claim_label = fields . field (\"claim_label\") . unwrap () ; let source_item = fields . field (\"source_item\") . unwrap () ; let command_field = fields . field (\"command_name\") . unwrap () ; let pairs = [(& execution_owner , Some (& \"CLICOMMON\" as & dyn tracing :: field :: Value)) , (& claim_owner , Some (& \"ROOT\" as & dyn tracing :: field :: Value)) , (& claim_label , Some (& \"rule:observe:spans\" as & dyn tracing :: field :: Value)) , (& source_item , Some (& \"run_stdout_json_command_from_origin\" as & dyn tracing :: field :: Value) ,) , (& command_field , Some (& command_name as & dyn tracing :: field :: Value)) ,] ; let values = fields . value_set (& pairs) ; tracing :: Span :: new (meta , & values) }",
+    "class_decision": "delivery",
+    "item_premise": "This private body belongs to the opt-in origin installation and adoption decision; it creates no independent operation and leaves ordinary accounting paths unchanged.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

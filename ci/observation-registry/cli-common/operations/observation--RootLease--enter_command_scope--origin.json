@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::RootLease < '_ >::enter_command_scope",
-    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_stdout_json_command_from_origin\" , command_name , adopted_root_id = self . operation . id) . entered () ,) }",
+    "body": "{ let ticket = RootHandoff { observation : Arc :: as_ptr (& self . operation . observation . next_id) as usize , root_id : self . operation . id , } ; let span = with_root_handoff (ticket , | | command_scope_span (command_name)) ; Scope (span . entered ()) }",
     "class_decision": "delivery",
-    "item_premise": "This body is the opt-in origin route for observation::RootLease < '_ >::enter_command_scope; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "This lease arms a same-thread private ticket only during construction of its command span, then enters the span after disarming; the lease alone owns root completion.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

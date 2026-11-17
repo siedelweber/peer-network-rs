@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::bootstrap_inner",
+    "owner": "CLICOMMON",
+    "signature": "fn bootstrap_inner (enabled : bool , _debug : bool , _default_level : tracing :: Level , bridge : Option < Arc < crate :: observation_export :: Bridge > > , started : Instant ,) -> Result < BootstrapGuard , BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: Bootstrap installs the observer before any instrumented command span can exist; its unchanged body is reviewed and pinned.",
+      "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::bootstrap_inner",
+    "body": "{ let level = configured_level () ? ; if ! enabled { let status = Observation :: with_writer (StderrSink , Arc :: new (SystemClock (Instant :: now ()))) . map_err (| _ | ObserverUnavailable :: StatusWriter) ? ; status . emit (json ! ({ \"kind\" : \"observation_status\" , \"name\" : \"dec:observe:sinks\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"dec:observe:sinks\" , \"execution_owner\" : \"CLICOMMON\" , \"availability\" : \"disabled\" , \"measurements\" : \"unavailable\" })) ; status . flush () ; return Ok (BootstrapGuard (None)) ; } if GLOBAL . get () . is_some () { return Err (ObserverUnavailable :: ObservationAlreadyInitialized . into ()) ; } let evidence_capture = false ; # [cfg (feature = \"observation-test-hook\")] let evidence_capture = evidence_capture || std :: env :: var_os (\"PN_OBSERVE_COMPLETE_EVIDENCE\") . is_some () ; let mut observation = if evidence_capture { Observation :: with_delivery (StderrSink , Arc :: new (SystemClock (started)) , bridge , EVIDENCE_QUEUE_RECORDS , true ,) } else { Observation :: with_writer_bridge (StderrSink , Arc :: new (SystemClock (started)) , bridge) } . map_err (| _ | ObserverUnavailable :: Writer) ? ; observation . full_trace = level ; tracing_subscriber :: registry () . with (AccountingLayer (observation . clone () , None)) . try_init () . map_err (| _ | ObserverUnavailable :: SubscriberAlreadyInitialized) ? ; metrics :: set_global_recorder (observation . recorder . clone ()) . map_err (| _ | ObserverUnavailable :: MetricsAlreadyInitialized) ? ; GLOBAL . set (observation . clone ()) . map_err (| _ | ObserverUnavailable :: ObservationAlreadyInitialized) ? ; let mut operation = observation . operation (OperationKind :: Bootstrap , json ! ({ \"level\" : if observation . full_trace { \"trace\" } else { \"default\" } , \"queue_records\" : observation . queue_records , \"record_capacity_bytes\" : RECORD_LIMIT })) ; operation . started = Duration :: ZERO ; operation . finish (Outcome :: Success , json ! ({ \"subscriber\" : \"accounting_layer\" , \"metrics_recorder\" : \"json\" }) ,) ; Ok (BootstrapGuard (Some (observation))) }",
+    "class_decision": "delivery",
+    "item_premise": "This private body belongs to the opt-in origin installation and adoption decision; it creates no independent operation and leaves ordinary accounting paths unchanged.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

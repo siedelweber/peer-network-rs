@@ -277,6 +277,8 @@
     "cli-common::observation::tests::default_emission": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
     "cli-common::observation::tests::default_return_outcomes": "Claim: At default, nested instrumented returns and scoped finishes each classify Ok as success and Err as error without formatting either payload, so returned work cannot be reported as incomplete merely because trace capture is disabled.",
     "cli-common::observation::tests::drain_timeout_preserves_loss": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
+    "cli-common::observation::tests::entry_origin_adoption_is_private": "",
+    "cli-common::observation::tests::entry_origin_installation_transfer": "",
     "cli-common::observation::tests::entry_origin_is_inert": "",
     "cli-common::observation::tests::entry_origin_root_once": "",
     "cli-common::observation::tests::entry_origin_spans_prefix": "",

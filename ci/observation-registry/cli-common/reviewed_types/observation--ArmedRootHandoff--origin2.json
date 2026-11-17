@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::ArmedRootHandoff",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "struct ArmedRootHandoff (Option < RootHandoff >) ;"
+  }
+}

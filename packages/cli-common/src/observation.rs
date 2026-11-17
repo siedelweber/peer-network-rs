@@ -15,6 +15,7 @@ use serde::Serialize;
 use serde_json::{Map, Value, json};
 use tracing::{
     Subscriber,
+    callsite::{Callsite, DefaultCallsite, Identifier},
     field::{Field, Visit},
     span::{Attributes, Id, Record},
 };
@@ -101,6 +102,71 @@ impl LossCauses {
 }
 
 thread_local! { static OBSERVING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
+thread_local! { static ROOT_HANDOFF: std::cell::Cell<Option<RootHandoff>> = const { std::cell::Cell::new(None) }; }
+
+#[derive(Clone, Copy)]
+struct RootHandoff {
+    observation: usize,
+    root_id: u64,
+}
+
+struct ArmedRootHandoff(Option<RootHandoff>);
+impl ArmedRootHandoff {
+    /// Justified: This private ticket exists only during construction of the enclosing command root span and has no independent operation.
+    fn new(ticket: RootHandoff) -> Self {
+        Self(ROOT_HANDOFF.replace(Some(ticket)))
+    }
+}
+/// Justified: This private hand-off helper restores the enclosing command root ticket after span construction and has no independent operation.
+fn with_root_handoff<T>(ticket: RootHandoff, construct: impl FnOnce() -> T) -> T {
+    let _armed = ArmedRootHandoff::new(ticket);
+    construct()
+}
+impl Drop for ArmedRootHandoff {
+    /// Justified: This private construction ticket is contained by the explicit command root and must be restored even during unwinding.
+    fn drop(&mut self) {
+        ROOT_HANDOFF.set(self.0);
+    }
+}
+
+static COMMAND_SCOPE_META: tracing::Metadata<'static> = tracing::Metadata::new(
+    "rule:observe:spans",
+    module_path!(),
+    tracing::Level::INFO,
+    Some(file!()),
+    Some(line!()),
+    Some(module_path!()),
+    tracing::field::FieldSet::new(
+        &["execution_owner", "claim_owner", "claim_label", "source_item", "command_name"],
+        Identifier(&COMMAND_SCOPE_CALLSITE),
+    ),
+    tracing::metadata::Kind::SPAN,
+);
+static COMMAND_SCOPE_CALLSITE: DefaultCallsite = DefaultCallsite::new(&COMMAND_SCOPE_META);
+
+/// Justified: This private span constructor lends the explicit command root to the accounting layer without creating another operation.
+fn command_scope_span(command_name: &str) -> tracing::Span {
+    COMMAND_SCOPE_CALLSITE.register();
+    let meta = COMMAND_SCOPE_CALLSITE.metadata();
+    let fields = meta.fields();
+    let execution_owner = fields.field("execution_owner").unwrap();
+    let claim_owner = fields.field("claim_owner").unwrap();
+    let claim_label = fields.field("claim_label").unwrap();
+    let source_item = fields.field("source_item").unwrap();
+    let command_field = fields.field("command_name").unwrap();
+    let pairs = [
+        (&execution_owner, Some(&"CLICOMMON" as &dyn tracing::field::Value)),
+        (&claim_owner, Some(&"ROOT" as &dyn tracing::field::Value)),
+        (&claim_label, Some(&"rule:observe:spans" as &dyn tracing::field::Value)),
+        (
+            &source_item,
+            Some(&"run_stdout_json_command_from_origin" as &dyn tracing::field::Value),
+        ),
+        (&command_field, Some(&command_name as &dyn tracing::field::Value)),
+    ];
+    let values = fields.value_set(&pairs);
+    tracing::Span::new(meta, &values)
+}
 struct Observing;
 impl Observing {
     fn enter(observation: &Observation) -> Option<Self> {
@@ -295,18 +361,12 @@ impl RootLease<'_> {
     /// Justified: This entry-origin adapter lends the existing root identity to a contextual span without creating another operation.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses child attachment to the enclosing root.
     pub(crate) fn enter_command_scope(&self, command_name: &str) -> Scope {
-        Scope(
-            tracing::info_span!(
-                "rule:observe:spans",
-                execution_owner = "CLICOMMON",
-                claim_owner = "ROOT",
-                claim_label = "rule:observe:spans",
-                source_item = "run_stdout_json_command_from_origin",
-                command_name,
-                adopted_root_id = self.operation.id
-            )
-            .entered(),
-        )
+        let ticket = RootHandoff {
+            observation: Arc::as_ptr(&self.operation.observation.next_id) as usize,
+            root_id: self.operation.id,
+        };
+        let span = with_root_handoff(ticket, || command_scope_span(command_name));
+        Scope(span.entered())
     }
 }
 
@@ -316,15 +376,32 @@ impl RootLease<'_> {
 /// Returns the existing configuration or observer-availability refusal.
 /// Justified: This entry-origin adapter installs the observer before a command span exists and transfers its duration to the explicit command root.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the prefix control witnesses the enclosing command operation.
-// Justified: One installation attempt must consume the origin token even though its Instant is Copy.
-#[expect(clippy::needless_pass_by_value)]
 pub fn install_from_origin(
     origin: EntryOrigin,
     debug: bool,
     default_level: tracing::Level,
     arguments: Value,
 ) -> Result<OriginInstallation, BootstrapError> {
-    let guard = bootstrap_inner(true, debug, default_level, None, origin.started)?;
+    install_from_origin_with(origin, debug, default_level, arguments, bootstrap_inner)
+}
+
+/// Justified: This shared entry-origin seam runs before its explicit command root exists and is witnessed by the transfer control.
+// Justified: The shared installation decision consumes the one-use origin even though its stored Instant is Copy.
+#[expect(clippy::needless_pass_by_value)]
+fn install_from_origin_with(
+    origin: EntryOrigin,
+    debug: bool,
+    default_level: tracing::Level,
+    arguments: Value,
+    bootstrap: impl FnOnce(
+        bool,
+        bool,
+        tracing::Level,
+        Option<Arc<crate::observation_export::Bridge>>,
+        Instant,
+    ) -> Result<BootstrapGuard, BootstrapError>,
+) -> Result<OriginInstallation, BootstrapError> {
+    let guard = bootstrap(true, debug, default_level, None, origin.started)?;
     OriginInstallation::from_guard(guard, arguments)
 }
 impl Clock for SystemClock {
@@ -1357,7 +1434,7 @@ impl Visit for SummaryFields {
     }
     /// Justified: Accounting accepts declared work without capturing public payloads.
     fn record_u64(&mut self, field: &Field, value: u64) {
-        if matches!(field.name(), "work_bytes" | "adopted_root_id") {
+        if field.name() == "work_bytes" {
             self.0.record_u64(field, value);
         }
     }
@@ -1405,10 +1482,17 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 self.0.loss_causes.note(&self.0.lost, 3);
                 return;
             }
-            let adopted_root_id = (fields.0.get("source_item").and_then(Value::as_str)
-                == Some("run_stdout_json_command_from_origin"))
-            .then(|| fields.0.get("adopted_root_id").and_then(Value::as_u64))
-            .flatten();
+            let adopted_root_id = (attributes.metadata().callsite() == Identifier(&COMMAND_SCOPE_CALLSITE))
+                .then(|| {
+                    ROOT_HANDOFF.with(|slot| {
+                        let ticket = slot.get()?;
+                        (ticket.observation == Arc::as_ptr(&self.0.next_id) as usize).then(|| {
+                            slot.set(None);
+                            ticket.root_id
+                        })
+                    })
+                })
+                .flatten();
             let command = matches!(
                 fields.0.get("source_item").and_then(Value::as_str),
                 Some(
@@ -1700,6 +1784,7 @@ fn configured_level() -> Result<bool, BootstrapError> {
     }
 }
 
+/// Justified: Bootstrap installs the observer before any instrumented command span can exist; its unchanged body is reviewed and pinned.
 fn bootstrap_inner(
     enabled: bool,
     _debug: bool,

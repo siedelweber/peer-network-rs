@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::install_from_origin",
-    "body": "{ let guard = bootstrap_inner (true , debug , default_level , None , origin . started) ? ; OriginInstallation :: from_guard (guard , arguments) }",
+    "body": "{ install_from_origin_with (origin , debug , default_level , arguments , bootstrap_inner) }",
     "class_decision": "delivery",
-    "item_premise": "This body is the opt-in origin route for observation::install_from_origin; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "This public origin installer delegates exactly once to the shared seam with the unchanged bootstrap body; its thin delegation remains source-read and body-pinned.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

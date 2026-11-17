@@ -250,7 +250,7 @@ fn entry_origin_installation_failure() {
     assert_eq!(*emitted.borrow(), [help]);
 }
 
-/// Claim: Existing private operation accounting without an origin emits the written expected records under a controlled clock and identifiers.
+/// Claim: Existing private operation and ordinary parent/child span accounting without an origin emits fixed expected records under a controlled clock and identifiers.
 /// ´claim:cli:entry-origin-existing-paths´
 /// ´test:crate:entry-origin-existing-paths´
 #[test]
@@ -259,9 +259,9 @@ fn entry_origin_existing_paths() {
     let timestamp = "2026-10-23T00:00:00Z";
     let process_id = std::process::id();
     let unavailable = json!({"value":null,"accuracy":"unavailable","unit":"bytes"});
-    let completion = |duration: f64, result: serde_json::Value| {
+    let completion = |duration: f64, result: serde_json::Value, outcome: &str| {
         json!({
-            "duration_seconds":duration,"duration_accuracy":"monotonic","outcome":"success",
+            "duration_seconds":duration,"duration_accuracy":"monotonic","outcome":outcome,
             "work":{"value":1,"accuracy":"exact","unit":"operations","aggregation":"one invoked operation; child invocations separate"},
             "resources":{"current":unavailable,"high_water":unavailable,"cumulative":unavailable,
                 "cpu_seconds":{"value":null,"accuracy":"unavailable","unit":"seconds"},
@@ -293,9 +293,43 @@ fn entry_origin_existing_paths() {
             2,
             Some(1),
             "completion",
-            completion(0.15, json!({"child":"done"})),
+            completion(0.15, json!({"child":"done"}), "success"),
         ),
-        record("Command", 1, None, "completion", completion(0.5, json!({"root":"done"}))),
+        record(
+            "PublicCli",
+            3,
+            None,
+            "start",
+            json!({"arguments":{"execution_owner":"CLICOMMON","source_item":"fixture-parent"}}),
+        ),
+        record(
+            "PublicCli",
+            4,
+            Some(3),
+            "start",
+            json!({"arguments":{"execution_owner":"CLICOMMON","source_item":"fixture-nested"}}),
+        ),
+        record(
+            "PublicCli",
+            4,
+            Some(3),
+            "completion",
+            completion(0.05, serde_json::Value::Null, "incomplete"),
+        ),
+        record(
+            "PublicCli",
+            3,
+            None,
+            "completion",
+            completion(0.15, serde_json::Value::Null, "incomplete"),
+        ),
+        record(
+            "Command",
+            1,
+            None,
+            "completion",
+            completion(0.5, json!({"root":"done"}), "success"),
+        ),
     ];
     assert_eq!(actual, expected);
 }

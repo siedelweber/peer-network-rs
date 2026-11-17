@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::RootHandoff",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Clone , Copy)] struct RootHandoff { observation : usize , root_id : u64 , }"
+  }
+}

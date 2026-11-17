@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::install_from_origin_with",
+    "owner": "CLICOMMON",
+    "signature": "fn install_from_origin_with (origin : EntryOrigin , debug : bool , default_level : tracing :: Level , arguments : Value , bootstrap : impl FnOnce (bool , bool , tracing :: Level , Option < Arc < crate :: observation_export :: Bridge > > , Instant ,) -> Result < BootstrapGuard , BootstrapError > ,) -> Result < OriginInstallation , BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This shared entry-origin seam runs before its explicit command root exists and is witnessed by the transfer control.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-installation-transfer",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::install_from_origin_with",
+    "body": "{ let guard = bootstrap (true , debug , default_level , None , origin . started) ? ; OriginInstallation :: from_guard (guard , arguments) }",
+    "class_decision": "delivery",
+    "item_premise": "This private body belongs to the opt-in origin installation and adoption decision; it creates no independent operation and leaves ordinary accounting paths unchanged.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

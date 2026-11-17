@@ -1266,6 +1266,22 @@
       "review": "The held-delivery contrast injects a zero window and observes its expiry before release; the complete route selects an unwindowed deployed wait, then acknowledges every held record after release. The private route observer pins the windowed test-build wait at its 600-second containment independently of scheduling. The batch-end, full-queue, timeout and unavailable controls remain. The after-drain event observes completion after the original acknowledgement attempt, so a caller timeout starts no second cleanup request. This claim does not witness the complete route's test-build timeout bound or caller naming. The separate overlapping-drains and event-wait-caller controls own their distinct propositions."
     },
     {
+      "operation": "cli-common::observation::tests::entry_origin_adoption_is_private",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-adoption-is-private",
+      "before": "",
+      "after": "Claim: Only the lease's scoped private hand-off authorizes adoption, without emitted or forgeable marker fields or retention after construction.",
+      "review": "Default and trace local subscribers observe genuine adoption without an emitted marker, a forged old-field span creating an ordinary operation, a second observation failing identity matching, and the slot cleared after success and unwinding."
+    },
+    {
+      "operation": "cli-common::observation::tests::entry_origin_installation_transfer",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-installation-transfer",
+      "before": "",
+      "after": "Claim: The shared installation decision passes the captured instant unchanged to its bootstrap step and returns one precreated zero-start root.",
+      "review": "The injected bootstrap callback checks the exact captured Instant and arguments once; the returned installation transfers a zero-start root once and emits one start and completion."
+    },
+    {
       "operation": "cli-common::observation::tests::entry_origin_is_inert",
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:entry-origin-is-inert",
@@ -1526,8 +1542,8 @@
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:entry-origin-existing-paths",
       "before": "",
-      "after": "Claim: Existing private operation accounting without an origin emits the written expected records under a controlled clock and identifiers.",
-      "review": "The test compares complete metering records with an independently written expected vector; it does not execute the public bootstrap or existing runners."
+      "after": "Claim: Existing private operation and ordinary parent/child span accounting without an origin emits fixed expected records under a controlled clock and identifiers.",
+      "review": "The expected metering vector was written from the base accounting path before its parent lookup changed; the test drives real ordinary parent and child spans and compares their complete metering records. It does not execute the public bootstrap or existing runners."
     },
     {
       "operation": "cli-common::tests::entry_origin_installation_failure",

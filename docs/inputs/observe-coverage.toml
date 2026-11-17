@@ -3,11 +3,11 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "cli-common"
-operations = 121
+operations = 127
 instrumented = 30
-exceptions = 88
+exceptions = 94
 helpers = 3
-generators = 43
+generators = 45
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 

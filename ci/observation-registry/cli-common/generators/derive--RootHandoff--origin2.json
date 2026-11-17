@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::RootHandoff",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "expansion_review": "This generated declaration supplies only structural private ticket state under the opt-in command root; it adds no emitted field, independent operation or ordinary-span parent selection.",
+    "class_decision": "public-cli"
+  }
+}

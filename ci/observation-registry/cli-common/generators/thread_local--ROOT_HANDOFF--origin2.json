@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::",
+    "kind": "item-macro",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "thread_local ! { static ROOT_HANDOFF : std :: cell :: Cell < Option < RootHandoff >> = const { std :: cell :: Cell :: new (None) } ; }",
+    "expansion_review": "This generated declaration supplies only structural private ticket state under the opt-in command root; it adds no emitted field, independent operation or ordinary-span parent selection.",
+    "class_decision": "public-cli"
+  }
+}

@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SummaryFields as Visit>::record_u64",
-    "body": "{ if matches ! (field . name () , \"work_bytes\" | \"adopted_root_id\") { self . 0 . record_u64 (field , value) ; } }",
+    "body": "{ if field . name () == \"work_bytes\" { self . 0 . record_u64 (field , value) ; } }",
     "class_decision": "delivery",
     "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_u64. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
     "assessments": {

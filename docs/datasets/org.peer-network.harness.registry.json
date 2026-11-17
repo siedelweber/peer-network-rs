@@ -941,6 +941,8 @@
         "cli-common::observation::tests::entry_origin_spans_prefix",
         "cli-common::observation::tests::entry_origin_is_inert",
         "cli-common::observation::tests::entry_origin_root_once",
+        "cli-common::observation::tests::entry_origin_adoption_is_private",
+        "cli-common::observation::tests::entry_origin_installation_transfer",
         "cli-common::tests::emit_writes_one_json_line",
         "cli-common::tests::entry_origin_runner_order",
         "cli-common::tests::entry_origin_installation_failure",
