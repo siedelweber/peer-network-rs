@@ -85,6 +85,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "EPOCH::def:compiler:fence-search",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The carrier retains and validates disclosed audit evidence under its explicit verifier premises, without asserting external finality.",
       "relation": "realizes",
       "source": "EPOCH::rule:admission:semantic-carrier",
@@ -96,6 +103,13 @@
       "relation": "realizes",
       "source": "EPOCH::rule:compiler:fence-refinement",
       "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "GRAPH::amend:numerics:binding-ridge",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -218,10 +232,24 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:admission-declarations",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
       "relation": "realizes",
       "source": "ROOT::amend:design:applied-dyadic-solve",
       "target": "cond:deployment:canonical-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:bite-six-close",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -295,6 +323,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:numerical-boundary-audit",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "The inventory specifies named public audit fields, not their external truth.",
       "relation": "realizes",
       "source": "ROOT::amend:design:publication-field-inventory",
@@ -334,6 +369,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:design:rung-proof-contract",
       "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:standing-comparison-plan",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -519,6 +561,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::cav:design:burn-response-holds",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "Only the required realization disclosures are carried; external economic and settlement assurance is explicitly not established.",
       "relation": "realizes",
       "source": "ROOT::cav:devnet:assurance",
@@ -544,6 +593,20 @@
       "relation": "realizes",
       "source": "ROOT::dec:design:burn-boundary",
       "target": "subsec:deployment:realization-obligations"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This locates the exact intersection and disjointness tests for the held reader relation; it supplies neither enclosure’s soundness premise nor an implemented consuming evaluator.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:comparison-verdict-record",
+      "target": "lem:deployment:sound-verdict-agreement"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses exact comparison of stated data without restating those data as enclosures, and asserts no soundness of an evaluated enclosure.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:comparison-verdict-record",
+      "target": "post:deployment:replay-verification"
     },
     {
       "conditional_on": "",
@@ -610,6 +673,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::gate:design:bite-6",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "Missing required disclosures are detectable publication failures; their external acquisition truth is not proved.",
       "relation": "realizes",
       "source": "ROOT::model:design:burn",
@@ -637,6 +707,13 @@
       "target": "ROOT::open:design:verdict-issuance"
     },
     {
+      "conditional_on": "post:deployment:verdict-issuance",
+      "reason": "The held placement of a rejected controller proposal’s verdict includes whole issuance to the deployment itself, which remains unclaimed and unbuilt.",
+      "relation": "relies",
+      "source": "ROOT::open:design:binding-ridge-controller-admission",
+      "target": "post:deployment:verdict-issuance"
+    },
+    {
       "conditional_on": "amend:testing:standing-work-execution",
       "reason": "Current Work-bearing replay needs the declaring numerical build and its exact internal accounting; mathematical inputs alone do not establish cross-build Work equality.",
       "relation": "relies",
@@ -652,10 +729,31 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:evaluated-scaling-joins",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:numeric-backend",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "This route retains the recipe and coordinated implementation hold, not its entropy premise.",
       "relation": "realizes",
       "source": "ROOT::open:design:proposal-carriage",
       "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:reference-wall-route",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -796,6 +894,13 @@
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
       "target": "cond:deployment:wall-calibration"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::rec:design:effective-schedule-fixtures",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -946,6 +1051,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:ridge-comparison",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
+    },
+    {
+      "conditional_on": "",
       "reason": "Public reconstruction reads the structural field without claiming the private opening or its entropy.",
       "relation": "realizes",
       "source": "ROOT::rule:devnet:author-public-evidence",
@@ -985,6 +1097,13 @@
       "relation": "relies",
       "source": "ROOT::rule:devnet:content-nonce",
       "target": "subsec:deployment:concealment-entropy"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "ROOT::verif:design:core-standing-properties",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",
@@ -1055,6 +1174,13 @@
       "relation": "realizes",
       "source": "input:org.peer-network.design.crates:pn-replay",
       "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
+      "relation": "realizes",
+      "source": "input:org.peer-network.design.implementation-bites:5",
+      "target": "ROOT::open:design:binding-ridge-controller-admission"
     },
     {
       "conditional_on": "",

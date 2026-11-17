@@ -32807,6 +32807,10 @@
           "record": "ROOT::amend:design:rung-proof-contract"
         },
         {
+          "clause": "Claimed part: This uses exact comparison of stated data without restating those data as enclosures, and asserts no soundness of an evaluated enclosure.",
+          "record": "ROOT::dec:design:comparison-verdict-record"
+        },
+        {
           "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::resol:design:replay-paper-contract"
         },
@@ -32997,17 +33001,22 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/implementation.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "lem:deployment:sound-verdict-agreement",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This locates the exact intersection and disjointness tests for the held reader relation; it supplies neither enclosure’s soundness premise nor an implemented consuming evaluator.",
+          "record": "ROOT::dec:design:comparison-verdict-record"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -33020,10 +33029,19 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:design:reference-registration-base",
+          "record": "ROOT::open:design:binding-ridge-controller-admission"
+        }
+      ],
       "kind": "policy",
       "label": "post:deployment:verdict-issuance",
       "portions": [
+        {
+          "clause": "Conformance reliance: The held placement of a rejected controller proposal’s verdict includes whole issuance to the deployment itself, which remains unclaimed and unbuilt.",
+          "record": "ROOT::open:design:binding-ridge-controller-admission"
+        },
         {
           "clause": "Conformance reliance: The separation of the held note from issuance rests on the duty to issue the rejecting verdict to the measured party, which is not claimed or implemented.",
           "record": "ROOT::open:design:rejected-comparison-publication"
@@ -33036,6 +33054,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::open:design:binding-ridge-controller-admission",
         "ROOT::open:design:rejected-comparison-publication",
         "ROOT::open:design:verdict-issuance"
       ],
@@ -36499,10 +36518,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "69",
+          "exact": "70",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "70",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36513,7 +36532,7 @@
           "exact_digits": 32
         }
       },
-      "total": 69
+      "total": 70
     },
     {
       "category": "total",
@@ -39688,10 +39707,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "68",
+          "exact": "67",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "68",
+          "num": "67",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39702,7 +39721,7 @@
           "exact_digits": 32
         }
       },
-      "total": 68
+      "total": 67
     },
     {
       "category": "record-coverage",
@@ -40352,14 +40371,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 215,
+      "exact_citing": 216,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "215",
+          "exact": "216",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "215",
+          "num": "216",
           "num_exact": true,
           "num_relation": "="
         },
