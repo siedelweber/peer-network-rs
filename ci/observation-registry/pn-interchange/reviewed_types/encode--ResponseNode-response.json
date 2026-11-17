@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::ResponseNode",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "enum ResponseNode < 'a > { Object (& 'a [(& 'a str , ResponseView < 'a >)]) , Array (& 'a [ResponseView < 'a >]) , Value (& 'a Value) , Name (& 'a str) , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::ResponseWriteError",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" A response refused before any message is returned.\"] # [doc = \" (´[ROOT-amend:api:ordered-response-writer]´)\"] # [derive (Debug , Clone , Copy , PartialEq , Eq)] pub enum ResponseWriteError { # [doc = \" The cause distinguishes counted excess from a failed reservation or allocation.\"] # [doc = \" `Length` and `Limit` are counted response excess; `Reservation` and\"] # [doc = \" `Allocation` are failures after the response ceiling check.\"] ResponseLimit (EncodingError) , # [doc = \" A response map contains one name more than once.\"] DuplicateResponseName , # [doc = \" A value lies outside the response vocabulary.\"] ResponseValueUnsupported , }"
+  }
+}

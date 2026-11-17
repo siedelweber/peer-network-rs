@@ -2,20 +2,20 @@ use super::*;
 use crate::{Array, Map, Tag};
 use std::cell::RefCell;
 
-type Requests = Vec<(usize, usize, usize)>;
+pub(super) type Requests = Vec<(usize, usize, usize)>;
 thread_local! {
     static REQUESTS: RefCell<Requests> = const { RefCell::new(Vec::new()) };
 }
 pub(super) fn requested(amount: usize, usage: &EncodingUsage) {
     REQUESTS.with_borrow_mut(|calls| calls.push((amount, usage.allocation_calls, usage.allocation_bytes)));
 }
-fn clear() {
+pub(super) fn clear() {
     REQUESTS.with_borrow_mut(Vec::clear);
 }
-fn calls() -> Requests {
+pub(super) fn calls() -> Requests {
     REQUESTS.with_borrow(Clone::clone)
 }
-fn accounted(usage: &EncodingUsage) {
+pub(super) fn accounted(usage: &EncodingUsage) {
     let mut total = 0;
     for (index, (amount, count, bytes)) in calls().into_iter().enumerate() {
         total += amount;

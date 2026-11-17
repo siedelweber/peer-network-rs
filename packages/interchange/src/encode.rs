@@ -212,6 +212,223 @@ impl Value {
     }
 }
 
+/// Borrowed presentation of a response value. Object entries retain caller order.
+/// A typed value is checked recursively, including every map inside it.
+/// (´[ROOT-amend:api:ordered-response-writer]´)
+#[derive(Debug)]
+pub enum ResponseView<'a> {
+    /// An existing typed CBOR value.
+    Value(&'a Value),
+    /// Text names and values in presentation order.
+    Object(&'a [(&'a str, ResponseView<'a>)]),
+    /// Values in list order.
+    Array(&'a [ResponseView<'a>]),
+}
+
+/// A complete transient response. Its bytes carry no canonical membership.
+/// (´[ROOT-amend:api:ordered-response-writer]´)
+#[derive(Debug)]
+pub struct TransportMessage(Vec<u8>);
+
+impl TransportMessage {
+    /// Borrow the completed bytes for transport.
+    /// (´[ROOT-amend:api:ordered-response-writer]´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "encode::TransportMessage::as_bytes"
+        ),
+        ret
+    )]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.0
+    }
+}
+
+/// A response refused before any message is returned.
+/// (´[ROOT-amend:api:ordered-response-writer]´)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ResponseWriteError {
+    /// The cause distinguishes counted excess from a failed reservation or allocation.
+    /// `Length` and `Limit` are counted response excess; `Reservation` and
+    /// `Allocation` are failures after the response ceiling check.
+    ResponseLimit(EncodingError),
+    /// A response map contains one name more than once.
+    DuplicateResponseName,
+    /// A value lies outside the response vocabulary.
+    ResponseValueUnsupported,
+}
+
+enum ResponseNode<'a> {
+    Object(&'a [(&'a str, ResponseView<'a>)]),
+    Array(&'a [ResponseView<'a>]),
+    Value(&'a Value),
+    Name(&'a str),
+}
+
+fn response_node<'a>(view: &'a ResponseView<'a>) -> ResponseNode<'a> {
+    match view {
+        ResponseView::Value(value) => ResponseNode::Value(value),
+        ResponseView::Object(fields) => ResponseNode::Object(fields),
+        ResponseView::Array(items) => ResponseNode::Array(items),
+    }
+}
+
+fn response_name(value: &Value) -> Result<&str, ResponseWriteError> {
+    match value {
+        Value::Text(text) => Ok(text.as_str()),
+        _ => Err(ResponseWriteError::ResponseValueUnsupported),
+    }
+}
+
+fn response_walk<'a>(
+    fields: &'a [(&'a str, ResponseView<'a>)],
+    output: &mut PublicOutput<'_>,
+    work: &mut Vec<ResponseNode<'a>>,
+    policy: &mut WritePolicy<'_>,
+) -> Result<(), ResponseWriteError> {
+    output
+        .head(5, fields.len() as u64)
+        .map_err(ResponseWriteError::ResponseLimit)?;
+    push_response_fields(fields, work, policy)?;
+    while let Some(node) = work.pop() {
+        match node {
+            ResponseNode::Name(name) => write_response_name(name, output)?,
+            ResponseNode::Object(fields) => {
+                output
+                    .head(5, fields.len() as u64)
+                    .map_err(ResponseWriteError::ResponseLimit)?;
+                push_response_fields(fields, work, policy)?;
+            }
+            ResponseNode::Array(items) => {
+                output
+                    .head(4, items.len() as u64)
+                    .map_err(ResponseWriteError::ResponseLimit)?;
+                for item in items.iter().rev() {
+                    policy.reserve(work, 1).map_err(ResponseWriteError::ResponseLimit)?;
+                    work.push(response_node(item));
+                }
+            }
+            ResponseNode::Value(value) => {
+                match value {
+                    Value::Array(items) => {
+                        output
+                            .head(4, items.len() as u64)
+                            .map_err(ResponseWriteError::ResponseLimit)?;
+                        for item in items.as_slice().iter().rev() {
+                            policy.reserve(work, 1).map_err(ResponseWriteError::ResponseLimit)?;
+                            work.push(ResponseNode::Value(item));
+                        }
+                    }
+                    Value::Map(map) => {
+                        output.head(5, map.len() as u64).map_err(ResponseWriteError::ResponseLimit)?;
+                        // Map construction already makes each key distinct; text keys
+                        // therefore need no second repeated-name comparison here.
+                        for (key, item) in map.entries().iter().rev() {
+                            policy.reserve(work, 2).map_err(ResponseWriteError::ResponseLimit)?;
+                            let name = response_name(key)?;
+                            work.push(ResponseNode::Value(item));
+                            work.push(ResponseNode::Name(name));
+                        }
+                    }
+                    Value::Tag(_) | Value::Simple(_) => return Err(ResponseWriteError::ResponseValueUnsupported),
+                    Value::Float(float) => {
+                        if !float.to_f64().is_finite() {
+                            return Err(ResponseWriteError::ResponseValueUnsupported);
+                        }
+                        public_node(value, output, &mut Vec::new(), policy).map_err(ResponseWriteError::ResponseLimit)?;
+                    }
+                    Value::Unsigned(_) | Value::Negative(_) | Value::Bytes(_) | Value::Text(_) | Value::Bool(_) | Value::Null => {
+                        // The shared typed writer remains the sole scalar implementation.
+                        public_node(value, output, &mut Vec::new(), policy).map_err(ResponseWriteError::ResponseLimit)?;
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+fn push_response_fields<'a>(
+    fields: &'a [(&'a str, ResponseView<'a>)],
+    work: &mut Vec<ResponseNode<'a>>,
+    policy: &mut WritePolicy<'_>,
+) -> Result<(), ResponseWriteError> {
+    for (index, (name, value)) in fields.iter().enumerate().rev() {
+        policy.reserve(work, 2).map_err(ResponseWriteError::ResponseLimit)?;
+        if fields[..index].iter().any(|(prior, _)| prior == name) {
+            return Err(ResponseWriteError::DuplicateResponseName);
+        }
+        work.push(response_node(value));
+        work.push(ResponseNode::Name(name));
+    }
+    Ok(())
+}
+
+fn write_response_name(name: &str, output: &mut PublicOutput<'_>) -> Result<(), ResponseWriteError> {
+    output.head(3, name.len() as u64).map_err(ResponseWriteError::ResponseLimit)?;
+    output.bytes(name.as_bytes()).map_err(ResponseWriteError::ResponseLimit)
+}
+
+/// Write one response map with an explicit positive byte ceiling.
+/// Both encoded length and cumulative workspace and output reservations obey it.
+/// Usage is reset at entry and retains admitted requests on refusal.
+/// (´[ROOT-amend:api:ordered-response-writer]´)
+///
+/// # Errors
+/// Returns `ResponseLimit` with its `EncodingError` cause for an invalid or
+/// exhausted ceiling, failed callback reservation or failed allocation,
+/// `DuplicateResponseName` for a repeated map name, and
+/// `ResponseValueUnsupported` for a value outside the response vocabulary.
+///
+/// # Panics
+/// A panicking reservation callback propagates after earlier admitted requests.
+pub fn write_transport_response<'a>(
+    fields: &'a [(&'a str, ResponseView<'a>)],
+    ceiling: usize,
+    usage: &mut EncodingUsage,
+    mut reservation: impl FnMut(usize) -> Result<(), ()>,
+) -> Result<TransportMessage, ResponseWriteError> {
+    let scope = crate::observe::scope(
+        "INTERCHANGE",
+        "rule:observe:spans",
+        "encode::write_transport_response",
+        &(fields, ceiling, "reservation callback is an executable capability"),
+    );
+    *usage = EncodingUsage::default();
+    let result = (|| {
+        if ceiling == 0 {
+            return Err(ResponseWriteError::ResponseLimit(EncodingError::Limit));
+        }
+        let mut policy = WritePolicy::Budget {
+            limit: ceiling,
+            usage,
+            reservation: &mut reservation,
+        };
+        let mut work = Vec::new();
+        let mut count = PublicOutput::Count { length: 0, ceiling };
+        response_walk(fields, &mut count, &mut work, &mut policy)?;
+        let length = match count {
+            PublicOutput::Count { length, .. } => length,
+            PublicOutput::Bytes(_) => return Err(ResponseWriteError::ResponseLimit(EncodingError::Length)),
+        };
+        let mut bytes = Vec::new();
+        policy
+            .reserve(&mut bytes, length)
+            .map_err(ResponseWriteError::ResponseLimit)?;
+        response_walk(fields, &mut PublicOutput::Bytes(&mut bytes), &mut work, &mut policy)?;
+        Ok(TransportMessage(bytes))
+    })();
+    tracing::event!(tracing::Level::TRACE, encoding_usage = ?usage);
+    let result = result.inspect_err(|_| tracing::event!(tracing::Level::TRACE, outcome = "refusal"));
+    scope.finish(&result);
+    result
+}
+
 /// Work items borrow either public values or protected leaves.
 enum Node<'a> {
     Public(&'a Value),
@@ -840,3 +1057,142 @@ mod secret_tests {
 
 #[cfg(test)]
 mod budget_tests;
+
+#[cfg(test)]
+mod response_tests {
+    use super::*;
+    use crate::{Array, Bytes, Map, Tag, Text, TransportLimits, TransportUsage};
+
+    fn write<'a>(
+        fields: &'a [(&'a str, ResponseView<'a>)],
+        ceiling: usize,
+        usage: &mut EncodingUsage,
+    ) -> Result<TransportMessage, ResponseWriteError> {
+        write_transport_response(fields, ceiling, usage, |_| Ok(()))
+    }
+
+    /// Claim: Nested response objects retain caller order and preferred heads while typed scalar and byte-string leaves keep their existing encodings.
+    /// ´claim:encoding:response-order-preserved´
+    /// ´test:unit:response-order-preserved´
+    #[test]
+    fn response_order_preserved() {
+        let bytes = Value::Bytes(Bytes::from(vec![0, 255]));
+        let integer = Value::Unsigned(24);
+        let nested = [("z", ResponseView::Value(&bytes)), ("a", ResponseView::Value(&integer))];
+        let fields = [("data", ResponseView::Object(&nested))];
+        let mut usage = EncodingUsage::default();
+        let message = write(&fields, 1024, &mut usage).unwrap();
+        assert_eq!(
+            message.as_bytes(),
+            &[
+                0xa1, 0x64, b'd', b'a', b't', b'a', 0xa2, 0x61, b'z', 0x42, 0, 255, 0x61, b'a', 0x18, 24
+            ]
+        );
+        let limits = TransportLimits {
+            input_bytes: 1024,
+            allocation_bytes: 1024,
+            items: 1024,
+            depth: 16,
+            nesting: 16,
+            work: 1024,
+        };
+        let mut read_usage = TransportUsage::default();
+        assert!(Value::from_transport_bytes(message.as_bytes(), limits, &mut read_usage).is_ok());
+    }
+
+    /// Claim: A repeated name inside a nested presentation object refuses with no completed transport message.
+    /// ´claim:encoding:response-duplicate-refuses´
+    /// ´test:unit:response-duplicate-refuses´
+    #[test]
+    fn response_duplicate_refuses() {
+        let nested = [
+            ("same", ResponseView::Value(&Value::Null)),
+            ("same", ResponseView::Value(&Value::Null)),
+        ];
+        let fields = [("data", ResponseView::Object(&nested))];
+        let mut usage = EncodingUsage::default();
+        assert!(matches!(
+            write(&fields, 1024, &mut usage),
+            Err(ResponseWriteError::DuplicateResponseName)
+        ));
+    }
+
+    /// Claim: An exact reservation ceiling admits a message, while one byte less refuses before its next reservation and returns no message.
+    /// ´claim:encoding:response-budget-precedes-reservation´
+    /// ´test:unit:response-budget-precedes-reservation´
+    #[test]
+    fn response_budget_precedes_reservation() {
+        let value = Value::Bytes(Bytes::from(vec![7; 64]));
+        let fields = [("data", ResponseView::Value(&value))];
+        let mut usage = EncodingUsage::default();
+        let mut requests = Vec::new();
+        budget_tests::clear();
+        let complete = write_transport_response(&fields, 1024, &mut usage, |amount| {
+            requests.push(amount);
+            Ok(())
+        })
+        .unwrap();
+        let exact = usage.allocation_bytes;
+        assert!(exact >= complete.as_bytes().len());
+        assert_eq!(requests.iter().sum::<usize>(), exact);
+        assert_eq!(budget_tests::calls().iter().map(|call| call.0).collect::<Vec<_>>(), requests);
+        budget_tests::accounted(&usage);
+        budget_tests::clear();
+        assert!(write(&fields, exact, &mut usage).is_ok());
+        budget_tests::accounted(&usage);
+        let mut offered = Vec::new();
+        budget_tests::clear();
+        assert!(matches!(
+            write_transport_response(&fields, exact - 1, &mut usage, |amount| {
+                offered.push(amount);
+                Ok(())
+            }),
+            Err(ResponseWriteError::ResponseLimit(EncodingError::Limit))
+        ));
+        assert!(offered.iter().sum::<usize>() < exact);
+        assert_eq!(usage.allocation_bytes, offered.iter().sum::<usize>());
+        budget_tests::accounted(&usage);
+        budget_tests::clear();
+        assert!(matches!(
+            write_transport_response(&fields, exact, &mut usage, |_| Err(())),
+            Err(ResponseWriteError::ResponseLimit(EncodingError::Reservation))
+        ));
+        assert_eq!(usage.allocation_calls, 0);
+        assert_eq!(budget_tests::calls(), []);
+    }
+
+    /// Claim: Excluded leaves and non-text maps refuse even inside typed arrays, while adjacent admitted values still write.
+    /// ´claim:encoding:response-vocabulary-refuses´
+    /// ´test:unit:response-vocabulary-refuses´
+    #[test]
+    fn response_vocabulary_refuses() {
+        let excluded = [
+            Value::Tag(Tag::new(1, Value::Null)),
+            Value::Simple(crate::Simple::UNDEFINED),
+            Value::Float(crate::Float::from_f64(f64::INFINITY).unwrap()),
+            Value::Float(crate::Float::CANONICAL_NAN),
+            Value::Map(Map::new([(Value::Unsigned(1), Value::Null)]).unwrap()),
+        ];
+        let mut usage = EncodingUsage::default();
+        for value in &excluded {
+            let wrapped = Value::Array(Array::new([value.clone()]));
+            let fields = [("data", ResponseView::Value(&wrapped))];
+            assert!(matches!(
+                write(&fields, 1024, &mut usage),
+                Err(ResponseWriteError::ResponseValueUnsupported)
+            ));
+        }
+        let accepted = Value::Array(Array::new([
+            Value::Text(Text::from("ok".to_owned())),
+            Value::Null,
+            Value::Unsigned(24),
+            Value::Negative(crate::Negative::from_argument(1)),
+            Value::Float(crate::Float::from_f64(1.5).unwrap()),
+            Value::Bool(true),
+            Value::Bytes(Bytes::from(vec![0, 255])),
+            Value::Map(Map::new([(Value::Text(Text::from("key".to_owned())), Value::Null)]).unwrap()),
+        ]));
+        let fields = [("data", ResponseView::Value(&accepted))];
+        assert!(write(&fields, 1024, &mut usage).is_ok());
+    }
+}

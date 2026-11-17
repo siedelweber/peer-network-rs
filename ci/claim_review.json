@@ -5563,6 +5563,38 @@
       "review": "Finite transfer-address/capacity and refusal controls, disposal legacy-site hooks and shared-meter controls; source review supplies absence of bypass allocation. Scalar counting shares byte writers; map capacity and usage overflow are observed directly. No allocator census, protected budget or storage admission."
     },
     {
+      "operation": "pn-interchange::encode::response_tests::response_budget_precedes_reservation",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:response-budget-precedes-reservation",
+      "before": "Claim: An exact reservation ceiling admits a message, while one byte less refuses before its next reservation and returns no message.",
+      "after": "Claim: An exact reservation ceiling admits a message, while one byte less refuses before its next reservation and returns no message.",
+      "review": "The selected one-process control uses test-written values and checks its named response-writer proposition; no deployment ceiling or canonical membership is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::response_tests::response_duplicate_refuses",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:response-duplicate-refuses",
+      "before": "Claim: A repeated name inside a nested presentation object refuses with no completed transport message.",
+      "after": "Claim: A repeated name inside a nested presentation object refuses with no completed transport message.",
+      "review": "The selected one-process control uses test-written values and checks its named response-writer proposition; no deployment ceiling or canonical membership is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::response_tests::response_order_preserved",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:response-order-preserved",
+      "before": "Claim: Nested response objects retain caller order and preferred heads while typed scalar and byte-string leaves keep their existing encodings.",
+      "after": "Claim: Nested response objects retain caller order and preferred heads while typed scalar and byte-string leaves keep their existing encodings.",
+      "review": "The selected one-process control uses test-written values and checks its named response-writer proposition; no deployment ceiling or canonical membership is inferred."
+    },
+    {
+      "operation": "pn-interchange::encode::response_tests::response_vocabulary_refuses",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:response-vocabulary-refuses",
+      "before": "Claim: Excluded leaves and non-text maps refuse even inside typed arrays, while adjacent admitted values still write.",
+      "after": "Claim: Excluded leaves and non-text maps refuse even inside typed arrays, while adjacent admitted values still write.",
+      "review": "The selected one-process control uses test-written values and checks its named response-writer proposition; no deployment ceiling or canonical membership is inferred."
+    },
+    {
       "operation": "pn-interchange::encode::secret_tests::protected_canonical_bytes",
       "path": "packages/interchange/src/encode.rs",
       "claim": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",

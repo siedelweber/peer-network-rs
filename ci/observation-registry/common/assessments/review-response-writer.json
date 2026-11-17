@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The public response view, ceiling, result and admitted reservation usage are recorded at this boundary. The caller callback is executable and described without invocation by observation; the iterative writer keeps its own output private until success.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-response-writer"
+}

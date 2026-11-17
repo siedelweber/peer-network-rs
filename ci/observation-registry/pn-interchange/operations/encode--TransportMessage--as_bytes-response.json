@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::TransportMessage::as_bytes",
+    "owner": "INTERCHANGE",
+    "signature": "fn as_bytes (& self) -> & [u8]",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::TransportMessage::as_bytes",
+    "body": "{ & self . 0 }",
+    "class_decision": "public-interchange",
+    "item_premise": "The public response boundary observes presentation inputs, complete transport bytes or typed refusal, and reported writer usage. Callback execution remains a described capability; no canonical membership is inferred.",
+    "assessments": {
+      "full_recording": "review-response-message-bytes",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

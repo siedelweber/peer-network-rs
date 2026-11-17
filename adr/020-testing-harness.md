@@ -171,7 +171,7 @@
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::storage-tree | active | integration | pn-host-postgresql | service | 11 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
-| pn-interchange | active | unit | pn-interchange-rust | fast | 247 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 251 |
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
 | pn-interchange::benchmark_correctness | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |

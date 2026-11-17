@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::ResponseView",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" Borrowed presentation of a response value. Object entries retain caller order.\"] # [doc = \" A typed value is checked recursively, including every map inside it.\"] # [doc = \" (´[ROOT-amend:api:ordered-response-writer]´)\"] # [derive (Debug)] pub enum ResponseView < 'a > { # [doc = \" An existing typed CBOR value.\"] Value (& 'a Value) , # [doc = \" Text names and values in presentation order.\"] Object (& 'a [(& 'a str , ResponseView < 'a >)]) , # [doc = \" Values in list order.\"] Array (& 'a [ResponseView < 'a >]) , }"
+  }
+}

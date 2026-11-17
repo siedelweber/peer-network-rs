@@ -83,7 +83,7 @@
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
 | pn-host | 265 | 73 | 192 | 0 | 200 |
-| pn-interchange | 167 | 130 | 36 | 1 | 100 |
+| pn-interchange | 169 | 132 | 36 | 1 | 103 |
 | pn-records | 137 | 63 | 74 | 0 | 198 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |
 | pn-wallet | 30 | 7 | 23 | 0 | 30 |

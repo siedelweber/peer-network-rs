@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The accessor returns the completed public transport bytes. It neither constructs a document nor certifies canonical membership; ordinary public recording can retain the returned byte slice.",
+    "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+  },
+  "name": "review-response-message-bytes"
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "encode::TransportMessage",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [doc = \" A complete transient response. Its bytes carry no canonical membership.\"] # [doc = \" (´[ROOT-amend:api:ordered-response-writer]´)\"] # [derive (Debug)] pub struct TransportMessage (Vec < u8 >) ;"
+  }
+}

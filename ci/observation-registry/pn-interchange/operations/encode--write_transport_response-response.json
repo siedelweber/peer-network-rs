@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "item": "encode::write_transport_response",
+    "owner": "INTERCHANGE",
+    "signature": "fn write_transport_response < 'a > (fields : & 'a [(& 'a str , ResponseView < 'a >)] , ceiling : usize , usage : & mut EncodingUsage , mut reservation : impl FnMut (usize) -> Result < () , () > ,) -> Result < TransportMessage , ResponseWriteError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/encode.rs::encode::write_transport_response",
+    "body": "{ let scope = crate :: observe :: scope (\"INTERCHANGE\" , \"rule:observe:spans\" , \"encode::write_transport_response\" , & (fields , ceiling , \"reservation callback is an executable capability\") ,) ; * usage = EncodingUsage :: default () ; let result = (| | { if ceiling == 0 { return Err (ResponseWriteError :: ResponseLimit (EncodingError :: Limit)) ; } let mut policy = WritePolicy :: Budget { limit : ceiling , usage , reservation : & mut reservation , } ; let mut work = Vec :: new () ; let mut count = PublicOutput :: Count { length : 0 , ceiling } ; response_walk (fields , & mut count , & mut work , & mut policy) ? ; let length = match count { PublicOutput :: Count { length , .. } => length , PublicOutput :: Bytes (_) => return Err (ResponseWriteError :: ResponseLimit (EncodingError :: Length)) , } ; let mut bytes = Vec :: new () ; policy . reserve (& mut bytes , length) . map_err (ResponseWriteError :: ResponseLimit) ? ; response_walk (fields , & mut PublicOutput :: Bytes (& mut bytes) , & mut work , & mut policy) ? ; Ok (TransportMessage (bytes)) }) () ; tracing :: event ! (tracing :: Level :: TRACE , encoding_usage = ? usage) ; let result = result . inspect_err (| _ | tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\")) ; scope . finish (& result) ; result }",
+    "class_decision": "public-interchange",
+    "item_premise": "The public response boundary observes presentation inputs, complete transport bytes or typed refusal, and reported writer usage. Callback execution remains a described capability; no canonical membership is inferred.",
+    "assessments": {
+      "full_recording": "review-response-writer",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

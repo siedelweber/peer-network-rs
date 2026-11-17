@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "encode::ResponseView",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/encode.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "The derived traits expose only public response presentation and typed refusal data; no secret carrier or canonical membership is introduced."
+  }
+}
