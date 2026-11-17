@@ -3051,7 +3051,6 @@
         "ROOT::dec:design:publication",
         "ROOT::dec:design:replay",
         "ROOT::model:design:package",
-        "ROOT::open:design:rejected-comparison-publication",
         "ROOT::req:vision:admission",
         "ROOT::req:vision:final-membership",
         "ROOT::req:vision:public-inputs",
@@ -14271,6 +14270,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::open:design:verdict-issuance",
         "ROOT::rec:design:atomic-admission-evidence"
       ],
       "routes": [],
@@ -17284,20 +17284,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [
-        "docs/design/workload-benchmarks.md",
-        "docs/templates/docs/design/workload-benchmarks.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "rem:scalability:boundary-search-cost",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:design:verdict-issuance"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -32679,7 +32678,7 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "Conformance reliance: The published package retains this restriction while rejection-evidence publication is held.",
+          "clause": "Conformance reliance: The published package carries no verdict of a rejected set, and the deployment’s own rejected comparisons are kept outside it.",
           "record": "ROOT::open:design:rejected-comparison-publication"
         },
         {
@@ -32928,6 +32927,164 @@
       ],
       "routes": [],
       "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "subsec:deployment:verdict-certificates",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "type",
+      "label": "def:deployment:verdict-certificate",
+      "portions": [
+        {
+          "clause": "Claimed part: This uses the certificate’s stated enclosure, standard and recomputable outcome to delimit the object of the held route, without claiming its soundness or provenance.",
+          "record": "ROOT::open:design:verdict-issuance"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:design:verdict-issuance"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "lem:deployment:stated-verdict-replay",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "lem:deployment:sound-verdict-agreement",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:verdict-issuance",
+      "portions": [
+        {
+          "clause": "Conformance reliance: The separation of the held note from issuance rests on the duty to issue the rejecting verdict to the measured party, which is not claimed or implemented.",
+          "record": "ROOT::open:design:rejected-comparison-publication"
+        },
+        {
+          "clause": "Conformance reliance: The open route is required by whole issuance to the measured party with the rejection and unasked; whether issuance occurs is not claimed.",
+          "record": "ROOT::open:design:verdict-issuance"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:design:rejected-comparison-publication",
+        "ROOT::open:design:verdict-issuance"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:rejected-verdicts",
+      "portions": [
+        {
+          "clause": "Conformance reliance: The held note is constrained by the author choosing any showing and by the absence of a register, which the public record does not establish.",
+          "record": "ROOT::open:design:rejected-comparison-publication"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:design:rejected-comparison-publication"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "rem:deployment:stated-exactness",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -36342,10 +36499,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "70",
+          "exact": "69",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "70",
+          "num": "69",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36356,19 +36513,19 @@
           "exact_digits": 32
         }
       },
-      "total": 70
+      "total": 69
     },
     {
       "category": "total",
-      "designed": 401,
+      "designed": 405,
       "held": 67,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "401",
+          "exact": "405",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "401",
+          "num": "405",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36397,26 +36554,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "7",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 357",
+          "exact": "1 364",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 357",
+          "num": "1 364",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "854",
+          "exact": "857",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "854",
+          "num": "857",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36453,9 +36610,9 @@
       },
       "realized": 35,
       "record_granular": 32,
-      "tentative": 7,
-      "total": 1357,
-      "unassigned": 854
+      "tentative": 11,
+      "total": 1364,
+      "unassigned": 857
     },
     {
       "category": "total",
@@ -36855,15 +37012,15 @@
     },
     {
       "category": "crate",
-      "designed": 46,
+      "designed": 49,
       "held": 20,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "46",
+          "exact": "49",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "46",
+          "num": "49",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36892,26 +37049,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "166",
+          "exact": "168",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "166",
+          "num": "168",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "95",
+          "exact": "94",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "95",
+          "num": "94",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36948,9 +37105,9 @@
       },
       "realized": 5,
       "record_granular": 2,
-      "tentative": 1,
-      "total": 166,
-      "unassigned": 95
+      "tentative": 4,
+      "total": 168,
+      "unassigned": 94
     },
     {
       "category": "crate",
@@ -37152,15 +37309,15 @@
     },
     {
       "category": "crate",
-      "designed": 5,
+      "designed": 6,
       "held": 3,
       "name": "pn-replay",
       "number_forms": {
         "designed": {
-          "exact": "5",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37189,26 +37346,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "27",
+          "exact": "32",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "32",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "19",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37245,9 +37402,9 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 0,
-      "total": 27,
-      "unassigned": 19
+      "tentative": 1,
+      "total": 32,
+      "unassigned": 23
     },
     {
       "category": "crate",
@@ -37890,18 +38047,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "517",
+          "exact": "520",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "517",
+          "num": "520",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "337",
+          "exact": "340",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "337",
+          "num": "340",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37939,8 +38096,8 @@
       "realized": 16,
       "record_granular": 11,
       "tentative": 1,
-      "total": 517,
-      "unassigned": 337
+      "total": 520,
+      "unassigned": 340
     },
     {
       "category": "kind",
@@ -38043,15 +38200,15 @@
     },
     {
       "category": "kind",
-      "designed": 52,
+      "designed": 55,
       "held": 21,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "52",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38080,18 +38237,18 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "5",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "266",
+          "exact": "269",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "266",
+          "num": "269",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38136,8 +38293,8 @@
       },
       "realized": 3,
       "record_granular": 4,
-      "tentative": 5,
-      "total": 266,
+      "tentative": 8,
+      "total": 269,
       "unassigned": 190
     },
     {
@@ -38241,15 +38398,15 @@
     },
     {
       "category": "kind",
-      "designed": 49,
+      "designed": 50,
       "held": 9,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "49",
+          "exact": "50",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49",
+          "num": "50",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38278,18 +38435,18 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "92",
+          "exact": "93",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "92",
+          "num": "93",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38334,8 +38491,8 @@
       },
       "realized": 1,
       "record_granular": 5,
-      "tentative": 0,
-      "total": 92,
+      "tentative": 1,
+      "total": 93,
       "unassigned": 33
     },
     {
@@ -39429,15 +39586,15 @@
     },
     {
       "category": "bite",
-      "designed": 280,
+      "designed": 284,
       "held": 27,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "280",
+          "exact": "284",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "280",
+          "num": "284",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39466,26 +39623,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "13",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 485",
+          "exact": "1 492",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 485",
+          "num": "1 492",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 156",
+          "exact": "1 159",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 156",
+          "num": "1 159",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39522,19 +39679,19 @@
       },
       "realized": 22,
       "record_granular": 21,
-      "tentative": 13,
-      "total": 1485,
-      "unassigned": 1156
+      "tentative": 17,
+      "total": 1492,
+      "unassigned": 1159
     },
     {
       "category": "classification-identities",
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "64",
+          "exact": "68",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "64",
+          "num": "68",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39545,7 +39702,7 @@
           "exact_digits": 32
         }
       },
-      "total": 64
+      "total": 68
     },
     {
       "category": "record-coverage",
@@ -40195,22 +40352,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 214,
+      "exact_citing": 215,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "214",
+          "exact": "215",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "214",
+          "num": "215",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 753",
+          "exact": "1 754",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 753",
+          "num": "1 754",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40225,7 +40382,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1753
+      "total": 1754
     },
     {
       "category": "record-coverage",

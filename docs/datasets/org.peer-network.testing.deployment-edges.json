@@ -98,11 +98,18 @@
       "target": "ROOT::open:design:cross-build-replay"
     },
     {
-      "conditional_on": "cond:deployment:wall-calibration",
-      "reason": "Rejection publication remains held without changing the evaluated verdict.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This uses the held note’s scope: no rejected verdict is in the package and the note is unbuilt, without assuming a note, its showing or issuance.",
+      "relation": "realizes",
       "source": "HOST::rule:publication:authority",
       "target": "ROOT::open:design:rejected-comparison-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "relation": "realizes",
+      "source": "HOST::rule:publication:authority",
+      "target": "ROOT::open:design:verdict-issuance"
     },
     {
       "conditional_on": "",
@@ -119,11 +126,18 @@
       "target": "case:deployment:transparency-of-protocol-formulas-edition-fixed"
     },
     {
-      "conditional_on": "cond:deployment:wall-calibration",
-      "reason": "Rejection publication remains held without changing the evaluated verdict.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This uses the held note’s scope: no rejected verdict is in the package and the note is unbuilt, without assuming a note, its showing or issuance.",
+      "relation": "realizes",
       "source": "RECORDS::def:declarations:floor-comparison-evidence",
       "target": "ROOT::open:design:rejected-comparison-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "relation": "realizes",
+      "source": "RECORDS::def:declarations:floor-comparison-evidence",
+      "target": "ROOT::open:design:verdict-issuance"
     },
     {
       "conditional_on": "",
@@ -616,6 +630,13 @@
       "target": "subsec:deployment:immutability"
     },
     {
+      "conditional_on": "",
+      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "relation": "realizes",
+      "source": "ROOT::model:design:wall-floor",
+      "target": "ROOT::open:design:verdict-issuance"
+    },
+    {
       "conditional_on": "amend:testing:standing-work-execution",
       "reason": "Current Work-bearing replay needs the declaring numerical build and its exact internal accounting; mathematical inputs alone do not establish cross-build Work equality.",
       "relation": "relies",
@@ -637,11 +658,46 @@
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
+      "conditional_on": "",
+      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:rejected-comparison-publication",
+      "target": "ROOT::open:design:verdict-issuance"
+    },
+    {
       "conditional_on": "cond:deployment:wall-calibration",
-      "reason": "The published package retains this restriction while rejection-evidence publication is held.",
+      "reason": "The published package carries no verdict of a rejected set, and the deployment’s own rejected comparisons are kept outside it.",
       "relation": "relies",
       "source": "ROOT::open:design:rejected-comparison-publication",
       "target": "cond:deployment:wall-calibration"
+    },
+    {
+      "conditional_on": "post:deployment:rejected-verdicts",
+      "reason": "The held note is constrained by the author choosing any showing and by the absence of a register, which the public record does not establish.",
+      "relation": "relies",
+      "source": "ROOT::open:design:rejected-comparison-publication",
+      "target": "post:deployment:rejected-verdicts"
+    },
+    {
+      "conditional_on": "post:deployment:verdict-issuance",
+      "reason": "The separation of the held note from issuance rests on the duty to issue the rejecting verdict to the measured party, which is not claimed or implemented.",
+      "relation": "relies",
+      "source": "ROOT::open:design:rejected-comparison-publication",
+      "target": "post:deployment:verdict-issuance"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the certificate’s stated enclosure, standard and recomputable outcome to delimit the object of the held route, without claiming its soundness or provenance.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:verdict-issuance",
+      "target": "def:deployment:verdict-certificate"
+    },
+    {
+      "conditional_on": "post:deployment:verdict-issuance",
+      "reason": "The open route is required by whole issuance to the measured party with the rejection and unasked; whether issuance occurs is not claimed.",
+      "relation": "relies",
+      "source": "ROOT::open:design:verdict-issuance",
+      "target": "post:deployment:verdict-issuance"
     },
     {
       "conditional_on": "",
@@ -838,6 +894,20 @@
       "relation": "realizes",
       "source": "ROOT::rule:crypto:retry-private-exit",
       "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the separation of a rejected verdict from accepted publication and records the note as held, without relying on a note being made.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:binary64-evidence",
+      "target": "ROOT::open:design:rejected-comparison-publication"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "relation": "realizes",
+      "source": "ROOT::rule:design:binary64-evidence",
+      "target": "ROOT::open:design:verdict-issuance"
     },
     {
       "conditional_on": "",
