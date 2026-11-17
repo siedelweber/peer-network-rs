@@ -4,6 +4,6 @@
     "item": "executor::StartInputs",
     "package": "pn",
     "path": "packages/node/src/executor.rs",
-    "syntax": "# [derive (Clone , Debug)] struct StartInputs { edition_supported : bool , bootstrap_valid : bool , cancelled : bool , failures : StartFailures , count : Arc < AtomicUsize > , }"
+    "syntax": "# [derive (Clone , Debug)] struct StartInputs { edition_supported : bool , bootstrap_valid : bool , cancelled : bool , failures : StartFailures , # [cfg (test)] count : Arc < AtomicUsize > , }"
   }
 }

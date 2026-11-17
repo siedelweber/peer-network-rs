@@ -7301,20 +7301,28 @@
       "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
     },
     {
+      "operation": "pn::executor::tests::lexical_walk_matches_parser",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:node:lexical-walk-matches-parser",
+      "before": "Claim: The source walk agrees with the locked parser at CR comments, ignored BOM and escaped block quotes.",
+      "after": "Claim: The source walk agrees with the locked parser at CR comments, ignored BOM and escaped block quotes.",
+      "review": "CR comment, BOM and escaped block-string inputs compare the bounded walk with the locked parser; finite neighbours show dispatch, validation and source_nesting refusal without a served bound."
+    },
+    {
       "operation": "pn::executor::tests::malformed_message_refuses",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:malformed-message-refuses",
-      "before": "Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.",
-      "after": "Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "before": "Claim: Malformed transport or source syntax refuses before resolver entry while a complete neighbour dispatches.",
+      "after": "Claim: Malformed transport or source syntax refuses before resolver entry while a complete neighbour dispatches.",
+      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
     },
     {
       "operation": "pn::executor::tests::message_error_bytes",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:message-error-bytes",
-      "before": "Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.",
-      "after": "Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "before": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
+      "after": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
+      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
     },
     {
       "operation": "pn::executor::tests::pending_configuration_refuses",
@@ -7360,17 +7368,17 @@
       "operation": "pn::executor::tests::start_through_bytes",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:start-through-bytes",
-      "before": "Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.",
-      "after": "Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "before": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
+      "after": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
+      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
     },
     {
       "operation": "pn::executor::tests::unsupported_operation_refuses",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:unsupported-operation-refuses",
-      "before": "Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation.",
-      "after": "Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "before": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
+      "after": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
+      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
     }
   ],
   "conditional_claims": {}

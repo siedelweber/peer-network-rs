@@ -435,3 +435,10 @@ area = "executor"
 stake = "An executor that performs unbounded work or emits a partial response would violate the public control contract."
 register = "NODE::def:node:scope"
 contract = "NODE::verif:node:bounded-executor"
+
+[[rows]]
+owner = "NODE"
+area = "node"
+stake = "If the lexical walk disagrees with the locked parser, source work can escape its declared ceilings."
+register = "NODE::def:node:scope"
+contract = "NODE::verif:node:bounded-executor"

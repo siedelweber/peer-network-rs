@@ -6,11 +6,11 @@ use async_graphql::{
     extensions::{Extension, ExtensionContext, ExtensionFactory, NextExecute},
 };
 use async_graphql_parser::{
-    parse_query,
-    types::{DocumentOperations, ExecutableDocument, OperationType, Selection, SelectionSet},
+    Error as ParserError, Positioned, parse_query,
+    types::{Directive, DocumentOperations, ExecutableDocument, OperationDefinition, OperationType, Selection, SelectionSet},
 };
 use pn_interchange::{
-    DecodeError, EncodingError, EncodingUsage, ResponseView, ResponseWriteError, Text, TransportLimits, TransportMessage,
+    DecodeError, EncodingError, EncodingUsage, Map, ResponseView, ResponseWriteError, Text, TransportLimits, TransportMessage,
     TransportUsage, Value, write_transport_response,
 };
 use std::{
@@ -130,6 +130,7 @@ struct StartInputs {
     bootstrap_valid: bool,
     cancelled: bool,
     failures: StartFailures,
+    #[cfg(test)]
     count: Arc<AtomicUsize>,
 }
 
@@ -332,6 +333,7 @@ fn decode_refusal(error: &DecodeError) -> Result<Refusal, EntryError> {
 struct Message<'a> {
     query: &'a str,
     operation_name: Option<&'a str>,
+    variables: Option<&'a Map>,
 }
 
 fn graphql_name(name: &str) -> bool {
@@ -346,6 +348,7 @@ fn message(value: &Value) -> Result<Message<'_>, Refusal> {
     };
     let mut query = None;
     let mut operation_name = None;
+    let mut variables = None;
     for (key, item) in map.iter() {
         let Value::Text(name) = key else {
             return Err(Refusal::invalid());
@@ -367,15 +370,16 @@ fn message(value: &Value) -> Result<Message<'_>, Refusal> {
                 operation_name = Some(text.as_str());
             }
             "variables" => {
-                let Value::Map(variables) = item else {
+                let Value::Map(bindings) = item else {
                     return Err(Refusal::invalid());
                 };
-                if variables
+                if bindings
                     .iter()
                     .any(|(key, _)| !matches!(key, Value::Text(text) if graphql_name(text.as_str())))
                 {
                     return Err(Refusal::invalid());
                 }
+                variables = Some(bindings);
             }
             _ => return Err(Refusal::invalid()),
         }
@@ -383,6 +387,7 @@ fn message(value: &Value) -> Result<Message<'_>, Refusal> {
     Ok(Message {
         query: query.ok_or(Refusal::invalid())?,
         operation_name,
+        variables,
     })
 }
 
@@ -565,7 +570,11 @@ struct GraphFrame<'a> {
     next: usize,
 }
 
-fn check_fragment_graph(document: &ExecutableDocument, root: &SelectionSet, tokens: usize) -> Result<(), Refusal> {
+fn check_fragment_graph<'a>(
+    document: &'a ExecutableDocument,
+    root: &'a SelectionSet,
+    tokens: usize,
+) -> Result<BTreeSet<&'a str>, Refusal> {
     let mut stack = Vec::new();
     stack.try_reserve(1).map_err(|_| Refusal::limit(None))?;
     stack.push(GraphFrame {
@@ -609,7 +618,7 @@ fn check_fragment_graph(document: &ExecutableDocument, root: &SelectionSet, toke
         stack.try_reserve(1).map_err(|_| Refusal::limit(None))?;
         stack.push(GraphFrame { name, set, next: 0 });
     }
-    Ok(())
+    Ok(complete)
 }
 
 struct ExpandFrame<'a> {
@@ -618,17 +627,38 @@ struct ExpandFrame<'a> {
     depth: usize,
 }
 
-struct Expansion<'a> {
-    root_response_name: &'a str,
-    nested_names: Vec<&'a str>,
+struct Expansion {
     cost: Option<usize>,
+    roots: usize,
+    unsupported_field: bool,
+    unadmitted_directive: bool,
 }
 
-fn count_expansion<'a>(
-    document: &'a ExecutableDocument,
-    operation: &'a async_graphql_parser::types::OperationDefinition,
+fn has_unadmitted_directive(directives: &[Positioned<Directive>]) -> bool {
+    directives
+        .iter()
+        .any(|directive| !matches!(directive.node.name.node.as_str(), "skip" | "include"))
+}
+
+fn directive_profile_invalid(
+    document: &ExecutableDocument,
+    operation: &OperationDefinition,
+    reached: &BTreeSet<&str>,
+    selections_invalid: bool,
+) -> bool {
+    selections_invalid
+        || has_unadmitted_directive(&operation.directives)
+        || document
+            .fragments
+            .iter()
+            .any(|(name, fragment)| reached.contains(name.as_str()) && has_unadmitted_directive(&fragment.node.directives))
+}
+
+fn count_expansion(
+    document: &ExecutableDocument,
+    operation: &async_graphql_parser::types::OperationDefinition,
     limits: &Limits,
-) -> Result<Expansion<'a>, Refusal> {
+) -> Result<Expansion, Refusal> {
     let mut stack = Vec::new();
     stack.try_reserve(1).map_err(|_| Refusal::limit(None))?;
     stack.push(ExpandFrame {
@@ -641,8 +671,7 @@ fn count_expansion<'a>(
     let mut aliases = 0usize;
     let mut fragments = 0usize;
     let mut unsupported_field = false;
-    let mut root_response_name = None;
-    let mut nested_names = Vec::new();
+    let mut unadmitted_directive = false;
     while let Some(frame) = stack.last_mut() {
         if frame.next == frame.set.items.len() {
             stack.pop();
@@ -651,6 +680,12 @@ fn count_expansion<'a>(
         let selection = &frame.set.items[frame.next].node;
         frame.next += 1;
         let depth = frame.depth;
+        let directives = match selection {
+            Selection::FragmentSpread(spread) => &spread.node.directives,
+            Selection::InlineFragment(fragment) => &fragment.node.directives,
+            Selection::Field(field) => &field.node.directives,
+        };
+        unadmitted_directive |= has_unadmitted_directive(directives);
         match selection {
             Selection::FragmentSpread(spread) => {
                 fragments = fragments.checked_add(1).ok_or(Refusal::unsupported(Some("fragment_work")))?;
@@ -688,7 +723,6 @@ fn count_expansion<'a>(
                 if matches!(name, "__schema" | "__type" | "__typename") {
                     unsupported_field = true;
                 }
-                let response_name = field.node.response_key().node.as_str();
                 if next_depth == 1 {
                     if matches!(name, "inspect" | "administer") {
                         unsupported_field = true;
@@ -697,10 +731,6 @@ fn count_expansion<'a>(
                     if roots > limits.root_selections {
                         return Err(Refusal::unsupported(Some("root_selections")));
                     }
-                    root_response_name.get_or_insert(response_name);
-                } else if next_depth == 2 && !nested_names.contains(&response_name) {
-                    nested_names.try_reserve(1).map_err(|_| Refusal::limit(None))?;
-                    nested_names.push(response_name);
                 }
                 if !field.node.selection_set.node.items.is_empty() {
                     stack.try_reserve(1).map_err(|_| Refusal::limit(None))?;
@@ -713,17 +743,12 @@ fn count_expansion<'a>(
             }
         }
     }
-    if matches!(operation.ty, OperationType::Query | OperationType::Subscription) || unsupported_field {
-        return Err(Refusal::unsupported(None));
-    }
-    if roots != 1 {
-        return Err(Refusal::invalid());
-    }
     let cost = limits.start_weight.checked_mul(roots);
     Ok(Expansion {
-        root_response_name: root_response_name.ok_or(Refusal::invalid())?,
-        nested_names,
         cost,
+        roots,
+        unsupported_field,
+        unadmitted_directive,
     })
 }
 
@@ -777,6 +802,7 @@ struct ControlStartResult {
 impl ControlMutation {
     async fn start(&self, context: &Context<'_>) -> ControlStartResult {
         let run = context.data_unchecked::<StartRun>();
+        #[cfg(test)]
         run.inputs.count.fetch_add(1, Ordering::AcqRel);
         let failure = if !run.inputs.edition_supported {
             Some("EditionUnsupported")
@@ -892,38 +918,52 @@ fn graph_scalar(value: &GraphValue, budget: &mut PresentationBudget) -> Result<V
     }
 }
 
-fn present_result(
-    context: &ExecutionContext,
-    response: &Response,
-    expansion: &Expansion<'_>,
-) -> Result<TransportMessage, EntryError> {
-    let GraphValue::Object(root) = &response.data else {
-        return Err(EntryError::ResponseValueUnsupported);
-    };
-    let (_, GraphValue::Object(start)) = root
-        .iter()
-        .find(|(name, _)| name.as_str() == expansion.root_response_name)
-        .ok_or(EntryError::ResponseValueUnsupported)?
-    else {
-        return Err(EntryError::ResponseValueUnsupported);
-    };
+fn present_result(context: &ExecutionContext, response: &Response) -> Result<TransportMessage, EntryError> {
     let mut budget = PresentationBudget::new(context.limits.response);
+    let root = match &response.data {
+        GraphValue::Object(root) => Some(root),
+        GraphValue::Null => None,
+        _ => return Err(EntryError::ResponseValueUnsupported),
+    };
+    let Some(root) = root else {
+        let empty = [];
+        let message = [("data", ResponseView::Object(&empty))];
+        return writer(&message, &budget);
+    };
+    if root.is_empty() {
+        let empty = [];
+        let message = [("data", ResponseView::Object(&empty))];
+        return writer(&message, &budget);
+    }
+    if root.len() != 1 {
+        return Err(EntryError::ResponseValueUnsupported);
+    }
+    let Some((root_name, start_value)) = root.iter().next() else {
+        return Err(EntryError::ResponseValueUnsupported);
+    };
+    if matches!(start_value, GraphValue::Null) {
+        let empty = [];
+        let data = [(root_name.as_str(), ResponseView::Object(&empty))];
+        let message = [("data", ResponseView::Object(&data))];
+        return writer(&message, &budget);
+    }
+    let GraphValue::Object(start) = start_value else {
+        return Err(EntryError::ResponseValueUnsupported);
+    };
     let mut values = Vec::new();
     let mut names = Vec::new();
-    for name in &expansion.nested_names {
-        if let Some((_, value)) = start.iter().find(|(key, _)| key.as_str() == *name) {
-            budget.reserve_vec(&mut values, 1)?;
-            values.push(graph_scalar(value, &mut budget)?);
-            budget.reserve_vec(&mut names, 1)?;
-            names.push(*name);
-        }
+    for (name, value) in start {
+        budget.reserve_vec(&mut values, 1)?;
+        values.push(graph_scalar(value, &mut budget)?);
+        budget.reserve_vec(&mut names, 1)?;
+        names.push(name.as_str());
     }
     let mut fields = Vec::new();
     budget.reserve_vec(&mut fields, names.len())?;
     for (name, value) in names.iter().zip(&values) {
         fields.push((*name, ResponseView::Value(value)));
     }
-    let data = [(expansion.root_response_name, ResponseView::Object(&fields))];
+    let data = [(root_name.as_str(), ResponseView::Object(&fields))];
     let message = [("data", ResponseView::Object(&data))];
     writer(&message, &budget)
 }
@@ -948,6 +988,41 @@ fn present_with_replacement(
 
 fn refuse(context: &ExecutionContext, refusal: Refusal) -> Result<TransportMessage, EntryError> {
     present_with_replacement(context, || present_error(context, refusal))
+}
+
+async fn dispatch_graphql(
+    context: &ExecutionContext,
+    message: &Message<'_>,
+    deadline: Instant,
+    cost: Option<usize>,
+) -> Result<Response, Refusal> {
+    let exceeded = Arc::new(AtomicBool::new(false));
+    let cost_gate = CostGate {
+        cost,
+        limit: context.limits.resolver_work,
+        exceeded: exceeded.clone(),
+    };
+    let schema = Schema::build(ControlQuery, ControlMutation, EmptySubscription)
+        .extension(cost_gate)
+        .finish();
+    let run = StartRun {
+        inputs: context.start.clone(),
+        cancelled: context.cancelled.clone(),
+        deadline,
+        edition: context.edition.clone(),
+    };
+    let mut request = Request::new(message.query).data(run);
+    if let Some(name) = message.operation_name {
+        request = request.operation_name(name);
+    }
+    let response = schema.execute(request).await;
+    if exceeded.load(Ordering::Acquire) {
+        return Err(Refusal::unsupported(Some("resolver_work")));
+    }
+    if !response.errors.is_empty() {
+        return Err(Refusal::invalid());
+    }
+    Ok(response)
 }
 
 /// Execute one bounded CBOR GraphQL control message in process.
@@ -1010,8 +1085,10 @@ pub async fn execute(bytes: &[u8], context: &ExecutionContext) -> Result<Transpo
     if let Err(refusal) = boundary(context, deadline) {
         return refuse(context, refusal);
     }
-    let Ok(document) = parse_query(message.query) else {
-        return refuse(context, Refusal::malformed());
+    let document = match parse_query(message.query) {
+        Ok(document) => document,
+        Err(ParserError::RecursionLimitExceeded) => return refuse(context, Refusal::unsupported(None)),
+        Err(_) => return refuse(context, Refusal::malformed()),
     };
     if let Err(refusal) = boundary(context, deadline) {
         return refuse(context, refusal);
@@ -1023,9 +1100,10 @@ pub async fn execute(bytes: &[u8], context: &ExecutionContext) -> Result<Transpo
     if let Err(refusal) = boundary(context, deadline) {
         return refuse(context, refusal);
     }
-    if let Err(refusal) = check_fragment_graph(&document, &operation.selection_set.node, context.limits.lexical_tokens) {
-        return refuse(context, refusal);
-    }
+    let reached = match check_fragment_graph(&document, &operation.selection_set.node, context.limits.lexical_tokens) {
+        Ok(reached) => reached,
+        Err(refusal) => return refuse(context, refusal),
+    };
     if let Err(refusal) = boundary(context, deadline) {
         return refuse(context, refusal);
     }
@@ -1036,41 +1114,39 @@ pub async fn execute(bytes: &[u8], context: &ExecutionContext) -> Result<Transpo
     if let Err(refusal) = boundary(context, deadline) {
         return refuse(context, refusal);
     }
-
-    let exceeded = Arc::new(AtomicBool::new(false));
-    let cost_gate = CostGate {
-        cost: expansion.cost,
-        limit: context.limits.resolver_work,
-        exceeded: exceeded.clone(),
-    };
-    let schema = Schema::build(ControlQuery, ControlMutation, EmptySubscription)
-        .extension(cost_gate)
-        .finish();
-    let run = StartRun {
-        inputs: context.start.clone(),
-        cancelled: context.cancelled.clone(),
-        deadline,
-        edition: context.edition.clone(),
-    };
-    let mut request = Request::new(message.query).data(run);
-    if let Some(name) = message.operation_name {
-        request = request.operation_name(name);
+    let extra_operations = matches!(&document.operations, DocumentOperations::Multiple(operations) if operations.len() > 1);
+    if matches!(operation.ty, OperationType::Query | OperationType::Subscription)
+        || expansion.unsupported_field
+        || extra_operations
+        || document.fragments.keys().any(|name| !reached.contains(name.as_str()))
+        || !operation.variable_definitions.is_empty()
+    {
+        return refuse(context, Refusal::unsupported(None));
     }
-    let response = schema.execute(request).await;
-    if exceeded.load(Ordering::Acquire) {
-        return refuse(context, Refusal::unsupported(Some("resolver_work")));
-    }
-    if !response.errors.is_empty() {
+    if expansion.roots != 1 {
         return refuse(context, Refusal::invalid());
     }
-    present_with_replacement(context, || present_result(context, &response, &expansion))
+    if let Err(refusal) = boundary(context, deadline) {
+        return refuse(context, refusal);
+    }
+    if message.variables.is_some_and(|bindings| !bindings.is_empty()) {
+        return refuse(context, Refusal::invalid());
+    }
+    if directive_profile_invalid(&document, operation, &reached, expansion.unadmitted_directive) {
+        return refuse(context, Refusal::invalid());
+    }
+
+    let response = match dispatch_graphql(context, &message, deadline, expansion.cost).await {
+        Ok(response) => response,
+        Err(refusal) => return refuse(context, refusal),
+    };
+    present_with_replacement(context, || present_result(context, &response))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use async_graphql::futures_util::FutureExt;
-    use pn_interchange::Map;
 
     const DRAFT: &str = include_str!("../schema/control-register-draft.toml");
 
@@ -1127,14 +1203,35 @@ mod tests {
     }
 
     fn request(query: &str) -> Vec<u8> {
+        request_parts(query, None, None)
+    }
+
+    fn request_parts(query: &str, operation_name: Option<&str>, variables: Option<Value>) -> Vec<u8> {
+        let mut members = vec![(
+            Value::Text(Text::from("query".to_owned())),
+            Value::Text(Text::from(query.to_owned())),
+        )];
+        if let Some(name) = operation_name {
+            members.push((
+                Value::Text(Text::from("operationName".to_owned())),
+                Value::Text(Text::from(name.to_owned())),
+            ));
+        }
+        if let Some(value) = variables {
+            members.push((Value::Text(Text::from("variables".to_owned())), value));
+        }
+        Value::Map(Map::new(members).expect("distinct request members")).to_canonical_bytes()
+    }
+
+    fn bindings(members: Vec<(&str, Value)>) -> Value {
         Value::Map(
-            Map::new([(
-                Value::Text(Text::from("query".to_owned())),
-                Value::Text(Text::from(query.to_owned())),
-            )])
-            .expect("one text key"),
+            Map::new(
+                members
+                    .into_iter()
+                    .map(|(name, value)| (Value::Text(Text::from(name.to_owned())), value)),
+            )
+            .expect("distinct binding names"),
         )
-        .to_canonical_bytes()
     }
 
     fn large_query(count: usize) -> String {
@@ -1174,6 +1271,25 @@ mod tests {
             .expect("named member")
     }
 
+    fn optional_member<'a>(value: &'a Value, name: &str) -> Option<&'a Value> {
+        let Value::Map(map) = value else {
+            panic!("expected map");
+        };
+        map.iter()
+            .find(|(key, _)| matches!(key, Value::Text(text) if text.as_str() == name))
+            .map(|(_, value)| value)
+    }
+
+    fn encoded_key_position(bytes: &[u8], name: &str) -> usize {
+        let name_len = u8::try_from(name.len()).expect("short test key");
+        let mut encoded = vec![0x60 | name_len];
+        encoded.extend_from_slice(name.as_bytes());
+        bytes
+            .windows(encoded.len())
+            .position(|window| window == encoded)
+            .expect("encoded response key")
+    }
+
     fn error_class(message: &TransportMessage) -> (String, Option<String>) {
         let value = read(message);
         let Value::Array(errors) = member(&value, "errors") else {
@@ -1206,7 +1322,22 @@ mod tests {
         (*ready, failure)
     }
 
-    /// Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.
+    fn assert_skipped_root_spread(context: &ExecutionContext, calls: &Arc<AtomicUsize>) {
+        let before = calls.load(Ordering::Acquire);
+        let message = run(
+            &request("mutation { ...F @skip(if: true) } fragment F on ControlMutation { start { ready } }"),
+            context,
+        )
+        .expect("removed root spread response");
+        let response = read(&message);
+        let Value::Map(data) = member(&response, "data") else {
+            panic!("empty data map");
+        };
+        assert!(data.is_empty());
+        assert_eq!(calls.load(Ordering::Acquire), before, "skipped spread does not call start");
+    }
+
+    /// Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.
     /// ´claim:executor:start-through-bytes´
     /// ´test:unit:start-through-bytes´
     #[test]
@@ -1222,9 +1353,98 @@ mod tests {
             panic!("edition text");
         };
         assert_eq!(edition.as_str(), EDITION);
+
+        let empty_bindings = Value::Map(Map::new(std::iter::empty()).expect("empty bindings"));
+        let message = run(
+            &request_parts("mutation { start { ready } }", None, Some(empty_bindings)),
+            &context,
+        )
+        .expect("empty bindings admit the same request");
+        assert!(optional_member(member(&read(&message), "data"), "start").is_some());
+        assert_eq!(calls.load(Ordering::Acquire), 2);
+
+        for (source, survives) in [
+            ("mutation { start @skip(if: true) { ready } }", false),
+            ("mutation { start @skip(if: false) { ready } }", true),
+            ("mutation { start @include(if: false) { ready } }", false),
+            ("mutation { start @include(if: true) { ready } }", true),
+            ("mutation { start @skip(if: false) @include(if: true) { ready } }", true),
+            ("mutation { start @skip(if: true) @include(if: true) { ready } }", false),
+            ("mutation { start @skip(if: false) @include(if: false) { ready } }", false),
+        ] {
+            let before = calls.load(Ordering::Acquire);
+            let message = run(&request(source), &context).expect("literal root directive response");
+            let data = read(&message);
+            let Value::Map(fields) = member(&data, "data") else {
+                panic!("data map");
+            };
+            assert_eq!(fields.len(), usize::from(survives), "root inclusion for {source}");
+            assert_eq!(calls.load(Ordering::Acquire), before + usize::from(survives));
+        }
+
+        assert_skipped_root_spread(&context, &calls);
+
+        let child = run(
+            &request("mutation { start { ready @skip(if: true) edition @include(if: true) } }"),
+            &context,
+        )
+        .expect("child directive response");
+        let data = read(&child);
+        let start = member(member(&data, "data"), "start");
+        assert!(optional_member(start, "ready").is_none());
+        assert!(optional_member(start, "edition").is_some());
+
+        let before_empty = calls.load(Ordering::Acquire);
+        let empty_child =
+            run(&request("mutation { start { ready @skip(if: true) } }"), &context).expect("retained root with omitted child");
+        let data = read(&empty_child);
+        let Value::Map(fields) = member(member(&data, "data"), "start") else {
+            panic!("empty retained root");
+        };
+        assert!(fields.is_empty());
+        assert_eq!(calls.load(Ordering::Acquire), before_empty + 1);
+
+        let spread = "mutation { start { ...Keep @include(if: true) ...Keep @skip(if: true) } } fragment Keep on ControlStartResult { ready }";
+        let spread_result = run(&request(spread), &context).expect("reachable conditional fragment");
+        let data = read(&spread_result);
+        assert!(optional_member(member(member(&data, "data"), "start"), "ready").is_some());
+
+        let inline = "mutation { start { ... on ControlStartResult @include(if: true) { edition } ... on ControlStartResult @skip(if: true) { ready } } }";
+        let inline_result = run(&request(inline), &context).expect("conditional inline fragment");
+        let data = read(&inline_result);
+        let start = member(member(&data, "data"), "start");
+        assert!(optional_member(start, "edition").is_some());
+        assert!(optional_member(start, "ready").is_none());
+
+        for (directive, survives) in [
+            ("@skip(if: true)", false),
+            ("@skip(if: false)", true),
+            ("@include(if: true)", true),
+            ("@include(if: false)", false),
+            ("@skip(if: false) @include(if: true)", true),
+            ("@skip(if: true) @include(if: true)", false),
+        ] {
+            let sources = [
+                format!("mutation {{ start {{ ready {directive} }} }}"),
+                format!("mutation {{ start {{ ...Keep {directive} }} }} fragment Keep on ControlStartResult {{ ready }}"),
+                format!("mutation {{ start {{ ... on ControlStartResult {directive} {{ ready }} }} }}"),
+            ];
+            for source in sources {
+                let before = calls.load(Ordering::Acquire);
+                let result = run(&request(&source), &context).expect("literal child or fragment directive");
+                let data = read(&result);
+                let start = member(member(&data, "data"), "start");
+                assert_eq!(optional_member(start, "ready").is_some(), survives, "{source}");
+                assert_eq!(calls.load(Ordering::Acquire), before + 1, "retained root calls once");
+            }
+        }
+
+        let skipped_early = "mutation { start { early: ready @skip(if: true) later: failure early: ready } }";
+        let ordered = run(&request(skipped_early), &context).expect("merged surviving response names");
+        assert!(encoded_key_position(ordered.as_bytes(), "later") < encoded_key_position(ordered.as_bytes(), "early"));
     }
 
-    /// Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.
+    /// Claim: Malformed transport or source syntax refuses before resolver entry while a complete neighbour dispatches.
     /// ´claim:executor:malformed-message-refuses´
     /// ´test:unit:malformed-message-refuses´
     #[test]
@@ -1239,15 +1459,18 @@ mod tests {
         assert_eq!(calls.load(Ordering::Acquire), 0);
         assert!(run(&complete, &context).is_ok());
         assert_eq!(calls.load(Ordering::Acquire), 1);
-        let bom = "\u{feff}mutation { start { ready } }";
-        let escaped_block = r#"mutation { start(arg: """a \""" b""") { ready } }"#;
-        for source in [bom, escaped_block] {
-            assert!(lexical(source, &limits()).is_ok(), "valid lexical neighbour");
-            assert!(parse_query(source).is_ok(), "dependency accepts lexical neighbour");
+        for source in [
+            "mutation { start { ready",
+            "mutation { start( }",
+            "mutation { start { ready } } ~",
+        ] {
+            let error = run(&request(source), &context).expect("malformed source error");
+            assert_eq!(error_class(&error), ("Malformed".to_owned(), None));
+            assert_eq!(calls.load(Ordering::Acquire), 1, "malformed source did not call start");
         }
     }
 
-    /// Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation.
+    /// Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.
     /// ´claim:executor:unsupported-operation-refuses´
     /// ´test:unit:unsupported-operation-refuses´
     #[test]
@@ -1263,7 +1486,66 @@ mod tests {
             let message = run(&request(source), &context).expect("unsupported root in either order");
             assert_eq!(error_class(&message), ("Unsupported".to_owned(), None));
         }
+        let declared = vec![
+            ("mutation($x: Boolean!) { start { ready @include(if: $x) } }", None),
+            (
+                "mutation($x: Boolean) { start { ready @include(if: $x) } }",
+                Some(bindings(vec![("x", Value::Null)])),
+            ),
+            (
+                "mutation($x: Boolean = true) { start { ready @include(if: $x) } }",
+                Some(bindings(vec![("x", Value::Bool(false))])),
+            ),
+            (
+                "mutation($x: Boolean) { start { ready } }",
+                Some(bindings(vec![("x", Value::Bool(false)), ("extra", Value::Bool(true))])),
+            ),
+            ("mutation($x: Boolean) { start { ready } }", None),
+            ("mutation($x: Boolean) { a: start { ready } b: start { ready } }", None),
+        ];
+        for (source, variables) in declared {
+            let message = run(&request_parts(source, None, variables), &context).expect("declared variable refusal");
+            assert_eq!(error_class(&message), ("Unsupported".to_owned(), None), "{source}");
+        }
+        for (source, operation_name) in [
+            (
+                "mutation First { start { ready } } mutation Second { start { ready } }",
+                Some("First"),
+            ),
+            (
+                "mutation First { a: start { ready } b: start { ready } } mutation Second { start { ready } }",
+                Some("First"),
+            ),
+            (
+                "mutation { start { ready } } fragment Spare on ControlStartResult { edition }",
+                None,
+            ),
+            ("mutation { start { ready } inspect @skip(if: true) }", None),
+            ("mutation { start { __typename @skip(if: true) } }", None),
+        ] {
+            let message = run(&request_parts(source, operation_name, None), &context).expect("explicit profile refusal");
+            assert_eq!(error_class(&message), ("Unsupported".to_owned(), None), "{source}");
+        }
         assert_eq!(calls.load(Ordering::Acquire), 0);
+
+        let mut deep = String::from("mutation { start { ");
+        for _ in 0..65 {
+            deep.push_str("... on ControlStartResult { ");
+        }
+        deep.push_str("ready");
+        for _ in 0..65 {
+            deep.push_str(" }");
+        }
+        deep.push_str(" } }");
+        let mut deep_limits = limits();
+        deep_limits.source_nesting = 100;
+        assert!(lexical(&deep, &deep_limits).is_ok(), "finite walk admits deep valid source");
+        assert!(matches!(parse_query(&deep), Err(ParserError::RecursionLimitExceeded)));
+        let deep_state = start();
+        let deep_calls = deep_state.count.clone();
+        let deep_message = run(&request(&deep), &self::context(deep_limits, deep_state)).expect("typed depth guard message");
+        assert_eq!(error_class(&deep_message), ("Unsupported".to_owned(), None));
+        assert_eq!(deep_calls.load(Ordering::Acquire), 0);
     }
 
     /// Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.
@@ -1360,17 +1642,43 @@ mod tests {
             Value::from_transport_bytes(&bytes, exact, &mut TransportUsage::default()),
             Err(DecodeError::TransportLimit { resource: "depth", .. })
         ));
-        let source = "# ignored until carriage return\rmutation { start { ready } }";
-        assert!(parse_query(source).is_ok(), "dependency accepts carriage-return terminator");
-        let mut source_limits = self::limits();
-        source_limits.source_nesting = 1;
-        assert_eq!(
-            lexical(source, &source_limits),
-            Err(Refusal::unsupported(Some("source_nesting")))
+    }
+
+    /// Claim: The source walk agrees with the locked parser at CR comments, ignored BOM and escaped block quotes.
+    /// ´claim:node:lexical-walk-matches-parser´
+    /// ´test:unit:lexical-walk-matches-parser´
+    #[test]
+    fn lexical_walk_matches_parser() {
+        let state = start();
+        let calls = state.count.clone();
+        let context = context(limits(), state);
+        let carriage = "# ignored until carriage return\rmutation { start { ready } }";
+        let bom = "\u{feff}mutation { start { ready } }";
+        for source in [carriage, bom] {
+            assert!(lexical(source, &limits()).is_ok(), "walk admits parser source");
+            assert!(parse_query(source).is_ok(), "locked parser admits source");
+            let response = run(&request(source), &context).expect("lexical neighbour dispatches");
+            let data = read(&response);
+            assert!(optional_member(member(&data, "data"), "start").is_some());
+        }
+        assert_eq!(calls.load(Ordering::Acquire), 2);
+
+        let escaped_block = r#"mutation { start(arg: """a \""" b""") { ready } }"#;
+        assert!(lexical(escaped_block, &limits()).is_ok());
+        assert!(
+            parse_query(escaped_block).is_ok(),
+            "escaped triple quote stays in block string"
         );
-        let message = run(&request(source), &self::context(source_limits, start())).expect("source depth error");
+        let invalid = run(&request(escaped_block), &context).expect("schema-invalid argument response");
+        assert_eq!(error_class(&invalid), ("Invalid".to_owned(), None));
+        assert_eq!(calls.load(Ordering::Acquire), 2, "invalid argument never calls start");
+
+        let mut narrow = limits();
+        narrow.source_nesting = 1;
+        assert_eq!(lexical(carriage, &narrow), Err(Refusal::unsupported(Some("source_nesting"))));
+        let refused = run(&request(carriage), &self::context(narrow, start())).expect("hidden nesting refusal");
         assert_eq!(
-            error_class(&message),
+            error_class(&refused),
             ("Unsupported".to_owned(), Some("source_nesting".to_owned()))
         );
     }
@@ -1432,7 +1740,7 @@ mod tests {
         assert_eq!(start_result(&message, "start").1.as_deref(), Some("Cancelled"));
     }
 
-    /// Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.
+    /// Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.
     /// ´claim:executor:message-error-bytes´
     /// ´test:unit:message-error-bytes´
     #[test]
@@ -1448,6 +1756,40 @@ mod tests {
         let invalid_input = Value::Map(Map::new(std::iter::empty()).expect("empty map")).to_canonical_bytes();
         let invalid = run(&invalid_input, &context(limits(), start())).expect("invalid response");
         assert_eq!(invalid.as_bytes(), INVALID);
+        let state = start();
+        let invalid_calls = state.count.clone();
+        let invalid_context = context(limits(), state);
+        let invalid_cases = vec![
+            request_parts(
+                "mutation { start { ready } }",
+                None,
+                Some(bindings(vec![("extra", Value::Bool(true))])),
+            ),
+            request_parts("mutation { start { ready } }", None, Some(Value::Null)),
+            request_parts("mutation { start { ready } }", None, Some(Value::Bool(true))),
+            request_parts(
+                "mutation { start { ready } }",
+                None,
+                Some(bindings(vec![("$bad", Value::Bool(true))])),
+            ),
+            request("mutation { start { ready @include(if: $missing) } }"),
+            request("mutation { start { ready @skip } }"),
+            request("mutation { start { ready @skip(if: 1) } }"),
+            request("mutation { start { ready @skip(if: false, extra: true) } }"),
+            request("mutation { start { ready @skip(if: false) @skip(if: true) } }"),
+            request("mutation @skip(if: true) { start { ready } }"),
+            request("mutation { start { ready @deprecated } }"),
+            request("mutation { start { absent @ifdef } }"),
+            request_parts("mutation Named { start { ready } }", Some("Other"), None),
+            request("mutation { start { ...A } } fragment A on ControlStartResult { ...A }"),
+            request("mutation { start { ...Missing } }"),
+            request("mutation { start { absent @skip(if: true) } }"),
+        ];
+        for case in invalid_cases {
+            let invalid = run(&case, &invalid_context).expect("validation error message");
+            assert_eq!(invalid.as_bytes(), INVALID, "validation case keeps Invalid bytes");
+            assert_eq!(invalid_calls.load(Ordering::Acquire), 0, "invalid request never calls start");
+        }
         let unsupported = run(&request("mutation { inspect }"), &context(limits(), start())).expect("unsupported response");
         assert_eq!(unsupported.as_bytes(), UNSUPPORTED);
         let mut small = limits();

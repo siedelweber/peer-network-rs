@@ -4829,6 +4829,7 @@
         "pn::executor::tests::pending_configuration_refuses",
         "pn::executor::tests::reservation_limit_precedes_work",
         "pn::executor::tests::depth_limit_precedes_expansion",
+        "pn::executor::tests::lexical_walk_matches_parser",
         "pn::executor::tests::decoding_work_is_independent",
         "pn::executor::tests::result_invariant",
         "pn::executor::tests::message_error_bytes",

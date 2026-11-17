@@ -4,6 +4,6 @@
     "item": "executor::Expansion",
     "package": "pn",
     "path": "packages/node/src/executor.rs",
-    "syntax": "struct Expansion < 'a > { root_response_name : & 'a str , nested_names : Vec < & 'a str > , cost : Option < usize > , }"
+    "syntax": "struct Expansion { cost : Option < usize > , roots : usize , unsupported_field : bool , unadmitted_directive : bool , }"
   }
 }

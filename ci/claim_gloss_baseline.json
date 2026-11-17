@@ -1556,14 +1556,15 @@
     "pn::admission::schema_refusals": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
     "pn::executor::tests::decoding_work_is_independent": "Claim: Decode work is an independent pre-dispatch ceiling; a sufficient work cap admits the same bytes.",
     "pn::executor::tests::depth_limit_precedes_expansion": "Claim: A value-head depth excess refuses before GraphQL expansion, with root depth one.",
-    "pn::executor::tests::malformed_message_refuses": "Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.",
-    "pn::executor::tests::message_error_bytes": "Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.",
+    "pn::executor::tests::lexical_walk_matches_parser": "Claim: The source walk agrees with the locked parser at CR comments, ignored BOM and escaped block quotes.",
+    "pn::executor::tests::malformed_message_refuses": "Claim: Malformed transport or source syntax refuses before resolver entry while a complete neighbour dispatches.",
+    "pn::executor::tests::message_error_bytes": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
     "pn::executor::tests::pending_configuration_refuses": "Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.",
     "pn::executor::tests::reservation_limit_precedes_work": "Claim: The decoder's allocation-byte ceiling refuses before work or an unbudgeted reservation.",
     "pn::executor::tests::response_nothing_fits": "Claim: A positive cap that fits neither the result nor one replacement returns typed `ResponseLimit` and no bytes.",
     "pn::executor::tests::response_replacement_fits": "Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.",
     "pn::executor::tests::result_invariant": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
-    "pn::executor::tests::start_through_bytes": "Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.",
-    "pn::executor::tests::unsupported_operation_refuses": "Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation."
+    "pn::executor::tests::start_through_bytes": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
+    "pn::executor::tests::unsupported_operation_refuses": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch."
   }
 }
