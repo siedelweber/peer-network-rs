@@ -4654,7 +4654,7 @@
       "budget": "pure-suite",
       "case_budget_reasons": {
         "pn-wallet::rpc_cookie::tests::descriptor_cases": "The descriptor witness retains the exhaustive file-mode sweep, ownership and link checks, descriptor mutation and rotated-read controls.",
-        "pn-wallet::rpc_http::tests::acquisition_cases": "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline."
+        "pn-wallet::rpc_http::tests::acquisition_cases": "The HTTP acquisition witness retains the framing refusals, the named containment trip and the gated first-body-frame control on the controlled deadline source."
       },
       "case_budgets": {
         "pn-wallet::rpc_cookie::tests::descriptor_cases": "calibrated-wallet-rpc-cookie-descriptor-cases-case",

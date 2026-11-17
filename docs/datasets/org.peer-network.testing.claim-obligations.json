@@ -2841,17 +2841,19 @@
         "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
         "WALLET::claim:wallet:rpc-deadline-is-fixed-across-phases"
       ],
-      "closing_condition": "Review the implemented deadline source against its design and execute deterministic controls on it for read-path non-renewal and the configured transport budget, without inferring conformance from real-time scheduling; the real wall-time envelope stays unclaimed.",
+      "closing_condition": "Review the implemented deadline source against its design and execute deterministic controls on it for non-renewal over body progress and the configured transport budget, without inferring conformance from real-time scheduling; the real wall-time envelope stays unclaimed.",
       "closing_step": "Wallet transport-clock design and evidence cut",
       "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Transport reviewer’s closing review of the controlled integration evidence on the implemented deadline source of (`amend:devnet:transport-deadline-source`); real-network wall-time envelopes remain unclaimed.",
+      "hold": "",
+      "missing": "Outside scope: real-network wall-time envelopes. Single-change mutants remain owed as arguments, not executed evidence.",
       "name": "ROOT::req:harness:transport-clock-evidence",
       "owner": "Wallet implementer and transport reviewer",
       "path": "adr/020-testing-harness.md",
-      "premises": "One controlled source encloses one exchange; hooks signal without waiting, the peer independently reads the complete request, and each body byte follows consumption and an unexpired enclosing check. Phase, configured-budget and non-renewal evidence is on that source’s virtual clock, not a real-network wall-time envelope; closing review remains held.",
-      "realizers": [],
-      "status": "held",
+      "premises": "One controlled source encloses one exchange; hooks signal without waiting, the peer independently reads the complete request, and each body byte follows consumption and an unexpired enclosing check. The reviewed phase and configured-budget evidence is on that source’s virtual clock. Non-renewal is witnessed over body progress and carried to other phases by the single private fixed instant, which has no setter or recomputing path. Transfer of both claims to production rests on the reviewed source equivalence: the same fixed instant, inner future, poll order and synchronous checks, and on the runtime timer firing at that instant; its real wall-time envelope is not claimed.",
+      "realizers": [
+        "ROOT::verif:devnet:wallet-http"
+      ],
+      "status": "scoped-supported",
       "witnessed_labels": []
     },
     {
@@ -4006,7 +4008,7 @@
         "bare LF, folded lines, 1xx and close-delimited bodies refused",
         "duplicate or conflicting lengths, transfer encoding, compression and redirects refused",
         "header/body truncation, trailing bytes and excessive size refused",
-        "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and refuse renewal by progress; closing review remains held",
+        "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and witness non-renewal over body progress; the single private fixed instant carries non-renewal to other phases by construction",
         "one attempt per exchange and aggregate reconnection ceiling before cookie access"
       ],
       "claims": [
@@ -4018,11 +4020,11 @@
         "WALLET::claim:wallet:rpc-json-envelope-is-correlated",
         "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing"
       ],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: status 200 result and error; 400, 404 and 500 error-only bodies; 401 closes without body parsing or retry; other statuses refused; bare LF, folded lines, 1xx and close-delimited bodies refused; duplicate or conflicting lengths, transfer encoding, compression and redirects refused; header/body truncation, trailing bytes and excessive size refused; controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and refuse renewal by progress; closing review remains held; one attempt per exchange and aggregate reconnection ceiling before cookie access.",
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: status 200 result and error; 400, 404 and 500 error-only bodies; 401 closes without body parsing or retry; other statuses refused; bare LF, folded lines, 1xx and close-delimited bodies refused; duplicate or conflicting lengths, transfer encoding, compression and redirects refused; header/body truncation, trailing bytes and excessive size refused; controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and witness non-renewal over body progress; the single private fixed instant carries non-renewal to other phases by construction; one attempt per exchange and aggregate reconnection ceiling before cookie access.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
       "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
       "hold": "",
-      "missing": "Outside scope: real connect/read wall-time envelopes are not claimed; the separate held transport-clock prerequisite owns their deterministic evidence. Signed fixtures are measured separately; recognition, settlement and spending remain held.",
+      "missing": "Outside scope: real connect/read wall-time envelopes are not claimed; the reviewed transport-clock evidence does not establish those envelopes. Signed fixtures are measured separately; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-http",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",

@@ -1974,7 +1974,7 @@ name = "calibrated-wallet-rpc-http-acquisition-cases-case"
 category = "case"
 budget_ms = 300
 scope = "one pn-wallet::rpc_http::tests::acquisition_cases case"
-reason = "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline."
+reason = "The HTTP acquisition witness retains the framing refusals, the named containment trip and the gated first-body-frame control on the controlled deadline source."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 calibration_walls_ms = [136.67741394601762, 134.70446993596852, 133.7620869744569]
 calibration_sample_choice = "maximum-of-three-warm-serial"

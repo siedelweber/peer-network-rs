@@ -231,7 +231,7 @@
             "bare LF, folded lines, 1xx and close-delimited bodies refused",
             "duplicate or conflicting lengths, transfer encoding, compression and redirects refused",
             "header/body truncation, trailing bytes and excessive size refused",
-            "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and refuse renewal by progress; closing review remains held",
+            "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and witness non-renewal over body progress; the single private fixed instant carries non-renewal to other phases by construction",
             "one attempt per exchange and aggregate reconnection ceiling before cookie access"
           ],
           "name": "http",

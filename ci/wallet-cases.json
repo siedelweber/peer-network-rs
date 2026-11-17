@@ -295,7 +295,7 @@
     },
     {
       "group": "http",
-      "case": "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and refuse renewal by progress; closing review remains held",
+      "case": "controlled-source deadlines close incomplete peers in head and body phases, pin the configured budget and witness non-renewal over body progress; the single private fixed instant carries non-renewal to other phases by construction",
       "status": "scoped",
       "claims": [
         "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
