@@ -186,7 +186,10 @@ impl fmt::Display for ServerError {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (form, cause) = match self {
-            Self::Failed(cause) => ("The request failed and took no effect.", cause),
+            Self::Failed(cause) => (
+                "The request failed; the failing transaction's changes were not committed.",
+                cause,
+            ),
             Self::Uncertain(cause) => (
                 "The request may have taken effect: the server ended the session or did not report the outcome.",
                 cause,
@@ -1202,16 +1205,19 @@ mod server_error_value_tests {
         }
     }
 
-    /// Claim: Across all fourteen causes only Failed reports that the request took no effect.
+    /// Claim: Across all fourteen causes only Failed reports that the failing transaction's changes were not committed.
     /// ´claim:host:server-error-effect´
     /// ´test:unit:server-error-effect´
     #[test]
     fn server_error_effect() {
         for (cause, _, _, _) in TABLE {
-            assert!(ServerError::Failed(cause).took_no_effect(), "failed reports no effect");
+            assert!(
+                ServerError::Failed(cause).took_no_effect(),
+                "failed reports transaction changes not committed"
+            );
             assert!(
                 !ServerError::Uncertain(cause).took_no_effect(),
-                "uncertain never reports no effect"
+                "uncertain never reports transaction changes not committed"
             );
         }
     }
@@ -1247,7 +1253,10 @@ mod server_error_value_tests {
     fn server_error_sentences() {
         for (cause, _, _, sentence) in TABLE {
             for (value, form) in [
-                (ServerError::Failed(cause), "The request failed and took no effect."),
+                (
+                    ServerError::Failed(cause),
+                    "The request failed; the failing transaction's changes were not committed.",
+                ),
                 (
                     ServerError::Uncertain(cause),
                     "The request may have taken effect: the server ended the session or did not report the outcome.",

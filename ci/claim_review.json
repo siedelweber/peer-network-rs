@@ -4703,8 +4703,8 @@
       "path": "packages/host/src/lib.rs",
       "claim": "HOST::claim:host:server-error-effect",
       "before": "",
-      "after": "Claim: Across all fourteen causes only Failed reports that the request took no effect.",
-      "review": "Twenty-eight explicitly constructed values distinguish the effect answer of Failed from Uncertain across all fourteen causes. No diagnostic or severity is classified, and no request effect is inferred from a live server in this value-level control."
+      "after": "Claim: Across all fourteen causes only Failed reports that the failing transaction's changes were not committed.",
+      "review": "Twenty-eight explicitly constructed values distinguish whether the failing transaction's changes were not committed: Failed answers true and Uncertain false across all fourteen causes. This excludes non-transactional effects and earlier committed statements of a simple-query string; it classifies no diagnostic and establishes no live server effect."
     },
     {
       "operation": "pn-host::server_error_value_tests::server_error_retry",
