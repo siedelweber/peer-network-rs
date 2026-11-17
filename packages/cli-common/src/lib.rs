@@ -885,6 +885,163 @@ where
     result
 }
 
+/// Result of bounded synchronous preparation before observation workers start.
+pub enum OriginPreparation<Context> {
+    /// Run command work with a prepared context and its safe public arguments.
+    Continue { context: Context, arguments: serde_json::Value },
+    /// Emit a selected control record after attempting observation installation.
+    Terminal { exit: CliExit, arguments: serde_json::Value },
+}
+
+/// Run a stdout-result command whose synchronous preparation is measured from entry.
+/// The caller captures `EntryOrigin` as the first controlled statement of `main`.
+/// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses the enclosing command operation.
+pub fn run_stdout_json_command_from_origin<Context, Output, CommandError, Prepare, Run>(
+    origin: observation::EntryOrigin,
+    command_name: &str,
+    debug: bool,
+    default_level: tracing::Level,
+    prepare: Prepare,
+    run: Run,
+) -> ExitCode
+where
+    Output: serde::Serialize,
+    CommandError: std::fmt::Display,
+    Prepare: FnOnce() -> OriginPreparation<Context>,
+    Run: FnOnce(Context) -> Result<Output, CommandError>,
+{
+    run_stdout_json_command_from_origin_inner(
+        command_name,
+        || install_json_panic_hook(command_name),
+        prepare,
+        || stdout_tty_refusal_record(command_name),
+        |arguments| observation::install_from_origin(origin, debug, default_level, arguments).map(Some),
+        |record| {
+            let _ignored = emit_control_plane_record(record);
+        },
+        emit,
+        run,
+    )
+}
+
+/// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses the enclosing command operation.
+// Justified: The private test seam injects runner phases separately to verify their order.
+#[expect(clippy::too_many_arguments)]
+fn run_stdout_json_command_from_origin_inner<
+    Context,
+    Output,
+    CommandError,
+    Hook,
+    Prepare,
+    Install,
+    EmitControl,
+    EmitOutput,
+    Run,
+    Tty,
+>(
+    command_name: &str,
+    hook: Hook,
+    prepare: Prepare,
+    tty: Tty,
+    install: Install,
+    mut emit_control: EmitControl,
+    mut emit_output: EmitOutput,
+    run: Run,
+) -> ExitCode
+where
+    Output: serde::Serialize,
+    CommandError: std::fmt::Display,
+    Hook: FnOnce(),
+    Prepare: FnOnce() -> OriginPreparation<Context>,
+    Install: FnOnce(serde_json::Value) -> Result<Option<observation::OriginInstallation>, observation::BootstrapError>,
+    EmitControl: FnMut(&ControlPlaneRecord),
+    EmitOutput: FnMut(&Output) -> io::Result<()>,
+    Run: FnOnce(Context) -> Result<Output, CommandError>,
+    Tty: FnOnce() -> Option<ControlPlaneRecord>,
+{
+    hook();
+    let prepared = prepare();
+    let prepared = match prepared {
+        OriginPreparation::Continue { context, arguments } => {
+            if let Some(record) = tty() {
+                OriginPreparation::Terminal {
+                    exit: CliExit::new(record, CommandExit::Usage),
+                    arguments,
+                }
+            } else {
+                OriginPreparation::Continue { context, arguments }
+            }
+        }
+        terminal @ OriginPreparation::Terminal { .. } => terminal,
+    };
+    let arguments = match &prepared {
+        OriginPreparation::Continue { arguments, .. } | OriginPreparation::Terminal { arguments, .. } => arguments.clone(),
+    };
+    let mut installation = match install(arguments) {
+        Ok(installation) => installation,
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            record.message = error.to_string();
+            emit_control(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        Err(observation::BootstrapError::Unavailable(_)) => None,
+    };
+    let root = installation.as_mut().map(|handle| {
+        handle
+            .take_root()
+            .unwrap_or_else(|_| unreachable!("new origin installation retains its root"))
+    });
+    let scope = root.as_ref().map(|lease| lease.enter_command_scope(command_name));
+    let (exit, outcome, result) = match prepared {
+        OriginPreparation::Terminal { exit, .. } => {
+            let result = serde_json::json!({"record":exit.record,"exit":exit.exit});
+            emit_control(&exit.record);
+            let outcome = if exit.exit == CommandExit::Success {
+                observation::Outcome::Success
+            } else if exit.exit == CommandExit::Usage {
+                observation::Outcome::Refusal
+            } else {
+                observation::Outcome::Error
+            };
+            (exit.exit.exit_code(), outcome, result)
+        }
+        OriginPreparation::Continue { context, .. } => match run(context) {
+            Ok(output) => match emit_output(&output) {
+                Ok(()) => (
+                    CommandExit::Success.exit_code(),
+                    observation::Outcome::Success,
+                    serde_json::to_value(&output).unwrap_or(serde_json::Value::Null),
+                ),
+                Err(error) => {
+                    tracing::error!(error = %error, "failed to write JSON to stdout");
+                    (
+                        CommandExit::Failure.exit_code(),
+                        observation::Outcome::Error,
+                        serde_json::json!({"error":error.to_string()}),
+                    )
+                }
+            },
+            Err(error) => {
+                tracing::error!(error = %error, "command failed");
+                (
+                    CommandExit::Failure.exit_code(),
+                    observation::Outcome::Error,
+                    serde_json::json!({"error":error.to_string()}),
+                )
+            }
+        },
+    };
+    if let Some(root) = root {
+        root.finish(outcome, result);
+    }
+    drop(scope);
+    drop(installation);
+    exit
+}
+
 /// Run a side-effect command that does not emit stdout result data.
 ///
 /// The runner installs the JSON panic hook, initialises JSON stderr tracing, and

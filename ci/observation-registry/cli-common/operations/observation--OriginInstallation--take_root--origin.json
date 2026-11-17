@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::OriginInstallation::take_root",
+    "owner": "CLICOMMON",
+    "signature": "fn take_root (& mut self) -> Result < RootLease < '_ > , RootAlreadyTaken >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This entry-origin adapter precedes the adopted command span and transfers ownership of the explicit root without starting another operation.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-root-once",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::OriginInstallation::take_root",
+    "body": "{ self . root . take () . map (| operation | RootLease { operation , _guard : std :: marker :: PhantomData , }) . ok_or (RootAlreadyTaken) }",
+    "class_decision": "delivery",
+    "item_premise": "This body is the opt-in origin route for observation::OriginInstallation::take_root; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

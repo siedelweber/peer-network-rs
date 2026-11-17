@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::install_from_origin",
+    "owner": "CLICOMMON",
+    "signature": "fn install_from_origin (origin : EntryOrigin , debug : bool , default_level : tracing :: Level , arguments : Value ,) -> Result < OriginInstallation , BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This entry-origin adapter installs the observer before a command span exists and transfers its duration to the explicit command root.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-spans-prefix",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::install_from_origin",
+    "body": "{ let guard = bootstrap_inner (true , debug , default_level , None , origin . started) ? ; OriginInstallation :: from_guard (guard , arguments) }",
+    "class_decision": "delivery",
+    "item_premise": "This body is the opt-in origin route for observation::install_from_origin; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

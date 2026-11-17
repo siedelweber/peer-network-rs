@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::RootLease < '_ >::finish",
+    "owner": "CLICOMMON",
+    "signature": "fn finish (self , outcome : Outcome , result : Value)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This entry-origin adapter completes the already started command operation; instrumenting it separately would create another accounting boundary.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-root-once",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::RootLease < '_ >::finish",
+    "body": "{ self . operation . finish (outcome , result) ; }",
+    "class_decision": "delivery",
+    "item_premise": "This body is the opt-in origin route for observation::RootLease < '_ >::finish; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

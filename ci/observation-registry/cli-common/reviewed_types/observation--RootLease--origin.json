@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::RootLease",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Sole completion owner of an origin-rooted command operation.\"] pub struct RootLease < 'a > { operation : Operation , _guard : std :: marker :: PhantomData < & 'a OriginInstallation > , }"
+  }
+}

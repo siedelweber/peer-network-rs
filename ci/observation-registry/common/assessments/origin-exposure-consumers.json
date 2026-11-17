@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "These origin and runner bodies expose no private carrier and add no capability read. Caller acquisition sites retain their own reviewed disclosure boundaries.",
+    "negative_probe": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop"
+  },
+  "name": "origin-exposure-consumers"
+}

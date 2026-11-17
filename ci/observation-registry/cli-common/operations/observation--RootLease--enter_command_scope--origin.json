@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::RootLease < '_ >::enter_command_scope",
+    "owner": "CLICOMMON",
+    "signature": "fn enter_command_scope (& self , command_name : & str) -> Scope",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This entry-origin adapter lends the existing root identity to a contextual span without creating another operation.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-runner-order",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::RootLease < '_ >::enter_command_scope",
+    "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_stdout_json_command_from_origin\" , command_name , adopted_root_id = self . operation . id) . entered () ,) }",
+    "class_decision": "delivery",
+    "item_premise": "This body is the opt-in origin route for observation::RootLease < '_ >::enter_command_scope; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

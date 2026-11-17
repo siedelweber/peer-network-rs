@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::RootAlreadyTaken",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" A second transfer of an installed command root is refused.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)] # [error (\"command root already taken\")] pub struct RootAlreadyTaken ;"
+  }
+}

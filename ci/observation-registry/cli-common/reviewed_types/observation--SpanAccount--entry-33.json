@@ -4,6 +4,6 @@
     "item": "observation::SpanAccount",
     "package": "cli-common",
     "path": "packages/cli-common/src/observation.rs",
-    "syntax": "struct SpanAccount { fields : Fields , started : Duration , operation : Option < Operation > , result : Option < Value > , outcome : Option < & 'static str > , explicit_outcome : bool , }"
+    "syntax": "struct SpanAccount { fields : Fields , started : Duration , operation : Option < Operation > , adopted_root_id : Option < u64 > , result : Option < Value > , outcome : Option < & 'static str > , explicit_outcome : bool , }"
   }
 }

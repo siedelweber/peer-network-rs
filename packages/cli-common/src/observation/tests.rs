@@ -8,6 +8,74 @@ fn receive<T>(receiver: &mpsc::Receiver<T>, event: &str) -> T {
 
 use super::*;
 
+/// Claim: The shared monotonic zero covers synchronous prefix time in Bootstrap and Command while emitted UTC stays current.
+/// ´claim:cli:entry-origin-spans-prefix´
+/// ´test:unit:entry-origin-spans-prefix´
+#[test]
+fn entry_origin_spans_prefix() {
+    let (observation, clock, capture) = fixture();
+    clock.0.store(250, Ordering::Relaxed);
+    let mut bootstrap = observation.operation(OperationKind::Bootstrap, json!({"level":"trace"}));
+    bootstrap.started = Duration::ZERO;
+    clock.0.store(400, Ordering::Relaxed);
+    bootstrap.finish(Outcome::Success, json!("installed"));
+    let mut installed =
+        OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+    clock.0.store(950, Ordering::Relaxed);
+    installed.take_root().unwrap().finish(Outcome::Success, json!({"done":true}));
+    drop(installed);
+    let rows = records(&observation, &capture);
+    let completions: Vec<_> = rows.iter().filter(|row| row["event_kind"] == "completion").collect();
+    assert_eq!(completions.len(), 2);
+    let bootstrap = completions.iter().find(|row| row["operation"] == "Bootstrap").unwrap();
+    let command = completions.iter().find(|row| row["operation"] == "Command").unwrap();
+    assert_eq!(bootstrap["detail"]["duration_seconds"], 0.4);
+    assert_eq!(command["detail"]["duration_seconds"], 0.95);
+    assert_eq!(command["detail"]["resources"]["cpu_seconds"]["accuracy"], "unavailable");
+    assert_eq!(command["detail"]["work"]["value"], 1);
+    assert_eq!(bootstrap["timestamp"], command["timestamp"]);
+}
+
+/// Claim: Capturing and dropping an origin performs only one injected clock read.
+/// ´claim:cli:entry-origin-is-inert´
+/// ´test:unit:entry-origin-is-inert´
+#[test]
+fn entry_origin_is_inert() {
+    let (observation, _clock, capture) = fixture();
+    let before_id = observation.next_id.load(Ordering::Relaxed);
+    let before_attempts = observation.attempted.load(Ordering::Relaxed);
+    let mut reads = 0;
+    {
+        let _origin = EntryOrigin::capture_with(|| {
+            reads += 1;
+            Instant::now()
+        });
+    }
+    assert_eq!(reads, 1);
+    assert_eq!(observation.next_id.load(Ordering::Relaxed), before_id);
+    assert_eq!(observation.attempted.load(Ordering::Relaxed), before_attempts);
+    assert!(capture.0.lock().unwrap().is_empty());
+}
+
+/// Claim: One root transfer and completion leaves no second operation or output on another request.
+/// ´claim:cli:entry-origin-root-once´
+/// ´test:unit:entry-origin-root-once´
+#[test]
+fn entry_origin_root_once() {
+    let (observation, clock, capture) = fixture();
+    let mut installed =
+        OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+    let next_id = observation.next_id.load(Ordering::Relaxed);
+    clock.0.store(40, Ordering::Relaxed);
+    installed.take_root().unwrap().finish(Outcome::Success, json!("done"));
+    assert!(matches!(installed.take_root(), Err(RootAlreadyTaken)));
+    assert_eq!(observation.next_id.load(Ordering::Relaxed), next_id);
+    drop(installed);
+    let rows = records(&observation, &capture);
+    assert_eq!(rows.iter().filter(|row| row["event_kind"] == "start").count(), 1);
+    assert_eq!(rows.iter().filter(|row| row["event_kind"] == "completion").count(), 1);
+}
+
 /// Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal.
 /// ´claim:cli:unavailable-observation-preserves-command-execution´
 /// ´test:unit:unavailable-observation´
@@ -1399,7 +1467,7 @@ fn async_cancellation() {
     assert!(completion["detail"]["result"].is_null());
 }
 
-struct ManualClock(AtomicU64);
+pub(crate) struct ManualClock(pub(crate) AtomicU64);
 impl Clock for ManualClock {
     fn elapsed(&self) -> Duration {
         Duration::from_millis(self.0.load(Ordering::Relaxed))
@@ -1409,7 +1477,7 @@ impl Clock for ManualClock {
     }
 }
 #[derive(Clone, Default)]
-struct Capture(Arc<Mutex<Vec<u8>>>);
+pub(crate) struct Capture(pub(crate) Arc<Mutex<Vec<u8>>>);
 impl Write for Capture {
     fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
         self.0.lock().unwrap().extend_from_slice(bytes);
@@ -1555,7 +1623,7 @@ fn deep_payload_delivery() {
     );
 }
 
-fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
+pub(crate) fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
     let clock = Arc::new(ManualClock(AtomicU64::new(0)));
     let capture = Capture::default();
     (
@@ -1569,7 +1637,27 @@ fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
         capture,
     )
 }
-fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
+pub(crate) fn fixture_installation(arguments: Value) -> (OriginInstallation, Observation, Arc<ManualClock>, Capture) {
+    let (observation, clock, capture) = fixture();
+    let installation = OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), arguments).unwrap();
+    (installation, observation, clock, capture)
+}
+pub(crate) fn with_fixture_subscriber<T>(observation: &Observation, run: impl FnOnce() -> T) -> T {
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, run)
+}
+pub(crate) fn existing_path_records() -> Vec<Value> {
+    let (observation, clock, capture) = fixture();
+    let root = observation.operation(OperationKind::Command, json!({"command":"fixture"}));
+    clock.0.store(100, Ordering::Relaxed);
+    let child = root.child(OperationKind::PublicCli, json!({"operation":"fixture-child"}));
+    clock.0.store(250, Ordering::Relaxed);
+    child.finish(Outcome::Success, json!({"child":"done"}));
+    clock.0.store(500, Ordering::Relaxed);
+    root.finish(Outcome::Success, json!({"root":"done"}));
+    records(&observation, &capture)
+}
+pub(crate) fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     if observation.closing.load(Ordering::Acquire) {
         // These callers have returned from guard destruction and its final status write.
         let rows = captured_records(capture);

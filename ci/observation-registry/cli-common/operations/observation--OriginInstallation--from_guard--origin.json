@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::OriginInstallation::from_guard",
+    "owner": "CLICOMMON",
+    "signature": "fn from_guard (guard : BootstrapGuard , arguments : Value) -> Result < Self , BootstrapError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: This entry-origin adapter creates the one explicit command root after installation; a span here would create a second operation.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-spans-prefix",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::OriginInstallation::from_guard",
+    "body": "{ let Some (observation) = guard . 0 . as_ref () else { return Err (ObserverUnavailable :: Writer . into ()) ; } ; let mut root = observation . operation (OperationKind :: Command , arguments) ; root . started = Duration :: ZERO ; Ok (Self { root : Some (root) , _guard : guard , }) }",
+    "class_decision": "delivery",
+    "item_premise": "This body is the opt-in origin route for observation::OriginInstallation::from_guard; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

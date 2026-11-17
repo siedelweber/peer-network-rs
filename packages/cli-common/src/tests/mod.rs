@@ -43,11 +43,262 @@ use std::io::{self, Write};
 use clap::Parser;
 use serde::Serialize;
 use serde_json::json;
+use std::cell::{Cell, RefCell};
+use std::sync::atomic::Ordering;
 
 use crate::{
     BaseArgs, CONTROL_PLANE_SCHEMA, CommandExit, ControlPlaneFields, ControlPlaneRecord, ControlPlaneRecordKind, StandardStream,
     TracingFilterSource, panic_payload_message_from_payload, parse_args_from, tracing_filter_from_rust_log, write_json_line,
 };
+
+/// Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.
+/// ´claim:cli:entry-origin-runner-order´
+/// ´test:crate:entry-origin-runner-order´
+#[test]
+fn entry_origin_runner_order() {
+    use crate::observation::{
+        Outcome,
+        tests::{fixture_installation, records, with_fixture_subscriber},
+    };
+    let (installed, observation, clock, capture) = fixture_installation(json!({"command":"fixture"}));
+    let events = RefCell::new(Vec::new());
+    let emitted = Cell::new(false);
+    let exit = with_fixture_subscriber(&observation, || {
+        crate::run_stdout_json_command_from_origin_inner(
+            "fixture",
+            || events.borrow_mut().push("hook"),
+            || {
+                events.borrow_mut().push("prepare");
+                crate::OriginPreparation::Continue {
+                    context: 7_u8,
+                    arguments: json!({"command":"fixture"}),
+                }
+            },
+            || {
+                events.borrow_mut().push("tty");
+                None
+            },
+            |_| {
+                events.borrow_mut().push("install");
+                Ok(Some(installed))
+            },
+            |_| panic!("continuation emitted control record"),
+            |_| {
+                emitted.set(true);
+                Ok(())
+            },
+            |context| -> Result<u8, &str> {
+                events.borrow_mut().push("command");
+                assert_eq!(context, 7);
+                clock.0.store(200, Ordering::Relaxed);
+                let child = crate::observation::scope("CLICOMMON", "rule:observe:spans", "fixture_child", &context);
+                clock.0.store(350, Ordering::Relaxed);
+                child.finish_with(Outcome::Success, &context);
+                clock.0.store(700, Ordering::Relaxed);
+                Ok(9)
+            },
+        )
+    });
+    assert_eq!(exit, std::process::ExitCode::SUCCESS);
+    assert!(emitted.get());
+    assert_eq!(*events.borrow(), ["hook", "prepare", "tty", "install", "command"]);
+    let rows = records(&observation, &capture);
+    let root = rows
+        .iter()
+        .find(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+        .unwrap();
+    let child = rows
+        .iter()
+        .find(|row| {
+            row["operation"] == "PublicCli" && row["event_kind"] == "completion" && row["parent_id"] == root["operation_id"]
+        })
+        .unwrap();
+    assert_eq!(root["detail"]["duration_seconds"], 0.7);
+    assert_eq!(child["detail"]["duration_seconds"], 0.15);
+    assert_eq!(
+        rows.iter()
+            .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+            .count(),
+        1
+    );
+    assert_origin_terminal_cases();
+}
+
+fn assert_origin_terminal_cases() {
+    use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
+    for (record, expected) in [
+        (ControlPlaneRecord::help("fixture", "help"), CommandExit::Success),
+        (ControlPlaneRecord::version("fixture", "1"), CommandExit::Success),
+        (ControlPlaneRecord::usage_error("fixture", "bad"), CommandExit::Usage),
+    ] {
+        let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+        let tty_called = Cell::new(false);
+        let command_called = Cell::new(false);
+        let selected = RefCell::new(Vec::new());
+        let exit = with_fixture_subscriber(&observation, || {
+            crate::run_stdout_json_command_from_origin_inner(
+                "fixture",
+                || {},
+                || crate::OriginPreparation::Terminal {
+                    exit: crate::CliExit::new(record.clone(), expected),
+                    arguments: json!({"command":"fixture"}),
+                },
+                || {
+                    tty_called.set(true);
+                    None
+                },
+                |_| Ok(Some(installed)),
+                |record| selected.borrow_mut().push(record.clone()),
+                |_: &u8| panic!("terminal emitted stdout"),
+                |()| -> Result<u8, &str> {
+                    command_called.set(true);
+                    Ok(0)
+                },
+            )
+        });
+        assert_eq!(exit, expected.exit_code());
+        assert!(!tty_called.get());
+        assert!(!command_called.get());
+        assert_eq!(*selected.borrow(), [record]);
+        let rows = records(&observation, &capture);
+        assert_eq!(
+            rows.iter()
+                .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+                .count(),
+            1
+        );
+    }
+
+    let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+    let selected = RefCell::new(Vec::new());
+    let exit = with_fixture_subscriber(&observation, || {
+        crate::run_stdout_json_command_from_origin_inner(
+            "fixture",
+            || {},
+            || crate::OriginPreparation::Continue {
+                context: (),
+                arguments: json!({"command":"fixture"}),
+            },
+            || Some(ControlPlaneRecord::tty_refusal("fixture")),
+            |_| Ok(Some(installed)),
+            |record| selected.borrow_mut().push(record.clone()),
+            |_: &u8| panic!("TTY emitted stdout"),
+            |()| -> Result<u8, &str> { panic!("TTY ran command") },
+        )
+    });
+    assert_eq!(exit, CommandExit::Usage.exit_code());
+    assert_eq!(*selected.borrow(), [ControlPlaneRecord::tty_refusal("fixture")]);
+    let rows = records(&observation, &capture);
+    assert_eq!(
+        rows.iter()
+            .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+            .count(),
+        1
+    );
+}
+
+/// Claim: Configuration failure replaces a selected terminal with usage; unavailability retains the selected path without an origin root.
+/// ´claim:cli:entry-origin-installation-failure´
+/// ´test:crate:entry-origin-installation-failure´
+#[test]
+fn entry_origin_installation_failure() {
+    use crate::observation::{BootstrapError, EmissionConfigurationError, ObserverUnavailable};
+    for pending in [
+        ControlPlaneRecord::help("fixture", "help"),
+        ControlPlaneRecord::version("fixture", "1"),
+        ControlPlaneRecord::usage_error("fixture", "bad"),
+    ] {
+        let emitted = RefCell::new(Vec::new());
+        let exit = crate::run_stdout_json_command_from_origin_inner(
+            "fixture",
+            || {},
+            || crate::OriginPreparation::Terminal {
+                exit: crate::CliExit::new(pending.clone(), CommandExit::Success),
+                arguments: json!({"command":"fixture"}),
+            },
+            || panic!("terminal checked TTY"),
+            |_| Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel)),
+            |record| emitted.borrow_mut().push(record.clone()),
+            |_: &u8| panic!("configuration emitted stdout"),
+            |()| -> Result<u8, &str> { panic!("configuration ran command") },
+        );
+        assert_eq!(exit, CommandExit::Usage.exit_code());
+        assert_eq!(emitted.borrow().len(), 1);
+        assert_eq!(emitted.borrow()[0].kind, ControlPlaneRecordKind::UsageError);
+        assert_ne!(emitted.borrow()[0], pending);
+    }
+    let emitted = RefCell::new(Vec::new());
+    let help = ControlPlaneRecord::help("fixture", "help");
+    let exit = crate::run_stdout_json_command_from_origin_inner(
+        "fixture",
+        || {},
+        || crate::OriginPreparation::Terminal {
+            exit: crate::CliExit::new(help.clone(), CommandExit::Success),
+            arguments: json!({"command":"fixture"}),
+        },
+        || panic!("terminal checked TTY"),
+        |_| {
+            Err(BootstrapError::Unavailable(
+                ObserverUnavailable::ObservationAlreadyInitialized,
+            ))
+        },
+        |record| emitted.borrow_mut().push(record.clone()),
+        |_: &u8| panic!("terminal emitted stdout"),
+        |()| -> Result<u8, &str> { panic!("terminal ran command") },
+    );
+    assert_eq!(exit, CommandExit::Success.exit_code());
+    assert_eq!(*emitted.borrow(), [help]);
+}
+
+/// Claim: Existing private operation accounting without an origin emits the written expected records under a controlled clock and identifiers.
+/// ´claim:cli:entry-origin-existing-paths´
+/// ´test:crate:entry-origin-existing-paths´
+#[test]
+fn entry_origin_existing_paths() {
+    let actual = crate::observation::tests::existing_path_records();
+    let timestamp = "2026-10-23T00:00:00Z";
+    let process_id = std::process::id();
+    let unavailable = json!({"value":null,"accuracy":"unavailable","unit":"bytes"});
+    let completion = |duration: f64, result: serde_json::Value| {
+        json!({
+            "duration_seconds":duration,"duration_accuracy":"monotonic","outcome":"success",
+            "work":{"value":1,"accuracy":"exact","unit":"operations","aggregation":"one invoked operation; child invocations separate"},
+            "resources":{"current":unavailable,"high_water":unavailable,"cumulative":unavailable,
+                "cpu_seconds":{"value":null,"accuracy":"unavailable","unit":"seconds"},
+                "allocation_bytes":{"value":null,"accuracy":"unavailable","unit":"bytes"}},
+            "duration_aggregation":"inclusive; do not sum parent and child","result":result
+        })
+    };
+    let record = |operation: &str, operation_id: u64, parent_id: Option<u64>, event_kind: &str, detail: serde_json::Value| {
+        let name = if operation == "Command" {
+            "rule:observe:metering"
+        } else {
+            "rule:observe:spans"
+        };
+        json!({"kind":"metering","name":name,"claim_owner":"ROOT","claim_label":name,"execution_owner":"CLICOMMON",
+            "operation":operation,"operation_id":operation_id,"parent_id":parent_id,"event_kind":event_kind,"detail":detail,
+            "process_id":process_id,"timestamp":timestamp,"timestamp_accuracy":"wall_clock","lost_records":0})
+    };
+    let expected = vec![
+        record("Command", 1, None, "start", json!({"arguments":{"command":"fixture"}})),
+        record(
+            "PublicCli",
+            2,
+            Some(1),
+            "start",
+            json!({"arguments":{"operation":"fixture-child"}}),
+        ),
+        record(
+            "PublicCli",
+            2,
+            Some(1),
+            "completion",
+            completion(0.15, json!({"child":"done"})),
+        ),
+        record("Command", 1, None, "completion", completion(0.5, json!({"root":"done"}))),
+    ];
+    assert_eq!(actual, expected);
+}
 
 /// A `Write` that fails every call with `BrokenPipe`.
 ///

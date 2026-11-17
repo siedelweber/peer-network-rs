@@ -212,6 +212,121 @@ trait Clock: Send + Sync {
 }
 
 struct SystemClock(Instant);
+/// An inert monotonic origin captured by an executable at its first statement.
+pub struct EntryOrigin {
+    started: Instant,
+    same_thread: std::marker::PhantomData<std::rc::Rc<()>>,
+}
+
+impl EntryOrigin {
+    /// Read the monotonic clock without initializing observation or reading configuration.
+    #[must_use]
+    /// Justified: This entry-origin adapter precedes observation installation and transfers its duration to the explicit command root; instrumenting it separately would start observation during capture.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the entry-origin controls witness its inert capture and enclosing command root.
+    pub fn capture() -> Self {
+        Self::capture_with(Instant::now)
+    }
+
+    fn capture_with(clock: impl FnOnce() -> Instant) -> Self {
+        Self {
+            started: clock(),
+            same_thread: std::marker::PhantomData,
+        }
+    }
+}
+
+/// A second transfer of an installed command root is refused.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[error("command root already taken")]
+pub struct RootAlreadyTaken;
+
+/// Owns the installed observer and its precreated command root until transfer.
+pub struct OriginInstallation {
+    root: Option<Operation>,
+    _guard: BootstrapGuard,
+}
+
+impl OriginInstallation {
+    /// Justified: This entry-origin adapter creates the one explicit command root after installation; a span here would create a second operation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the prefix and root-once controls witness the enclosing operation.
+    pub(crate) fn from_guard(guard: BootstrapGuard, arguments: Value) -> Result<Self, BootstrapError> {
+        let Some(observation) = guard.0.as_ref() else {
+            return Err(ObserverUnavailable::Writer.into());
+        };
+        let mut root = observation.operation(OperationKind::Command, arguments);
+        root.started = Duration::ZERO;
+        Ok(Self {
+            root: Some(root),
+            _guard: guard,
+        })
+    }
+
+    /// Transfer the command root once. Its lease must finish before this guard drains.
+    ///
+    /// # Errors
+    /// Returns `RootAlreadyTaken` after the root has been transferred.
+    /// Justified: This entry-origin adapter precedes the adopted command span and transfers ownership of the explicit root without starting another operation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the root-once control witnesses the enclosing command operation.
+    pub fn take_root(&mut self) -> Result<RootLease<'_>, RootAlreadyTaken> {
+        self.root
+            .take()
+            .map(|operation| RootLease {
+                operation,
+                _guard: std::marker::PhantomData,
+            })
+            .ok_or(RootAlreadyTaken)
+    }
+}
+
+/// Sole completion owner of an origin-rooted command operation.
+pub struct RootLease<'a> {
+    operation: Operation,
+    _guard: std::marker::PhantomData<&'a OriginInstallation>,
+}
+
+impl RootLease<'_> {
+    /// Complete the root using its ordinary accounting path.
+    /// Justified: This entry-origin adapter completes the already started command operation; instrumenting it separately would create another accounting boundary.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the root-once control witnesses completion through the enclosing operation.
+    pub fn finish(self, outcome: Outcome, result: Value) {
+        self.operation.finish(outcome, result);
+    }
+
+    /// Justified: This entry-origin adapter lends the existing root identity to a contextual span without creating another operation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses child attachment to the enclosing root.
+    pub(crate) fn enter_command_scope(&self, command_name: &str) -> Scope {
+        Scope(
+            tracing::info_span!(
+                "rule:observe:spans",
+                execution_owner = "CLICOMMON",
+                claim_owner = "ROOT",
+                claim_label = "rule:observe:spans",
+                source_item = "run_stdout_json_command_from_origin",
+                command_name,
+                adopted_root_id = self.operation.id
+            )
+            .entered(),
+        )
+    }
+}
+
+/// Install observation against an already captured origin and create one command root.
+///
+/// # Errors
+/// Returns the existing configuration or observer-availability refusal.
+/// Justified: This entry-origin adapter installs the observer before a command span exists and transfers its duration to the explicit command root.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the prefix control witnesses the enclosing command operation.
+// Justified: One installation attempt must consume the origin token even though its Instant is Copy.
+#[expect(clippy::needless_pass_by_value)]
+pub fn install_from_origin(
+    origin: EntryOrigin,
+    debug: bool,
+    default_level: tracing::Level,
+    arguments: Value,
+) -> Result<OriginInstallation, BootstrapError> {
+    let guard = bootstrap_inner(true, debug, default_level, None, origin.started)?;
+    OriginInstallation::from_guard(guard, arguments)
+}
 impl Clock for SystemClock {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
@@ -1242,7 +1357,7 @@ impl Visit for SummaryFields {
     }
     /// Justified: Accounting accepts declared work without capturing public payloads.
     fn record_u64(&mut self, field: &Field, value: u64) {
-        if field.name() == "work_bytes" {
+        if matches!(field.name(), "work_bytes" | "adopted_root_id") {
             self.0.record_u64(field, value);
         }
     }
@@ -1263,6 +1378,7 @@ struct SpanAccount {
     fields: Fields,
     started: Duration,
     operation: Option<Operation>,
+    adopted_root_id: Option<u64>,
     result: Option<Value>,
     outcome: Option<&'static str>,
     explicit_outcome: bool,
@@ -1289,6 +1405,10 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 self.0.loss_causes.note(&self.0.lost, 3);
                 return;
             }
+            let adopted_root_id = (fields.0.get("source_item").and_then(Value::as_str)
+                == Some("run_stdout_json_command_from_origin"))
+            .then(|| fields.0.get("adopted_root_id").and_then(Value::as_u64))
+            .flatten();
             let command = matches!(
                 fields.0.get("source_item").and_then(Value::as_str),
                 Some(
@@ -1314,22 +1434,30 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("SECRETHOME") => Some(OperationKind::SecretHome),
                     Some("DERIVATION") => Some(OperationKind::CredentialDerivation),
                     Some("GENERATOR") => Some(OperationKind::CredentialGenerator),
-                    Some("CLICOMMON") => Some(OperationKind::PublicCli),
+                    Some("CLICOMMON") if adopted_root_id.is_none() => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,
                 }
             };
             let parent = span.parent().and_then(|parent| {
-                parent
-                    .extensions()
-                    .get::<SpanAccount>()
-                    .and_then(|account| account.operation.as_ref().map(|operation| operation.id))
+                parent.extensions().get::<SpanAccount>().and_then(|account| {
+                    account
+                        .operation
+                        .as_ref()
+                        .map(|operation| operation.id)
+                        .or(account.adopted_root_id)
+                })
             });
             let operation = kind.map(|kind| self.0.operation_with_parent(kind, json!(fields.0), parent));
             span.extensions_mut().insert(SpanAccount {
                 fields,
-                started: self.0.clock.elapsed(),
+                started: if adopted_root_id.is_some() {
+                    Duration::ZERO
+                } else {
+                    self.0.clock.elapsed()
+                },
                 operation,
+                adopted_root_id,
                 result: None,
                 outcome: None,
                 explicit_outcome: false,
@@ -1643,4 +1771,4 @@ impl Write for StderrSink {
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

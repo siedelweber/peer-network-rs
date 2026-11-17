@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The opt-in runner takes caller-supplied safe public root arguments and records a full public result or error through the existing Command completion path. The prepared context remains caller-owned; no generic Debug bound is added to it.",
+    "negative_probe": "CLICOMMON::claim:cli:entry-origin-runner-order"
+  },
+  "name": "origin-full-recording"
+}

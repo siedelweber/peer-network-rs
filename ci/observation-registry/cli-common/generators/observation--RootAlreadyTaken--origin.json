@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::RootAlreadyTaken",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)]",
+    "expansion_review": "Standard structural derives and thiserror's fixed display text add no work, private carrier or observation boundary; the typed refusal is local to one root transfer.",
+    "class_decision": "public-cli"
+  }
+}

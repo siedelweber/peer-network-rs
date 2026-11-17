@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "OriginPreparation",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Result of bounded synchronous preparation before observation workers start.\"] pub enum OriginPreparation < Context > { # [doc = \" Run command work with a prepared context and its safe public arguments.\"] Continue { context : Context , arguments : serde_json :: Value } , # [doc = \" Emit a selected control record after attempting observation installation.\"] Terminal { exit : CliExit , arguments : serde_json :: Value } , }"
+  }
+}

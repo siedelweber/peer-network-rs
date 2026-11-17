@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::EntryOrigin",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" An inert monotonic origin captured by an executable at its first statement.\"] pub struct EntryOrigin { started : Instant , same_thread : std :: marker :: PhantomData < std :: rc :: Rc < () > > , }"
+  }
+}

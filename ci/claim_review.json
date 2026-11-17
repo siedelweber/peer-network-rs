@@ -1266,6 +1266,30 @@
       "review": "The held-delivery contrast injects a zero window and observes its expiry before release; the complete route selects an unwindowed deployed wait, then acknowledges every held record after release. The private route observer pins the windowed test-build wait at its 600-second containment independently of scheduling. The batch-end, full-queue, timeout and unavailable controls remain. The after-drain event observes completion after the original acknowledgement attempt, so a caller timeout starts no second cleanup request. This claim does not witness the complete route's test-build timeout bound or caller naming. The separate overlapping-drains and event-wait-caller controls own their distinct propositions."
     },
     {
+      "operation": "cli-common::observation::tests::entry_origin_is_inert",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-is-inert",
+      "before": "",
+      "after": "Claim: Capturing and dropping an origin performs only one injected clock read.",
+      "review": "The test observes clock reads and stable operation and sink counters around capture; source review confirms that the public capture delegates only to the clock read and opaque storage."
+    },
+    {
+      "operation": "cli-common::observation::tests::entry_origin_root_once",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-root-once",
+      "before": "",
+      "after": "Claim: One root transfer and completion leaves no second operation or output on another request.",
+      "review": "The test takes and completes the root, requests it again, and compares operation IDs and start/completion record counts."
+    },
+    {
+      "operation": "cli-common::observation::tests::entry_origin_spans_prefix",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-spans-prefix",
+      "before": "",
+      "after": "Claim: The shared monotonic zero covers synchronous prefix time in Bootstrap and Command while emitted UTC stays current.",
+      "review": "The controlled clock advances before Bootstrap completion and Command completion; assertions compare both durations, current UTC and unavailable CPU."
+    },
+    {
       "operation": "cli-common::observation::tests::epoch_owner_accounting",
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:epoch-operations-retain-owner-accounting",
@@ -1496,6 +1520,30 @@
       "before": "emit writes one json line.",
       "after": "Claim: Given an ordered two-field payload, emission writes exactly one JSON object and a trailing newline, preserving record framing for consumers.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::entry_origin_existing_paths",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-existing-paths",
+      "before": "",
+      "after": "Claim: Existing private operation accounting without an origin emits the written expected records under a controlled clock and identifiers.",
+      "review": "The test compares complete metering records with an independently written expected vector; it does not execute the public bootstrap or existing runners."
+    },
+    {
+      "operation": "cli-common::tests::entry_origin_installation_failure",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-installation-failure",
+      "before": "",
+      "after": "Claim: Configuration failure replaces a selected terminal with usage; unavailability retains the selected path without an origin root.",
+      "review": "The injected typed errors run through the runner decision path and assert the emitted record and exit; no process-global subscriber is installed."
+    },
+    {
+      "operation": "cli-common::tests::entry_origin_runner_order",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-runner-order",
+      "before": "",
+      "after": "Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.",
+      "review": "The controlled subscriber observes preparation, TTY and installation order, child parentage, inclusive durations, one root completion, and help, version, usage and TTY terminal cases."
     },
     {
       "operation": "cli-common::tests::hard_linked_destinations_are_not_treated_as_one_role",
