@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "item": "executor::ExecutionContext::served",
+    "owner": "NODE",
+    "signature": "fn served () -> Result < Self , EntryError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-control"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/executor.rs::executor::ExecutionContext::served",
+    "body": "{ # [cfg (test)] match crate :: admission :: embedded_pending () { Ok (true) => Err (EntryError :: LimitsUnadmitted) , Ok (false) | Err (()) => Err (EntryError :: Configuration) , } # [cfg (not (test))] { Err (EntryError :: LimitsUnadmitted) } }",
+    "class_decision": "node-control",
+    "item_premise": "The control entry bounds its input and result. This item either is that boundary or inherits it as trait plumbing without a separate externally callable byte entry.",
+    "assessments": {
+      "full_recording": "node-control-full_recording",
+      "secret_flow": "node-control-secret_flow",
+      "exposure_consumers": "node-control-exposure_consumers"
+    }
+  }
+}

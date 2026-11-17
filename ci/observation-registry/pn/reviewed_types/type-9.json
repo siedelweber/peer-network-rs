@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::Refusal",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)] struct Refusal { class : Class , ceiling : Option < & 'static str > , }"
+  }
+}

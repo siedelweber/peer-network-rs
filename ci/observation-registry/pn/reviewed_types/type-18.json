@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::ControlStartResult",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , SimpleObject)] # [graphql (name = \"ControlStartResult\")] struct ControlStartResult { ready : bool , edition : String , failure : Option < String > , }"
+  }
+}

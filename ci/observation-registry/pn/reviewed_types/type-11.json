@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::Message",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "struct Message < 'a > { query : & 'a str , operation_name : Option < & 'a str > , }"
+  }
+}

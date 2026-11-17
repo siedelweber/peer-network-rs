@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::StartFailures",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , Debug)] struct StartFailures { resource_exhausted : bool , start_failed : bool , }"
+  }
+}

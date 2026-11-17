@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::ControlMutation",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "struct ControlMutation ;"
+  }
+}

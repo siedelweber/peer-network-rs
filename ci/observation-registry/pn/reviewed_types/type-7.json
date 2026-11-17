@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::ExecutionContext",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [doc = \" An admitted execution context. The build-owned draft cannot construct a served context while any value is pending.\"] # [doc = \" (´[ROOT-amend:api:test-schema-plan]´)\"] # [derive (Debug)] pub struct ExecutionContext { limits : Limits , start : StartInputs , cancelled : Arc < AtomicBool > , active : AtomicUsize , edition : String , }"
+  }
+}

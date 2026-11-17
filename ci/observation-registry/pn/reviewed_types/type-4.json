@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::StartInputs",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , Debug)] struct StartInputs { edition_supported : bool , bootstrap_valid : bool , cancelled : bool , failures : StartFailures , count : Arc < AtomicUsize > , }"
+  }
+}

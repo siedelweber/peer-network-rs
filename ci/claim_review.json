@@ -7283,6 +7283,94 @@
       "before": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
       "after": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
       "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::executor::tests::decoding_work_is_independent",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:decoding-work-is-independent",
+      "before": "Claim: Decode work is an independent pre-dispatch ceiling; a sufficient work cap admits the same bytes.",
+      "after": "Claim: Decode work is an independent pre-dispatch ceiling; a sufficient work cap admits the same bytes.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::depth_limit_precedes_expansion",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:depth-limit-precedes-expansion",
+      "before": "Claim: A value-head depth excess refuses before GraphQL expansion, with root depth one.",
+      "after": "Claim: A value-head depth excess refuses before GraphQL expansion, with root depth one.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::malformed_message_refuses",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:malformed-message-refuses",
+      "before": "Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.",
+      "after": "Claim: A truncated transport message refuses as Malformed before resolver entry while its complete neighbour dispatches.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::message_error_bytes",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:message-error-bytes",
+      "before": "Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.",
+      "after": "Claim: Each of five closed message classes has its exact literal bytes, ordered maps, context edition and ceiling/null.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::pending_configuration_refuses",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:pending-configuration-refuses",
+      "before": "Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.",
+      "after": "Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::reservation_limit_precedes_work",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:reservation-limit-precedes-work",
+      "before": "Claim: The decoder's allocation-byte ceiling refuses before work or an unbudgeted reservation.",
+      "after": "Claim: The decoder's allocation-byte ceiling refuses before work or an unbudgeted reservation.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::response_nothing_fits",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:response-nothing-fits",
+      "before": "Claim: A positive cap that fits neither the result nor one replacement returns typed `ResponseLimit` and no bytes.",
+      "after": "Claim: A positive cap that fits neither the result nor one replacement returns typed `ResponseLimit` and no bytes.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::response_replacement_fits",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:response-replacement-fits",
+      "before": "Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.",
+      "after": "Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::result_invariant",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:result-invariant",
+      "before": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
+      "after": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::start_through_bytes",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:start-through-bytes",
+      "before": "Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.",
+      "after": "Claim: The byte entry decodes one bounded CBOR request and dispatches start through the actual GraphQL schema.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+    },
+    {
+      "operation": "pn::executor::tests::unsupported_operation_refuses",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:unsupported-operation-refuses",
+      "before": "Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation.",
+      "after": "Claim: A syntactically valid selected inspect or administer mutation refuses Unsupported before ordinary field validation.",
+      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
     }
   ],
   "conditional_claims": {}

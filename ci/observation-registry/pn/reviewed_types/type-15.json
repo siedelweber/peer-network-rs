@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::CostGate",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone)] struct CostGate { cost : Option < usize > , limit : usize , exceeded : Arc < AtomicBool > , }"
+  }
+}

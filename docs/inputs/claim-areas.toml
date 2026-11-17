@@ -428,3 +428,10 @@ area = "admission"
 stake = "A reader that accepts structural disagreement or a substituted input can admit a different edition from the reviewed source."
 register = "NODE::def:node:scope"
 contract = "NODE::verif:node:admission"
+
+[[rows]]
+owner = "NODE"
+area = "executor"
+stake = "An executor that performs unbounded work or emits a partial response would violate the public control contract."
+register = "NODE::def:node:scope"
+contract = "NODE::verif:node:bounded-executor"

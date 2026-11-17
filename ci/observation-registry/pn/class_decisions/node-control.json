@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "node-control",
+    "status": "reviewer-confirmed",
+    "premises": "The byte entry receives a bounded transport request and returns an opaque bounded transport response. The context constructor observes only the build-owned register; concurrency release and GraphQL extension plumbing inherit the byte entry. The initial schema has one control mutation and no secret or store carrier.",
+    "membership": {
+      "explicit": [
+        "pn::packages/node/src/executor.rs::executor::ExecutionContext::served",
+        "pn::packages/node/src/executor.rs::executor::<Permit < '_ > as Drop>::drop",
+        "pn::packages/node/src/executor.rs::executor::<CostGate as ExtensionFactory>::create",
+        "pn::packages/node/src/executor.rs::executor::<CostGate as Extension>::execute",
+        "pn::packages/node/src/executor.rs::executor::execute"
+      ]
+    }
+  }
+}

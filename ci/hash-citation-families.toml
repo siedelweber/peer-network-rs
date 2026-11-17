@@ -398,6 +398,16 @@ reader = "interchange-literal"
 definition = "Explicit integer and escape literals denote protocol bytes, ASCII ranges and Unicode scalar boundaries; no bare identity-shaped value is admitted."
 paths = ["packages/host/**/*.rs"]
 
+[[rows]]
+family = "node-control-response-literals"
+group = "node control response fixture"
+measures = "Explicit CBOR head and text-length bytes, not identities"
+producer = "The closed response vocabulary of the public API amendment"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "The five test-written message fixtures spell complete CBOR responses for the fixed error classes. Their explicit byte escapes denote CBOR heads and UTF-8 lengths, not hashes or content identities; the test checks each against the bounded ordered writer."
+paths = ["packages/node/src/executor.rs"]
+
 
 [[rows]]
 family = "storage-recipe-vectors"

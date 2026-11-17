@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The opaque response is emitted only after complete accounting; replacement is a separate complete write under the same ceiling. Tracing observes the request and result, and no computation reads tracing output.",
+    "negative_probe": "NODE::claim:executor:response-replacement-fits"
+  },
+  "name": "node-control-exposure_consumers"
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::ExpandFrame",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "struct ExpandFrame < 'a > { set : & 'a SelectionSet , next : usize , depth : usize , }"
+  }
+}

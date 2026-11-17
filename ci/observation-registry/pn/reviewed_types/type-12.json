@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::GraphFrame",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "struct GraphFrame < 'a > { name : Option < & 'a str > , set : & 'a SelectionSet , next : usize , }"
+  }
+}

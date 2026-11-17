@@ -223,6 +223,78 @@
       "operations": 12
     },
     {
+      "exceptions": 3,
+      "generators": 10,
+      "helpers": 0,
+      "instrumented": 2,
+      "name": "pn",
+      "number_forms": {
+        "exceptions": {
+          "exact": "3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "generators": {
+          "exact": "10",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "helpers": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "instrumented": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "operations": {
+          "exact": "5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exceptions": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "generators": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "helpers": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "instrumented": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "operations": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "operations": 5
+    },
+    {
       "exceptions": 0,
       "generators": 20,
       "helpers": 0,

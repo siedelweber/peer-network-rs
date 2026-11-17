@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::EntryError",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [doc = \" A refusal for which no response message exists.\"] # [doc = \" (´[ROOT-amend:api:control-message-errors]´)\"] # [doc = \" After dispatch, a response-limit or typed presentation refusal means the result was not presented;\"] # [doc = \" the start outcome is unknown, and neither readiness nor rollback can be inferred.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq)] pub enum EntryError { # [doc = \" The build-owned register still has a pending required value.\"] LimitsUnadmitted , # [doc = \" The build-owned schema and register cannot be agreed or selected.\"] Configuration , # [doc = \" A new decoder refusal has no decided message class.\"] DecoderContract , # [doc = \" Neither the original response nor its one replacement could be written.\"] ResponseLimit (EncodingError) , # [doc = \" Response presentation repeated one name.\"] DuplicateResponseName , # [doc = \" Response presentation supplied a value outside its vocabulary.\"] ResponseValueUnsupported , }"
+  }
+}

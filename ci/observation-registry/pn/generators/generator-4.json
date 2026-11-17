@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "executor::StartInputs",
+    "kind": "derive",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "expansion_review": "The exact derive or GraphQL generator syntax and containing type are bound to this review. Generated value, formatting and GraphQL field access runs under the enclosing control entry; changed syntax requires renewed review.",
+    "class_decision": "node-control"
+  }
+}

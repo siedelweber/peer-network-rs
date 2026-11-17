@@ -1,4 +1,4 @@
-//! Unserved node admission boundary.
+//! Unserved node admission and bounded control execution boundary.
 //!
 //! (´def:node:scope´)
 
@@ -12,3 +12,6 @@ use tracing as _;
 
 #[cfg(test)]
 mod admission;
+mod executor;
+
+pub use executor::{EntryError, ExecutionContext, execute};

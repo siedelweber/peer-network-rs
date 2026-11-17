@@ -1,4 +1,4 @@
-//! Test-only reader admission; no execution configuration is exported.
+//! Build-owned reader admission; no served execution configuration is admitted.
 //! (´verif:node:admission´)
 
 use async_graphql_parser::{
@@ -9,7 +9,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use toml::Value;
 
 const ARTIFACT: &[u8] = include_bytes!("../../interchange/schema/control.cbor");
+#[cfg(test)]
 const SOURCE: &str = include_str!("../../interchange/schema/control.graphql");
+#[cfg(test)]
 const DRAFT: &str = include_str!("../schema/control-register-draft.toml");
 
 #[derive(Debug, PartialEq, Eq)]
@@ -22,7 +24,9 @@ enum Refusal {
     UnknownKey,
     RegisterShape,
     Agreement,
+    #[cfg(test)]
     Pending,
+    #[cfg(test)]
     Unserved,
 }
 
@@ -318,6 +322,16 @@ fn embedding(bytes: &[u8], draft: &str) -> Result<bool, Refusal> {
     agree(&source, draft)
 }
 
+pub(super) fn embedded_pending() -> Result<bool, ()> {
+    embedding(ARTIFACT, DRAFT).map_err(|_| ())
+}
+
+#[cfg(test)]
+pub(super) fn synthetic_pending(draft: &str) -> Result<bool, ()> {
+    agree(SOURCE, draft).map_err(|_| ())
+}
+
+#[cfg(test)]
 fn served(pending: bool) -> Result<(), Refusal> {
     if pending {
         Err(Refusal::Pending)

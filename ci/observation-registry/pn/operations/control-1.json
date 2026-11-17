@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "item": "executor::<Permit < '_ > as Drop>::drop",
+    "owner": "NODE",
+    "signature": "fn drop (& mut self)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-node-control",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Permit release inherits the enclosing byte execution span; another span would duplicate the same concurrency outcome.",
+      "witness": "NODE::claim:executor:start-through-bytes",
+      "boundary": "pn::packages/node/src/executor.rs::executor::execute",
+      "class_decision": "node-control"
+    }
+  },
+  "review": {
+    "operation": "pn::packages/node/src/executor.rs::executor::<Permit < '_ > as Drop>::drop",
+    "body": "{ self . 0 . fetch_sub (1 , Ordering :: AcqRel) ; }",
+    "class_decision": "node-control",
+    "item_premise": "The control entry bounds its input and result. This item either is that boundary or inherits it as trait plumbing without a separate externally callable byte entry.",
+    "assessments": {
+      "full_recording": "node-control-full_recording",
+      "secret_flow": "node-control-secret_flow",
+      "exposure_consumers": "node-control-exposure_consumers"
+    }
+  }
+}

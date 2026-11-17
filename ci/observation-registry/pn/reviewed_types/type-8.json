@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "executor::Class",
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)] enum Class { Malformed , Invalid , Unsupported , ResourceLimit , Cancelled , }"
+  }
+}

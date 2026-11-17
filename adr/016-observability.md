@@ -90,6 +90,7 @@ Focused one-process controls for that implementation are entry_origin_spans_pref
 | cli-common | 121 | 30 | 88 | 3 | 43 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
+| pn | 5 | 2 | 3 | 0 | 10 |
 | pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
 | pn-act-profile | 26 | 23 | 3 | 0 | 11 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
