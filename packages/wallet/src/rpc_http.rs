@@ -114,6 +114,10 @@ impl Deadline {
                         Poll::Ready(Err(RpcRefusal::Deadline))
                     } else {
                         state.waker = Some(cx.waker().clone());
+                        let checked = state.now;
+                        drop(state);
+                        // Signal the checked instant, not a later clock read. Hooks never wait.
+                        self.source.reach(clock::Stage::Pending(checked));
                         Poll::Pending
                     }
                 });
@@ -144,6 +148,7 @@ pub(crate) mod clock {
         HeadByte,
         HeadReleased,
         BodyFrame,
+        Pending(Instant),
     }
 
     pub(crate) struct State {
@@ -151,6 +156,202 @@ pub(crate) mod clock {
         pub(super) waker: Option<Waker>,
         expire: Option<Stage>,
         hook: Option<Arc<dyn Fn(Stage) + Send + Sync>>,
+    }
+
+    #[derive(Clone, Copy, Debug, PartialEq)]
+    pub(crate) enum Script {
+        Silent,
+        Head,
+        Body,
+        FirstFrame,
+        Positive,
+        BeforeBudget,
+        Budget,
+        Quarters,
+    }
+
+    #[derive(Debug)]
+    pub(crate) struct Evidence {
+        pub(crate) request_bytes: usize,
+        pub(crate) written: bool,
+        pub(crate) head_bytes: usize,
+        pub(crate) head: bool,
+        pub(crate) frames: usize,
+        pub(crate) offered: usize,
+        pub(crate) closed: bool,
+        pub(crate) before_budget: Option<Instant>,
+    }
+
+    enum Event {
+        Stage(Stage),
+        Finished,
+    }
+
+    /// One exchange and one peer. Every body byte follows consumption of the preceding byte
+    /// and an unexpired encloser check. No frame bound is inferred from cooperative budgeting.
+    pub(crate) fn scripted<T: Send>(
+        listener: &std::net::TcpListener,
+        source: &Source,
+        script: Script,
+        budget: Duration,
+        body: &[u8],
+        read: impl FnOnce() -> T + Send,
+    ) -> (T, Evidence) {
+        let (send, receive) = std::sync::mpsc::channel();
+        let clock = source.clone();
+        let stages = send.clone();
+        source.on_stage(Arc::new(move |stage| {
+            match (script, stage) {
+                (Script::Head, Stage::HeadByte)
+                | (Script::Body, Stage::HeadReleased)
+                | (Script::FirstFrame, Stage::BodyFrame) => clock.advance(budget),
+                (Script::Quarters, Stage::BodyFrame) => clock.advance(budget / 4),
+                _ => {}
+            }
+            stages.send(Event::Stage(stage)).unwrap();
+        }));
+        let outcome = std::thread::scope(|scope| {
+            let reader = scope.spawn(move || {
+                let result = read();
+                send.send(Event::Finished).unwrap();
+                result
+            });
+            let (mut stream, request_bytes) = receive_request(listener);
+            let mut evidence = drive_peer(&mut stream, source, script, budget, body, &receive);
+            evidence.request_bytes = request_bytes;
+            (reader.join().expect("gated reader panicked"), evidence)
+        });
+        // Drop the callback's source reference; one source encloses one exchange at a time.
+        source.on_stage(Arc::new(|_| {}));
+        outcome
+    }
+
+    fn receive_request(listener: &std::net::TcpListener) -> (std::net::TcpStream, usize) {
+        use std::io::Read as _;
+        listener.set_nonblocking(true).unwrap();
+        let containment = Instant::now() + CONTAINMENT;
+        let mut stream = loop {
+            match listener.accept() {
+                Ok((stream, _)) => break stream,
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                    assert!(Instant::now() < containment, "HANG awaiting gated peer connection");
+                    std::thread::sleep(Duration::from_millis(2));
+                }
+                Err(error) => panic!("gated peer accept: {error}"),
+            }
+        };
+        stream.set_read_timeout(Some(CONTAINMENT)).unwrap();
+        stream.set_write_timeout(Some(CONTAINMENT)).unwrap();
+        stream.set_nodelay(true).unwrap();
+        let mut request = Vec::new();
+        let mut byte = [0];
+        while !request.ends_with(b"\r\n\r\n") {
+            stream
+                .read_exact(&mut byte)
+                .expect("HANG or I/O failure awaiting gated request head");
+            request.push(byte[0]);
+        }
+        let request_head = String::from_utf8(request).unwrap().to_ascii_lowercase();
+        let length: usize = request_head
+            .lines()
+            .find_map(|line| line.strip_prefix("content-length:"))
+            .expect("gated request declares its body")
+            .trim()
+            .parse()
+            .unwrap();
+        stream
+            .read_exact(&mut vec![0; length])
+            .expect("HANG or I/O failure awaiting gated request body");
+        (stream, request_head.len() + length)
+    }
+
+    fn send_head(stream: &mut std::net::TcpStream, source: &Source, script: Script, budget: Duration, length: usize) {
+        use std::io::Write as _;
+        if script == Script::BeforeBudget {
+            source.advance(budget.checked_sub(Duration::from_nanos(1)).unwrap());
+        }
+        if script == Script::Silent {
+            // Both complete receipt and the independently signalled flush precede expiry.
+            source.advance(budget);
+        } else if script == Script::Head {
+            stream.write_all(b"H").expect("HANG or I/O failure writing gated head byte");
+        } else {
+            write!(stream, "HTTP/1.1 200 OK\r\nContent-Length: {length}\r\n\r\n")
+                .expect("HANG or I/O failure writing gated response head");
+        }
+    }
+
+    fn drive_peer(
+        stream: &mut std::net::TcpStream,
+        source: &Source,
+        script: Script,
+        budget: Duration,
+        body: &[u8],
+        receive: &std::sync::mpsc::Receiver<Event>,
+    ) -> Evidence {
+        use std::io::{Read as _, Write as _};
+        let start = source.admission().0;
+        let before = budget.checked_sub(Duration::from_nanos(1)).unwrap();
+        let mut evidence = Evidence {
+            request_bytes: 0,
+            written: false,
+            head_bytes: 0,
+            head: false,
+            frames: 0,
+            offered: 0,
+            closed: false,
+            before_budget: None,
+        };
+        let mut boundary_started = false;
+        loop {
+            let event = receive
+                .recv_timeout(CONTAINMENT)
+                .expect("HANG awaiting gated exchange stage or completion");
+            match event {
+                Event::Finished => break,
+                Event::Stage(Stage::RequestWritten) => {
+                    evidence.written = true;
+                    send_head(stream, source, script, budget, body.len());
+                }
+                Event::Stage(Stage::HeadByte) => evidence.head_bytes += 1,
+                Event::Stage(Stage::HeadReleased) => evidence.head = true,
+                Event::Stage(Stage::BodyFrame) => evidence.frames += 1,
+                Event::Stage(Stage::Pending(checked)) if evidence.head => {
+                    if script == Script::Budget {
+                        if !boundary_started {
+                            boundary_started = true;
+                            source.advance(before);
+                        } else if evidence.before_budget.is_none() && checked == start + before {
+                            evidence.before_budget = Some(checked);
+                            source.advance(Duration::from_nanos(1));
+                        }
+                    } else if matches!(
+                        script,
+                        Script::FirstFrame | Script::Positive | Script::BeforeBudget | Script::Quarters
+                    ) && evidence.offered == evidence.frames
+                        && evidence.offered < body.len()
+                    {
+                        // Only one byte is in flight. The preceding frame's deadline check
+                        // returned unexpired; expiry sends no next-byte release signal.
+                        stream
+                            .write_all(&body[evidence.offered..=evidence.offered])
+                            .expect("HANG or I/O failure writing gated body byte");
+                        evidence.offered += 1;
+                        if evidence.offered == body.len() {
+                            stream.shutdown(std::net::Shutdown::Write).unwrap();
+                        }
+                    }
+                }
+                Event::Stage(_) => {}
+            }
+        }
+        match stream.read(&mut [0]) {
+            Ok(0) => evidence.closed = true,
+            Ok(_) => panic!("unexpected bytes after complete gated request"),
+            Err(error) if error.kind() == std::io::ErrorKind::ConnectionReset => evidence.closed = true,
+            Err(error) => panic!("HANG or I/O failure awaiting gated peer closure: {error}"),
+        }
+        evidence
     }
 
     impl Source {
@@ -737,11 +938,11 @@ mod tests {
         assert_eq!(ready.as_mut().poll(&mut cx), Poll::Ready(Ok(7)), "inner-ready wins at expiry");
     }
 
-    fn exchange_bytes(bytes: &'static [u8], drip: bool) -> Result<(u16, Vec<u8>), RpcRefusal> {
-        exchange_contained(bytes, drip, Duration::from_secs(600))
+    fn exchange_bytes(bytes: &'static [u8]) -> Result<(u16, Vec<u8>), RpcRefusal> {
+        exchange_contained(bytes, Duration::from_secs(600))
     }
 
-    fn exchange_contained(bytes: &'static [u8], drip: bool, containment: Duration) -> Result<(u16, Vec<u8>), RpcRefusal> {
+    fn exchange_contained(bytes: &'static [u8], containment: Duration) -> Result<(u16, Vec<u8>), RpcRefusal> {
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let server = std::thread::spawn(move || {
@@ -757,55 +958,7 @@ mod tests {
                 0
             });
             assert!(count <= request.len());
-            if count == 0 {
-                if drip {
-                    cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
-                        "acquisition-drip",
-                        "INCONCLUSIVE acquisition-drip: request not received; peer observed EOF",
-                    ))
-                    .unwrap();
-                }
-                return;
-            }
-            if drip {
-                // Each controlled write is offered without Nagle buffering; successful writes alone do not prove when the client reads them.
-                stream.set_nodelay(true).unwrap();
-                // This open-ended body peer observes closure, not the client's phase or non-renewal. Request receipt depends on scheduling and is reported, never required. The 600-second containment names a hang; at one byte per millisecond it precedes the admitted body length.
-                stream
-                    .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 8000000\r\n\r\n")
-                    .unwrap();
-                stream.set_nonblocking(true).unwrap();
-                let end = Instant::now() + Duration::from_secs(600);
-                loop {
-                    assert!(Instant::now() < end, "HANG awaiting acquisition drip client closure");
-                    match stream.read(&mut request) {
-                        Ok(0) => break,
-                        Ok(_) => {}
-                        Err(error) if error.kind() == std::io::ErrorKind::ConnectionReset => break,
-                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {}
-                        Err(error) => panic!("unexpected acquisition peer state: {error}"),
-                    }
-                    match stream.write_all(b" ") {
-                        Ok(()) => {}
-                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {}
-                        Err(error)
-                            if matches!(
-                                error.kind(),
-                                std::io::ErrorKind::BrokenPipe | std::io::ErrorKind::ConnectionReset
-                            ) =>
-                        {
-                            break;
-                        }
-                        Err(error) => panic!("acquisition drip write failed: {error}"),
-                    }
-                    std::thread::sleep(Duration::from_millis(1));
-                }
-                cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::status(
-                    "acquisition-drip",
-                    "ACQUISITION-DRIP request received; peer observed closure",
-                ))
-                .unwrap();
-            } else {
+            if count != 0 {
                 stream.write_all(bytes).unwrap();
                 stream.shutdown(std::net::Shutdown::Write).ok();
             }
@@ -818,34 +971,25 @@ mod tests {
             .header(header::CONNECTION, "close")
             .body(Full::new(Bytes::from_static(b"{}")))
             .unwrap();
-        // The drip asserts the refusal class and peer closure; request receipt is conditional on scheduling. Other exchanges use hang containment only.
-        let budget = if drip {
-            Duration::from_millis(100).min(containment)
-        } else {
-            containment
-        };
         let result = exchange(
             stream,
             request,
             RpcLimits::default(),
-            Source::Monotonic.fixed(Instant::now(), budget).unwrap(),
+            Source::Monotonic.fixed(Instant::now(), containment).unwrap(),
             &mut None,
         );
         let peer = server.join();
-        assert!(
-            drip || result != Err(RpcRefusal::Deadline),
-            "HANG awaiting acquisition exchange"
-        );
+        assert!(result != Err(RpcRefusal::Deadline), "HANG awaiting acquisition exchange");
         peer.expect("controlled acquisition peer failed; its panic names the event");
         result
     }
 
-    /// Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and an exchange whose body peer progresses until closure refuses with the deadline class and closes that peer before its response completes; whether the request reached the peer before closure is reported, and a trial it did not reach is inconclusive, not a failure. Neither the client's phase at refusal, read-path non-renewal nor a real-network wall-time envelope is claimed by this peer. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result. An already expired drip budget drives the unreached branch, asserting the deadline class and the peer thread's clean end, without asserting which observation the peer made or using a scheduling delay.
+    /// Claim: Response acquisition refuses truncation and trailing bytes and closes a 401 before its body. On the controlled source, expiry at the first gated body frame refuses with the deadline class after the complete request reached the peer and the head was admitted, and closes that peer with exactly one body frame consumed and its response incomplete. Each next byte requires consumption and an unexpired enclosing check, so no later frame is released. Real time only contains hangs; no real-network wall-time envelope is claimed. A zero containment injected into the non-drip helper names its hang instead of returning Deadline as a case result.
     /// ´claim:wallet:rpc-http-acquisition-is-bounded´
     /// ´test:unit:acquisition-cases´
     #[test]
     fn acquisition_cases() {
-        let trip = std::panic::catch_unwind(|| exchange_contained(b"", false, Duration::ZERO));
+        let trip = std::panic::catch_unwind(|| exchange_contained(b"", Duration::ZERO));
         let error = trip.expect_err("acquisition containment must report its named hang");
         let message = error
             .downcast_ref::<&str>()
@@ -856,17 +1000,8 @@ mod tests {
             message.contains("HANG awaiting acquisition exchange"),
             "acquisition containment names its event: {message}"
         );
-        // An already expired budget cannot send a request: this pins inconclusive handling,
-        // not the scheduling interleaving that produced the original failure.
         assert_eq!(
-            exchange_contained(b"", true, Duration::ZERO),
-            Err(RpcRefusal::Deadline),
-            "unreached drip retains its deadline class after the peer's clean end"
-        );
-        assert_eq!(
-            exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull", false)
-                .unwrap()
-                .1,
+            exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull").unwrap().1,
             b"null"
         );
         for bytes in [
@@ -874,16 +1009,43 @@ mod tests {
             b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnul",
             b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnullx",
         ] {
-            assert!(matches!(exchange_bytes(bytes, false), Err(RpcRefusal::Http)));
+            assert!(matches!(exchange_bytes(bytes), Err(RpcRefusal::Http)));
         }
         assert!(matches!(
-            exchange_bytes(b"HTTP/1.1 401 no\r\nContent-Length: 999999999\r\n\r\n", false),
+            exchange_bytes(b"HTTP/1.1 401 no\r\nContent-Length: 999999999\r\n\r\n"),
             Err(RpcRefusal::Authentication)
         ));
-        assert!(matches!(
-            exchange_bytes(b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nnull", true),
-            Err(RpcRefusal::Deadline)
-        ));
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let source = Source::controlled();
+        let budget = Duration::from_secs(4);
+        let (result, evidence) = clock::scripted(&listener, &source, clock::Script::FirstFrame, budget, b"null", || {
+            let stream = std::net::TcpStream::connect(address).unwrap();
+            let request = Request::builder()
+                .method("POST")
+                .uri("/")
+                .header(header::HOST, "localhost")
+                .header(header::CONNECTION, "close")
+                .body(Full::new(Bytes::from_static(b"{}")))
+                .unwrap();
+            exchange(
+                stream,
+                request,
+                RpcLimits::default(),
+                source.fixed(source.admission().0, budget).unwrap(),
+                &mut None,
+            )
+        });
+        assert_eq!(
+            result,
+            Err(RpcRefusal::Deadline),
+            "first body frame reaches the fixed deadline"
+        );
+        assert!(
+            evidence.request_bytes > 0 && evidence.written && evidence.head && evidence.closed && evidence.offered < 4,
+            "received request, admitted head, incomplete peer closed: {evidence:?}"
+        );
+        assert_eq!(evidence.frames, 1, "first frame expires before any next byte is released");
     }
 
     /// Claim: Strict HTTP framing accepts the four admitted status classes and refuses malformed lines, missing or duplicate lengths, transfer encodings, compression, redirects and declared header or body excesses.

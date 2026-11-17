@@ -796,6 +796,83 @@ mod tests {
         format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{body}", body.len())
     }
 
+    /// Claim: On one controlled source per exchange, the admission deadline refuses with the deadline class after a complete request reaches a silent peer, after one head byte, and after head admission before any body byte, closing each incomplete peer. A gated complete response succeeds both without virtual advancement and at the configured budget minus one nanosecond. A pending body read remains admitted at the configured budget minus one nanosecond and refuses at the budget. Advancing a quarter budget at each individually gated body byte refuses on frame four with no later frame; the positive script completes the same response. Each next byte waits for consumption and an unexpired enclosing check, so the count is pinned by the peer rather than the cooperative budget. Real time only contains hangs; no real-network wall-time envelope is claimed.
+    /// ´claim:wallet:rpc-deadline-is-fixed-across-phases´
+    /// ´test:unit:deadline-phases´
+    #[test]
+    fn deadline_phases() {
+        use crate::rpc_http::clock::{self, Script};
+        let body = b"{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":7}";
+        for script in [
+            Script::Silent,
+            Script::Head,
+            Script::Body,
+            Script::Positive,
+            Script::BeforeBudget,
+            Script::Budget,
+            Script::Quarters,
+        ] {
+            let fixture = Fixture::new();
+            let mut reader = fixture.reader();
+            reader.limits.deadline = Duration::from_secs(4);
+            let start = fixture.source.admission().0;
+            let (result, evidence) = clock::scripted(
+                &fixture.listener,
+                &fixture.source,
+                script,
+                reader.limits.deadline,
+                body,
+                || reader.read(Read::BlockCount),
+            );
+            assert!(
+                evidence.request_bytes > 0 && evidence.written && evidence.closed,
+                "{script:?}: {evidence:?}"
+            );
+            if matches!(script, Script::Positive | Script::BeforeBudget) {
+                assert!(matches!(result, Ok(ReadResult::Count(7))), "positive read: {result:?}");
+                assert!(
+                    evidence.offered == body.len() && evidence.head,
+                    "positive response: {evidence:?}"
+                );
+                assert_eq!(evidence.frames, body.len(), "one frame per released byte");
+            } else {
+                assert_eq!(result.map(drop), Err(RpcRefusal::Deadline), "{script:?}: {evidence:?}");
+                assert!(
+                    evidence.offered < body.len(),
+                    "refusal precedes peer completion: {script:?}: {evidence:?}"
+                );
+                match script {
+                    Script::Silent => assert_eq!(evidence.head_bytes, 0, "silent peer sends no head"),
+                    Script::Head => assert_eq!(evidence.head_bytes, 1, "one admitted head byte"),
+                    Script::Body | Script::Budget => assert!(
+                        evidence.head && evidence.frames == 0,
+                        "body entered without a body byte: {evidence:?}"
+                    ),
+                    Script::Quarters => assert_eq!(evidence.frames, 4, "fixed deadline at fourth frame; no later frame released"),
+                    _ => unreachable!(),
+                }
+            }
+            if script == Script::Budget {
+                assert!(
+                    evidence.before_budget == Some(start + reader.limits.deadline.checked_sub(Duration::from_nanos(1)).unwrap()),
+                    "unexpired enclosing check at budget minus one nanosecond"
+                );
+                assert_eq!(
+                    fixture.source.admission().0,
+                    start + reader.limits.deadline,
+                    "refusal at exactly configured budget"
+                );
+            }
+            if script == Script::BeforeBudget {
+                assert_eq!(
+                    fixture.source.admission().0,
+                    start + reader.limits.deadline.checked_sub(Duration::from_nanos(1)).unwrap(),
+                    "complete read succeeds one nanosecond before the configured budget"
+                );
+            }
+        }
+    }
+
     /// Each synchronous phase is bracketed by the one deadline, on success and refusal alike.
     fn phase_brackets() {
         let fixture = Fixture::new();

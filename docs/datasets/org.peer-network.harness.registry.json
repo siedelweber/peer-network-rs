@@ -4668,6 +4668,7 @@
         "pn-wallet::decoder::owned::owned_secrets",
         "pn-wallet::decoder::tests::global_context_initialization",
         "pn-wallet::rpc::tests::attempts_and_holds",
+        "pn-wallet::rpc::tests::deadline_phases",
         "pn-wallet::rpc::tests::projections",
         "pn-wallet::rpc::tests::secret_carriers",
         "pn-wallet::rpc_cookie::tests::grammar_cases",
