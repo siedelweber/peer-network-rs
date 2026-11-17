@@ -823,7 +823,7 @@
       "claim": "ROOT::claim:discipline:server-error-interpretation-stays-in-shim",
       "before": "",
       "after": "Claim: The existing driver boundary check refuses diagnostic API interpretation in production, retains public-grammar test assertions and admits only the credential fixture's exact registered error-classification function rather than another item as that exception.",
-      "review": "Four production diagnostic API spellings refuse; public-grammar tests and the exact registered credential parser pass. A second fixture item and a removed exit refuse. Lexical evidence is complemented by secret-exit review."
+      "review": "Eleven lexical inputs distinguish four forbidden production API spellings, admitted public-grammar tests and the exact registered fixture parser, refusal of a second fixture item and a missing exit, and three additional fixture-accessor cases: message refuses outside the masked parser, the exact process exit-status expression passes, and a diagnostic code accessor refuses. Driver-error formatting and path-form method values remain reviewed limits."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_server_error_leakage",
@@ -4664,7 +4664,7 @@
       "claim": "HOST::claim:host:server-error-forms",
       "before": "",
       "after": "Claim: Error severity alone permits the Failed form, with uncertain forms for fatal, panic, absent or unknown severity, malformed framing and the documented uncertain-outcome code exceptions.",
-      "review": "Ten inputs distinguish five severity cases, three uncertain-outcome codes, the protocol exception and malformed framing. These assert classification, not actual live transaction effects."
+      "review": "Fifteen inputs cover five severity cases, three uncertain-outcome codes, the protocol exception and six framing cases. The added cases reject repeated severity, repeated code, trailing bytes and an unterminated value as Uncertain(Unrecognized); localized-only severity preserves the valid constraint cause in the uncertain form. These classify frames, not live transaction effects."
     },
     {
       "operation": "pn-host::server_error_classification_tests::server_error_recording",
@@ -4680,7 +4680,7 @@
       "claim": "HOST::claim:host:server-error-table",
       "before": "",
       "after": "Claim: The forty-three documented PostgreSQL 19rc1 classes and the twenty-one explicit member entries map to their closed causes; the declared version is pinned, and unknown, missing and malformed codes map to Unrecognized.",
-      "review": "The 19rc1 roster executes 43 class defaults, 21 explicit member entries and six absent, malformed or undocumented codes. Independent cause assertions include the source-reviewed exceptions; extension-defined codes are not proved."
+      "review": "The declared-release roster executes 43 error-class defaults, 21 explicit member cases and six absent, malformed or undocumented cases. The configured-limit member 53400 asserts Resources; undocumented codes and non-error classes are not evidence of an error-class default."
     },
     {
       "operation": "pn-host::server_error_value_tests::server_error_cause",

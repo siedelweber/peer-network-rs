@@ -41,11 +41,11 @@ impl Drop for ForwardingTask {
 
 /// A server answer contains only a form and a closed cause, with no diagnostic content.
 /// (´def:host:server-error´)
-/// Failed denotes no effect; Uncertain requires an equality-checked operation before repetition.
-/// The type is implemented independently of the designed diagnostic translator and store mapping.
+/// Failed means the failing transaction's changes were not committed; it excludes non-transactional effects and earlier statements of one simple-query string committed before the failing statement.
+/// Uncertain requires an equality-checked operation before repetition. The translator is implemented; the store mapping remains designed work.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ServerError {
-    /// The server reported a definite failure of the request.
+    /// The server reported that the failing transaction's changes were not committed.
     Failed(Cause),
     /// The request may have taken effect.
     Uncertain(Cause),
@@ -80,7 +80,7 @@ pub enum Cause {
     ServerFault,
     /// The server found the stored data or an index physically damaged.
     StorageDamaged,
-    /// The server reported something this host does not know; this is kept rare by mapping every kind the declared server documents.
+    /// The server reported something this host does not know; every documented error class is mapped, while non-error classes 00, 01 and 02 also take this cause.
     Unrecognized,
 }
 
@@ -128,7 +128,7 @@ impl ServerError {
         result
     }
 
-    /// Whether the server reported no effect, under (´def:host:server-error´).
+    /// Whether the failing transaction's changes were not committed, under (´def:host:server-error´).
     #[must_use]
     pub fn took_no_effect(self) -> bool {
         let operation = cli_common::observation::scope("HOST", "sig:design:storage", "ServerError::took_no_effect", &self);
@@ -243,6 +243,7 @@ pub enum Refusal {
     /// Invalid framing or message order.
     Protocol,
     /// The server answered with a closed value translated inside the secret boundary.
+    /// During login before proof verification, the value is the configured peer's claim, not an authenticated server's fact.
     Server(ServerError),
     /// Cleartext password requests are forbidden.
     Cleartext,
@@ -800,7 +801,6 @@ fn server_error(frame: &wire::Frame) -> ServerError {
         Some(b"25P03" | b"25P04" | b"55P03" | b"57014" | b"57P05") => Cause::Cancelled,
         Some(b"40002") => Cause::ConstraintViolation,
         Some(b"42501") => Cause::PermissionDenied,
-        Some(b"53400") => Cause::Misconfigured,
         Some(b"57P01" | b"57P02" | b"57P03") => Cause::Unavailable,
         Some(b"XX001" | b"XX002") => Cause::StorageDamaged,
         Some(code) => match &code[..2] {
@@ -1336,7 +1336,7 @@ mod server_error_classification_tests {
             ("40002", ConstraintViolation),
             ("40003", Conflict),
             ("42501", PermissionDenied),
-            ("53400", Misconfigured),
+            ("53400", Resources),
             ("55P03", Cancelled),
             ("55006", Misconfigured),
             ("55P02", StatementRejected),
@@ -1404,6 +1404,40 @@ mod server_error_classification_tests {
             ServerError::Uncertain(Cause::Unrecognized),
             "malformed frame cannot assert no effect"
         );
+        let code = "23505";
+        for (name, fields, expected) in [
+            (
+                "repeated severity",
+                format!("VERROR\0VERROR\0C{code}\0\0"),
+                ServerError::Uncertain(Cause::Unrecognized),
+            ),
+            (
+                "repeated code",
+                format!("VERROR\0C{code}\0C{code}\0\0"),
+                ServerError::Uncertain(Cause::Unrecognized),
+            ),
+            (
+                "bytes after terminator",
+                format!("VERROR\0C{code}\0\0x"),
+                ServerError::Uncertain(Cause::Unrecognized),
+            ),
+            (
+                "unterminated value",
+                format!("VERROR\0C{code}"),
+                ServerError::Uncertain(Cause::Unrecognized),
+            ),
+            (
+                "localized severity only",
+                format!("SERROR\0C{code}\0\0"),
+                ServerError::Uncertain(Cause::ConstraintViolation),
+            ),
+        ] {
+            let input = crate::wire::Frame {
+                kind: b'E',
+                payload: Buffer::from_bytes(fields.as_bytes()).unwrap(),
+            };
+            assert_eq!(server_error(&input), expected, "diagnostic shape: {name}");
+        }
     }
 
     /// Claim: Distinct diagnostic message, detail and object-field sentinels change no closed value, fixed Display or role-only Debug output of the private classifier.

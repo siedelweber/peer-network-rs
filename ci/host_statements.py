@@ -126,7 +126,9 @@ def diagnostic_access(source,relative,test_only,fixture):
     # the shim. Tests of the three public grammars retain their direct assertions.
     if re.search(r'\b(?:as_db_error|SqlState|DbError|ErrorPosition|Severity)\b',text):
         raise ValueError('diagnostic interpretation outside the shim: '+relative)
-    if not fixture and re.search(r'\.\s*(?:code|message|detail|hint|where_|schema|table|column|datatype|constraint)\s*\(',text):
+    if fixture and relative=='packages/host/src/credential_fixture.rs':
+        text=re.sub(r'\boutput\s*\.\s*status\s*\.\s*code\s*\(\s*\)',lambda match:' '*len(match[0]),text)
+    if re.search(r'\.\s*(?:code|message|detail|hint|where_|schema|table|column|datatype|constraint)\s*\(',text):
         raise ValueError('diagnostic accessor outside the shim: '+relative)
 
 

@@ -971,6 +971,12 @@ class HostRuntime(unittest.TestCase):
             diagnostic_access(source+'\nfn another() { error.as_db_error(); }',path,True,True)
         with self.assertRaisesRegex(ValueError,'boundary exit missing'):
             diagnostic_access(source.replace('ROOT-cav:observe:secret-host-credential-error-class','removed'),path,True,True)
+        with self.assertRaisesRegex(ValueError,'diagnostic accessor'):
+            diagnostic_access(source+'\nfn another() { error.message(); }',path,True,True)
+        fixture='packages/host/src/credential_fixture.rs'
+        diagnostic_access('fn f() { output.status.code(); }',fixture,True,True)
+        with self.assertRaisesRegex(ValueError,'diagnostic accessor'):
+            diagnostic_access('fn f() { error.code(); }',fixture,True,True)
 
     def test_sensitive_result_control(self):
         """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and unexpected counted loss refuses as incomplete evidence.
