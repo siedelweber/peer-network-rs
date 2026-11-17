@@ -291,7 +291,7 @@ evidence = "8-b and 8-i finite transport and resolver workload measurements"
 [[rows]]
 name = "equality"
 category = "procedure"
-value = "checked exact defining equality or certified comparison; a straddling enclosure refines or withholds publication, never rounds to a verdict; no numerical tolerance or measured margin selects equality"
+value = "checked exact defining equality or certified comparison; a straddling enclosure refines or rejects the set, never rounds to a PASS or FAIL; no numerical tolerance or measured margin selects equality"
 owner = "lane/graph"
 
 [[rows]]

@@ -474,7 +474,7 @@
       "category": "procedure",
       "name": "equality",
       "owner": "lane/graph",
-      "value": "checked exact defining equality or certified comparison; a straddling enclosure refines or withholds publication, never rounds to a verdict; no numerical tolerance or measured margin selects equality"
+      "value": "checked exact defining equality or certified comparison; a straddling enclosure refines or rejects the set, never rounds to a PASS or FAIL; no numerical tolerance or measured margin selects equality"
     },
     {
       "category": "procedure",
