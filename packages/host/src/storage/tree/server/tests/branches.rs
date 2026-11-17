@@ -13,7 +13,9 @@ async fn read(store: &mut ServerTree, tip: &Retained, wanted: &Retained, exact: 
     assert!(result.is_ok(), "server branch read remains valid: {result:?}");
     let result = result.unwrap().unwrap();
     assert_eq!(result.identity, *wanted.event().1, "server read names the requested ancestor");
-    (result, reader.usage())
+    let usage = reader.usage();
+    reader.end().await.unwrap();
+    (result, usage)
 }
 
 pub(super) async fn run() {

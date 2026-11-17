@@ -4,6 +4,6 @@
     "item": "storage::StatementTransaction",
     "package": "pn-host",
     "path": "packages/host/src/storage.rs",
-    "syntax": "struct StatementTransaction < 'a > (tokio_postgres :: Transaction < 'a >) ;"
+    "syntax": "struct StatementTransaction < 'a > { raw : Option < tokio_postgres :: Transaction < 'a > > , state : RequestState , ended : bool , context : RequestContext , }"
   }
 }

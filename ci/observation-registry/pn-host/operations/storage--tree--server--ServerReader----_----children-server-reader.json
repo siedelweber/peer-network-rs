@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::children",
-    "body": "{ self . page (scope , Some (parent) , after , limit , Statement :: ReadChildren) . await }",
+    "body": "{ let result = self . page (scope , Some (parent) , after , limit , Statement :: ReadChildren) . await ; self . record (& result) ; result }",
     "class_decision": "host-storage",
-    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting.",
+    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting. The reader records its first local refusal for its consuming end; individual read results, delivery reservations and retained bytes are unchanged.",
     "assessments": {
       "full_recording": "storage-full_recording",
       "secret_flow": "storage-secret_flow",

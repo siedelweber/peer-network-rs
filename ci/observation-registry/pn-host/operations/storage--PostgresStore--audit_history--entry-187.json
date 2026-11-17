@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/storage.rs::storage::PostgresStore::audit_history",
-    "body": "{ let mut meter = TransactionMeter :: new () ; let transaction = self . session . client . snapshot () . await . map_err (| _ | StorageError :: Transport) ? ; let result = read (& transaction , Statement :: ReadHistory , & [] , true) . await . map (| _ | ()) ; transaction . commit () . await . map_err (| _ | StorageError :: Transport) ? ; meter . commit () ; classified (result) }",
+    "body": "{ let mut meter = TransactionMeter :: new () ; let transaction = self . session . client . snapshot (self . session . store_requests . clone ()) . await ? ; let result = read (& transaction , Statement :: ReadHistory , & [] , true) . await . map (| _ | ()) ; if let Err (error) = result { return classified (Err (transaction . refuse (error) . await)) ; } transaction . commit () . await ? ; meter . commit () ; classified (result) }",
     "class_decision": "host-storage",
-    "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+    "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held. The snapshot now ends with a wrapped commit on success or an explicit cleanup rollback on a local refusal, preserving the prior result.",
     "assessments": {
       "full_recording": "storage-full_recording",
       "secret_flow": "storage-secret_flow",

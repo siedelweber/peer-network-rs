@@ -42,7 +42,14 @@ async fn query(store: &mut ServerTree, kind: Query, budget: ReadBudget) -> (Resu
             })
         }
     };
-    (result, reader.usage())
+    let usage = reader.usage();
+    let end = reader.end().await;
+    if result.is_ok() {
+        end.unwrap();
+    } else {
+        assert_eq!(end, result.as_ref().copied().map_err(|error| *error));
+    }
+    (result, usage)
 }
 
 pub(super) fn run(fixture: &Fixture<'_>) {
@@ -150,19 +157,20 @@ pub(super) async fn shapes(store: &mut ServerTree) {
         Err(StorageError::Representation.into())
     );
     assert_eq!(reader.usage(), Usage::default(), "request shape precedes both admissions");
-    drop(reader);
+    assert_eq!(reader.end().await, Err(StorageError::Representation.into()));
     let mut reader = store.reader(allowance()).await.unwrap();
     assert_eq!(
         reader.children(scope, *f.main[0].event().1, None, 0).await,
         Err(StorageError::ReadLimit.into())
     );
     assert_eq!(reader.usage(), Usage::default(), "zero page limit refuses without any charge");
-    drop(reader);
+    assert_eq!(reader.end().await, Err(StorageError::ReadLimit.into()));
     for (identity, expected) in [
         ([255; 32], Ok(None)),
         (*f.main[0].event().1, Err(StorageError::ReadLimit.into())),
     ] {
         let mut reader = store.reader(ReadBudget { bytes: 7, rows: 0 }).await.unwrap();
+        let refused = expected.is_err();
         reset_fetches();
         assert_eq!(
             reader.exact(scope, identity).await,
@@ -177,6 +185,11 @@ pub(super) async fn shapes(store: &mut ServerTree) {
             }
         );
         assert_eq!(fetches(), 1, "the existence exception delivers no header");
+        if refused {
+            assert_eq!(reader.end().await, Err(StorageError::ReadLimit.into()));
+        } else {
+            reader.end().await.unwrap();
+        }
     }
 }
 
@@ -241,6 +254,15 @@ pub(super) async fn delivery(store: &mut ServerTree) {
             "used_bytes": reader.usage().allocation_bytes
         }))
         .unwrap();
+        if !ok {
+            reader.first_refusal = Some(StorageError::ReadLimit.into());
+        }
+        let end = reader.end().await;
+        if ok {
+            end.unwrap();
+        } else {
+            assert_eq!(end, Err(StorageError::ReadLimit.into()));
+        }
     }
     let mut reader = store.reader(allowance()).await.unwrap();
     reset_fetches();
@@ -252,6 +274,8 @@ pub(super) async fn delivery(store: &mut ServerTree) {
         StorageError::ReadLimit.into()
     );
     assert_eq!(fetches(), 0, "delivery product overflow precedes execution");
+    reader.first_refusal = Some(StorageError::ReadLimit.into());
+    assert_eq!(reader.end().await, Err(StorageError::ReadLimit.into()));
 }
 
 pub(super) async fn chunk_delivery(store: &mut ServerTree) {
@@ -299,6 +323,12 @@ pub(super) async fn chunk_delivery(store: &mut ServerTree) {
                 "maximum-field delivery refused before execution"
             );
             assert_eq!(fetches(), 0, "chunk delivery is admitted before execution");
+        }
+        if budget.bytes != 262_174 || budget.rows != 2 {
+            reader.first_refusal = Some(StorageError::ReadLimit.into());
+            assert_eq!(reader.end().await, Err(StorageError::ReadLimit.into()));
+        } else {
+            reader.end().await.unwrap();
         }
     }
     store

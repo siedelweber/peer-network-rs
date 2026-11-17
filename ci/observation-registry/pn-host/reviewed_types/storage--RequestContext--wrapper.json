@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::RequestContext",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)] enum RequestContext { Writer , Other , Commit , }"
+  }
+}

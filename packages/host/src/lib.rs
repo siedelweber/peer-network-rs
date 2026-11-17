@@ -327,6 +327,7 @@ pub struct Session {
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
     last_refusal: Arc<Mutex<Option<Refusal>>>,
     server_error: Arc<Mutex<Option<ServerError>>>,
+    store_requests: storage::RequestState,
     tasks: Vec<tokio::task::JoinHandle<()>>,
 }
 impl fmt::Debug for Session {
@@ -434,6 +435,7 @@ impl Session {
                 backend_key: key,
                 diagnostics,
                 last_refusal,
+                store_requests: storage::RequestState::new(server_error.clone()),
                 server_error,
                 tasks: vec![bridge, connection],
             })

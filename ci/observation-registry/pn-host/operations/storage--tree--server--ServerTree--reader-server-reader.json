@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::reader",
-    "body": "{ let transaction = self . session . client . snapshot () . await . map_err (| _ | StorageError :: Transport) ? ; Ok (ServerReader { transaction , meter : Meter { limit : budget , used : Usage :: default () , } , }) }",
+    "body": "{ let transaction = self . session . client . snapshot (self . session . store_requests . clone ()) . await ? ; Ok (ServerReader { transaction , first_refusal : None , meter : Meter { limit : budget , used : Usage :: default () , } , }) }",
     "class_decision": "host-storage",
-    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting.",
+    "item_premise": "The bounded server reader retains the existing protected Session and read-only transaction. Closed statements deliver only bounded public metadata and canonical retained evidence; all variable projections carry their stored lengths. The shared allowance admits delivery reservations, strict-validator requests and reconstruction before execution. Returned owned bytes and origins grant no admitted capability. Session configuration, cancellation and diagnostics retain their existing carriers; no new secret exit or transport path is introduced. Operation observation is outside reconstruction accounting. Snapshot start passes through the private request state before exposing the borrowed reader.",
     "assessments": {
       "full_recording": "storage-full_recording",
       "secret_flow": "storage-secret_flow",

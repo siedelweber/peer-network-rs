@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::RequestState",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Debug)] pub (crate) struct RequestState { answer : std :: sync :: Arc < std :: sync :: Mutex < Option < ServerError > > > , retired : std :: sync :: Arc < std :: sync :: atomic :: AtomicBool > , interval : std :: sync :: Arc < tokio :: sync :: Mutex < () > > , # [cfg (test)] events : std :: sync :: Arc < std :: sync :: Mutex < Vec < & 'static str > > > , }"
+  }
+}

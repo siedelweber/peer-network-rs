@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::RequestState",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Derived Clone shares the private closed answer slot, retirement flag and request lock without a new connection or take. Derived Debug can contain only the closed ServerError value and private synchronization state; Session formatting does not include this field, and no diagnostic payload exists in it."
+  }
+}

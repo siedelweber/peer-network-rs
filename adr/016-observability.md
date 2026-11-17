@@ -96,7 +96,7 @@ Focused one-process controls for that implementation are entry_origin_spans_pref
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
-| pn-host | 265 | 73 | 192 | 0 | 200 |
+| pn-host | 268 | 74 | 194 | 0 | 202 |
 | pn-interchange | 169 | 132 | 36 | 1 | 103 |
 | pn-records | 137 | 63 | 74 | 0 | 198 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |

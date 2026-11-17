@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::RequestContext",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Derived cloning and formatting of the private closed context produce only its fixed variant name; they create no request or secret content."
+  }
+}

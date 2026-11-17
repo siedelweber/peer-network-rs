@@ -72,7 +72,7 @@ pub(super) async fn surplus(store: &mut ServerTree) {
         Err(StorageError::CorruptHistory.into()),
         "surplus chunk refuses instead of reconstructing"
     );
-    drop(reader);
+    assert_eq!(reader.end().await, Err(StorageError::CorruptHistory.into()));
     store
         .session
         .client()
@@ -93,4 +93,6 @@ pub(super) async fn surplus(store: &mut ServerTree) {
         "surplus probe is admitted before request"
     );
     assert_eq!(fetches(), 0, "no chunk query before surplus admission");
+    reader.first_refusal = Some(StorageError::ReadLimit.into());
+    assert_eq!(reader.end().await, Err(StorageError::ReadLimit.into()));
 }

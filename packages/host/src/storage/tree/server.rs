@@ -58,9 +58,10 @@ impl ServerTree {
         ret
     )]
     pub async fn reader(&mut self, budget: ReadBudget) -> Result<ServerReader<'_>, Error> {
-        let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
+        let transaction = self.session.client.snapshot(self.session.store_requests.clone()).await?;
         Ok(ServerReader {
             transaction,
+            first_refusal: None,
             meter: Meter {
                 limit: budget,
                 used: Usage::default(),
@@ -75,6 +76,7 @@ impl ServerTree {
 pub struct ServerReader<'a> {
     transaction: StatementTransaction<'a>,
     meter: Meter,
+    first_refusal: Option<Error>,
 }
 
 /// A complete retained selection and its original judgement's result identity.
@@ -121,6 +123,37 @@ impl std::fmt::Debug for ServerReader<'_> {
 }
 
 impl ServerReader<'_> {
+    fn record<T>(&mut self, result: &Result<T, Error>) {
+        if let Err(error) = result
+            && self.first_refusal.is_none()
+            && !self.transaction.state.retired()
+        {
+            self.first_refusal = Some(*error);
+        }
+    }
+
+    /// End the snapshot with one wrapped commit or explicit cleanup rollback.
+    /// (´[ROOT-amend:storage:relay-termination]´)
+    /// # Errors
+    /// Retains the first store-decided read refusal, or reports the ending refusal.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::tree::server::ServerReader < '_ >::end",
+            asynchronous = true
+        ),
+        ret
+    )]
+    pub async fn end(self) -> Result<(), Error> {
+        if let Some(primary) = self.first_refusal {
+            Err(self.transaction.refuse(primary).await)
+        } else {
+            self.transaction.commit().await.map_err(Into::into)
+        }
+    }
     /// Observe admitted work, including reservations retained on refusal.
     /// (´[ROOT-amend:storage:admitted-reads]´)
     /// Justified: Counter observation inherits the enclosing read operation and performs no storage work.
@@ -145,24 +178,29 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn exact(&mut self, scope: &EpochScope, identity: Identity) -> Result<Option<ServerResult>, Error> {
-        scope_check(scope)?;
-        let key = Self::scope(scope)?;
-        let key = key.text()?;
-        // The initial bounded existence exception reserves only its boolean delivery.
-        self.meter.allocation(7)?;
-        #[cfg(test)]
-        tests::fetched();
-        let rows = observed(self.transaction.query(Statement::HasEpoch, &[&key, &&identity[..]])).await?;
-        if rows.len() != 1 {
-            return Err(StorageError::CorruptHistory.into());
+        let result = async {
+            scope_check(scope)?;
+            let key = Self::scope(scope)?;
+            let key = key.text()?;
+            // The initial bounded existence exception reserves only its boolean delivery.
+            self.meter.allocation(7)?;
+            #[cfg(test)]
+            tests::fetched();
+            let rows = observed(self.transaction.query(Statement::HasEpoch, &[&key, &&identity[..]])).await?;
+            if rows.len() != 1 {
+                return Err(StorageError::CorruptHistory.into());
+            }
+            let exists: bool = rows[0].try_get(0).map_err(|_| StorageError::CorruptHistory)?;
+            if !exists {
+                return Ok(None);
+            }
+            let header = self.header(key, identity).await?;
+            let result = self.reconstruct(scope, key, header).await?;
+            Ok(Some(result))
         }
-        let exists: bool = rows[0].try_get(0).map_err(|_| StorageError::CorruptHistory)?;
-        if !exists {
-            return Ok(None);
-        }
-        let header = self.header(key, identity).await?;
-        let result = self.reconstruct(scope, key, header).await?;
-        Ok(Some(result))
+        .await;
+        self.record(&result);
+        result
     }
 
     /// Resolve a depth only on the named tip's ancestor path, clamping at the tip.
@@ -181,33 +219,38 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn as_of(&mut self, scope: &EpochScope, tip: Identity, depth: u64) -> Result<Option<ServerResult>, Error> {
-        scope_check(scope)?;
-        i64::try_from(depth).map_err(|_| StorageError::Representation)?;
-        let key = Self::scope(scope)?;
-        let key = key.text()?;
-        let rows = self.request(Statement::ReadEpoch, &[&key, &&tip[..]], 1, 278, false).await?;
-        let tip = Header::read(rows.first().ok_or(Error::MissingTip)?)?;
-        let ranges = self.ranges(key, &tip).await?;
-        let depth = depth.min(tip.depth);
-        let Some(range) = ranges.iter().find(|range| range.start <= depth && depth <= range.end) else {
-            return Ok(None);
-        };
-        let ceiling = i64::try_from(depth).map_err(|_| StorageError::Representation)?;
-        let rows = self
-            .request(
-                Statement::ReadEpochAsOf,
-                &[&key, &&range.segment[..], &ceiling],
-                1,
-                278,
-                false,
-            )
-            .await?;
-        let header = Header::read(rows.first().ok_or(StorageError::CorruptHistory)?)?;
-        if header.segment != range.segment || header.depth != depth {
-            return Err(StorageError::CorruptHistory.into());
+        let result = async {
+            scope_check(scope)?;
+            i64::try_from(depth).map_err(|_| StorageError::Representation)?;
+            let key = Self::scope(scope)?;
+            let key = key.text()?;
+            let rows = self.request(Statement::ReadEpoch, &[&key, &&tip[..]], 1, 278, false).await?;
+            let tip = Header::read(rows.first().ok_or(Error::MissingTip)?)?;
+            let ranges = self.ranges(key, &tip).await?;
+            let depth = depth.min(tip.depth);
+            let Some(range) = ranges.iter().find(|range| range.start <= depth && depth <= range.end) else {
+                return Ok(None);
+            };
+            let ceiling = i64::try_from(depth).map_err(|_| StorageError::Representation)?;
+            let rows = self
+                .request(
+                    Statement::ReadEpochAsOf,
+                    &[&key, &&range.segment[..], &ceiling],
+                    1,
+                    278,
+                    false,
+                )
+                .await?;
+            let header = Header::read(rows.first().ok_or(StorageError::CorruptHistory)?)?;
+            if header.segment != range.segment || header.depth != depth {
+                return Err(StorageError::CorruptHistory.into());
+            }
+            let result = self.reconstruct(scope, key, header).await?;
+            Ok(Some(result))
         }
-        let result = self.reconstruct(scope, key, header).await?;
-        Ok(Some(result))
+        .await;
+        self.record(&result);
+        result
     }
 
     async fn reconstruct(&mut self, scope: &EpochScope, key: &str, header: Header) -> Result<ServerResult, Error> {
@@ -802,7 +845,9 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn roots(&mut self, scope: &EpochScope, after: Option<Identity>, limit: usize) -> Result<Page, Error> {
-        self.page(scope, None, after, limit, Statement::ReadRoots).await
+        let result = self.page(scope, None, after, limit, Statement::ReadRoots).await;
+        self.record(&result);
+        result
     }
 
     /// Read all direct children in identity byte order, with a charged parent-existence check.
@@ -827,7 +872,9 @@ impl ServerReader<'_> {
         after: Option<Identity>,
         limit: usize,
     ) -> Result<Page, Error> {
-        self.page(scope, Some(parent), after, limit, Statement::ReadChildren).await
+        let result = self.page(scope, Some(parent), after, limit, Statement::ReadChildren).await;
+        self.record(&result);
+        result
     }
 
     /// Read bounded identity candidates without filtering any branch.
@@ -846,7 +893,9 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn candidates(&mut self, scope: &EpochScope, after: Option<Identity>, limit: usize) -> Result<Page, Error> {
-        self.page(scope, None, after, limit, Statement::ReadResultCandidates).await
+        let result = self.page(scope, None, after, limit, Statement::ReadResultCandidates).await;
+        self.record(&result);
+        result
     }
 
     async fn page(
@@ -907,9 +956,14 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn has_child(&mut self, scope: &EpochScope, parent: Identity) -> Result<bool, Error> {
-        scope_check(scope)?;
-        let scope = Self::scope(scope)?;
-        self.existence(scope.text()?, parent, true).await
+        let result = async {
+            scope_check(scope)?;
+            let scope = Self::scope(scope)?;
+            self.existence(scope.text()?, parent, true).await
+        }
+        .await;
+        self.record(&result);
+        result
     }
 
     /// Inspect a bounded candidate page, advancing even if every candidate has children.
@@ -928,19 +982,24 @@ impl ServerReader<'_> {
         ret
     )]
     pub async fn tips(&mut self, scope: &EpochScope, after: Option<Identity>, limit: usize) -> Result<Page, Error> {
-        let candidates = self.candidates(scope, after, limit).await?;
-        let mut page = Page {
-            identities: Vec::new(),
-            after: candidates.after,
-            end: candidates.end,
-        };
-        self.meter.reserve(&mut page.identities, candidates.identities.len())?;
-        for identity in candidates.identities {
-            if !self.has_child(scope, identity).await? {
-                page.identities.push(identity);
+        let result = async {
+            let candidates = self.candidates(scope, after, limit).await?;
+            let mut page = Page {
+                identities: Vec::new(),
+                after: candidates.after,
+                end: candidates.end,
+            };
+            self.meter.reserve(&mut page.identities, candidates.identities.len())?;
+            for identity in candidates.identities {
+                if !self.has_child(scope, identity).await? {
+                    page.identities.push(identity);
+                }
             }
+            Ok(page)
         }
-        Ok(page)
+        .await;
+        self.record(&result);
+        result
     }
 }
 

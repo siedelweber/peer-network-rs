@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::PendingRequest",
+    "package": "pn-host",
+    "path": "packages/host/src/storage.rs",
+    "syntax": "struct PendingRequest { state : RequestState , complete : bool , }"
+  }
+}

@@ -29,31 +29,38 @@ pub async fn open(session: &mut Session) -> Result<(), StorageError> {
 
 async fn open_inner(session: &mut Session) -> Result<(), StorageError> {
     let mut meter = TransactionMeter::new();
-    let transaction = session.client.transaction().await.map_err(|_| StorageError::Transport)?;
-    observed(transaction.query(Statement::BootstrapLock, &[])).await?;
-    let exists: bool = observed(transaction.query_one(Statement::HasIdentity, &[])).await?.get(0);
-    if !exists {
-        let occupied: bool = observed(transaction.query_one(Statement::HasTables, &[])).await?.get(0);
-        if occupied {
+    let transaction = session.client.transaction(session.store_requests.clone()).await?;
+    let result = async {
+        observed(transaction.query(Statement::BootstrapLock, &[])).await?;
+        let exists: bool = observed(transaction.query_one(Statement::HasIdentity, &[])).await?.get(0);
+        if !exists {
+            let occupied: bool = observed(transaction.query_one(Statement::HasTables, &[])).await?.get(0);
+            if occupied {
+                return Err(StorageError::SchemaIdentity);
+            }
+            observed(transaction.batch_execute(Statement::Create)).await?;
+            observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
+            observed(transaction.batch_execute(Statement::CreateEpochStore)).await?;
+            observed(transaction.execute(Statement::SetIdentity, &[&IDENTITY])).await?;
+        }
+        let rows = observed(transaction.query(Statement::GetIdentity, &[])).await?;
+        if rows.len() != 1 || rows[0].get::<_, String>(0) != IDENTITY {
             return Err(StorageError::SchemaIdentity);
         }
-        observed(transaction.batch_execute(Statement::Create)).await?;
-        observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
-        observed(transaction.batch_execute(Statement::CreateEpochStore)).await?;
-        observed(transaction.execute(Statement::SetIdentity, &[&IDENTITY])).await?;
+        let history: bool = observed(transaction.query_one(Statement::VerifyIndexes, &[])).await?.get(0);
+        let catalogue: bool = observed(transaction.query_one(Statement::VerifyEpochStore, &[]))
+            .await?
+            .get(0);
+        if !history || !catalogue {
+            return Err(StorageError::IndexDefinition);
+        }
+        Ok::<_, StorageError>(())
     }
-    let rows = observed(transaction.query(Statement::GetIdentity, &[])).await?;
-    if rows.len() != 1 || rows[0].get::<_, String>(0) != IDENTITY {
-        return Err(StorageError::SchemaIdentity);
+    .await;
+    if let Err(error) = result {
+        return Err(transaction.refuse(error).await);
     }
-    let history: bool = observed(transaction.query_one(Statement::VerifyIndexes, &[])).await?.get(0);
-    let catalogue: bool = observed(transaction.query_one(Statement::VerifyEpochStore, &[]))
-        .await?
-        .get(0);
-    if !history || !catalogue {
-        return Err(StorageError::IndexDefinition);
-    }
-    transaction.commit().await.map_err(|_| StorageError::CommitUnknown)?;
+    transaction.commit().await?;
     meter.commit();
     Ok(())
 }

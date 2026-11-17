@@ -189,10 +189,15 @@ impl super::super::roster::ReadContract for Fixture<'_> {
         let mut store = self.store.borrow_mut();
         let result = self.runtime.block_on(async {
             let mut reader = store.reader(allowance()).await?;
-            match depth {
+            let result = match depth {
                 Some(depth) => reader.as_of(scope, identity, depth).await,
                 None => reader.exact(scope, identity).await,
+            };
+            let end = reader.end().await;
+            if result.is_ok() {
+                end?;
             }
+            result
         })?;
         Ok(result.map(|value| super::super::roster::ReadView {
             identity: value.identity,
@@ -398,6 +403,7 @@ async fn page_assertions(model: &MemoryTree<'static>, store: &mut ServerTree) {
         reader.children(scope, parent, None, 0).await,
         Err(StorageError::ReadLimit.into())
     );
+    assert_eq!(reader.end().await, Err(Error::MissingTip));
 }
 
 fn signed(value: impl TryInto<i64>) -> i64 {
@@ -635,4 +641,5 @@ pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
     for (statement, parameters, maximum) in requests {
         reader.request(statement, &parameters, 1, maximum, true).await.unwrap();
     }
+    reader.end().await.unwrap();
 }

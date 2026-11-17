@@ -4763,6 +4763,78 @@
       "review": "Read the decoded-disclosure census independently of the projection: typed selection coordinates are enumerated before joining complete public declarations, constants and four observation families. Every nested branch has a positive hit assertion. All six coordinate fields and complete payloads are compared, with public constructors for observation payloads. The ridge fixture is restored through public admission."
     },
     {
+      "operation": "pn-host::storage::store_error_tests::store_error_abandoned_request",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-abandoned-request",
+      "before": "",
+      "after": "Claim: Dropping a polled pending request retires before a later request can submit.",
+      "review": "A polled pending future is cancelled; its guard retires before the next request can submit."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_acknowledged_success",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-acknowledged-success",
+      "before": "",
+      "after": "Claim: An acknowledged COMMIT remains successful and leaves a later answer for the next pre-request take.",
+      "review": "A successful COMMIT has no failure take; the later value is found only at the next request boundary."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_commit_map",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-commit-map",
+      "before": "",
+      "after": "Claim: A submitted uncertain COMMIT stays unknown for every cause, while Failed follows the table.",
+      "review": "All twenty-eight closed values cross COMMIT; Uncertain remains unknown and Failed distinguishes constraint refusal."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_local_refusal_rollback",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-local-refusal-rollback",
+      "before": "",
+      "after": "Claim: Successful wrapped rollback keeps seven store-decided refusals and allows the next transaction.",
+      "review": "Seven named local refusals retain their value after scripted cleanup success, followed by another submission on the same state."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_no_answer",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-no-answer",
+      "before": "",
+      "after": "Claim: An unanswered submitted failure is Transport outside COMMIT and `CommitUnknown` at COMMIT.",
+      "review": "The empty failure take distinguishes an unanswered submitted COMMIT from an unanswered non-COMMIT."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_pending_answer",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-pending-answer",
+      "before": "",
+      "after": "Claim: A pending answer prevents submission, returns Transport and retires the session before reuse.",
+      "review": "A queued closed answer is taken before the proposed call, so neither it nor a reuse attempt submits."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_request_order",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-request-order",
+      "before": "",
+      "after": "Claim: A failing request takes before submission, takes its closed answer, and retires before interval release.",
+      "review": "The scripted completion records pre-take, submission, failure take, retirement and release in order."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_snapshot_end",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-snapshot-end",
+      "before": "",
+      "after": "Claim: Scripted COMMIT and cleanup preserve reuse, while an unended transaction Drop retires before reuse.",
+      "review": "The shared request owner preserves reuse after scripted COMMIT and cleanup; dropping an unended transaction retires before another request. Native reader behavior remains subject to its service roster."
+    },
+    {
+      "operation": "pn-host::storage::store_error_tests::store_error_statement_map",
+      "path": "packages/host/src/storage.rs",
+      "claim": "HOST::claim:host:store-error-statement-map",
+      "before": "",
+      "after": "Claim: Both statement contexts map every closed form and cause by the recorded table.",
+      "review": "Two statement contexts cross both closed forms and all fourteen causes; this is mapping evidence, not a native server classification."
+    },
+    {
       "operation": "pn-host::storage::tests::storage_competing_writers",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:competing-successors-serialize",

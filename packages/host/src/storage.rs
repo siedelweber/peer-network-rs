@@ -1,6 +1,6 @@
 //! Closed effective-history storage; no executable opens this library surface.
 //! (´def:host:effective-storage´)
-use crate::{Session, storage_payload as encoding};
+use crate::{Cause, ServerError, Session, storage_payload as encoding};
 use pn_interchange::Value;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
@@ -48,6 +48,7 @@ pub enum StorageError {
     SchemaIdentity,
     IndexDefinition,
     Transport,
+    Server(ServerError),
     CorruptHistory,
     EditionConflict,
     Predecessor,
@@ -645,6 +646,121 @@ impl Statement {
     }
 }
 
+#[derive(Clone, Debug)]
+pub(crate) struct RequestState {
+    answer: std::sync::Arc<std::sync::Mutex<Option<ServerError>>>,
+    retired: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    interval: std::sync::Arc<tokio::sync::Mutex<()>>,
+    #[cfg(test)]
+    events: std::sync::Arc<std::sync::Mutex<Vec<&'static str>>>,
+}
+
+#[derive(Clone, Copy, Debug)]
+enum RequestContext {
+    Writer,
+    Other,
+    Commit,
+}
+
+fn completion(context: RequestContext, answer: Option<ServerError>) -> StorageError {
+    match (context, answer) {
+        (RequestContext::Commit, None) => StorageError::CommitUnknown,
+        (RequestContext::Commit, Some(value)) if !value.took_no_effect() => StorageError::CommitUnknown,
+        (RequestContext::Commit | RequestContext::Writer, Some(value))
+            if value.took_no_effect() && value.cause() == Cause::ConstraintViolation =>
+        {
+            StorageError::CorruptHistory
+        }
+        (_, Some(value)) => StorageError::Server(value),
+        (_, None) => StorageError::Transport,
+    }
+}
+
+struct PendingRequest {
+    state: RequestState,
+    complete: bool,
+}
+impl Drop for PendingRequest {
+    /// Justified: Pending request retirement inherits the enclosing storage operation and emits no content.
+    fn drop(&mut self) {
+        if !self.complete {
+            self.state.retire();
+        }
+    }
+}
+
+impl RequestState {
+    pub(crate) fn new(answer: std::sync::Arc<std::sync::Mutex<Option<ServerError>>>) -> Self {
+        Self {
+            answer,
+            retired: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
+            interval: std::sync::Arc::new(tokio::sync::Mutex::new(())),
+            #[cfg(test)]
+            events: std::sync::Arc::new(std::sync::Mutex::new(Vec::new())),
+        }
+    }
+    fn retire(&self) {
+        self.retired.store(true, std::sync::atomic::Ordering::Release);
+        self.event("retire");
+    }
+    fn retired(&self) -> bool {
+        self.retired.load(std::sync::atomic::Ordering::Acquire)
+    }
+    pub(crate) fn take(&self) -> Option<ServerError> {
+        self.event("take");
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "Session::take_server_error", self);
+        let result = self.answer.lock().unwrap_or_else(std::sync::PoisonError::into_inner).take();
+        operation.finish(&result);
+        result
+    }
+    fn event(&self, value: &'static str) {
+        #[cfg(test)]
+        self.events.lock().unwrap().push(value);
+        #[cfg(not(test))]
+        let _ = (self, value);
+    }
+    async fn request<T, E>(
+        &self,
+        context: RequestContext,
+        future: impl std::future::Future<Output = Result<T, E>>,
+    ) -> Result<T, StorageError> {
+        let _interval = self.interval.lock().await;
+        if self.retired() {
+            self.event("release");
+            return Err(StorageError::Transport);
+        }
+        if self.take().is_some() {
+            self.retire();
+            self.event("release");
+            return Err(StorageError::Transport);
+        }
+        let mut pending = PendingRequest {
+            state: self.clone(),
+            complete: false,
+        };
+        self.event("submit");
+        match future.await {
+            Ok(value) => {
+                pending.complete = true;
+                drop(pending);
+                self.event("release");
+                Ok(value)
+            }
+            Err(_driver_error) => {
+                let answer = self.take();
+                let result = completion(context, answer);
+                drop(pending);
+                self.event("release");
+                Err(result)
+            }
+        }
+    }
+    async fn cleanup<P, E>(&self, primary: P, future: impl std::future::Future<Output = Result<(), E>>) -> (P, bool) {
+        let success = self.request(RequestContext::Other, future).await.is_ok();
+        (primary, success)
+    }
+}
+
 // The raw driver stays inside this wrapper; even other crate modules cannot issue SQL.
 #[derive(Debug)]
 pub(crate) struct StatementClient {
@@ -663,51 +779,95 @@ impl StatementClient {
     pub(crate) fn fixture(&self) -> &tokio_postgres::Client {
         &self.raw
     }
-    async fn transaction(&mut self) -> Result<StatementTransaction<'_>, tokio_postgres::Error> {
-        Ok(StatementTransaction(self.raw.transaction().await?))
+    async fn transaction(&mut self, state: RequestState) -> Result<StatementTransaction<'_>, StorageError> {
+        let transaction = state.request(RequestContext::Other, self.raw.transaction()).await?;
+        Ok(StatementTransaction {
+            raw: Some(transaction),
+            state,
+            ended: false,
+            context: RequestContext::Writer,
+        })
     }
-    async fn snapshot(&mut self) -> Result<StatementTransaction<'_>, tokio_postgres::Error> {
-        Ok(StatementTransaction(
-            self.raw
-                .build_transaction()
-                .isolation_level(tokio_postgres::IsolationLevel::RepeatableRead)
-                .read_only(true)
-                .start()
-                .await?,
-        ))
+    async fn snapshot(&mut self, state: RequestState) -> Result<StatementTransaction<'_>, StorageError> {
+        let transaction = state
+            .request(
+                RequestContext::Other,
+                self.raw
+                    .build_transaction()
+                    .isolation_level(tokio_postgres::IsolationLevel::RepeatableRead)
+                    .read_only(true)
+                    .start(),
+            )
+            .await?;
+        Ok(StatementTransaction {
+            raw: Some(transaction),
+            state,
+            ended: false,
+            context: RequestContext::Other,
+        })
     }
 }
-struct StatementTransaction<'a>(tokio_postgres::Transaction<'a>);
+struct StatementTransaction<'a> {
+    raw: Option<tokio_postgres::Transaction<'a>>,
+    state: RequestState,
+    ended: bool,
+    context: RequestContext,
+}
+impl Drop for StatementTransaction<'_> {
+    /// Justified: Unended transaction retirement inherits its caller's storage operation and emits no content.
+    fn drop(&mut self) {
+        if !self.ended {
+            self.state.retire();
+        }
+    }
+}
 impl StatementTransaction<'_> {
     async fn query(
         &self,
         statement: Statement,
         params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
-    ) -> Result<Vec<tokio_postgres::Row>, tokio_postgres::Error> {
-        self.0.query(statement.sql(), params).await
+    ) -> Result<Vec<tokio_postgres::Row>, StorageError> {
+        self.state
+            .request(self.context, self.raw.as_ref().unwrap().query(statement.sql(), params))
+            .await
     }
     async fn query_one(
         &self,
         statement: Statement,
         params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
-    ) -> Result<tokio_postgres::Row, tokio_postgres::Error> {
-        self.0.query_one(statement.sql(), params).await
+    ) -> Result<tokio_postgres::Row, StorageError> {
+        self.state
+            .request(self.context, self.raw.as_ref().unwrap().query_one(statement.sql(), params))
+            .await
     }
     async fn execute(
         &self,
         statement: Statement,
         params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
-    ) -> Result<u64, tokio_postgres::Error> {
-        self.0.execute(statement.sql(), params).await
+    ) -> Result<u64, StorageError> {
+        self.state
+            .request(self.context, self.raw.as_ref().unwrap().execute(statement.sql(), params))
+            .await
     }
-    async fn batch_execute(&self, statement: Statement) -> Result<(), tokio_postgres::Error> {
-        self.0.batch_execute(statement.sql()).await
+    async fn batch_execute(&self, statement: Statement) -> Result<(), StorageError> {
+        self.state
+            .request(self.context, self.raw.as_ref().unwrap().batch_execute(statement.sql()))
+            .await
     }
-    async fn commit(self) -> Result<(), tokio_postgres::Error> {
-        self.0.commit().await
+    async fn commit(mut self) -> Result<(), StorageError> {
+        let result = self
+            .state
+            .request(RequestContext::Commit, self.raw.take().unwrap().commit())
+            .await;
+        if result.is_ok() {
+            self.ended = true;
+        }
+        result
     }
-    async fn rollback(self) -> Result<(), tokio_postgres::Error> {
-        self.0.rollback().await
+    async fn refuse<P>(mut self, error: P) -> P {
+        let (error, success) = self.state.cleanup(error, self.raw.take().unwrap().rollback()).await;
+        self.ended = success;
+        error
     }
 }
 
@@ -758,27 +918,34 @@ impl PostgresStore {
     }
     async fn open_inner(session: &mut Session) -> Result<(), StorageError> {
         let mut meter = TransactionMeter::new();
-        let transaction = session.client.transaction().await.map_err(|_| StorageError::Transport)?;
-        observed(transaction.query(Statement::BootstrapLock, &[])).await?;
-        let exists: bool = observed(transaction.query_one(Statement::HasIdentity, &[])).await?.get(0);
-        if !exists {
-            let occupied: bool = observed(transaction.query_one(Statement::HasTables, &[])).await?.get(0);
-            if occupied {
+        let transaction = session.client.transaction(session.store_requests.clone()).await?;
+        let result = async {
+            observed(transaction.query(Statement::BootstrapLock, &[])).await?;
+            let exists: bool = observed(transaction.query_one(Statement::HasIdentity, &[])).await?.get(0);
+            if !exists {
+                let occupied: bool = observed(transaction.query_one(Statement::HasTables, &[])).await?.get(0);
+                if occupied {
+                    return Err(StorageError::SchemaIdentity);
+                }
+                observed(transaction.batch_execute(Statement::Create)).await?;
+                observed(transaction.execute(Statement::SetIdentity, &[&SCHEMA])).await?;
+            }
+            let rows = observed(transaction.query(Statement::GetIdentity, &[])).await?;
+            if rows.len() != 1 || rows[0].get::<_, String>(0) != SCHEMA {
                 return Err(StorageError::SchemaIdentity);
             }
-            observed(transaction.batch_execute(Statement::Create)).await?;
-            observed(transaction.execute(Statement::SetIdentity, &[&SCHEMA])).await?;
+            observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
+            let indexes_match: bool = observed(transaction.query_one(Statement::VerifyIndexes, &[])).await?.get(0);
+            if !indexes_match {
+                return Err(StorageError::IndexDefinition);
+            }
+            Ok::<_, StorageError>(())
         }
-        let rows = observed(transaction.query(Statement::GetIdentity, &[])).await?;
-        if rows.len() != 1 || rows[0].get::<_, String>(0) != SCHEMA {
-            return Err(StorageError::SchemaIdentity);
+        .await;
+        if let Err(error) = result {
+            return Err(transaction.refuse(error).await);
         }
-        observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
-        let indexes_match: bool = observed(transaction.query_one(Statement::VerifyIndexes, &[])).await?.get(0);
-        if !indexes_match {
-            return Err(StorageError::IndexDefinition);
-        }
-        transaction.commit().await.map_err(|_| StorageError::CommitUnknown)?;
+        transaction.commit().await?;
         meter.commit();
         Ok(())
     }
@@ -802,11 +969,17 @@ impl PostgresStore {
     }
     async fn load_inner(&mut self, at: u64, required: &[(Family, String)]) -> Result<Boundary, StorageError> {
         let mut meter = TransactionMeter::new();
-        let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
+        let transaction = self.session.client.snapshot(self.session.store_requests.clone()).await?;
         let at_sql = i64::try_from(at).unwrap_or(i64::MAX);
-        let history = read(&transaction, Statement::ReadBoundary, &[&at_sql], false).await?;
-        let result = boundary(&history, at, required);
-        transaction.commit().await.map_err(|_| StorageError::Transport)?;
+        let result = async {
+            let history = read(&transaction, Statement::ReadBoundary, &[&at_sql], false).await?;
+            boundary(&history, at, required)
+        }
+        .await;
+        if let Err(error) = result {
+            return Err(transaction.refuse(error).await);
+        }
+        transaction.commit().await?;
         meter.commit();
         result
     }
@@ -827,9 +1000,12 @@ impl PostgresStore {
     )]
     pub async fn audit_history(&mut self) -> Result<(), StorageError> {
         let mut meter = TransactionMeter::new();
-        let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
+        let transaction = self.session.client.snapshot(self.session.store_requests.clone()).await?;
         let result = read(&transaction, Statement::ReadHistory, &[], true).await.map(|_| ());
-        transaction.commit().await.map_err(|_| StorageError::Transport)?;
+        if let Err(error) = result {
+            return classified(Err(transaction.refuse(error).await));
+        }
+        transaction.commit().await?;
         meter.commit();
         classified(result)
     }
@@ -864,63 +1040,70 @@ impl PostgresStore {
         check(&version)?;
         metrics::counter!("host__root__sig__design__storage__successor_attempts").increment(1);
         let mut meter = TransactionMeter::new();
-        let transaction = self.session.client.transaction().await.map_err(|_| StorageError::Transport)?;
-        let queue = QueueMeter::new();
-        observed(transaction.batch_execute(Statement::LockHistory)).await?;
-        drop(queue);
-        let mut history = read(
-            &transaction,
-            Statement::ReadKey,
-            &[&version.family.name(), &version.key],
-            true,
-        )
-        .await?;
-        if !append(&mut history, version.clone(), predecessor)? {
-            metrics::counter!("host__root__sig__design__storage__retries").increment(1);
-            transaction.rollback().await.map_err(|_| StorageError::Transport)?;
-            return Ok(false);
+        let transaction = self.session.client.transaction(self.session.store_requests.clone()).await?;
+        let result = async {
+            let queue = QueueMeter::new();
+            observed(transaction.batch_execute(Statement::LockHistory)).await?;
+            drop(queue);
+            let mut history = read(
+                &transaction,
+                Statement::ReadKey,
+                &[&version.family.name(), &version.key],
+                true,
+            )
+            .await?;
+            if !append(&mut history, version.clone(), predecessor)? {
+                metrics::counter!("host__root__sig__design__storage__retries").increment(1);
+                return Ok(false);
+            }
+            let family = version.family.name();
+            let opens = i64::try_from(version.opens_at).map_err(|_| StorageError::Representation)?;
+            if let Some(prior) = predecessor {
+                observed(transaction.execute(Statement::Close, &[&family, &version.key, &prior.edition, &opens])).await?;
+            }
+            if fault == 1 {
+                return Err(StorageError::Injected);
+            }
+            let announced = i64::try_from(version.announced_at).map_err(|_| StorageError::Representation)?;
+            let bytes = version.payload.as_ref().map(|v| v.bytes.as_slice());
+            let digest = version.payload.as_ref().map(|v| v.digest.as_slice());
+            let disclosure = version
+                .payload
+                .as_ref()
+                .and_then(|v| v.disclosure.as_ref().map(<[u8; 32]>::as_slice));
+            observed(transaction.execute(
+                Statement::Insert,
+                &[
+                    &family,
+                    &version.key,
+                    &version.edition,
+                    &announced,
+                    &opens,
+                    &bytes,
+                    &digest,
+                    &disclosure,
+                ],
+            ))
+            .await?;
+            if fault == 2 {
+                return Err(StorageError::Injected);
+            }
+            Ok::<_, StorageError>(true)
         }
-        let family = version.family.name();
-        let opens = i64::try_from(version.opens_at).map_err(|_| StorageError::Representation)?;
-        if let Some(prior) = predecessor {
-            observed(transaction.execute(Statement::Close, &[&family, &version.key, &prior.edition, &opens])).await?;
-        }
-        if fault == 1 {
-            return Err(StorageError::Injected);
-        }
-        let announced = i64::try_from(version.announced_at).map_err(|_| StorageError::Representation)?;
-        let bytes = version.payload.as_ref().map(|v| v.bytes.as_slice());
-        let digest = version.payload.as_ref().map(|v| v.digest.as_slice());
-        let disclosure = version
-            .payload
-            .as_ref()
-            .and_then(|v| v.disclosure.as_ref().map(<[u8; 32]>::as_slice));
-        observed(transaction.execute(
-            Statement::Insert,
-            &[
-                &family,
-                &version.key,
-                &version.edition,
-                &announced,
-                &opens,
-                &bytes,
-                &digest,
-                &disclosure,
-            ],
-        ))
-        .await?;
-        if fault == 2 {
-            return Err(StorageError::Injected);
-        }
-        transaction.commit().await.map_err(|_| StorageError::CommitUnknown)?;
+        .await;
+        let success = match result {
+            Ok(success) => success,
+            Err(error) => return Err(transaction.refuse(error).await),
+        };
+        transaction.commit().await?;
         meter.commit();
-        Ok(true)
+        Ok(success)
     }
 }
-async fn observed<T>(future: impl std::future::Future<Output = Result<T, tokio_postgres::Error>>) -> Result<T, StorageError> {
+async fn observed<T>(future: impl std::future::Future<Output = Result<T, StorageError>>) -> Result<T, StorageError> {
     metrics::counter!("host__root__sig__design__storage__queries").increment(1);
     let started = std::time::Instant::now();
-    let result = future.await.map_err(|_| StorageError::Transport);
+    let result = future.await;
     metrics::histogram!("host__root__sig__design__storage__query_elapsed_seconds").record(started.elapsed().as_secs_f64());
     result
 }
@@ -1004,3 +1187,273 @@ mod tests;
 
 #[cfg(test)]
 mod declaration_census;
+
+#[cfg(test)]
+mod store_error_tests {
+    use super::{RequestContext, RequestState, StatementTransaction, StorageError, completion};
+    use crate::{Cause, ServerError};
+    use std::sync::{Arc, Mutex};
+
+    const CAUSES: [Cause; 14] = [
+        Cause::ConstraintViolation,
+        Cause::Conflict,
+        Cause::Cancelled,
+        Cause::Terminated,
+        Cause::Unavailable,
+        Cause::Resources,
+        Cause::ReadOnly,
+        Cause::LoginRejected,
+        Cause::PermissionDenied,
+        Cause::Misconfigured,
+        Cause::StatementRejected,
+        Cause::ServerFault,
+        Cause::StorageDamaged,
+        Cause::Unrecognized,
+    ];
+
+    fn state() -> RequestState {
+        RequestState::new(Arc::new(Mutex::new(None)))
+    }
+    fn run(future: impl std::future::Future<Output = ()>) {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(future);
+    }
+
+    async fn failure(state: &RequestState, context: RequestContext, value: ServerError) -> StorageError {
+        let answer = state.answer.clone();
+        state
+            .request(context, async move {
+                *answer.lock().unwrap() = Some(value);
+                Err::<(), ()>(())
+            })
+            .await
+            .unwrap_err()
+    }
+
+    /// Claim: A failing request takes before submission, takes its closed answer, and retires before interval release.
+    /// ´claim:host:store-error-request-order´
+    /// ´test:unit:store-error-request-order´
+    #[test]
+    fn store_error_request_order() {
+        run(async {
+            let state = state();
+            assert_eq!(
+                failure(&state, RequestContext::Other, ServerError::Failed(Cause::Conflict)).await,
+                StorageError::Server(ServerError::Failed(Cause::Conflict))
+            );
+            assert_eq!(*state.events.lock().unwrap(), ["take", "submit", "take", "retire", "release"]);
+            assert!(state.retired());
+        });
+    }
+
+    /// Claim: A pending answer prevents submission, returns Transport and retires the session before reuse.
+    /// ´claim:host:store-error-pending-answer´
+    /// ´test:unit:store-error-pending-answer´
+    #[test]
+    fn store_error_pending_answer() {
+        run(async {
+            let state = state();
+            *state.answer.lock().unwrap() = Some(ServerError::Uncertain(Cause::Terminated));
+            assert_eq!(
+                state.request(RequestContext::Commit, async { Ok::<(), ()>(()) }).await,
+                Err(StorageError::Transport)
+            );
+            assert_eq!(
+                state.request(RequestContext::Other, async { Ok::<(), ()>(()) }).await,
+                Err(StorageError::Transport)
+            );
+            assert!(state.retired());
+            assert!(!state.events.lock().unwrap().contains(&"submit"));
+        });
+    }
+
+    /// Claim: Both statement contexts map every closed form and cause by the recorded table.
+    /// ´claim:host:store-error-statement-map´
+    /// ´test:unit:store-error-statement-map´
+    #[test]
+    fn store_error_statement_map() {
+        for context in [RequestContext::Writer, RequestContext::Other] {
+            for cause in CAUSES {
+                for value in [ServerError::Failed(cause), ServerError::Uncertain(cause)] {
+                    let expected = if matches!(context, RequestContext::Writer)
+                        && value == ServerError::Failed(Cause::ConstraintViolation)
+                    {
+                        StorageError::CorruptHistory
+                    } else {
+                        StorageError::Server(value)
+                    };
+                    assert_eq!(completion(context, Some(value)), expected, "{context:?} {value:?}");
+                }
+            }
+        }
+    }
+
+    /// Claim: A submitted uncertain COMMIT stays unknown for every cause, while Failed follows the table.
+    /// ´claim:host:store-error-commit-map´
+    /// ´test:unit:store-error-commit-map´
+    #[test]
+    fn store_error_commit_map() {
+        for cause in CAUSES {
+            assert_eq!(
+                completion(RequestContext::Commit, Some(ServerError::Uncertain(cause))),
+                StorageError::CommitUnknown
+            );
+            let expected = if cause == Cause::ConstraintViolation {
+                StorageError::CorruptHistory
+            } else {
+                StorageError::Server(ServerError::Failed(cause))
+            };
+            assert_eq!(completion(RequestContext::Commit, Some(ServerError::Failed(cause))), expected);
+        }
+    }
+
+    /// Claim: An unanswered submitted failure is Transport outside COMMIT and `CommitUnknown` at COMMIT.
+    /// ´claim:host:store-error-no-answer´
+    /// ´test:unit:store-error-no-answer´
+    #[test]
+    fn store_error_no_answer() {
+        for context in [RequestContext::Writer, RequestContext::Other] {
+            assert_eq!(completion(context, None), StorageError::Transport);
+        }
+        assert_eq!(completion(RequestContext::Commit, None), StorageError::CommitUnknown);
+    }
+
+    /// Claim: An acknowledged COMMIT remains successful and leaves a later answer for the next pre-request take.
+    /// ´claim:host:store-error-acknowledged-success´
+    /// ´test:unit:store-error-acknowledged-success´
+    #[test]
+    fn store_error_acknowledged_success() {
+        run(async {
+            let state = state();
+            let answer = state.answer.clone();
+            assert_eq!(
+                state
+                    .request(RequestContext::Commit, async move {
+                        *answer.lock().unwrap() = Some(ServerError::Uncertain(Cause::Terminated));
+                        Ok::<_, ()>(7)
+                    })
+                    .await,
+                Ok(7)
+            );
+            assert!(!state.retired());
+            assert_eq!(
+                state.request(RequestContext::Other, async { Ok::<_, ()>(8) }).await,
+                Err(StorageError::Transport)
+            );
+            assert!(state.retired());
+        });
+    }
+
+    /// Claim: Dropping a polled pending request retires before a later request can submit.
+    /// ´claim:host:store-error-abandoned-request´
+    /// ´test:unit:store-error-abandoned-request´
+    #[test]
+    fn store_error_abandoned_request() {
+        run(async {
+            let state = state();
+            let (started, seen) = tokio::sync::oneshot::channel();
+            let active = state.clone();
+            let task = tokio::spawn(async move {
+                active
+                    .request(RequestContext::Other, async move {
+                        let _ = started.send(());
+                        std::future::pending::<Result<(), ()>>().await
+                    })
+                    .await
+            });
+            seen.await.unwrap();
+            task.abort();
+            drop(task.await);
+            assert!(state.retired());
+            assert_eq!(
+                state.request(RequestContext::Other, async { Ok::<_, ()>(()) }).await,
+                Err(StorageError::Transport)
+            );
+            assert_eq!(
+                state
+                    .events
+                    .lock()
+                    .unwrap()
+                    .iter()
+                    .filter(|value| **value == "submit")
+                    .count(),
+                1
+            );
+        });
+    }
+
+    /// Claim: Successful wrapped rollback keeps seven store-decided refusals and allows the next transaction.
+    /// ´claim:host:store-error-local-refusal-rollback´
+    /// ´test:unit:store-error-local-refusal-rollback´
+    #[test]
+    fn store_error_local_refusal_rollback() {
+        run(async {
+            for primary in [
+                StorageError::EditionConflict,
+                StorageError::Gap,
+                StorageError::Overlap,
+                StorageError::Predecessor,
+                StorageError::Retroactive,
+                StorageError::Injected,
+                StorageError::CorruptHistory,
+            ] {
+                let state = state();
+                let (returned, succeeded) = state.cleanup(primary, async { Ok::<(), ()>(()) }).await;
+                assert_eq!(returned, primary);
+                assert!(succeeded);
+                assert_eq!(state.request(RequestContext::Other, async { Ok::<_, ()>(()) }).await, Ok(()));
+                assert!(!state.retired());
+                assert_eq!(
+                    state
+                        .events
+                        .lock()
+                        .unwrap()
+                        .iter()
+                        .filter(|value| **value == "submit")
+                        .count(),
+                    2
+                );
+            }
+        });
+    }
+
+    /// Claim: Scripted COMMIT and cleanup preserve reuse, while an unended transaction Drop retires before reuse.
+    /// ´claim:host:store-error-snapshot-end´
+    /// ´test:unit:store-error-snapshot-end´
+    #[test]
+    fn store_error_snapshot_end() {
+        run(async {
+            let success = state();
+            assert_eq!(
+                success.request(RequestContext::Commit, async { Ok::<(), ()>(()) }).await,
+                Ok(())
+            );
+            assert_eq!(
+                success.request(RequestContext::Other, async { Ok::<(), ()>(()) }).await,
+                Ok(())
+            );
+            let refused = state();
+            let (primary, ended) = refused.cleanup(StorageError::ReadLimit, async { Ok::<(), ()>(()) }).await;
+            assert_eq!(primary, StorageError::ReadLimit);
+            assert!(ended);
+            assert_eq!(
+                refused.request(RequestContext::Other, async { Ok::<(), ()>(()) }).await,
+                Ok(())
+            );
+            let unended = state();
+            drop(StatementTransaction {
+                raw: None,
+                state: unended.clone(),
+                ended: false,
+                context: RequestContext::Other,
+            });
+            assert_eq!(
+                unended.request(RequestContext::Other, async { Ok::<(), ()>(()) }).await,
+                Err(StorageError::Transport)
+            );
+        });
+    }
+}
