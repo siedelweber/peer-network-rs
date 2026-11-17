@@ -862,6 +862,7 @@ def controller_vectors():
     def bad(name,factory,mutation,cause,**kwargs):
         value=factory();mutation(value);row(name,value,cause,**kwargs)
     positive=inputs(width='1')
+    positive_grid=inputs(width='1',delivery='grid',maximum_error='1/4')
     ridge=inputs(floor=1)
     grid=inputs(width='1',previous='1',deadband='1/100',delivery='grid')
     row('delivered-zero',delivered())
@@ -939,14 +940,14 @@ def controller_vectors():
     bad('floor-check-point',with_check,lambda v:v[4][0].__setitem__(1,[1,['clean-elasticity-ridge-v1','2*ln(2)',source(0),source(1)]]),'Point')
     bad('zero-width-flag',delivered,lambda v:v[5].__setitem__(0,False),'ZeroWidth')
     bad('zero-width-floor',delivered,lambda v:(v[5].__setitem__(1,evaluated(4,1,2)),v.__setitem__(3,inverse())),'ZeroFloor')
-    bad('positive-missing-floor',positive_delivered,lambda v:v[5].__setitem__(1,None),'MissingFloor',data=positive)
-    bad('missing-target',positive_delivered,lambda v:v.__setitem__(3,None),'Target',data=positive)
+    bad('positive-missing-floor',positive_delivered,lambda v:v[5].__setitem__(1,None),'MissingFloor',data=positive_grid)
+    bad('missing-target',positive_delivered,lambda v:v.__setitem__(3,None),'Target',data=positive_grid)
     for position,predicate in [(1,4),(2,1),(3,4),(4,4),(5,2)]:
         for key,mutate,cause in [('predicate',foreign_predicate,'Comparison::ExpectedPredicate'),('reduction',lambda c:c[1].__setitem__(1,1),'Comparison::ExpectedReduction'),('threshold',foreign_threshold,'Comparison::Threshold')]:
-            bad(f'position-{position}-{key}',positive_delivered,lambda v,position=position,mutate=mutate:mutate(v[5][position]),cause,data=positive)
-        bad(f'position-{position}-operational',positive_delivered,lambda v,position=position:v[5].__setitem__(position,[2,[2,5]]),'BranchOperational',data=positive)
-        bad(f'position-{position}-indecisive',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,evaluated(predicate)),'BranchIndecisive',data=positive)
-        bad(f'position-{position}-exact-symbolic',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,exact(predicate,1,2)),'Comparison::ExactContext',data=positive)
+            bad(f'position-{position}-{key}',positive_delivered,lambda v,position=position,mutate=mutate:mutate(v[5][position]),cause,data=positive_grid)
+        bad(f'position-{position}-operational',positive_delivered,lambda v,position=position:v[5].__setitem__(position,[2,[2,5]]),'BranchOperational',data=positive_grid)
+        bad(f'position-{position}-indecisive',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,evaluated(predicate)),'BranchIndecisive',data=positive_grid)
+        bad(f'position-{position}-exact-symbolic',positive_delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,exact(predicate,1,2)),'Comparison::ExactContext',data=positive_grid)
     for position,predicate in [(2,1),(3,4),(4,4),(5,2)]:
         bad(f'position-{position}-evaluated-exact',delivered,lambda v,position=position,predicate=predicate:v[5].__setitem__(position,evaluated(predicate)),'Comparison::ExactEvaluated')
         for side,cause in [(1,'Comparison::ExactLeft'),(3,'Comparison::ExactRight')]:
@@ -972,7 +973,7 @@ def controller_vectors():
     bad('stop-stage',operational,lambda v:v.__setitem__(2,[2]),'StopStage')
     bad('stopped-value',operational,lambda v:v.__setitem__(6,source(1)),'StoppedValue')
     bad('order-context-floor-check',with_check,lambda v:v[4][0].__setitem__(2,[1]),'Inputs',expected=inputs(width='2'),rule='outer input binding before floor-check binding')
-    bad('order-floor-check-branches',positive_delivered,lambda v:(v.__setitem__(4,[point(floor=1)]),v[5].__setitem__(0,True)),'FloorBinding',data=positive,rule='floor check before branch width')
+    bad('order-floor-check-branches',positive_delivered,lambda v:(v.__setitem__(4,[point(floor=1)]),v[5].__setitem__(0,True)),'FloorBinding',data=positive_grid,rule='floor check before branch width')
     bad('order-floor-point-binding-kind',with_check,lambda v:(v[4][0].__setitem__(2,[1]),v[4][0].__setitem__(1,[1,['clean-elasticity-ridge-v1','2*ln(2)',source(0),source(1)]])),'FloorBinding',rule='floor binding before point kind')
     bad('instance-floor-verdict-binding',with_check,lambda v:(v[4][0][4][1].__setitem__(5,1),v[4].append(point(floor=1))),'Comparison::VerdictAgreement',rule='earlier point verdict before later point floor binding')
     for name,first,second,cause in [
@@ -985,23 +986,23 @@ def controller_vectors():
     bad('order-zero-flag-floor',delivered,lambda v:(v[5].__setitem__(0,False),v[5].__setitem__(1,evaluated(4,1,2)),v.__setitem__(3,inverse())),'ZeroWidth',rule='overlap zero-width agreement then floor presence')
     bad('order-delivered-value-stop',delivered,lambda v:(v.__setitem__(6,None),v.__setitem__(2,[6])),'DeliveredValue',rule='overlap delivered value then stopped-at')
     bad('order-branch-result',positive_delivered,lambda v:(foreign_predicate(v[5][2]),v.__setitem__(8,[2,[6],8]),v.__setitem__(2,[6]),v.__setitem__(6,None)),'Comparison::ExpectedPredicate',data=positive,rule='overlap branch then result')
-    bad('instance-branch-verdict-predicate',positive_delivered,lambda v:(v[5][2][1].__setitem__(6,0),v[5][3][1].__setitem__(2,5)),'Comparison::VerdictAgreement',data=positive,rule='earlier branch verdict before later branch predicate')
+    bad('instance-branch-verdict-predicate',positive_delivered,lambda v:(v[5][2][1].__setitem__(6,0),v[5][3][1].__setitem__(2,5)),'Comparison::VerdictAgreement',data=positive_grid,rule='earlier branch verdict before later branch predicate')
     for constructor in (1,3):
         bad(f'result-{constructor}-extra',refused,lambda v,constructor=constructor:(v[8].__setitem__(0,constructor),v[8].append(0)),'Arity',data=positive)
     for code in range(4):
         bad(f'relation-{code}-agreement',lambda:stopped(2),lambda v,code=code:(v[8][2].__setitem__(1,evaluated(1,1,2)[1] if code==3 else evaluated(1)[1]),v[8][2][1].__setitem__(5,code)),'Comparison::RelationAgreement',data=positive)
 
     bad('prefix-empty',lambda:operational(2),lambda v:v.__setitem__(5,[True,None,None,None,None,None,rng('3/37','3/37'),None]),'EmptyPrefix')
-    bad('prefix-gap-direction',positive_delivered,lambda v:v[5].__setitem__(2,None),'BrokenPrefix',data=positive)
-    bad('prefix-gap-absolute',positive_delivered,lambda v:v[5].__setitem__(5,None),'BrokenPrefix',data=positive)
-    bad('prefix-gap-relative',positive_delivered,lambda v:v[5].__setitem__(3,None),'BrokenPrefix',data=positive)
+    bad('prefix-gap-direction',positive_delivered,lambda v:v[5].__setitem__(2,None),'BrokenPrefix',data=positive_grid)
+    bad('prefix-gap-absolute',positive_delivered,lambda v:v[5].__setitem__(5,None),'BrokenPrefix',data=positive_grid)
+    bad('prefix-gap-relative',positive_delivered,lambda v:v[5].__setitem__(3,None),'BrokenPrefix',data=positive_grid)
     for field in (3,4,5):
         bad(f'hold-past-end-{field}',symbolic_hold,lambda v,field=field:v[5].__setitem__(field,evaluated(2 if field==5 else 4,1,2)),'PastEnd',data=positive)
     bad('prefix-early-ideal',lambda:stopped(2),lambda v:v[5].__setitem__(7,rng('1/2','3/4')),'EarlyIdeal',data=positive)
     bad('complete-missing-ideal',symbolic_hold,lambda v:v[5].__setitem__(7,None),'MissingIdeal',data=positive)
-    bad('proposal-range-substitution',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,rng('2/3','3/4'))),'ProposalRange',data=positive)
-    bad('ideal-range-substitution',positive_delivered,lambda v:v[5].__setitem__(7,rng('2/3','3/4')),'IdealRange',data=positive)
-    bad('hold-ideal-substitution',symbolic_hold,lambda v:v[5].__setitem__(7,rng('1/4','1/3')),'IdealRange',data=positive)
+    bad('proposal-range-substitution',positive_delivered,lambda v:(v[5].__setitem__(6,rng('2/3','3/4')),v[5].__setitem__(7,rng('2/3','3/4'))),'ProposalRange',data=positive_grid)
+    bad('ideal-range-substitution',positive_delivered,lambda v:v[5].__setitem__(7,rng('2/3','3/4')),'IdealRange',data=positive_grid)
+    bad('hold-ideal-substitution',symbolic_hold,lambda v:v[5].__setitem__(7,rng('1/4','1/3')),'IdealRange',data=positive_grid)
     bad('stop-missing-floor',lambda:stopped(2),lambda v:v.__setitem__(5,None),'MissingBeforeStop',data=positive)
     bad('stop-missing-direction',lambda:stopped(4),lambda v:v[5].__setitem__(5,None),'MissingBeforeStop',data=positive)
     bad('stop-present-direction',lambda:stopped(3),lambda v:v[5].__setitem__(5,evaluated(2,1,2)),'PresentAfterStop',data=positive)

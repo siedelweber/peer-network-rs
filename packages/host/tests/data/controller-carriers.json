@@ -5377,9 +5377,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -5388,9 +5388,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -5642,9 +5642,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -5653,9 +5653,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -6522,9 +6522,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -6533,9 +6533,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -6837,9 +6837,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -6848,9 +6848,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -7964,9 +7964,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -7975,9 +7975,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -13159,9 +13159,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -13170,9 +13170,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -13490,9 +13490,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -13501,9 +13501,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -13811,9 +13811,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -13822,9 +13822,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -14151,9 +14151,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -14162,9 +14162,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -14482,9 +14482,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -14493,9 +14493,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -14803,9 +14803,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -14814,9 +14814,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -15143,9 +15143,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -15154,9 +15154,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -15474,9 +15474,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -15485,9 +15485,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -15795,9 +15795,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -15806,9 +15806,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -16135,9 +16135,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -16146,9 +16146,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -16466,9 +16466,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -16477,9 +16477,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -16787,9 +16787,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -16798,9 +16798,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -17127,9 +17127,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -17138,9 +17138,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -17458,9 +17458,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -17469,9 +17469,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -17779,9 +17779,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -17790,9 +17790,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -18119,9 +18119,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -18130,9 +18130,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -38237,9 +38237,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -38248,9 +38248,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -38552,9 +38552,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -38563,9 +38563,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -38892,9 +38892,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -38903,9 +38903,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -39232,9 +39232,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -39243,9 +39243,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -39572,9 +39572,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -39583,9 +39583,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -39912,9 +39912,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -39923,9 +39923,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -40252,9 +40252,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -40263,9 +40263,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -40592,9 +40592,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -40603,9 +40603,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -40932,9 +40932,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -40943,9 +40943,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -41272,9 +41272,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -41283,9 +41283,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -41612,9 +41612,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -41623,9 +41623,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -41952,9 +41952,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -41963,9 +41963,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -42292,9 +42292,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -42303,9 +42303,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -42632,9 +42632,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -42643,9 +42643,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -42972,9 +42972,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -42983,9 +42983,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -43312,9 +43312,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -43323,9 +43323,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -47426,9 +47426,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -47437,9 +47437,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -49892,9 +49892,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -49903,9 +49903,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
@@ -51037,9 +51037,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "expected": {
         "width": "1",
@@ -51048,9 +51048,9 @@
         "absolute_cap": "1/2",
         "relative_cap": "1/2",
         "deadband": "1/10",
-        "delivery": "exact",
+        "delivery": "grid",
         "quantum": "1/10",
-        "maximum_error": "1/10"
+        "maximum_error": "1/4"
       },
       "procedure": [
         [
