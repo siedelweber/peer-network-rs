@@ -205,6 +205,7 @@ fn ceiling_metadata(ceilings: &toml::Table) -> Result<bool, Refusal> {
         ("decoded_items", "items"),
         ("cbor_nesting", "levels"),
         ("input_nesting", "levels"),
+        ("decoding_work", "decode-work"),
         ("lexical_tokens", "tokens"),
         ("source_nesting", "levels"),
         ("selection_depth", "levels"),
@@ -440,6 +441,11 @@ fn register_unknown_keys() {
 fn register_metadata() {
     for bad in [
         DRAFT.replace("role = \"control\"\n", ""),
+        DRAFT.replace(
+            "decoding_work = { status = \"not-yet-admitted\", unit = \"decode-work\" }\n",
+            "",
+        ),
+        DRAFT.replace("decode-work", "work"),
         DRAFT.replace("role = \"control\"", "role = true"),
         DRAFT.replace(
             "\"BootstrapInvalid\", \"EditionUnsupported\"",

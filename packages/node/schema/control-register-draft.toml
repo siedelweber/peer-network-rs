@@ -40,6 +40,7 @@ decoded_bytes = { status = "not-yet-admitted", unit = "bytes" }
 decoded_items = { status = "not-yet-admitted", unit = "items" }
 cbor_nesting = { status = "not-yet-admitted", unit = "levels" }
 input_nesting = { status = "not-yet-admitted", unit = "levels" }
+decoding_work = { status = "not-yet-admitted", unit = "decode-work" }
 lexical_tokens = { status = "not-yet-admitted", unit = "tokens" }
 source_nesting = { status = "not-yet-admitted", unit = "levels" }
 selection_depth = { status = "not-yet-admitted", unit = "levels" }
