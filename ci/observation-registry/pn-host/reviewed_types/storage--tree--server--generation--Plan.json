@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::generation::Plan",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/generation.rs",
+    "syntax": "pub (super) struct Plan { scope : super :: Scope , pub (super) version_order : Vec < usize > , pub (super) closure_order : Vec < usize > , pub (super) version_count : i64 , pub (super) closure_count : i64 , }"
+  }
+}

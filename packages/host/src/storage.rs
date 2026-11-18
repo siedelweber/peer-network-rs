@@ -554,6 +554,12 @@ enum Statement {
     ReadDebitChunks,
     ReadAdmissionClosures,
     ReadAdmissionVersions,
+    ReadAdmissionDeltaVersions,
+    ReadAdmissionDeltaClosures,
+    HasVersion,
+    InsertAdmissionGeneration,
+    InsertAdmissionVersion,
+    InsertAdmissionClosure,
     ReadEpochUse,
     ReadEpochReferences,
 }
@@ -574,6 +580,22 @@ impl Statement {
             }
             Self::ReadAdmissionVersions => {
                 "SELECT CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint,m.generation FROM public.pn_admission_versions m JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=m.family COLLATE \"default\" AND q.family COLLATE \"C\"=m.family AND q.key=m.key COLLATE \"default\" AND q.key COLLATE \"C\"=m.key AND q.edition=m.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=m.edition LIMIT 1) v ON true WHERE m.scope=$1 AND m.generation<=$2 AND m.family=$3 AND m.key=$4 AND ($5::text IS NULL OR m.edition>$5) ORDER BY m.edition LIMIT $6"
+            }
+            Self::ReadAdmissionDeltaVersions => {
+                "SELECT CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint,m.generation FROM public.pn_admission_versions m JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=m.family COLLATE \"default\" AND q.family COLLATE \"C\"=m.family AND q.key=m.key COLLATE \"default\" AND q.key COLLATE \"C\"=m.key AND q.edition=m.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=m.edition LIMIT 1) v ON true WHERE m.scope=$1 AND m.generation=$2 ORDER BY m.family,m.key,m.edition LIMIT $3"
+            }
+            Self::ReadAdmissionDeltaClosures => {
+                "SELECT CASE WHEN octet_length(m.family)<=21 THEN m.family ELSE '' END,octet_length(m.family)::bigint,CASE WHEN octet_length(m.key)<=1024 THEN m.key ELSE '' END,octet_length(m.key)::bigint,CASE WHEN octet_length(m.edition)<=1024 THEN m.edition ELSE '' END,octet_length(m.edition)::bigint,c.closes,m.generation FROM public.pn_admission_closures m JOIN LATERAL (SELECT q.* FROM public.pn_closures q WHERE q.family=m.family COLLATE \"default\" AND q.family COLLATE \"C\"=m.family AND q.key=m.key COLLATE \"default\" AND q.key COLLATE \"C\"=m.key AND q.edition=m.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=m.edition LIMIT 1) c ON true WHERE m.scope=$1 AND m.generation=$2 ORDER BY m.family,m.key,m.edition LIMIT $3"
+            }
+            Self::HasVersion => "SELECT EXISTS(SELECT 1 FROM public.pn_versions WHERE family=$1 AND key=$2 AND edition=$3)",
+            Self::InsertAdmissionGeneration => {
+                "INSERT INTO public.pn_admission_generations(scope,generation,label,previous,minimum,version_count,closure_count) VALUES($1,$2,$3,$4,$5,$6,$7)"
+            }
+            Self::InsertAdmissionVersion => {
+                "INSERT INTO public.pn_admission_versions(scope,generation,family,key,edition) VALUES($1,$2,$3,$4,$5)"
+            }
+            Self::InsertAdmissionClosure => {
+                "INSERT INTO public.pn_admission_closures(scope,generation,family,key,edition) VALUES($1,$2,$3,$4,$5)"
             }
             Self::ReadEpochUse => {
                 "SELECT r.selected_at,substring(r.judgement_origin FROM 1 FOR 32),octet_length(r.judgement_origin)::bigint,CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint FROM public.pn_epoch_references r JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=r.family COLLATE \"default\" AND q.family COLLATE \"C\"=r.family AND q.key=r.key COLLATE \"default\" AND q.key COLLATE \"C\"=r.key AND q.edition=r.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=r.edition LIMIT 1) v ON true WHERE r.scope=$1 AND r.identity=$2 AND r.selected_at=$3 AND r.family=$4 AND r.key=$5 LIMIT 1"

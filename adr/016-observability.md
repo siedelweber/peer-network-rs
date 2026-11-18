@@ -103,7 +103,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
 | pn-graph | 67 | 53 | 14 | 0 | 68 |
-| pn-host | 268 | 74 | 194 | 0 | 202 |
+| pn-host | 269 | 75 | 194 | 0 | 202 |
 | pn-interchange | 169 | 132 | 36 | 1 | 103 |
 | pn-records | 137 | 63 | 74 | 0 | 198 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |

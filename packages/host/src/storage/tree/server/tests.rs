@@ -1,5 +1,6 @@
 mod bounds;
 mod branches;
+mod generation;
 mod plans;
 thread_local! {static FETCHES:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};static EVENTS:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};}
 pub(super) fn validated_event() {
@@ -152,33 +153,8 @@ struct Fixture<'a> {
 
 impl super::super::roster::ReadContract for Fixture<'_> {
     fn snapshot(&self) -> String {
-        let store = self.store.borrow();
-        self.runtime.block_on(async {
-            let mut snapshot = String::new();
-            for relation in [
-                "pn_store_identity",
-                "pn_versions",
-                "pn_closures",
-                "pn_admission_generations",
-                "pn_admission_versions",
-                "pn_admission_closures",
-                "pn_epoch_scopes",
-                "pn_epoch_branches",
-                "pn_epoch_results",
-                "pn_epoch_package_chunks",
-                "pn_epoch_references",
-                "pn_epoch_debits",
-                "pn_epoch_debit_chunks",
-                "pn_epoch_result_debits",
-            ] {
-                let sql = format!("SELECT row_to_json(t)::text FROM {relation} t ORDER BY row_to_json(t)::text");
-                for row in store.session.client().query(&sql, &[]).await.unwrap() {
-                    let value: &str = row.get(0);
-                    writeln!(snapshot, "{relation} {value}").unwrap();
-                }
-            }
-            snapshot
-        })
+        let mut store = self.store.borrow_mut();
+        self.runtime.block_on(async { complete_snapshot(&mut store).await })
     }
     fn read(
         &self,
@@ -228,6 +204,41 @@ impl super::super::roster::ReadContract for Fixture<'_> {
                 .collect(),
         }))
     }
+}
+
+async fn complete_snapshot(store: &mut ServerTree) -> String {
+    // Test-only relation census: one freshly ended snapshot captures orphans as well as readable results.
+    let transaction = store
+        .session
+        .client
+        .snapshot(store.session.store_requests.clone())
+        .await
+        .unwrap();
+    let mut snapshot = String::new();
+    for relation in [
+        "pn_store_identity",
+        "pn_versions",
+        "pn_closures",
+        "pn_admission_generations",
+        "pn_admission_versions",
+        "pn_admission_closures",
+        "pn_epoch_scopes",
+        "pn_epoch_branches",
+        "pn_epoch_results",
+        "pn_epoch_package_chunks",
+        "pn_epoch_references",
+        "pn_epoch_debits",
+        "pn_epoch_debit_chunks",
+        "pn_epoch_result_debits",
+    ] {
+        let sql = format!("SELECT row_to_json(t)::text FROM {relation} t ORDER BY row_to_json(t)::text");
+        for row in transaction.raw.as_ref().unwrap().query(&sql, &[]).await.unwrap() {
+            let value: &str = row.get(0);
+            writeln!(snapshot, "{relation} {value}").unwrap();
+        }
+    }
+    transaction.commit().await.unwrap();
+    snapshot
 }
 
 /// Claim: Explicit single-law server fixtures run the common fork read roster in both arrival orders through the production strict decoder, retaining complete package and vintage bytes, selection and debit origins and act order without changing stored state; this finite evidence establishes no writer atomicity, admission, audit, public label carrier or production budget.
@@ -642,4 +653,19 @@ pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
         reader.request(statement, &parameters, 1, maximum, true).await.unwrap();
     }
     reader.end().await.unwrap();
+    // The writer's first install and equal retry witness its six closed additions
+    // in the same public-content capture as the established tree reads.
+    let generation = super::super::tests::declared();
+    assert!(
+        store
+            .install_generation(&generation, allowance(), &mut Usage::default())
+            .await
+            .unwrap()
+    );
+    assert!(
+        !store
+            .install_generation(&generation, allowance(), &mut Usage::default())
+            .await
+            .unwrap()
+    );
 }

@@ -5,10 +5,11 @@ use std::fmt::Write;
 
 use super::super::{DISCLOSURE_RECIPE, Family, PAYLOAD_RECIPE, Payload, Version, digest};
 use super::super::{Session, Statement, StatementParameter, StatementRow, StatementTransaction, catalogue, observed};
-use super::{EpochScope, Error, Identity, Meter, Page, Range, ReadBudget, StorageError, Usage, fields, scope_check};
+use super::{EpochScope, Error, Generation, Identity, Meter, Page, Range, ReadBudget, StorageError, Usage, fields, scope_check};
 use crate::admitted_result::DeclarationUse;
 
 mod content;
+mod generation;
 mod projection;
 mod spans;
 #[cfg(test)]
@@ -19,6 +20,8 @@ mod tests;
 #[derive(Debug)]
 pub struct ServerTree {
     session: Session,
+    #[cfg(test)]
+    generation_hook: generation::Hook,
 }
 
 impl ServerTree {
@@ -39,7 +42,11 @@ impl ServerTree {
     )]
     pub async fn open(mut session: Session) -> Result<Self, StorageError> {
         catalogue::open(&mut session).await?;
-        Ok(Self { session })
+        Ok(Self {
+            session,
+            #[cfg(test)]
+            generation_hook: generation::Hook::default(),
+        })
     }
 
     /// Begin a read-only repeatable snapshot with an explicit allowance.
@@ -67,6 +74,25 @@ impl ServerTree {
                 used: Usage::default(),
             },
         })
+    }
+
+    /// Install one explicit first admission generation in a locked atomic transaction.
+    /// (´[ROOT-amend:storage:admitted-transaction]´)
+    /// # Errors
+    /// Refuses invalid input, damaged retained rows, allowance exhaustion or a wrapped request failure.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::tree::server::ServerTree::install_generation",
+            asynchronous = true
+        ),
+        ret
+    )]
+    pub async fn install_generation(&mut self, input: &Generation, budget: ReadBudget, usage: &mut Usage) -> Result<bool, Error> {
+        generation::install(self, input, budget, usage).await
     }
 }
 
@@ -409,70 +435,80 @@ impl ServerReader<'_> {
     }
 
     fn copy_text(&mut self, text: &str) -> Result<String, Error> {
-        self.meter.allocation(text.len())?;
-        let mut output = String::with_capacity(text.len());
-        output.push_str(text);
-        Ok(output)
+        copy_text(&mut self.meter, text)
     }
 
     fn version(&mut self, row: &StatementRow, start: usize) -> Result<Version, Error> {
-        let family = family(text(row, start, start + 1, 21)?)?;
-        let key = self.copy_text(text(row, start + 2, start + 3, 1024)?)?;
-        let edition = self.copy_text(text(row, start + 4, start + 5, 1024)?)?;
-        let announced_at = unsigned(row, start + 6)?;
-        let opens_at = unsigned(row, start + 7)?;
-        if key.is_empty() || edition.is_empty() || announced_at > opens_at {
-            return Err(StorageError::CorruptHistory.into());
-        }
-        let content = optional_bytes(row, start + 8, start + 9, 262_144)?;
-        let stored_digest = optional_identity(row, start + 10, start + 11)?;
-        let disclosure = optional_identity(row, start + 12, start + 13)?;
-        let payload = match (content, stored_digest) {
-            (None, None) if disclosure.is_none() => None,
-            (Some(content), Some(stored_digest)) => {
-                let validated = spans::Validated::new(content, &mut self.meter)?;
-                let envelope = validated.root()?.array(3)?;
-                if envelope.field(0)?.text()? != PAYLOAD_RECIPE
-                    || envelope.field(1)?.text()? != family.name()
-                    || digest(PAYLOAD_RECIPE, content) != stored_digest
+        decode_version(&mut self.meter, row, start)
+    }
+}
+
+fn copy_text(meter: &mut Meter, text: &str) -> Result<String, Error> {
+    meter.allocation(text.len())?;
+    let mut output = String::with_capacity(text.len());
+    output.push_str(text);
+    Ok(output)
+}
+
+fn decode_version(meter: &mut Meter, row: &StatementRow, start: usize) -> Result<Version, Error> {
+    let family = family(text(row, start, start + 1, 21)?)?;
+    let key = copy_text(meter, text(row, start + 2, start + 3, 1024)?)?;
+    let edition = copy_text(meter, text(row, start + 4, start + 5, 1024)?)?;
+    let announced_at = unsigned(row, start + 6)?;
+    let opens_at = unsigned(row, start + 7)?;
+    if key.is_empty() || edition.is_empty() || announced_at > opens_at {
+        return Err(StorageError::CorruptHistory.into());
+    }
+    let content = optional_bytes(row, start + 8, start + 9, 262_144)?;
+    let stored_digest = optional_identity(row, start + 10, start + 11)?;
+    let disclosure = optional_identity(row, start + 12, start + 13)?;
+    let payload = match (content, stored_digest) {
+        (None, None) if disclosure.is_none() => None,
+        (Some(content), Some(stored_digest)) => {
+            let validated = spans::Validated::new(content, meter)?;
+            let envelope = validated.root()?.array(3)?;
+            if envelope.field(0)?.text()? != PAYLOAD_RECIPE
+                || envelope.field(1)?.text()? != family.name()
+                || digest(PAYLOAD_RECIPE, content) != stored_digest
+            {
+                return Err(StorageError::CorruptHistory.into());
+            }
+            if family == Family::UnsettledRecognition {
+                let body = envelope.field(2)?.array(4)?;
+                let input = body.field(2)?;
+                let expected = digest(DISCLOSURE_RECIPE, input.bytes());
+                if body.field(0)?.text()? != DISCLOSURE_RECIPE
+                    || body.field(1)?.blob()? != expected
+                    || disclosure != Some(expected)
                 {
                     return Err(StorageError::CorruptHistory.into());
                 }
-                if family == Family::UnsettledRecognition {
-                    let body = envelope.field(2)?.array(4)?;
-                    let input = body.field(2)?;
-                    let expected = digest(DISCLOSURE_RECIPE, input.bytes());
-                    if body.field(0)?.text()? != DISCLOSURE_RECIPE
-                        || body.field(1)?.blob()? != expected
-                        || disclosure != Some(expected)
-                    {
-                        return Err(StorageError::CorruptHistory.into());
-                    }
-                } else if disclosure.is_some() {
-                    return Err(StorageError::CorruptHistory.into());
-                }
-                let mut bytes = Vec::new();
-                self.meter.reserve(&mut bytes, content.len())?;
-                bytes.extend_from_slice(content);
-                Some(Payload {
-                    family,
-                    bytes,
-                    digest: stored_digest,
-                    disclosure,
-                })
+            } else if disclosure.is_some() {
+                return Err(StorageError::CorruptHistory.into());
             }
-            _ => return Err(StorageError::CorruptHistory.into()),
-        };
-        Ok(Version {
-            family,
-            key,
-            edition,
-            announced_at,
-            opens_at,
-            payload,
-        })
-    }
+            let mut bytes = Vec::new();
+            meter.reserve(&mut bytes, content.len())?;
+            bytes.extend_from_slice(content);
+            Some(Payload {
+                family,
+                bytes,
+                digest: stored_digest,
+                disclosure,
+            })
+        }
+        _ => return Err(StorageError::CorruptHistory.into()),
+    };
+    Ok(Version {
+        family,
+        key,
+        edition,
+        announced_at,
+        opens_at,
+        payload,
+    })
+}
 
+impl ServerReader<'_> {
     fn selection(&mut self, row: &StatementRow) -> Result<ServerSelection, Error> {
         Ok(ServerSelection {
             use_: DeclarationUse {
@@ -787,26 +823,15 @@ impl ServerReader<'_> {
         maximum: usize,
         probe: bool,
     ) -> Result<Vec<StatementRow>, Error> {
-        if probe {
-            self.meter.row(|| ())?;
-        }
-        let reserved = limit.checked_mul(maximum).ok_or(StorageError::ReadLimit)?;
-        let rows = self.meter.used.rows.checked_add(limit).ok_or(StorageError::ReadLimit)?;
-        if rows > self.meter.limit.rows {
-            return Err(StorageError::ReadLimit.into());
-        }
-        self.meter.allocation(reserved)?;
-        self.meter.used.rows = rows;
-        #[cfg(test)]
-        tests::fetched();
-        let result = observed(self.transaction.query(statement, params)).await?;
-        if result.len() > limit {
-            return Err(StorageError::CorruptHistory.into());
-        }
-        let unused = limit - result.len();
-        self.meter.used.rows -= unused;
-        self.meter.used.allocation_bytes -= unused * maximum;
-        Ok(result)
+        read_request(
+            &self.transaction,
+            &mut self.meter,
+            statement,
+            params,
+            (limit, maximum, probe),
+            || Ok(()),
+        )
+        .await
     }
 
     fn scope(scope: &EpochScope) -> Result<Scope, Error> {
@@ -1001,6 +1026,38 @@ impl ServerReader<'_> {
         self.record(&result);
         result
     }
+}
+
+async fn read_request(
+    transaction: &StatementTransaction<'_>,
+    meter: &mut Meter,
+    statement: Statement,
+    params: &[StatementParameter<'_>],
+    shape: (usize, usize, bool),
+    before: impl FnOnce() -> Result<(), Error>,
+) -> Result<Vec<StatementRow>, Error> {
+    let (limit, maximum, probe) = shape;
+    if probe {
+        meter.row(|| ())?;
+    }
+    let reserved = limit.checked_mul(maximum).ok_or(StorageError::ReadLimit)?;
+    let rows = meter.used.rows.checked_add(limit).ok_or(StorageError::ReadLimit)?;
+    if rows > meter.limit.rows {
+        return Err(StorageError::ReadLimit.into());
+    }
+    meter.allocation(reserved)?;
+    meter.used.rows = rows;
+    before()?;
+    #[cfg(test)]
+    tests::fetched();
+    let result = observed(transaction.query(statement, params)).await?;
+    if result.len() > limit {
+        return Err(StorageError::CorruptHistory.into());
+    }
+    let unused = limit - result.len();
+    meter.used.rows -= unused;
+    meter.used.allocation_bytes -= unused * maximum;
+    Ok(result)
 }
 
 struct Header {

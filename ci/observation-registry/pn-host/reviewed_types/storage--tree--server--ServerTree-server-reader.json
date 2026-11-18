@@ -4,6 +4,6 @@
     "item": "storage::tree::server::ServerTree",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/server.rs",
-    "syntax": "# [doc = \" A verified tree catalogue, without a result-write capability.\"] # [doc = \" (´[ROOT-amend:storage:admitted-layout]´)\"] # [derive (Debug)] pub struct ServerTree { session : Session , }"
+    "syntax": "# [doc = \" A verified tree catalogue, without a result-write capability.\"] # [doc = \" (´[ROOT-amend:storage:admitted-layout]´)\"] # [derive (Debug)] pub struct ServerTree { session : Session , # [cfg (test)] generation_hook : generation :: Hook , }"
   }
 }

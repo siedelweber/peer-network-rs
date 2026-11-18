@@ -168,42 +168,56 @@ fn unqualified(family: Family) -> bool {
 }
 impl Generation {
     fn check(&self) -> Result<(), Error> {
-        scope_check(&self.scope)?;
-        super::stored_text(&self.label)?;
-        if self.ordinal > i64::MAX as u64 || self.minimum > i64::MAX as u64 || self.label.len() > 1024 {
+        Self::check_parts(
+            &self.scope,
+            self.ordinal,
+            self.minimum,
+            &self.label,
+            &self.versions,
+            &self.closures,
+        )
+    }
+
+    fn check_parts(
+        scope: &EpochScope,
+        ordinal: u64,
+        minimum: u64,
+        label: &str,
+        versions: &[Version],
+        closures: &[Closure],
+    ) -> Result<(), Error> {
+        scope_check(scope)?;
+        super::stored_text(label)?;
+        if ordinal > i64::MAX as u64 || minimum > i64::MAX as u64 || label.len() > 1024 {
             return Err(StorageError::Representation.into());
         }
-        if self.ordinal != 1 || self.minimum != 1 || self.label != "unstable" {
+        if ordinal != 1 || minimum != 1 || label != "unstable" {
             return Err(Error::InvalidAdmissionGeneration);
         }
-        for v in &self.versions {
+        for v in versions {
             super::check(v)?;
-            if !unqualified(v.family) || !member_scope(&v.key, &self.scope) {
+            if !unqualified(v.family) || !member_scope(&v.key, scope) {
                 return Err(Error::InvalidAdmissionGeneration);
             }
         }
-        if self
-            .versions
-            .windows(2)
-            .any(|w| declaration_key(&w[0]) >= declaration_key(&w[1]))
-            || self.closures.windows(2).any(|w| closure_key(&w[0]) >= closure_key(&w[1]))
+        if versions.windows(2).any(|w| declaration_key(&w[0]) >= declaration_key(&w[1]))
+            || closures.windows(2).any(|w| closure_key(&w[0]) >= closure_key(&w[1]))
         {
             return Err(Error::InvalidAdmissionGeneration);
         }
-        for c in &self.closures {
+        for c in closures {
             super::stored_text(&c.key)?;
             super::stored_text(&c.edition)?;
             if c.closes_at > i64::MAX as u64 || c.key.len() > 1024 || c.edition.len() > 1024 {
                 return Err(StorageError::Representation.into());
             }
-            if !unqualified(c.family) || c.key.is_empty() || c.edition.is_empty() || !member_scope(&c.key, &self.scope) {
+            if !unqualified(c.family) || c.key.is_empty() || c.edition.is_empty() || !member_scope(&c.key, scope) {
                 return Err(Error::InvalidAdmissionGeneration);
             }
-            let Some(predecessor) = self.versions.iter().find(|v| declaration_key(v) == closure_key(c)) else {
+            let Some(predecessor) = versions.iter().find(|v| declaration_key(v) == closure_key(c)) else {
                 return Err(Error::InvalidAdmissionGeneration);
             };
-            let Some(successor) = self
-                .versions
+            let Some(successor) = versions
                 .iter()
                 .find(|v| v.family == c.family && v.key == c.key && v.opens_at == c.closes_at)
             else {
@@ -213,20 +227,18 @@ impl Generation {
                 return Err(Error::InvalidAdmissionGeneration);
             }
         }
-        for v in &self.versions {
-            if self
-                .versions
+        for v in versions {
+            if versions
                 .iter()
                 .any(|w| w.family == v.family && w.key == v.key && w.edition != v.edition && w.opens_at == v.opens_at)
             {
                 return Err(Error::InvalidAdmissionGeneration);
             }
-            let next = self
-                .versions
+            let next = versions
                 .iter()
                 .filter(|w| w.family == v.family && w.key == v.key && w.opens_at > v.opens_at)
                 .min_by_key(|w| w.opens_at);
-            let close = self.closures.iter().find(|c| closure_key(c) == declaration_key(v));
+            let close = closures.iter().find(|c| closure_key(c) == declaration_key(v));
             if next.map(|w| w.opens_at) != close.map(|c| c.closes_at) {
                 return Err(Error::InvalidAdmissionGeneration);
             }

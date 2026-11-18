@@ -17,7 +17,7 @@ pub(super) fn budget() -> ReadBudget {
         rows: 10_000,
     }
 }
-fn declared() -> Generation {
+pub(super) fn declared() -> Generation {
     Generation {
         scope: EpochScope {
             history: "h".into(),

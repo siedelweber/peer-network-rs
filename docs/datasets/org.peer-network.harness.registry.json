@@ -3006,6 +3006,8 @@
         "pn-host::storage::store_error_tests::store_error_local_refusal_rollback",
         "pn-host::storage::store_error_tests::store_error_snapshot_end",
         "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",
+        "pn-host::storage::tree::server::tests::generation::tree_server_generation_input",
+        "pn-host::storage::tree::server::tests::generation::tree_server_generation_plan",
         "pn-host::storage::tree::tests::tree_stored_text_domain",
         "pn-host::storage::tree::tests::tree_read_shapes",
         "pn-host::storage::tree::tests::tree_read_page_limits",
@@ -3309,6 +3311,9 @@
     {
       "budget": "postgresql-suite",
       "cases": [
+        "pn-host::storage::tree::server::tests::generation::tree_server_generation_install",
+        "pn-host::storage::tree::server::tests::generation::tree_server_generation_retry",
+        "pn-host::storage::tree::server::tests::generation::tree_server_generation_cleanup",
         "pn-host::storage::tree::server::tests::tree_server_reads",
         "pn-host::storage::tree::server::tests::tree_server_pages",
         "pn-host::storage::tree::server::tests::tree_server_nested",

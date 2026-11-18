@@ -718,8 +718,8 @@ class HostRuntime(unittest.TestCase):
         source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
         statements=[json.loads('"'+literal+'"') for literal in re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"((?:[^"\\\n]|\\.)*)"',source)]
         statements += re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
-        self.assertEqual(len(statements),34)
-        groups=(('history',statements[18:]),('tree',statements[:18]))
+        self.assertEqual(len(statements),40)
+        groups=(('history',statements[24:]),('tree',statements[:24]))
         controls=[]
         for level in ('default','trace'):
             for surface,closed in groups:
