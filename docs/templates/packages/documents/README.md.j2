@@ -2,6 +2,8 @@
 
 **Setup (Scope)** · `setup:documents:scope` The documents package projects inputs, renders templates and checks that the committed outputs and document census agree. Its tests state their claims beside the code that witnesses them. The rendering policy and helper restrictions are fixed by [record 003](../../adr/003-templated-documentation.md).
 
+The designed installation-evidence extension of (`[ROOT-amend:design:test-installation]`) adds installation-check tag, sources and placement with --facts FILE to this existing binary, using its existing dependency edges. It checks closed public evidence documents and prints a conditional facts-consistent verdict; it never verifies a signature, inspects installed permissions, builds or installs. The design separates runtime refusals from document findings and leaves existing generation/render commands unchanged. These commands and their five focused library controls are not implemented by this paragraph; the import invoker and deployment administrator still establish the actual facts.
+
 **Rule (Registry views)** · `rule:documents:registry` The registry record and enforced relation share the kinds dataset and the fixed-point check under [record 003](../../adr/003-templated-documentation.md).
 
 **Rule (Record front matter)** · `rule:documents:records` Each record selects its own path in org.peer-network.records.index and includes fragments/record-front-matter.j2 from docs/fragments/. That shared fragment renders status, scope, dependency citations and the non-establishment sentence from the row; fragments have no independent output path.
