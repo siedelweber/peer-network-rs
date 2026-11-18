@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The wrapper reads no observation sink output and treats no trace or record as lifecycle completion authority.",
+    "negative_probe": "CLICOMMON::claim:cli:entry-origin-runner-order"
+  },
+  "name": "node-binary-exposure-consumers"
+}

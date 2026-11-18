@@ -7435,6 +7435,158 @@
       "before": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
       "after": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
       "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
+    },
+    {
+      "operation": "pn::lifecycle::tests::barrier_precedes_workers",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:barrier-precedes-workers",
+      "before": "Claim: An incomplete empty barrier refuses reserved input and cannot authorize construction or a worker.",
+      "after": "Claim: An incomplete empty barrier refuses reserved input and cannot authorize construction or a worker.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::byte_start_precedes_ready",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:byte-start-precedes-ready",
+      "before": "Claim: A fixed bounded CBOR request crosses the actual byte executor and yields a complete ready result before notification is authorized.",
+      "after": "Claim: A fixed bounded CBOR request crosses the actual byte executor and yields a complete ready result before notification is authorized.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::cleanup_preserves_cause",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:cleanup-preserves-cause",
+      "before": "Claim: Ordered one-time release and a checked cleanup failure forbid success while preserving the original selected start cause.",
+      "after": "Claim: Ordered one-time release exposes checked cleanup and stopping timeout diagnostics beside the retained first command cause and forbids success.",
+      "review": "The one-process control uses supplied facts and explicit finite test caps to witness the stated transition, retained cause and diagnostic; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::edition_arguments_refuse",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:edition-arguments-refuse",
+      "before": "Claim: Bare and extra argument forms cannot select an edition or admit an operation outside the closed command grammar.",
+      "after": "Claim: Bare and extra argument forms cannot select an edition or admit an operation outside the closed command grammar.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::edition_both_sources_refuse",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:edition-both-sources-refuse",
+      "before": "Claim: Both public edition sources refuse by presence before either value or file bytes can select an edition.",
+      "after": "Claim: Both public edition sources refuse by presence before either value or file bytes can select an edition.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::edition_input_forms",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:edition-input-forms",
+      "before": "Claim: The public environment and bounded file forms enforce exact coordinate syntax while a valid unknown pair remains unsupported rather than malformed.",
+      "after": "Claim: The public environment and bounded file forms enforce exact coordinate syntax while a valid unknown pair remains unsupported rather than malformed.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::edition_neither_source_refuses",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:edition-neither-source-refuses",
+      "before": "Claim: Absent public edition sources refuse without manufacturing a default selection.",
+      "after": "Claim: Absent public edition sources refuse without manufacturing a default selection.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::edition_reports_selection",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:edition-reports-selection",
+      "before": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
+      "after": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::entry_failures_retire",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:entry-failures-retire",
+      "before": "Claim: Construction, complete start and pre-dispatch entry failures retain their public meanings and retire without retry or successful output.",
+      "after": "Claim: Construction, complete start and pre-dispatch entry failures retain class and ceiling over coincident stop or elapsed startup bounds, retiring without retry or successful output.",
+      "review": "The one-process control uses supplied facts and explicit finite test caps to witness the stated transition, retained cause and diagnostic; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::lifecycle_deadlines_compose",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:lifecycle-deadlines-compose",
+      "before": "Claim: Supplied instants count elapsed preparation before dispatch and retain separate stopping and capped cancellation deadlines.",
+      "after": "Claim: Supplied instants gate a pending entry before polling, count elapsed preparation before dispatch, and retain separate stopping and capped cancellation deadlines.",
+      "review": "The one-process control uses supplied facts and explicit finite test caps to witness the stated transition, retained cause and diagnostic; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::lifecycle_transitions_are_closed",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:lifecycle-transitions-are-closed",
+      "before": "Claim: Unlisted and duplicate transitions refuse without effects, while a driver fault enters retirement once.",
+      "after": "Claim: Unlisted and duplicate transitions and a second construction in Constructing refuse without effects, while a driver fault enters retirement once.",
+      "review": "The one-process control refuses EndpointSetupFailed before construction, after a successful Constructed transition and as a duplicate in retirement, keeping the state and cause unchanged on the post-construction refusal; supplied facts and finite test caps establish no OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::notification_contract",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:notification-contract",
+      "before": "Claim: Only the admitted local datagram endpoint facts permit a checked start, whose eventual ready action uses the exact payload; inspection needs no endpoint.",
+      "after": "Claim: Only admitted protected notification validity facts permit a checked start, whose eventual ready action uses the exact payload; inspection needs no endpoint.",
+      "review": "The one-process control supplies only protected-capability validity facts and checks the fixed notification payload; address form and OS endpoint inspection remain the trusted adapter's obligation."
+    },
+    {
+      "operation": "pn::lifecycle::tests::pending_lifecycle_cannot_start",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:pending-lifecycle-cannot-start",
+      "before": "Claim: A pending build-owned register refuses construction before any byte entry or notification and yields runtime failure with empty stdout.",
+      "after": "Claim: A pending build-owned register refuses construction before any byte entry or notification and yields runtime failure with empty stdout.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::presentation_refusal_never_notifies",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:presentation-refusal-never-notifies",
+      "before": "Claim: Presentation uncertainty retires once with empty stdout and never turns into a ready notification or a guessed start failure.",
+      "after": "Claim: Presentation uncertainty retires once with empty stdout and never turns into a ready notification or a guessed start failure.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::ready_notification_arbitrates",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:ready-notification-arbitrates",
+      "before": "Claim: A stop, elapsed startup bound or checked failure before authorization prevents notification, while a stop after a successful send retires from ready.",
+      "after": "Claim: A stop, elapsed startup bound or checked failure before authorization prevents notification, while a stop after a successful send retires from ready.",
+      "review": "The one-process control keeps NotificationFailed over a later Stop after returned setup failure and settles an earlier startup expiry through Constructed before setup, refusing a later setup-failure event; supplied facts and finite test caps establish no OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::repeated_stop_keeps_deadline",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:repeated-stop-keeps-deadline",
+      "before": "Claim: A repeated stop retains the first stopping and cancellation deadlines instead of extending them.",
+      "after": "Claim: A repeated stop retains the first stopping and cancellation deadlines instead of extending them.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::reserved_input_refuses",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:reserved-input-refuses",
+      "before": "Claim: Public descriptor and directory advertisements refuse the reserved input before acquisition, while valid absence remains admitted.",
+      "after": "Claim: Public descriptor and directory advertisements refuse the reserved input before acquisition, while valid absence remains admitted.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::stop_clears_ready",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:stop-clears-ready",
+      "before": "Claim: A classified graceful stop clears the ready state and closes dispatch before retirement.",
+      "after": "Claim: A classified graceful stop clears the ready state and closes dispatch before retirement.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::termination_output_contract",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:termination-output-contract",
+      "before": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion.",
+      "after": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion.",
+      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
     }
   ],
   "conditional_claims": {}

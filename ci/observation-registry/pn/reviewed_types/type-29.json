@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::PreparationRefusal",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" A fixed public reason for a preparation refusal.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum PreparationRefusal { # [doc = \" The argument grammar was not admitted.\"] Arguments , # [doc = \" Both edition sources or neither were supplied.\"] EditionSources , # [doc = \" The selected edition source was malformed or unreadable.\"] EditionForm , # [doc = \" Reserved supervisor input was advertised.\"] ReservedInput , # [doc = \" The start notification endpoint was absent or invalid.\"] Notification , }"
+  }
+}

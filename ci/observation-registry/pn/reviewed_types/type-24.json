@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::Controller",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" Opaque owner of the finite state and its retained cause and deadlines.\"] # [doc = \" It never reads the process environment or executes an action.\"] # [doc = \" (´[ROOT-amend:api:node-package]´)\"] # [derive (Debug)] # [expect (clippy :: struct_excessive_bools)] pub struct Controller { state : State , bootstrap : Option < CheckedBootstrap > , inspection : Option < EditionInspection > , terminal_exit : Option < u8 > , caps : Option < Caps > , preparation_at : Option < u64 > , startup_deadline : Option < u64 > , stop_deadline : Option < u64 > , drain_deadline : Option < u64 > , cause : Option < Cause > , notified : bool , construction_attempted : bool , construction_succeeded : bool , dispatched : bool , work_pending : bool , cancelled : Arc < AtomicBool > , served_edition : Option < String > , work_settled : bool , release_requested : bool , cleanup_failed : bool , stopping_timed_out : bool , pending_stop : Option < u64 > , pending_failure : Option < (u64 , Cause) > , test_caps : Option < Caps > , }"
+  }
+}

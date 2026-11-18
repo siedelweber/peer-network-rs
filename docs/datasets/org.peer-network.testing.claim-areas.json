@@ -446,6 +446,13 @@
       "owner": "NODE",
       "register": "NODE::def:node:scope",
       "stake": "If the lexical walk disagrees with the locked parser, source work can escape its declared ceilings."
+    },
+    {
+      "area": "lifecycle",
+      "contract": "NODE::verif:node:pure-lifecycle",
+      "owner": "NODE",
+      "register": "NODE::def:node:scope",
+      "stake": "A controller that publishes readiness early, repeats start or extends retirement can violate the supervisor’s start and stop contract."
     }
   ]
 }

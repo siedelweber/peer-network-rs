@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::State",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" Closed lifecycle states, inspected but never assigned by an adapter.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum State { # [doc = \" Captured origin only.\"] Captured , # [doc = \" Synchronous preparation.\"] Preparing , # [doc = \" A terminal decision awaits installation.\"] PreparedTerminal , # [doc = \" Inspection awaits installation.\"] PreparedInspection , # [doc = \" A checked start awaits installation.\"] PreparedStart , # [doc = \" The shared runner attempted installation.\"] Installed , # [doc = \" The build-owned context is being constructed.\"] Constructing , # [doc = \" The one byte entry is outstanding.\"] Starting , # [doc = \" A complete ready candidate awaits the final check.\"] ReadyCheck , # [doc = \" The single send attempt is in flight.\"] Notifying , # [doc = \" Successful send has published readiness.\"] Ready , # [doc = \" Owned work is being cancelled and released.\"] Retiring , # [doc = \" The runner completes output and observation.\"] Finalizing , # [doc = \" No further work is admitted.\"] Exited , }"
+  }
+}

@@ -70,11 +70,8 @@ struct Limits {
     response: usize,
     concurrency: usize,
     execution: usize,
-    #[cfg(test)]
     cancellation_drain: usize,
-    #[cfg(test)]
     shell_start: usize,
-    #[cfg(test)]
     shell_stop: usize,
     start_weight: usize,
 }
@@ -126,14 +123,20 @@ impl Limits {
 
 #[derive(Clone, Debug)]
 struct StartInputs {
+    selected_edition: String,
+    #[cfg(test)]
     edition_supported: bool,
+    #[cfg(test)]
     bootstrap_valid: bool,
+    #[cfg(test)]
     cancelled: bool,
+    #[cfg(test)]
     failures: StartFailures,
     #[cfg(test)]
     count: Arc<AtomicUsize>,
 }
 
+#[cfg(test)]
 #[derive(Clone, Debug)]
 struct StartFailures {
     resource_exhausted: bool,
@@ -160,6 +163,30 @@ pub struct ExecutionContext {
 }
 
 impl ExecutionContext {
+    pub(crate) fn lifecycle_edition(&self) -> &str {
+        &self.edition
+    }
+
+    #[cfg(test)]
+    pub(crate) fn lifecycle_start_calls(&self) -> usize {
+        self.start.count.load(Ordering::Acquire)
+    }
+
+    pub(crate) fn lifecycle_caps(&self) -> Result<crate::lifecycle::Caps, EntryError> {
+        Ok(crate::lifecycle::Caps {
+            transport: self.limits.transport,
+            response: self.limits.response,
+            decoded_bytes: self.limits.decoded_bytes,
+            decoded_items: self.limits.decoded_items,
+            input_nesting: self.limits.input_nesting,
+            cbor_nesting: self.limits.cbor_nesting,
+            decoding_work: self.limits.decoding_work,
+            shell_start: u64::try_from(self.limits.shell_start).map_err(|_| EntryError::Configuration)?,
+            shell_stop: u64::try_from(self.limits.shell_stop).map_err(|_| EntryError::Configuration)?,
+            cancellation_drain: u64::try_from(self.limits.cancellation_drain).map_err(|_| EntryError::Configuration)?,
+        })
+    }
+
     /// Validate the build-owned schema and register before constructing a served context.
     /// (´[ROOT-amend:api:test-schema-plan]´)
     ///
@@ -185,6 +212,65 @@ impl ExecutionContext {
         {
             Err(EntryError::LimitsUnadmitted)
         }
+    }
+
+    pub(crate) fn checked_from_bootstrap(
+        bootstrap: &crate::lifecycle::CheckedBootstrap,
+        cancelled: Arc<AtomicBool>,
+    ) -> Result<Self, EntryError> {
+        let _selection = bootstrap.edition();
+        drop(cancelled);
+        // No generated register exists in this build. This is the sole checked
+        // construction route once that artifact and its admitted limits exist.
+        Err(EntryError::LimitsUnadmitted)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_checked_from_bootstrap(
+        bootstrap: &crate::lifecycle::CheckedBootstrap,
+        cancelled: Arc<AtomicBool>,
+        caps: crate::lifecycle::Caps,
+    ) -> Result<Self, EntryError> {
+        let start = StartInputs {
+            selected_edition: bootstrap.edition().to_owned(),
+            edition_supported: true,
+            bootstrap_valid: true,
+            cancelled: false,
+            failures: StartFailures {
+                resource_exhausted: false,
+                start_failed: false,
+            },
+            count: Arc::new(AtomicUsize::new(0)),
+        };
+        let limits = Limits {
+            schema_source: 16_384,
+            register_source: 16_384,
+            graphql_source: 16_384,
+            transport: caps.transport,
+            decoded_bytes: caps.decoded_bytes,
+            decoded_items: caps.decoded_items,
+            cbor_nesting: caps.cbor_nesting,
+            input_nesting: caps.input_nesting,
+            decoding_work: caps.decoding_work,
+            lexical_tokens: 4_096,
+            source_nesting: 32,
+            selection_depth: 16,
+            root_selections: 16,
+            fields: 4_096,
+            aliases: 4_096,
+            fragment_work: 4_096,
+            resolver_work: 4_096,
+            response: caps.response,
+            concurrency: 1,
+            execution: 1_000_000_000,
+            cancellation_drain: usize::try_from(caps.cancellation_drain).map_err(|_| EntryError::Configuration)?,
+            shell_start: usize::try_from(caps.shell_start).map_err(|_| EntryError::Configuration)?,
+            shell_stop: usize::try_from(caps.shell_stop).map_err(|_| EntryError::Configuration)?,
+            start_weight: 1,
+        };
+        let mut context = Self::unserved(limits, start)?;
+        context.cancelled = cancelled;
+        Ok(context)
     }
 
     #[cfg(test)]
@@ -804,15 +890,34 @@ impl ControlMutation {
         let run = context.data_unchecked::<StartRun>();
         #[cfg(test)]
         run.inputs.count.fetch_add(1, Ordering::AcqRel);
-        let failure = if !run.inputs.edition_supported {
+        let edition_supported = run.inputs.selected_edition == run.edition;
+        #[cfg(test)]
+        let edition_supported = edition_supported && run.inputs.edition_supported;
+        #[cfg(test)]
+        let bootstrap_valid = run.inputs.bootstrap_valid;
+        #[cfg(not(test))]
+        let bootstrap_valid = true;
+        #[cfg(test)]
+        let forced_cancelled = run.inputs.cancelled;
+        #[cfg(not(test))]
+        let forced_cancelled = false;
+        #[cfg(test)]
+        let forced_resource = run.inputs.failures.resource_exhausted;
+        #[cfg(not(test))]
+        let forced_resource = false;
+        #[cfg(test)]
+        let forced_failure = run.inputs.failures.start_failed;
+        #[cfg(not(test))]
+        let forced_failure = false;
+        let failure = if !edition_supported {
             Some("EditionUnsupported")
-        } else if !run.inputs.bootstrap_valid {
+        } else if !bootstrap_valid {
             Some("BootstrapInvalid")
-        } else if run.inputs.cancelled || run.cancelled.load(Ordering::Acquire) {
+        } else if forced_cancelled || run.cancelled.load(Ordering::Acquire) {
             Some("Cancelled")
-        } else if Instant::now() >= run.deadline || run.inputs.failures.resource_exhausted {
+        } else if Instant::now() >= run.deadline || forced_resource {
             Some("ResourceLimit")
-        } else if run.inputs.failures.start_failed {
+        } else if forced_failure {
             Some("StartFailed")
         } else {
             None
@@ -1181,6 +1286,7 @@ mod tests {
 
     fn start() -> StartInputs {
         StartInputs {
+            selected_edition: EDITION.to_owned(),
             edition_supported: true,
             bootstrap_valid: true,
             cancelled: false,

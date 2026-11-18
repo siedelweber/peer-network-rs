@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::CheckedBootstrap",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" A checked public selection with the empty credential barrier established.\"] # [doc = \" It conveys no resolver, limits, artifact, or completion authority.\"] # [doc = \" (´[ROOT-amend:api:node-package]´)\"] # [derive (Debug)] pub struct CheckedBootstrap { edition : String , source : EditionSource , }"
+  }
+}

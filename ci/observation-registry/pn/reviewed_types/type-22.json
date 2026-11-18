@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::Cause",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" Fixed public command causes retained without private adapter values.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Cause { # [doc = \" A graceful stop before readiness.\"] BeforeReadyStop , # [doc = \" A graceful stop after readiness.\"] AfterReadyStop , # [doc = \" The enclosing startup deadline elapsed.\"] StartupTimeout , # [doc = \" The bounded retirement deadline elapsed.\"] StoppingTimeout , # [doc = \" Returned bytes or a typed refusal did not establish a start result.\"] PresentationUnknown , # [doc = \" A complete start failure was selected by the executor.\"] StartFailure (& 'static str) , # [doc = \" The fixed request or a pre-dispatch entry stage refused.\"] EntryFailure (& 'static str) , # [doc = \" A complete pre-dispatch message retains its fixed class and ceiling key.\"] PreDispatchFailure { class : & 'static str , ceiling : Option < & 'static str > , } , # [doc = \" The notification send failed.\"] NotificationFailed , # [doc = \" A checked release failed.\"] CleanupFailed , # [doc = \" The controller driver reported an internal fault.\"] TransitionRefused , }"
+  }
+}

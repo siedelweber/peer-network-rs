@@ -363,6 +363,41 @@
     },
     {
       "claims": [
+        "NODE::claim:lifecycle:barrier-precedes-workers",
+        "NODE::claim:lifecycle:reserved-input-refuses",
+        "NODE::claim:lifecycle:byte-start-precedes-ready",
+        "NODE::claim:lifecycle:presentation-refusal-never-notifies",
+        "NODE::claim:lifecycle:stop-clears-ready",
+        "NODE::claim:lifecycle:repeated-stop-keeps-deadline",
+        "NODE::claim:lifecycle:edition-both-sources-refuse",
+        "NODE::claim:lifecycle:edition-neither-source-refuses",
+        "NODE::claim:lifecycle:edition-arguments-refuse",
+        "NODE::claim:lifecycle:edition-reports-selection",
+        "NODE::claim:lifecycle:edition-input-forms",
+        "NODE::claim:lifecycle:notification-contract",
+        "NODE::claim:lifecycle:termination-output-contract",
+        "NODE::claim:lifecycle:lifecycle-transitions-are-closed",
+        "NODE::claim:lifecycle:pending-lifecycle-cannot-start",
+        "NODE::claim:lifecycle:entry-failures-retire",
+        "NODE::claim:lifecycle:lifecycle-deadlines-compose",
+        "NODE::claim:lifecycle:ready-notification-arbitrates",
+        "NODE::claim:lifecycle:cleanup-preserves-cause"
+      ],
+      "closing_condition": "The nineteen named lifecycle controls and node package tests pass.",
+      "closing_step": "Pure shell lifecycle and executable boundary subcut.",
+      "evidence_paragraph": "NODE::def:node:scope",
+      "hold": "",
+      "missing": "Process adapter, installation rehearsal, admitted measurements and executable witnesses remain separate cuts.",
+      "name": "NODE::verif:node:pure-lifecycle",
+      "owner": "Node implementer and API reviewer",
+      "path": "packages/node/README.md",
+      "premises": "Finite one-process controls use supplied facts and explicit test caps; no OS effect, admitted register or served startup is inferred.",
+      "realizers": [],
+      "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [
         "RECORDS::claim:acts:authentication-fields-refuse-absence-and-retain-disclosures"
       ],
       "closing_condition": "Every named absent field refuses and complete disclosures retain their exact fields.",

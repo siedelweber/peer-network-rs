@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::EditionInspection",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" The public inspection result; support is false until both assigned artifacts exist.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Debug)] pub struct EditionInspection { edition : String , source : EditionSource , supported : bool , }"
+  }
+}

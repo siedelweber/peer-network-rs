@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Arguments",
+    "package": "pn",
+    "path": "packages/node/src/main.rs",
+    "syntax": "# [doc = \" The initial command grammar has no edition operand or override.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Parser)] # [command (name = \"pn\" , version , about = \"Node control; start requires a supervisor notification socket\")] struct Arguments { # [command (subcommand)] command : Command , }"
+  }
+}

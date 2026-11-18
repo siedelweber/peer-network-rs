@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::EditionSource",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" The two public edition-delivery forms. (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum EditionSource { # [doc = \" The public environment value was supplied.\"] Environment , # [doc = \" A designated regular public file was supplied.\"] File , }"
+  }
+}

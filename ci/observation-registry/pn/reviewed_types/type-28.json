@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::PreparationFacts",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" Supplied public and protected-capability validity facts; the process adapter owns their acquisition.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [expect (clippy :: struct_excessive_bools)] pub struct PreparationFacts < 'a > { # [doc = \" Command arguments, including the program name.\"] pub arguments : & 'a [& 'a str] , # [doc = \" Presence and public value of `PN_EDITION`.\"] pub edition : Option < & 'a str > , # [doc = \" Presence and public value of `PN_EDITION_FILE`.\"] pub edition_file : Option < & 'a str > , # [doc = \" The designated file's bounded bytes, if read successfully as a regular file.\"] pub file_bytes : Option < & 'a [u8] > , # [doc = \" `LISTEN_PID` metadata.\"] pub listen_pid : Option < & 'a str > , # [doc = \" `LISTEN_FDS` metadata.\"] pub listen_fds : Option < & 'a str > , # [doc = \" `LISTEN_FDNAMES` metadata.\"] pub listen_fdnames : Option < & 'a str > , # [doc = \" Presence of `LISTEN_PIDFDID`, including an empty value.\"] pub listen_pidfdid : bool , # [doc = \" Presence of `PN_CONNECTION_INPUT`, including an empty value.\"] pub connection_input : bool , # [doc = \" The current process identifier supplied by the adapter.\"] pub process_id : u32 , # [doc = \" Whether the protected notification capability was supplied for start.\"] pub notification_present : bool , # [doc = \" Whether the adapter admitted its private absolute filesystem address form.\"] pub notification_form_valid : bool , # [doc = \" Whether the protected endpoint's final component is a symlink.\"] pub notification_final_symlink : bool , # [doc = \" Whether the protected endpoint is a socket.\"] pub notification_is_socket : bool , }"
+  }
+}

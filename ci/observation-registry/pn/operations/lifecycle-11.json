@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "item": "lifecycle::Controller::new",
+    "owner": "NODE",
+    "signature": "fn new () -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-lifecycle"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::new",
+    "body": "{ Self { state : State :: Captured , bootstrap : None , inspection : None , terminal_exit : None , caps : None , preparation_at : None , startup_deadline : None , stop_deadline : None , drain_deadline : None , cause : None , notified : false , construction_attempted : false , construction_succeeded : false , dispatched : false , work_pending : false , cancelled : Arc :: new (AtomicBool :: new (false)) , served_edition : None , work_settled : false , release_requested : false , cleanup_failed : false , stopping_timed_out : false , pending_stop : None , pending_failure : None , test_caps : None , } }",
+    "class_decision": "node-lifecycle",
+    "item_premise": "This pure support operation is bounded by supplied public facts and records a redacted decision or action without acquiring a private capability.",
+    "assessments": {
+      "full_recording": "node-lifecycle-full-recording",
+      "secret_flow": "node-lifecycle-secret-flow",
+      "exposure_consumers": "node-lifecycle-exposure-consumers"
+    }
+  }
+}

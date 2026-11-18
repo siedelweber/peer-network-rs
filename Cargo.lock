@@ -1980,7 +1980,10 @@ dependencies = [
  "async-graphql-derive",
  "async-graphql-parser",
  "async-graphql-value",
+ "clap",
+ "cli-common",
  "pn-interchange",
+ "serde_json",
  "toml",
  "tracing",
 ]

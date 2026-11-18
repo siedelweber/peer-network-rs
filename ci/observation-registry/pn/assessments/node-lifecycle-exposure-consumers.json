@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The controller consumes supplied facts and produces bounded actions; no operation reads tracing output or treats a recorded event as completion authority.",
+    "negative_probe": "NODE::claim:lifecycle:presentation-refusal-never-notifies"
+  },
+  "name": "node-lifecycle-exposure-consumers"
+}

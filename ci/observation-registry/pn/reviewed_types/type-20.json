@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::Action",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" An adapter effect request; inspecting it performs no effect.\"] # [doc = \" (´[ROOT-amend:api:node-package]´)\"] # [derive (Debug)] pub enum Action { # [doc = \" Attempt shared observation installation once.\"] Install , # [doc = \" Report the retained terminal through the shared runner.\"] Complete { exit : u8 , stdout : Option < PublicOutput > , cause : Option < Cause > , # [doc = \" Timeout and checked cleanup diagnostics beside the retained first command cause.\"] retirement_diagnostics : [Option < Cause > ; 2] , } , # [doc = \" Construct a checked context once.\"] Construct , # [doc = \" Call the existing byte entry with these bounded request bytes and the checked context.\"] Dispatch (Vec < u8 >) , # [doc = \" Send exactly these bytes once through the protected endpoint.\"] Notify (& 'static [u8]) , # [doc = \" Close dispatch and notification permission.\"] Close , # [doc = \" Request cancellation of the one owned future.\"] Cancel { until : Option < u64 > } , # [doc = \" Release retained request and response buffers.\"] ReleaseBuffers , # [doc = \" Release the execution context.\"] ReleaseContext , # [doc = \" Release the notification endpoint.\"] ReleaseEndpoint , # [doc = \" Release public preparation state.\"] ReleasePreparation , }"
+  }
+}

@@ -13,5 +13,6 @@ use tracing as _;
 #[cfg(test)]
 mod admission;
 mod executor;
+pub mod lifecycle;
 
 pub use executor::{EntryError, ExecutionContext, execute};

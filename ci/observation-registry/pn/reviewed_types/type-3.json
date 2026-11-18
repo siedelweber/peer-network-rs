@@ -4,6 +4,6 @@
     "item": "executor::Limits",
     "package": "pn",
     "path": "packages/node/src/executor.rs",
-    "syntax": "# [derive (Clone , Debug)] struct Limits { # [cfg (test)] schema_source : usize , # [cfg (test)] register_source : usize , graphql_source : usize , transport : usize , decoded_bytes : usize , decoded_items : usize , cbor_nesting : usize , input_nesting : usize , decoding_work : usize , lexical_tokens : usize , source_nesting : usize , selection_depth : usize , root_selections : usize , fields : usize , aliases : usize , fragment_work : usize , resolver_work : usize , response : usize , concurrency : usize , execution : usize , # [cfg (test)] cancellation_drain : usize , # [cfg (test)] shell_start : usize , # [cfg (test)] shell_stop : usize , start_weight : usize , }"
+    "syntax": "# [derive (Clone , Debug)] struct Limits { # [cfg (test)] schema_source : usize , # [cfg (test)] register_source : usize , graphql_source : usize , transport : usize , decoded_bytes : usize , decoded_items : usize , cbor_nesting : usize , input_nesting : usize , decoding_work : usize , lexical_tokens : usize , source_nesting : usize , selection_depth : usize , root_selections : usize , fields : usize , aliases : usize , fragment_work : usize , resolver_work : usize , response : usize , concurrency : usize , execution : usize , cancellation_drain : usize , shell_start : usize , shell_stop : usize , start_weight : usize , }"
   }
 }

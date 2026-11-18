@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "lifecycle::TransitionRefused",
+    "kind": "derive",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "expansion_review": "The exact derive syntax and containing lifecycle type are bound to this review. Generated formatting observes public selection and redacted preparation facts only; changing the derive requires renewed review.",
+    "class_decision": "node-lifecycle"
+  }
+}

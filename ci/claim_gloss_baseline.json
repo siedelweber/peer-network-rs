@@ -1572,6 +1572,25 @@
     "pn::executor::tests::response_replacement_fits": "Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.",
     "pn::executor::tests::result_invariant": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
     "pn::executor::tests::start_through_bytes": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
-    "pn::executor::tests::unsupported_operation_refuses": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch."
+    "pn::executor::tests::unsupported_operation_refuses": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
+    "pn::lifecycle::tests::barrier_precedes_workers": "Claim: An incomplete empty barrier refuses reserved input and cannot authorize construction or a worker.",
+    "pn::lifecycle::tests::byte_start_precedes_ready": "Claim: A fixed bounded CBOR request crosses the actual byte executor and yields a complete ready result before notification is authorized.",
+    "pn::lifecycle::tests::cleanup_preserves_cause": "Claim: Ordered one-time release and a checked cleanup failure forbid success while preserving the original selected start cause.",
+    "pn::lifecycle::tests::edition_arguments_refuse": "Claim: Bare and extra argument forms cannot select an edition or admit an operation outside the closed command grammar.",
+    "pn::lifecycle::tests::edition_both_sources_refuse": "Claim: Both public edition sources refuse by presence before either value or file bytes can select an edition.",
+    "pn::lifecycle::tests::edition_input_forms": "Claim: The public environment and bounded file forms enforce exact coordinate syntax while a valid unknown pair remains unsupported rather than malformed.",
+    "pn::lifecycle::tests::edition_neither_source_refuses": "Claim: Absent public edition sources refuse without manufacturing a default selection.",
+    "pn::lifecycle::tests::edition_reports_selection": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
+    "pn::lifecycle::tests::entry_failures_retire": "Claim: Construction, complete start and pre-dispatch entry failures retain their public meanings and retire without retry or successful output.",
+    "pn::lifecycle::tests::lifecycle_deadlines_compose": "Claim: Supplied instants count elapsed preparation before dispatch and retain separate stopping and capped cancellation deadlines.",
+    "pn::lifecycle::tests::lifecycle_transitions_are_closed": "Claim: Unlisted and duplicate transitions refuse without effects, while a driver fault enters retirement once.",
+    "pn::lifecycle::tests::notification_contract": "Claim: Only the admitted local datagram endpoint facts permit a checked start, whose eventual ready action uses the exact payload; inspection needs no endpoint.",
+    "pn::lifecycle::tests::pending_lifecycle_cannot_start": "Claim: A pending build-owned register refuses construction before any byte entry or notification and yields runtime failure with empty stdout.",
+    "pn::lifecycle::tests::presentation_refusal_never_notifies": "Claim: Presentation uncertainty retires once with empty stdout and never turns into a ready notification or a guessed start failure.",
+    "pn::lifecycle::tests::ready_notification_arbitrates": "Claim: A stop, elapsed startup bound or checked failure before authorization prevents notification, while a stop after a successful send retires from ready.",
+    "pn::lifecycle::tests::repeated_stop_keeps_deadline": "Claim: A repeated stop retains the first stopping and cancellation deadlines instead of extending them.",
+    "pn::lifecycle::tests::reserved_input_refuses": "Claim: Public descriptor and directory advertisements refuse the reserved input before acquisition, while valid absence remains admitted.",
+    "pn::lifecycle::tests::stop_clears_ready": "Claim: A classified graceful stop clears the ready state and closes dispatch before retirement.",
+    "pn::lifecycle::tests::termination_output_contract": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion."
   }
 }

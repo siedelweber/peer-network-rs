@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "item": "lifecycle::<PreparationFacts < '_ > as std :: fmt :: Debug>::fmt",
+    "owner": "NODE",
+    "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-node-lifecycle",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Redacted preparation formatting inherits the checked lifecycle preparation span and never reads or emits private capability values.",
+      "witness": "NODE::claim:lifecycle:reserved-input-refuses",
+      "boundary": "pn::packages/node/src/lifecycle.rs::lifecycle::CheckedBootstrap::new",
+      "class_decision": "node-lifecycle"
+    }
+  },
+  "review": {
+    "operation": "pn::packages/node/src/lifecycle.rs::lifecycle::<PreparationFacts < '_ > as std :: fmt :: Debug>::fmt",
+    "body": "{ f . debug_struct (\"PreparationFacts\") . field (\"argument_count\" , & self . arguments . len ()) . field (\"edition_present\" , & self . edition . is_some ()) . field (\"edition_file_present\" , & self . edition_file . is_some ()) . field (\"descriptor_metadata_present\" , & (self . listen_pid . is_some () || self . listen_fds . is_some () || self . listen_fdnames . is_some ()) ,) . field (\"connection_input_present\" , & self . connection_input) . field (\"notification_present\" , & self . notification_present) . finish () }",
+    "class_decision": "node-lifecycle",
+    "item_premise": "This pure support operation is bounded by supplied public facts and records a redacted decision or action without acquiring a private capability.",
+    "assessments": {
+      "full_recording": "node-lifecycle-full-recording",
+      "secret_flow": "node-lifecycle-secret-flow",
+      "exposure_consumers": "node-lifecycle-exposure-consumers"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The checked preparation and pure transitions record redacted public facts, their finite action or refusal and the selected public cause; the private endpoint value is never included.",
+    "negative_probe": "NODE::claim:lifecycle:byte-start-precedes-ready"
+  },
+  "name": "node-lifecycle-full-recording"
+}

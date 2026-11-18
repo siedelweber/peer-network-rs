@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "item": "lifecycle::Controller::active_deadlines",
+    "owner": "NODE",
+    "signature": "fn active_deadlines (& self) -> (Option < u64 > , Option < u64 > , Option < u64 >)",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-lifecycle"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::active_deadlines",
+    "body": "{ let startup = matches ! (self . state , State :: Constructing | State :: Starting | State :: ReadyCheck | State :: Notifying) . then_some (self . startup_deadline) . flatten () ; let stopping = (self . state == State :: Retiring) . then_some (self . stop_deadline) . flatten () ; let drain = (self . state == State :: Retiring && self . work_pending && ! self . work_settled) . then_some (self . drain_deadline) . flatten () ; (startup , stopping , drain) }",
+    "class_decision": "node-lifecycle",
+    "item_premise": "This read-only support operation reports only active supplied-timeline bounds and performs no effect, renewal or private-capability access.",
+    "assessments": {
+      "full_recording": "node-lifecycle-full-recording",
+      "secret_flow": "node-lifecycle-secret-flow",
+      "exposure_consumers": "node-lifecycle-exposure-consumers"
+    }
+  }
+}

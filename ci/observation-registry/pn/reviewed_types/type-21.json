@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::Caps",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)] pub (crate) struct Caps { pub (crate) transport : usize , pub (crate) response : usize , pub (crate) decoded_bytes : usize , pub (crate) decoded_items : usize , pub (crate) input_nesting : usize , pub (crate) cbor_nesting : usize , pub (crate) decoding_work : usize , pub (crate) shell_start : u64 , pub (crate) shell_stop : u64 , pub (crate) cancellation_drain : u64 , }"
+  }
+}

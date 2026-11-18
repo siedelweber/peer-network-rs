@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Command",
+    "package": "pn",
+    "path": "packages/node/src/main.rs",
+    "syntax": "# [derive (Subcommand)] enum Command { # [doc = \" Start the selected control edition under its supervisor.\"] Start , # [doc = \" Report the selected public edition as JSON; pipe or redirect stdout.\"] Edition , }"
+  }
+}

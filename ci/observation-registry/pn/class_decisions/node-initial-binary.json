@@ -1,0 +1,14 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "node-initial-binary",
+    "status": "reviewer-confirmed",
+    "premises": "The initial binary captures entry before its own work and delegates observation, output and exit to cli-common. It parses actual public arguments and returns Configuration before any unbound environment, file or notification effect.",
+    "membership": {
+      "explicit": [
+        "pn::packages/node/src/main.rs::main",
+        "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::PublicOutput",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" Bounded public output selected by the controller; the binary owns JSON serialization.\"] # [doc = \" (´[ROOT-amend:api:health-lifecycle]´)\"] # [derive (Debug)] pub enum PublicOutput { # [doc = \" The edition inspection object's exact member order is edition, source, supported.\"] Inspection { edition : String , source : EditionSource , supported : bool , } , # [doc = \" The only successful stop object has edition then outcome=stopped.\"] Stopped { edition : String } , }"
+  }
+}

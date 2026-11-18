@@ -96,7 +96,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | cli-common | 127 | 30 | 94 | 3 | 45 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn | 5 | 2 | 3 | 0 | 10 |
+| pn | 20 | 15 | 5 | 0 | 23 |
 | pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
 | pn-act-profile | 26 | 23 | 3 | 0 | 11 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |

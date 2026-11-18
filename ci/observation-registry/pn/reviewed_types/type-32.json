@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "lifecycle::TransitionRefused",
+    "package": "pn",
+    "path": "packages/node/src/lifecycle.rs",
+    "syntax": "# [doc = \" A programming-error refusal with no state change or effect request.\"] # [doc = \" (´[ROOT-amend:api:node-package]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct TransitionRefused ;"
+  }
+}

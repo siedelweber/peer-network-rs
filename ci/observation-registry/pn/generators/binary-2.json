@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Command",
+    "kind": "derive",
+    "package": "pn",
+    "path": "packages/node/src/main.rs",
+    "syntax": "# [derive (Subcommand)]",
+    "expansion_review": "The exact derive syntax is bound to the initial binary argument grammar; generated parsing accepts only the two explicit commands and shared help/version terminals.",
+    "class_decision": "node-initial-binary"
+  }
+}

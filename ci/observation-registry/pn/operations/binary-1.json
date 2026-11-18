@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/main.rs",
+    "item": "main",
+    "owner": "NODE",
+    "signature": "fn main () -> ExitCode",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: Entry capture must precede all instrumentation; this binary delegates the observed command root, terminal output and exit to the origin runner.",
+      "witness": "CLICOMMON::claim:cli:entry-origin-runner-order",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "node-initial-binary"
+    },
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/main.rs::main",
+    "body": "{ let origin = EntryOrigin :: capture () ; cli_common :: run_stdout_json_command_from_origin (origin , \"pn\" , false , tracing :: Level :: INFO , | | { let _preparation_at = Instant :: now () ; let arguments : Vec < OsString > = std :: env :: args_os () . collect () ; let observed = serde_json :: json ! ({ \"arguments\" : arguments . iter () . map (| argument | argument . as_encoded_bytes () . to_vec ()) . collect ::< Vec < _ >> () }) ; let exit = match cli_common :: parse_args_from :: < Arguments , _ , _ > (arguments) { Ok (Arguments { command : Command :: Start | Command :: Edition , }) => CliExit :: new (ControlPlaneRecord :: diagnostic (\"pn\" , \"Configuration\") , CommandExit :: Failure) , Err (exit) => exit , } ; OriginPreparation :: < Infallible > :: Terminal { exit , arguments : observed , } } , | never : Infallible | -> Result < () , Infallible > { match never { } } ,) }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "The only binary entry captures origin first and delegates terminal classes, output and observation to the existing runner; no lifecycle or OS effect is fabricated.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

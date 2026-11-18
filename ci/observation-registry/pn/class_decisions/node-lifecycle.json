@@ -1,0 +1,26 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "node-lifecycle",
+    "status": "reviewer-confirmed",
+    "premises": "The pure lifecycle receives bounded supplied public facts and protected-capability validity facts, never the private notification address, and returns action requests without executing them. The checked bootstrap retains no private endpoint path; the pending build-owned register cannot yield a served context. A private formatting helper redacts source values before observation.",
+    "membership": {
+      "explicit": [
+        "pn::packages/node/src/lifecycle.rs::lifecycle::<PreparationFacts < '_ > as std :: fmt :: Debug>::fmt",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::CheckedBootstrap::edition",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::CheckedBootstrap::new",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::CheckedBootstrap::source",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::active_deadlines",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::advance",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::construct_context",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::new",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Controller::state",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::EditionInspection::edition",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::EditionInspection::new",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::EditionInspection::source",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::EditionInspection::supported",
+        "pn::packages/node/src/lifecycle.rs::lifecycle::Event::supported_signal"
+      ]
+    }
+  }
+}
