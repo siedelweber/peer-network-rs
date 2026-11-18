@@ -345,10 +345,11 @@
         "NODE::claim:executor:decoding-work-is-independent",
         "NODE::claim:executor:result-invariant",
         "NODE::claim:executor:message-error-bytes",
+        "NODE::claim:executor:directive-admission-is-closed",
         "NODE::claim:executor:response-replacement-fits",
         "NODE::claim:executor:response-nothing-fits"
       ],
-      "closing_condition": "The twelve named executor controls and package tests pass with the bounded byte entry.",
+      "closing_condition": "The thirteen named executor controls and package tests pass with the bounded byte entry.",
       "closing_step": "Bounded byte executor subcut.",
       "evidence_paragraph": "NODE::def:node:scope",
       "hold": "",

@@ -4858,6 +4858,7 @@
         "pn::executor::tests::lexical_walk_matches_parser",
         "pn::executor::tests::decoding_work_is_independent",
         "pn::executor::tests::result_invariant",
+        "pn::executor::tests::directive_admission_is_closed",
         "pn::executor::tests::message_error_bytes",
         "pn::executor::tests::response_replacement_fits",
         "pn::executor::tests::response_nothing_fits"

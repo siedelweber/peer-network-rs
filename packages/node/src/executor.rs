@@ -160,6 +160,8 @@ pub struct ExecutionContext {
     cancelled: Arc<AtomicBool>,
     active: AtomicUsize,
     edition: String,
+    #[cfg(test)]
+    dependency_validation_entered: AtomicBool,
 }
 
 impl ExecutionContext {
@@ -287,6 +289,7 @@ impl ExecutionContext {
             cancelled: Arc::new(AtomicBool::new(false)),
             active: AtomicUsize::new(0),
             edition: EDITION.to_owned(),
+            dependency_validation_entered: AtomicBool::new(false),
         })
     }
 
@@ -1120,6 +1123,8 @@ async fn dispatch_graphql(
     if let Some(name) = message.operation_name {
         request = request.operation_name(name);
     }
+    #[cfg(test)]
+    context.dependency_validation_entered.store(true, Ordering::Release);
     let response = schema.execute(request).await;
     if exceeded.load(Ordering::Acquire) {
         return Err(Refusal::unsupported(Some("resolver_work")));
@@ -1844,6 +1849,23 @@ mod tests {
         simultaneous.failures.start_failed = true;
         let message = run(&bytes, &context(limits(), simultaneous)).expect("bounded startup cause order");
         assert_eq!(start_result(&message, "start").1.as_deref(), Some("Cancelled"));
+    }
+
+    /// Claim: Execute applies its closed executable-directive check before dependency validation.
+    /// ´claim:executor:directive-admission-is-closed´
+    /// ´test:unit:directive-admission-is-closed´
+    #[test]
+    fn directive_admission_is_closed() {
+        let context = context(limits(), start());
+        let refused = run(&request("mutation { start { absent @ifdef } }"), &context).expect("closed directive refusal");
+        assert_eq!(error_class(&refused), ("Invalid".to_owned(), None));
+        assert!(!context.dependency_validation_entered.load(Ordering::Acquire));
+
+        context.dependency_validation_entered.store(false, Ordering::Release);
+        let admitted =
+            run(&request("mutation { start { absent @skip(if: true) } }"), &context).expect("dependency validation refusal");
+        assert_eq!(error_class(&admitted), ("Invalid".to_owned(), None));
+        assert!(context.dependency_validation_entered.load(Ordering::Acquire));
     }
 
     /// Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.

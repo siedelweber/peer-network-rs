@@ -7357,6 +7357,14 @@
       "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
     },
     {
+      "operation": "pn::executor::tests::directive_admission_is_closed",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:directive-admission-is-closed",
+      "before": "Claim: Execute applies its closed executable-directive check before dependency validation.",
+      "after": "Claim: Execute applies its closed executable-directive check before dependency validation.",
+      "review": "The paired finite byte requests distinguish the adapter's own refusal from entry to dependency validation; the marker is context-local and test-only, and the result does not establish served or process behavior."
+    },
+    {
       "operation": "pn::executor::tests::lexical_walk_matches_parser",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:node:lexical-walk-matches-parser",

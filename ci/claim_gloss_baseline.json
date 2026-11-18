@@ -1563,6 +1563,7 @@
     "pn::admission::schema_refusals": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
     "pn::executor::tests::decoding_work_is_independent": "Claim: Decode work is an independent pre-dispatch ceiling; a sufficient work cap admits the same bytes.",
     "pn::executor::tests::depth_limit_precedes_expansion": "Claim: A value-head depth excess refuses before GraphQL expansion, with root depth one.",
+    "pn::executor::tests::directive_admission_is_closed": "Claim: Execute applies its closed executable-directive check before dependency validation.",
     "pn::executor::tests::lexical_walk_matches_parser": "Claim: The source walk agrees with the locked parser at CR comments, ignored BOM and escaped block quotes.",
     "pn::executor::tests::malformed_message_refuses": "Claim: Malformed transport or source syntax refuses before resolver entry while a complete neighbour dispatches.",
     "pn::executor::tests::message_error_bytes": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
