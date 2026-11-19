@@ -8,7 +8,7 @@ Edit prose in `docs/templates` and repeated facts in `docs/inputs`, then generat
 
 Run `python3 -B ci/precheck.py` before the full gate, using the gate environment and explicitly prepared checker executables: it checks registrations and structural correspondence without compiling or executing tests (`rule:buildgraph:registration-precheck`). A new tracked file needs its build-graph declaration, and its labels and citations must fit the declared owners and inventories; follow the [build-graph record](adr/024-build-graph.md) for the complete registration checks.
 
-Run `bash ci/gate.sh` from the repository root on the committed, clean tree with the tracked toolchain, Python and the linter supplied through `LINTER_BIN`; only its final `GATE-EXIT` status zero means every step passed (`gate:foundation:verification`). The pre-check does not replace this execution evidence. Keep the exact commands and requirements with their cited owners rather than copying a gate roster here.
+For the full gate, follow the [README’s verification gate](README.md) (`gate:foundation:verification`); it owns the command, environment and success criterion.
 
 ## Labels and citations · `sec:foundation:contributing-labels`
 
@@ -43,4 +43,4 @@ The table routes to statements of kind `inv` only, at their defining places. A p
 | [Host intranet](adr/022-host-intranet.md) | Record (`sec:intranet:record`) |
 | [Implementation design](docs/design/implementation.md) | Purpose (`sec:design:purpose`); Architecture (`sec:design:architecture`); Records (`sec:design:records`); Graph (`sec:design:graph`); Admission (`sec:design:admission`); Publication (`sec:design:publication`); Observability (`sec:design:observability`) |
 
-**Rule (Invariant routes)** · `rule:foundation:contributing-invariant-routes` A change that mints a statement of kind `inv` in a place not routed by this table adds its route in the same change, so a reader can reach the new statement from this guide.
+**Rule (Invariant routes)** · `rule:foundation:contributing-invariant-routes` A change that mints a statement of kind `inv` in a place not routed by this table adds its route in the same change, so a reader can reach the new statement from this guide. A change that leaves a routed place with no statement of kind `inv` removes that route in the same change, so every route still leads to an invariant statement.
