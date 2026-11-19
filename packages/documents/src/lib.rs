@@ -392,12 +392,15 @@ fn package_pins(root: &Path, dataset: &envelope::Dataset) -> Result<Vec<(PathBuf
 
 fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
     let path = Path::new(document);
+    let root_markdown = path.components().count() == 1
+        && matches!(path.components().next(), Some(std::path::Component::Normal(_)))
+        && path.extension().is_some_and(|extension| extension == "md");
     let allowed = (path.starts_with("docs") && path.extension().is_some_and(|extension| extension == "md"))
         || (path.starts_with("adr") && path.extension().is_some_and(|extension| extension == "md"))
+        || root_markdown
         || matches!(
             document,
-            "README.md"
-                | "packages/documents/README.md"
+            "packages/documents/README.md"
                 | "packages/interchange/README.md"
                 | "packages/cli-common/README.md"
                 | "packages/execwrap/README.md"

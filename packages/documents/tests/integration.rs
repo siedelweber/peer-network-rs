@@ -739,6 +739,13 @@ fn declaration_authority() -> Result<()> {
 #[test]
 fn protected_outputs() -> Result<()> {
     for document in [
+        "guide.txt",
+        "GUIDE.MD",
+        "other/GUIDE.md",
+        "docs/inputs/blocked.md",
+        "docs/datasets/blocked.md",
+        "docs/templates/blocked.md",
+        "docs/fragments/blocked.md",
         "docs/inputs/records.toml",
         "docs/datasets/result.json",
         "docs/templates/docs/result.md.j2",
@@ -757,6 +764,9 @@ fn protected_outputs() -> Result<()> {
             root.join("ci/vendor-packages.toml"),
             "[[packages]]\npath = 'vendor/new-member'\n",
         )?;
+        fs::write(root.join("docs/templates/GUIDE.md.j2"), "root guide\n")?;
+        documents::run(root, Operation::Write)?;
+        assert_eq!(fs::read_to_string(root.join("GUIDE.md"))?, "root guide\n");
         let template = root.join("docs/templates").join(format!("{document}.j2"));
         fs::create_dir_all(template.parent().ok_or("template parent")?)?;
         fs::write(template, "overwrite\n")?;
@@ -772,6 +782,7 @@ fn protected_outputs() -> Result<()> {
             assert!(error.to_string().contains(document), "{error}");
         }
         assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, "2\n");
+        assert_eq!(fs::read_to_string(root.join("GUIDE.md"))?, "root guide\n");
     }
     let directory = fixture()?;
     let root = directory.path();
@@ -779,6 +790,46 @@ fn protected_outputs() -> Result<()> {
     fs::write(root.join("docs/templates/packages/graph/README.md.j2"), "graph guide\n")?;
     documents::run(root, Operation::Write)?;
     assert_eq!(fs::read_to_string(root.join("packages/graph/README.md"))?, "graph guide\n");
+    Ok(())
+}
+
+/// Claim: Every ordinary direct-root Markdown name uses the template, census and fixed-point route.
+/// ´claim:render:root-markdown-admission´
+/// ´test:integration:root-markdown-admission´
+#[test]
+fn root_markdown_admission() -> Result<()> {
+    let directory = fixture()?;
+    let root = directory.path();
+    for (name, bytes) in [
+        ("README.md", "root readme\n"),
+        ("CONTRIBUTING.md", "root contributing\n"),
+        ("GUIDE.md", "root guide\n"),
+    ] {
+        fs::write(root.join("docs/templates").join(format!("{name}.j2")), bytes)?;
+    }
+    documents::run(root, Operation::Write)?;
+    for (name, bytes) in [
+        ("README.md", "root readme\n"),
+        ("CONTRIBUTING.md", "root contributing\n"),
+        ("GUIDE.md", "root guide\n"),
+    ] {
+        assert_eq!(fs::read_to_string(root.join(name))?, bytes);
+    }
+    git(root, &["add", "-A"])?;
+    assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
+    let census = documents::run(root, Operation::Census)?;
+    for name in ["README.md", "CONTRIBUTING.md", "GUIDE.md"] {
+        assert!(census.templates.iter().any(|item| item.document == name));
+    }
+    assert_eq!(
+        documents::run(root, Operation::Generate { check: true })?.findings,
+        Vec::<Finding>::new()
+    );
+    assert_eq!(
+        documents::run(root, Operation::Generate { check: false })?.findings,
+        Vec::<Finding>::new()
+    );
+    assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
     Ok(())
 }
 
@@ -1141,8 +1192,12 @@ fn paired_census() -> Result<()> {
     let directory = fixture()?;
     let root = directory.path();
     let stray = root.join("orphan.md");
+    let paired = root.join("docs/templates/orphan.md.j2");
+    fs::write(&paired, "unpaired\n")?;
     fs::write(&stray, "unpaired\n")?;
     git(root, &["add", "-A"])?;
+    assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
+    fs::remove_file(&paired)?;
     let error = documents::run(root, Operation::Check).expect_err("unpaired Markdown");
     assert!(error.to_string().contains("orphan.md: first-party Markdown has no template"));
     fs::remove_file(stray)?;

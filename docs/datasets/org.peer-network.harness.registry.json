@@ -1101,6 +1101,7 @@
         "documents::integration::record_row_key",
         "documents::integration::registry_relation",
         "documents::integration::release_premises",
+        "documents::integration::root_markdown_admission",
         "documents::integration::tracker_replacement_artifacts",
         "documents::integration::number_registry",
         "documents::integration::directed_number_displays",

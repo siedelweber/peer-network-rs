@@ -399,6 +399,7 @@
     "documents::integration::registry_relation": "Claim: registry counts and homonyms derive from classified rows, exclude devices, and reject duplicate or candidate pairs.",
     "documents::integration::release_premises": "Claim: both release documents refuse mismatched refresh tags, and the register refuses a changed status-absence set.",
     "documents::integration::repository_fixed_point": "Claim: the committed datasets and documents are current in consecutive read-only checks.",
+    "documents::integration::root_markdown_admission": "",
     "documents::integration::runtime_error": "Claim: a malformed input makes the binary exit one with no result and a JSON tracing error naming its path.",
     "documents::integration::stale_rendering": "Claim: stale documents fail checking and writing repairs them while reporting a finding.",
     "documents::integration::template_fragments": "Claim: included and imported fragments share dataset tracking, emit no separate output, and preserve raw delimiters.",

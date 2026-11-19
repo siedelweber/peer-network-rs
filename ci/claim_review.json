@@ -1946,6 +1946,14 @@
       "review": "The existing two full fixed-point passes remain. A private copy of the retained workload input and dataset first passes generation-check, then changing one digit of one retained sample produces exactly StaleDataset. The shared checkout and measured values remain untouched. Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
     },
     {
+      "operation": "documents::integration::root_markdown_admission",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:root-markdown-admission",
+      "before": "",
+      "after": "Claim: Every ordinary direct-root Markdown name uses the template, census and fixed-point route.",
+      "review": "Three distinct root names use literal templates, exact output bytes, tracked census, both generation modes and a clean check; the fixture establishes the ordinary root route without a special-name list."
+    },
+    {
       "operation": "documents::integration::stale_rendering",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:render:stale-rendering",
