@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Refusal",
+    "package": "pn",
+    "path": "packages/node/src/admission.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)] enum Refusal { # [cfg (test)] Envelope , # [cfg (test)] Embedding , SchemaSyntax , SchemaShape , RegisterSyntax , UnknownKey , RegisterShape , Agreement , Capacity , # [cfg (test)] Pending , # [cfg (test)] Unserved , }"
+  }
+}

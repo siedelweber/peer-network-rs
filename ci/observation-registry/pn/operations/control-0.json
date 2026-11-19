@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "pn::packages/node/src/executor.rs::executor::ExecutionContext::served",
-    "body": "{ # [cfg (test)] match crate :: admission :: embedded_pending () { Ok (true) => Err (EntryError :: LimitsUnadmitted) , Ok (false) | Err (()) => Err (EntryError :: Configuration) , } # [cfg (not (test))] { Err (EntryError :: LimitsUnadmitted) } }",
+    "body": "{ drop (admitted_source :: embedded_limits () . map_err (| () | EntryError :: Configuration) ?) ; Err (EntryError :: Configuration) }",
     "class_decision": "node-control",
-    "item_premise": "The control entry bounds its input and result. This item either is that boundary or inherits it as trait plumbing without a separate externally callable byte entry.",
+    "item_premise": "The no-argument constructor validates the exact embedded register but retains Configuration; only the controller checked-bootstrap path selects a context, and both paths record their public result.",
     "assessments": {
       "full_recording": "node-control-full_recording",
       "secret_flow": "node-control-secret_flow",

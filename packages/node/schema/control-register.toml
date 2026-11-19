@@ -1,0 +1,60 @@
+role = "control"
+schema_namespace = "org.peer-network.test.api-control-schema"
+schema_version = "1.0.0"
+query_root = "ControlQuery"
+query_fields = ["unavailable:Boolean"]
+mutation_root = "ControlMutation"
+query_admission = "refuse-before-resolver"
+introspection = "isolated-conformance-only"
+
+[[operations]]
+name = "start"
+kind = "mutation"
+arguments = []
+defaults = []
+result = "ControlStartResult!"
+fields = ["ready:Boolean!", "edition:String!", "failure:String"]
+success = "ready=true; failure=null"
+refusal = "ready=false; failure=one-closed-name"
+failures = ["BootstrapInvalid", "EditionUnsupported", "ResourceLimit", "Cancelled", "StartFailed"]
+authorization = "in-process-entry; no-channel; no-control-credential"
+bootstrap = "embedding-public-context; no-message-arguments"
+pagination = "not-applicable:no-list-result"
+cancellation = "before-ready; first-terminal-cause; absolute-deadline"
+argument_nullability = "not-applicable:no-arguments"
+work_weights = { status = "admitted", value = 1, unit = "work-per-start" }
+
+[failure_conditions]
+BootstrapInvalid = "public-bootstrap-validation"
+EditionUnsupported = "unsupported-lifecycle-edition"
+ResourceLimit = "resource-or-execution-deadline-exhausted"
+Cancelled = "cancellation-before-readiness"
+StartFailed = "remaining-checked-shell-startup-failure"
+
+[ceilings]
+schema_source = { status = "admitted", value = 246, unit = "utf8-bytes" }
+register_source = { status = "admitted", value = 3107, unit = "utf8-bytes" }
+graphql_source = { status = "admitted", value = 512, unit = "utf8-bytes" }
+transport = { status = "admitted", value = 4096, unit = "bytes" }
+decoded_bytes = { status = "admitted", value = 65536, unit = "bytes" }
+decoded_items = { status = "admitted", value = 128, unit = "items" }
+cbor_nesting = { status = "admitted", value = 8, unit = "levels" }
+input_nesting = { status = "admitted", value = 8, unit = "levels" }
+decoding_work = { status = "admitted", value = 65536, unit = "decode-work" }
+lexical_tokens = { status = "admitted", value = 128, unit = "tokens" }
+source_nesting = { status = "admitted", value = 8, unit = "levels" }
+selection_depth = { status = "admitted", value = 2, unit = "levels" }
+root_selections = { status = "admitted", value = 1, unit = "selections" }
+fields = { status = "admitted", value = 16, unit = "selections" }
+aliases = { status = "admitted", value = 8, unit = "aliases" }
+fragment_work = { status = "admitted", value = 8, unit = "occurrences" }
+resolver_work = { status = "admitted", value = 1, unit = "work" }
+response = { status = "admitted", value = 4096, unit = "bytes" }
+concurrency = { status = "admitted", value = 1, unit = "executions" }
+execution = { status = "admitted", value = 1000000000, unit = "nanoseconds" }
+cancellation_drain = { status = "admitted", value = 1000000000, unit = "nanoseconds" }
+shell_start = { status = "admitted", value = 5000000000, unit = "nanoseconds" }
+shell_stop = { status = "admitted", value = 5000000000, unit = "nanoseconds" }
+list_size = "not-applicable:no-list-type"
+page_size = "not-applicable:no-pagination"
+http_body = "not-applicable:no-http-listener"

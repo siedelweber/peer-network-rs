@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Shape",
+    "package": "pn",
+    "path": "packages/node/src/admission.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)] struct Shape { query : String , mutation : String , objects : BTreeMap < String , Vec < String > > , }"
+  }
+}

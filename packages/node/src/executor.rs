@@ -22,7 +22,8 @@ use std::{
     time::{Duration, Instant},
 };
 
-#[cfg(test)]
+use crate::admission as admitted_source;
+
 const EDITION: &str =
     "schema=org.peer-network.test.api-control-schema@1.0.0;register=org.peer-network.test.api-control-register@1.0.0";
 
@@ -205,26 +206,77 @@ impl ExecutionContext {
         ret
     )]
     pub fn served() -> Result<Self, EntryError> {
-        #[cfg(test)]
-        match crate::admission::embedded_pending() {
-            Ok(true) => Err(EntryError::LimitsUnadmitted),
-            Ok(false) | Err(()) => Err(EntryError::Configuration),
-        }
-        #[cfg(not(test))]
-        {
-            Err(EntryError::LimitsUnadmitted)
-        }
+        drop(admitted_source::embedded_limits().map_err(|()| EntryError::Configuration)?);
+        Err(EntryError::Configuration)
     }
 
     pub(crate) fn checked_from_bootstrap(
         bootstrap: &crate::lifecycle::CheckedBootstrap,
         cancelled: Arc<AtomicBool>,
     ) -> Result<Self, EntryError> {
-        let _selection = bootstrap.edition();
-        drop(cancelled);
-        // No generated register exists in this build. This is the sole checked
-        // construction route once that artifact and its admitted limits exist.
-        Err(EntryError::LimitsUnadmitted)
+        let admitted = admitted_source::embedded_limits().map_err(|()| EntryError::Configuration)?;
+        let value = |name| admitted.value(name).map_err(|()| EntryError::Configuration);
+        let limits = Limits {
+            #[cfg(test)]
+            schema_source: value("schema_source")?,
+            #[cfg(test)]
+            register_source: value("register_source")?,
+            graphql_source: value("graphql_source")?,
+            transport: value("transport")?,
+            decoded_bytes: value("decoded_bytes")?,
+            decoded_items: value("decoded_items")?,
+            cbor_nesting: value("cbor_nesting")?,
+            input_nesting: value("input_nesting")?,
+            decoding_work: value("decoding_work")?,
+            lexical_tokens: value("lexical_tokens")?,
+            source_nesting: value("source_nesting")?,
+            selection_depth: value("selection_depth")?,
+            root_selections: value("root_selections")?,
+            fields: value("fields")?,
+            aliases: value("aliases")?,
+            fragment_work: value("fragment_work")?,
+            resolver_work: value("resolver_work")?,
+            response: value("response")?,
+            concurrency: value("concurrency")?,
+            execution: value("execution")?,
+            cancellation_drain: value("cancellation_drain")?,
+            shell_start: value("shell_start")?,
+            shell_stop: value("shell_stop")?,
+            start_weight: admitted.start_weight(),
+        };
+        let start = StartInputs {
+            selected_edition: bootstrap.edition().to_owned(),
+            #[cfg(test)]
+            edition_supported: true,
+            #[cfg(test)]
+            bootstrap_valid: true,
+            #[cfg(test)]
+            cancelled: false,
+            #[cfg(test)]
+            failures: StartFailures {
+                resource_exhausted: false,
+                start_failed: false,
+            },
+            #[cfg(test)]
+            count: Arc::new(AtomicUsize::new(0)),
+        };
+        Ok(Self {
+            limits,
+            start,
+            cancelled,
+            active: AtomicUsize::new(0),
+            edition: EDITION.to_owned(),
+            #[cfg(test)]
+            dependency_validation_entered: AtomicBool::new(false),
+        })
+    }
+
+    #[cfg(test)]
+    pub(crate) fn pending_unserved() -> Result<(), EntryError> {
+        match crate::admission::synthetic_pending(include_str!("../schema/control-register-draft.toml")) {
+            Ok(true) => Err(EntryError::LimitsUnadmitted),
+            Ok(false) | Err(()) => Err(EntryError::Configuration),
+        }
     }
 
     #[cfg(test)]
@@ -889,6 +941,7 @@ struct ControlStartResult {
 
 #[Object(name = "ControlMutation")]
 impl ControlMutation {
+    #[doc = "Justified: The private start decision inherits the enclosing byte execution span and returns its closed result through that entry."]
     async fn start(&self, context: &Context<'_>) -> ControlStartResult {
         let run = context.data_unchecked::<StartRun>();
         #[cfg(test)]
@@ -1289,6 +1342,33 @@ mod tests {
         }
     }
 
+    fn fixed_limits() -> Limits {
+        let admitted = crate::admission::embedded_limits().expect("completed embedded register");
+        let value = |name| admitted.value(name).expect("declared count cap");
+        let mut caps = limits();
+        caps.schema_source = value("schema_source");
+        caps.register_source = value("register_source");
+        caps.graphql_source = value("graphql_source");
+        caps.transport = value("transport");
+        caps.decoded_bytes = value("decoded_bytes");
+        caps.decoded_items = value("decoded_items");
+        caps.cbor_nesting = value("cbor_nesting");
+        caps.input_nesting = value("input_nesting");
+        caps.decoding_work = value("decoding_work");
+        caps.lexical_tokens = value("lexical_tokens");
+        caps.source_nesting = value("source_nesting");
+        caps.selection_depth = value("selection_depth");
+        caps.root_selections = value("root_selections");
+        caps.fields = value("fields");
+        caps.aliases = value("aliases");
+        caps.fragment_work = value("fragment_work");
+        caps.resolver_work = value("resolver_work");
+        caps.response = value("response");
+        caps.concurrency = value("concurrency");
+        caps.start_weight = admitted.start_weight();
+        caps
+    }
+
     fn start() -> StartInputs {
         StartInputs {
             selected_edition: EDITION.to_owned(),
@@ -1455,6 +1535,12 @@ mod tests {
     fn start_through_bytes() {
         let state = start();
         let calls = state.count.clone();
+        let fixed_state = start();
+        let fixed_calls = fixed_state.count.clone();
+        let fixed = context(fixed_limits(), fixed_state);
+        let message = run(&request("mutation { start { ready edition failure } }"), &fixed).expect("fixed start response");
+        assert_eq!(start_result(&message, "start"), (true, None));
+        assert_eq!(fixed_calls.load(Ordering::Acquire), 1, "fixed call dispatches once");
         let context = context(limits(), state);
         let message = run(&request("mutation { start { ready edition failure } }"), &context).expect("start response");
         assert_eq!(start_result(&message, "start"), (true, None));
@@ -1659,12 +1745,16 @@ mod tests {
         assert_eq!(deep_calls.load(Ordering::Acquire), 0);
     }
 
-    /// Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.
+    /// Claim: Each pending synthetic register value and the private pending source refuse context construction without serving an edition.
     /// ´claim:executor:pending-configuration-refuses´
     /// ´test:unit:pending-configuration-refuses´
     #[test]
     fn pending_configuration_refuses() {
-        assert!(matches!(ExecutionContext::served(), Err(EntryError::LimitsUnadmitted)));
+        assert!(matches!(
+            ExecutionContext::pending_unserved(),
+            Err(EntryError::LimitsUnadmitted)
+        ));
+        assert!(matches!(ExecutionContext::served(), Err(EntryError::Configuration)));
         let complete = DRAFT.replace("status = \"not-yet-admitted\"", "status = \"admitted\", value = 1");
         let marker = "status = \"admitted\", value = 1";
         let slots = complete.match_indices(marker).count();
@@ -1830,7 +1920,7 @@ mod tests {
             state.cancelled = kind == 3;
             state.failures.resource_exhausted = kind == 4;
             state.failures.start_failed = kind == 5;
-            let message = run(&bytes, &context(limits(), state)).expect("produced result");
+            let message = run(&bytes, &context(fixed_limits(), state)).expect("produced result");
             let (ready, failure) = start_result(&message, "start");
             assert_eq!(ready, failure.is_none());
             assert_eq!(failure.as_deref(), expected);
@@ -1879,10 +1969,10 @@ mod tests {
         const RESOURCE_LIMIT: &[u8] = b"\xa1\x66errors\x81\xa2\x67message\x78\x38Response cannot be completed within the declared limits.\x6aextensions\xa3\x65class\x6dResourceLimit\x67edition\x78\x6fschema=org.peer-network.test.api-control-schema@1.0.0;register=org.peer-network.test.api-control-register@1.0.0\x67ceiling\x68response";
         const CANCELLED: &[u8] = b"\xa1\x66errors\x81\xa2\x67message\x78\x26Request was cancelled before dispatch.\x6aextensions\xa3\x65class\x69Cancelled\x67edition\x78\x6fschema=org.peer-network.test.api-control-schema@1.0.0;register=org.peer-network.test.api-control-register@1.0.0\x67ceiling\xf6";
         let bytes = request("mutation { start { ready edition failure } }");
-        let malformed = run(&bytes[..bytes.len() - 1], &context(limits(), start())).expect("malformed response");
+        let malformed = run(&bytes[..bytes.len() - 1], &context(fixed_limits(), start())).expect("malformed response");
         assert_eq!(malformed.as_bytes(), MALFORMED);
         let invalid_input = Value::Map(Map::new(std::iter::empty()).expect("empty map")).to_canonical_bytes();
-        let invalid = run(&invalid_input, &context(limits(), start())).expect("invalid response");
+        let invalid = run(&invalid_input, &context(fixed_limits(), start())).expect("invalid response");
         assert_eq!(invalid.as_bytes(), INVALID);
         let state = start();
         let invalid_calls = state.count.clone();
@@ -1918,16 +2008,111 @@ mod tests {
             assert_eq!(invalid.as_bytes(), INVALID, "validation case keeps Invalid bytes");
             assert_eq!(invalid_calls.load(Ordering::Acquire), 0, "invalid request never calls start");
         }
-        let unsupported = run(&request("mutation { inspect }"), &context(limits(), start())).expect("unsupported response");
+        let unsupported = run(&request("mutation { inspect }"), &context(fixed_limits(), start())).expect("unsupported response");
         assert_eq!(unsupported.as_bytes(), UNSUPPORTED);
         let mut small = limits();
         small.response = 800;
         let exhausted = run(&request(&large_query(50)), &context(small, start())).expect("replacement response");
         assert_eq!(exhausted.as_bytes(), RESOURCE_LIMIT);
-        let cancelled = context(limits(), start());
+        let cancelled = context(fixed_limits(), start());
         cancelled.cancelled.store(true, Ordering::Release);
         let cancelled = run(&bytes, &cancelled).expect("cancelled response");
         assert_eq!(cancelled.as_bytes(), CANCELLED);
+    }
+
+    pub(super) fn register_fixed_messages_fit_inner() {
+        let caps = fixed_limits();
+        let context = context(caps.clone(), start());
+        let read_fixed = |bytes: &[u8]| {
+            let mut usage = TransportUsage::default();
+            Value::from_transport_bytes(bytes, caps.transport_limits(), &mut usage).expect("six-budget read-back")
+        };
+        let query = "mutation { start { ready edition failure } }";
+        let bytes = request(query);
+        assert!(bytes.len() <= caps.transport);
+        assert_eq!(
+            read_fixed(&bytes),
+            bindings(vec![("query", Value::Text(Text::from(query.to_owned())))]),
+            "fixed request tree"
+        );
+        for failure in [
+            None,
+            Some("BootstrapInvalid"),
+            Some("EditionUnsupported"),
+            Some("ResourceLimit"),
+            Some("Cancelled"),
+            Some("StartFailed"),
+        ] {
+            let ready = failure.is_none();
+            let graph = GraphValue::from_json(serde_json::json!({
+                "start": { "ready": ready, "edition": EDITION, "failure": failure }
+            }))
+            .expect("fixed GraphQL fixture");
+            let response = Response::new(graph);
+            let message = present_result(&context, &response).expect("declared presentation storage");
+            let expected = bindings(vec![(
+                "data",
+                bindings(vec![(
+                    "start",
+                    bindings(vec![
+                        ("ready", Value::Bool(ready)),
+                        ("edition", Value::Text(Text::from(EDITION.to_owned()))),
+                        (
+                            "failure",
+                            failure.map_or(Value::Null, |name| Value::Text(Text::from(name.to_owned()))),
+                        ),
+                    ]),
+                )]),
+            )]);
+            assert_eq!(read_fixed(message.as_bytes()), expected, "closed start outcome {failure:?}");
+        }
+        let cases = [
+            (Class::Malformed, None),
+            (Class::Invalid, None),
+            (Class::Cancelled, None),
+            (Class::Unsupported, None),
+            (Class::ResourceLimit, None),
+            (Class::ResourceLimit, Some("response")),
+            (Class::ResourceLimit, Some("execution")),
+        ];
+        for (class, ceiling) in cases.into_iter().chain(
+            [
+                "transport",
+                "decoded_bytes",
+                "decoded_items",
+                "cbor_nesting",
+                "input_nesting",
+                "decoding_work",
+                "graphql_source",
+                "lexical_tokens",
+                "source_nesting",
+                "selection_depth",
+                "root_selections",
+                "fields",
+                "aliases",
+                "fragment_work",
+                "resolver_work",
+                "concurrency",
+            ]
+            .into_iter()
+            .map(|ceiling| (Class::Unsupported, Some(ceiling))),
+        ) {
+            let message = present_error(&context, Refusal::new(class, ceiling)).expect("declared error presentation storage");
+            let extension = bindings(vec![
+                ("class", Value::Text(Text::from(class.name().to_owned()))),
+                ("edition", Value::Text(Text::from(EDITION.to_owned()))),
+                (
+                    "ceiling",
+                    ceiling.map_or(Value::Null, |name| Value::Text(Text::from(name.to_owned()))),
+                ),
+            ]);
+            let error = bindings(vec![
+                ("message", Value::Text(Text::from(class.message().to_owned()))),
+                ("extensions", extension),
+            ]);
+            let expected = bindings(vec![("errors", Value::Array(pn_interchange::Array::new([error])))]);
+            assert_eq!(read_fixed(message.as_bytes()), expected, "closed error {class:?} {ceiling:?}");
+        }
     }
 
     /// Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.
@@ -1977,4 +2162,13 @@ mod tests {
             Err(EntryError::ResponseLimit(EncodingError::Reservation))
         ));
     }
+}
+
+/// Claim: The fixed request and every closed result and message class fit production presentation storage and all six declared response-reader budgets with independent expected trees.
+/// ´claim:executor:register-fixed-messages-fit´
+/// ´test:unit:register-fixed-messages-fit´
+#[cfg(test)]
+#[test]
+fn register_fixed_messages_fit() {
+    tests::register_fixed_messages_fit_inner();
 }

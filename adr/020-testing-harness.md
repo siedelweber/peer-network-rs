@@ -215,7 +215,7 @@
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 11 |
 | pn-wallet::wire | active | integration | pn-wallet-rust | extended | 1 |
-| pn::unit | active | unit | pn-rust | fast | 48 |
+| pn::unit | active | unit | pn-rust | fast | 52 |
 | records-records | active | integration | pn-records-rust | fast | 20 |
 | records-verification | active | integration | pn-records-rust | fast | 20 |
 | records-workload-benchmarks | active | integration | pn-records-rust | fast | 1 |

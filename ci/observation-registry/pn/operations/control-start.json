@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/executor.rs",
+    "item": "executor::ControlMutation::start",
+    "owner": "NODE",
+    "signature": "async fn start (& self , context : & Context < '_ >) -> ControlStartResult",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-node-control",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: The private start decision inherits the enclosing byte execution span and returns its closed result through that entry.",
+      "witness": "NODE::claim:executor:start-through-bytes",
+      "boundary": "pn::packages/node/src/executor.rs::executor::execute",
+      "class_decision": "node-control"
+    }
+  },
+  "review": {
+    "operation": "pn::packages/node/src/executor.rs::executor::ControlMutation::start",
+    "body": "{ let run = context . data_unchecked :: < StartRun > () ; # [cfg (test)] run . inputs . count . fetch_add (1 , Ordering :: AcqRel) ; let edition_supported = run . inputs . selected_edition == run . edition ; # [cfg (test)] let edition_supported = edition_supported && run . inputs . edition_supported ; # [cfg (test)] let bootstrap_valid = run . inputs . bootstrap_valid ; # [cfg (not (test))] let bootstrap_valid = true ; # [cfg (test)] let forced_cancelled = run . inputs . cancelled ; # [cfg (not (test))] let forced_cancelled = false ; # [cfg (test)] let forced_resource = run . inputs . failures . resource_exhausted ; # [cfg (not (test))] let forced_resource = false ; # [cfg (test)] let forced_failure = run . inputs . failures . start_failed ; # [cfg (not (test))] let forced_failure = false ; let failure = if ! edition_supported { Some (\"EditionUnsupported\") } else if ! bootstrap_valid { Some (\"BootstrapInvalid\") } else if forced_cancelled || run . cancelled . load (Ordering :: Acquire) { Some (\"Cancelled\") } else if Instant :: now () >= run . deadline || forced_resource { Some (\"ResourceLimit\") } else if forced_failure { Some (\"StartFailed\") } else { None } ; ControlStartResult { ready : failure . is_none () , edition : run . edition . clone () , failure : failure . map (str :: to_owned) , } }",
+    "class_decision": "node-control",
+    "item_premise": "The one-start decision checks edition and the ordered supplied facts and constructs the closed result. Its private macro callsite inherits the byte-entry span; its reviewed body is pinned so a changed start path reopens the work-unit definition.",
+    "assessments": {
+      "full_recording": "node-control-full_recording",
+      "secret_flow": "node-control-secret_flow",
+      "exposure_consumers": "node-control-exposure_consumers"
+    }
+  }
+}

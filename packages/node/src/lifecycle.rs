@@ -187,10 +187,14 @@ impl EditionInspection {
         command(facts.arguments, "edition")?;
         let (edition, source) = select_edition(facts)?;
         reserved_input(facts)?;
+        let embedded_pair = format!("{SCHEMA_PREFIX}1.0.0{REGISTER_PREFIX}1.0.0");
+        let supported = edition == embedded_pair
+            && !include_bytes!("../../interchange/schema/control.cbor").is_empty()
+            && !include_bytes!("../../interchange/schema/control-register.cbor").is_empty();
         Ok(Self {
             edition: edition.to_owned(),
             source,
-            supported: false,
+            supported,
         })
     }
 
@@ -1573,7 +1577,7 @@ mod tests {
         }
     }
 
-    /// Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.
+    /// Claim: Inspection reports the selected public edition, source and embedded-roster membership without dispatch or notification, and terminal stdout refuses.
     /// ´claim:lifecycle:edition-reports-selection´
     /// ´test:unit:edition-reports-selection´
     #[test]
@@ -1585,7 +1589,7 @@ mod tests {
             (inspection.edition(), inspection.source()),
             (EDITION, EditionSource::Environment)
         );
-        assert!(!inspection.supported());
+        assert!(inspection.supported());
         let mut controller = Controller::new();
         controller.advance(Event::Prepare { at: 0 }).expect("preparation");
         assert!(matches!(
@@ -1614,13 +1618,14 @@ mod tests {
         file.file_bytes = Some(bytes.as_bytes());
         let inspection = EditionInspection::new(&file).expect("file selection");
         assert_eq!((inspection.edition(), inspection.source()), (EDITION, EditionSource::File));
+        assert!(inspection.supported());
         let mut controller = Controller::new();
         controller.advance(Event::Prepare { at: 0 }).expect("prepare");
         controller.advance(Event::PreparedInspection(inspection)).expect("inspection");
         controller.advance(Event::Installed).expect("installed");
         let actions = controller.advance(Event::Continue).expect("report");
         assert!(
-            matches!(actions.as_slice(), [Action::Complete { exit: 0, stdout: Some(PublicOutput::Inspection { edition, source: EditionSource::File, supported: false }), .. }] if edition == EDITION)
+            matches!(actions.as_slice(), [Action::Complete { exit: 0, stdout: Some(PublicOutput::Inspection { edition, source: EditionSource::File, supported: true }), .. }] if edition == EDITION)
         );
     }
 
@@ -1781,12 +1786,15 @@ mod tests {
         assert_eq!(controller.state(), State::Captured);
         let mut unsuccessful = prepared(false);
         assert!(unsuccessful.advance(Event::EndpointSetupFailed { at: 1 }).is_err());
-        assert!(matches!(
-            unsuccessful.construct_context().expect("state"),
-            Err(EntryError::LimitsUnadmitted)
-        ));
+        let pending = ExecutionContext::pending_unserved();
+        assert!(matches!(pending, Err(EntryError::LimitsUnadmitted)));
+        unsuccessful.construction_attempted = true;
         assert!(unsuccessful.advance(Event::EndpointSetupFailed { at: 1 }).is_err());
         assert_eq!(unsuccessful.state(), State::Constructing);
+        let actions = unsuccessful
+            .advance(Event::Constructed { result: pending, at: 1 })
+            .expect("pending construction refusal");
+        assert!(matches!(actions.first(), Some(Action::Close)));
         let mut constructing = prepared(true);
         constructing
             .construct_context()
@@ -1841,13 +1849,11 @@ mod tests {
     #[test]
     fn pending_lifecycle_cannot_start() {
         let mut controller = prepared(false);
-        let result = controller.construct_context().expect("constructing state");
-        assert!(matches!(result, Err(EntryError::LimitsUnadmitted)));
+        let pending = ExecutionContext::pending_unserved();
+        assert!(matches!(pending, Err(EntryError::LimitsUnadmitted)));
+        controller.construction_attempted = true;
         let actions = controller
-            .advance(Event::Constructed {
-                result: Err(EntryError::LimitsUnadmitted),
-                at: 1,
-            })
+            .advance(Event::Constructed { result: pending, at: 1 })
             .expect("construction refusal");
         assert!(matches!(actions.first(), Some(Action::Close)));
         assert!(!actions.iter().any(|a| matches!(a, Action::Dispatch(_) | Action::Notify(_))));

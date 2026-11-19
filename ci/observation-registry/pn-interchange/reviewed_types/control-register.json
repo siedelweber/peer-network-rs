@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "control_register::Refusal",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_register.rs",
+    "syntax": "# [doc = \" Refusal of canonical document membership or the closed register theory.\"] # [derive (Debug , thiserror :: Error)] # [non_exhaustive] pub enum Refusal { # [doc = \" The complete original bytes are not a canonical document.\"] # [error (\"control register document: {0}\")] Document (# [from] EnvelopeError) , # [doc = \" Another role cannot supply this register.\"] # [error (\"expected the control register namespace\")] Role , # [doc = \" Only the assigned major/minor is implemented; patch is unconstrained.\"] # [error (\"expected control register major one and minor zero\")] Edition , # [doc = \" Exactly key two with text is required.\"] # [error (\"expected exactly one text content field at key two\")] Content , }"
+  }
+}

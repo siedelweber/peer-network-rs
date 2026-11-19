@@ -1,7 +1,9 @@
 //! Closed control schema envelope and exact text carriage.
 //! (´[ROOT-dec:api:schema]´)
 
-use pn_interchange::{Document, Theory, control_schema, satisfies};
+use pn_interchange::{
+    Content, ContentKey, Document, Envelope, NamespaceLabel, Theory, Value, Version, control_register, control_schema, satisfies,
+};
 
 #[path = "../examples/control_schema.rs"]
 mod generator;
@@ -156,6 +158,70 @@ fn envelope_refusals() {
         let closed = Document::from_canonical_bytes(&bytes).is_ok_and(|document| satisfies(&document, &theory).holds());
         assert_eq!(result.is_ok(), closed, "closed theory agrees for {}", row["name"]);
     }
+
+    assert_register_refusals();
+}
+
+fn assert_register_refusals() {
+    let register_theory =
+        Theory::parse(r#"e = {0 => "org.peer-network.test.api-control-register", 1 => [1, 0, uint], 2 => tstr}"#)
+            .expect("admitted register theory");
+    let document = |role: &str, version: Version, content: Content| {
+        Document::new(
+            Envelope::new(NamespaceLabel::parse(role).expect("assigned role"), version),
+            content,
+        )
+        .to_canonical_bytes()
+    };
+    let text = || {
+        let mut content = Content::new();
+        content.insert(
+            ContentKey::new(2).expect("source key"),
+            Value::Text("source".to_owned().into()),
+        );
+        content
+    };
+    let mut wrong_value = Content::new();
+    wrong_value.insert(ContentKey::new(2).expect("source key"), Value::Bool(true));
+    let cases = [
+        ("role", document(control_schema::NAMESPACE, Version::new(1, 0, 0), text())),
+        (
+            "edition",
+            document(control_register::NAMESPACE, Version::new(2, 0, 0), text()),
+        ),
+        (
+            "content",
+            document(control_register::NAMESPACE, Version::new(1, 0, 0), Content::new()),
+        ),
+        (
+            "content",
+            document(control_register::NAMESPACE, Version::new(1, 0, 0), wrong_value),
+        ),
+    ];
+    for (expected, bytes) in cases {
+        let refusal = control_register::decode(&bytes).expect_err("closed register refusal");
+        let actual = match refusal {
+            control_register::Refusal::Role => "role",
+            control_register::Refusal::Edition => "edition",
+            control_register::Refusal::Content => "content",
+            other => panic!("unexpected register refusal: {other:?}"),
+        };
+        assert_eq!(actual, expected);
+        let candidate = Document::from_canonical_bytes(&bytes).expect("canonical refusal vector");
+        assert!(
+            !satisfies(&candidate, &register_theory).holds(),
+            "closed theory refuses {expected}"
+        );
+    }
+    assert!(matches!(
+        control_register::decode(&[0xff]),
+        Err(control_register::Refusal::Document(_))
+    ));
+    let admitted = include_bytes!("../schema/control-register.cbor");
+    let source = include_str!("../../node/schema/control-register.toml");
+    assert_eq!(control_register::decode(admitted).expect("committed register"), source);
+    let accepted = Document::from_canonical_bytes(admitted).expect("canonical register");
+    assert!(satisfies(&accepted, &register_theory).holds());
 }
 
 /// Claim: Conformance retains every accepted corpus text byte, including control characters, distinct Unicode spellings, LF, CR, CRLF and absent or present terminal newlines.

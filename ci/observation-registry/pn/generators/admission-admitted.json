@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "admission::Admitted",
+    "kind": "derive",
+    "package": "pn",
+    "path": "packages/node/src/admission.rs",
+    "syntax": "# [derive (Debug)]",
+    "expansion_review": "The exact derive syntax and containing type are bound to this review. Generated formatting and comparison support runs inside the checked admission path; changed syntax requires renewed review.",
+    "class_decision": "node-control"
+  }
+}

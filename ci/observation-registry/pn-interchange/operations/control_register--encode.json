@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_register.rs",
+    "item": "control_register::encode",
+    "owner": "INTERCHANGE",
+    "signature": "fn encode (source : & str) -> Result < Vec < u8 > , EnvelopeError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-001"
+  },
+  "review": {
+    "operation": "pn-interchange::packages/interchange/src/control_register.rs::control_register::encode",
+    "body": "{ let label = NamespaceLabel :: parse (NAMESPACE) . map_err (EnvelopeError :: BadLabel) ? ; let mut content = Content :: new () ; content . insert (ContentKey :: new (2) ? , Value :: Text (source . to_owned () . into ())) ; Ok (Document :: new (Envelope :: new (label , Version :: new (1 , 0 , 0)) , content) . to_canonical_bytes ()) }",
+    "class_decision": "public-interchange",
+    "item_premise": "The complete register source and original canonical envelope bytes are public and recorded with the result or typed refusal. Exact role, edition and content checks establish carriage only; capacity agreement remains with the node admission reader.",
+    "assessments": {
+      "full_recording": "review-066",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

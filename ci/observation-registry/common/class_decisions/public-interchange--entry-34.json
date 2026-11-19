@@ -49,6 +49,8 @@
         "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::implicit_reaches",
         "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::is_restrained",
         "pn-interchange::packages/interchange/src/cddl/restraint.rs::cddl::restraint::RestraintReport::provisions",
+        "pn-interchange::packages/interchange/src/control_register.rs::control_register::decode",
+        "pn-interchange::packages/interchange/src/control_register.rs::control_register::encode",
         "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_bytes",
         "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_prefix",
         "pn-interchange::packages/interchange/src/decode.rs::decode::Value::validate_canonical_bytes",

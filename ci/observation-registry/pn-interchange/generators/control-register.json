@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "control_register::Refusal",
+    "kind": "derive",
+    "package": "pn-interchange",
+    "path": "packages/interchange/src/control_register.rs",
+    "syntax": "# [derive (Debug , thiserror :: Error)]",
+    "class_decision": "public-interchange",
+    "expansion_review": "Debug and Error derive public structural register-envelope refusals only. Nested envelope errors carry public bytes and offsets, with no secret carrier or second codec generated."
+  }
+}

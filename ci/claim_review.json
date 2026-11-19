@@ -5712,7 +5712,7 @@
       "claim": "INTERCHANGE::claim:documents:control-envelope-refusals",
       "before": "",
       "after": "Claim: Robustness compares each original corpus input with its named refusal and the closed theory, including other roles, editions, content shapes and malformed document bytes.",
-      "review": "Finite original-byte controls establish only the named carriage property. Independent Python framing is checked by the hash audit, not by a Rust subprocess; no SDL parser, executable schema, supported operation or served edition is inferred."
+      "review": "Finite original-byte controls establish the schema corpus refusals and the register role, edition and content refusals with a separate closed-theory comparison. Independent Python framing is checked by the hash audit; no SDL parser, executable schema, supported operation or served edition is inferred."
     },
     {
       "operation": "pn-interchange::control_schema::source_record_agreement",
@@ -7373,12 +7373,36 @@
       "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
     },
     {
+      "operation": "pn::admission::register_generation_requires_complete_source",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-generation-requires-complete-source",
+      "before": "Claim: Generation carries exact completed source while a pending or synthetic admitted draft cannot select the embedded production register.",
+      "after": "Claim: Generation carries exact completed source while a pending or synthetic admitted draft cannot select the embedded production register.",
+      "review": "The private pending and synthetic statuses refuse, while canonical encode/decode and the embedded exact source agree; the test does not admit an alternate register."
+    },
+    {
       "operation": "pn::admission::register_metadata",
       "path": "packages/node/src/admission.rs",
       "claim": "NODE::claim:admission:register-metadata-is-closed",
       "before": "Claim: Robustness refuses missing members, wrong types, reordered failure rows and invalid status, unit, applicability or value combinations without treating pending as unlimited.",
       "after": "Claim: Robustness refuses missing members, wrong types, reordered failure rows and invalid status, unit, applicability or value combinations without treating pending as unlimited.",
       "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::admission::register_source_least_bound",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-source-least-bound",
+      "before": "Claim: Self-inclusive register sizing reaches the least positive fitting value across decimal-width boundaries.",
+      "after": "Claim: Self-inclusive register sizing reaches the least positive fitting value across decimal-width boundaries.",
+      "review": "The finite serializer checks the 1, 3104, 3107, 3107 sequence, final bytes and each smaller decimal-width interval; it is a source-sizing witness, not an elapsed bound."
+    },
+    {
+      "operation": "pn::admission::register_start_cost_agreement",
+      "path": "packages/node/src/admission.rs",
+      "claim": "NODE::claim:admission:register-start-cost-agreement",
+      "before": "Claim: A completed register refuses below the one-start work charge and admits equal or greater synthetic capacity with other fields valid.",
+      "after": "Claim: A completed register refuses below the one-start work charge and admits equal or greater synthetic capacity with other fields valid.",
+      "review": "The below, equal and above synthetic rows exercise the general work-capacity predicate separately from the exact initial table; only the embedded table selects production."
     },
     {
       "operation": "pn::admission::register_syntax",
@@ -7469,6 +7493,14 @@
       "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
     },
     {
+      "operation": "pn::executor::register_fixed_messages_fit",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:register-fixed-messages-fit",
+      "before": "Claim: The fixed request and every closed result and message class fit production presentation storage and all six declared response-reader budgets with independent expected trees.",
+      "after": "Claim: The fixed request and every closed result and message class fit production presentation storage and all six declared response-reader budgets with independent expected trees.",
+      "review": "The fixed request and authored expected trees exercise production presentation and the shared six-budget reader with declared counts; no resolver or elapsed measurement is used."
+    },
+    {
       "operation": "pn::executor::tests::decoding_work_is_independent",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:decoding-work-is-independent",
@@ -7514,15 +7546,15 @@
       "claim": "NODE::claim:executor:message-error-bytes",
       "before": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
       "after": "Claim: Five closed classes and validation defects retain exact literal message bytes and ordered members.",
-      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
+      "review": "The fixed-call cases use the embedded declared count caps with explicit finite unserved time allowances; broader profile cases keep their separate finite fixture caps and the original one-process claim."
     },
     {
       "operation": "pn::executor::tests::pending_configuration_refuses",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:pending-configuration-refuses",
       "before": "Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.",
-      "after": "Claim: Each pending synthetic register value and the embedded pending draft refuse context construction without serving an edition.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "after": "Claim: Each pending synthetic register value and the private pending source refuse context construction without serving an edition.",
+      "review": "The private unserved pending source returns LimitsUnadmitted after production checked construction becomes available; synthetic rows keep their per-slot pending refusal and no edition is served by this test."
     },
     {
       "operation": "pn::executor::tests::reservation_limit_precedes_work",
@@ -7554,7 +7586,7 @@
       "claim": "NODE::claim:executor:result-invariant",
       "before": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
       "after": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
-      "review": "Finite one-process test-written control; the assertion witnesses only the named executor behavior and admits no served ceiling."
+      "review": "The fixed-call cases use the embedded declared count caps with explicit finite unserved time allowances; broader profile cases keep their separate finite fixture caps and the original one-process claim."
     },
     {
       "operation": "pn::executor::tests::start_through_bytes",
@@ -7562,7 +7594,7 @@
       "claim": "NODE::claim:executor:start-through-bytes",
       "before": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
       "after": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
-      "review": "Finite test-written input witnesses the named control admission and projection profile under explicit unserved caps; no measured ceiling or served edition is inferred."
+      "review": "The fixed-call cases use the embedded declared count caps with explicit finite unserved time allowances; broader profile cases keep their separate finite fixture caps and the original one-process claim."
     },
     {
       "operation": "pn::executor::tests::unsupported_operation_refuses",
@@ -7633,8 +7665,8 @@
       "path": "packages/node/src/lifecycle.rs",
       "claim": "NODE::claim:lifecycle:edition-reports-selection",
       "before": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
-      "after": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
-      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+      "after": "Claim: Inspection reports the selected public edition, source and embedded-roster membership without dispatch or notification, and terminal stdout refuses.",
+      "review": "The one-process control uses supplied public facts and the build's embedded pair to witness membership and the terminal refusal; it does not claim OS binding, limit revalidation or successful start."
     },
     {
       "operation": "pn::lifecycle::tests::entry_failures_retire",
@@ -7658,7 +7690,7 @@
       "claim": "NODE::claim:lifecycle:lifecycle-transitions-are-closed",
       "before": "Claim: Unlisted and duplicate transitions refuse without effects, while a driver fault enters retirement once.",
       "after": "Claim: Unlisted and duplicate transitions and a second construction in Constructing refuse without effects, while a driver fault enters retirement once.",
-      "review": "The one-process control refuses EndpointSetupFailed before construction, after a successful Constructed transition and as a duplicate in retirement, keeping the state and cause unchanged on the post-construction refusal; supplied facts and finite test caps establish no OS binding or admitted measurements."
+      "review": "The one-process control feeds the private pending source into unsuccessful construction, refuses EndpointSetupFailed before construction and after Constructed success, refuses a second construction and duplicate retirement, and keeps state and cause unchanged on the refused events."
     },
     {
       "operation": "pn::lifecycle::tests::notification_contract",
@@ -7674,7 +7706,7 @@
       "claim": "NODE::claim:lifecycle:pending-lifecycle-cannot-start",
       "before": "Claim: A pending build-owned register refuses construction before any byte entry or notification and yields runtime failure with empty stdout.",
       "after": "Claim: A pending build-owned register refuses construction before any byte entry or notification and yields runtime failure with empty stdout.",
-      "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+      "review": "The private pending source supplies the constructed-error event, which retires without dispatch or notification; the production checked constructor is separately admitted."
     },
     {
       "operation": "pn::lifecycle::tests::presentation_refusal_never_notifies",

@@ -1,5 +1,5 @@
-//! Build-owned reader admission; no served execution configuration is admitted.
-//! (´verif:node:admission´)
+// Build-owned schema and register admission for the checked construction route.
+// (´verif:node:admission´)
 
 use async_graphql_parser::{
     parse_schema,
@@ -9,14 +9,17 @@ use std::collections::{BTreeMap, BTreeSet};
 use toml::Value;
 
 const ARTIFACT: &[u8] = include_bytes!("../../interchange/schema/control.cbor");
-#[cfg(test)]
 const SOURCE: &str = include_str!("../../interchange/schema/control.graphql");
+const REGISTER_SOURCE: &str = include_str!("../schema/control-register.toml");
+const REGISTER_ARTIFACT: &[u8] = include_bytes!("../../interchange/schema/control-register.cbor");
 #[cfg(test)]
 const DRAFT: &str = include_str!("../schema/control-register-draft.toml");
 
 #[derive(Debug, PartialEq, Eq)]
 enum Refusal {
+    #[cfg(test)]
     Envelope,
+    #[cfg(test)]
     Embedding,
     SchemaSyntax,
     SchemaShape,
@@ -24,6 +27,7 @@ enum Refusal {
     UnknownKey,
     RegisterShape,
     Agreement,
+    Capacity,
     #[cfg(test)]
     Pending,
     #[cfg(test)]
@@ -314,16 +318,133 @@ fn agree(source: &str, draft: &str) -> Result<bool, Refusal> {
     Ok(pending)
 }
 
+const DECLARED: [(&str, i64); 23] = [
+    ("schema_source", 246),
+    ("register_source", 3107),
+    ("graphql_source", 512),
+    ("transport", 4096),
+    ("decoded_bytes", 65536),
+    ("decoded_items", 128),
+    ("input_nesting", 8),
+    ("cbor_nesting", 8),
+    ("decoding_work", 65536),
+    ("lexical_tokens", 128),
+    ("source_nesting", 8),
+    ("selection_depth", 2),
+    ("root_selections", 1),
+    ("fields", 16),
+    ("aliases", 8),
+    ("fragment_work", 8),
+    ("resolver_work", 1),
+    ("response", 4096),
+    ("concurrency", 1),
+    ("execution", 1_000_000_000),
+    ("cancellation_drain", 1_000_000_000),
+    ("shell_start", 5_000_000_000),
+    ("shell_stop", 5_000_000_000),
+];
+
+#[derive(Debug)]
+pub(super) struct Admitted {
+    values: BTreeMap<String, usize>,
+    start_weight: usize,
+}
+
+impl Admitted {
+    pub(super) fn value(&self, name: &str) -> Result<usize, ()> {
+        self.values.get(name).copied().ok_or(())
+    }
+
+    pub(super) fn start_weight(&self) -> usize {
+        self.start_weight
+    }
+}
+
+fn capacities(source: &str) -> Result<Admitted, Refusal> {
+    if agree(SOURCE, source)? {
+        return Err(Refusal::Capacity);
+    }
+    let table = source.parse::<toml::Table>().map_err(|_| Refusal::RegisterSyntax)?;
+    let ceilings = table["ceilings"].as_table().ok_or(Refusal::RegisterShape)?;
+    let operation = table["operations"]
+        .as_array()
+        .and_then(|v| v.first())
+        .and_then(Value::as_table)
+        .ok_or(Refusal::RegisterShape)?;
+    let read = |row: &toml::Table| -> Result<usize, Refusal> {
+        let signed = row.get("value").and_then(Value::as_integer).ok_or(Refusal::Capacity)?;
+        usize::try_from(signed).map_err(|_| Refusal::Capacity)
+    };
+    let mut values = BTreeMap::new();
+    for (name, _) in DECLARED {
+        let row = ceilings.get(name).and_then(Value::as_table).ok_or(Refusal::Capacity)?;
+        values.insert(name.to_owned(), read(row)?);
+    }
+    let start_weight = read(operation["work_weights"].as_table().ok_or(Refusal::Capacity)?)?;
+    let get = |name: &str| -> Result<usize, Refusal> { values.get(name).copied().ok_or(Refusal::Capacity) };
+    if get("decoded_bytes")? != get("transport")?.checked_mul(16).ok_or(Refusal::Capacity)?
+        || get("response")? != get("transport")?
+        || get("resolver_work")? < start_weight
+        || get("execution")? > get("shell_start")?
+        || get("cancellation_drain")? > get("shell_stop")?
+    {
+        return Err(Refusal::Capacity);
+    }
+    if get("resolver_work")? < start_weight.checked_mul(get("root_selections")?).ok_or(Refusal::Capacity)? {
+        return Err(Refusal::Capacity);
+    }
+    for name in ["execution", "cancellation_drain", "shell_start", "shell_stop"] {
+        let nanos = u64::try_from(get(name)?).map_err(|_| Refusal::Capacity)?;
+        std::time::Instant::now()
+            .checked_add(std::time::Duration::from_nanos(nanos))
+            .ok_or(Refusal::Capacity)?;
+    }
+    Ok(Admitted { values, start_weight })
+}
+
+pub(super) fn embedded_limits() -> Result<Admitted, ()> {
+    let schema = pn_interchange::control_schema::decode(ARTIFACT).map_err(|_| ())?;
+    let source = pn_interchange::control_register::decode(REGISTER_ARTIFACT).map_err(|_| ())?;
+    if schema != SOURCE
+        || source != REGISTER_SOURCE
+        || pn_interchange::control_register::encode(&source).map_err(|_| ())? != REGISTER_ARTIFACT
+        || REGISTER_SOURCE.len() != 3107
+    {
+        return Err(());
+    }
+    let admitted = capacities(&source).map_err(|_| ())?;
+    let table = source.parse::<toml::Table>().map_err(|_| ())?;
+    let ceilings = table["ceilings"].as_table().ok_or(())?;
+    for (name, expected) in DECLARED {
+        let actual = ceilings
+            .get(name)
+            .and_then(Value::as_table)
+            .and_then(|row| row.get("value"))
+            .and_then(Value::as_integer)
+            .ok_or(())?;
+        if actual != expected {
+            return Err(());
+        }
+    }
+    if admitted.value("schema_source")? != SOURCE.len()
+        || admitted.value("register_source")? != REGISTER_SOURCE.len()
+        || admitted.start_weight != 1
+        || admitted.value("root_selections")? != 1
+        || admitted.value("concurrency")? != 1
+        || admitted.value("resolver_work")? != admitted.start_weight
+    {
+        return Err(());
+    }
+    Ok(admitted)
+}
+
+#[cfg(test)]
 fn embedding(bytes: &[u8], draft: &str) -> Result<bool, Refusal> {
     let source = pn_interchange::control_schema::decode(bytes).map_err(|_| Refusal::Envelope)?;
     if bytes != ARTIFACT || draft.as_bytes() != DRAFT.as_bytes() {
         return Err(Refusal::Embedding);
     }
     agree(&source, draft)
-}
-
-pub(super) fn embedded_pending() -> Result<bool, ()> {
-    embedding(ARTIFACT, DRAFT).map_err(|_| ())
 }
 
 #[cfg(test)]
@@ -580,4 +701,74 @@ fn embedded_child() {
         Ok(true),
         "disk substitutes are never inputs to embedded readers"
     );
+}
+
+/// Claim: Self-inclusive register sizing reaches the least positive fitting value across decimal-width boundaries.
+/// ´claim:admission:register-source-least-bound´
+/// ´test:unit:register-source-least-bound´
+#[test]
+fn register_source_least_bound() {
+    fn serialize(candidate: usize) -> String {
+        REGISTER_SOURCE.replace(
+            "register_source = { status = \"admitted\", value = 3107, unit = \"utf8-bytes\" }",
+            &format!("register_source = {{ status = \"admitted\", value = {candidate}, unit = \"utf8-bytes\" }}"),
+        )
+    }
+    let mut candidate = 1;
+    let mut sequence = vec![candidate];
+    loop {
+        let next = candidate.max(serialize(candidate).len());
+        sequence.push(next);
+        if next == candidate {
+            break;
+        }
+        candidate = next;
+    }
+    assert_eq!(sequence, [1, 3104, 3107, 3107]);
+    assert_eq!(REGISTER_SOURCE.len(), 3107);
+    for smaller in [1, 9, 10, 99, 100, 999, 1000, 3106] {
+        assert!(serialize(smaller).len() > smaller, "{smaller} cannot fit its own source");
+    }
+}
+
+/// Claim: A completed register refuses below the one-start work charge and admits equal or greater synthetic capacity with other fields valid.
+/// ´claim:admission:register-start-cost-agreement´
+/// ´test:unit:register-start-cost-agreement´
+#[test]
+fn register_start_cost_agreement() {
+    let weight_two = REGISTER_SOURCE.replace(
+        "work_weights = { status = \"admitted\", value = 1, unit = \"work-per-start\" }",
+        "work_weights = { status = \"admitted\", value = 2, unit = \"work-per-start\" }",
+    );
+    assert!(matches!(capacities(&weight_two), Err(Refusal::Capacity)));
+    let equal = weight_two.replace(
+        "resolver_work = { status = \"admitted\", value = 1, unit = \"work\" }",
+        "resolver_work = { status = \"admitted\", value = 2, unit = \"work\" }",
+    );
+    assert!(capacities(&equal).is_ok(), "equal charge is sufficient");
+    let above = equal.replace(
+        "resolver_work = { status = \"admitted\", value = 2, unit = \"work\" }",
+        "resolver_work = { status = \"admitted\", value = 3, unit = \"work\" }",
+    );
+    assert!(capacities(&above).is_ok(), "greater capacity is sufficient");
+}
+
+/// Claim: Generation carries exact completed source while a pending or synthetic admitted draft cannot select the embedded production register.
+/// ´claim:admission:register-generation-requires-complete-source´
+/// ´test:unit:register-generation-requires-complete-source´
+#[test]
+fn register_generation_requires_complete_source() {
+    assert!(capacities(DRAFT).is_err(), "pending source is incomplete");
+    let synthetic = DRAFT.replace("status = \"not-yet-admitted\"", "status = \"admitted\", value = 1");
+    assert!(capacities(&synthetic).is_err(), "positive statuses alone cannot agree");
+    assert!(embedded_limits().is_ok(), "only the completed embedded source selects limits");
+    assert_eq!(
+        pn_interchange::control_register::decode(REGISTER_ARTIFACT).expect("closed theory"),
+        REGISTER_SOURCE
+    );
+    assert_eq!(
+        pn_interchange::control_register::encode(REGISTER_SOURCE).expect("canonical carriage"),
+        REGISTER_ARTIFACT
+    );
+    assert_ne!(synthetic.as_bytes(), REGISTER_SOURCE.as_bytes());
 }

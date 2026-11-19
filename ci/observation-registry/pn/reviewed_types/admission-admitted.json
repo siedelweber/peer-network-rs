@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admission::Admitted",
+    "package": "pn",
+    "path": "packages/node/src/admission.rs",
+    "syntax": "# [derive (Debug)] pub (super) struct Admitted { values : BTreeMap < String , usize > , start_weight : usize , }"
+  }
+}
