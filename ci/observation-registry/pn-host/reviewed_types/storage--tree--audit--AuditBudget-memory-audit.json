@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditBudget",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" Explicit ceilings for a complete audit invocation.\"] # [doc = \" (´[ROOT-amend:storage:tree-audit]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct AuditBudget { pub page_rows : usize , pub rows : usize , pub allocation_bytes : usize , pub retained_bytes : usize , pub items : usize , }"
+  }
+}

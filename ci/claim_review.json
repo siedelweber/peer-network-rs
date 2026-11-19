@@ -5059,6 +5059,46 @@
       "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
     },
     {
+      "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_content",
+      "path": "packages/host/src/storage/tree/audit/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-memory-content",
+      "before": "",
+      "after": "Claim: A sibling substituted as one inherited selected-use origin is a semantic corruption, with no partial inventory or mutation.",
+      "review": "One-process memory-tree audit evidence on explicit admitted fixtures and bounded private damage; no server snapshot, rebuild, corruption campaign or allocation census is claimed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_domains",
+      "path": "packages/host/src/storage/tree/audit/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-memory-domains",
+      "before": "",
+      "after": "Claim: Empty and declaration-only histories retain all versions and closures in framed scope order with exact occurrence counts.",
+      "review": "One-process memory-tree audit evidence on explicit admitted fixtures and bounded private damage; no server snapshot, rebuild, corruption campaign or allocation census is claimed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_forks",
+      "path": "packages/host/src/storage/tree/audit/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-memory-forks",
+      "before": "",
+      "after": "Claim: Two sibling arrival orders yield one complete logical inventory with both roots, exact packages and independent origins.",
+      "review": "One-process memory-tree audit evidence on explicit admitted fixtures and bounded private damage; no server snapshot, rebuild, corruption campaign or allocation census is claimed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_limit",
+      "path": "packages/host/src/storage/tree/audit/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-memory-limit",
+      "before": "",
+      "after": "Claim: Four separate allowance shortages refuse cumulatively without mutation; a new sufficient invocation returns the expected full inventory.",
+      "review": "One-process memory-tree audit evidence on explicit admitted fixtures and bounded private damage; no server snapshot, rebuild, corruption campaign or allocation census is claimed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_orphan",
+      "path": "packages/host/src/storage/tree/audit/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-memory-orphan",
+      "before": "",
+      "after": "Claim: On the orphan fixture, independent enumeration preserves `CorruptHistory` and its complete observed key at the allocation ceiling; diagnostic publication uses only its initial reservation.",
+      "review": "The undamaged positive, exact-usage rerun and exhausted-meter direct finish assert the cause and complete key, meter requests and backing pointer/capacity transfer. This is one private damage shape, not a global allocator census or server snapshot."
+    },
+    {
       "operation": "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",
       "path": "packages/host/src/storage/tree/server/content.rs",
       "claim": "HOST::claim:history:tree-server-rational-spelling",

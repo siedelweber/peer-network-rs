@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/memory.rs",
+    "item": "storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_content",
+    "owner": "HOST",
+    "signature": "fn check_content (& self , row : & RawResult < '_ > , parent : Option < & RawResult < '_ > > , meter : & mut AuditMeter ,) -> Result < () , AuditFailure >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Memory audit adapter work inherits the enclosing metered audit operation.",
+      "witness": "HOST::claim:history:tree-audit-memory-domains",
+      "boundary": "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::audit",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_content",
+    "body": "{ meter . visit (result_location (row . scope , row . identity)) ? ; let node = self . results . get (& (row . scope , row . identity)) . ok_or_else (| | meter . refused (StorageError :: CorruptHistory , result_location (row . scope , row . identity))) ? ; let mut bytes = Vec :: new () ; let reserve_location = result_location (row . scope , row . identity) ; meter . reserve (& mut bytes , row . package . len () , reserve_location) ? ; for (slot , chunk) in node . chunks . iter () . enumerate () { let location = result_slot_location (row . scope , row . identity , \"pn_epoch_package_chunks\" , slot) ; meter . visit (location) ? ; if chunk . is_empty () || chunk . len () > super :: super :: super :: MAX_PACKAGE { return Err (meter . refused (StorageError :: CorruptHistory , location)) ; } if bytes . len () . checked_add (chunk . len ()) . is_none_or (| length | length > row . package . len ()) { return Err (meter . refused (StorageError :: CorruptHistory , location)) ; } bytes . extend_from_slice (chunk) ; } if bytes != row . package || node . references . len () != node . input . declarations () . len () { return Err (meter . refused (StorageError :: CorruptHistory , result_location (row . scope , row . identity))) ; } for (reference , expected) in node . references . iter () . zip (node . input . declarations ()) { let reference_site = reference_location (row . scope , row . identity , reference . use_) ; meter . visit (reference_site) ? ; if reference . use_ != expected { return Err (meter . refused (StorageError :: CorruptHistory , reference_site)) ; } if unqualified (expected . version . family) { meter . visit (reference_site) ? ; let generation = self . generations . binary_search_by (| g | g . declaration . scope . cmp (row . scope)) . ok () . map (| at | & self . generations [at]) . ok_or_else (| | meter . refused (StorageError :: CorruptHistory , reference_site)) ? ; match MemoryTree :: selected_with_probes (generation , expected , & mut meter . core , true) { Ok (()) => { } Err (super :: super :: Error :: Storage (StorageError :: ReadLimit)) => { return Err (meter . refused (StorageError :: ReadLimit , reference_site)) ; } Err (_) => return Err (meter . refused (StorageError :: CorruptHistory , reference_site)) , } } } for introduction in & node . introductions { let introduction_site = vintage_location (introduction . vintage , introduction . origin , \"pn_epoch_result_debits\" , None) ; meter . visit (introduction_site) ? ; if ! introduction . member { return Err (meter . refused (StorageError :: CorruptHistory , introduction_site)) ; } let mut debit_bytes = Vec :: new () ; meter . reserve (& mut debit_bytes , introduction . vintage . bytes . len () , introduction_site) ? ; for (slot , chunk) in introduction . chunks . iter () . enumerate () { let chunk_site = vintage_location (introduction . vintage , introduction . origin , \"pn_epoch_debit_chunks\" , Some (slot)) ; meter . visit (chunk_site) ? ; if chunk . is_empty () || chunk . len () > super :: super :: super :: MAX_PACKAGE { return Err (meter . refused (StorageError :: CorruptHistory , chunk_site)) ; } if debit_bytes . len () . checked_add (chunk . len ()) . is_none_or (| length | length > introduction . vintage . bytes . len ()) { return Err (meter . refused (StorageError :: CorruptHistory , chunk_site)) ; } debit_bytes . extend_from_slice (chunk) ; } if debit_bytes != introduction . vintage . bytes { return Err (meter . refused (StorageError :: CorruptHistory , introduction_site)) ; } } if let Some (parent) = parent { meter . visit (result_location (row . scope , row . identity)) ? ; let prior = self . results . get (& (parent . scope , parent . identity)) . ok_or_else (| | meter . refused (StorageError :: CorruptHistory , result_location (row . scope , row . identity))) ? ; if ! node . input . extends (prior . input) || ! node . input . same_context (prior . input) { return Err (meter . refused (StorageError :: CorruptHistory , result_location (row . scope , row . identity))) ; } } Ok (()) }",
+    "class_decision": "host-storage",
+    "item_premise": "The memory adapter is private to the bounded audit. It reads immutable retained tree records and shares the one audit meter and failure outcome under the enclosing public operation.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

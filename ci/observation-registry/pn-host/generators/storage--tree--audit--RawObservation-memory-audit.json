@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::audit::RawObservation",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Private audit descriptors and slots carry bounded public storage keys only. Their derives copy or compare scalar metadata; no credential or transport diagnostic enters the type."
+  }
+}

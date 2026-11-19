@@ -179,6 +179,25 @@ struct Context {
     records: Vec<burn::BurnRecord>,
 }
 impl Retained {
+    pub(crate) fn audit_context(
+        &self,
+        ceiling: usize,
+        usage: &mut EncodingUsage,
+        reservation: &mut dyn FnMut(usize) -> Result<(), ()>,
+    ) -> Result<Value, Error> {
+        let mut builder = Builder {
+            ceiling,
+            usage,
+            reservation,
+        };
+        builder.context(
+            &self.context.genesis,
+            &self.context.policy,
+            &self.context.initial,
+            &self.context.records,
+        )
+    }
+
     /// Retain complete canonical bytes and selections after the position is computed.
     /// This construction clones and re-encodes outside the position projection's meter.
     /// (´[ROOT-amend:storage:admitted-correspondence]´)
@@ -669,7 +688,7 @@ impl Builder<'_> {
     }
     fn marker(
         &mut self,
-        input: &Input<'_>,
+        records: &[burn::BurnRecord],
         m: &burn::RecognizedMarker,
         base: Option<&burn::RecognizedMarker>,
     ) -> Result<Value, Error> {
@@ -692,7 +711,12 @@ impl Builder<'_> {
                     .iter()
                     .filter(|v| base.is_none_or(|p| !p.identity().lineage.contains(*v)))
                 {
-                    v.push(b.record(record(&input.frame.marker_history, id)?)?);
+                    let mut matches = records.iter().filter(|record| &record.identity == id);
+                    let record = matches.next().ok_or(Error::InvalidPosition)?;
+                    if matches.next().is_some() {
+                        return Err(Error::InvalidPosition);
+                    }
+                    v.push(b.record(record)?);
                 }
                 Ok(())
             })?);
@@ -722,6 +746,26 @@ impl Builder<'_> {
             Ok(())
         })
     }
+    fn context(
+        &mut self,
+        genesis: &Declaration,
+        policy: &burn::PolicyInput,
+        initial: &burn::RecognizedMarker,
+        records: &[burn::BurnRecord],
+    ) -> Result<Value, Error> {
+        self.array(4, |b, v| {
+            v.push(b.array(4, |b, v| {
+                for s in scope(initial.identity()) {
+                    v.push(b.text(s)?);
+                }
+                Ok(())
+            })?);
+            v.push(b.declaration(genesis)?);
+            v.push(b.policy(policy)?);
+            v.push(b.marker(records, initial, None)?);
+            Ok(())
+        })
+    }
     fn projection(&mut self, input: &Input<'_>, previous: Option<&Input<'_>>, parent: Option<&[u8; 32]>) -> Result<Owned, Error> {
         Ok(Owned(Some(self.array(2, |b, out| {
             out.push(b.text(TAG)?);
@@ -729,24 +773,22 @@ impl Builder<'_> {
                 v.push(if parent.is_some() {
                     Value::Null
                 } else {
-                    b.array(4, |b, v| {
-                        v.push(b.array(4, |b, v| {
-                            for s in scope(input.initial.identity()) {
-                                v.push(b.text(s)?);
-                            }
-                            Ok(())
-                        })?);
-                        v.push(b.declaration(input.genesis)?);
-                        v.push(b.policy(&input.frame.marker_policy)?);
-                        v.push(b.marker(input, input.initial, None)?);
-                        Ok(())
-                    })?
+                    b.context(
+                        input.genesis,
+                        &input.frame.marker_policy,
+                        input.initial,
+                        &input.frame.marker_history.records,
+                    )?
                 });
                 v.push(match parent {
                     Some(id) => b.bytes(id)?,
                     None => Value::Null,
                 });
-                v.push(b.marker(input, input.terminal, Some(previous.map_or(input.initial, |p| p.terminal)))?);
+                v.push(b.marker(
+                    &input.frame.marker_history.records,
+                    input.terminal,
+                    Some(previous.map_or(input.initial, |p| p.terminal)),
+                )?);
                 Ok(())
             })?);
             Ok(())

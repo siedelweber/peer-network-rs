@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::audit::AuditInventory",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Public audit budgets, usage, typed failure location and owned logical inventory contain only public storage facts. Derived formatting and equality are observation or caller work outside the audit allowance; no private transport diagnostic or credential enters the type."
+  }
+}

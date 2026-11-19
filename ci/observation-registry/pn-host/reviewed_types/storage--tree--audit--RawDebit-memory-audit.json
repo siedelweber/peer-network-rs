@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::RawDebit",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "pub (super) struct RawDebit < 'a > { pub scope : & 'a EpochScope , pub origin : Identity , pub act : & 'a ActId , pub bytes : & 'a [u8] , }"
+  }
+}

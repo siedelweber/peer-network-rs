@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::audit::output::Count",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/output.rs",
+    "syntax": "# [derive (Default)]",
+    "class_decision": "host-storage",
+    "expansion_review": "Private audit count derives default construction for fresh zeroed accounting; the enclosing audit operation reviews and bounds every logical field and allocation."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditFailure",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" A tree refusal or an allocator refusal after admitted capacity.\"] # [doc = \" (´[ROOT-amend:storage:tree-audit]´)\"] # [derive (Debug , PartialEq , Eq)] pub enum AuditFailure { Refused { error : Error , location : AuditLocation } , Allocation { location : AuditLocation } , }"
+  }
+}

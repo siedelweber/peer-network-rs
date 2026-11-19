@@ -8,6 +8,8 @@ use index::Index;
 mod index;
 mod read;
 pub use read::{DebitRead, Page, Reader, ResultRead};
+mod audit;
+pub use audit::{AuditBudget, AuditFailure, AuditInventory, AuditLocation, AuditUsage};
 mod server;
 pub use server::{ServerDebit, ServerJudgement, ServerReader, ServerResult, ServerSelection, ServerTree};
 mod stage;
@@ -390,6 +392,25 @@ fn checked_result_input<'a>(input: &Retained, label: Option<&'a str>) -> Result<
 }
 
 impl<'a> MemoryTree<'a> {
+    /// Reconcile one immutable memory tree into a complete owned logical inventory.
+    /// (´[ROOT-amend:storage:tree-audit]´)
+    /// # Errors
+    /// Refuses the first damaged domain, exhausted allowance or admitted allocator refusal.
+    pub fn audit(&self, budget: AuditBudget, usage: &mut AuditUsage) -> Result<AuditInventory, AuditFailure> {
+        let operation = cli_common::observation::scope(
+            "HOST",
+            "sig:design:storage",
+            "storage::tree::MemoryTree < 'a >::audit",
+            &(budget,),
+        );
+        *usage = AuditUsage::default();
+        let mut meter = audit::AuditMeter::new(budget);
+        let result = meter.begin(budget).and_then(|()| audit::reconcile(self, &mut meter));
+        *usage = meter.usage();
+        operation.finish(&result);
+        result
+    }
+
     /// Commit a caller-owned retaining carrier under its explicit public label.
     /// Construction of the input is outside this budget; no carrier is reconstructed here.
     /// The store retains immutable borrows, so input custody outlives the store.

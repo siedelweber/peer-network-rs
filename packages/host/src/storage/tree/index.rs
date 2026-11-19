@@ -98,6 +98,20 @@ fn insert<K: Ord, V>(link: Link<K, V>, entry: Box<Entry<K, V>>) -> (Link<K, V>, 
 }
 
 impl<K: Ord, V> Index<K, V> {
+    pub(super) fn for_each<E>(&self, visitor: &mut impl FnMut(&K, &V) -> Result<(), E>) -> Result<(), E> {
+        fn walk<K, V, E>(node: Option<&Entry<K, V>>, visitor: &mut impl FnMut(&K, &V) -> Result<(), E>) -> Result<(), E> {
+            if let Some(node) = node {
+                walk(node.left.as_deref(), visitor)?;
+                if let Some(value) = &node.value {
+                    visitor(&node.key, value)?;
+                }
+                walk(node.right.as_deref(), visitor)?;
+            }
+            Ok(())
+        }
+        walk(self.root.as_deref(), visitor)
+    }
+
     pub(super) fn prepare(key: K, meter: &mut Meter) -> Result<Slot<K, V>, Error> {
         meter.allocation(std::mem::size_of::<Entry<K, V>>())?;
         #[cfg(test)]

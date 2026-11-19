@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditLocation",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" An owned diagnostic with borrowed, allocation-free scalar inspection.\"] # [doc = \" (´[ROOT-amend:storage:tree-audit]´)\"] # [derive (Clone , PartialEq , Eq)] pub struct AuditLocation { state : LocationState , backing : Vec < u8 > , relation_len : u8 , kinds : [LocationKind ; 6] , slots : [u64 ; 6] , used : u8 , }"
+  }
+}

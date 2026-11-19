@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditMeter",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "pub (super) struct AuditMeter { core : Meter , retained_bytes : usize , items : usize , bytes_limit : usize , items_limit : usize , requests : usize , diagnostic : Vec < u8 > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditInventory",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" Owned complete logical state of one audited snapshot.\"] # [doc = \" The value tree is an inspection view, not an admitted external encoding.\"] # [doc = \" (´[ROOT-amend:storage:tree-audit]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct AuditInventory { tree : Value , generations : usize , histories : usize , scopes : usize , results : usize , logical_bytes : usize , logical_items : usize , }"
+  }
+}

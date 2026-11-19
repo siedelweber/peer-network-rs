@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::RawScope",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "pub (super) struct RawScope < 'a > { pub key : String , pub scope : & 'a EpochScope , pub pointer : Identity , }"
+  }
+}

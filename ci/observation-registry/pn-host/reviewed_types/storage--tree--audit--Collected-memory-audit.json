@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::Collected",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "pub (super) struct Collected < 'a > { pub generations : Vec < RawGeneration < 'a > > , pub scopes : Vec < RawScope < 'a > > , pub results : Vec < RawResult < 'a > > , }"
+  }
+}

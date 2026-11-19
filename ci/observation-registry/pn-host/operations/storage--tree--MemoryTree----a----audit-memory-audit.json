@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree.rs",
+    "item": "storage::tree::MemoryTree < 'a >::audit",
+    "owner": "HOST",
+    "signature": "fn audit (& self , budget : AuditBudget , usage : & mut AuditUsage) -> Result < AuditInventory , AuditFailure >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::audit",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::tree::MemoryTree < 'a >::audit\" , & (budget ,) ,) ; * usage = AuditUsage :: default () ; let mut meter = audit :: AuditMeter :: new (budget) ; let result = meter . begin (budget) . and_then (| () | audit :: reconcile (self , & mut meter)) ; * usage = meter . usage () ; operation . finish (& result) ; result }",
+    "class_decision": "host-storage",
+    "item_premise": "The public memory audit observes an immutable tree under caller-supplied bounded work and logical retention allowances. It returns an owned logical inventory or one located refusal. The operation carries no credentials or session state.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

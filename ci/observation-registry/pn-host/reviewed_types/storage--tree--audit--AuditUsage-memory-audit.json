@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditUsage",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" Cumulative work and logical retention consumed by one audit attempt.\"] # [doc = \" (´[ROOT-amend:storage:tree-audit]´)\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] pub struct AuditUsage { pub rows : usize , pub allocation_bytes : usize , pub retained_bytes : usize , pub items : usize , pub allocation_requests : usize , }"
+  }
+}
