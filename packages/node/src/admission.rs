@@ -438,6 +438,24 @@ pub(super) fn embedded_limits() -> Result<Admitted, ()> {
     Ok(admitted)
 }
 
+pub(super) fn embedded_edition() -> Result<String, ()> {
+    embedded_limits()?;
+    let schema = pn_interchange::Document::from_canonical_bytes(ARTIFACT).map_err(|_| ())?;
+    let register = pn_interchange::Document::from_canonical_bytes(REGISTER_ARTIFACT).map_err(|_| ())?;
+    let coordinate = |document: &pn_interchange::Document| {
+        let envelope = document.envelope();
+        let version = envelope.version();
+        format!(
+            "{}@{}.{}.{}",
+            envelope.label().as_str(),
+            version.major(),
+            version.minor(),
+            version.patch()
+        )
+    };
+    Ok(format!("schema={};register={}", coordinate(&schema), coordinate(&register)))
+}
+
 #[cfg(test)]
 fn embedding(bytes: &[u8], draft: &str) -> Result<bool, Refusal> {
     let source = pn_interchange::control_schema::decode(bytes).map_err(|_| Refusal::Envelope)?;

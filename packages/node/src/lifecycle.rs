@@ -187,10 +187,7 @@ impl EditionInspection {
         command(facts.arguments, "edition")?;
         let (edition, source) = select_edition(facts)?;
         reserved_input(facts)?;
-        let embedded_pair = format!("{SCHEMA_PREFIX}1.0.0{REGISTER_PREFIX}1.0.0");
-        let supported = edition == embedded_pair
-            && !include_bytes!("../../interchange/schema/control.cbor").is_empty()
-            && !include_bytes!("../../interchange/schema/control-register.cbor").is_empty();
+        let supported = crate::admission::embedded_edition().is_ok_and(|embedded_pair| edition == embedded_pair);
         Ok(Self {
             edition: edition.to_owned(),
             source,
@@ -1304,7 +1301,10 @@ pub(crate) mod tests {
         let mut controller = Controller::new();
         controller.advance(Event::Prepare { at: 0 }).expect("preparation");
         assert!(matches!(
-            controller.advance(Event::PreparedStart(bootstrap)).expect("checked start").as_slice(),
+            controller
+                .advance(Event::PreparedStart(bootstrap))
+                .expect("checked start")
+                .as_slice(),
             [Action::Install]
         ));
         controller.advance(Event::Installed).expect("installation");
@@ -1616,6 +1616,25 @@ pub(crate) mod tests {
         let args = ["pn", "edition"];
         let supplied = facts(&args);
         let inspection = EditionInspection::new(&supplied).expect("public selection");
+        let schema = pn_interchange::Document::from_canonical_bytes(include_bytes!("../../interchange/schema/control.cbor"))
+            .expect("embedded schema envelope");
+        let register =
+            pn_interchange::Document::from_canonical_bytes(include_bytes!("../../interchange/schema/control-register.cbor"))
+                .expect("embedded register envelope");
+        let coordinate = |document: &pn_interchange::Document| {
+            let envelope = document.envelope();
+            let version = envelope.version();
+            format!(
+                "{}@{}.{}.{}",
+                envelope.label().as_str(),
+                version.major(),
+                version.minor(),
+                version.patch()
+            )
+        };
+        let embedded = format!("schema={};register={}", coordinate(&schema), coordinate(&register));
+        assert_eq!(inspection.edition(), embedded);
+        assert_eq!(crate::admission::embedded_edition(), Ok(embedded));
         assert_eq!(
             (inspection.edition(), inspection.source()),
             (EDITION, EditionSource::Environment)

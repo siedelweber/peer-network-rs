@@ -24,9 +24,6 @@ use std::{
 
 use crate::admission as admitted_source;
 
-const EDITION: &str =
-    "schema=org.peer-network.test.api-control-schema@1.0.0;register=org.peer-network.test.api-control-register@1.0.0";
-
 /// A refusal for which no response message exists.
 /// (´[ROOT-amend:api:control-message-errors]´)
 /// After dispatch, a response-limit or typed presentation refusal means the result was not presented;
@@ -270,7 +267,7 @@ impl ExecutionContext {
             start,
             cancelled,
             active: AtomicUsize::new(0),
-            edition: EDITION.to_owned(),
+            edition: admitted_source::embedded_edition().map_err(|()| EntryError::Configuration)?,
             #[cfg(test)]
             dependency_validation_entered: AtomicBool::new(false),
         })
@@ -345,7 +342,7 @@ impl ExecutionContext {
             start,
             cancelled: Arc::new(AtomicBool::new(false)),
             active: AtomicUsize::new(0),
-            edition: EDITION.to_owned(),
+            edition: admitted_source::embedded_edition().map_err(|()| EntryError::Configuration)?,
             dependency_validation_entered: AtomicBool::new(false),
         })
     }
@@ -1316,6 +1313,8 @@ pub(crate) mod tests {
     use super::*;
     use async_graphql::futures_util::FutureExt;
 
+    const EDITION: &str =
+        "schema=org.peer-network.test.api-control-schema@1.0.0;register=org.peer-network.test.api-control-register@1.0.0";
     const DRAFT: &str = include_str!("../schema/control-register-draft.toml");
 
     fn limits() -> Limits {
@@ -1416,10 +1415,19 @@ pub(crate) mod tests {
         assert!(source.len() <= value("graphql_source"));
         assert!(bytes.len() <= value("transport"));
         for (name, used) in [
-            ("lexical_tokens", tokens), ("source_nesting", nesting), ("selection_depth", depth),
-            ("root_selections", 1), ("fields", fields), ("aliases", 0), ("fragment_work", 0),
-            ("resolver_work", 1), ("decoded_items", 3), ("input_nesting", 2),
-            ("cbor_nesting", 1), ("decoding_work", work), ("concurrency", 1),
+            ("lexical_tokens", tokens),
+            ("source_nesting", nesting),
+            ("selection_depth", depth),
+            ("root_selections", 1),
+            ("fields", fields),
+            ("aliases", 0),
+            ("fragment_work", 0),
+            ("resolver_work", 1),
+            ("decoded_items", 3),
+            ("input_nesting", 2),
+            ("cbor_nesting", 1),
+            ("decoding_work", work),
+            ("concurrency", 1),
         ] {
             assert!(used <= value(name), "{name} premise");
         }
@@ -1442,11 +1450,21 @@ pub(crate) mod tests {
         assert_eq!(bytes, request("mutation { start { ready edition failure } }"));
         assert_eq!(bytes.len(), 53);
         for (name, used) in [
-            ("graphql_source", 44), ("transport", 53), ("lexical_tokens", 9),
-            ("source_nesting", 2), ("selection_depth", 2), ("root_selections", 1),
-            ("fields", 4), ("aliases", 0), ("fragment_work", 0), ("resolver_work", 1),
-            ("decoded_items", 3), ("input_nesting", 2), ("cbor_nesting", 1),
-            ("decoding_work", 154), ("concurrency", 1),
+            ("graphql_source", 44),
+            ("transport", 53),
+            ("lexical_tokens", 9),
+            ("source_nesting", 2),
+            ("selection_depth", 2),
+            ("root_selections", 1),
+            ("fields", 4),
+            ("aliases", 0),
+            ("fragment_work", 0),
+            ("resolver_work", 1),
+            ("decoded_items", 3),
+            ("input_nesting", 2),
+            ("cbor_nesting", 1),
+            ("decoding_work", 154),
+            ("concurrency", 1),
         ] {
             assert!(used <= value(name), "{name} premise");
         }
@@ -1456,8 +1474,14 @@ pub(crate) mod tests {
         context.dependency_validation_entered.store(false, Ordering::Release);
         context.start.count.store(0, Ordering::Release);
         let message = run(bytes, context).expect("served start message");
-        assert_eq!(start_result(&message, "start"), (failure.is_none(), failure.map(str::to_owned)));
-        assert_eq!(member(member(member(&read(&message), "data"), "start"), "edition"), &Value::Text(Text::from(EDITION.to_owned())));
+        assert_eq!(
+            start_result(&message, "start"),
+            (failure.is_none(), failure.map(str::to_owned))
+        );
+        assert_eq!(
+            member(member(member(&read(&message), "data"), "start"), "edition"),
+            &Value::Text(Text::from(EDITION.to_owned()))
+        );
         assert!(context.dependency_validation_entered.load(Ordering::Acquire));
         assert_eq!(context.start.count.load(Ordering::Acquire), 1);
     }
@@ -1761,13 +1785,21 @@ pub(crate) mod tests {
             .execute(Request::new(source).data(run))
             .now_or_never()
             .expect("immediate isolated conformance witness");
-        assert!(direct.errors.is_empty(), "isolated introspection succeeds: {:?}", direct.errors);
+        assert!(
+            direct.errors.is_empty(),
+            "isolated introspection succeeds: {:?}",
+            direct.errors
+        );
         assert_eq!(
             serde_json::to_value(&direct.data).expect("isolated response value"),
             serde_json::json!({"__type": {"name": "ControlQuery"}})
         );
         assert!(serde_json::to_vec(&direct.data).expect("finite witness result").len() <= ceiling("response"));
-        assert_eq!(witness_calls.load(Ordering::Acquire), 0, "introspection performs no start work");
+        assert_eq!(
+            witness_calls.load(Ordering::Acquire),
+            0,
+            "introspection performs no start work"
+        );
     }
 
     /// Claim: The schema-validity scaffold remains in the committed SDL but refuses before dependency validation or resolver work through checked served construction.
@@ -1780,9 +1812,9 @@ pub(crate) mod tests {
         let source = include_str!("../../interchange/schema/control.graphql");
         let parsed = async_graphql_parser::parse_schema(source).expect("committed SDL parses");
         let scaffold = parsed.definitions.into_iter().any(|definition| match definition {
-            TypeSystemDefinition::Type(definition) if definition.node.name.node.to_string() == "ControlQuery" => {
+            TypeSystemDefinition::Type(definition) if definition.node.name.node == "ControlQuery" => {
                 matches!(definition.node.kind, TypeKind::Object(object) if object.fields.iter().any(|field| {
-                    field.node.name.node.to_string() == "unavailable" && field.node.ty.node.to_string() == "Boolean"
+                    field.node.name.node == "unavailable" && field.node.ty.node.to_string() == "Boolean"
                 }))
             }
             _ => false,

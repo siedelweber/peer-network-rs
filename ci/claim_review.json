@@ -7722,7 +7722,7 @@
       "claim": "NODE::claim:lifecycle:edition-reports-selection",
       "before": "Claim: Inspection reports the selected public edition, source and unsupported roster state without dispatch or notification, and terminal stdout refuses.",
       "after": "Claim: Inspection reports the selected public edition, source and embedded-roster membership without dispatch or notification, and terminal stdout refuses.",
-      "review": "The one-process control uses supplied public facts and the build's embedded pair to witness membership and the terminal refusal; it does not claim OS binding, limit revalidation or successful start."
+      "review": "The one-process control derives the embedded pair from both decoded envelope coordinates, checks that inspection reports that exact pair as supported, and retains terminal refusal; it does not claim OS binding, limit revalidation or successful start."
     },
     {
       "operation": "pn::lifecycle::tests::entry_failures_retire",

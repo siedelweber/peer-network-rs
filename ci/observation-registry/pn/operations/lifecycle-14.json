@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn::packages/node/src/lifecycle.rs::lifecycle::EditionInspection::new",
-    "body": "{ command (facts . arguments , \"edition\") ? ; let (edition , source) = select_edition (facts) ? ; reserved_input (facts) ? ; let embedded_pair = format ! (\"{SCHEMA_PREFIX}1.0.0{REGISTER_PREFIX}1.0.0\") ; let supported = edition == embedded_pair && ! include_bytes ! (\"../../interchange/schema/control.cbor\") . is_empty () && ! include_bytes ! (\"../../interchange/schema/control-register.cbor\") . is_empty () ; Ok (Self { edition : edition . to_owned () , source , supported , }) }",
+    "body": "{ command (facts . arguments , \"edition\") ? ; let (edition , source) = select_edition (facts) ? ; reserved_input (facts) ? ; let supported = crate :: admission :: embedded_edition () . is_ok_and (| embedded_pair | edition == embedded_pair) ; Ok (Self { edition : edition . to_owned () , source , supported , }) }",
     "class_decision": "node-lifecycle",
     "item_premise": "This pure support operation is bounded by supplied public facts and records a redacted decision or action without acquiring a private capability.",
     "assessments": {
