@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "InstallationCheck",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Subcommand)] enum InstallationCheck { # [doc = \" Check the supplied tag, key, commit and ancestry facts.\"] Tag { # [arg (long)] facts : PathBuf , } , # [doc = \" Check the supplied source inventory and build facts.\"] Sources { # [arg (long)] facts : PathBuf , } , # [doc = \" Check the supplied binary placement facts.\"] Placement { # [arg (long)] facts : PathBuf , } , }"
+  }
+}

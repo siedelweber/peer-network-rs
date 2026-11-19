@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::PlacementFacts",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct PlacementFacts { binary_sha256 : String , provenance_binary_sha256 : String , directory_binary_sha256 : String , administrator_owned : RequiredNullable < bool > , binary_read_only : RequiredNullable < bool > , provenance_read_only : RequiredNullable < bool > , directory_not_replaceable : RequiredNullable < bool > , full_path_selected : RequiredNullable < bool > , provenance_same_build : RequiredNullable < bool > , never_rewritten : RequiredNullable < bool > , identities_separate : RequiredNullable < bool > , }"
+  }
+}

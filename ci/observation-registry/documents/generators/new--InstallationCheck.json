@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "InstallationCheck",
+    "kind": "derive",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Subcommand)]",
+    "class_decision": "public-documents",
+    "expansion_review": "These derives serialize or decode public installation evidence, conditional verdicts and command selectors; they expose no private carrier or external effect."
+  }
+}

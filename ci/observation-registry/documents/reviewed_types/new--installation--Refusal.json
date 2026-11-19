@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::Refusal",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [doc = \" A closed refusal class for evidence admission or a selected predicate.\"] # [derive (Debug , PartialEq , Eq)] pub enum Refusal { # [doc = \" The evidence file could not be admitted as the selected closed shape.\"] EvidenceInvalid (String) , # [doc = \" A supplied tag fact failed its consistency predicate.\"] TagRefused (String) , # [doc = \" A supplied source or build fact failed its consistency predicate.\"] SourcesRefused (String) , # [doc = \" A supplied placement fact failed its consistency predicate.\"] PlacementRefused (String) , }"
+  }
+}

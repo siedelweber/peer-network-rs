@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::MapOnly",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "struct MapOnly < T > (T) ;"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::SourceKind",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "enum SourceKind { Registry , Git , Path , Patch , Notice , Compiler , Component , Selection , }"
+  }
+}

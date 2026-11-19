@@ -8,6 +8,7 @@ use serde::Serialize;
 
 mod census;
 mod envelope;
+pub mod installation;
 mod numbers;
 mod registry;
 mod rendering;

@@ -31,6 +31,30 @@ enum Command {
     Write,
     /// List templates, datasets and rendered documents.
     Census,
+    /// Check one closed public installation evidence document.
+    InstallationCheck {
+        #[command(subcommand)]
+        check: InstallationCheck,
+    },
+}
+
+#[derive(Subcommand)]
+enum InstallationCheck {
+    /// Check the supplied tag, key, commit and ancestry facts.
+    Tag {
+        #[arg(long)]
+        facts: PathBuf,
+    },
+    /// Check the supplied source inventory and build facts.
+    Sources {
+        #[arg(long)]
+        facts: PathBuf,
+    },
+    /// Check the supplied binary placement facts.
+    Placement {
+        #[arg(long)]
+        facts: PathBuf,
+    },
 }
 
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
@@ -43,6 +67,16 @@ fn main() -> ExitCode {
         Command::Check => Operation::Check,
         Command::Write => Operation::Write,
         Command::Census => Operation::Census,
+        Command::InstallationCheck { check } => {
+            let (selected, facts) = match check {
+                InstallationCheck::Tag { facts } => ("tag", facts),
+                InstallationCheck::Sources { facts } => ("sources", facts),
+                InstallationCheck::Placement { facts } => ("placement", facts),
+            };
+            return cli_common::run_stdout_json_command("documents", arguments.base.debug, tracing::Level::INFO, || {
+                documents::installation::check_file(&arguments.root, selected, &facts)
+            });
+        }
     };
     cli_common::run_check_command(
         "documents",

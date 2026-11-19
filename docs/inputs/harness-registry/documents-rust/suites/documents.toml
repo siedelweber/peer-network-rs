@@ -6,4 +6,4 @@ level = "unit"
 implementation = "documents-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["documents::census::tests::record_name_boundary", "documents::numbers::tests::rust_integer_boundaries"]
+cases = ["documents::census::tests::record_name_boundary", "documents::installation::tests::installation_bad_tag", "documents::installation::tests::installation_evidence_shape", "documents::installation::tests::installation_missing_source", "documents::installation::tests::installation_verdict_route", "documents::installation::tests::installation_writable_install", "documents::numbers::tests::rust_integer_boundaries"]

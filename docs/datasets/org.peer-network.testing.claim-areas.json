@@ -42,6 +42,13 @@
       "stake": "If envelope claims fail, a malformed or incompatible structured file can be treated as valid data before its identity is established."
     },
     {
+      "area": "installation",
+      "contract": "DOCUMENTS::sec:documents:area-installation",
+      "owner": "DOCUMENTS",
+      "register": "DOCUMENTS::sec:documents:area-installation",
+      "stake": "If supplied installation evidence is accepted without its closed shape and ordered predicates, a negative source, tag or placement fact can be presented as a consistent installation premise."
+    },
+    {
       "area": "render",
       "contract": "DOCUMENTS::sec:documents:area-render",
       "owner": "DOCUMENTS",

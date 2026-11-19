@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::SourceRow",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct SourceRow { kind : SourceKind , identity : String , sha256 : String , }"
+  }
+}

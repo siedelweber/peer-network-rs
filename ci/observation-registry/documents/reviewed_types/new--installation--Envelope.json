@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::Envelope",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] # [serde (bound (deserialize = \"F: Deserialize<'de>\"))] struct Envelope < F > { schema : u64 , check : String , commit : String , # [serde (deserialize_with = \"map_only\")] facts : F , }"
+  }
+}

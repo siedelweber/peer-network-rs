@@ -94,7 +94,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | Package | Operations | Instrumented | Local exceptions | Reviewed helpers | Generators |
 |---|---:|---:|---:|---:|---:|
 | cli-common | 127 | 30 | 94 | 3 | 45 |
-| documents | 23 | 17 | 6 | 0 | 11 |
+| documents | 29 | 19 | 10 | 0 | 20 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn | 34 | 24 | 10 | 0 | 29 |
 | pn-act-authentication | 35 | 35 | 0 | 0 | 20 |

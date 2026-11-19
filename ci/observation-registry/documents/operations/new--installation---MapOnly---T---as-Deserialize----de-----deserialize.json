@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "item": "installation::<MapOnly < T > as Deserialize < 'de >>::deserialize",
+    "owner": "DOCUMENTS",
+    "signature": "fn deserialize < D : Deserializer < 'de > > (deserializer : D) -> Result < Self , D :: Error >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: the closed evidence shape admits objects, never positional struct sequences.",
+      "witness": "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
+      "boundary": "documents::packages/documents/src/census.rs::census::record",
+      "class_decision": "public-documents"
+    },
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/installation.rs::installation::<MapOnly < T > as Deserialize < 'de >>::deserialize",
+    "body": "{ map_only (deserializer) . map (Self) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body handles public installation evidence and conditional outcomes; it records no private installation observation or claimed trust.",
+    "assessments": {
+      "full_recording": "review-302",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

@@ -43,7 +43,7 @@
 | Crate or record location | Design records | Records citing an inventory label exactly |
 | --- | ---: | ---: |
 | cli-common | 17 | 0 |
-| documents | 10 | 0 |
+| documents | 11 | 0 |
 | execwrap | 62 | 0 |
 | pn | 15 | 0 |
 | pn-act-authentication | 11 | 0 |

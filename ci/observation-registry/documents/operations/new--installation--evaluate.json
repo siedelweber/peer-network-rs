@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "item": "installation::evaluate",
+    "owner": "DOCUMENTS",
+    "signature": "fn evaluate (selected : & str , bytes : & [u8]) -> Result < Verdict , Refusal >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-002"
+  },
+  "review": {
+    "operation": "documents::packages/documents/src/installation.rs::installation::evaluate",
+    "body": "{ let commit = match selected { \"tag\" => { let envelope : Envelope < TagFacts > = admitted (bytes , selected) ? ; tag_shape (& envelope . commit , & envelope . facts) ? ; tag (& envelope . commit , & envelope . facts) ? ; envelope . commit } \"sources\" => { let envelope : Envelope < SourcesFacts > = admitted (bytes , selected) ? ; source_shape (& envelope . facts . expected , \"expected\") ? ; source_shape (& envelope . facts . captured , \"captured\") ? ; sources (& envelope . facts) ? ; envelope . commit } \"placement\" => { let envelope : Envelope < PlacementFacts > = admitted (bytes , selected) ? ; placement_shape (& envelope . facts) ? ; placement (& envelope . facts) ? ; envelope . commit } _ => return Err (Refusal :: EvidenceInvalid (\"check\" . into ())) , } ; Ok (Verdict { check : selected . into () , commit , facts_consistent : true , }) }",
+    "class_decision": "public-documents",
+    "item_premise": "This body handles public installation evidence and conditional outcomes; it records no private installation observation or claimed trust.",
+    "assessments": {
+      "full_recording": "review-300",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

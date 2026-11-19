@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::RequiredNullable",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Debug)] struct RequiredNullable < T > (Option < T >) ;"
+  }
+}

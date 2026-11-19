@@ -1,8 +1,8 @@
 # Documents · `guide:documents:overview`
 
-**Setup (Scope)** · `setup:documents:scope` The documents package projects inputs, renders templates and checks that the committed outputs and document census agree. Its tests state their claims beside the code that witnesses them. The rendering policy and helper restrictions are fixed by [record 003](../../adr/003-templated-documentation.md).
+**Setup (Scope)** · `setup:documents:scope` The documents package projects inputs, renders templates and checks that the committed outputs and document census agree. It also checks closed public installation evidence through supplied-fact predicates. Its tests state their claims beside the code that witnesses them. The rendering policy and helper restrictions are fixed by [record 003](../../adr/003-templated-documentation.md).
 
-The designed installation-evidence extension of (`[ROOT-amend:design:test-installation]`) adds installation-check tag, sources and placement with --facts FILE to this existing binary, using its existing dependency edges. It checks closed public evidence documents and prints a conditional facts-consistent verdict; it never verifies a signature, inspects installed permissions, builds or installs. The design separates runtime refusals from document findings and leaves existing generation/render commands unchanged. These commands and their five focused library controls are not implemented by this paragraph; the import invoker and deployment administrator still establish the actual facts.
+The installation-evidence extension of (`[ROOT-amend:design:test-installation]`) provides installation-check tag, sources and placement with --facts FILE in this existing binary, using its existing dependency edges. It checks closed public evidence documents and prints a conditional facts-consistent verdict; it never verifies a signature, inspects installed permissions, builds or installs. Runtime refusals stay separate from document findings and existing generation/render commands are unchanged. The five focused library controls check supplied facts only; the clean-fetch release sequence, every installation fact, and the import invoker's and deployment administrator's evidence remain owed. Evidence for the supplied-fact boundary: (`claim:installation:bad-tag`), (`claim:installation:missing-source`), (`claim:installation:writable-install`), (`claim:installation:evidence-shape`) and (`claim:installation:verdict-route`).
 
 **Rule (Registry views)** · `rule:documents:registry` The registry record and enforced relation share the kinds dataset and the fixed-point check under [record 003](../../adr/003-templated-documentation.md).
 
@@ -15,6 +15,8 @@ The designed installation-evidence extension of (`[ROOT-amend:design:test-instal
 **Section (render)** · `sec:documents:area-render` If rendering claims fail, committed documents can silently drift from their inputs or conceal unsupported premises.
 
 **Section (cli)** · `sec:documents:area-cli` If command contract claims fail, machine callers cannot distinguish results from diagnostics or rely on process status before using an output.
+
+**Section (installation)** · `sec:documents:area-installation` If supplied installation evidence is accepted without its closed shape and ordered predicates, a negative source, tag or placement fact can be presented as a consistent installation premise.
 
 **Convention (Release support)** · `conv:documents:release-support` Dataset admission and command contracts describe the current engine. They carry no promise of cross-release compatibility or migrations before 1.0 (`[ROOT-rule:compatibility:pre-one]`).
 

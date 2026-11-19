@@ -38,6 +38,13 @@ contract = "DOCUMENTS::sec:documents:area-envelope"
 
 [[rows]]
 owner = "DOCUMENTS"
+area = "installation"
+stake = "If supplied installation evidence is accepted without its closed shape and ordered predicates, a negative source, tag or placement fact can be presented as a consistent installation premise."
+register = "DOCUMENTS::sec:documents:area-installation"
+contract = "DOCUMENTS::sec:documents:area-installation"
+
+[[rows]]
+owner = "DOCUMENTS"
 area = "render"
 stake = "If rendering claims fail, committed documents can silently drift from their inputs or conceal unsupported premises."
 register = "DOCUMENTS::sec:documents:area-render"

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::TagFacts",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct TagFacts { tag : String , annotated : RequiredNullable < bool > , publisher_key : String , verified_key : RequiredNullable < String > , signature_valid : RequiredNullable < bool > , resolved_commit : String , public_main : String , ancestor : RequiredNullable < bool > , }"
+  }
+}

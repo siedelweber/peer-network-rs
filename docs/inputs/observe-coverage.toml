@@ -13,11 +13,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "documents"
-operations = 23
-instrumented = 17
-exceptions = 6
+operations = 29
+instrumented = 19
+exceptions = 10
 helpers = 0
-generators = 11
+generators = 20
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 

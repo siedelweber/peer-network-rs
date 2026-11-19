@@ -39771,10 +39771,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "10",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39789,7 +39789,7 @@
           "exact_digits": 32
         }
       },
-      "total": 10
+      "total": 11
     },
     {
       "category": "record-coverage",

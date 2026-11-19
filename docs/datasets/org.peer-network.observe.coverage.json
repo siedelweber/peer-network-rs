@@ -79,25 +79,25 @@
       "operations": 127
     },
     {
-      "exceptions": 6,
-      "generators": 11,
+      "exceptions": 10,
+      "generators": 20,
       "helpers": 0,
-      "instrumented": 17,
+      "instrumented": 19,
       "name": "documents",
       "number_forms": {
         "exceptions": {
-          "exact": "6",
+          "exact": "10",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "11",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         },
@@ -110,18 +110,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "17",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "23",
+          "exact": "29",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "29",
           "num_exact": true,
           "num_relation": "="
         }
@@ -148,7 +148,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 23
+      "operations": 29
     },
     {
       "exceptions": 4,

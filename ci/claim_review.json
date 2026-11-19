@@ -1914,6 +1914,46 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
+      "operation": "documents::installation::tests::installation_bad_tag",
+      "path": "packages/documents/src/installation.rs",
+      "claim": "DOCUMENTS::claim:installation:bad-tag",
+      "before": "",
+      "after": "Claim: Supplied tag facts admit only the selected key, resolved commit and established ancestry with exact tag form.",
+      "review": "The admitted neighbour and each bad form or negative or null field assert TagRefused at the first tag condition."
+    },
+    {
+      "operation": "documents::installation::tests::installation_evidence_shape",
+      "path": "packages/documents/src/installation.rs",
+      "claim": "DOCUMENTS::claim:installation:evidence-shape",
+      "before": "",
+      "after": "Claim: Closed evidence decoding rejects malformed, duplicate, unknown, missing and mismatched shapes before predicate checks.",
+      "review": "The selected in-memory JSON bytes cover the admitted neighbour, complete positional arrays at envelope, facts and source-row boundaries, a non-string source kind, an otherwise complete duplicate-key document, malformed and trailing input, unknown and missing fields, and a source-row absolute identity; each refuses EvidenceInvalid."
+    },
+    {
+      "operation": "documents::installation::tests::installation_missing_source",
+      "path": "packages/documents/src/installation.rs",
+      "claim": "DOCUMENTS::claim:installation:missing-source",
+      "before": "",
+      "after": "Claim: Supplied source evidence requires nonempty unique exact membership and digest agreement before every execution assertion.",
+      "review": "The admitted neighbour, both empty-array orders, duplicates, missing and changed members, digest mismatch, and every false or null assertion distinguish SourcesRefused from shape errors."
+    },
+    {
+      "operation": "documents::installation::tests::installation_verdict_route",
+      "path": "packages/documents/src/installation.rs",
+      "claim": "DOCUMENTS::claim:installation:verdict-route",
+      "before": "",
+      "after": "Claim: The command seam emits one conditional JSON success and distinguishes runtime evidence refusal from usage selection.",
+      "review": "The private file seam checks one serialized success object, a policy refusal and an unreadable file; shared CommandExit values pin runtime and usage classes without process-wide observation."
+    },
+    {
+      "operation": "documents::installation::tests::installation_writable_install",
+      "path": "packages/documents/src/installation.rs",
+      "claim": "DOCUMENTS::claim:installation:writable-install",
+      "before": "",
+      "after": "Claim: Supplied effective placement facts require digest equality, established rights, immutable ancestry and separate identities.",
+      "review": "The admitted neighbour, each mismatched digest and each false or null effective placement assertion refuse PlacementRefused without measuring permissions."
+    },
+    {
       "operation": "documents::integration::dataset_mutation",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:render:dataset-mutation",

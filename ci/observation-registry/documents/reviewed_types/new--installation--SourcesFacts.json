@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::SourcesFacts",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct SourcesFacts { # [serde (deserialize_with = \"map_only_rows\")] expected : Vec < SourceRow > , # [serde (deserialize_with = \"map_only_rows\")] captured : Vec < SourceRow > , fetch_checksums_verified : RequiredNullable < bool > , fetch_without_dependency_execution : RequiredNullable < bool > , build_network_denied : RequiredNullable < bool > , no_build_acquisition : RequiredNullable < bool > , source_bytes_unchanged : RequiredNullable < bool > , release_build_succeeded : RequiredNullable < bool > , package_scoped : RequiredNullable < bool > , }"
+  }
+}

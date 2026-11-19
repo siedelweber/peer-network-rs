@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "installation::Verdict",
+    "package": "documents",
+    "path": "packages/documents/src/installation.rs",
+    "syntax": "# [doc = \" A conditional verdict over supplied public facts, not an installation claim.\"] # [derive (Debug , PartialEq , Eq , Serialize)] pub struct Verdict { # [doc = \" The selected evidence predicate.\"] pub check : String , # [doc = \" The candidate commit named by the evidence.\"] pub commit : String , # [doc = \" Whether the supplied facts satisfy that predicate.\"] pub facts_consistent : bool , }"
+  }
+}

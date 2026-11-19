@@ -56,7 +56,7 @@
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | cli-common::public | active | public-surface | cli-common-rust | fast | 1 |
-| documents | active | unit | documents-rust | fast | 2 |
+| documents | active | unit | documents-rust | fast | 7 |
 | documents::integration | active | integration | documents-rust | fast | 31 |
 | documents::integration-extended | active | integration | documents-rust | extended | 1 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
