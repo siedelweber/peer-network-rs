@@ -175,6 +175,11 @@ impl ExecutionContext {
         self.start.count.load(Ordering::Acquire)
     }
 
+    #[cfg(test)]
+    pub(crate) fn lifecycle_dependency_validation_entered(&self) -> bool {
+        self.dependency_validation_entered.load(Ordering::Acquire)
+    }
+
     pub(crate) fn lifecycle_caps(&self) -> Result<crate::lifecycle::Caps, EntryError> {
         Ok(crate::lifecycle::Caps {
             transport: self.limits.transport,
@@ -1307,7 +1312,7 @@ pub async fn execute(bytes: &[u8], context: &ExecutionContext) -> Result<Transpo
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use async_graphql::futures_util::FutureExt;
 
@@ -1395,6 +1400,66 @@ mod tests {
 
     fn request(query: &str) -> Vec<u8> {
         request_parts(query, None, None)
+    }
+
+    pub(crate) fn assert_served_unsupported(context: &ExecutionContext, source: &str) {
+        let admitted = crate::admission::embedded_limits().expect("completed register");
+        let value = |name| admitted.value(name).expect("admitted ceiling");
+        let bytes = request(source);
+        let (source_bytes, transport_bytes, tokens, nesting, depth, fields, work) = match source {
+            "query { __type(name:\"ControlQuery\"){name} }" => (43, 52, 12, 2, 2, 2, 151),
+            "query { unavailable }" => (21, 29, 4, 1, 1, 1, 84),
+            _ => panic!("fixed served refusal source"),
+        };
+        assert_eq!(source.len(), source_bytes);
+        assert_eq!(bytes.len(), transport_bytes);
+        assert!(source.len() <= value("graphql_source"));
+        assert!(bytes.len() <= value("transport"));
+        for (name, used) in [
+            ("lexical_tokens", tokens), ("source_nesting", nesting), ("selection_depth", depth),
+            ("root_selections", 1), ("fields", fields), ("aliases", 0), ("fragment_work", 0),
+            ("resolver_work", 1), ("decoded_items", 3), ("input_nesting", 2),
+            ("cbor_nesting", 1), ("decoding_work", work), ("concurrency", 1),
+        ] {
+            assert!(used <= value(name), "{name} premise");
+        }
+        assert_eq!(admitted.start_weight(), 1);
+        let mut usage = TransportUsage::default();
+        Value::from_transport_bytes(&bytes, fixed_limits().transport_limits(), &mut usage)
+            .expect("fixed request fits all six production reader budgets");
+        context.dependency_validation_entered.store(false, Ordering::Release);
+        context.start.count.store(0, Ordering::Release);
+        let message = run(&bytes, context).expect("served refusal message");
+        assert_eq!(error_class(&message), ("Unsupported".to_owned(), None));
+        assert!(optional_member(&read(&message), "data").is_none(), "refusal has no data");
+        assert!(!context.dependency_validation_entered.load(Ordering::Acquire));
+        assert_eq!(context.start.count.load(Ordering::Acquire), 0);
+    }
+
+    pub(crate) fn assert_served_start(context: &ExecutionContext, bytes: &[u8], failure: Option<&str>) {
+        let admitted = crate::admission::embedded_limits().expect("completed register");
+        let value = |name| admitted.value(name).expect("admitted ceiling");
+        assert_eq!(bytes, request("mutation { start { ready edition failure } }"));
+        assert_eq!(bytes.len(), 53);
+        for (name, used) in [
+            ("graphql_source", 44), ("transport", 53), ("lexical_tokens", 9),
+            ("source_nesting", 2), ("selection_depth", 2), ("root_selections", 1),
+            ("fields", 4), ("aliases", 0), ("fragment_work", 0), ("resolver_work", 1),
+            ("decoded_items", 3), ("input_nesting", 2), ("cbor_nesting", 1),
+            ("decoding_work", 154), ("concurrency", 1),
+        ] {
+            assert!(used <= value(name), "{name} premise");
+        }
+        assert_eq!(admitted.start_weight(), 1);
+        Value::from_transport_bytes(bytes, fixed_limits().transport_limits(), &mut TransportUsage::default())
+            .expect("fixed start fits all six production reader budgets");
+        context.dependency_validation_entered.store(false, Ordering::Release);
+        context.start.count.store(0, Ordering::Release);
+        let message = run(bytes, context).expect("served start message");
+        assert_eq!(start_result(&message, "start"), (failure.is_none(), failure.map(str::to_owned)));
+        assert_eq!(member(member(member(&read(&message), "data"), "start"), "edition"), &Value::Text(Text::from(EDITION.to_owned())));
+        assert!(context.dependency_validation_entered.load(Ordering::Acquire));
+        assert_eq!(context.start.count.load(Ordering::Acquire), 1);
     }
 
     fn request_parts(query: &str, operation_name: Option<&str>, variables: Option<Value>) -> Vec<u8> {
@@ -1665,6 +1730,69 @@ mod tests {
             assert_eq!(error_class(&error), ("Malformed".to_owned(), None));
             assert_eq!(calls.load(Ordering::Acquire), 1, "malformed source did not call start");
         }
+    }
+
+    /// Claim: The fixed schema-introspection request succeeds only in an isolated finite conformance witness and refuses before dependency validation or start work through checked served construction.
+    /// ´claim:executor:served-introspection-refuses´
+    /// ´test:unit:served-introspection-refuses´
+    #[test]
+    fn served_introspection_refuses() {
+        let source = "query { __type(name:\"ControlQuery\"){name} }";
+        let (_controller, context, bytes) = crate::lifecycle::tests::served_start();
+        assert_served_unsupported(&context, source);
+        let (_neighbour_controller, neighbour, _) = crate::lifecycle::tests::served_start();
+        assert_served_start(&neighbour, &bytes, None);
+
+        let admitted = crate::admission::embedded_limits().expect("completed register witness inputs");
+        let ceiling = |name| admitted.value(name).expect("finite witness ceiling");
+        assert!(source.len() <= ceiling("graphql_source"));
+        assert!(request(source).len() <= ceiling("transport"));
+        let witness_start = start();
+        let witness_calls = Arc::clone(&witness_start.count);
+        let duration = Duration::from_nanos(u64::try_from(ceiling("execution")).expect("finite execution clock"));
+        let run = StartRun {
+            inputs: witness_start,
+            cancelled: Arc::new(AtomicBool::new(false)),
+            deadline: Instant::now().checked_add(duration).expect("finite witness deadline"),
+            edition: EDITION.to_owned(),
+        };
+        let schema = Schema::build(ControlQuery, ControlMutation, EmptySubscription).finish();
+        let direct = schema
+            .execute(Request::new(source).data(run))
+            .now_or_never()
+            .expect("immediate isolated conformance witness");
+        assert!(direct.errors.is_empty(), "isolated introspection succeeds: {:?}", direct.errors);
+        assert_eq!(
+            serde_json::to_value(&direct.data).expect("isolated response value"),
+            serde_json::json!({"__type": {"name": "ControlQuery"}})
+        );
+        assert!(serde_json::to_vec(&direct.data).expect("finite witness result").len() <= ceiling("response"));
+        assert_eq!(witness_calls.load(Ordering::Acquire), 0, "introspection performs no start work");
+    }
+
+    /// Claim: The schema-validity scaffold remains in the committed SDL but refuses before dependency validation or resolver work through checked served construction.
+    /// ´claim:executor:served-scaffold-query-refuses´
+    /// ´test:unit:served-scaffold-query-refuses´
+    #[test]
+    fn served_scaffold_query_refuses() {
+        use async_graphql_parser::types::{TypeKind, TypeSystemDefinition};
+
+        let source = include_str!("../../interchange/schema/control.graphql");
+        let parsed = async_graphql_parser::parse_schema(source).expect("committed SDL parses");
+        let scaffold = parsed.definitions.into_iter().any(|definition| match definition {
+            TypeSystemDefinition::Type(definition) if definition.node.name.node.to_string() == "ControlQuery" => {
+                matches!(definition.node.kind, TypeKind::Object(object) if object.fields.iter().any(|field| {
+                    field.node.name.node.to_string() == "unavailable" && field.node.ty.node.to_string() == "Boolean"
+                }))
+            }
+            _ => false,
+        });
+        assert!(scaffold, "committed SDL retains ControlQuery.unavailable: Boolean");
+
+        let (_controller, context, _) = crate::lifecycle::tests::served_start();
+        assert_served_unsupported(&context, "query { unavailable }");
+        let (_neighbour_controller, neighbour, bytes) = crate::lifecycle::tests::served_start();
+        assert_served_start(&neighbour, &bytes, None);
     }
 
     /// Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.

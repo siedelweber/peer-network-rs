@@ -7629,6 +7629,22 @@
       "review": "The fixed-call cases use the embedded declared count caps with explicit finite unserved time allowances; broader profile cases keep their separate finite fixture caps and the original one-process claim."
     },
     {
+      "operation": "pn::executor::tests::served_introspection_refuses",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:served-introspection-refuses",
+      "before": "Claim: The fixed schema-introspection request succeeds only in an isolated finite conformance witness and refuses before dependency validation or start work through checked served construction.",
+      "after": "Claim: The fixed schema-introspection request succeeds only in an isolated finite conformance witness and refuses before dependency validation or start work through checked served construction.",
+      "review": "The one-process control compares the exact small witness tree with the checked byte-entry refusal and a fresh admitted start neighbour; it does not establish the full schema comparison or process behavior."
+    },
+    {
+      "operation": "pn::executor::tests::served_scaffold_query_refuses",
+      "path": "packages/node/src/executor.rs",
+      "claim": "NODE::claim:executor:served-scaffold-query-refuses",
+      "before": "Claim: The schema-validity scaffold remains in the committed SDL but refuses before dependency validation or resolver work through checked served construction.",
+      "after": "Claim: The schema-validity scaffold remains in the committed SDL but refuses before dependency validation or resolver work through checked served construction.",
+      "review": "The one-process control checks the committed SDL, the exact checked byte-entry refusal and a fresh admitted start neighbour; it does not claim listener or process behavior."
+    },
+    {
       "operation": "pn::executor::tests::start_through_bytes",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:start-through-bytes",
@@ -7795,6 +7811,14 @@
       "before": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion.",
       "after": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion.",
       "review": "The one-process control uses supplied public facts and explicit finite test caps to witness its stated transition or refusal; it does not claim OS binding or admitted measurements."
+    },
+    {
+      "operation": "pn::lifecycle::tests::witness_configuration_refuses",
+      "path": "packages/node/src/lifecycle.rs",
+      "claim": "NODE::claim:lifecycle:witness-configuration-refuses",
+      "before": "Claim: Public edition sources and arguments cannot select the isolated conformance witness, while supported and unembedded coordinates retain their distinct checked served outcomes.",
+      "after": "Claim: Public edition sources and arguments cannot select the isolated conformance witness, while supported and unembedded coordinates retain their distinct checked served outcomes.",
+      "review": "Both public source forms use production checked construction and fixed request bytes; malformed witness text and the extra argument refuse during preparation, while fresh supported and unembedded start neighbours preserve distinct outcomes."
     }
   ],
   "conditional_claims": {}

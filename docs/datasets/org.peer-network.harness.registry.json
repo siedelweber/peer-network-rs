@@ -4835,6 +4835,9 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn::executor::tests::served_scaffold_query_refuses",
+        "pn::lifecycle::tests::witness_configuration_refuses",
+        "pn::executor::tests::served_introspection_refuses",
         "pn::bin/pn::process_adapter::tests::adapter_output_classification",
         "pn::bin/pn::process_adapter::tests::adapter_command_statuses",
         "pn::bin/pn::process_adapter::tests::adapter_ready_datagram",

@@ -1597,6 +1597,8 @@
     "pn::executor::tests::response_nothing_fits": "Claim: A positive cap that fits neither the result nor one replacement returns typed `ResponseLimit` and no bytes.",
     "pn::executor::tests::response_replacement_fits": "Claim: An oversized aliased start result is discarded once and replaced under a fresh response budget without rerunning start.",
     "pn::executor::tests::result_invariant": "Claim: Produced start data has ready exactly when failure is null across success and every closed failure name.",
+    "pn::executor::tests::served_introspection_refuses": "Claim: The fixed schema-introspection request succeeds only in an isolated finite conformance witness and refuses before dependency validation or start work through checked served construction.",
+    "pn::executor::tests::served_scaffold_query_refuses": "Claim: The schema-validity scaffold remains in the committed SDL but refuses before dependency validation or resolver work through checked served construction.",
     "pn::executor::tests::start_through_bytes": "Claim: Valid byte requests dispatch through actual GraphQL exactly when their root survives literal conditional selection.",
     "pn::executor::tests::unsupported_operation_refuses": "Claim: Requests outside the supported operation or limits, the explicit set and the dependency's depth guard, refuse Unsupported with a null ceiling before dispatch.",
     "pn::lifecycle::tests::barrier_precedes_workers": "Claim: An incomplete empty barrier refuses reserved input and cannot authorize construction or a worker.",
@@ -1617,6 +1619,7 @@
     "pn::lifecycle::tests::repeated_stop_keeps_deadline": "Claim: A repeated stop retains the first stopping and cancellation deadlines instead of extending them.",
     "pn::lifecycle::tests::reserved_input_refuses": "Claim: Public descriptor and directory advertisements refuse the reserved input before acquisition, while valid absence remains admitted.",
     "pn::lifecycle::tests::stop_clears_ready": "Claim: A classified graceful stop clears the ready state and closes dispatch before retirement.",
-    "pn::lifecycle::tests::termination_output_contract": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion."
+    "pn::lifecycle::tests::termination_output_contract": "Claim: Only SIGTERM classifies as graceful, and only an orderly stop after notification emits the minimal successful completion.",
+    "pn::lifecycle::tests::witness_configuration_refuses": "Claim: Public edition sources and arguments cannot select the isolated conformance witness, while supported and unembedded coordinates retain their distinct checked served outcomes."
   }
 }

@@ -1219,7 +1219,7 @@ fn known_ceiling(key: &str) -> Option<&'static str> {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use async_graphql::futures_util::FutureExt;
     use pn_interchange::{ResponseView, write_transport_response};
@@ -1297,6 +1297,37 @@ mod tests {
 
     fn starting() -> (Controller, ExecutionContext, Vec<u8>) {
         starting_with_caps(caps())
+    }
+
+    fn served_start_with(facts: &PreparationFacts<'_>) -> (Controller, ExecutionContext, Vec<u8>) {
+        let bootstrap = CheckedBootstrap::new(facts).expect("checked public start facts");
+        let mut controller = Controller::new();
+        controller.advance(Event::Prepare { at: 0 }).expect("preparation");
+        assert!(matches!(
+            controller.advance(Event::PreparedStart(bootstrap)).expect("checked start").as_slice(),
+            [Action::Install]
+        ));
+        controller.advance(Event::Installed).expect("installation");
+        assert!(matches!(
+            controller.advance(Event::Continue).expect("continue").as_slice(),
+            [Action::Construct]
+        ));
+        let context = controller
+            .construct_context()
+            .expect("constructing state")
+            .expect("completed embedded register");
+        let actions = controller
+            .advance(Event::Constructed { result: Ok(()), at: 1 })
+            .expect("constructed");
+        let [Action::Dispatch(bytes)] = <[Action; 1]>::try_from(actions).expect("one dispatch") else {
+            panic!("fixed byte dispatch")
+        };
+        (controller, context, bytes)
+    }
+
+    pub(crate) fn served_start() -> (Controller, ExecutionContext, Vec<u8>) {
+        let args = ["pn", "start"];
+        served_start_with(&facts(&args))
     }
 
     fn response(ready: bool, failure: Option<&str>) -> TransportMessage {
@@ -1861,6 +1892,57 @@ mod tests {
             retire_to_completion(&mut controller, 1, false),
             (1, Some(Cause::EntryFailure("LimitsUnadmitted")), false)
         );
+    }
+
+    /// Claim: Public edition sources and arguments cannot select the isolated conformance witness, while supported and unembedded coordinates retain their distinct checked served outcomes.
+    /// ´claim:lifecycle:witness-configuration-refuses´
+    /// ´test:unit:witness-configuration-refuses´
+    #[test]
+    fn witness_configuration_refuses() {
+        let args = ["pn", "start"];
+        let edition_file = format!("{EDITION}\n");
+        for from_file in [false, true] {
+            let mut selected = facts(&args);
+            if from_file {
+                selected.edition = None;
+                selected.edition_file = Some("/edition.conf");
+                selected.file_bytes = Some(edition_file.as_bytes());
+            }
+            let (_controller, context, _) = served_start_with(&selected);
+            crate::executor::tests::assert_served_unsupported(&context, "query { __type(name:\"ControlQuery\"){name} }");
+            assert!(!context.lifecycle_dependency_validation_entered());
+            let (_neighbour_controller, neighbour, bytes) = served_start_with(&selected);
+            crate::executor::tests::assert_served_start(&neighbour, &bytes, None);
+
+            let mut invalid = facts(&args);
+            if from_file {
+                invalid.edition = None;
+                invalid.edition_file = Some("/edition.conf");
+                invalid.file_bytes = Some(b"witness\n");
+            } else {
+                invalid.edition = Some("witness");
+            }
+            assert!(matches!(
+                CheckedBootstrap::new(&invalid),
+                Err(PreparationRefusal::EditionForm)
+            ));
+        }
+
+        let witness_args = ["pn", "start", "--witness"];
+        assert!(matches!(
+            CheckedBootstrap::new(&facts(&witness_args)),
+            Err(PreparationRefusal::Arguments)
+        ));
+
+        let unembedded = EDITION.replace("register@1.0.0", "register@1.0.1");
+        assert_ne!(unembedded, EDITION);
+        let mut unsupported = facts(&args);
+        unsupported.edition = Some(&unembedded);
+        let (_controller, context, _) = served_start_with(&unsupported);
+        crate::executor::tests::assert_served_unsupported(&context, "query { __type(name:\"ControlQuery\"){name} }");
+        assert!(!context.lifecycle_dependency_validation_entered());
+        let (_neighbour_controller, neighbour, bytes) = served_start_with(&unsupported);
+        crate::executor::tests::assert_served_start(&neighbour, &bytes, Some("EditionUnsupported"));
     }
 
     /// Claim: Construction, complete start and pre-dispatch entry failures retain class and ceiling over coincident stop or elapsed startup bounds, retiring without retry or successful output.

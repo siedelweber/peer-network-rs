@@ -351,9 +351,11 @@
         "NODE::claim:executor:directive-admission-is-closed",
         "NODE::claim:executor:response-replacement-fits",
         "NODE::claim:executor:response-nothing-fits",
-        "NODE::claim:executor:register-fixed-messages-fit"
+        "NODE::claim:executor:register-fixed-messages-fit",
+        "NODE::claim:executor:served-introspection-refuses",
+        "NODE::claim:executor:served-scaffold-query-refuses"
       ],
-      "closing_condition": "The fourteen named executor controls and package tests pass with the bounded byte entry.",
+      "closing_condition": "The fourteen bounded-executor controls and two served-configuration executor controls pass with the package tests.",
       "closing_step": "Bounded byte executor subcut.",
       "evidence_paragraph": "NODE::def:node:scope",
       "hold": "",
@@ -386,9 +388,10 @@
         "NODE::claim:lifecycle:entry-failures-retire",
         "NODE::claim:lifecycle:lifecycle-deadlines-compose",
         "NODE::claim:lifecycle:ready-notification-arbitrates",
-        "NODE::claim:lifecycle:cleanup-preserves-cause"
+        "NODE::claim:lifecycle:cleanup-preserves-cause",
+        "NODE::claim:lifecycle:witness-configuration-refuses"
       ],
-      "closing_condition": "The nineteen named lifecycle controls and node package tests pass.",
+      "closing_condition": "The nineteen supplied-fact lifecycle controls, the served witness-configuration control and node package tests pass.",
       "closing_step": "Pure shell lifecycle and executable boundary subcut.",
       "evidence_paragraph": "NODE::def:node:scope",
       "hold": "",
