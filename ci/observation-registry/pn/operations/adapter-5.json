@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::<Prepared as fmt :: Debug>::fmt",
+    "owner": "NODE",
+    "signature": "fn fmt (& self , formatter : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This formatter reports only lifecycle state and capability presence, suppressing the monotonic origin and private address.",
+      "witness": "NODE::claim:lifecycle:adapter-output-classification",
+      "boundary": "pn::packages/node/src/main.rs::main",
+      "class_decision": "node-initial-binary"
+    },
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::<Prepared as fmt :: Debug>::fmt",
+    "body": "{ formatter . debug_struct (\"Prepared\") . field (\"controller\" , & self . controller . state ()) . field (\"clock\" , & \"[monotonic origin]\") . field (\"stop\" , & self . stop . is_some ()) . field (\"address\" , & self . address . is_some ()) . finish () }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "The formatter emits public state and capability presence only; its Debug output cannot borrow or print the protected notification address.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

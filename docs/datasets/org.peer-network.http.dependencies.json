@@ -33,6 +33,18 @@
     },
     {
       "features": [
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "errno",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.3.14"
+    },
+    {
+      "features": [
         "alloc",
         "default",
         "std"
@@ -231,6 +243,15 @@
       "version": "1.0.47"
     },
     {
+      "features": [],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "signal-hook-registry",
+      "notice": "docs/NODE-NOTICES",
+      "scope": "HTTP runtime closure plus process adapter signal wakeup; absent from minimal probe",
+      "version": "1.4.8"
+    },
+    {
       "features": [
         "const_generics",
         "const_new"
@@ -287,6 +308,8 @@
         "net",
         "rt",
         "rt-multi-thread",
+        "signal",
+        "signal-hook-registry",
         "socket2",
         "sync",
         "time",

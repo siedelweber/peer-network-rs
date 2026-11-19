@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::Wake",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "enum Wake { Entry (Result < pn_interchange :: TransportMessage , pn :: EntryError > , u64) , PendingCheck (u64 , bool) , Signal (u64 , bool) , }"
+  }
+}

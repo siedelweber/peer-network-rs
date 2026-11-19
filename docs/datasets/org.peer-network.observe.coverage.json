@@ -223,25 +223,25 @@
       "operations": 12
     },
     {
-      "exceptions": 5,
-      "generators": 23,
+      "exceptions": 9,
+      "generators": 26,
       "helpers": 0,
-      "instrumented": 15,
+      "instrumented": 24,
       "name": "pn",
       "number_forms": {
         "exceptions": {
-          "exact": "5",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "23",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
@@ -254,18 +254,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "15",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "15",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "20",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         }
@@ -292,7 +292,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 20
+      "operations": 33
     },
     {
       "exceptions": 0,

@@ -96,7 +96,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | cli-common | 127 | 30 | 94 | 3 | 45 |
 | documents | 23 | 17 | 6 | 0 | 11 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn | 20 | 15 | 5 | 0 | 23 |
+| pn | 33 | 24 | 9 | 0 | 26 |
 | pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
 | pn-act-profile | 26 | 23 | 3 | 0 | 11 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
@@ -526,6 +526,12 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-credential-custody-capture` In `packages/host/src/credential_fixture/raw.rs`, function `capture`: The mutable capture loan ends at bounded acquisition through EOF after the writer ends; no ordinary intermediate holds captured bytes. Source method: `expose_storage`. Fixture-only boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-credential-custody-search` In `packages/host/src/credential_fixture/raw.rs`, function `contains`: The protected capture or view borrow ends at the public sentinel search and returns only presence, never captured content. Source method: `expose_bytes`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-node-notify-form-1` In `packages/node/src/process_adapter.rs`, function `form_valid`: Notification address bytes are borrowed only for slash, NUL and length checks until form validation returns; byte-slice operations cannot accept the protected carrier, and the original environment copy remains process-owned until exit. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-node-notify-metadata-1` In `packages/node/src/process_adapter.rs`, function `metadata_validity`: Notification pathname bytes are borrowed for one symlink_metadata call until it returns; the filesystem API cannot accept protected storage and may retain a kernel pathname copy. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-node-notify-send-1` In `packages/node/src/process_adapter.rs`, function `send_once_with`: Notification pathname bytes are borrowed for one send_to call until it returns; the socket API cannot accept protected storage and may retain a kernel address copy. Source method: `expose_secret`. Production boundary.
 
 
 

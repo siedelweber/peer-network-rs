@@ -837,6 +837,7 @@
         "ci::test_testkit.SupportGuard.test_property_seed": "calibrated-testkit-property-seed-case"
       },
       "cases": [
+        "ci::test_testkit.PropertyDeclarations.test_binary_library_module_identity",
         "ci::test_testkit.PropertyDeclarations.test_consumer_seed",
         "ci::test_testkit.PropertyDeclarations.test_source_seed",
         "ci::test_testkit.PropertyDeclarations.test_undeclared_property",
@@ -4828,6 +4829,14 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn::bin/pn::process_adapter::tests::adapter_output_classification",
+        "pn::bin/pn::process_adapter::tests::adapter_command_statuses",
+        "pn::bin/pn::process_adapter::tests::adapter_ready_datagram",
+        "pn::bin/pn::process_adapter::tests::adapter_stop_bound_precedes_wait",
+        "pn::bin/pn::process_adapter::tests::adapter_wait_plan",
+        "pn::bin/pn::process_adapter::tests::adapter_stop_is_latched",
+        "pn::bin/pn::process_adapter::tests::adapter_edition_file_is_bounded",
+        "pn::bin/pn::process_adapter::tests::adapter_preparation_order",
         "pn::lifecycle::tests::barrier_precedes_workers",
         "pn::lifecycle::tests::reserved_input_refuses",
         "pn::lifecycle::tests::byte_start_precedes_ready",

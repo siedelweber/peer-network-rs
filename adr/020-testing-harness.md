@@ -50,7 +50,7 @@
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | extended | 15 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
-| ci::test_testkit | active | unit | ci-python | fast | 11 |
+| ci::test_testkit | active | unit | ci-python | fast | 12 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | service | 11 |
 | cli-common | active | unit | cli-common-rust | fast | 111 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
@@ -215,7 +215,7 @@
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 11 |
 | pn-wallet::wire | active | integration | pn-wallet-rust | extended | 1 |
-| pn::unit | active | unit | pn-rust | fast | 40 |
+| pn::unit | active | unit | pn-rust | fast | 48 |
 | records-records | active | integration | pn-records-rust | fast | 20 |
 | records-verification | active | integration | pn-records-rust | fast | 20 |
 | records-workload-benchmarks | active | integration | pn-records-rust | fast | 1 |

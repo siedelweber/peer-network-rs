@@ -45,7 +45,7 @@
 | cli-common | 17 | 0 |
 | documents | 10 | 0 |
 | execwrap | 62 | 0 |
-| pn | 14 | 0 |
+| pn | 15 | 0 |
 | pn-act-authentication | 11 | 0 |
 | pn-act-profile | 12 | 0 |
 | pn-credential-derivation | 7 | 0 |
@@ -61,7 +61,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 1 755 | 216 |
+| ROOT (repository-wide) | 1 758 | 216 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

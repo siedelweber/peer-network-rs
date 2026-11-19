@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::PublicInputs",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "# [derive (Debug)] struct PublicInputs { edition : Option < OsString > , edition_file : Option < OsString > , file_bytes : Option < Vec < u8 > > , file_refused : bool , listen_pid : Option < OsString > , listen_fds : Option < OsString > , listen_fdnames : Option < OsString > , listen_pidfdid : bool , connection_input : bool , }"
+  }
+}

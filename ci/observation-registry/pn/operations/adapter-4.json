@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::<Option < Option < T > > as TransposeOption < T >>::transpose_option",
+    "owner": "NODE",
+    "signature": "fn transpose_option (self , refusal : PreparationRefusal) -> Result < Option < T > , PreparationRefusal >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This pure conversion only carries an optional public preparation fact into the observed binary command.",
+      "witness": "NODE::claim:lifecycle:adapter-preparation-order",
+      "boundary": "pn::packages/node/src/main.rs::main",
+      "class_decision": "node-initial-binary"
+    },
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::<Option < Option < T > > as TransposeOption < T >>::transpose_option",
+    "body": "{ match self { None => Ok (None) , Some (Some (value)) => Ok (Some (value)) , Some (None) => Err (refusal) , } }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "The item performs only a bounded local conversion within the observed binary command and does not publish a new operation or a private capability.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

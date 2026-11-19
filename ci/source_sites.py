@@ -18,6 +18,7 @@ OWNERS = {'node':'NODE','credential-generator':'GENERATOR','credential-derivatio
 RAW_STRING = re.compile(r'(?:br|r)(#*)"')
 CHAR_LITERAL = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")
 DOC_ATTRIBUTE = re.compile(r'#\[doc\s*=\s*("(?:[^"\\]|\\.)*")\s*\]')
+MODULE_DECLARATION = re.compile(r'(?m)(?:#\[path\s*=\s*"(?P<path>[^"]+)"\]\s*)?(?:pub(?:\([^)]*\))?\s+)?(?P<keyword>mod)\s+(?P<name>\w+)\s*;')
 
 
 def rust_mask(text, comments=None):
@@ -109,12 +110,71 @@ def rust_sites(path, text, package, owner, aliases=None):
     return sites
 
 
+def module_sources(root, entry):
+    """Follow the declared root's file modules without guessing a missing path."""
+    source_root = (root/'src').resolve()
+    entry = entry.resolve()
+    pending = [entry]
+    reached = set()
+    while pending:
+        parent = pending.pop()
+        if not parent.is_relative_to(source_root) or not parent.is_file():
+            raise StructuralError(f'{parent}: declared module source is outside src or absent')
+        if parent in reached:
+            continue
+        reached.add(parent)
+        source = parent.read_text()
+        masked = rust_mask(source)
+        braces = []
+        ends = {}
+        for mark in re.finditer(r'[{}]', masked):
+            if mark[0] == '{':
+                braces.append(mark.start())
+            elif braces:
+                ends[braces.pop()] = mark.start()
+        inline = []
+        for mark in re.finditer(r'\bmod\s+(\w+)\s*\{', masked):
+            opening = mark.end()-1
+            if opening in ends:
+                inline.append((opening, ends[opening], mark[1]))
+        for mark in MODULE_DECLARATION.finditer(source):
+            if masked[mark.start('keyword'):mark.end('keyword')] != 'mod':
+                continue
+            base = parent.parent if parent.name in {'lib.rs', 'main.rs', 'mod.rs'} else parent.with_suffix('')
+            for opening, closing, name in sorted(inline):
+                if opening < mark.start('keyword') < closing:
+                    base /= name
+            if mark['path'] is not None:
+                candidates = [base/mark['path']]
+            else:
+                candidates = [base/(mark['name']+'.rs'), base/mark['name']/'mod.rs']
+            existing = [path.resolve() for path in candidates if path.is_file()]
+            if len(existing) != 1:
+                raise StructuralError(f'{parent}: unresolved module declaration {mark["name"]}: found {len(existing)} files')
+            pending.extend(existing)
+    return reached
+
+
 def census(root):
     root = Path(root)
     sites = []
     for directory, owner in OWNERS.items():
         manifest = tomllib.loads((root/'packages'/directory/'Cargo.toml').read_text())
         package = manifest['package']['name']
+        crate_root = root/'packages'/directory
+        source_root = crate_root/'src'
+        library_root = source_root/'lib.rs'
+        binaries = manifest.get('bin', [])
+        binary_sources = set()
+        if library_root.is_file() and binaries:
+            if len(binaries) != 1:
+                raise StructuralError(f'{package}: more than one declared binary beside library')
+            if 'path' not in binaries[0]:
+                raise StructuralError(f'{package}: declared binary beside library lacks a root path')
+            binary_sources = module_sources(crate_root, crate_root/binaries[0]['path'])
+            shared = module_sources(crate_root, library_root) & binary_sources
+            if shared:
+                raise StructuralError(f'{package}: source reached from both library and binary roots: {sorted(str(path.relative_to(crate_root)) for path in shared)}')
         aliases = {}
         for parent in (root/'packages'/directory/'src').rglob('*.rs'):
             source = parent.read_text()
@@ -124,12 +184,12 @@ def census(root):
         for path in sorted((root/'packages'/directory).rglob('*.rs')):
             if not {'src','tests'}.intersection(path.relative_to(root).parts[2:]): continue
             target = package
-            # A declared sole binary has nextest's binary component even for
-            # its source-local unit controls; it is not a library test target.
+            # A sole binary has nextest's binary component for its source-local
+            # controls; beside a library, only files reached from that binary root do.
             if (path.is_relative_to(root/'packages'/directory/'src')
-                    and not (root/'packages'/directory/'src/lib.rs').exists()
-                    and len(manifest.get('bin', [])) == 1):
-                target += '::bin/'+manifest['bin'][0]['name']
+                    and ((not library_root.is_file() and len(binaries) == 1)
+                         or path.resolve() in binary_sources)):
+                target += '::bin/'+binaries[0]['name']
             sites.extend(rust_sites(path.relative_to(root), path.read_text(), target, owner, aliases))
     for path in sorted((root/'ci').glob('test_*.py')):
         tree = ast.parse(path.read_text())

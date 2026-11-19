@@ -2,7 +2,7 @@
   "section": "assessments",
   "value": {
     "status": "reviewer-confirmed",
-    "premises": "The wrapper reads no observation sink output and treats no trace or record as lifecycle completion authority.",
+    "premises": "The adapter reads no observation sink output and treats no trace or record as lifecycle completion authority; the one successful send is an OS result, not an observation record.",
     "negative_probe": "CLICOMMON::claim:cli:entry-origin-runner-order"
   },
   "name": "node-binary-exposure-consumers"

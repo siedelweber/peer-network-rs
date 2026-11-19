@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::NotificationAddress::metadata_validity",
+    "owner": "NODE",
+    "signature": "fn metadata_validity (& self) -> Result < (bool , bool) , (io :: ErrorKind , Option < i32 >) >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::NotificationAddress::metadata_validity",
+    "body": "{ let bytes = self . bytes . expose_secret () ; let path = Path :: new (OsStr :: from_bytes (bytes)) ; match fs :: symlink_metadata (path) { Ok (metadata) => Ok ((metadata . file_type () . is_symlink () , metadata . file_type () . is_socket ())) , Err (error) => Err ((error . kind () , error . raw_os_error ())) , } }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "This child span records public acquisition, wait or selected outcome inside the adopted binary command; protected address bytes are represented only by the fixed role marker.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

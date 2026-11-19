@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::run",
+    "owner": "NODE",
+    "signature": "fn run (mut prepared : Prepared) -> Result < Value , AdapterFailure >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::run",
+    "body": "{ prepared . controller . advance (Event :: Installed) . map_err (| _ | AdapterFailure :: Configuration) ? ; let actions = prepared . controller . advance (Event :: Continue) . map_err (| _ | AdapterFailure :: Configuration) ? ; match actions . as_slice () { [Action :: Complete { .. }] => selected_completion (actions , & mut prepared . controller) , [Action :: Construct] => { let construction = prepared . controller . construct_context () . map_err (| _ | AdapterFailure :: Configuration) ? ; match construction { Ok (context) => run_served (prepared , context) , Err (error) => { let actions = prepared . controller . advance (Event :: Constructed { result : Err (error) , at : elapsed_ns (prepared . clock) , }) . map_err (| _ | AdapterFailure :: Configuration) ? ; complete_retirement (& mut prepared , actions) } } } _ => Err (AdapterFailure :: Configuration) , } }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "This child span records public acquisition, wait or selected outcome inside the adopted binary command; protected address bytes are represented only by the fixed role marker.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

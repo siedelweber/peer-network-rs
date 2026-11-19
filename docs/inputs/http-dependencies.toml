@@ -20,6 +20,15 @@ scope = "HTTP runtime closure plus existing unified workspace features"
 notice = "docs/HTTP-NOTICES"
 
 [[rows]]
+name = "errno"
+version = "0.3.14"
+license = "MIT OR Apache-2.0"
+features = ["default", "std"]
+minimal_features = []
+scope = "HTTP runtime closure plus existing unified workspace features; absent from minimal probe"
+notice = "Existing workspace dependency notices"
+
+[[rows]]
 name = "futures-core"
 version = "0.3.34"
 license = "MIT OR Apache-2.0"
@@ -155,6 +164,15 @@ scope = "HTTP runtime closure plus existing unified workspace features; absent f
 notice = "Existing workspace dependency notices"
 
 [[rows]]
+name = "signal-hook-registry"
+version = "1.4.8"
+license = "MIT OR Apache-2.0"
+features = []
+minimal_features = []
+scope = "HTTP runtime closure plus process adapter signal wakeup; absent from minimal probe"
+notice = "docs/NODE-NOTICES"
+
+[[rows]]
 name = "smallvec"
 version = "1.16.3"
 license = "MIT OR Apache-2.0"
@@ -185,7 +203,7 @@ notice = "Existing workspace dependency notices"
 name = "tokio"
 version = "1.54.1"
 license = "MIT"
-features = ["bytes", "default", "io-util", "libc", "mio", "net", "rt", "rt-multi-thread", "socket2", "sync", "time", "windows-sys"]
+features = ["bytes", "default", "io-util", "libc", "mio", "net", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "time", "windows-sys"]
 minimal_features = ["default", "rt", "sync", "time"]
 scope = "HTTP runtime closure plus existing unified workspace features"
 notice = "docs/HTTP-NOTICES"

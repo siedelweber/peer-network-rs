@@ -2496,6 +2496,19 @@
     {
       "build_time": "none",
       "built_for_host": false,
+      "checksum": "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.26",
+      "name": "signal-hook-registry 1.4.8",
+      "procedural_macros": [],
+      "version": "1.4.8"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
       "checksum": "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [],

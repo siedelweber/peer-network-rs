@@ -226,6 +226,7 @@
 | serde_json 1.0.154 | MIT OR Apache-2.0 | default, raw_value, std | 1.71 | build script: build-script-build | e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6 |
 | sha2 0.11.1 | MIT OR Apache-2.0 | alloc, default, oid, zeroize | 1.88 | none | 47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19 |
 | sharded-slab 0.1.7 | MIT | none enabled | 1.42.0 | none | f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6 |
+| signal-hook-registry 1.4.8 | MIT OR Apache-2.0 | not built for pn-host | 1.26 | none | c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b |
 | similar 2.7.0 | Apache-2.0 | not built for pn-host | 1.60 | none | bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa |
 | siphasher 1.0.4 | MIT OR Apache-2.0 | default, std | not declared | none | 33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256 |
 | slab 0.4.12 | MIT | std | 1.51 | none | 0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5 |

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::Prepared",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "pub (super) struct Prepared { controller : Controller , clock : Instant , stop : Option < Arc < AtomicBool > > , address : Option < NotificationAddress > , }"
+  }
+}

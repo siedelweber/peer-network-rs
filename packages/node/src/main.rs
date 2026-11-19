@@ -1,9 +1,11 @@
 #![doc = include_str!("../README.md")]
 
-use std::{convert::Infallible, ffi::OsString, process::ExitCode, time::Instant};
+use std::{ffi::OsString, process::ExitCode, time::Instant};
 
 use clap::{Parser, Subcommand};
-use cli_common::{CliExit, CommandExit, ControlPlaneRecord, OriginPreparation, observation::EntryOrigin};
+use cli_common::{OriginPreparation, observation::EntryOrigin};
+
+mod process_adapter;
 
 /// The initial command grammar has no edition operand or override.
 /// (´[ROOT-amend:api:health-lifecycle]´)
@@ -37,22 +39,19 @@ fn main() -> ExitCode {
         false,
         tracing::Level::INFO,
         || {
-            let _preparation_at = Instant::now();
+            let preparation_at = Instant::now();
             let arguments: Vec<OsString> = std::env::args_os().collect();
             let observed = serde_json::json!({
                 "arguments": arguments.iter().map(|argument| argument.as_encoded_bytes().to_vec()).collect::<Vec<_>>()
             });
-            let exit = match cli_common::parse_args_from::<Arguments, _, _>(arguments) {
-                Ok(Arguments {
-                    command: Command::Start | Command::Edition,
-                }) => CliExit::new(ControlPlaneRecord::diagnostic("pn", "Configuration"), CommandExit::Failure),
-                Err(exit) => exit,
-            };
-            OriginPreparation::<Infallible>::Terminal {
-                exit,
-                arguments: observed,
+            match cli_common::parse_args_from::<Arguments, _, _>(arguments.clone()) {
+                Ok(Arguments { command }) => process_adapter::prepare(&command, &arguments, preparation_at),
+                Err(exit) => OriginPreparation::Terminal {
+                    exit,
+                    arguments: observed,
+                },
             }
         },
-        |never: Infallible| -> Result<(), Infallible> { match never {} },
+        process_adapter::run,
     )
 }

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::NotificationAddress",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "struct NotificationAddress { bytes : SecretBox < [u8] > , }"
+  }
+}

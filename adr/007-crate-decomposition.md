@@ -264,6 +264,7 @@ The order is carrier work without a pin move; selection and separate qualificati
 | --- | --- | --- | --- | --- | --- |
 | atomic-waker | 1.1.2 | Apache-2.0 OR MIT |  |  | HTTP runtime closure plus existing unified workspace features |
 | bytes | 1.12.1 | MIT | default, std | default, serde, std | HTTP runtime closure plus existing unified workspace features |
+| errno | 0.3.14 | MIT OR Apache-2.0 |  | default, std | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
 | futures-core | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
 | futures-sink | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
 | http | 1.5.0 | MIT OR Apache-2.0 | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
@@ -279,10 +280,11 @@ The order is carrier work without a pin move; selection and separate qualificati
 | pin-project-lite | 0.2.17 | Apache-2.0 OR MIT |  |  | HTTP runtime closure plus existing unified workspace features |
 | proc-macro2 | 1.0.107 | MIT OR Apache-2.0 |  | default, proc-macro, span-locations | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
 | quote | 1.0.47 | MIT OR Apache-2.0 |  | default, proc-macro | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| signal-hook-registry | 1.4.8 | MIT OR Apache-2.0 |  |  | HTTP runtime closure plus process adapter signal wakeup; absent from minimal probe |
 | smallvec | 1.16.3 | MIT OR Apache-2.0 | const_generics, const_new | const_generics, const_new | HTTP runtime closure plus existing unified workspace features |
 | socket2 | 0.6.5 | MIT OR Apache-2.0 |  | all | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
 | syn | 2.0.119 | MIT OR Apache-2.0 |  | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
-| tokio | 1.54.1 | MIT | default, rt, sync, time | bytes, default, io-util, libc, mio, net, rt, rt-multi-thread, socket2, sync, time, windows-sys | HTTP runtime closure plus existing unified workspace features |
+| tokio | 1.54.1 | MIT | default, rt, sync, time | bytes, default, io-util, libc, mio, net, rt, rt-multi-thread, signal, signal-hook-registry, socket2, sync, time, windows-sys | HTTP runtime closure plus existing unified workspace features |
 | tokio-util | 0.7.20 | MIT |  | codec, default, libc | HTTP runtime closure plus existing unified workspace features |
 | tower | 0.5.3 | MIT | limit, pin-project-lite, timeout, tokio, tokio-util, tracing | limit, pin-project-lite, timeout, tokio, tokio-util, tracing | HTTP runtime closure plus existing unified workspace features |
 | tower-layer | 0.3.3 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |

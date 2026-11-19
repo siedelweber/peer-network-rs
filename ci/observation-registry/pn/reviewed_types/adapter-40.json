@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::WaitPlan",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)] struct WaitPlan { poll_work : bool , deadline : Option < u64 > , }"
+  }
+}

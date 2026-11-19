@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::classify_complete",
+    "owner": "NODE",
+    "signature": "fn classify_complete (exit : u8 , stdout : Option < PublicOutput > , cause : Option < Cause >) -> Result < Value , AdapterFailure >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::classify_complete",
+    "body": "{ if exit == 0 { stdout . map (render_output) . ok_or (AdapterFailure :: Configuration) } else { Err (cause . map_or (AdapterFailure :: Configuration , AdapterFailure :: Selected)) } }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "This child span records public acquisition, wait or selected outcome inside the adopted binary command; protected address bytes are represented only by the fixed role marker.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

@@ -3,11 +3,24 @@
   "value": {
     "name": "node-initial-binary",
     "status": "reviewer-confirmed",
-    "premises": "The initial binary captures entry before its own work and delegates observation, output and exit to cli-common. It parses actual public arguments and returns Configuration before any unbound environment, file or notification effect.",
+    "premises": "The binary captures origin before effects, delegates complete public command observation and terminal publication to the shared runner, and drives only the checked controller. Private notification bytes remain in protected storage and leave it only at the labelled OS boundaries.",
     "membership": {
       "explicit": [
+        "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
         "pn::packages/node/src/main.rs::main",
-        "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
+        "pn::packages/node/src/process_adapter.rs::process_adapter::<NotificationAddress as fmt :: Debug>::fmt",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::NotificationAddress::metadata_validity",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::NotificationAddress::send_once",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::<Prepared as fmt :: Debug>::fmt",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::<AdapterFailure as fmt :: Display>::fmt",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::<Option < Option < T > > as TransposeOption < T >>::transpose_option",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::read_public_file",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::classify_complete",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::complete_retirement",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::run",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::wait_plan",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::run_served",
+        "pn::packages/node/src/process_adapter.rs::process_adapter::acquire_actual_public_inputs"
       ]
     }
   }

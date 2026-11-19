@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::AdapterFailure",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "# [derive (Clone , Copy , Debug)] pub (super) enum AdapterFailure { Configuration , Selected (Cause) , }"
+  }
+}

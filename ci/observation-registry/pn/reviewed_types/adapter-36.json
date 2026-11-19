@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "process_adapter::NotificationValidity",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "# [expect (clippy :: struct_excessive_bools)] struct NotificationValidity { present : bool , form_valid : bool , final_symlink : bool , is_socket : bool , reason : & 'static str , error_kind : Option < io :: ErrorKind > , os_code : Option < i32 > , }"
+  }
+}

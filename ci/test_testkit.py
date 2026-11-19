@@ -294,6 +294,40 @@ class SupportGuard(unittest.TestCase):
 
 
 class PropertyDeclarations(unittest.TestCase):
+    def test_binary_library_module_identity(self):
+        """A resolved binary module gets the runner's target identity while library modules keep theirs, and shared or unresolved sources refuse.
+        ´claim:harness:binary-library-module-identity´
+        ´test:integration:test-binary-library-module-identity´
+        """
+        from source_sites import OWNERS, census
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            crate = root/'packages'/'example'
+            source = crate/'src'
+            source.mkdir(parents=True)
+            (crate/'Cargo.toml').write_text('[package]\nname = "example"\nversion = "0.1.0"\n[[bin]]\nname = "example"\npath = "src/main.rs"\n')
+            (source/'main.rs').write_text('#[path = "adapter.rs"]\nmod adapter;\n')
+            (source/'adapter.rs').write_text('#[test]\nfn binary_case() {}\n')
+            (source/'lib.rs').write_text('mod library;\n')
+            (source/'library.rs').write_text('#[test]\nfn library_case() {}\n')
+            with patch.dict(OWNERS, {'example': 'ROOT'}, clear=True):
+                operations = {site['operation'] for site in census(root)}
+                self.assertEqual(operations, {'example::bin/example::adapter::binary_case', 'example::library::library_case'})
+                (source/'main.rs').write_text('mod adapter;\nmod shared;\n')
+                (source/'lib.rs').write_text('mod library;\nmod shared;\n')
+                (source/'shared.rs').write_text('#[test]\nfn shared_case() {}\n')
+                with self.assertRaisesRegex(StructuralError, 'source reached from both library and binary roots'):
+                    census(root)
+                (source/'main.rs').write_text('mod adapter;\nmod missing;\n')
+                (source/'lib.rs').write_text('mod library;\n')
+                with self.assertRaisesRegex(StructuralError, 'unresolved module declaration missing'):
+                    census(root)
+                (source/'main.rs').write_text('mod adapter;\n')
+                with (crate/'Cargo.toml').open('a') as manifest:
+                    manifest.write('[[bin]]\nname = "second"\npath = "src/second.rs"\n')
+                with self.assertRaisesRegex(StructuralError, 'more than one declared binary beside library'):
+                    census(root)
+
     def test_undeclared_property(self):
         """A property discovered from its macro cannot silently run without replay declarations.
         ´claim:harness:undeclared-property-refused´

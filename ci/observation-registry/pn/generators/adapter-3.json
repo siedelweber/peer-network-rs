@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "process_adapter::WaitPlan",
+    "kind": "derive",
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "expansion_review": "The exact derive syntax and containing private adapter type are bound to this review. Generated formatting carries only selected public facts or a redacted capability marker; changing the derive requires renewed review.",
+    "class_decision": "node-initial-binary"
+  }
+}

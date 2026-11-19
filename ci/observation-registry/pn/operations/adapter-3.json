@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::<AdapterFailure as fmt :: Display>::fmt",
+    "owner": "NODE",
+    "signature": "fn fmt (& self , formatter : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This formatter emits a closed public cause name after the controller selects an exit; the binary entry remains the observed command root.",
+      "witness": "NODE::claim:lifecycle:adapter-command-statuses",
+      "boundary": "pn::packages/node/src/main.rs::main",
+      "class_decision": "node-initial-binary"
+    },
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::<AdapterFailure as fmt :: Display>::fmt",
+    "body": "{ match self { Self :: Configuration => formatter . write_str (\"Configuration\") , Self :: Selected (Cause :: PreDispatchFailure { class , ceiling }) => match ceiling { Some (key) => write ! (formatter , \"{class} ceiling={key}\") , None => write ! (formatter , \"{class} ceiling=null\") , } , Self :: Selected (cause) => write ! (formatter , \"{}\" , cause_name (* cause)) , } }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "The item performs only a bounded local conversion within the observed binary command and does not publish a new operation or a private capability.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}

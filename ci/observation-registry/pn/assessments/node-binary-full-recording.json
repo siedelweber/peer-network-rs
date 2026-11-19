@@ -2,7 +2,7 @@
   "section": "assessments",
   "value": {
     "status": "reviewer-confirmed",
-    "premises": "This wrapper supplies complete public argument bytes to the origin runner and selects only the fixed Configuration refusal at the first unbound OS fact. Its actual command path still owes the deferred executable witness.",
+    "premises": "The binary supplies complete public argument bytes and selected public preparation facts to the origin runner. The runner records the command root, closed terminal outcome and actual output; the controller selects lifecycle causes and actions.",
     "negative_probe": "CLICOMMON::claim:cli:entry-origin-runner-order"
   },
   "name": "node-binary-full-recording"

@@ -2137,6 +2137,19 @@ procedural_macros = []
 membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
 built_for_host = false
 feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
+name = "signal-hook-registry 1.4.8"
+version = "1.4.8"
+checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
+licence = "MIT OR Apache-2.0"
+msrv = "1.26"
+features = []
+build_time = "none"
+procedural_macros = []
+
+[[rows]]
+membership_scope = "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges."
+built_for_host = false
+feature_scope = "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification."
 name = "similar 2.7.0"
 version = "2.7.0"
 checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"

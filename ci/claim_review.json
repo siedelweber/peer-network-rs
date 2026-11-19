@@ -1058,6 +1058,14 @@
       "review": "Read the parser subprocess fixtures: asynchronous true remains a JSON boolean; another boolean field, a call expression, duplicate fields and skipped arguments each refuse."
     },
     {
+      "operation": "ci::test_testkit.PropertyDeclarations.test_binary_library_module_identity",
+      "path": "ci/test_testkit.py",
+      "claim": "ROOT::claim:harness:binary-library-module-identity",
+      "before": "A resolved binary module gets the runner's target identity while library modules keep theirs, and shared or unresolved sources refuse.",
+      "after": "A resolved binary module gets the runner's target identity while library modules keep theirs, and shared or unresolved sources refuse.",
+      "review": "The temporary package declares one library and one binary, checks their distinct discovered test identities, then refuses a shared source, an unresolved module and a second declared binary; no package on disk or runner result is substituted."
+    },
+    {
       "operation": "ci::test_testkit.PropertyDeclarations.test_consumer_seed",
       "path": "ci/test_testkit.py",
       "claim": "ROOT::claim:harness:consumer-seeds-separate-observations",
@@ -7387,6 +7395,70 @@
       "before": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
       "after": "Claim: Robustness refuses malformed schema source at parsing and duplicate or additional definitions, directives and arguments at the closed shape check before agreement.",
       "review": "Read the finite reader assertions and their distinct refusal classes; this test-only harness constructs no executor, and pending values establish no execution bound."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_command_statuses",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-command-statuses",
+      "before": "Claim: Supplied inspection, orderly stop and closed failure completions retain the decided stdout and exit classes without installing a process-global runner.",
+      "after": "Claim: Supplied inspection, orderly stop and closed failure completions retain the decided stdout and exit classes without installing a process-global runner.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_edition_file_is_bounded",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-edition-file-is-bounded",
+      "before": "Claim: A test-written regular edition file is read through its opened descriptor within the grammar ceiling, while excess, nonregular and failed reads refuse without another path.",
+      "after": "Claim: A test-written regular edition file is read through its opened descriptor within the grammar ceiling, while excess, nonregular and failed reads refuse without another path.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_output_classification",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-output-classification",
+      "before": "Claim: Production public formatting retains test-written selector values and closed errors, while a private notification sentinel appears only as its role and marker in debug and error paths.",
+      "after": "Claim: Production public formatting retains test-written selector values and closed errors, while a private notification sentinel appears only as its role and marker in debug and error paths.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_preparation_order",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-preparation-order",
+      "before": "Claim: Injected named lookups and one opened-file boundary preserve selector-first acquisition, refuse conflicting selectors without opening, and never inspect a reserved descriptor or credential directory.",
+      "after": "Claim: Injected named lookups and one opened-file boundary preserve selector-first acquisition, refuse conflicting selectors without opening, and never inspect a reserved descriptor or credential directory.",
+      "review": "The private one-process test records exact named lookup and open calls, including selector refusal before opening; it makes no signal or descriptor-adoption claim."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_ready_datagram",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-ready-datagram",
+      "before": "Claim: One unbound nonblocking sender enqueues exactly READY=1 to a test-owned local receiver, and injected failed counts or errors consume one attempt without a retry.",
+      "after": "Claim: One unbound nonblocking sender enqueues exactly READY=1 to a test-owned local receiver, and injected failed counts or errors consume one attempt without a retry.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_stop_bound_precedes_wait",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-stop-bound-precedes-wait",
+      "before": "Claim: At the retained stopping or capped drain bound, supplied instants prevent another work poll before release, while an earlier instant admits exactly one poll.",
+      "after": "Claim: At the retained stopping or capped drain bound, supplied instants prevent another work poll before release, while an earlier instant admits exactly one poll.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_stop_is_latched",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-stop-is-latched",
+      "before": "Claim: A stop set on the owned atomic before subscription handoff remains visible through handoff and repeated reads without clearing or counting deliveries.",
+      "after": "Claim: A stop set on the owned atomic before subscription handoff remains visible through handoff and repeated reads without clearing or counting deliveries.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
+    },
+    {
+      "operation": "pn::bin/pn::process_adapter::tests::adapter_wait_plan",
+      "path": "packages/node/src/process_adapter.rs",
+      "claim": "NODE::claim:lifecycle:adapter-wait-plan",
+      "before": "Claim: Supplied pending and wake phases schedule only the one active absolute bound, and a ready command waits for signal without work polling or a timer.",
+      "after": "Claim: Supplied pending and wake phases schedule only the one active absolute bound, and a ready command waits for signal without work polling or a timer.",
+      "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
     },
     {
       "operation": "pn::executor::tests::decoding_work_is_independent",

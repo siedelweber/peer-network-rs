@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn",
+    "path": "packages/node/src/process_adapter.rs",
+    "item": "process_adapter::complete_retirement",
+    "owner": "NODE",
+    "signature": "fn complete_retirement (prepared : & mut Prepared , mut actions : Vec < Action >) -> Result < Value , AdapterFailure >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-node-initial-binary"
+  },
+  "review": {
+    "operation": "pn::packages/node/src/process_adapter.rs::process_adapter::complete_retirement",
+    "body": "{ if prepared . controller . state () != State :: Retiring { return selected_completion (actions , & mut prepared . controller) ; } for action in actions . drain (..) { match action { Action :: ReleaseEndpoint => drop (prepared . address . take ()) , Action :: ReleaseBuffers | Action :: ReleaseContext | Action :: ReleasePreparation | Action :: Close | Action :: Cancel { .. } => { } _ => return Err (AdapterFailure :: Configuration) , } } let completed = prepared . controller . advance (Event :: Retired { at : elapsed_ns (prepared . clock) , cleanup_failed : false , }) . map_err (| _ | AdapterFailure :: Configuration) ? ; selected_completion (completed , & mut prepared . controller) }",
+    "class_decision": "node-initial-binary",
+    "item_premise": "This child span records public acquisition, wait or selected outcome inside the adopted binary command; protected address bytes are represented only by the fixed role marker.",
+    "assessments": {
+      "full_recording": "node-binary-full-recording",
+      "secret_flow": "node-binary-secret-flow",
+      "exposure_consumers": "node-binary-exposure-consumers"
+    }
+  }
+}
