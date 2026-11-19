@@ -803,7 +803,8 @@
         "ci::test_observe_runtime.Processes.test_four_mode_results",
         "ci::test_observe_runtime.Processes.test_records_entry",
         "ci::test_observe_runtime.Processes.test_records_replay",
-        "ci::test_observe_runtime.Processes.test_rendezvous_failures"
+        "ci::test_observe_runtime.Processes.test_rendezvous_failures",
+        "ci::test_observe_runtime.Processes.test_timeout_evidence_is_retained"
       ],
       "implementation": "ci-python",
       "kind": "suite",

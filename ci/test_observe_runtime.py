@@ -3,11 +3,96 @@ import json
 import hashlib
 import os
 from pathlib import Path
+import resource
 import subprocess
 import tempfile
 import time
 import threading
 import unittest
+
+from calibrate import USAGE_FIELDS
+
+
+DIAGNOSTIC_ALLOWANCE = 0.100
+SNAPSHOT_BYTES = 16 * 1024
+SNAPSHOT_TASKS = 64
+
+
+def _usage_sample():
+    usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return {name: getattr(usage, name) for name in USAGE_FIELDS}
+
+
+def _usage_difference(before, after):
+    if before is None or after is None:
+        return {name: None for name in USAGE_FIELDS}
+    return {name: after[name] - before[name] for name in USAGE_FIELDS}
+
+
+def _proc_text(path):
+    try:
+        with path.open('rb') as source:
+            contents = source.read(SNAPSHOT_BYTES + 1)
+        return {'source': str(path), 'text': contents[:SNAPSHOT_BYTES].decode('utf-8', 'backslashreplace'),
+                'truncated': len(contents) > SNAPSHOT_BYTES}
+    except OSError as error:
+        return {'source': str(path), 'unavailable': str(error)}
+
+
+def _process_snapshot(pid, cancelled, proc_root=Path('/proc')):
+    if pid is None:
+        return {'unavailable': 'process-id-unavailable'}
+    root = proc_root / str(pid)
+    result = {'pid': pid, 'process': {}, 'tasks': [], 'task_limit': SNAPSHOT_TASKS}
+    for name in ('stat', 'status', 'io'):
+        if cancelled.is_set():
+            return {'unavailable': 'snapshot-cancelled'}
+        result['process'][name] = _proc_text(root / name)
+    try:
+        tids = sorted(int(path.name) for path in (root / 'task').iterdir() if path.name.isdecimal())
+    except OSError as error:
+        result['task_listing'] = {'source': str(root / 'task'), 'unavailable': str(error)}
+        return result
+    result['task_listing'] = {'source': str(root / 'task'), 'count': len(tids),
+                              'truncated': len(tids) > SNAPSHOT_TASKS}
+    for tid in tids[:SNAPSHOT_TASKS]:
+        if cancelled.is_set():
+            return {'unavailable': 'snapshot-cancelled'}
+        task = {'tid': tid}
+        for name in ('stat', 'status', 'wchan', 'syscall'):
+            if cancelled.is_set():
+                return {'unavailable': 'snapshot-cancelled'}
+            task[name] = _proc_text(root / 'task' / str(tid) / name)
+        result['tasks'].append(task)
+    return result
+
+
+def _diagnostic_join(helper, remaining):
+    helper.join(timeout=remaining)
+
+
+def _timeout_artifact_dir():
+    return Path('.lane/observation-comparison')
+
+
+def _retain_timeout(mode, report, stdout, stderr):
+    paths = []
+    failures = []
+    directory = _timeout_artifact_dir()
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+    except OSError as error:
+        failures.append(f'{directory}: {error}')
+        return paths, failures
+    for suffix, contents in (('timeout.json', json.dumps(report, sort_keys=True, indent=2).encode() + b'\n'),
+                             ('stdout', stdout), ('jsonl', stderr)):
+        path = directory / f'{mode}.{suffix}'
+        try:
+            path.write_bytes(contents)
+            paths.append(str(path))
+        except OSError as error:
+            failures.append(f'{path}: {error}')
+    return paths, failures
 
 
 def reconcile_publication(status, captured):
@@ -50,14 +135,40 @@ def run(argv, **kwargs):
     return result
 
 
-def compare(argv, mode, env, deadline=600, injected=False):
+def compare(argv, mode, env, deadline=600, injected=False, retain_timeout=False):
     """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
     if not injected and mode != 'disabled':
         env=env | {'PN_OBSERVE_COMPLETE_EVIDENCE':'1'}
-    process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
-                             env={key:value for key,value in env.items() if key!='PN_TEST_OBSERVATION_RENDEZVOUS'})
+    try: usage_before=_usage_sample() if retain_timeout else None
+    except OSError: usage_before=None
     stderr=[]; stdout=[]; reader_errors=[]
+    stderr_lock=threading.Lock(); stdout_lock=threading.Lock()
+    snapshot_request=threading.Event(); snapshot_cancel=threading.Event()
+    snapshot_done=threading.Event(); snapshot_prefix_ready=threading.Event()
+    snapshot_slot={}; process_slot={}
+    def snapshot_worker():
+        snapshot_request.wait()
+        if snapshot_cancel.is_set(): return
+        with stdout_lock: out_length=sum(map(len,stdout))
+        with stderr_lock: err_length=sum(map(len,stderr))
+        snapshot_slot['prefix_lengths']={'stdout':out_length,'stderr':err_length}
+        snapshot_prefix_ready.set()
+        try: snapshot=_process_snapshot(getattr(process_slot.get('process'), 'pid', None), snapshot_cancel)
+        except Exception as error: snapshot={'unavailable':f'snapshot-error: {error}'}
+        if not snapshot_cancel.is_set():
+            snapshot_slot['snapshot']=snapshot
+            snapshot_done.set()
+    helper=threading.Thread(target=snapshot_worker,daemon=True) if retain_timeout else None
+    if helper is not None: helper.start()
+    try:
+        process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                                 env={key:value for key,value in env.items() if key!='PN_TEST_OBSERVATION_RENDEZVOUS'})
+    except BaseException:
+        if helper is not None:
+            snapshot_cancel.set(); snapshot_request.set()
+        raise
+    process_slot['process']=process
     released=False
     def release():
         nonlocal released
@@ -66,32 +177,100 @@ def compare(argv, mode, env, deadline=600, injected=False):
         try: process.stdin.write(b'\n'); process.stdin.flush()
         except (OSError,ValueError): pass
     def receive():
+        pending=b''
         try:
-            for line in process.stderr:
-                stderr.append(line)
-                try: row=json.loads(line)
-                except (ValueError,UnicodeError): continue
-                if isinstance(row,dict) and row.get('kind')=='observation_status': release()
+            while chunk:=process.stderr.read1(4096):
+                with stderr_lock: stderr.append(chunk)
+                pending+=chunk
+                while b'\n' in pending:
+                    line,pending=pending.split(b'\n',1)
+                    try: row=json.loads(line)
+                    except (ValueError,UnicodeError): continue
+                    if isinstance(row,dict) and row.get('kind')=='observation_status': release()
         except (OSError,ValueError) as error: reader_errors.append(str(error))
         finally: release()
+    def receive_output():
+        try:
+            while chunk:=process.stdout.read1(4096):
+                with stdout_lock: stdout.append(chunk)
+        except (OSError,ValueError) as error: reader_errors.append(str(error))
     reader=threading.Thread(target=receive,daemon=True)
-    output=threading.Thread(target=lambda: stdout.append(process.stdout.read()),daemon=True)
+    output=threading.Thread(target=receive_output,daemon=True)
     reader.start(); output.start()
-    timed_out=False
+    timed_out=False; status=None; kill_error=None; reap_error=None; join_error=None
+    snapshot_complete=False; prefix_ready=False
     try: status=process.wait(timeout=deadline)
     except subprocess.TimeoutExpired:
-        timed_out=True; process.kill(); status=process.wait(timeout=600)
+        timed_out=True
+        if helper is not None:
+            diagnostic_end=time.monotonic()+DIAGNOSTIC_ALLOWANCE
+            try:
+                snapshot_request.set()
+                _diagnostic_join(helper,max(0,diagnostic_end-time.monotonic()))
+            except Exception as error: join_error=str(error)
+            finally:
+                snapshot_complete=snapshot_done.is_set()
+                prefix_ready=snapshot_prefix_ready.is_set()
+                snapshot_cancel.set()
+                try: process.kill()
+                except OSError as error: kill_error=str(error)
+        else:
+            try: process.kill()
+            except OSError as error: kill_error=str(error)
+        try: status=process.wait(timeout=600)
+        except (OSError,subprocess.TimeoutExpired) as error: reap_error=str(error)
     finally:
+        if not timed_out and helper is not None:
+            snapshot_cancel.set(); snapshot_request.set()
         reader.join(timeout=600); output.join(timeout=600)
         if not reader.is_alive(): process.stderr.close()
         if not output.is_alive(): process.stdout.close()
         try: process.stdin.close()
         except (OSError,ValueError): pass
-    witness(argv,status,time.monotonic()-started,b''.join(stderr),injected)
-    if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
+    try: usage_after=_usage_sample() if retain_timeout else None
+    except OSError: usage_after=None
+    with stderr_lock: stderr_bytes=b''.join(stderr)
+    with stdout_lock: stdout_bytes=b''.join(stdout)
+    if timed_out:
+        wall=time.monotonic()-started
+        witness_error=None
+        try: witness(argv,status,wall,stderr_bytes,injected)
+        except Exception as error: witness_error=str(error)
+        paths=[]; failures=[]
+        if retain_timeout:
+            prefixes=snapshot_slot.get('prefix_lengths') if prefix_ready else None
+            report={
+                'command':argv,
+                'fixture_wall_seconds':wall,
+                'fixture_deadline_seconds':deadline,
+                'diagnostic_allowance_seconds':DIAGNOSTIC_ALLOWANCE,
+                'snapshot_complete':snapshot_complete,
+                'snapshot_reason':None if snapshot_complete else 'diagnostic-budget-expired',
+                'snapshot':snapshot_slot.get('snapshot') if snapshot_complete else None,
+                'pre_kill_prefix_lengths':prefixes,
+                'after_kill_capture':{
+                    'stdout_bytes':len(stdout_bytes)-prefixes['stdout'] if prefixes else None,
+                    'stderr_bytes':len(stderr_bytes)-prefixes['stderr'] if prefixes else None,
+                    'stdout_eof':not output.is_alive(), 'stderr_eof':not reader.is_alive()},
+                'kill_attempted':True, 'kill_error':kill_error,
+                'reap_status':status, 'reap_error':reap_error,
+                'reader_errors':reader_errors, 'reader_alive':reader.is_alive(),
+                'output_alive':output.is_alive(), 'diagnostic_join_error':join_error,
+                'witness_error':witness_error,
+                'usage':{'source':'RUSAGE_CHILDREN','scope':'compare-reaped-children',
+                         'before':usage_before,'after':usage_after,
+                         'difference':_usage_difference(usage_before,usage_after)},
+                'load':{'value':None,'source':'unavailable','scope':'unavailable',
+                        'reason':'proc-provenance-not-established-by-this-control'}}
+            try: paths,failures=_retain_timeout(mode,report,stdout_bytes,stderr_bytes)
+            except Exception as error: failures=[f'timeout-retention: {error}']
+        raise AssertionError('observation fixture deadline exceeded; artifacts='+str(paths)+
+                             '; retention_failures='+str(failures)+'; witness_error='+str(witness_error))
+    witness(argv,status,time.monotonic()-started,stderr_bytes,injected)
+    if reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
     if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
-    if not injected and mode != 'disabled': complete_capture(b''.join(stderr))
-    return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
+    if not injected and mode != 'disabled': complete_capture(stderr_bytes)
+    return subprocess.CompletedProcess(argv,status,stdout_bytes,stderr_bytes)
 
 
 def evidence_bound(status):
@@ -757,6 +936,157 @@ class Processes(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, 'OBSERVATION-CAPTURE-INCOMPLETE'):
                 complete_capture(b'\n'.join(json.dumps(row).encode() for row in rows))
 
+    def test_timeout_evidence_is_retained(self):
+        """Claim: A selected fixture deadline kills after bounded diagnostic acquisition, retains complete or incomplete facts, and remains a failure even when retention fails.
+        ´claim:discipline:observation-timeout-retains-failure-evidence´
+        ´test:integration:test-timeout-evidence-is-retained´
+        """
+        import io
+        from contextlib import redirect_stdout
+        from unittest.mock import patch
+
+        class Chunks(io.BytesIO):
+            def read1(self, size):
+                return super().read(min(size, 3))
+
+        class Process:
+            def __init__(self, timeout=True):
+                self.stdin=io.BytesIO(); self.stdout=Chunks(b'result!')
+                self.stderr=Chunks(b'diagnostic without newline')
+                self.timeout=timeout; self.killed=False; self.pid=741
+            def wait(self, timeout):
+                if self.timeout and not self.killed:
+                    raise subprocess.TimeoutExpired('fixture',timeout)
+                return -9 if self.killed else 0
+            def kill(self):
+                events.append('kill'); self.killed=True
+
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            usage=dict.fromkeys(USAGE_FIELDS, 4)
+            after={name:value+2 for name,value in usage.items()}
+            samples=iter((usage,after))
+            events=[]; entered=threading.Event(); release=threading.Event()
+            def held_snapshot(pid, cancelled):
+                events.append('capture'); entered.set(); release.wait()
+                return {'pid':pid,'process':{'stat':{'text':'late'}}}
+            def bounded_join(helper, remaining):
+                events.append('join'); self.assertLessEqual(remaining,DIAGNOSTIC_ALLOWANCE)
+                self.assertTrue(entered.wait(1))
+            process=Process()
+            witness_lines=io.StringIO()
+            with patch('subprocess.Popen',return_value=process), \
+                 patch(__name__+'._timeout_artifact_dir',return_value=root), \
+                 patch(__name__+'._usage_sample',side_effect=lambda: next(samples)), \
+                 patch(__name__+'._process_snapshot',side_effect=held_snapshot), \
+                 patch(__name__+'._diagnostic_join',side_effect=bounded_join), \
+                 redirect_stdout(witness_lines):
+                with self.assertRaisesRegex(AssertionError,'observation fixture deadline exceeded'):
+                    compare(['fixture'],'trace',{},deadline=7,injected=True,retain_timeout=True)
+            self.assertLess(events.index('capture'),events.index('kill'))
+            self.assertLess(events.index('join'),events.index('kill'))
+            report=json.loads((root/'trace.timeout.json').read_text())
+            self.assertFalse(report['snapshot_complete'])
+            self.assertEqual(report['snapshot_reason'],'diagnostic-budget-expired')
+            self.assertIsNone(report['snapshot'])
+            self.assertEqual(report['fixture_deadline_seconds'],7)
+            self.assertEqual(report['command'],['fixture'])
+            self.assertIn('OBSERVATION-WITNESS command=fixture status=-9',witness_lines.getvalue())
+            self.assertIn(f'wall_seconds={report["fixture_wall_seconds"]:.6f}',witness_lines.getvalue())
+            self.assertEqual(report['diagnostic_allowance_seconds'],DIAGNOSTIC_ALLOWANCE)
+            self.assertEqual(report['usage']['difference'],dict.fromkeys(USAGE_FIELDS,2))
+            self.assertEqual(report['load']['source'],'unavailable')
+            self.assertEqual(report['load']['reason'],'proc-provenance-not-established-by-this-control')
+            self.assertEqual((root/'trace.stdout').read_bytes(),b'result!')
+            self.assertEqual((root/'trace.jsonl').read_bytes(),b'diagnostic without newline')
+            release.set(); self.assertTrue(entered.wait(1))
+            self.assertIsNone(json.loads((root/'trace.timeout.json').read_text())['snapshot'])
+
+            events.clear(); samples=iter((usage,after))
+            process=Process()
+            def complete_snapshot(pid, cancelled):
+                events.append('capture'); return {'pid':pid,'process':{'stat':{'text':'pre-kill'}}}
+            def completed_join(helper, remaining):
+                self.assertLessEqual(remaining,DIAGNOSTIC_ALLOWANCE)
+                helper.join(timeout=1)
+                self.assertFalse(helper.is_alive())
+            with patch('subprocess.Popen',return_value=process), \
+                 patch(__name__+'._timeout_artifact_dir',return_value=root), \
+                 patch(__name__+'._usage_sample',side_effect=lambda: next(samples)), \
+                 patch(__name__+'._process_snapshot',side_effect=complete_snapshot), \
+                 patch(__name__+'._diagnostic_join',side_effect=completed_join):
+                with self.assertRaisesRegex(AssertionError,'observation fixture deadline exceeded'):
+                    compare(['fixture'],'default',{},deadline=7,injected=True,retain_timeout=True)
+            report=json.loads((root/'default.timeout.json').read_text())
+            self.assertTrue(report['snapshot_complete'])
+            self.assertEqual(report['snapshot']['process']['stat']['text'],'pre-kill')
+            self.assertEqual(report['pre_kill_prefix_lengths'],{'stdout':7,'stderr':26})
+            self.assertEqual(report['after_kill_capture']['stdout_bytes'],0)
+
+            process=Process(timeout=False)
+            with patch('subprocess.Popen',return_value=process), \
+                 patch(__name__+'._timeout_artifact_dir',return_value=root):
+                result=compare(['fixture'],'success',{},injected=True,retain_timeout=True)
+            self.assertEqual((result.returncode,result.stdout,result.stderr),
+                             (0,b'result!',b'diagnostic without newline'))
+            self.assertFalse((root/'success.timeout.json').exists())
+
+            proc=root/'proc'/'741'; (proc/'task'/'2').mkdir(parents=True)
+            (proc/'stat').write_text('x'*(SNAPSHOT_BYTES+1))
+            (proc/'status').write_text('status')
+            (proc/'io').write_text('io')
+            for name in ('stat','status','wchan'):
+                (proc/'task'/'2'/name).write_text(name)
+            snapshot=_process_snapshot(741,threading.Event(),root/'proc')
+            self.assertTrue(snapshot['process']['stat']['truncated'])
+            self.assertIn('unavailable',snapshot['tasks'][0]['syscall'])
+            for tid in range(3,68):
+                (proc/'task'/str(tid)).mkdir()
+            snapshot=_process_snapshot(741,threading.Event(),root/'proc')
+            self.assertEqual(len(snapshot['tasks']),SNAPSHOT_TASKS)
+            self.assertTrue(snapshot['task_listing']['truncated'])
+
+            events.clear(); samples=iter((usage,after)); process=Process()
+            original_mkdir=Path.mkdir
+            def checked_mkdir(path, *args, **kwargs):
+                self.assertTrue(process.killed)
+                return original_mkdir(path,*args,**kwargs)
+            def failed_write(contents):
+                self.assertTrue(process.killed)
+                raise OSError('supplied retention failure')
+            with patch('subprocess.Popen',return_value=process), \
+                 patch(__name__+'._timeout_artifact_dir',return_value=root), \
+                 patch(__name__+'._usage_sample',side_effect=lambda: next(samples)), \
+                 patch('pathlib.Path.mkdir',side_effect=checked_mkdir,autospec=True), \
+                 patch('pathlib.Path.write_bytes',side_effect=failed_write), \
+                 patch(__name__+'._process_snapshot',return_value={'pid':741}), \
+                 patch(__name__+'.witness',side_effect=AssertionError('supplied reconciliation')):
+                with self.assertRaisesRegex(AssertionError,'deadline exceeded.*supplied retention failure.*supplied reconciliation'):
+                    compare(['fixture'],'failed',{},deadline=7,injected=True,retain_timeout=True)
+            self.assertTrue(process.killed)
+
+            process=Process()
+            with patch('subprocess.Popen',return_value=process), \
+                 patch(__name__+'._timeout_artifact_dir',return_value=root), \
+                 patch(__name__+'._process_snapshot',side_effect=AssertionError('unselected snapshot')):
+                with self.assertRaisesRegex(AssertionError,'observation fixture deadline exceeded'):
+                    compare(['fixture'],'unselected',{},deadline=7,injected=True)
+            self.assertTrue(process.killed)
+            self.assertFalse((root/'unselected.timeout.json').exists())
+
+            created=[]; original_thread=threading.Thread
+            def record_thread(*args, **kwargs):
+                thread=original_thread(*args,**kwargs)
+                created.append(thread)
+                return thread
+            with patch('subprocess.Popen',side_effect=OSError('supplied spawn refusal')), \
+                 patch(__name__+'.threading.Thread',side_effect=record_thread):
+                with self.assertRaisesRegex(OSError,'supplied spawn refusal'):
+                    compare(['fixture'],'spawn-failure',{},injected=True,retain_timeout=True)
+            self.assertEqual(len(created),1)
+            created[0].join(timeout=1)
+            self.assertFalse(created[0].is_alive())
+
     def test_four_mode_results(self):
         """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.
         ´claim:discipline:four-observation-modes-preserve-command-results´
@@ -782,7 +1112,8 @@ class Processes(unittest.TestCase):
             for mode in ('disabled','default','trace','failing-export'):
                 objects=artifact/(mode+'-objects')
                 selected=env | {'PN_OBSERVE_LEVEL':'trace' if mode in ('trace','failing-export') else 'default', 'PN_OBSERVE_ARTIFACT_DIR':str(objects.resolve())}
-                result=compare([str(target/'examples/observation_compare'),mode,str(root)],mode,selected)
+                result=compare([str(target/'examples/observation_compare'),mode,str(root)],mode,selected,
+                               retain_timeout=True)
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 samples[mode]=(result.returncode,result.stdout)
                 (artifact/(mode+'.stdout')).write_bytes(result.stdout)

@@ -1042,6 +1042,14 @@
       "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
+      "operation": "ci::test_observe_runtime.Processes.test_timeout_evidence_is_retained",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:observation-timeout-retains-failure-evidence",
+      "before": "",
+      "after": "Claim: A selected fixture deadline kills after bounded diagnostic acquisition, retains complete or incomplete facts, and remains a failure even when retention fails.",
+      "review": "The fake fixture selects retention and supplies a timeout and chunked partial lines. A held snapshot proves kill precedes release, late facts are omitted, and the witness and record report the same wall and command; a completed snapshot proves pre-kill facts are retained. An unselected timeout writes no artifact, and a spawn refusal releases the dormant helper. Supplied child usage and unavailable load remain labelled. A normal neighbour keeps its bytes with no timeout file, proc fixtures show vanished and truncated facts, and a write failure plus failed witness reconciliation retains the deadline verdict after kill. This establishes reporting behavior, not scheduler or proc availability."
+    },
+    {
       "operation": "ci::test_observe_runtime.Processes.test_title_suite",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:title-suite-retains-observed-evidence",
