@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::result::LocalDebit",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/result.rs",
+    "syntax": "struct LocalDebit { index : usize , sequence : [u8 ; 20] , sequence_start : usize , bytes : i64 , chunks : i64 , boundary : i64 , }"
+  }
+}

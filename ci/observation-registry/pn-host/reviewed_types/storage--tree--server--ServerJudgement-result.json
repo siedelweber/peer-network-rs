@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::ServerJudgement",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [doc = \" The recorded selection origins returned only after an acknowledged commit.\"] # [doc = \" (´[ROOT-dec:storage:public-generation-label]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct ServerJudgement < 'a > { pub label : & 'a str , pub generation : u64 , pub selections : Vec < super :: Selected < 'a > > , pub inserted : bool , }"
+  }
+}

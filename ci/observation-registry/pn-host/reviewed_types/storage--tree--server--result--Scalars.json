@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::result::Scalars",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/result.rs",
+    "syntax": "# [derive (Clone , Copy)] struct Scalars { depth : i64 , package_bytes : i64 , package_chunks : i64 , references : i64 , debits : i64 , }"
+  }
+}

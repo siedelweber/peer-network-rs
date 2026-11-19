@@ -98,7 +98,7 @@ fn tree_server_generation_plan() {
     assert_eq!(meter.used.allocation_bytes, 5 * std::mem::size_of::<usize>());
 }
 
-async fn empty_tree() -> ServerTree {
+pub(super) async fn empty_tree() -> ServerTree {
     let mut owner = connect_named("storage-tree-reads.json").await;
     catalogue::open(&mut owner).await.unwrap();
     owner.client().batch_execute("TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes,pn_admission_versions,pn_admission_closures,pn_admission_generations,pn_versions,pn_closures").await.unwrap();

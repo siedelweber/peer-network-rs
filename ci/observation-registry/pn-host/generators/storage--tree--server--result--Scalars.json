@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::server::result::Scalars",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/result.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The private fixed-width scalar plan derives Copy and Clone for five checked signed counts and coordinates. It borrows no session, owns no buffer, and carries no diagnostic or protected content."
+  }
+}

@@ -378,18 +378,19 @@ fn definition(a: Item<'_>, b: Item<'_>) -> Result<(), Error> {
     }
 }
 
-pub(super) fn marker_identity(a: Item<'_>, b: Item<'_>) -> Result<(), Error> {
+pub(super) fn marker_identity_match(a: Item<'_>, b: Item<'_>) -> Result<bool, Error> {
     a.array(11)?;
     b.array(11)?;
+    let mut same = true;
     for index in 1..9 {
-        same(a.field(index)?, b.field(index)?)?;
+        same &= a.field(index)?.bytes() == b.field(index)?.bytes();
     }
     let a = a.field(9)?;
     let b = b.field(9)?;
-    same(a.field(0)?, b.field(0)?)?;
+    same &= a.field(0)?.bytes() == b.field(0)?.bytes();
     match a.field(0)?.unsigned()? {
-        0 | 1 => same(a.field(1)?, b.field(1)?),
-        2 => Ok(()),
+        0 | 1 => Ok(same && a.field(1)?.bytes() == b.field(1)?.bytes()),
+        2 => Ok(same),
         _ => Err(StorageError::CorruptHistory.into()),
     }
 }

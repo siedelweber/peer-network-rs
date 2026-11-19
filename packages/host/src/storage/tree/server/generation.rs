@@ -51,7 +51,7 @@ pub(super) struct Hook {
 
 #[cfg(test)]
 impl Hook {
-    fn before(&mut self, point: &'static str) -> Result<(), Error> {
+    pub(super) fn before(&mut self, point: &'static str) -> Result<(), Error> {
         self.points.push(point);
         if self.stop_at == Some(self.points.len()) {
             return Err(StorageError::Injected.into());
@@ -90,17 +90,12 @@ pub(super) async fn install(
         writer.run(input, &plan).await
     };
     *usage = meter.used;
-    match result {
-        Ok(inserted) => {
-            #[cfg(test)]
-            if let Err(error) = store.generation_hook.before("COMMIT") {
-                return Err(transaction.refuse(error).await);
-            }
-            transaction.commit().await?;
-            Ok(inserted)
-        }
-        Err(error) => Err(transaction.refuse(error).await),
-    }
+    super::finish_transaction(transaction, result, || {
+        #[cfg(test)]
+        store.generation_hook.before("COMMIT")?;
+        Ok(())
+    })
+    .await
 }
 
 pub(super) fn prepare(input: &Generation, meter: &mut Meter) -> Result<Plan, Error> {
@@ -148,14 +143,14 @@ impl Writer<'_, '_> {
         point: &'static str,
         params: &[StatementParameter<'_>],
     ) -> Result<(), Error> {
-        #[cfg(test)]
-        self.hook.before(point)?;
-        #[cfg(not(test))]
-        let _ = point;
-        if super::super::super::observed(self.transaction.execute(statement, params)).await? != 1 {
-            return Err(StorageError::CorruptHistory.into());
-        }
-        Ok(())
+        super::execute_one(self.transaction, statement, params, || {
+            #[cfg(test)]
+            self.hook.before(point)?;
+            #[cfg(not(test))]
+            let _ = point;
+            Ok(())
+        })
+        .await
     }
 
     async fn run(&mut self, input: &Generation, plan: &Plan) -> Result<bool, Error> {

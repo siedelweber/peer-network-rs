@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::result::Writer",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/result.rs",
+    "syntax": "struct Writer < 'a , 'b > { transaction : & 'a StatementTransaction < 'b > , meter : & 'a mut Meter , # [cfg (test)] hook : & 'a mut super :: generation :: Hook , }"
+  }
+}

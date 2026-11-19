@@ -560,10 +560,20 @@ enum Statement {
     InsertAdmissionGeneration,
     InsertAdmissionVersion,
     InsertAdmissionClosure,
+    InsertScope,
+    InsertBranch,
+    InsertEpoch,
+    InsertEpochChunk,
+    InsertEpochReference,
+    InsertDebit,
+    InsertDebitChunk,
+    InsertEpochDebit,
     ReadEpochUse,
     ReadEpochReferences,
 }
 impl Statement {
+    // Justified: The closed statement vocabulary keeps each SQL text in one auditable match.
+    #[expect(clippy::too_many_lines)]
     const fn sql(self) -> &'static str {
         match self {
             Self::ReadEpochDebitKeys => {
@@ -596,6 +606,28 @@ impl Statement {
             }
             Self::InsertAdmissionClosure => {
                 "INSERT INTO public.pn_admission_closures(scope,generation,family,key,edition) VALUES($1,$2,$3,$4,$5)"
+            }
+            Self::InsertScope => "INSERT INTO public.pn_epoch_scopes(scope,context_root) VALUES($1,$2)",
+            Self::InsertBranch => {
+                "INSERT INTO public.pn_epoch_branches(scope,segment,start_depth,parent_segment,fork_parent,fork_depth) VALUES($1,$2,$3,$4,$5,$6)"
+            }
+            Self::InsertEpoch => {
+                "INSERT INTO public.pn_epoch_results(scope,identity,depth,parent,parent_depth,parent_segment,segment,generation,package_bytes,package_chunks,reference_count,debit_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)"
+            }
+            Self::InsertEpochChunk => {
+                "INSERT INTO public.pn_epoch_package_chunks(scope,identity,ordinal,bytes) VALUES($1,$2,$3,$4)"
+            }
+            Self::InsertEpochReference => {
+                "INSERT INTO public.pn_epoch_references(scope,identity,selected_at,family,key,edition,judgement_origin) VALUES($1,$2,$3,$4,$5,$6,$7)"
+            }
+            Self::InsertDebit => {
+                "INSERT INTO public.pn_epoch_debits(scope,origin,author,act_sequence,act_family,writing_boundary,vintage_bytes,vintage_chunks) VALUES($1,$2,$3,$4,$5,$6,$7,$8)"
+            }
+            Self::InsertDebitChunk => {
+                "INSERT INTO public.pn_epoch_debit_chunks(scope,origin,author,act_sequence,act_family,ordinal,bytes) VALUES($1,$2,$3,$4,$5,$6,$7)"
+            }
+            Self::InsertEpochDebit => {
+                "INSERT INTO public.pn_epoch_result_debits(scope,origin,segment,origin_depth,author,act_sequence,act_family) VALUES($1,$2,$3,$4,$5,$6,$7)"
             }
             Self::ReadEpochUse => {
                 "SELECT r.selected_at,substring(r.judgement_origin FROM 1 FOR 32),octet_length(r.judgement_origin)::bigint,CASE WHEN octet_length(v.family)<=21 THEN v.family ELSE '' END,octet_length(v.family)::bigint,CASE WHEN octet_length(v.key)<=1024 THEN v.key ELSE '' END,octet_length(v.key)::bigint,CASE WHEN octet_length(v.edition)<=1024 THEN v.edition ELSE '' END,octet_length(v.edition)::bigint,v.announced,v.opens,substring(v.payload FROM 1 FOR 0x40000),octet_length(v.payload)::bigint,substring(v.digest FROM 1 FOR 32),octet_length(v.digest)::bigint,substring(v.disclosure FROM 1 FOR 32),octet_length(v.disclosure)::bigint FROM public.pn_epoch_references r JOIN LATERAL (SELECT q.* FROM public.pn_versions q WHERE q.family=r.family COLLATE \"default\" AND q.family COLLATE \"C\"=r.family AND q.key=r.key COLLATE \"default\" AND q.key COLLATE \"C\"=r.key AND q.edition=r.edition COLLATE \"default\" AND q.edition COLLATE \"C\"=r.edition LIMIT 1) v ON true WHERE r.scope=$1 AND r.identity=$2 AND r.selected_at=$3 AND r.family=$4 AND r.key=$5 LIMIT 1"

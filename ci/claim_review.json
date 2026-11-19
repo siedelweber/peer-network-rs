@@ -5043,6 +5043,54 @@
       "review": "The same service session installs once, retries the exact declaration, checks hook point names for no INSERT or Close, and compares all identity, history and tree relations in fresh ended snapshots. A distinct valid payload then refuses conflict with the complete snapshot unchanged."
     },
     {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_admission",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-admission",
+      "before": "",
+      "after": "Claim: A valid root under zero row and then zero allocation allowance refuses `ReadLimit` before the charged `ReadEpoch` request hook and leaves complete durable state unchanged.",
+      "review": "Two service inputs hold one allowance at zero with the other generous; neither reaches the ReadEpoch hook. Usage stays zero and a fresh ended snapshot equals the installed-generation baseline. Later exact boundaries remain owed."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_cleanup",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-cleanup",
+      "before": "",
+      "after": "Claim: Refusal immediately before the first reference insert rolls back provisional header, chunks and observations; a complete same-session snapshot is unchanged and a retry succeeds.",
+      "review": "The test-only hook finds the first reference point after a successful fixture trace, then stops that point on an otherwise fresh store. It checks prior header, chunk and observation points, Injected, complete relation equality through a fresh ended snapshot and same-session retry. This witnesses one point only."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_fork",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-fork",
+      "before": "",
+      "after": "Claim: Real root, child, fork and independent-origin writes preserve complete package and debit bytes, selected origins, first-child continuation and the later branch descriptor in one fixed arrival order.",
+      "review": "The registered service installs one explicit generation and writes two roots, a child, first and later grandchildren and a descendant, including the side child's independently introduced vintage. It compares returned selection origins with the memory reference and each read-back debit origin with the first matching act on that branch's ancestry, then checks complete bytes, two segment keys and descriptor count. This is one fixed order."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_input",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-input",
+      "before": "",
+      "after": "Claim: The shared result predicates preserve missing, unsupported and overlength label refusals before any allowance is charged, and admit the explicit unstable label on a valid carrier.",
+      "review": "The one-process test uses the actual shared predicate function on a valid fixture carrier with four label inputs. Source review establishes that the entry calls it before BEGIN and before constructing a charged meter; no service claim follows from this case."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_retry",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-retry",
+      "before": "",
+      "after": "Claim: An exact retained side result returns unchanged without inserts or admission-history reads, while same-position changed bytes refuse `EpochConflict` and preserve the complete committed snapshot.",
+      "review": "The service writes a root, child and side result, retries the same carrier and checks the returned flag, all fourteen relations in fresh ended snapshots and hook absence of inserts, history pages or HasVersion. A second carrier at the same identity with changed bytes refuses EpochConflict without a row change."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::result::tree_server_result_selection",
+      "path": "packages/host/src/storage/tree/server/tests/result.rs",
+      "claim": "HOST::claim:history:tree-server-result-selection",
+      "before": "",
+      "after": "Claim: A complete valid first generation lacking the carrier's selected unqualified version refuses `MissingSelectedVersion` and leaves every committed relation unchanged.",
+      "review": "The service installs a valid generation with one selected version omitted, attempts the original root carrier and compares a fresh ended complete snapshot before and after the specific refusal."
+    },
+    {
       "operation": "pn-host::storage::tree::server::tests::tree_server_closure",
       "path": "packages/host/src/storage/tree/server/tests.rs",
       "claim": "HOST::claim:history:tree-server-closure",

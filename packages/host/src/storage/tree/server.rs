@@ -7,10 +7,12 @@ use super::super::{DISCLOSURE_RECIPE, Family, PAYLOAD_RECIPE, Payload, Version, 
 use super::super::{Session, Statement, StatementParameter, StatementRow, StatementTransaction, catalogue, observed};
 use super::{EpochScope, Error, Generation, Identity, Meter, Page, Range, ReadBudget, StorageError, Usage, fields, scope_check};
 use crate::admitted_result::DeclarationUse;
+use crate::admitted_result::position::Retained;
 
 mod content;
 mod generation;
 mod projection;
+mod result;
 mod spans;
 #[cfg(test)]
 mod tests;
@@ -94,6 +96,71 @@ impl ServerTree {
     pub async fn install_generation(&mut self, input: &Generation, budget: ReadBudget, usage: &mut Usage) -> Result<bool, Error> {
         generation::install(self, input, budget, usage).await
     }
+
+    /// Commit one retained result under the installed first law.
+    /// (´[ROOT-amend:storage:admitted-transaction]´)
+    /// # Errors
+    /// Refuses invalid input, damaged retained state, allowance exhaustion or a wrapped request failure.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::tree::server::ServerTree::commit",
+            asynchronous = true
+        ),
+        ret
+    )]
+    pub async fn commit<'a>(
+        &mut self,
+        input: &'a Retained,
+        label: Option<&'a str>,
+        budget: ReadBudget,
+        usage: &mut Usage,
+    ) -> Result<ServerJudgement<'a>, Error> {
+        result::commit(self, input, label, budget, usage).await
+    }
+}
+
+/// The recorded selection origins returned only after an acknowledged commit.
+/// (´[ROOT-dec:storage:public-generation-label]´)
+#[derive(Debug, PartialEq, Eq)]
+pub struct ServerJudgement<'a> {
+    pub label: &'a str,
+    pub generation: u64,
+    pub selections: Vec<super::Selected<'a>>,
+    pub inserted: bool,
+}
+
+async fn execute_one(
+    transaction: &StatementTransaction<'_>,
+    statement: Statement,
+    params: &[StatementParameter<'_>],
+    before: impl FnOnce() -> Result<(), Error>,
+) -> Result<(), Error> {
+    before()?;
+    if observed(transaction.execute(statement, params)).await? != 1 {
+        return Err(StorageError::CorruptHistory.into());
+    }
+    Ok(())
+}
+
+async fn finish_transaction<T>(
+    transaction: StatementTransaction<'_>,
+    result: Result<T, Error>,
+    before_commit: impl FnOnce() -> Result<(), Error>,
+) -> Result<T, Error> {
+    match result {
+        Ok(value) => {
+            if let Err(error) = before_commit() {
+                return Err(transaction.refuse(error).await);
+            }
+            transaction.commit().await?;
+            Ok(value)
+        }
+        Err(error) => Err(transaction.refuse(error).await),
+    }
 }
 
 /// A borrowed server snapshot; every page shares this reader's cumulative meter.
@@ -103,6 +170,40 @@ pub struct ServerReader<'a> {
     transaction: StatementTransaction<'a>,
     meter: Meter,
     first_refusal: Option<Error>,
+}
+
+struct ReadAccess<'a, 'b> {
+    transaction: &'a StatementTransaction<'b>,
+    meter: &'a mut Meter,
+    #[cfg(test)]
+    hook: Option<&'a mut generation::Hook>,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum HistoryState {
+    Equal,
+    Missing,
+    Different,
+    Inactive,
+}
+
+#[cfg(test)]
+const fn request_point(statement: Statement) -> &'static str {
+    match statement {
+        Statement::ReadScope => "ReadScope",
+        Statement::ReadEpoch => "ReadEpoch",
+        Statement::ReadBranch => "ReadBranch",
+        Statement::ReadEpochChunks => "ReadEpochChunks",
+        Statement::ReadAdmissionGeneration => "ReadAdmissionGeneration",
+        Statement::ReadEpochUse => "ReadEpochUse",
+        Statement::ReadEpochReferences => "ReadEpochReferences",
+        Statement::ReadAdmissionVersions => "ReadAdmissionVersions",
+        Statement::ReadAdmissionClosures => "ReadAdmissionClosures",
+        Statement::ReadEpochDebitKeys => "ReadEpochDebitKeys",
+        Statement::ReadDebit => "ReadDebit",
+        Statement::ReadDebitChunks => "ReadDebitChunks",
+        _ => "ReadOther",
+    }
 }
 
 /// A complete retained selection and its original judgement's result identity.
@@ -220,8 +321,14 @@ impl ServerReader<'_> {
             if !exists {
                 return Ok(None);
             }
-            let header = self.header(key, identity).await?;
-            let result = self.reconstruct(scope, key, header).await?;
+            let mut access = ReadAccess {
+                transaction: &self.transaction,
+                meter: &mut self.meter,
+                #[cfg(test)]
+                hook: None,
+            };
+            let header = access.header(key, identity).await?;
+            let result = access.reconstruct(scope, key, header).await?;
             Ok(Some(result))
         }
         .await;
@@ -252,7 +359,14 @@ impl ServerReader<'_> {
             let key = key.text()?;
             let rows = self.request(Statement::ReadEpoch, &[&key, &&tip[..]], 1, 278, false).await?;
             let tip = Header::read(rows.first().ok_or(Error::MissingTip)?)?;
-            let ranges = self.ranges(key, &tip).await?;
+            let ranges = ReadAccess {
+                transaction: &self.transaction,
+                meter: &mut self.meter,
+                #[cfg(test)]
+                hook: None,
+            }
+            .ranges(key, &tip)
+            .await?;
             let depth = depth.min(tip.depth);
             let Some(range) = ranges.iter().find(|range| range.start <= depth && depth <= range.end) else {
                 return Ok(None);
@@ -271,22 +385,31 @@ impl ServerReader<'_> {
             if header.segment != range.segment || header.depth != depth {
                 return Err(StorageError::CorruptHistory.into());
             }
-            let result = self.reconstruct(scope, key, header).await?;
+            let result = ReadAccess {
+                transaction: &self.transaction,
+                meter: &mut self.meter,
+                #[cfg(test)]
+                hook: None,
+            }
+            .reconstruct(scope, key, header)
+            .await?;
             Ok(Some(result))
         }
         .await;
         self.record(&result);
         result
     }
+}
 
+impl ReadAccess<'_, '_> {
     async fn reconstruct(&mut self, scope: &EpochScope, key: &str, header: Header) -> Result<ServerResult, Error> {
         let label = self.generation(key, header.generation).await?;
         let ranges = self.ranges(key, &header).await?;
         let bytes = self.package(key, &header).await?;
-        let validated = spans::Validated::new(&bytes, &mut self.meter)?;
-        let selections = self.selections(key, &header, &ranges).await?;
+        let validated = spans::Validated::new(&bytes, self.meter)?;
+        let selections = self.selections(key, &header, &ranges, true).await?;
         let debits = self.debits(key, &header, &ranges).await?;
-        projection::validate(scope, &header, &validated, &selections, &debits, &mut self.meter)?;
+        projection::validate(scope, &header, &validated, &selections, &debits, self.meter)?;
         let rows = self.request(Statement::ReadScope, &[&key], 1, 50, false).await?;
         let root = identity(rows.first().ok_or(StorageError::CorruptHistory)?, 0, 1)?;
         let root_header = self.header(key, root).await?;
@@ -294,7 +417,7 @@ impl ServerReader<'_> {
             return Err(StorageError::CorruptHistory.into());
         }
         let root_bytes = self.package(key, &root_header).await?;
-        let root_value = spans::Validated::new(&root_bytes, &mut self.meter)?;
+        let root_value = spans::Validated::new(&root_bytes, self.meter)?;
         projection::context(&validated, &root_value)?;
         if let Some(parent) = header.parent {
             let parent = self.header(key, parent).await?;
@@ -303,14 +426,14 @@ impl ServerReader<'_> {
             }
             self.generation(key, parent.generation).await?;
             let parent_bytes = self.package(key, &parent).await?;
-            let parent_value = spans::Validated::new(&parent_bytes, &mut self.meter)?;
+            let parent_value = spans::Validated::new(&parent_bytes, self.meter)?;
             projection::extends(&validated, &parent_value)?;
         }
         for debit in &debits {
             if debit.origin != header.identity {
                 let origin = self.header(key, debit.origin).await?;
                 let origin_bytes = self.package(key, &origin).await?;
-                let origin_value = spans::Validated::new(&origin_bytes, &mut self.meter)?;
+                let origin_value = spans::Validated::new(&origin_bytes, self.meter)?;
                 projection::debit_origin(&origin_value, debit)?;
             }
         }
@@ -435,11 +558,11 @@ impl ServerReader<'_> {
     }
 
     fn copy_text(&mut self, text: &str) -> Result<String, Error> {
-        copy_text(&mut self.meter, text)
+        copy_text(self.meter, text)
     }
 
     fn version(&mut self, row: &StatementRow, start: usize) -> Result<Version, Error> {
-        decode_version(&mut self.meter, row, start)
+        decode_version(self.meter, row, start)
     }
 }
 
@@ -508,7 +631,7 @@ fn decode_version(meter: &mut Meter, row: &StatementRow, start: usize) -> Result
     })
 }
 
-impl ServerReader<'_> {
+impl ReadAccess<'_, '_> {
     fn selection(&mut self, row: &StatementRow) -> Result<ServerSelection, Error> {
         Ok(ServerSelection {
             use_: DeclarationUse {
@@ -519,7 +642,13 @@ impl ServerReader<'_> {
         })
     }
 
-    async fn selections(&mut self, scope: &str, header: &Header, ranges: &[Range]) -> Result<Vec<ServerSelection>, Error> {
+    async fn selections(
+        &mut self,
+        scope: &str,
+        header: &Header,
+        ranges: &[Range],
+        resolve_history: bool,
+    ) -> Result<Vec<ServerSelection>, Error> {
         let count = usize::try_from(header.references).map_err(|_| StorageError::ReadLimit)?;
         let limit = count.checked_add(1).ok_or(StorageError::ReadLimit)?;
         let parameter = i64::try_from(limit).map_err(|_| StorageError::ReadLimit)?;
@@ -545,7 +674,8 @@ impl ServerReader<'_> {
             {
                 return Err(StorageError::CorruptHistory.into());
             }
-            self.selection_origin(scope, header, ranges, &current).await?;
+            self.selection_origin(scope, header, ranges, &current, resolve_history)
+                .await?;
             output.push(current);
         }
         output.sort_unstable_by(|a, b| {
@@ -565,7 +695,12 @@ impl ServerReader<'_> {
         Ok(output)
     }
 
-    async fn use_at(&mut self, scope: &str, owner: Identity, wanted: &DeclarationUse) -> Result<ServerSelection, Error> {
+    async fn use_at_optional(
+        &mut self,
+        scope: &str,
+        owner: Identity,
+        wanted: &DeclarationUse,
+    ) -> Result<Option<ServerSelection>, Error> {
         let coordinate = i64::try_from(wanted.selected_at).map_err(|_| StorageError::CorruptHistory)?;
         let version = &wanted.version;
         let rows = self
@@ -577,7 +712,13 @@ impl ServerReader<'_> {
                 false,
             )
             .await?;
-        self.selection(rows.first().ok_or(StorageError::CorruptHistory)?)
+        rows.first().map(|row| self.selection(row)).transpose()
+    }
+
+    async fn use_at(&mut self, scope: &str, owner: Identity, wanted: &DeclarationUse) -> Result<ServerSelection, Error> {
+        self.use_at_optional(scope, owner, wanted)
+            .await?
+            .ok_or(StorageError::CorruptHistory.into())
     }
 
     async fn selection_origin(
@@ -586,6 +727,7 @@ impl ServerReader<'_> {
         header: &Header,
         ranges: &[Range],
         selected: &ServerSelection,
+        resolve_history: bool,
     ) -> Result<(), Error> {
         let version = &selected.use_.version;
         if selected.origin != header.identity {
@@ -606,7 +748,9 @@ impl ServerReader<'_> {
             }
         }
         if super::unqualified(version.family) {
-            self.effective(scope, &selected.use_).await?;
+            if resolve_history && self.history(scope, &selected.use_).await? != HistoryState::Equal {
+                return Err(StorageError::CorruptHistory.into());
+            }
         } else if selected.origin != header.identity
             || version.opens_at != header.depth
             || version.announced_at != header.depth
@@ -617,7 +761,7 @@ impl ServerReader<'_> {
         Ok(())
     }
 
-    async fn effective(&mut self, scope: &str, selected: &DeclarationUse) -> Result<(), Error> {
+    async fn history(&mut self, scope: &str, selected: &DeclarationUse) -> Result<HistoryState, Error> {
         let wanted = &selected.version;
         let mut versions = Vec::new();
         let mut cursor: Option<String> = None;
@@ -688,11 +832,21 @@ impl ServerReader<'_> {
         let mut matching = versions.iter().filter(|(version, close)| {
             version.opens_at <= selected.selected_at && close.is_none_or(|end| selected.selected_at < end)
         });
-        let (version, _) = matching.next().ok_or(StorageError::CorruptHistory)?;
-        if version != wanted || version.payload.is_none() || matching.next().is_some() {
+        let active = matching.next();
+        if matching.next().is_some() {
             return Err(StorageError::CorruptHistory.into());
         }
-        Ok(())
+        let exact = versions.iter().find(|(version, _)| version.edition == wanted.edition);
+        let Some((exact, _)) = exact.filter(|(version, _)| version.payload.is_some()) else {
+            return Ok(HistoryState::Missing);
+        };
+        if exact != wanted {
+            return Ok(HistoryState::Different);
+        }
+        if active.is_none_or(|(version, _)| version != exact) {
+            return Ok(HistoryState::Inactive);
+        }
+        Ok(HistoryState::Equal)
     }
 
     async fn debits(&mut self, scope: &str, header: &Header, ranges: &[Range]) -> Result<Vec<ServerDebit>, Error> {
@@ -798,7 +952,7 @@ impl ServerReader<'_> {
         if output.len() != length {
             return Err(StorageError::CorruptHistory.into());
         }
-        let validated = spans::Validated::new(&output, &mut self.meter)?;
+        let validated = spans::Validated::new(&output, self.meter)?;
         if decimal(validated.root()?.array(3)?.field(1)?.text()?)? != writing_boundary {
             return Err(StorageError::CorruptHistory.into());
         }
@@ -813,6 +967,57 @@ impl ServerReader<'_> {
             writing_boundary,
             bytes: output,
         })
+    }
+
+    async fn request(
+        &mut self,
+        statement: Statement,
+        params: &[StatementParameter<'_>],
+        limit: usize,
+        maximum: usize,
+        probe: bool,
+    ) -> Result<Vec<StatementRow>, Error> {
+        #[cfg(test)]
+        let hook = &mut self.hook;
+        read_request(
+            self.transaction,
+            self.meter,
+            statement,
+            params,
+            (limit, maximum, probe),
+            || {
+                #[cfg(test)]
+                if let Some(hook) = hook.as_deref_mut() {
+                    hook.before(request_point(statement))?;
+                }
+                Ok(())
+            },
+        )
+        .await
+    }
+}
+
+impl ServerReader<'_> {
+    #[cfg(test)]
+    async fn header(&mut self, scope: &str, identity: Identity) -> Result<Header, Error> {
+        ReadAccess {
+            transaction: &self.transaction,
+            meter: &mut self.meter,
+            hook: None,
+        }
+        .header(scope, identity)
+        .await
+    }
+
+    #[cfg(test)]
+    async fn package(&mut self, scope: &str, header: &Header) -> Result<Vec<u8>, Error> {
+        ReadAccess {
+            transaction: &self.transaction,
+            meter: &mut self.meter,
+            hook: None,
+        }
+        .package(scope, header)
+        .await
     }
 
     async fn request(

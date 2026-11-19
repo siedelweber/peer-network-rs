@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "item": "storage::tree::server::ServerTree::commit",
+    "owner": "HOST",
+    "signature": "async fn commit < 'a > (& mut self , input : & 'a Retained , label : Option < & 'a str > , budget : ReadBudget , usage : & mut Usage ,) -> Result < ServerJudgement < 'a > , Error >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::commit",
+    "body": "{ result :: commit (self , input , label , budget , usage) . await }",
+    "class_decision": "host-storage",
+    "item_premise": "The result writer borrows caller-owned admitted public bytes, selections and label, and returns only public origin judgements after acknowledged wrapped COMMIT. Its protected Session is never formatted; closed statements carry bounded public fields, while row delivery, strict validation and every store-owned preparation allocation use one explicit allowance. Driver buffers are a declared trusted dependency outside that allowance. Local refusals roll back, and uncertain COMMIT returns no judgement. No executable persistence or further generation is enabled.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

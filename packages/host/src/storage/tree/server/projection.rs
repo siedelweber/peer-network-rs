@@ -1,17 +1,60 @@
 //! Complete selected-use and debit correspondence on borrowed strict-validation spans.
 //! (´[ROOT-amend:storage:admitted-correspondence]´)
+use super::super::Selected;
 use super::{
     EpochScope, Error, Family, Header, Meter, Scope, ServerDebit, ServerSelection, StorageError, content, decimal, fields,
     spans::{Item, Validated},
 };
+use crate::admitted_result::{DebitVintage, DeclarationUse};
 use std::fmt::Write;
 
-struct Uses<'a, 'm> {
+trait SelectedUse {
+    fn use_(&self) -> &DeclarationUse;
+}
+impl SelectedUse for ServerSelection {
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn use_(&self) -> &DeclarationUse {
+        &self.use_
+    }
+}
+impl SelectedUse for Selected<'_> {
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn use_(&self) -> &DeclarationUse {
+        self.use_
+    }
+}
+
+trait DebitUse {
+    fn act(&self) -> &pn_records::ActId;
+    fn bytes(&self) -> &[u8];
+}
+impl DebitUse for ServerDebit {
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn act(&self) -> &pn_records::ActId {
+        &self.act
+    }
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+impl DebitUse for DebitVintage {
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn act(&self) -> &pn_records::ActId {
+        &self.key.act
+    }
+    /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
+    fn bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+struct Uses<'a, 'm, S: SelectedUse> {
     scope: &'a EpochScope,
     header: &'a Header,
     document: &'a Validated<'a>,
     frame: Item<'a>,
-    selections: &'a [ServerSelection],
+    selections: &'a [S],
     found: Vec<bool>,
     meter: &'m mut Meter,
 }
@@ -22,6 +65,28 @@ pub(super) fn validate(
     document: &Validated<'_>,
     selections: &[ServerSelection],
     debits: &[ServerDebit],
+    meter: &mut Meter,
+) -> Result<(), Error> {
+    validate_inner(scope, header, document, selections, debits, meter)
+}
+
+pub(super) fn validate_input(
+    scope: &EpochScope,
+    header: &Header,
+    document: &Validated<'_>,
+    selections: &[Selected<'_>],
+    debits: &[DebitVintage],
+    meter: &mut Meter,
+) -> Result<(), Error> {
+    validate_inner(scope, header, document, selections, debits, meter)
+}
+
+fn validate_inner<S: SelectedUse, D: DebitUse>(
+    scope: &EpochScope,
+    header: &Header,
+    document: &Validated<'_>,
+    selections: &[S],
+    debits: &[D],
     meter: &mut Meter,
 ) -> Result<(), Error> {
     let root = document.root()?;
@@ -68,7 +133,7 @@ pub(super) fn validate(
     debit_values(root, debits)
 }
 
-impl<'a> Uses<'a, '_> {
+impl<'a, S: SelectedUse> Uses<'a, '_, S> {
     fn key(&self, suffix: &[&str], observation: bool) -> Result<Scope, Error> {
         let mut key = Scope {
             bytes: [0; 1024],
@@ -106,19 +171,19 @@ impl<'a> Uses<'a, '_> {
     ) -> Result<(), Error> {
         let key = self.key(suffix, !matches!(family, Family::Rule | Family::Constants))?;
         let mut matching = self.selections.iter().enumerate().filter(|(_, selected)| {
-            selected.use_.selected_at == coordinate
-                && selected.use_.version.family == family
-                && selected.use_.version.key == key.text().unwrap_or("")
-                && selected.use_.version.edition == edition
+            selected.use_().selected_at == coordinate
+                && selected.use_().version.family == family
+                && selected.use_().version.key == key.text().unwrap_or("")
+                && selected.use_().version.edition == edition
         });
         let (index, selected) = matching.next().ok_or(StorageError::CorruptHistory)?;
         if matching.next().is_some()
-            || selected.use_.version.announced_at != interval.0
-            || selected.use_.version.opens_at != interval.1
+            || selected.use_().version.announced_at != interval.0
+            || selected.use_().version.opens_at != interval.1
         {
             return Err(StorageError::CorruptHistory.into());
         }
-        let payload = selected.use_.version.payload.as_ref().ok_or(StorageError::CorruptHistory)?;
+        let payload = selected.use_().version.payload.as_ref().ok_or(StorageError::CorruptHistory)?;
         let validated = Validated::new(&payload.bytes, self.meter)?;
         compare(validated.root()?.array(3)?.field(2)?)?;
         self.found[index] = true;
@@ -351,7 +416,7 @@ fn hex(identity: [u8; 32]) -> [u8; 64] {
     result
 }
 
-fn debit_values(root: Item<'_>, debits: &[ServerDebit]) -> Result<(), Error> {
+fn debit_values<D: DebitUse>(root: Item<'_>, debits: &[D]) -> Result<(), Error> {
     let ledger = root.map_value(3)?.children()?.last().ok_or(StorageError::CorruptHistory)?;
     let mut entries = ledger.field(3)?.children()?;
     let mut count = 0;
@@ -363,9 +428,9 @@ fn debit_values(root: Item<'_>, debits: &[ServerDebit]) -> Result<(), Error> {
         let family = key.field(2)?.text()?;
         let mut matching = debits
             .iter()
-            .filter(|debit| debit.act.author == author && debit.act.sequence == sequence && debit.act.family == family);
+            .filter(|debit| debit.act().author == author && debit.act().sequence == sequence && debit.act().family == family);
         let found = matching.next().ok_or(StorageError::CorruptHistory)?;
-        if matching.next().is_some() || found.bytes != value.bytes() {
+        if matching.next().is_some() || found.bytes() != value.bytes() {
             return Err(StorageError::CorruptHistory.into());
         }
         count += 1;
@@ -405,56 +470,67 @@ fn ensure(value: bool) -> Result<(), Error> {
     }
 }
 pub(super) fn context(a: &Validated<'_>, b: &Validated<'_>) -> Result<(), Error> {
-    ensure(genesis(a)?.bytes() == genesis(b)?.bytes())?;
+    ensure(context_match(a, b)?)
+}
+pub(super) fn context_match(a: &Validated<'_>, b: &Validated<'_>) -> Result<bool, Error> {
+    let mut same = genesis(a)?.bytes() == genesis(b)?.bytes();
     let a = last(a)?;
     let b = last(b)?;
-    ensure(a.field(5)?.bytes() == b.field(5)?.bytes())?;
+    same &= a.field(5)?.bytes() == b.field(5)?.bytes();
     let am = a.field(7)?.field(1)?.children()?.next().ok_or(StorageError::CorruptHistory)?;
     let bm = b.field(7)?.field(1)?.children()?.next().ok_or(StorageError::CorruptHistory)?;
-    content::marker_identity(am.field(0)?, bm.field(0)?)?;
-    ensure(am.field(1)?.children()?.next().is_none() && bm.field(1)?.children()?.next().is_none())?;
-    lineage(a.field(6)?, b.field(6)?, am.field(0)?.field(8)?)
+    same &= content::marker_identity_match(am.field(0)?, bm.field(0)?)?;
+    same &= am.field(1)?.children()?.next().is_none() && bm.field(1)?.children()?.next().is_none();
+    Ok(same && lineage_match(a.field(6)?, b.field(6)?, am.field(0)?.field(8)?)?)
 }
-fn lineage(a: Item<'_>, b: Item<'_>, members: Item<'_>) -> Result<(), Error> {
+fn lineage_match(a: Item<'_>, b: Item<'_>, members: Item<'_>) -> Result<bool, Error> {
+    let mut same = true;
     for member in members.children()? {
         let name = member.text()?;
-        let ar = find_record(a, name)?;
-        let br = find_record(b, name)?;
-        for index in 0..4 {
-            ensure(ar.field(index)?.bytes() == br.field(index)?.bytes())?;
+        let ar = find_record_optional(a, name)?;
+        let br = find_record_optional(b, name)?;
+        if let (Some(ar), Some(br)) = (ar, br) {
+            for index in 0..4 {
+                same &= ar.field(index)?.bytes() == br.field(index)?.bytes();
+            }
+        } else {
+            same = false;
         }
     }
-    Ok(())
+    Ok(same)
 }
-fn find_record<'a>(history: Item<'a>, name: &str) -> Result<Item<'a>, Error> {
+fn find_record_optional<'a>(history: Item<'a>, name: &str) -> Result<Option<Item<'a>>, Error> {
     let mut found = history
         .field(1)?
         .children()?
         .filter(|record| record.field(0).and_then(Item::text).is_ok_and(|id| id == name));
-    let record = found.next().ok_or(StorageError::CorruptHistory)?;
+    let record = found.next();
     ensure(found.next().is_none())?;
     Ok(record)
 }
 pub(super) fn extends(a: &Validated<'_>, b: &Validated<'_>) -> Result<(), Error> {
-    context(a, b)?;
+    ensure(extends_match(a, b)?)
+}
+pub(super) fn extends_match(a: &Validated<'_>, b: &Validated<'_>) -> Result<bool, Error> {
+    let mut same = context_match(a, b)?;
     let a = last(a)?;
     let b = last(b)?;
     let mut bindings = a.field(8)?.children()?;
     for prior in b.field(8)?.children()? {
-        let current = bindings.next().ok_or(StorageError::CorruptHistory)?;
-        content::marker_identity(current.field(0)?, prior.field(0)?)?;
-        content::marker_identity(current.field(1)?, prior.field(1)?)?;
+        let Some(current) = bindings.next() else { return Ok(false) };
+        same &= content::marker_identity_match(current.field(0)?, prior.field(0)?)?;
+        same &= content::marker_identity_match(current.field(1)?, prior.field(1)?)?;
         for index in 2..5 {
-            ensure(current.field(index)?.bytes() == prior.field(index)?.bytes())?;
+            same &= current.field(index)?.bytes() == prior.field(index)?.bytes();
         }
     }
     let previous = terminal(b)?;
     let current = terminal(a)?;
     let old = previous.field(0)?;
     let new = current.field(0)?;
-    ensure(decimal(old.field(5)?.text()?)?.checked_add(1) == Some(decimal(new.field(5)?.text()?)?))?;
-    ensure(new.field(7)?.bytes() == old.field(6)?.bytes())?;
-    ensure(decimal(new.field(6)?.text()?)? > decimal(old.field(6)?.text()?)?)?;
+    same &= decimal(old.field(5)?.text()?)?.checked_add(1) == Some(decimal(new.field(5)?.text()?)?);
+    same &= new.field(7)?.bytes() == old.field(6)?.bytes();
+    same &= decimal(new.field(6)?.text()?)? > decimal(old.field(6)?.text()?)?;
     let disclosed = a
         .field(7)?
         .field(1)?
@@ -465,14 +541,14 @@ pub(super) fn extends(a: &Validated<'_>, b: &Validated<'_>) -> Result<(), Error>
                 .is_ok_and(|index| old.field(5).is_ok_and(|expected| index.bytes() == expected.bytes()))
         })
         .ok_or(StorageError::CorruptHistory)?;
-    content::marker_identity(disclosed.field(0)?, old)?;
-    ensure(disclosed.field(1)?.bytes() == previous.field(1)?.bytes())?;
+    same &= content::marker_identity_match(disclosed.field(0)?, old)?;
+    same &= disclosed.field(1)?.bytes() == previous.field(1)?.bytes();
     for (base, extended) in [(old.field(8)?, new.field(8)?), (previous.field(1)?, current.field(1)?)] {
         for value in base.children()? {
-            ensure(extended.children()?.any(|candidate| candidate.bytes() == value.bytes()))?;
+            same &= extended.children()?.any(|candidate| candidate.bytes() == value.bytes());
         }
     }
-    lineage(a.field(6)?, b.field(6)?, old.field(8)?)
+    Ok(same && lineage_match(a.field(6)?, b.field(6)?, old.field(8)?)?)
 }
 pub(super) fn debit_origin(document: &Validated<'_>, debit: &ServerDebit) -> Result<(), Error> {
     let ledger = document

@@ -47,8 +47,15 @@
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::roots",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::tips",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::usage",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::commit",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::open",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::reader",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<DebitVintage as DebitUse>::act",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<DebitVintage as DebitUse>::bytes",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<Selected < '_ > as SelectedUse>::use_",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<ServerDebit as DebitUse>::act",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<ServerDebit as DebitUse>::bytes",
+        "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<ServerSelection as SelectedUse>::use_",
         "pn-host::packages/host/src/storage/tree/server/spans.rs::storage::tree::server::spans::<Children < 'a > as Iterator>::next"
       ]
     }

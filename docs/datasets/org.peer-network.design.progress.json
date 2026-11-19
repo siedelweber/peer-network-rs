@@ -40077,10 +40077,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "31",
+          "exact": "32",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "31",
+          "num": "32",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40095,7 +40095,7 @@
           "exact_digits": 32
         }
       },
-      "total": 31
+      "total": 32
     },
     {
       "category": "record-coverage",

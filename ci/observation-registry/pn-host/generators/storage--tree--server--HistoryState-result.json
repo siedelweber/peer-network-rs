@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::server::HistoryState",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [derive (Clone , Copy , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The private four-way history discriminant derives Copy, Clone and equality over fieldless states. It carries no stored bytes or diagnostic content and only the writer and reader inspect it."
+  }
+}

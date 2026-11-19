@@ -2,6 +2,7 @@ mod bounds;
 mod branches;
 mod generation;
 mod plans;
+mod result;
 thread_local! {static FETCHES:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};static EVENTS:std::cell::Cell<usize>=const {std::cell::Cell::new(0)};}
 pub(super) fn validated_event() {
     EVENTS.set(EVENTS.get() + 1);
@@ -668,4 +669,96 @@ pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
             .await
             .unwrap()
     );
+    // The eight result inserts use one rollback-only fixture so the complete
+    // trace stays within its existing finite evidence bound.
+    store.session.client().batch_execute(
+        "TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes"
+    ).await.unwrap();
+    trace_result_inserts(store, scope, &selected.version).await;
+}
+
+async fn trace_result_inserts(store: &mut ServerTree, scope: &str, version: &super::super::Version) {
+    let identity = [0xAA_u8; 32];
+    let identity = &identity[..];
+    let one = 1_i64;
+    let zero = 0_i64;
+    let absent_bytes: Option<&[u8]> = None;
+    let absent_depth: Option<i64> = None;
+    let chunk = &[1_u8][..];
+    let author = "trace-author";
+    let sequence = "1";
+    let family = "trace-family";
+    let transaction = store
+        .session
+        .client
+        .transaction(store.session.store_requests.clone())
+        .await
+        .unwrap();
+    trace_insert(&transaction, Statement::InsertScope, &[&scope, &identity]).await;
+    trace_insert(
+        &transaction,
+        Statement::InsertBranch,
+        &[&scope, &identity, &one, &absent_bytes, &absent_bytes, &zero],
+    )
+    .await;
+    trace_insert(
+        &transaction,
+        Statement::InsertEpoch,
+        &[
+            &scope,
+            &identity,
+            &one,
+            &absent_bytes,
+            &absent_depth,
+            &absent_bytes,
+            &identity,
+            &one,
+            &one,
+            &one,
+            &one,
+            &one,
+        ],
+    )
+    .await;
+    trace_insert(&transaction, Statement::InsertEpochChunk, &[&scope, &identity, &zero, &chunk]).await;
+    trace_insert(
+        &transaction,
+        Statement::InsertEpochReference,
+        &[
+            &scope,
+            &identity,
+            &zero,
+            &version.family.name(),
+            &version.key,
+            &version.edition,
+            &identity,
+        ],
+    )
+    .await;
+    trace_insert(
+        &transaction,
+        Statement::InsertDebit,
+        &[&scope, &identity, &author, &sequence, &family, &one, &one, &one],
+    )
+    .await;
+    trace_insert(
+        &transaction,
+        Statement::InsertDebitChunk,
+        &[&scope, &identity, &author, &sequence, &family, &zero, &chunk],
+    )
+    .await;
+    trace_insert(
+        &transaction,
+        Statement::InsertEpochDebit,
+        &[&scope, &identity, &identity, &one, &author, &sequence, &family],
+    )
+    .await;
+    assert_eq!(
+        transaction.refuse(StorageError::CorruptHistory).await,
+        StorageError::CorruptHistory
+    );
+}
+
+async fn trace_insert(transaction: &StatementTransaction<'_>, statement: Statement, params: &[StatementParameter<'_>]) {
+    assert_eq!(transaction.execute(statement, params).await.unwrap(), 1);
 }

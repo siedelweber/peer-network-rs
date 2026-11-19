@@ -9,7 +9,7 @@ mod index;
 mod read;
 pub use read::{DebitRead, Page, Reader, ResultRead};
 mod server;
-pub use server::{ServerDebit, ServerReader, ServerResult, ServerSelection, ServerTree};
+pub use server::{ServerDebit, ServerJudgement, ServerReader, ServerResult, ServerSelection, ServerTree};
 mod stage;
 
 type Identity = [u8; 32];
@@ -364,6 +364,31 @@ fn retained_bytes(parts: &[&[u8]], retained_length: usize, expected: &[u8], mete
     Ok(bytes == expected)
 }
 
+fn checked_result_input<'a>(input: &Retained, label: Option<&'a str>) -> Result<&'a str, Error> {
+    let (scope, _, parent, depth) = input.event();
+    let label = label.ok_or(Error::MissingGenerationLabel)?;
+    scope_check(scope)?;
+    super::stored_text(label)?;
+    super::stored_projection(input.declarations(), input.debits())?;
+    if label.len() > 1024 || depth > i64::MAX as u64 {
+        return Err(StorageError::Representation.into());
+    }
+    if label != "unstable" {
+        return Err(Error::UnknownGenerationLabel);
+    }
+    if depth == 0 || (depth == 1) != parent.is_none() {
+        return Err(Error::PredecessorMismatch);
+    }
+    if input
+        .debits()
+        .iter()
+        .any(|vintage| i64::try_from(vintage.disclosure.boundary).is_err())
+    {
+        return Err(StorageError::Representation.into());
+    }
+    Ok(label)
+}
+
 impl<'a> MemoryTree<'a> {
     /// Commit a caller-owned retaining carrier under its explicit public label.
     /// Construction of the input is outside this budget; no carrier is reconstructed here.
@@ -405,19 +430,7 @@ impl<'a> MemoryTree<'a> {
         point: &mut impl FnMut(Write) -> Result<(), Error>,
     ) -> Result<Judgement<'_>, Error> {
         let (scope, identity, parent, depth) = input.event();
-        let label = label.ok_or(Error::MissingGenerationLabel)?;
-        scope_check(scope)?;
-        super::stored_text(label)?;
-        super::stored_projection(input.declarations(), input.debits())?;
-        if label.len() > 1024 || depth > i64::MAX as u64 {
-            return Err(StorageError::Representation.into());
-        }
-        if label != "unstable" {
-            return Err(Error::UnknownGenerationLabel);
-        }
-        if depth == 0 || (depth == 1) != parent.is_none() {
-            return Err(Error::PredecessorMismatch);
-        }
+        let label = checked_result_input(input, label)?;
         let existing = meter.row(|| self.results.get(&(scope, *identity)))?;
         if let Some(existing) = existing {
             self.equal(existing, input, label, meter)?;

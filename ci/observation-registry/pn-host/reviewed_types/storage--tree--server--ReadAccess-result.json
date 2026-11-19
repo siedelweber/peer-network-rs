@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::ReadAccess",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "struct ReadAccess < 'a , 'b > { transaction : & 'a StatementTransaction < 'b > , meter : & 'a mut Meter , # [cfg (test)] hook : Option < & 'a mut generation :: Hook > , }"
+  }
+}

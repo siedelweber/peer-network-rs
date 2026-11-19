@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::server::ServerJudgement",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The returned judgement derives Debug and equality over the public borrowed label, selections and inserted flag. The protected Session, transaction, meter and driver state are absent; formatting this public result occurs outside the writer allowance."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::result::Plan",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/result.rs",
+    "syntax": "struct Plan < 'a > { judgement : ServerJudgement < 'a > , reference_order : Vec < usize > , local : Vec < LocalDebit > , new_scope : bool , new_branch : bool , segment : Identity , parent_segment : Option < Identity > , parent_depth : Option < i64 > , depth : i64 , package_bytes : i64 , package_chunks : i64 , references : i64 , debits : i64 , }"
+  }
+}
