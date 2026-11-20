@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::SelectedFields",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "struct SelectedFields < F , M , D > { frame : F , initial : M , terminal : M , genesis : D , }"
+  }
+}

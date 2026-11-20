@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::AdmittedFields",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "struct AdmittedFields < 'a > (& 'a pn_epoch :: publication :: Carrier) ;"
+  }
+}

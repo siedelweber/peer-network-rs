@@ -311,15 +311,126 @@ impl Retained {
     }
 }
 
-fn unique_genesis(declarations: &[Declaration]) -> Result<&Declaration, Error> {
-    let mut declarations = declarations
-        .iter()
-        .filter(|d| d.id.namespace == "deployment" && d.id.name == "genesis");
-    let genesis = declarations.next().ok_or(Error::InvalidPosition)?;
-    if declarations.next().is_some() {
+// The selection rule is shared by admitted fields now and validated stored fields later.
+// Accessors expose fields; they cannot choose a frame, marker or genesis declaration.
+trait PositionFieldView {
+    type Frame: Copy;
+    type Marker: Copy;
+    type Declaration: Copy;
+
+    fn frame_count(&self) -> usize;
+    fn frame(&self, at: usize) -> Option<Self::Frame>;
+    fn marker_count(&self, frame: Self::Frame) -> usize;
+    fn marker(&self, frame: Self::Frame, at: usize) -> Option<Self::Marker>;
+    fn boundary(&self, frame: Self::Frame) -> u64;
+    fn marker_index(&self, marker: Self::Marker) -> u64;
+    fn declaration_count(&self) -> usize;
+    fn declaration(&self, at: usize) -> Option<Self::Declaration>;
+    fn is_genesis(&self, declaration: Self::Declaration) -> bool;
+    fn genesis_at(&self, declaration: Self::Declaration) -> Option<u64>;
+    fn policy_genesis_at(&self, frame: Self::Frame) -> u64;
+}
+
+struct SelectedFields<F, M, D> {
+    frame: F,
+    initial: M,
+    terminal: M,
+    genesis: D,
+}
+
+type SelectedFrom<V> =
+    SelectedFields<<V as PositionFieldView>::Frame, <V as PositionFieldView>::Marker, <V as PositionFieldView>::Declaration>;
+
+fn select_fields<V: PositionFieldView>(view: &V) -> Result<SelectedFrom<V>, Error> {
+    let frame = view
+        .frame_count()
+        .checked_sub(1)
+        .and_then(|at| view.frame(at))
+        .ok_or(Error::InvalidPosition)?;
+    let initial = view.marker(frame, 0).ok_or(Error::InvalidPosition)?;
+    let mut terminal = None;
+    for at in 0..view.marker_count(frame) {
+        let marker = view.marker(frame, at).ok_or(Error::InvalidPosition)?;
+        if view.marker_index(marker) == view.boundary(frame) {
+            terminal = Some(marker);
+            break;
+        }
+    }
+    let terminal = terminal.ok_or(Error::InvalidPosition)?;
+    let mut genesis = None;
+    for at in 0..view.declaration_count() {
+        let declaration = view.declaration(at).ok_or(Error::InvalidPosition)?;
+        if view.is_genesis(declaration) && genesis.replace(declaration).is_some() {
+            return Err(Error::InvalidPosition);
+        }
+    }
+    let genesis = genesis.ok_or(Error::InvalidPosition)?;
+    if view.genesis_at(genesis) != Some(view.policy_genesis_at(frame)) {
         return Err(Error::InvalidPosition);
     }
-    Ok(genesis)
+    Ok(SelectedFields {
+        frame,
+        initial,
+        terminal,
+        genesis,
+    })
+}
+
+struct AdmittedFields<'a>(&'a pn_epoch::publication::Carrier);
+
+impl<'a> PositionFieldView for AdmittedFields<'a> {
+    type Frame = &'a Frame;
+    type Marker = &'a burn::RecognizedMarker;
+    type Declaration = &'a Declaration;
+
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn frame_count(&self) -> usize {
+        self.0.frames.len()
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn frame(&self, at: usize) -> Option<Self::Frame> {
+        self.0.frames.get(at)
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn marker_count(&self, frame: Self::Frame) -> usize {
+        frame.closure.markers.markers().len()
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn marker(&self, frame: Self::Frame, at: usize) -> Option<Self::Marker> {
+        frame.closure.markers.markers().get(at)
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn boundary(&self, frame: Self::Frame) -> u64 {
+        frame.parameters.boundary
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn marker_index(&self, marker: Self::Marker) -> u64 {
+        marker.identity().index
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn declaration_count(&self) -> usize {
+        self.0.causes.declarations.len()
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn declaration(&self, at: usize) -> Option<Self::Declaration> {
+        self.0.causes.declarations.get(at)
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn is_genesis(&self, declaration: Self::Declaration) -> bool {
+        declaration.id.namespace == "deployment" && declaration.id.name == "genesis"
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn genesis_at(&self, declaration: Self::Declaration) -> Option<u64> {
+        if let DeclarationContent::Deployment { genesis_at } = declaration.content {
+            Some(genesis_at)
+        } else {
+            None
+        }
+    }
+    /// Justified: Private admitted field access inherits the metered position construction.
+    fn policy_genesis_at(&self, frame: Self::Frame) -> u64 {
+        frame.marker_policy.genesis_at
+    }
 }
 
 struct Input<'a> {
@@ -335,18 +446,12 @@ impl<'a> Input<'a> {
 
     // Private input boundary: tests can supply malformed carriers without forging admission.
     fn carrier(carrier: &'a pn_epoch::publication::Carrier) -> Result<Self, Error> {
-        let frame = carrier.frames.last().ok_or(Error::InvalidPosition)?;
-        let markers = frame.closure.markers.markers();
-        let initial = markers.first().ok_or(Error::InvalidPosition)?;
-        let terminal = markers
-            .iter()
-            .find(|m| m.identity().index == frame.parameters.boundary)
-            .ok_or(Error::InvalidPosition)?;
-        let genesis = unique_genesis(&carrier.causes.declarations)?;
-        if !matches!(genesis.content, DeclarationContent::Deployment { genesis_at } if genesis_at == frame.marker_policy.genesis_at)
-        {
-            return Err(Error::InvalidPosition);
-        }
+        let SelectedFields {
+            frame,
+            initial,
+            terminal,
+            genesis,
+        } = select_fields(&AdmittedFields(carrier))?;
         Ok(Self {
             frame,
             genesis,

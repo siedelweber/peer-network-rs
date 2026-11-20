@@ -242,19 +242,21 @@ fn position_binding() {
     let initial = Input::admitted(root).unwrap();
     let next = Input::admitted(child).unwrap();
     let parent = position(root, None);
-    assert_eq!(
-        unique_genesis(&[]),
-        Err(Error::InvalidPosition),
+    let mut carrier = root.carrier().clone();
+    carrier.causes.declarations.clear();
+    assert!(
+        matches!(Input::carrier(&carrier), Err(Error::InvalidPosition)),
         "private genesis guard refuses absence"
     );
-    assert_eq!(unique_genesis(std::slice::from_ref(initial.genesis)), Ok(initial.genesis));
+    carrier.causes.declarations.push(initial.genesis.clone());
+    assert_eq!(Input::carrier(&carrier).unwrap().genesis, initial.genesis);
     let mut later = initial.genesis.clone();
     later.id.edition += 1;
     later.effective_at += 1;
     for declarations in [[initial.genesis.clone(), later.clone()], [later, initial.genesis.clone()]] {
-        assert_eq!(
-            unique_genesis(&declarations),
-            Err(Error::InvalidPosition),
+        carrier.causes.declarations = declarations.into();
+        assert!(
+            matches!(Input::carrier(&carrier), Err(Error::InvalidPosition)),
             "private genesis guard refuses multiple declarations regardless of effective point or carrier order"
         );
     }
