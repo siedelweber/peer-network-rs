@@ -152,6 +152,17 @@ definition = "The package name and version locate https://static.crates.io/crate
 paths = ["Cargo.lock", "ci/protected-packages/*.json"]
 
 [[rows]]
+family = "installation-notice-bindings"
+group = "reviewed installation source and notice coverage"
+measures = "Verified source member digests, bound owner-file digests and locked source identities"
+producer = "ci/installation_inventory.py from the locked source objects and reviewed catalogue"
+establishment = "recomputable"
+reader = "installation-notice-catalogue"
+source = "ci/installation-notices.json"
+definition = "The audit places typed catalogue digests against locked source identities and declared member, evidence, projection and owner recipes; vendor-set separately checks the source and owner bytes."
+paths = ["ci/installation-notices.json"]
+
+[[rows]]
 family = "correspondence-pins"
 group = "first-party"
 measures = "Normalized accepted decomposition and release-derived dataset projections"
@@ -351,7 +362,7 @@ reader = "public-git"
 locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 commit = "2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-cas. The manifest rev and Cargo.lock fix the same reviewed source revision; the accepting record and numeric dependency dataset retain the licence, resolved features and representation limits reviewed before numeric carriers."
-paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md"]
+paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "ci/installation-notices.json", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md"]
 
 [[rows]]
 family = "numeric-prepared-evaluator-source"

@@ -576,6 +576,8 @@
       },
       "cases": [
         "ci::test_discipline.WorkspaceChecks.test_credential_fixture_census",
+        "ci::test_discipline.WorkspaceChecks.test_installation_inventory",
+        "ci::test_discipline.WorkspaceChecks.test_installation_notice_coverage",
         "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
         "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
         "ci::test_discipline.HashCitations.test_hash_indexed_lines",

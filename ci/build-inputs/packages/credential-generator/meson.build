@@ -1,7 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 local_inputs = [
   ['ci/build-inputs/packages/credential-generator/meson.build', 'build-graph', ''],
-  ['packages/credential-generator/Cargo.toml', 'protected-packages,fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
+  ['packages/credential-generator/Cargo.toml', 'vendor-set,protected-packages,fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
   ['packages/credential-generator/README.md', 'protected-packages,fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,host-observation-build,fixed-point-generate,fixed-point-write,datasets,documents,determinism-datasets,determinism-documents,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', 'fixed-point-write'],
 ]
 foreach row : local_inputs

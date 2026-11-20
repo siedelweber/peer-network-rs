@@ -27,7 +27,297 @@ from clippy_fixture import crate
 from hash_citations import audit, establish, occurrences
 
 
+def _installation_fixture(base):
+    import hashlib
+    import io
+    import shutil
+    import tarfile
+    from installation_inventory import (catalogue, compare_manifests, require_coverage,
+                                        source_rows, verified_material, object_files,
+                                        manifest_declarations, members, digest, encoded)
+
+    def write(root, path, data):
+        destination = root / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(data)
+
+    def commit(root):
+        subprocess.run(['git', '-C', str(root), 'add', '.'], check=True, capture_output=True)
+        subprocess.run(['git', '-C', str(root), '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'fixture'], check=True, capture_output=True)
+        return subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD']).decode().strip()
+
+    git_root, root, home, view = (base / name for name in ('upstream', 'candidate', 'home', 'view'))
+    for repository in (git_root, root):
+        repository.mkdir()
+        subprocess.run(['git', '-C', str(repository), 'init', '-q'], check=True, capture_output=True)
+    write(git_root, 'LICENSE', b'Permission is hereby granted to use this sample.\n')
+    write(git_root, 'Cargo.toml', b'[package]\nname="upstream"\nversion="0.1.0"\n')
+    write(git_root, 'src/lib.rs', b'pub fn sample() {}\n')
+    revision = commit(git_root)
+    git_url = git_root.as_uri()
+    files = {'Cargo.toml': b'[package]\nname="reg"\nversion="1.0.0"\nlicense="MIT OR Apache-2.0"\n',
+             'LICENSE': b'MIT permission notice for reg.\n',
+             'README.md': b'Licensing: MIT is the selected alternative.\n',
+             'src/lib.rs': b'pub fn reg() {}\n'}
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode='w:gz') as archive:
+        for path, data in files.items():
+            info = tarfile.TarInfo(f'reg-1.0.0/{path}')
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
+    archive_bytes = buffer.getvalue()
+    bare_files = {'Cargo.toml': b'[package]\nname="bare"\nversion="1.0.0"\nlicense="BSD-2-Clause"\n',
+                  'src/lib.rs': b'pub fn bare() {}\n'}
+    bare_buffer = io.BytesIO()
+    with tarfile.open(fileobj=bare_buffer, mode='w:gz') as archive:
+        for path, data in bare_files.items():
+            info = tarfile.TarInfo(f'bare-1.0.0/{path}')
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
+    bare_bytes = bare_buffer.getvalue()
+    archive_dir = home / 'registry/cache/fixture-index'
+    archive_dir.mkdir(parents=True)
+    write(archive_dir, 'reg-1.0.0.crate', archive_bytes)
+    write(archive_dir, 'bare-1.0.0.crate', bare_bytes)
+    unpacked = home / 'registry/src/fixture-index/reg-1.0.0'
+    for path, data in files.items():
+        write(unpacked, path, data)
+    for path, data in bare_files.items():
+        write(home / 'registry/src/fixture-index/bare-1.0.0', path, data)
+    git_view = base / 'git-view'
+    shutil.copytree(git_root, git_view, ignore=shutil.ignore_patterns('.git'))
+    write(root, 'Cargo.toml', b'[workspace]\nmembers=["packages/app","vendor/sample"]\n')
+    write(root, 'rust-toolchain.toml', b'[toolchain]\nchannel="nightly-2026-10-16"\ncomponents=["rustfmt","clippy"]\n')
+    write(root, 'docs/inputs/build-policy.toml', b'[[rows]]\nrustc_commit="fixture-revision"\n')
+    write(root, 'packages/app/Cargo.toml', b'[package]\nname="app"\nversion="0.1.0"\nlicense="AGPL-3.0-only"\n')
+    write(root, 'ci/vendor-packages.toml', b'[[packages]]\nname="sample"\nversion="1.0.0"\npath="vendor/sample"\nmode="member"\n')
+    write(root, 'LICENSE-CODE', b'Code permission for app.\n')
+    write(root, 'vendor/sample/Cargo.toml', b'[package]\nname="sample"\nversion="1.0.0"\nlicense="MIT"\n')
+    write(root, 'vendor/sample/LICENSE', b'MIT permission for sample.\n')
+    write(root, 'vendor/sample/src/lib.rs', b'pub fn sample() {}\n')
+    write(root, 'docs/NODE-NOTICES', 'reg 1.0.0 — MIT\nOther reviewed entry.\n'.encode())
+    write(root, 'packages/host/NOTICE-DEPENDENCIES', b'Exact rows: docs/inputs/host-dependencies.toml\n')
+    write(root, 'docs/inputs/host-dependencies.toml',
+          ('[[rows]]\nname = "reg 1.0.0"\nchecksum = "' + digest(archive_bytes)
+           + '"\nlicence = "MIT OR Apache-2.0"\n').encode())
+    write(root, 'vendor/sample.patch', b'patch bytes\n')
+    lock = f'''version = 4
+    [[package]]
+    name = "app"
+    version = "0.1.0"
+    [[package]]
+    name = "bare"
+    version = "1.0.0"
+    source = "registry+https://github.com/rust-lang/crates.io-index"
+    checksum = "{hashlib.sha256(bare_bytes).hexdigest()}"
+    [[package]]
+    name = "reg"
+    version = "1.0.0"
+    source = "registry+https://github.com/rust-lang/crates.io-index"
+    checksum = "{hashlib.sha256(archive_bytes).hexdigest()}"
+    [[package]]
+    name = "upstream"
+    version = "0.1.0"
+    source = "git+{git_url}?rev={revision}#{revision}"
+    [[package]]
+    name = "sample"
+    version = "1.0.0"
+    '''
+    write(root, 'Cargo.lock', lock.encode())
+    write(root, 'ci/installation-notices.json', b'{}\n')
+    candidate = commit(root)
+    mapping = {git_url: (git_root, git_view)}
+    tracked = object_files(root, candidate)
+    packages = __import__('tomllib').loads((root / 'Cargo.lock').read_text())['package']
+    entries = []
+    for package in packages:
+        source = 'registry' if package.get('source', '').startswith('registry+') else ('git' if package.get('source', '').startswith('git+') else 'path')
+        identity = f"{package['name']}@{package['version']}"
+        if source == 'git':
+            identity += f'#{revision}'
+        seed = {'source': source, 'identity': identity,
+                **({'path': 'vendor/sample' if package['name'] == 'sample' else 'packages/app'} if source == 'path' else {}),
+                **({'repository': git_url} if source == 'git' else {})}
+        material, provenance = verified_material(root, candidate, package, seed, archive_dir, mapping, tracked)
+        declarations = manifest_declarations(material, '', None)
+        file_map = members(material)
+        review = {'source_identity': provenance, 'member_map': file_map,
+                  'member_map_sha256': digest(encoded(file_map)), 'declarations': declarations,
+                  'inspection': 'Reviewed every verified member and manifest; selected all applicable evidence.',
+                  'absence': package['name'] == 'bare'}
+        if source == 'path' and package['name'] == 'app':
+            from installation_inventory import first_party_projection
+            projection = first_party_projection(root, candidate, package, 'packages/app')
+            review = {'scope': 'first-party-notice',
+                      'source_identity': {'name': package['name'], 'version': package['version'],
+                                          'origin': 'path', 'package_path': 'packages/app'},
+                      'declaration_projection': projection,
+                      'declaration_projection_sha256': digest(encoded(projection)),
+                      'inspection': 'Reviewed the first-party licence declaration and selected notice bytes.',
+                      'absence': False}
+        if package['name'] == 'bare':
+            evidence = [{'kind': 'declaration-only', 'path': 'Cargo.toml', 'member': 'license',
+                         'expression': 'BSD-2-Clause', 'sha256': digest(material['Cargo.toml'][1])}]
+        else:
+            path = 'LICENSE-CODE' if package['name'] == 'app' else 'LICENSE'
+            evidence = [{'kind': 'notice-file', 'path': path, 'sha256': digest(material[path][1])}]
+        if package['name'] == 'reg':
+            evidence.append({'kind': 'embedded-statement', 'path': 'README.md',
+                             'first_line': 1, 'last_line': 1, 'sha256': digest(material['README.md'][1])})
+            owner_bytes = (root / 'docs/NODE-NOTICES').read_bytes()
+            owners = [{'path': 'docs/NODE-NOTICES', 'sha256': digest(owner_bytes),
+                       'covered_identity': identity, 'first_line': 1, 'last_line': 1,
+                       'asserted': {'identity': 'reg 1.0.0', 'source_digest': None, 'expression': 'MIT'},
+                       'correspondence': {'source_expression': 'MIT OR Apache-2.0',
+                                          'note': 'MIT is the selected alternative.'}}]
+            table_path = 'docs/inputs/host-dependencies.toml'
+            parent_path = 'packages/host/NOTICE-DEPENDENCIES'
+            owners.append({'path': table_path, 'sha256': digest((root / table_path).read_bytes()),
+                           'covered_identity': identity, 'first_line': 1, 'last_line': 4,
+                           'asserted': {'identity': 'reg 1.0.0', 'source_digest': digest(archive_bytes),
+                                        'expression': 'MIT OR Apache-2.0'},
+                           'correspondence': {'source_expression': 'MIT OR Apache-2.0', 'note': None},
+                           'parent': {'path': parent_path, 'sha256': digest((root / parent_path).read_bytes()),
+                                      'first_line': 1, 'last_line': 1}})
+        else:
+            owners = []
+        review['selected_evidence'] = copy.deepcopy(evidence)
+        review['required_owners'] = [{'path': owner['path'], 'first_line': owner['first_line'],
+                                      'last_line': owner['last_line']} for owner in owners]
+        entries.append({**seed, 'review': review, 'evidence': evidence, 'owners': owners})
+    write(root, 'ci/installation-notices.json', (json.dumps({'schema': 2, 'entries': entries}) + '\n').encode())
+    candidate = commit(root)
+    shutil.copytree(root, view, ignore=shutil.ignore_patterns('.git'))
+    reviewed = require_coverage(root, catalogue(root), candidate, archives=archive_dir, git_sources=mapping)
+    def verify(changed, revision=candidate):
+        return require_coverage(root, changed, revision, archives=archive_dir, git_sources=mapping)
+
+    return locals()
+
+
 class WorkspaceChecks(unittest.TestCase):
+    def test_installation_inventory(self):
+        """Locked source and reviewed notices define expected bytes independently of the captured source view.
+        ´claim:discipline:installation-inventory-independent´
+        ´test:integration:test-installation-inventory´
+        """
+        with tempfile.TemporaryDirectory(prefix='installation-inventory-', dir=os.environ['TMPDIR']) as directory:
+            f = _installation_fixture(Path(directory))
+            root, home, view, git_view, unpacked, archive_dir, mapping, reviewed, candidate = (
+                f[name] for name in ('root', 'home', 'view', 'git_view', 'unpacked', 'archive_dir',
+                                     'mapping', 'reviewed', 'candidate'))
+            write, commit, verify, files = (f[name] for name in ('write', 'commit', 'verify', 'files'))
+            source_rows, compare_manifests = (f[name] for name in ('source_rows', 'compare_manifests'))
+            expected = source_rows(root, candidate, home, mapping, reviewed)
+            captured = source_rows(root, candidate, home, mapping, reviewed, captured_view=view)
+            self.assertTrue(compare_manifests(expected, captured))
+            write(unpacked, 'src/lib.rs', b'changed registry source\n')
+            with self.assertRaisesRegex(ValueError, 'registry-source:reg@1.0.0/src/lib.rs'):
+                compare_manifests(expected, source_rows(root, candidate, home, mapping, reviewed, captured_view=view))
+            write(unpacked, 'src/lib.rs', files['src/lib.rs'])
+            write(git_view, 'src/lib.rs', b'changed Git checkout\n')
+            with self.assertRaisesRegex(ValueError, 'git-source:upstream@0.1.0'):
+                compare_manifests(expected, source_rows(root, candidate, home, mapping, reviewed, captured_view=view))
+            write(git_view, 'src/lib.rs', b'pub fn sample() {}\n')
+            (view / 'vendor/sample.patch').unlink()
+            with self.assertRaisesRegex(ValueError, 'tracked-source:100644:vendor/sample.patch'):
+                compare_manifests(expected, source_rows(root, candidate, home, mapping, reviewed, captured_view=view))
+            write(view, 'vendor/sample.patch', b'patch bytes\n')
+            write(view, 'packages/app/.lane/extra', b'nested extra source\n')
+            with self.assertRaisesRegex(ValueError, 'tracked-source:'):
+                compare_manifests(expected, source_rows(root, candidate, home, mapping, reviewed, captured_view=view))
+
+    def test_installation_notice_coverage(self):
+        """The registered coverage decision accepts current bindings and refuses missing, foreign or stale bindings.
+        ´claim:discipline:installation-notice-coverage´
+        ´test:integration:test-installation-notice-coverage´
+        """
+        with tempfile.TemporaryDirectory(prefix='installation-inventory-', dir=os.environ['TMPDIR']) as directory:
+            f = _installation_fixture(Path(directory))
+            root, home, view, git_view, unpacked, archive_dir, mapping, reviewed, candidate = (
+                f[name] for name in ('root', 'home', 'view', 'git_view', 'unpacked', 'archive_dir',
+                                     'mapping', 'reviewed', 'candidate'))
+            write, commit, verify, files = (f[name] for name in ('write', 'commit', 'verify', 'files'))
+            source_rows, compare_manifests = (f[name] for name in ('source_rows', 'compare_manifests'))
+            manifest_declarations = f['manifest_declarations']
+            digest = f['digest']
+            self.assertEqual(len(reviewed), 5)
+            reg_key = ('registry', 'reg@1.0.0')
+            bare_key = ('registry', 'bare@1.0.0')
+            from provision_vendor import check_installation_notices
+            poison = Path(directory) / 'unrelated-home'
+            (poison / 'registry/cache/one').mkdir(parents=True)
+            (poison / 'registry/cache/two').mkdir()
+            declared = {'PN_VENDOR_ARCHIVES': str(archive_dir),
+                        'PN_INSTALLATION_GIT_OBJECTS': str(f['git_root']), 'CARGO_HOME': str(poison)}
+            with patch.dict(os.environ, declared):
+                self.assertEqual(len(check_installation_notices(root)), 5)
+                missing = archive_dir / 'bare-1.0.0.crate'
+                missing.rename(archive_dir / 'bare-held.crate')
+                with self.assertRaisesRegex(ValueError, 'bare@1.0.0.*provision PN_VENDOR_ARCHIVES'):
+                    check_installation_notices(root)
+                (archive_dir / 'bare-held.crate').rename(missing)
+            with self.assertRaisesRegex(ValueError, 'registry:reg@1.0.0'):
+                verify({key: entry for key, entry in reviewed.items() if key != reg_key})
+            for key, edit, reason in (
+                (reg_key, lambda entry: entry['review']['member_map'].pop(), 'member map'),
+                (reg_key, lambda entry: entry['review'].pop('member_map_sha256'), 'member map'),
+                (reg_key, lambda entry: entry['review'].update(inspection=''), 'bound installation notice evidence'),
+                (reg_key, lambda entry: entry['review']['source_identity'].update(archive_sha256='foreign'), 'member map'),
+                (reg_key, lambda entry: entry['evidence'].pop(), 'bound installation notice evidence'),
+                (reg_key, lambda entry: (entry['evidence'][1].update(first_line=2), entry['review']['selected_evidence'][1].update(first_line=2)), 'embedded statement range'),
+                (reg_key, lambda entry: entry['owners'][0]['asserted'].update(identity='other 1.0.0'), 'owner correspondence'),
+                (reg_key, lambda entry: entry['owners'][0]['asserted'].update(source_digest='foreign'), 'owner correspondence'),
+                (reg_key, lambda entry: entry['owners'][0]['asserted'].update(expression='BSD'), 'owner correspondence'),
+                (reg_key, lambda entry: entry['owners'].clear(), 'owner correspondence'),
+                (reg_key, lambda entry: entry['owners'][1]['asserted'].update(source_digest='foreign'), 'owner correspondence'),
+                (bare_key, lambda entry: entry['review'].update(absence=False), 'declaration-only'),
+                (bare_key, lambda entry: entry['review']['member_map'].pop(), 'member map'),
+                (bare_key, lambda entry: entry['review']['source_identity'].update(archive_sha256='foreign'), 'member map'),
+            ):
+                changed = copy.deepcopy(reviewed)
+                edit(changed[key])
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify(changed)
+            with self.assertRaisesRegex(ValueError, 'unresolved licence-file reference'):
+                manifest_declarations({'Cargo.toml': ('100644', b'[package]\nlicense-file="missing"\n', None)}, '')
+            write(root, 'packages/app/src/lib.rs', b'pub fn changed() {}\n')
+            code_commit = commit(root)
+            self.assertIs(verify(reviewed, code_commit), reviewed)
+            write(root, 'packages/app/Cargo.toml', b'[package]\nname="app"\nversion="0.1.0"\nlicense="MIT"\n')
+            licence_commit = commit(root)
+            with self.assertRaisesRegex(ValueError, 'first-party licence declaration differs'):
+                verify(reviewed, licence_commit)
+            write(root, 'packages/app/Cargo.toml', b'[package]\nname="app"\nversion="0.1.0"\nlicense="AGPL-3.0-only"\n')
+            write(root, 'vendor/sample/src/lib.rs', b'pub fn changed() {}\n')
+            vendor_commit = commit(root)
+            with self.assertRaisesRegex(ValueError, 'member map'):
+                verify(reviewed, vendor_commit)
+            write(root, 'vendor/sample/src/lib.rs', b'pub fn sample() {}\n')
+            (unpacked / 'LICENSE').unlink()
+            with self.assertRaisesRegex(ValueError, 'notice path missing: reg@1.0.0/LICENSE'):
+                source_rows(root, candidate, home, mapping, reviewed, captured_view=view)
+            write(unpacked, 'LICENSE', files['LICENSE'])
+            write(root, 'docs/NODE-NOTICES', 'Unrelated reviewed entry.\nreg 1.0.0 — MIT\n'.encode())
+            changed_commit = commit(root)
+            with self.assertRaisesRegex(ValueError, 'owner correspondence'):
+                verify(reviewed, changed_commit)
+            rebound = copy.deepcopy(reviewed)
+            owner = rebound[reg_key]['owners'][0]
+            owner['sha256'] = digest((root / 'docs/NODE-NOTICES').read_bytes())
+            owner['first_line'] = 2
+            owner['last_line'] = 2
+            rebound[reg_key]['review']['required_owners'][0]['first_line'] = 2
+            rebound[reg_key]['review']['required_owners'][0]['last_line'] = 2
+            self.assertIs(verify(rebound, changed_commit), rebound)
+            write(root, 'docs/NODE-NOTICES', 'Unrelated reviewed entry.\nreg 1.0.0 — MITNFA\n'.encode())
+            misleading_commit = commit(root)
+            misleading = copy.deepcopy(rebound)
+            misleading[reg_key]['owners'][0]['sha256'] = digest((root / 'docs/NODE-NOTICES').read_bytes())
+            with self.assertRaisesRegex(ValueError, 'owner correspondence'):
+                verify(misleading, misleading_commit)
+
+
     def test_protected_package_resolution(self):
         """Package-scoped versions and features are exact, including absent rows and distinct build contexts; an incomplete protected roster refuses before resolution or testing.
         ´claim:discipline:protected-packages-retain-scoped-resolution´
@@ -985,6 +1275,19 @@ class HashCitations(unittest.TestCase):
                 establish(root, dict(declaration, patch_id='0'*40))
             with self.assertRaisesRegex(ValueError, 'not reachable'):
                 establish(root, dict(declaration, commit='f'*40))
+
+        # Catalogue placement reads committed structure, independently of the
+        # provisioning material and the coverage check's byte comparison.
+        repository = Path(__file__).resolve().parent.parent
+        families = tomllib.loads((repository/'ci/hash-citation-families.toml').read_text())
+        family = next(row for row in families['rows'] if row['reader'] == 'installation-notice-catalogue')
+        catalogue = json.loads((repository/'ci/installation-notices.json').read_text())
+        bound = catalogue['entries'][0]['evidence'][0]['sha256']
+        with patch('installation_inventory.require_coverage', side_effect=AssertionError('coverage called')):
+            with patch('installation_inventory.verified_material', side_effect=AssertionError('material opened')):
+                placed = establish(repository, family)
+        self.assertTrue(placed(bound, ''))
+        self.assertFalse(placed('f'*64, ''))
 
     def test_hash_carrier(self):
         """the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.

@@ -650,6 +650,22 @@
       "review": "Read the finite startup or protected-delivery fixture and its named assertions; syscall denial and write outcome seams remain explicitly test-only and do not witness installation. The injected inline and file child modules refuse at the non-test module guard, and a duplicate public name refuses with multiplicity retained."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_installation_inventory",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:installation-inventory-independent",
+      "before": "",
+      "after": "Locked source and reviewed notices define expected bytes independently of the captured source view.",
+      "review": "The expected side reads locked archive members, Git objects and tracked bytes; the captured side reads unpacked, checkout and supplied path bytes. Matching inputs accept, while a removed or altered registry, Git or tracked file and a nested extra file refuse. No fetch or build runs."
+    },
+    {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_installation_notice_coverage",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:installation-notice-coverage",
+      "before": "The registered coverage decision accepts current bindings and refuses missing, foreign or stale bindings.",
+      "after": "The registered coverage decision accepts current bindings and refuses missing, foreign or stale bindings.",
+      "review": "The supplied fixture admits notice-file, embedded and declaration-only evidence, a narrower first-party licence projection, complete external and vendor maps, required owner locations and a followed TOML row. Mutations cover missing material and bindings, altered evidence and range, a stale or rebound owner, exact values and changed vendor bytes. The registered entry ignores an unrelated Cargo home and refuses a missing declared archive with a provisioning hint."
+    },
+    {
       "operation": "ci::test_discipline.WorkspaceChecks.test_protected_package_resolution",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:protected-packages-retain-scoped-resolution",

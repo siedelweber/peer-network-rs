@@ -592,6 +592,49 @@ def establish(root, rule):
                     raise ValueError("hash citations: archive locator lacks package or version")
                 values.add(package["checksum"])
         return lambda value, _line: value in values
+    if kind == 'installation-notice-catalogue' and standing == 'recomputable':
+        if rule.get('source') != 'ci/installation-notices.json' or rule.get('paths') != ['ci/installation-notices.json']:
+            raise ValueError('hash citations: installation notice catalogue requires its exact input')
+        from installation_inventory import catalogue, committed_lock, git, lock_packages, source_key
+        commit = git(root, 'rev-parse', 'HEAD').decode().strip()
+        entries = catalogue(root, commit=commit)
+        locked = lock_packages(committed_lock(root, commit))
+        if set(entries) != {source_key(package) for package in locked}:
+            raise ValueError('hash citations: installation notice identity differs from lock')
+        values = set()
+        def place(value):
+            if isinstance(value, str) and re.fullmatch(r'(?:[0-9a-f]{40}|[0-9a-f]{64})', value):
+                values.add(value)
+        for (source, identity), entry in entries.items():
+            expected = {'source', 'identity', 'review', 'evidence', 'owners'}
+            if source == 'path':
+                expected.add('path')
+            elif source == 'git':
+                expected.add('repository')
+            if set(entry) != expected:
+                raise ValueError(f'hash citations: unknown installation notice fields: {identity}')
+            review = entry['review']
+            typed = {'source_identity', 'inspection', 'selected_evidence', 'absence', 'required_owners'}
+            typed |= {'declaration_projection', 'declaration_projection_sha256', 'scope', 'declarations'} if review.get('scope') == 'first-party-notice' else {'member_map', 'member_map_sha256', 'declarations'}
+            if set(review) != typed:
+                raise ValueError(f'hash citations: unknown installation review fields: {identity}')
+            source_identity = review['source_identity']
+            for field in ('archive_sha256', 'revision', 'tree', 'tracked_tree'):
+                place(source_identity.get(field))
+            place(review.get('member_map_sha256'))
+            place(review.get('declaration_projection_sha256'))
+            for member in review.get('member_map', []):
+                place(member['sha256'])
+            for member in review.get('declaration_projection', {}).get('license_files', []):
+                place(member['sha256'])
+            for evidence in entry['evidence']:
+                place(evidence['sha256'])
+            for owner in entry['owners']:
+                place(owner['sha256'])
+                place(owner['asserted'].get('source_digest'))
+                if 'parent' in owner:
+                    place(owner['parent']['sha256'])
+        return lambda value, _line: value in values
     if kind == "projection-pin" and standing == "recomputable":
         program = ast.parse(relative_file(root, rule["source"]).read_text())
         if not any(isinstance(node, ast.FunctionDef) and node.name == rule["function"] for node in program.body):

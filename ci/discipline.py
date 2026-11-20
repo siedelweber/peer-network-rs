@@ -869,6 +869,8 @@ def main():
                     raise ValueError(f"{path}: tracked Cargo configuration may not carry rustflags, lint flags, source replacement, patch tables or paths overrides")
         return 0
     if mode == "vendor-set":
+        from provision_vendor import check_installation_notices
+        check_installation_notices(pathlib.Path.cwd())
         vendors = sorted((row['path'], row['name']) for row in vendor_packages(pathlib.Path.cwd()))
         terms = [f'%s"{path}/" *VCHAR' for path, _ in vendors]
         terms += [f'%s"{row["patch_file"]}"' for row in vendor_packages(pathlib.Path.cwd()) if row.get('patch_file')]
