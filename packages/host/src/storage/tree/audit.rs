@@ -74,7 +74,7 @@ impl std::fmt::Debug for LocationKey<'_> {
                 LocationKind::Bytes => {
                     list.entry(&self.0.key_bytes(at).ok_or(std::fmt::Error)?);
                 }
-                LocationKind::Integer => {
+                LocationKind::UnsignedInteger | LocationKind::SignedInteger => {
                     list.entry(&self.0.key_integer(at).ok_or(std::fmt::Error)?);
                 }
                 LocationKind::Null => {
@@ -99,7 +99,8 @@ enum LocationKind {
     Empty,
     Text,
     Bytes,
-    Integer,
+    UnsignedInteger,
+    SignedInteger,
     Null,
 }
 
@@ -156,9 +157,15 @@ impl AuditLocation {
     /// Justified: Location inspection borrows an already published audit outcome.
     #[must_use]
     pub fn key_integer(&self, at: usize) -> Option<i128> {
-        (self.kinds.get(at) == Some(&LocationKind::Integer))
-            .then(|| self.slots.get(at).map(|value| i128::from(*value)))
-            .flatten()
+        match self.kinds.get(at)? {
+            LocationKind::UnsignedInteger => self.slots.get(at).copied().map(i128::from),
+            LocationKind::SignedInteger => self
+                .slots
+                .get(at)
+                .copied()
+                .map(|value| i128::from(i64::from_ne_bytes(value.to_ne_bytes()))),
+            _ => None,
+        }
     }
 
     /// Whether an observed nullable position was null.
@@ -198,7 +205,18 @@ pub(super) enum SitePart<'a> {
     Identity(Identity),
     Decimal(u64),
     Integer(u64),
+    Signed(i64),
     Null,
+}
+
+impl SitePart<'_> {
+    fn length(self) -> usize {
+        match self {
+            Self::Decimal(value) => decimal_length(value),
+            Self::Text(value, _) => value.len(),
+            _ => 0,
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -356,6 +374,7 @@ impl AuditMeter {
             };
             length = next;
         }
+        // The text form retains a server row's original decimal bytes, including malformed text.
         if matches!(
             relation,
             "pn_epoch_debits" | "pn_epoch_debit_chunks" | "pn_epoch_result_debits"
@@ -364,7 +383,7 @@ impl AuditMeter {
                 SitePart::Scope(scope),
                 SitePart::Identity(_),
                 SitePart::Text(author, _),
-                SitePart::Decimal(sequence),
+                sequence @ (SitePart::Decimal(_) | SitePart::Text(_, 20)),
                 SitePart::Text(family, _),
                 ..,
             ] = slots
@@ -374,10 +393,10 @@ impl AuditMeter {
             let Some(framed) = scope_key_length(scope)
                 .ok()
                 .and_then(|total| total.checked_add(author.len()))
-                .and_then(|total| total.checked_add(decimal_length(sequence)))
+                .and_then(|total| total.checked_add(sequence.length()))
                 .and_then(|total| total.checked_add(family.len()))
                 .and_then(|total| total.checked_add(decimal_length(author.len() as u64)))
-                .and_then(|total| total.checked_add(decimal_length(decimal_length(sequence) as u64)))
+                .and_then(|total| total.checked_add(decimal_length(sequence.length() as u64)))
                 .and_then(|total| total.checked_add(decimal_length(family.len() as u64)))
                 .and_then(|total| total.checked_add(3))
             else {
@@ -420,7 +439,15 @@ impl AuditMeter {
                 }
                 SitePart::Integer(value) => {
                     directory[at] = *value;
-                    LocationKind::Integer
+                    if i64::try_from(*value).is_ok() {
+                        LocationKind::SignedInteger
+                    } else {
+                        LocationKind::UnsignedInteger
+                    }
+                }
+                SitePart::Signed(value) => {
+                    directory[at] = u64::from_ne_bytes(value.to_ne_bytes());
+                    LocationKind::SignedInteger
                 }
                 SitePart::Null => LocationKind::Null,
                 SitePart::Empty => LocationKind::Empty,
@@ -615,10 +642,11 @@ fn result_index_location<'a>(scope: &'a EpochScope, identity: Identity, relation
 }
 
 fn placement_location<'a>(scope: &'a EpochScope, segment: Identity, depth: u64, relation: &'static str) -> AuditSite<'a> {
-    AuditSite::row(
-        relation,
-        &[SitePart::Scope(scope), SitePart::Identity(segment), SitePart::Integer(depth)],
-    )
+    let depth = match i64::try_from(depth) {
+        Ok(value) => SitePart::Signed(value),
+        Err(_) => SitePart::Integer(depth),
+    };
+    AuditSite::row(relation, &[SitePart::Scope(scope), SitePart::Identity(segment), depth])
 }
 
 fn child_location(scope: &EpochScope, parent: Option<Identity>, identity: Identity) -> AuditSite<'_> {
@@ -731,6 +759,17 @@ pub(super) struct RawScope<'a> {
     pub pointer: Identity,
 }
 
+pub(super) struct RawDescriptor<'a> {
+    pub key: String,
+    pub scope: &'a EpochScope,
+    pub segment: Identity,
+    pub first: Identity,
+    pub start: u64,
+    pub parent_segment: Option<Identity>,
+    pub fork: Option<Identity>,
+    pub cutoff: u64,
+}
+
 pub(super) struct RawSelection<'a> {
     pub use_: &'a DeclarationUse,
     pub origin: Identity,
@@ -777,6 +816,7 @@ pub(super) struct Collected<'a> {
     pub generations: Vec<RawGeneration<'a>>,
     pub scopes: Vec<RawScope<'a>>,
     pub results: Vec<RawResult<'a>>,
+    pub descriptors: Vec<RawDescriptor<'a>>,
 }
 
 /// Adapter-specific scans and physical checks; the graph, history, content order,
@@ -786,13 +826,13 @@ pub(super) trait AuditSource<'a> {
     fn check_identity(&self, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
     fn check_shapes(&self, rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
     fn check_generation_indices(&self, rows: &mut Collected<'a>, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
-    fn check_forest_joins(&self, rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
+    fn collect_descriptors(&'a self, rows: &mut Collected<'a>, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
     fn check_reference_index(&self, rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure>;
     fn check_segments(
         &self,
         rows: &Collected<'_>,
-        parents: &[Option<usize>],
         children: &[Vec<usize>],
+        segment_order: &[usize],
         meter: &mut AuditMeter,
     ) -> Result<(), AuditFailure>;
     fn check_content(
@@ -821,17 +861,114 @@ pub(super) fn reconcile<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditM
     source.check_shapes(&rows, meter)?;
     check_generation(&rows, meter)?;
     source.check_generation_indices(&mut rows, meter)?;
-    source.check_forest_joins(&rows, meter)?;
     check_joins(&rows, meter)?;
+    check_scope_roots(&rows, meter)?;
     let parents = parent_forest(&rows, meter)?;
     let ranks = ancestry_ranks(&rows, &parents, meter)?;
-    source.check_segments(&rows, &parents, &ranks.children, meter)?;
+    let segment_order = check_descriptors(source, &mut rows, &parents, meter)?;
+    source.check_segments(&rows, &ranks.children, &segment_order, meter)?;
     source.check_reference_index(&rows, meter)?;
     let (debits, mut contexts) = check_content(source, &rows, &parents, &ranks, meter)?;
     let observations = source.collect_observations(meter)?;
     check_observations(&rows, &observations, meter)?;
     source.check_enumeration(&rows, &ranks.children, meter)?;
     materialize(&rows, &parents, &ranks.children, &debits, &mut contexts, meter)
+}
+
+fn check_scope_roots(rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {
+    for scope in &rows.scopes {
+        let site = scope_location(scope.scope);
+        meter.visit(site)?;
+        meter.visit(site)?;
+        let root = rows
+            .results
+            .binary_search_by(|row| (&row.key, row.identity).cmp(&(&scope.key, scope.pointer)))
+            .ok()
+            .and_then(|index| rows.results.get(index));
+        if root.is_none_or(|row| row.parent.is_some()) {
+            return Err(meter.refused(StorageError::CorruptHistory, site));
+        }
+    }
+    Ok(())
+}
+
+// Justified: One sorted member index reconciles every descriptor before physical indexes.
+#[allow(clippy::too_many_lines)]
+fn check_descriptors<'a>(
+    source: &'a impl AuditSource<'a>,
+    rows: &mut Collected<'a>,
+    parents: &[Option<usize>],
+    meter: &mut AuditMeter,
+) -> Result<Vec<usize>, AuditFailure> {
+    let mut segment_order = Vec::new();
+    meter.reserve(&mut segment_order, rows.results.len(), AuditSite::NotRead)?;
+    segment_order.extend(0..rows.results.len());
+    segment_order.sort_unstable_by_key(|&at| {
+        let row = &rows.results[at];
+        (&row.key, row.segment, row.depth, row.identity)
+    });
+    source.collect_descriptors(rows, meter)?;
+    rows.descriptors
+        .sort_unstable_by(|a, b| (&a.key, a.segment).cmp(&(&b.key, b.segment)));
+    let mut descriptor_count = 0usize;
+    for descriptor in &rows.descriptors {
+        let site = descriptor_location(descriptor.scope, descriptor.segment);
+        descriptor_count = descriptor_count
+            .checked_add(1)
+            .ok_or_else(|| meter.refused(StorageError::ReadLimit, site))?;
+        meter.visit(site)?;
+        let first_index = segment_order.partition_point(|&at| {
+            let row = &rows.results[at];
+            (row.key.as_str(), row.segment) < (descriptor.key.as_str(), descriptor.segment)
+        });
+        meter.visit(site)?;
+        let last_index = segment_order.partition_point(|&at| {
+            let row = &rows.results[at];
+            (row.key.as_str(), row.segment) <= (descriptor.key.as_str(), descriptor.segment)
+        });
+        let group = &segment_order[first_index..last_index];
+        let Some(&first_at) = group.first() else {
+            return Err(meter.refused(StorageError::CorruptHistory, site));
+        };
+        let first = &rows.results[first_at];
+        if descriptor.first != first.identity
+            || descriptor.segment != first.identity
+            || descriptor.start != first.depth
+            || descriptor.fork != first.parent
+            || descriptor.cutoff != first.depth - 1
+        {
+            return Err(meter.refused(StorageError::CorruptHistory, site));
+        }
+        let actual_parent_segment = parents[first_at].map(|at| rows.results[at].segment);
+        if descriptor.parent_segment != actual_parent_segment {
+            return Err(meter.refused(StorageError::CorruptHistory, site));
+        }
+        for pair in group.windows(2) {
+            let before = &rows.results[pair[0]];
+            let after = &rows.results[pair[1]];
+            let location = result_location(after.scope, after.identity);
+            meter.visit(location)?;
+            if before.depth.checked_add(1) != Some(after.depth) || after.parent != Some(before.identity) {
+                return Err(meter.refused(StorageError::CorruptHistory, location));
+            }
+        }
+    }
+    if descriptor_count > rows.results.len() {
+        return Err(meter.refused(StorageError::CorruptHistory, AuditSite::NotRead));
+    }
+    for row in &rows.results {
+        let site = result_location(row.scope, row.identity);
+        meter.visit(site)?;
+        meter.visit(site)?;
+        if rows
+            .descriptors
+            .binary_search_by(|descriptor| (&descriptor.key, descriptor.segment).cmp(&(&row.key, row.segment)))
+            .is_err()
+        {
+            return Err(meter.refused(StorageError::CorruptHistory, site));
+        }
+    }
+    Ok(segment_order)
 }
 
 fn check_joins(rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {

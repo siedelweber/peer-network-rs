@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::AuditLocation::key_integer",
-    "body": "{ (self . kinds . get (at) == Some (& LocationKind :: Integer)) . then (| | self . slots . get (at) . map (| value | i128 :: from (* value))) . flatten () }",
+    "body": "{ match self . kinds . get (at) ? { LocationKind :: UnsignedInteger => self . slots . get (at) . copied () . map (i128 :: from) , LocationKind :: SignedInteger => self . slots . get (at) . copied () . map (| value | i128 :: from (i64 :: from_ne_bytes (value . to_ne_bytes ()))) , _ => None , } }",
     "class_decision": "host-storage",
     "item_premise": "The published audit location exposes only its fixed tag and already retained scalar key; inspection does not read or allocate store state.",
     "assessments": {

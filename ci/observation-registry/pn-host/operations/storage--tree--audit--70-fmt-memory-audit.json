@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::<LocationKey < '_ > as std :: fmt :: Debug>::fmt",
-    "body": "{ let mut list = formatter . debug_list () ; for at in 0 .. usize :: from (self . 0 . used) { match self . 0 . kinds [at] { LocationKind :: Text => { list . entry (& self . 0 . key_text (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: Bytes => { list . entry (& self . 0 . key_bytes (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: Integer => { list . entry (& self . 0 . key_integer (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: Null => { list . entry (& \"null\") ; } LocationKind :: Empty => { } } } list . finish () }",
+    "body": "{ let mut list = formatter . debug_list () ; for at in 0 .. usize :: from (self . 0 . used) { match self . 0 . kinds [at] { LocationKind :: Text => { list . entry (& self . 0 . key_text (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: Bytes => { list . entry (& self . 0 . key_bytes (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: UnsignedInteger | LocationKind :: SignedInteger => { list . entry (& self . 0 . key_integer (at) . ok_or (std :: fmt :: Error) ?) ; } LocationKind :: Null => { list . entry (& \"null\") ; } LocationKind :: Empty => { } } } list . finish () }",
     "class_decision": "host-storage",
     "item_premise": "The published audit location exposes only its fixed tag and already retained scalar key; inspection does not read or allocate store state.",
     "assessments": {

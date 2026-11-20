@@ -3,10 +3,10 @@
 
 use super::super::{MemoryTree, coordinate, unqualified};
 use super::{
-    AuditFailure, AuditMeter, AuditSite, AuditSource, Collected, RawDebit, RawExpectedDebit, RawGeneration, RawObservation,
-    RawResult, RawScope, RawSelection, child_location, descriptor_location, generation_slot_location, generation_source_location,
-    placement_location, reference_location, result_index_location, result_location, result_slot_location, scope_location,
-    version_location, vintage_location,
+    AuditFailure, AuditMeter, AuditSite, AuditSource, Collected, RawDebit, RawDescriptor, RawExpectedDebit, RawGeneration,
+    RawObservation, RawResult, RawScope, RawSelection, child_location, descriptor_location, generation_slot_location,
+    generation_source_location, placement_location, reference_location, result_index_location, result_location,
+    result_slot_location, scope_location, version_location, vintage_location,
 };
 use crate::admitted_result::position::{Error as PositionError, Representation};
 use crate::storage::StorageError;
@@ -140,6 +140,27 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             generations,
             scopes,
             results,
+            descriptors: Vec::new(),
+        })
+    }
+
+    #[doc = "Justified: Descriptor collection inherits the enclosing metered audit operation."]
+    fn collect_descriptors(&'a self, rows: &mut Collected<'a>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {
+        self.segments.for_each(&mut |(scope, segment), descriptor| {
+            let site = descriptor_location(scope, *segment);
+            meter.reserve(&mut rows.descriptors, 1, site)?;
+            meter.visit(site)?;
+            rows.descriptors.push(RawDescriptor {
+                key: meter.key(scope, site)?,
+                scope,
+                segment: *segment,
+                first: descriptor.first,
+                start: descriptor.start,
+                parent_segment: descriptor.parent_segment,
+                fork: descriptor.fork,
+                cutoff: descriptor.cutoff,
+            });
+            Ok(())
         })
     }
 
@@ -240,23 +261,6 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
     }
 
     #[doc = "Justified: Memory audit adapter work inherits the enclosing metered audit operation."]
-    fn check_forest_joins(&self, rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {
-        for scope in &rows.scopes {
-            meter.visit(scope_location(scope.scope))?;
-            meter.visit(scope_location(scope.scope))?;
-            let root = rows
-                .results
-                .binary_search_by(|row| (&row.key, row.identity).cmp(&(&scope.key, scope.pointer)))
-                .ok()
-                .and_then(|index| rows.results.get(index));
-            if root.is_none_or(|row| row.parent.is_some()) {
-                return Err(meter.refused(StorageError::CorruptHistory, scope_location(scope.scope)));
-            }
-        }
-        Ok(())
-    }
-
-    #[doc = "Justified: Memory audit adapter work inherits the enclosing metered audit operation."]
     fn check_reference_index(&self, rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {
         for row in &rows.results {
             meter.visit(result_location(row.scope, row.identity))?;
@@ -292,83 +296,15 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
     }
 
     #[doc = "Justified: Memory audit adapter work inherits the enclosing metered audit operation."]
-    // Justified: Descriptor and auxiliary index checks share one ordered physical-consistency phase.
+    // Justified: The physical indexes are checked after common descriptor reconciliation.
     #[allow(clippy::too_many_lines)]
     fn check_segments(
         &self,
         rows: &Collected<'_>,
-        parents: &[Option<usize>],
         children: &[Vec<usize>],
+        segment_order: &[usize],
         meter: &mut AuditMeter,
     ) -> Result<(), AuditFailure> {
-        let mut segment_order = Vec::new();
-        meter.reserve(&mut segment_order, rows.results.len(), AuditSite::NotRead)?;
-        segment_order.extend(0..rows.results.len());
-        segment_order.sort_unstable_by_key(|&at| {
-            let row = &rows.results[at];
-            (&row.key, row.segment, row.depth, row.identity)
-        });
-        let mut descriptor_count = 0usize;
-        self.segments.for_each(&mut |(scope, segment), descriptor| {
-            let site = descriptor_location(scope, *segment);
-            meter.visit(site)?;
-            descriptor_count = descriptor_count
-                .checked_add(1)
-                .ok_or_else(|| meter.refused(StorageError::ReadLimit, site))?;
-            let key = meter.key(scope, site)?;
-            meter.visit(site)?;
-            let first_index = segment_order.partition_point(|&at| {
-                let row = &rows.results[at];
-                (row.key.as_str(), row.segment) < (key.as_str(), *segment)
-            });
-            meter.visit(site)?;
-            let last_index = segment_order.partition_point(|&at| {
-                let row = &rows.results[at];
-                (row.key.as_str(), row.segment) <= (key.as_str(), *segment)
-            });
-            let group = &segment_order[first_index..last_index];
-            let Some(&first_at) = group.first() else {
-                return Err(meter.refused(StorageError::CorruptHistory, site));
-            };
-            let first = &rows.results[first_at];
-            if descriptor.first != first.identity
-                || *segment != first.identity
-                || descriptor.start != first.depth
-                || descriptor.fork != first.parent
-                || descriptor.cutoff != first.depth - 1
-            {
-                return Err(meter.refused(StorageError::CorruptHistory, site));
-            }
-            let actual_parent_segment = parents[first_at].map(|at| rows.results[at].segment);
-            if descriptor.parent_segment != actual_parent_segment {
-                return Err(meter.refused(StorageError::CorruptHistory, site));
-            }
-            for pair in group.windows(2) {
-                let before = &rows.results[pair[0]];
-                let after = &rows.results[pair[1]];
-                {
-                    let location = result_location(after.scope, after.identity);
-                    meter.visit(location)?;
-                }
-                if before.depth.checked_add(1) != Some(after.depth) || after.parent != Some(before.identity) {
-                    return Err(meter.refused(StorageError::CorruptHistory, result_location(after.scope, after.identity)));
-                }
-            }
-            Ok(())
-        })?;
-        if descriptor_count > rows.results.len() {
-            return Err(meter.refused(StorageError::CorruptHistory, AuditSite::NotRead));
-        }
-        for row in &rows.results {
-            {
-                let location = result_location(row.scope, row.identity);
-                meter.visit(location)?;
-            }
-            meter.visit(result_location(row.scope, row.identity))?;
-            if self.segments.get(&(row.scope, row.segment)).is_none() {
-                return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
-            }
-        }
         let mut placement_count = 0usize;
         self.placements.for_each(&mut |(scope, segment, depth), identity| {
             let site = placement_location(scope, *segment, *depth, "memory.placements");

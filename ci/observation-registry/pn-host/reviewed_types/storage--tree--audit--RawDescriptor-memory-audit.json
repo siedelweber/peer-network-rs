@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::RawDescriptor",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "pub (super) struct RawDescriptor < 'a > { pub key : String , pub scope : & 'a EpochScope , pub segment : Identity , pub first : Identity , pub start : u64 , pub parent_segment : Option < Identity > , pub fork : Option < Identity > , pub cutoff : u64 , }"
+  }
+}
