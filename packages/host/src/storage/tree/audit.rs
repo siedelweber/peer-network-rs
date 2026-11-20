@@ -522,11 +522,15 @@ impl AuditMeter {
         if needed <= out.capacity() {
             return Ok(());
         }
-        let bytes = needed
+        // Unknown collection lengths grow by a bounded factor; charge the capacity requested here.
+        let doubled = out.capacity().checked_mul(2).unwrap_or(needed);
+        let requested = needed.max(doubled);
+        let bytes = requested
             .checked_mul(std::mem::size_of::<T>())
             .ok_or_else(|| self.refused(StorageError::ReadLimit, location))?;
         let location = self.allocation(bytes, location)?;
-        out.try_reserve_exact(additional).map_err(|_| self.allocated(location))
+        out.try_reserve_exact(requested - out.len())
+            .map_err(|_| self.allocated(location))
     }
 
     pub(super) fn retain(&mut self, bytes: usize, slots: usize, location: AuditSite<'_>) -> Result<(), AuditFailure> {

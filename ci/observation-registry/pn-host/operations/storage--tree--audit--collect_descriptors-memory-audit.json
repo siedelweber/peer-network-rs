@@ -22,7 +22,7 @@
     "operation": "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::collect_descriptors",
     "body": "{ self . segments . for_each (& mut | (scope , segment) , descriptor | { let site = descriptor_location (scope , * segment) ; meter . reserve (& mut rows . descriptors , 1 , site) ? ; meter . visit (site) ? ; rows . descriptors . push (RawDescriptor { key : meter . key (scope , site) ? , scope , segment : * segment , first : descriptor . first , start : descriptor . start , parent_segment : descriptor . parent_segment , fork : descriptor . fork , cutoff : descriptor . cutoff , }) ; Ok (()) }) }",
     "class_decision": "host-storage",
-    "item_premise": "The memory audit adapter checks a retained index inside the same bounded, observed audit invocation.",
+    "item_premise": "The memory audit adapter collects a retained index inside the same bounded, observed audit invocation.",
     "assessments": {
       "full_recording": "storage-full_recording",
       "secret_flow": "storage-secret_flow",
