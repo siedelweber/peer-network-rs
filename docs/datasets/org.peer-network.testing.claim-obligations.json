@@ -968,6 +968,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Admit the component and complete publication representations, then attach source-matched controls for pinned authority, missing or failing mandatory evidence and historical-prefix replacement without a courtesy dependency.",
+      "closing_step": "Separated authority component, replay and publication cuts",
+      "hold": "ROOT::open:identity:act-realization-admission",
+      "missing": "Admitted declaration and boundary representation, independent mandatory authority checks and reviewed scoped execution evidence",
+      "name": "ROOT::dec:devnet:author-authority-case",
+      "owner": "Development-profile, identity and publication designers",
+      "path": "adr/019-development-network.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",

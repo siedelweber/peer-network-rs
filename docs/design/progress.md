@@ -20,21 +20,21 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 384 | 36 | 69 | 418 | 22 | 32 | 861 |
-| prose | 329 | 0 | 0 | 22 | 14 | 0 | 307 |
+| implementation | 1 384 | 36 | 69 | 418 | 21 | 32 | 861 |
+| prose | 329 | 0 | 0 | 22 | 13 | 0 | 307 |
 
 ## By crate · `sec:progress:crates`
 
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| none | 329 | 0 | 0 | 22 | 14 | 0 | 307 |
+| none | 329 | 0 | 0 | 22 | 13 | 0 | 307 |
 | pn-act-authentication | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | pn-act-profile | 2 | 0 | 0 | 2 | 2 | 0 | 0 |
 | pn-epoch | 371 | 15 | 8 | 141 | 0 | 13 | 207 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
 | pn-host | 181 | 5 | 21 | 55 | 7 | 2 | 100 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 219 | 2 | 16 | 77 | 7 | 7 | 124 |
+| pn-records | 219 | 2 | 16 | 77 | 6 | 7 | 124 |
 | pn-replay | 34 | 1 | 3 | 5 | 0 | 0 | 25 |
 | pn-verification | 282 | 8 | 9 | 69 | 5 | 6 | 196 |
 
@@ -63,7 +63,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 1 759 | 215 |
+| ROOT (repository-wide) | 1 760 | 215 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -81,7 +81,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 94 | 9 | 27 | 57 | 0 | 5 | 1 |
-| unlinked | 1 520 | 23 | 29 | 304 | 36 | 21 | 1 164 |
+| unlinked | 1 520 | 23 | 29 | 304 | 34 | 21 | 1 164 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -92,8 +92,8 @@
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
 | fixture | 219 | 5 | 6 | 50 | 7 | 3 | 158 |
 | function | 216 | 10 | 6 | 98 | 1 | 8 | 102 |
-| invariant check | 520 | 17 | 23 | 142 | 3 | 11 | 338 |
-| none | 354 | 0 | 0 | 21 | 9 | 0 | 333 |
+| invariant check | 520 | 17 | 23 | 142 | 2 | 11 | 338 |
+| none | 354 | 0 | 0 | 21 | 8 | 0 | 333 |
 | policy | 287 | 3 | 23 | 62 | 12 | 4 | 199 |
 | serialization | 9 | 0 | 0 | 8 | 4 | 0 | 1 |
 | type | 94 | 1 | 9 | 50 | 0 | 5 | 34 |
@@ -401,7 +401,7 @@
 | ``def:graph:act-payload-projection`` | pn-records; type | held | ``ROOT::rule:devnet:content-carrier`` | | | ``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>|  | | |
 | ``post:graph:separable-act-projections`` | pn-records; invariant check | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | |
 | ``def:graph:act-payload-state`` | pn-records; type | held | ``ROOT::open:vision:deployment-profile`` ``ROOT::rule:devnet:content-carrier`` | | | ``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>|  | | ``ROOT::open:identity:optional-act-carriage``; Premise only: A pair held only by its author is full; availability belongs to an accepting carrier.<br>|
-| ``prop:graph:removable-projection-invariance`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
+| ``prop:graph:removable-projection-invariance`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:act-removal-facts`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``def:graph:act-payload-controller`` | pn-records; function | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``rem:graph:payload-size-not-act-cost`` | pn-records; invariant check | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``rem:graph:act-payload-removal-neutrality`` | pn-replay; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
@@ -516,13 +516,13 @@
 | ``def:graph:dependent-act-set`` | pn-graph; function | designed | ``GRAPH::def:membership:partition`` ``ROOT::alg:design:closure-registration`` ``ROOT::alg:design:dependency-partition`` | | | | 1, 3 | | |
 | ``cor:graph:act-projection-atomicity`` | pn-records; invariant check | designed | ``ROOT::amend:design:act-removal-facts`` | | | |  | | |
 | ``rem:graph:dependency-closure-excludes-conflicts`` | pn-graph; policy | unassigned | | | | |  | | |
-| ``def:graph:public-protocol-reference`` | pn-records; type | designed | ``GRAPH::amend:formation:formed-reference-conformance`` ``ROOT::amend:design:act-removal-facts`` | | | |  | | |
+| ``def:graph:public-protocol-reference`` | pn-records; type | designed | ``GRAPH::amend:formation:formed-reference-conformance`` | | | |  | | |
 | ``def:graph:act-removable-projections`` | pn-records; type | designed | ``ROOT::amend:design:act-removal-facts`` | | | |  | | |
-| ``def:graph:act-dependency-projection`` | pn-records; serialization | designed | ``RECORDS::def:acts:dependencies`` ``ROOT::amend:design:act-removal-facts`` | | | |  | | |
+| ``def:graph:act-dependency-projection`` | pn-records; serialization | designed | ``RECORDS::def:acts:dependencies`` | | | |  | | |
 | ``case:graph:act-dependency-projection-full-empty`` | pn-records; serialization | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``case:graph:act-dependency-projection-full`` | pn-records; serialization | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``case:graph:act-dependency-projection-tombstoned`` | pn-records; serialization | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
-| ``def:graph:act-dependency-tombstone`` | pn-records; invariant check | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
+| ``def:graph:act-dependency-tombstone`` | pn-records; invariant check | designed | ``ROOT::amend:design:act-removal-facts`` ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``rem:graph:authentication-realization-out-of-scope`` | pn-host; policy | held | ``ROOT::dec:crypto:base-library`` ``ROOT::dec:design:replay`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 9, 11 | | ``ROOT::amend:design:epoch-authentication-fields``; Premise only: authentication realization is a deployment concern<br>``ROOT::amend:identity:act-proposal-admission``; Premise only: authentication serialization and key management are deployment concerns<br>``ROOT::open:identity:act-realization-admission``; Premise only: The reference permits deployment encodings satisfying the seven requirements.<br>|
 | ``def:graph:proposal-pre-commitment`` | pn-records; type | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::amend:identity:proposal-signature`` ``ROOT::open:identity:act-realization-admission`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:decomposition:act-profile``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:identity:act-proposal-admission``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:identity:proposal-signature``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::open:identity:act-realization-admission``; ``ROOT::open:identity:act-realization-admission``<br>|  | | ``ROOT::amend:identity:act-proposal-admission``; Premise only: the proposal commits its Actor-chosen body before host fields<br>``ROOT::open:identity:host-contribution-option``; Premise only: I and the Actor-chosen B exist before the nonces; P and final commitments do not.<br>|
 | ``def:graph:verified-act`` | pn-records; type | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::def:identity:verified-header-name`` ``ROOT::open:design:proposal-carriage`` ``ROOT::open:identity:act-realization-admission`` ``ROOT::rule:devnet:content-carrier`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::alg:design:authentication-handoff``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:decomposition:act-profile``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::amend:identity:act-proposal-admission``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::def:identity:verified-header-name``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::open:design:proposal-carriage``; ``ROOT::open:identity:act-production-concealment``<br>``ROOT::open:identity:act-realization-admission``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>| 3, 4 | | ``ROOT::open:identity:optional-act-carriage``; Premise only: Act acceptance is independent of optional content carriage.<br>|
@@ -1857,7 +1857,7 @@
 | ``gloss:graph:opening`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``gloss:graph:blinding-value`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``gloss:graph:peek`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
-| ``def:graph:holder`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
+| ``def:graph:holder`` | none; none | designed | ``ROOT::amend:design:act-removal-facts`` ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``def:graph:storage`` | pn-host; policy | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``def:graph:custodian`` | pn-host; policy | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``def:graph:carriage`` | pn-host; policy | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |

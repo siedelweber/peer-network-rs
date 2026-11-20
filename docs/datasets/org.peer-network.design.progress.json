@@ -4938,6 +4938,7 @@
       "record_routes": [],
       "records": [
         "GRAPH::def:formation:boundary-title",
+        "ROOT::amend:design:act-removal-facts",
         "ROOT::amend:design:bite-four-close"
       ],
       "routes": [
@@ -6934,8 +6935,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "GRAPH::amend:formation:formed-reference-conformance",
-        "ROOT::amend:design:act-removal-facts"
+        "GRAPH::amend:formation:formed-reference-conformance"
       ],
       "routes": [],
       "status": "designed",
@@ -6971,8 +6971,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "RECORDS::def:acts:dependencies",
-        "ROOT::amend:design:act-removal-facts"
+        "RECORDS::def:acts:dependencies"
       ],
       "routes": [],
       "status": "designed",
@@ -7044,11 +7043,12 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::amend:design:act-removal-facts",
         "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
       "status": "designed",
-      "tentative": 1
+      "tentative": 0
     },
     {
       "bites": [
@@ -35940,11 +35940,12 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::amend:design:act-removal-facts",
         "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
       "status": "designed",
-      "tentative": 1
+      "tentative": 0
     },
     {
       "bites": [],
@@ -37233,10 +37234,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "22",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37289,7 +37290,7 @@
       },
       "realized": 36,
       "record_granular": 32,
-      "tentative": 22,
+      "tentative": 21,
       "total": 1384,
       "unassigned": 861
     },
@@ -37332,10 +37333,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "14",
+          "exact": "13",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "13",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37388,7 +37389,7 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 14,
+      "tentative": 13,
       "total": 329,
       "unassigned": 307
     },
@@ -37431,10 +37432,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "14",
+          "exact": "13",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "13",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37487,7 +37488,7 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 14,
+      "tentative": 13,
       "total": 329,
       "unassigned": 307
     },
@@ -38124,10 +38125,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "7",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38180,7 +38181,7 @@
       },
       "realized": 2,
       "record_granular": 7,
-      "tentative": 7,
+      "tentative": 6,
       "total": 219,
       "unassigned": 124
     },
@@ -38916,10 +38917,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "3",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38972,7 +38973,7 @@
       },
       "realized": 17,
       "record_granular": 11,
-      "tentative": 3,
+      "tentative": 2,
       "total": 520,
       "unassigned": 338
     },
@@ -39015,10 +39016,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "9",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39071,7 +39072,7 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 9,
+      "tentative": 8,
       "total": 354,
       "unassigned": 333
     },
@@ -40500,10 +40501,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "36",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "36",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40556,7 +40557,7 @@
       },
       "realized": 23,
       "record_granular": 21,
-      "tentative": 36,
+      "tentative": 34,
       "total": 1520,
       "unassigned": 1164
     },
@@ -41241,10 +41242,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 759",
+          "exact": "1 760",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 759",
+          "num": "1 760",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41259,7 +41260,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1759
+      "total": 1760
     },
     {
       "category": "record-coverage",

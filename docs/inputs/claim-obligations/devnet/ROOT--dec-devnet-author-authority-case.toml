@@ -1,0 +1,11 @@
+name = "ROOT::dec:devnet:author-authority-case"
+witnessed_labels = []
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:act-realization-admission"
+owner = "Development-profile, identity and publication designers"
+missing = "Admitted declaration and boundary representation, independent mandatory authority checks and reviewed scoped execution evidence"
+closing_condition = "Admit the component and complete publication representations, then attach source-matched controls for pinned authority, missing or failing mandatory evidence and historical-prefix replacement without a courtesy dependency."
+closing_step = "Separated authority component, replay and publication cuts"
